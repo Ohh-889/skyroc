@@ -41,6 +41,10 @@ export const tabSlice = createSlice({
         state.tabs[index].i18nKey = state.tabs[index].oldLabel;
       }
     },
+    // 新增：清空所有标签页相关数据（重置为初始状态）
+    clearTabData: () => {
+      return initialState;
+    },
     setActiveFirstLevelMenuKey: (state, action: PayloadAction<string>) => {
       state.activeFirstLevelMenuKey = action.payload;
     },
@@ -63,7 +67,7 @@ export const tabSlice = createSlice({
   }
 });
 
-export const { addTab, changeTabLabel, setActiveFirstLevelMenuKey, setActiveTabId, setTabs, updateTab } =
+export const { addTab, changeTabLabel, clearTabData, setActiveFirstLevelMenuKey, setActiveTabId, setTabs, updateTab } =
   tabSlice.actions;
 
 export const { selectActiveFirstLevelMenuKey, selectActiveTabId, selectTabs } = tabSlice.selectors;
