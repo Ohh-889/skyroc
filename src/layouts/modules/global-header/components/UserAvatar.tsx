@@ -1,5 +1,6 @@
 import type { MenuProps } from 'antd';
 
+import { useLogout } from '@/features/auth';
 import { selectToken, selectUserInfo } from '@/features/auth/authStore';
 import { useRouter } from '@/features/router';
 
@@ -12,13 +13,15 @@ const UserAvatar = memo(() => {
 
   const { navigate } = useRouter();
 
+  // 处理用户退出
+  const toLogout = useLogout();
   function logout() {
     window?.$modal?.confirm({
       cancelText: t('common.cancel'),
       content: t('common.logoutConfirm'),
       okText: t('common.confirm'),
       onOk: () => {
-        navigate('/login-out');
+        toLogout();
       },
       title: t('common.tip')
     });

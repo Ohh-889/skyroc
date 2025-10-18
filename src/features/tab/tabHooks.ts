@@ -4,6 +4,7 @@ import { useRoute, useRouter } from '@/features/router';
 import {
   addTab,
   changeTabLabel,
+  clearTabData,
   selectActiveTabId,
   selectTabs,
   setActiveFirstLevelMenuKey,
@@ -241,6 +242,16 @@ export function initTab(cache: boolean, updateTabs: (tabs: App.Global.Tab[]) => 
   }
 
   return [];
+}
+
+// 新增：清空所有标签页相关数据
+export function useClearTabs() {
+  const dispatch = useAppDispatch();
+  function clearTabs() {
+    localStg.remove('globalTabs');
+    dispatch(clearTabData());
+  }
+  return clearTabs;
 }
 
 export function useCacheTabs() {
