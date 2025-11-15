@@ -1,116 +1,41 @@
 ---
-description:
+description: Skyroc Admin project overview and workspace expectations
 globs:
-alwaysApply: false
----
----
-description:
-globs:
+  - "**/*"
 alwaysApply: true
 ---
-# 项目背景
+# 项目背景 Project Overview
 
-这是 soybeanjs/soybean-admin-react的源代码仓库，是一个 React 后台管理模板仓库
+Skyroc Admin 是一套基于 **React 19 + Vite 6 + TypeScript 5** 的中后台模板，整合了 Ant Design 5、Redux Toolkit、TanStack Query、UnoCSS 与 i18next 等能力。仓库采用 **pnpm monorepo**，根目录负责应用壳，`packages/` 存放可复用的工具包（`@sa/axios`、`@sa/utils`、`@sa/hooks`、`@sa/materials`、`@sa/scripts`、`@sa/uno-preset` 等）。
 
-- 使用 TypeScript 和 React 开发
-- 兼容 React 16 ~ 19 版本
-- 遵循 Ant Design 设计规范
-- 支持国际化
-- 基于 React 18 + TypeScript + Vite 的后台管理系统
-- 采用 pnpm monorepo 架构
-- 使用文件系统路由，类似 Next.js 的路由系统
-- 技术栈：React、TypeScript、Vite、Redux Toolkit、Antd、UnoCSS
-- 代码风格遵循 SoybeanJS 官方规范
+## 目录速览
+- `src/`：前端应用主体。
+  - `pages/`：文件系统路由，`(base)` 代表主布局，`(blank)` 用于登录等简化页面。
+  - `features/`：领域模块（auth、menu、theme 等），内部包含 hooks、store、组件。
+  - `layouts/`：布局骨架与全局模块（菜单、页签、主题抽屉）。
+  - `components/`：跨业务复用的基础组件。
+  - `router/`：路由初始化、鉴权与缓存控制。
+  - `service/`：请求客户端、接口定义、业务 hooks。
+  - `store/`：Redux store 配置与自定义 `createAppSlice`。
+  - `theme/`、`styles/`：主题 token、CSS/SCSS 与 UnoCSS 变量。
+- `packages/`：workspace 工具包，变更通用逻辑优先修改对应包后在 `src/` 中引用。
+- `build/`、`public/`：打包脚本与静态资源。
 
-## 编码规范
+## 运行与构建命令
+- `pnpm dev` / `pnpm dev:prod`：启动本地开发，默认加载测试/生产配置。
+- `pnpm build` / `pnpm build:test`：生产/测试环境构建。
+- `pnpm preview`：本地预览构建产物。
+- `pnpm lint`：使用 ESLint + Prettier 自动修正格式问题。
+- `pnpm typecheck`：在 strict 模式下执行 TypeScript 类型检查。
+- `pnpm gen-route`：基于 `src/pages` 结构重新生成路由声明。
+- `pnpm commit`：通过内置脚本生成符合 Conventional Commits 的提交信息。
 
-- 使用 TypeScript 和 React 书写
-- 使用函数式组件和 hooks，避免类组件
-- 使用提前返回（early returns）提高代码可读性
-- 组件名使用大驼峰（PascalCase）
-- 属性名使用小驼峰（camelCase）
-- 合理使用 React.memo、useMemo 和 useCallback 优化性能
-- 所有页面放置于 `src/pages`，每个页面一个文件夹，命名使用小写连字符。
-- 公共组件放在 `src/components`，抽象通用性组件优先。
-- API 调用统一由 `src/service` 管理，采用 axios 封装。
-- 工具函数集中于 `src/utils`。
+## 开发约定
+1. **使用 pnpm**：不要混用 npm/yarn。workspace 依赖通过 `workspace:*` 管理。
+2. **保持类型安全**：TS 配置开启 `strict` 与 `isolatedModules`，新增模块需提供类型。
+3. **遵守文件组织**：新增业务逻辑时优先在对应 feature 内扩展，而非随意创建新顶级目录。
+4. **国际化默认开启**：用户可选中英文，新增界面文本请落在 `src/locales` 中的语言包。
+5. **环境变量**：通过 Vite 的 `import.meta.env` 获取，公共配置集中在 `src/config.ts`。
+6. **脚手架脚本**：`packages/scripts` 内置常用 automation，新增脚本保持幂等并在 README 记录。
 
-## 核心开发原则
-
-### 1. 严格的类型安全
-- 所有代码必须使用 TypeScript
-- 避免使用 `any` 类型，优先使用具体类型或泛型
-- 为所有函数参数和返回值定义明确的类型
-- 使用 `.d.ts` 文件定义全局类型
-
-### 2. 响应式设计优先
-- 所有组件必须考虑移动端适配
-- 使用 UnoCSS 进行样式开发
-- 遵循移动端优先的设计理念
-
-### 3. 性能优化
-- 使用 React.memo、useMemo、useCallback 优化组件性能
-- 路由懒加载，避免首屏加载过慢
-- 图片懒加载和压缩优化
-
-## 文件和目录命名规范
-
-### 1. 文件和文件夹命名
-- **统一使用小写字母 + 连字符（kebab-case）命名**
-- 多个单词用连字符 `-` 连接
-- 示例：`user-center`、`role-manage`、`global-header`
-
-### 2. 组件文件命名
-- React 组件文件使用 PascalCase 命名
-- 页面组件：`index.tsx`
-- 动态路由：`[id].tsx`、`[...slug].tsx`
-- 布局组件：`layout.tsx`
-- 加载组件：`loading.tsx`
-- 错误组件：`error.tsx`
-
-### 3. 变量和函数命名
-- **变量和普通函数：camelCase**
-  ```typescript
-  const userInfo = {...};
-  const getUserInfo = () => {...};
-  ```
-- **常量：UPPER_SNAKE_CASE**
-  ```typescript
-  const MAX_RETRY_COUNT = 3;
-  const API_BASE_URL = 'https://api.example.com';
-  ```
-- **类型和接口：PascalCase**
-  ```typescript
-  interface UserInfo {
-    name: string;
-  }
-  type ApiResponse<T> = {
-    data: T;
-  };
-  ```
-- **请求函数：以 `fetch` 开头**
-  ```typescript
-  const fetchUserList = () => {...};
-  const fetchUserById = (id: string) => {...};
-  ```
-
-### 4. 样式类命名
-
-- 使用 Tailwind CSS + UnoCSS 配合，避免直接写原生 CSS。
-- 原则：能用类写完的 UI 不新建样式文件。
-- `class` 顺序遵循结构 > 状态 > 修饰。
-- 尽量通过 `theme` 和 `preset` 控制色彩与间距。
-- 避免写死颜色、字体，统一使用 token。
-- 使用小写字母 + 连字符（kebab-case）
-- 遵循 BEM 命名规范
-```css
-.user-card {
-  .user-card__header {
-    .user-card__title {
-    }
-  }
-}
-```
-
-> 遵循约定大于配置，尽量避免横跨多个职责的模块。
-
+保持这些约定能确保 Cursor 在任意子目录下都有一致的上下文与期望。
