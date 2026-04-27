@@ -42,6 +42,7 @@ const SvgIcon = ({ icon, localIcon, ...props }: Props) => {
   ) : (
     <Icon
       icon={icon}
+      key={icon}
       {...props}
     />
   );
