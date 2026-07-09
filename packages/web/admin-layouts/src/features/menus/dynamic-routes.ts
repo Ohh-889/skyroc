@@ -135,9 +135,12 @@ export function normalizeBackendRouteResponse(
 
 export function createAdminDynamicRouteLoader(options: CreateAdminDynamicRouteLoaderOptions) {
   const { loadBackendRoutes, routeTree } = options;
-  const normalizeBackendRoutes = createBackendRouteNormalizer(routeTree);
+
+  let normalizeBackendRoutes: ReturnType<typeof createBackendRouteNormalizer> | null = null;
 
   return async function loadAdminDynamicRoutes() {
+    normalizeBackendRoutes ??= createBackendRouteNormalizer(routeTree);
+
     const routeData = await loadBackendRoutes();
 
     return normalizeBackendRoutes(routeData);
