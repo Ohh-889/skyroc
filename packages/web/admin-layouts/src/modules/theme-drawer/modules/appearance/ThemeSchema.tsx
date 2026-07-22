@@ -3,12 +3,14 @@ import { ThemeSchemaSegmented, useSettingsTheme } from '@skyroc/web-admin-theme'
 import { Switch as ASwitch } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import AnimatedCollapse from '../../components/AnimatedCollapse';
 import SettingItem from '../../components/SettingItem';
 
 const DarkMode = () => {
   const { t } = useTranslation();
 
-  const { colourWeakness, grayscale, setColourWeakness, setGrayscale, setSettings, sider } = useSettingsTheme();
+  const { colourWeakness, darkMode, grayscale, setColourWeakness, setGrayscale, setSettings, sider } =
+    useSettingsTheme();
 
   const handleSiderInvertedChange = (value: boolean) => {
     setSettings({ sider: { ...sider, inverted: value } });
@@ -20,9 +22,12 @@ const DarkMode = () => {
         <ThemeSchemaSegmented />
       </div>
 
-      <SettingItem label={t('theme.layout.sider.inverted')}>
-        <ASwitch checked={sider.inverted} onChange={handleSiderInvertedChange} />
-      </SettingItem>
+      <AnimatedCollapse visible={!darkMode}>
+        <SettingItem label={t('theme.layout.sider.inverted')}>
+          <ASwitch checked={sider.inverted} onChange={handleSiderInvertedChange} />
+        </SettingItem>
+      </AnimatedCollapse>
+
       <SettingItem label={t('theme.appearance.grayscale')}>
         <ASwitch checked={grayscale} onChange={setGrayscale} />
       </SettingItem>
