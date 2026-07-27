@@ -860,6 +860,202 @@ importers:
         specifier: catalog:core
         version: 8.0.14(@types/node@24.10.13)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
+  apps/ruoyi-plus-fast:
+    dependencies:
+      '@skyroc/adapter-antd-theme':
+        specifier: workspace:*
+        version: link:../../packages/web/antd-theme
+      '@skyroc/axios':
+        specifier: workspace:*
+        version: link:../../packages/@core/axios
+      '@skyroc/color':
+        specifier: workspace:*
+        version: link:../../packages/@core/color
+      '@skyroc/core-state':
+        specifier: workspace:*
+        version: link:../../packages/@core/state
+      '@skyroc/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@skyroc/logger':
+        specifier: workspace:*
+        version: link:../../packages/@core/logger
+      '@skyroc/materials':
+        specifier: workspace:*
+        version: link:../../packages/web/materials
+      '@skyroc/service':
+        specifier: workspace:*
+        version: link:../../packages/@core/service
+      '@skyroc/utils':
+        specifier: workspace:*
+        version: link:../../packages/@core/utils
+      '@skyroc/web-admin-devtools':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-devtools
+      '@skyroc/web-admin-i18n':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-i18n
+      '@skyroc/web-admin-layouts':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-layouts
+      '@skyroc/web-admin-notification':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-notification
+      '@skyroc/web-admin-runtime':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-runtime
+      '@skyroc/web-admin-styles':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-styles
+      '@skyroc/web-admin-theme':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-theme
+      '@skyroc/web-ui':
+        specifier: workspace:*
+        version: link:../../packages/web/ui/shadcn
+      '@skyroc/web-ui-antd':
+        specifier: workspace:*
+        version: link:../../packages/web/ui/antd
+      '@skyroc/web-ui-compose':
+        specifier: workspace:*
+        version: link:../../packages/web/ui/compose
+      '@tanstack/react-query':
+        specifier: catalog:core
+        version: 5.90.21(react@19.1.0)
+      '@tanstack/react-router':
+        specifier: catalog:web
+        version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      ahooks:
+        specifier: catalog:utils
+        version: 3.9.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      antd:
+        specifier: catalog:web
+        version: 6.3.0(date-fns@4.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      clsx:
+        specifier: catalog:utils
+        version: 2.1.1
+      dayjs:
+        specifier: catalog:utils
+        version: 1.11.19
+      defu:
+        specifier: catalog:utils
+        version: 6.1.4
+      i18next:
+        specifier: catalog:i18n
+        version: 25.7.2(typescript@6.0.3)
+      jotai:
+        specifier: catalog:core
+        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.14)(react@19.1.0)
+      motion:
+        specifier: catalog:ui-shared
+        version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      nprogress:
+        specifier: catalog:ui-shared
+        version: 0.2.0
+      react:
+        specifier: catalog:core
+        version: 19.1.0
+      react-dom:
+        specifier: catalog:core
+        version: 19.1.0(react@19.1.0)
+      react-error-boundary:
+        specifier: catalog:core
+        version: 6.0.0(react@19.1.0)
+      react-i18next:
+        specifier: catalog:i18n
+        version: 16.4.0(i18next@25.7.2(typescript@6.0.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@6.0.3)
+      zod:
+        specifier: catalog:utils
+        version: 4.3.6
+    devDependencies:
+      '@iconify/json':
+        specifier: catalog:ui-shared
+        version: 2.2.442
+      '@iconify/react':
+        specifier: catalog:ui-shared
+        version: 6.0.2(react@19.1.0)
+      '@iconify/types':
+        specifier: catalog:ui-shared
+        version: 2.0.0
+      '@sa/uno-config':
+        specifier: workspace:*
+        version: link:../../internal/uno-config
+      '@skyroc/scripts':
+        specifier: workspace:*
+        version: link:../../packages/@core/scripts
+      '@skyroc/types':
+        specifier: workspace:*
+        version: link:../../packages/@core/types
+      '@skyroc/web-admin-vite':
+        specifier: workspace:*
+        version: link:../../packages/web/admin-vite
+      '@svgr/core':
+        specifier: catalog:web
+        version: 8.1.0(typescript@6.0.3)
+      '@svgr/plugin-jsx':
+        specifier: catalog:web
+        version: 8.1.0(@svgr/core@8.1.0(typescript@6.0.3))
+      '@types/node':
+        specifier: catalog:dev
+        version: 24.10.13
+      '@types/nprogress':
+        specifier: catalog:dev
+        version: 0.2.3
+      '@types/react':
+        specifier: catalog:dev
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: catalog:dev
+        version: 19.2.3(@types/react@19.2.14)
+      '@unocss/eslint-config':
+        specifier: catalog:dev
+        version: 66.6.0(eslint@10.2.0(jiti@2.6.1))(typescript@6.0.3)
+      '@unocss/preset-uno':
+        specifier: catalog:dev
+        version: 66.6.0
+      '@unocss/preset-wind3':
+        specifier: catalog:dev
+        version: 66.6.0
+      '@unocss/transformer-directives':
+        specifier: catalog:dev
+        version: 66.6.0
+      '@unocss/transformer-variant-group':
+        specifier: catalog:dev
+        version: 66.6.0
+      eslint-plugin-react:
+        specifier: catalog:dev
+        version: 7.37.5(eslint@10.2.0(jiti@2.6.1))
+      eslint-plugin-react-hooks:
+        specifier: catalog:dev
+        version: 7.0.1(eslint@10.2.0(jiti@2.6.1))
+      eslint-plugin-react-refresh:
+        specifier: catalog:dev
+        version: 0.4.26(eslint@10.2.0(jiti@2.6.1))
+      eslint-plugin-sort:
+        specifier: catalog:dev
+        version: 4.0.0(eslint@10.2.0(jiti@2.6.1))(typescript@6.0.3)
+      fast-glob:
+        specifier: catalog:dev
+        version: 3.3.3
+      oxlint:
+        specifier: catalog:dev
+        version: 1.60.0
+      sass:
+        specifier: catalog:web
+        version: 1.97.3
+      tsx:
+        specifier: catalog:dev
+        version: 4.21.0
+      typescript:
+        specifier: catalog:core
+        version: 6.0.3
+      unocss:
+        specifier: ^66.5.11
+        version: 66.6.0(postcss@8.5.15)(vite@8.0.14(@types/node@24.10.13)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      vite:
+        specifier: catalog:core
+        version: 8.0.14(@types/node@24.10.13)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+
   apps/web-ui-playground:
     dependencies:
       '@faker-js/faker':
