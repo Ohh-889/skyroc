@@ -1,93 +1,186 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { SvgIcon } from '@skyroc/web-ui-compose';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
+import { useCaptchaQuery } from '@/service/api';
+import SocialLogin from './modules/SocialLogin';
 
-type AccountKey = 'admin' | 'super' | 'user';
-
-interface Account {
-  key: AccountKey;
-  label: string;
+interface LoginFormValues {
+  /** 图形验证码内容 */
+  code?: string;
+  /** 登录密码 */
   password: string;
+  /** 是否保持登录 */
+  remember: boolean;
+  /** 用户名、手机号或邮箱 */
   userName: string;
 }
 
-type LoginParams = Pick<Account, 'password' | 'userName'>;
 
-const INITIAL_VALUES = {
-  password: '123456',
-  userName: 'Soybean'
-};
+const CAPTCHA_ENABLED = import.meta.env.VITE_AUTH_CAPTCHA_ENABLED === 'Y';
 
 const Login = () => {
   const { t } = useTranslation();
 
-  const [form] = AForm.useForm<LoginParams>();
+  const navigate = useNavigate();
+
+  const search = useSearch({ from: '/(auth)/login/' });
+
+  const [passwordForm] = AForm.useForm<LoginFormValues>();
 
   const { loading, login } = useInitLogin();
 
   const {
-    formRules: { pwd, userName: userNameRules }
+    data: captcha,
+    error: captchaError,
+    isFetching: captchaLoading,
+    refetch: refetchCaptcha
+  } = useCaptchaQuery(CAPTCHA_ENABLED);
+
+  const {
+    formRules: { pwd }
   } = useAuthFormRules();
 
-  const accounts: Account[] = [
-    {
-      key: 'super',
-      label: t('page.login.pwdLogin.superAdmin'),
-      password: '123456',
-      userName: 'Super'
-    },
-    {
-      key: 'admin',
-      label: t('page.login.pwdLogin.admin'),
-      password: '123456',
-      userName: 'Admin'
-    },
-    {
-      key: 'user',
-      label: t('page.login.pwdLogin.user'),
-      password: '123456',
-      userName: 'User'
-    }
-  ];
+  const captchaEnabled = CAPTCHA_ENABLED
+  const captchaSrc = captcha?.img ? `data:image/png;base64,${captcha.img}` : '';
 
-  function handleAccountLogin(account: Account) {
+  const requiredAccountRule = {
+    required: true,
+    message: t('page.login.enterprise.accountRequired')
+  };
+
+  const requiredCaptchaRule = {
+    required: true,
+    message: t('page.login.enterprise.captchaRequired')
+  };
+
+
+
+  function handlePasswordSubmit(values: LoginFormValues) {
     login({
-      password: account.password,
-      userName: account.userName
+      code: captchaEnabled ? values.code?.trim() : undefined,
+      password: values.password,
+      remember: values.remember,
+      userName: values.userName.trim(),
+      uuid: captchaEnabled ? (captcha?.uuid ?? undefined) : undefined
     });
   }
 
+
+
+  function refreshCaptcha() {
+    passwordForm.setFieldValue('code', '');
+    refetchCaptcha().catch(() => undefined);
+  }
+
+  function handleUnavailableAction() {
+    showInfoMessage(t('page.login.enterprise.notConfigured'));
+  }
+
   useKeyPress('enter', () => {
-    form.submit();
+    passwordForm.submit();
   });
 
   return (
     <>
-      <h3 className="text-18px text-primary font-medium">{t('page.login.pwdLogin.title')}</h3>
-      <AForm className="pt-24px" form={form} initialValues={INITIAL_VALUES} onFinish={login}>
-        <AForm.Item name="userName" rules={userNameRules}>
-          <AInput size="large" />
+      <header className="skyroc-auth-heading">
+        <h1>{t('page.login.enterprise.title')}</h1>
+        <p>{t('page.login.enterprise.subtitle')}</p>
+      </header>
+
+
+      <AForm
+        className="skyroc-login-form"
+        form={passwordForm}
+        initialValues={{ remember: false }}
+        layout="vertical"
+        requiredMark={false}
+        onFinish={handlePasswordSubmit}
+      >
+        <AForm.Item label={t('page.login.enterprise.accountLabel')} name="userName" rules={[requiredAccountRule]}>
+          <AInput
+            autoComplete="username"
+            className="skyroc-login-control"
+            placeholder={t('page.login.enterprise.accountPlaceholder')}
+            prefix={<SvgIcon icon="ph:user" />}
+          />
         </AForm.Item>
 
-        <AForm.Item name="password" rules={pwd}>
-          <AInput.Password autoComplete="password" size="large" />
+        <AForm.Item label={t('page.login.enterprise.passwordLabel')} name="password" rules={pwd}>
+          <AInput.Password
+            autoComplete="current-password"
+            className="skyroc-login-control"
+            placeholder={t('page.login.enterprise.passwordPlaceholder')}
+            prefix={<SvgIcon icon="ph:lock" />}
+          />
         </AForm.Item>
-        <ASpace className="w-full" orientation="vertical" size={24}>
-          <AButton block color="primary" htmlType="submit" loading={loading} shape="round" size="large" type="primary">
-            {t('common.confirm')}
-          </AButton>
-          <ADivider className="!m-0 !text-14px !text-#666">{t('page.login.pwdLogin.otherAccountLogin')}</ADivider>
-          <div className="flex-center gap-12px">
-            {accounts.map(item => {
-              return (
-                <AButton key={item.key} type="primary" onClick={() => handleAccountLogin(item)}>
-                  {item.label}
-                </AButton>
-              );
-            })}
+
+        {captchaEnabled ? (
+          <div className="skyroc-captcha-field">
+            <AForm.Item label={t('page.login.enterprise.captchaLabel')} name="code" rules={[requiredCaptchaRule]}>
+              <AInput
+                autoComplete="off"
+                className="skyroc-login-control"
+                disabled={!captchaSrc}
+                placeholder={t('page.login.enterprise.captchaPlaceholder')}
+              />
+            </AForm.Item>
+
+            <button
+              aria-label={t('page.login.enterprise.captchaRefresh')}
+              className="skyroc-captcha-image"
+              disabled={captchaLoading}
+              type="button"
+              onClick={refreshCaptcha}
+            >
+              {captchaLoading ? <SvgIcon className="skyroc-captcha-loading" icon="ph:circle-notch" /> : null}
+              {!captchaLoading && captchaSrc ? (
+                <img alt={t('page.login.enterprise.captchaAlt')} src={captchaSrc} />
+              ) : null}
+              {!captchaLoading && !captchaSrc ? (
+                <span>
+                  {captchaError
+                    ? t('page.login.enterprise.captchaLoadError')
+                    : t('page.login.enterprise.captchaRefresh')}
+                </span>
+              ) : null}
+            </button>
+
+            <button className="skyroc-captcha-refresh" type="button" onClick={refreshCaptcha}>
+              <SvgIcon icon="ph:arrows-clockwise" />
+              <span>{t('page.login.enterprise.captchaRefreshShort')}</span>
+            </button>
           </div>
-        </ASpace>
+        ) : null}
+
+        <div className="skyroc-form-options">
+          <AForm.Item name="remember" noStyle valuePropName="checked">
+            <ACheckbox>{t('page.login.enterprise.keepSignedIn')}</ACheckbox>
+          </AForm.Item>
+          <AButton type="link" onClick={handleUnavailableAction}>
+            {t('page.login.enterprise.forgetPassword')}
+          </AButton>
+        </div>
+
+        <AButton
+          block
+          className='rounded-xl'
+          size='large'
+          htmlType="submit"
+          loading={loading}
+          type="primary">
+          {t('page.login.enterprise.login')}
+        </AButton>
+
+        <div className="skyroc-switch-mode">
+          <AButton type="link" onClick={() => navigate({ search, to: '/login/code' })}>
+            {t('page.login.enterprise.codeLogin')}
+          </AButton>
+        </div>
+
+        <SocialLogin />
+
       </AForm>
     </>
   );

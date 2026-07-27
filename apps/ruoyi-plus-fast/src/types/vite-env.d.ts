@@ -12,6 +12,10 @@ declare namespace Env {
     readonly VITE_APP_DESC: string;
     /** The title of the application */
     readonly VITE_APP_TITLE: string;
+    /** Whether image captcha is enabled on the login page */
+    readonly VITE_AUTH_CAPTCHA_ENABLED?: Common.YesOrNo;
+    /** Feishu OAuth authorization URL */
+    readonly VITE_AUTH_FEISHU_URL?: string;
     /**
      * The auth route mode
      *
@@ -19,6 +23,8 @@ declare namespace Env {
      * - Dynamic: the auth routes is generated in back-end
      */
     readonly VITE_AUTH_ROUTE_MODE: 'dynamic' | 'static';
+    /** WeChat OAuth authorization URL */
+    readonly VITE_AUTH_WECHAT_URL?: string;
     /** Whether to automatically detect updates after configuring application packaging */
     readonly VITE_AUTOMATICALLY_DETECT_UPDATE?: Common.YesOrNo;
     /** The base url of the application */

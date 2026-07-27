@@ -4,6 +4,12 @@ import { request } from '../../request';
 
 import { AUTH_URLS } from './urls';
 
+export function fetchCaptcha() {
+  return request<Api.Auth.CaptchaInfo>({
+    url: AUTH_URLS.CAPTCHA
+  });
+}
+
 export function fetchLogin(params: Api.Auth.LoginParams) {
   return request<Api.Auth.LoginResponse>({
     data: params,

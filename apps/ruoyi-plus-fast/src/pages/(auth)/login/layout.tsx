@@ -1,10 +1,11 @@
-import { mixColor } from '@skyroc/color';
-import { useSettingsTheme } from '@skyroc/web-admin-theme';
-import { Outlet, createFileRoute, redirect, useLocation } from '@tanstack/react-router';
-import { AnimatePresence, motion } from 'motion/react';
+// oxlint-disable import/no-unassigned-import
+import { LangSwitch } from '@skyroc/web-admin-i18n';
+import { ThemeSchemaSwitch, useSettingsTheme } from '@skyroc/web-admin-theme';
+import { SvgIcon } from '@skyroc/web-ui-compose';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 
-const COLOR_WHITE = '#ffffff';
+import './style.css';
 
 const LoginSearchSchema = z.object({
   redirect: z.string().startsWith('/').optional()
@@ -13,46 +14,85 @@ const LoginSearchSchema = z.object({
 const LoginLayout = () => {
   const { t } = useTranslation();
 
-  const { darkMode, themeColor } = useSettingsTheme();
+  const { header } = useSettingsTheme();
 
-  const ratio = darkMode ? 0.5 : 0.2;
+  const features = [
+    {
+      icon: 'ph:shield-check',
+      text: t('page.login.enterprise.brandFeaturePermission')
+    },
+    {
+      icon: 'ph:clock',
+      text: t('page.login.enterprise.brandFeatureAudit')
+    },
+    {
+      icon: 'ph:shield-warning',
+      text: t('page.login.enterprise.brandFeatureSecure')
+    }
+  ];
 
-  const location = useLocation();
-
-  const bgColor = mixColor(COLOR_WHITE, themeColor, ratio);
+  function handleUnavailableAction() {
+    showInfoMessage(t('page.login.enterprise.notConfigured'));
+  }
 
   return (
-    <div className="relative size-full flex-center overflow-hidden bg-layout" style={{ backgroundColor: bgColor }}>
-      <ACard className="relative z-4 w-auto rd-8px" variant="borderless">
-        <div className="w-400px lt-sm:w-300px">
-          <div className="text-center">
-            <h1 className="m-0 text-28px font-600 text-primary">{t('system.title')}</h1>
-            <p className="m-0 mt-8px text-14px text-text-2">{t('page.login.common.loginOrRegister')}</p>
+    <main className="skyroc-login-page">
+      <div className="skyroc-auth-shell">
+        <aside className="skyroc-brand-panel" aria-label={t('system.title')}>
+          <div className="skyroc-brand-grid" aria-hidden="true" />
+          <div className="skyroc-brand-orbit" aria-hidden="true">
+            <span className="skyroc-orbit-dot skyroc-orbit-dot-one" />
+            <span className="skyroc-orbit-dot skyroc-orbit-dot-two" />
+            <span className="skyroc-orbit-dot skyroc-orbit-dot-three" />
+          </div>
+          <div className="skyroc-glass-ellipse" aria-hidden="true" />
+          <div className="skyroc-glass-cube" aria-hidden="true" />
+
+          <header className="skyroc-brand-header">
+            <SystemLogo className="skyroc-brand-logo" />
+            <p className="skyroc-brand-name">{t('system.title')}</p>
+          </header>
+
+          <section className="skyroc-brand-copy">
+            <h1 className="skyroc-brand-title">{t('page.login.enterprise.brandTitle')}</h1>
+            <ul className="skyroc-brand-features">
+              {features.map(item => (
+                <li className="skyroc-brand-feature" key={item.icon}>
+                  <SvgIcon icon={item.icon} />
+                  <span>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </aside>
+
+        <section className="skyroc-login-panel">
+          <div className="skyroc-login-actions">
+            <ThemeSchemaSwitch
+              className="skyroc-login-action-button"
+              tooltipContent={t('icon.themeSchema')}
+              tooltipPlacement="bottom"
+            />
+            <LangSwitch className="skyroc-login-action-button" visible={header.multilingual.visible} />
           </div>
 
-          <AnimatePresence initial={false} mode="wait">
-            <motion.main
-              layout
-              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              className="pt-24px"
-              exit={{ opacity: 0, x: 28, filter: 'blur(6px)' }}
-              initial={{ opacity: 0, x: -28, filter: 'blur(6px)' }}
-              key={location.pathname}
-              style={{
-                willChange: 'transform, opacity, filter'
-              }}
-              transition={{
-                x: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-                opacity: { duration: 0.18, ease: 'easeOut' },
-                filter: { duration: 0.18, ease: 'easeOut' }
-              }}
-            >
-              <Outlet />
-            </motion.main>
-          </AnimatePresence>
-        </div>
-      </ACard>
-    </div>
+          <div className="skyroc-auth-content">
+            <Outlet />
+
+            <footer className="skyroc-auth-footer">
+              <button type="button" onClick={handleUnavailableAction}>
+                {t('page.login.enterprise.privacy')}
+              </button>
+              <span>·</span>
+              <button type="button" onClick={handleUnavailableAction}>
+                {t('page.login.enterprise.terms')}
+              </button>
+              <span className="skyroc-auth-copyright">© 2026 Skyroc</span>
+            </footer>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 };
 

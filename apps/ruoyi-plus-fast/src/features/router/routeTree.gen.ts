@@ -18,6 +18,7 @@ import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
+import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -63,6 +64,11 @@ const adminHomeIndexRoute = adminHomeIndexRouteImport.update({
   path: '/home/',
   getParentRoute: () => adminLayoutRoute,
 } as any)
+const authLoginCodeRoute = authLoginCodeRouteImport.update({
+  id: '/code',
+  path: '/code',
+  getParentRoute: () => authLoginLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/login/code': typeof authLoginCodeRoute
   '/home/': typeof adminHomeIndexRoute
   '/login/': typeof authLoginIndexRoute
 }
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/login/code': typeof authLoginCodeRoute
   '/home': typeof adminHomeIndexRoute
   '/login': typeof authLoginIndexRoute
 }
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
+  '/(auth)/login/code': typeof authLoginCodeRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
 }
@@ -104,10 +113,19 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/500'
+    | '/login/code'
     | '/home/'
     | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login-out' | '/403' | '/404' | '/500' | '/home' | '/login'
+  to:
+    | '/'
+    | '/login-out'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/login/code'
+    | '/home'
+    | '/login'
   id:
     | '__root__'
     | '/'
@@ -117,6 +135,7 @@ export interface FileRouteTypes {
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
+    | '/(auth)/login/code'
     | '/(admin)/home/'
     | '/(auth)/login/'
   fileRoutesById: FileRoutesById
@@ -196,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminHomeIndexRouteImport
       parentRoute: typeof adminLayoutRoute
     }
+    '/(auth)/login/code': {
+      id: '/(auth)/login/code'
+      path: '/code'
+      fullPath: '/login/code'
+      preLoaderRoute: typeof authLoginCodeRouteImport
+      parentRoute: typeof authLoginLayoutRoute
+    }
   }
 }
 
@@ -212,10 +238,12 @@ const adminLayoutRouteWithChildren = adminLayoutRoute._addFileChildren(
 )
 
 interface authLoginLayoutRouteChildren {
+  authLoginCodeRoute: typeof authLoginCodeRoute
   authLoginIndexRoute: typeof authLoginIndexRoute
 }
 
 const authLoginLayoutRouteChildren: authLoginLayoutRouteChildren = {
+  authLoginCodeRoute: authLoginCodeRoute,
   authLoginIndexRoute: authLoginIndexRoute,
 }
 

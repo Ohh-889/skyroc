@@ -1,7 +1,18 @@
 import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 
-import { fetchGetUserInfo, fetchLogin } from './api';
+import { fetchCaptcha, fetchGetUserInfo, fetchLogin } from './api';
 import { AUTH_MUTATION_KEYS, AUTH_QUERY_KEYS } from './keys';
+
+export function useCaptchaQuery(enabled: boolean) {
+  return useQuery({
+    enabled,
+    gcTime: 0,
+    queryFn: fetchCaptcha,
+    queryKey: AUTH_QUERY_KEYS.CAPTCHA,
+    retry: false,
+    staleTime: Infinity
+  });
+}
 
 export function queryUserInfoOptions() {
   return queryOptions({

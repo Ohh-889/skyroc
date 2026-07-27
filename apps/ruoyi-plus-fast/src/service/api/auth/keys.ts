@@ -1,4 +1,5 @@
 export const AUTH_QUERY_KEYS = {
+  CAPTCHA: ['auth', 'captcha'] as const,
   USER_INFO: ['auth', 'userInfo'] as const
 } as const;
 
