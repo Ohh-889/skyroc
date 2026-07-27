@@ -303,6 +303,8 @@ Courier, monospace
 | ---------- | ----------------- |
 | 输入框     | 6px               |
 | 按钮       | 6px               |
+| 大号输入框 | 8px               |
+| 大号按钮   | 8px               |
 | 选择器     | 6px               |
 | 表格外容器 | 8px               |
 | 普通卡片   | 8px               |
@@ -325,7 +327,7 @@ Courier, monospace
 规则：
 
 - 同一操作区优先使用相同高度。
-- 登录页输入框和主按钮使用 40px。
+- 登录页输入框和主按钮使用 40px 高度与 8px 圆角。
 - 常规查询表单使用 32px。
 - 不使用 24px 输入框承载复杂文本输入。
 - 图标点击目标应保证可操作性，不等同于视觉图标尺寸。
@@ -606,6 +608,8 @@ Common Spacing:       8 / 12 / 16 / 20 / 24 / 32px
 
 Input Radius:         6px
 Button Radius:        6px
+Large Input Radius:   8px
+Large Button Radius:  8px
 Card Radius:          8px
 Modal Radius:         8px
 

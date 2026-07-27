@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Skyroc 管理系统 - 忘记密码原型</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #5b5ff5;
+        --primary-hover: #4c50e8;
+        --primary-soft: #eef0ff;
+        --page-background: #f4f5f8;
+        --panel-background: #ffffff;
+        --surface-background: #ffffff;
+        --text-heading: #27272a;
+        --text-primary: #353535;
+        --text-secondary: #656565;
+        --text-tertiary: #919191;
+        --placeholder: #adaeb5;
+        --border: #cfd0d5;
+        --border-soft: #ececf0;
+        --control-hover: #a0aeff;
+        --success: #16a36a;
+        --success-soft: #eaf8f2;
+        --danger: #e5485d;
+        --danger-soft: #fff0f2;
+        --shadow: 0 18px 55px rgb(38 42 68 / 12%), 0 2px 8px rgb(38 42 68 / 7%);
+        --brand-start: #263eb7;
+        --brand-middle: #3d57dd;
+        --brand-end: #6474f5;
+      }
+
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #7477ff;
+        --primary-hover: #8588ff;
+        --primary-soft: #292b52;
+        --page-background: #111317;
+        --panel-background: #202327;
+        --surface-background: #25282d;
+        --text-heading: #f3f4f6;
+        --text-primary: #e2e4e9;
+        --text-secondary: #aeb2bb;
+        --text-tertiary: #81858f;
+        --placeholder: #737883;
+        --border: #4a4e57;
+        --border-soft: #353940;
+        --control-hover: #7477ff;
+        --success: #4bd6a0;
+        --success-soft: #193b30;
+        --danger: #ff7184;
+        --danger-soft: #49242b;
+        --shadow: 0 20px 60px rgb(0 0 0 / 35%);
+        --brand-start: #091b49;
+        --brand-middle: #11285f;
+        --brand-end: #182f6d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        background: var(--page-background);
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 15% 8%, rgb(255 255 255 / 82%), transparent 28%),
+          radial-gradient(circle at 86% 82%, rgb(99 102 241 / 7%), transparent 26%), var(--page-background);
+        color: var(--text-primary);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        transition:
+          background-color 200ms ease,
+          color 200ms ease;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .auth-shell {
+        width: min(1280px, calc(100vw - 64px));
+        min-height: min(760px, calc(100vh - 64px));
+        display: grid;
+        grid-template-columns: 46.5% 53.5%;
+        overflow: hidden;
+        border: 1px solid rgb(21 28 67 / 7%);
+        border-radius: 12px;
+        background: var(--panel-background);
+        box-shadow: var(--shadow);
+      }
+
+      .brand-panel {
+        position: relative;
+        min-height: 758px;
+        overflow: hidden;
+        padding: 34px 48px;
+        color: #ffffff;
+        background:
+          radial-gradient(circle at 25% 88%, rgb(109 126 255 / 48%), transparent 33%),
+          linear-gradient(140deg, var(--brand-start) 0%, var(--brand-middle) 52%, var(--brand-end) 100%);
+      }
+
+      .brand-grid {
+        position: absolute;
+        inset: 0;
+        opacity: 0.12;
+        background-image:
+          linear-gradient(rgb(255 255 255 / 32%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(255 255 255 / 32%) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(140deg, #000 0%, transparent 63%);
+      }
+
+      .orbit {
+        position: absolute;
+        width: 540px;
+        height: 540px;
+        left: -92px;
+        top: 138px;
+        border: 1px solid rgb(255 255 255 / 22%);
+        border-radius: 50%;
+      }
+
+      .orbit::before,
+      .orbit::after {
+        content: '';
+        position: absolute;
+        border: 1px solid rgb(255 255 255 / 18%);
+        border-radius: inherit;
+      }
+
+      .orbit::before {
+        inset: 58px;
+      }
+
+      .orbit::after {
+        inset: 122px;
+      }
+
+      .orbit-dot {
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        border: 1px solid rgb(255 255 255 / 80%);
+        border-radius: 50%;
+        background: rgb(255 255 255 / 12%);
+      }
+
+      .orbit-dot.one {
+        left: 134px;
+        top: 157px;
+      }
+
+      .orbit-dot.two {
+        right: 64px;
+        top: 222px;
+      }
+
+      .orbit-dot.three {
+        right: 72px;
+        bottom: 108px;
+      }
+
+      .glass-shape {
+        position: absolute;
+        left: 80px;
+        bottom: 70px;
+        width: 58px;
+        height: 58px;
+        transform: rotate(30deg) skew(-5deg, -5deg);
+        border: 1px solid rgb(255 255 255 / 38%);
+        background: linear-gradient(145deg, rgb(255 255 255 / 17%), rgb(255 255 255 / 2%));
+        box-shadow: 20px 22px 50px rgb(17 31 101 / 28%);
+      }
+
+      .glass-shape::before,
+      .glass-shape::after {
+        content: '';
+        position: absolute;
+        border: 1px solid rgb(255 255 255 / 23%);
+      }
+
+      .glass-shape::before {
+        inset: 11px -12px -12px 11px;
+      }
+
+      .glass-shape::after {
+        inset: 22px -23px -23px 22px;
+        opacity: 0.45;
+      }
+
+      .brand-header,
+      .brand-copy,
+      .brand-footer {
+        position: relative;
+        z-index: 2;
+      }
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-logo {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 auto;
+      }
+
+      .brand-name {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 650;
+        letter-spacing: 2px;
+      }
+
+      .brand-copy {
+        width: min(420px, 100%);
+        margin-top: 154px;
+      }
+
+      .brand-title {
+        max-width: 380px;
+        margin: 0;
+        font-size: clamp(30px, 3vw, 42px);
+        font-weight: 650;
+        line-height: 1.28;
+        letter-spacing: -0.5px;
+      }
+
+      .brand-description {
+        max-width: 380px;
+        margin: 20px 0 0;
+        color: rgb(255 255 255 / 72%);
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .brand-features {
+        display: grid;
+        gap: 14px;
+        margin: 32px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .brand-feature {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: rgb(255 255 255 / 88%);
+      }
+
+      .feature-icon {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgb(255 255 255 / 24%);
+        border-radius: 8px;
+        background: rgb(255 255 255 / 10%);
+      }
+
+      .feature-icon svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .brand-footer {
+        position: absolute;
+        left: 48px;
+        bottom: 34px;
+        color: rgb(255 255 255 / 55%);
+        font-size: 12px;
+      }
+
+      .auth-panel {
+        position: relative;
+        min-width: 0;
+        padding: 76px 48px 36px;
+        background: var(--panel-background);
+      }
+
+      .header-actions {
+        position: absolute;
+        z-index: 5;
+        top: 24px;
+        right: 24px;
+        display: flex;
+        gap: 4px;
+      }
+
+      .icon-button {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .icon-button:focus-visible,
+      .language-option:focus-visible,
+      .text-button:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .icon-button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .sun-icon,
+      :root[data-theme='dark'] .moon-icon {
+        display: none;
+      }
+
+      :root[data-theme='dark'] .sun-icon {
+        display: block;
+      }
+
+      .language-wrap {
+        position: relative;
+      }
+
+      .language-menu {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        width: 126px;
+        display: none;
+        padding: 6px;
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        background: var(--surface-background);
+        box-shadow: 0 12px 32px rgb(30 34 55 / 16%);
+      }
+
+      .language-menu.open {
+        display: grid;
+      }
+
+      .language-option {
+        height: 34px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-primary);
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .language-option:hover,
+      .language-option.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .mobile-logo {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 28px;
+        color: var(--text-heading);
+        font-weight: 650;
+      }
+
+      .mobile-logo svg {
+        width: 36px;
+        height: 36px;
+      }
+
+      .recovery-content {
+        width: min(400px, 100%);
+        margin: 0 auto;
+      }
+
+      .auth-header {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .auth-title {
+        margin: 0;
+        color: var(--text-heading);
+        font-size: 28px;
+        font-weight: 650;
+        line-height: 1.3;
+      }
+
+      .auth-subtitle {
+        margin: 10px 0 0;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      .form-stack {
+        display: grid;
+        gap: 17px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-label {
+        color: var(--text-primary);
+        font-weight: 550;
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+
+      .input-control {
+        width: 100%;
+        height: 42px;
+        padding: 0 13px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+        background: var(--surface-background);
+        color: var(--text-primary);
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          background-color 160ms ease;
+      }
+
+      .input-control::placeholder {
+        color: var(--placeholder);
+      }
+
+      .input-control:hover {
+        border-color: var(--control-hover);
+      }
+
+      .input-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgb(91 95 245 / 13%);
+      }
+
+      .input-control.has-suffix {
+        padding-right: 42px;
+      }
+
+      .input-control.is-error {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 3px rgb(229 72 93 / 10%);
+      }
+
+      .field-error {
+        display: none;
+        color: var(--danger);
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .field-error.visible {
+        display: block;
+      }
+
+      .suffix-button {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
+      }
+
+      .suffix-button:hover {
+        color: var(--primary);
+        background: var(--primary-soft);
+      }
+
+      .suffix-button svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .channel-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 9px;
+        background: var(--page-background);
+      }
+
+      .channel-tab {
+        height: 34px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .channel-tab.active {
+        background: var(--surface-background);
+        color: var(--primary);
+        font-weight: 600;
+        box-shadow: 0 1px 4px rgb(30 34 55 / 10%);
+      }
+
+      .captcha-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 116px;
+        gap: 10px;
+      }
+
+      .captcha-box {
+        position: relative;
+        height: 42px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background:
+          repeating-linear-gradient(14deg, transparent 0 12px, rgb(91 95 245 / 8%) 13px 14px),
+          linear-gradient(135deg, var(--primary-soft), var(--surface-background));
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .captcha-box::before,
+      .captcha-box::after {
+        content: '';
+        position: absolute;
+        width: 46px;
+        height: 1px;
+        top: 20px;
+        background: rgb(229 72 93 / 42%);
+      }
+
+      .captcha-box::before {
+        left: 7px;
+        transform: rotate(14deg);
+      }
+
+      .captcha-box::after {
+        right: 7px;
+        transform: rotate(-17deg);
+      }
+
+      .captcha-value {
+        position: relative;
+        z-index: 1;
+        font-family: Georgia, serif;
+        font-size: 19px;
+        font-weight: 700;
+        font-style: italic;
+        letter-spacing: 5px;
+      }
+
+      .code-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 126px;
+        gap: 10px;
+      }
+
+      .secondary-button {
+        height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface-background);
+        color: var(--primary);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .secondary-button:hover:not(:disabled) {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+      }
+
+      .secondary-button:disabled {
+        color: var(--text-tertiary);
+        cursor: not-allowed;
+      }
+
+      .notice {
+        display: none;
+        gap: 9px;
+        padding: 11px 12px;
+        border-radius: 8px;
+        background: var(--primary-soft);
+        color: var(--text-secondary);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .notice.visible {
+        display: flex;
+      }
+
+      .notice svg {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+        margin-top: 1px;
+        color: var(--primary);
+      }
+
+      .password-section {
+        display: none;
+        gap: 17px;
+        padding-top: 2px;
+      }
+
+      .password-section.visible {
+        display: grid;
+        animation: reveal 220ms ease-out both;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .password-rules {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        margin: -2px 0 0;
+        padding: 12px;
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        background: var(--page-background);
+      }
+
+      .rule {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .rule-dot {
+        width: 16px;
+        height: 16px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        font-size: 10px;
+      }
+
+      .rule.met {
+        color: var(--success);
+      }
+
+      .rule.met .rule-dot {
+        border-color: var(--success);
+        background: var(--success-soft);
+      }
+
+      .primary-button {
+        width: 100%;
+        height: 42px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--primary);
+        color: #ffffff;
+        font-weight: 600;
+        box-shadow: 0 7px 18px rgb(91 95 245 / 22%);
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          background-color 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .primary-button:hover {
+        background: var(--primary-hover);
+        box-shadow: 0 9px 22px rgb(91 95 245 / 28%);
+      }
+
+      .primary-button:active {
+        transform: translateY(1px);
+      }
+
+      .text-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 0;
+        border: 0;
+        background: transparent;
+        color: var(--text-secondary);
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .text-button:hover {
+        color: var(--primary);
+      }
+
+      .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .admin-help {
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .legal {
+        margin: 30px 0 0;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 1.7;
+        text-align: center;
+      }
+
+      .success-view {
+        min-height: 470px;
+        display: none;
+        place-items: center;
+        text-align: center;
+      }
+
+      .success-view.visible {
+        display: grid;
+        animation: reveal 240ms ease-out both;
+      }
+
+      .success-content {
+        width: min(360px, 100%);
+      }
+
+      .success-icon {
+        width: 72px;
+        height: 72px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 24px;
+        border-radius: 50%;
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .success-icon svg {
+        width: 35px;
+        height: 35px;
+      }
+
+      .success-title {
+        margin: 0;
+        color: var(--text-heading);
+        font-size: 26px;
+        font-weight: 650;
+      }
+
+      .success-description {
+        margin: 12px 0 28px;
+        color: var(--text-secondary);
+        line-height: 1.8;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding: 0;
+          place-items: stretch;
+        }
+
+        .auth-shell {
+          width: 100%;
+          min-height: 100vh;
+          display: block;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .brand-panel {
+          display: none;
+        }
+
+        .auth-panel {
+          min-height: 100vh;
+          padding: 78px 32px 32px;
+        }
+
+        .mobile-logo {
+          display: flex;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .auth-panel {
+          padding: 72px 20px 28px;
+        }
+
+        .header-actions {
+          top: 16px;
+          right: 16px;
+        }
+
+        .auth-header {
+          margin-bottom: 26px;
+        }
+
+        .auth-title {
+          font-size: 25px;
+        }
+
+        .password-rules {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 390px) {
+        .captcha-row,
+        .code-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="auth-shell">
+      <aside class="brand-panel" aria-label="Skyroc 品牌介绍">
+        <div class="brand-grid" aria-hidden="true"></div>
+        <div class="orbit" aria-hidden="true">
+          <span class="orbit-dot one"></span>
+          <span class="orbit-dot two"></span>
+          <span class="orbit-dot three"></span>
+        </div>
+        <div class="glass-shape" aria-hidden="true"></div>
+
+        <header class="brand-header">
+          <svg class="brand-logo" aria-hidden="true" viewBox="0 0 160 160">
+            <path fill="#fff" d="M24 28h45l23 24H48v56H24z" opacity=".96" />
+            <path fill="#fff" d="M92 52h44v80H91l-23-24h44V76H92z" opacity=".72" />
+          </svg>
+          <p class="brand-name" data-i18n="brandName">Skyroc 管理系统</p>
+        </header>
+
+        <section class="brand-copy">
+          <h1 class="brand-title" data-i18n="brandTitle">安全找回账号，继续高效工作</h1>
+          <p class="brand-description" data-i18n="brandDescription">
+            通过已绑定的手机或邮箱验证身份，重新设置你的登录密码。
+          </p>
+          <ul class="brand-features">
+            <li class="brand-feature">
+              <span class="feature-icon">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M12 3 5 6v5c0 4.5 2.8 8 7 10 4.2-2 7-5.5 7-10V6l-7-3Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                </svg>
+              </span>
+              <span data-i18n="featureOne">身份验证，全程安全保护</span>
+            </li>
+            <li class="brand-feature">
+              <span class="feature-icon">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6z" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+              </span>
+              <span data-i18n="featureTwo">验证码限时且仅可使用一次</span>
+            </li>
+            <li class="brand-feature">
+              <span class="feature-icon">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path d="m7 12 3 3 7-7" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                </svg>
+              </span>
+              <span data-i18n="featureThree">重置后自动退出其他会话</span>
+            </li>
+          </ul>
+        </section>
+
+        <footer class="brand-footer">© 2026 Skyroc. All rights reserved.</footer>
+      </aside>
+
+      <section class="auth-panel">
+        <div class="header-actions">
+          <button class="icon-button" id="themeToggle" type="button" aria-label="切换主题" title="切换主题">
+            <svg class="moon-icon" fill="none" viewBox="0 0 24 24">
+              <path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" stroke="currentColor" stroke-width="1.7" />
+            </svg>
+            <svg class="sun-icon" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.7" />
+              <path
+                d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="1.7"
+              />
+            </svg>
+          </button>
+          <div class="language-wrap">
+            <button class="icon-button" id="languageToggle" type="button" aria-label="切换语言" title="切换语言">
+              <svg fill="none" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" />
+                <path
+                  d="M3.5 12h17M12 3c2.2 2.5 3.3 5.5 3.3 9S14.2 18.5 12 21M12 3C9.8 5.5 8.7 8.5 8.7 12s1.1 6.5 3.3 9"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </button>
+            <div class="language-menu" id="languageMenu" role="menu">
+              <button class="language-option active" data-lang="zh-CN" type="button">中文</button>
+              <button class="language-option" data-lang="en-US" type="button">English</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-logo">
+          <svg aria-hidden="true" viewBox="0 0 160 160">
+            <path fill="#5b5ff5" d="M24 28h45l23 24H48v56H24z" />
+            <path fill="#8184ff" d="M92 52h44v80H91l-23-24h44V76H92z" />
+          </svg>
+          <span data-i18n="brandName">Skyroc 管理系统</span>
+        </div>
+
+        <div class="recovery-content">
+          <div id="recoveryView">
+            <header class="auth-header">
+              <h2 class="auth-title" data-i18n="title">找回密码</h2>
+              <p class="auth-subtitle" data-i18n="subtitle">验证身份后重新设置密码</p>
+            </header>
+
+            <form id="recoveryForm" novalidate>
+              <div class="form-stack">
+                <div class="field">
+                  <label class="field-label" for="account" data-i18n="accountLabel">账号</label>
+                  <input
+                    class="input-control"
+                    id="account"
+                    name="account"
+                    autocomplete="username"
+                    data-i18n-placeholder="accountPlaceholder"
+                    placeholder="请输入用户名、手机号或邮箱"
+                  />
+                  <span class="field-error" id="accountError" data-i18n="accountError">请输入账号</span>
+                </div>
+
+                <div class="channel-tabs" role="radiogroup" aria-label="验证方式">
+                  <button class="channel-tab active" data-channel="sms" role="radio" aria-checked="true" type="button">
+                    <span data-i18n="smsChannel">手机验证</span>
+                  </button>
+                  <button class="channel-tab" data-channel="email" role="radio" aria-checked="false" type="button">
+                    <span data-i18n="emailChannel">邮箱验证</span>
+                  </button>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="captcha" data-i18n="captchaLabel">图形验证码</label>
+                  <div class="captcha-row">
+                    <input
+                      class="input-control"
+                      id="captcha"
+                      name="captcha"
+                      autocomplete="off"
+                      maxlength="4"
+                      data-i18n-placeholder="captchaPlaceholder"
+                      placeholder="请输入图中字符"
+                    />
+                    <button class="captcha-box" id="captchaBox" type="button" aria-label="换一张图形验证码">
+                      <span class="captcha-value" id="captchaValue">7K9P</span>
+                    </button>
+                  </div>
+                  <span class="field-error" id="captchaError" data-i18n="captchaError">请输入图形验证码</span>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="verificationCode" data-i18n="codeLabel">身份验证码</label>
+                  <div class="code-row">
+                    <input
+                      class="input-control"
+                      id="verificationCode"
+                      name="verificationCode"
+                      autocomplete="one-time-code"
+                      inputmode="numeric"
+                      maxlength="6"
+                      data-i18n-placeholder="codePlaceholder"
+                      placeholder="请输入 6 位验证码"
+                    />
+                    <button class="secondary-button" id="sendCodeButton" type="button" data-i18n="sendCode">
+                      获取验证码
+                    </button>
+                  </div>
+                  <span class="field-error" id="codeError" data-i18n="codeError">请输入 6 位验证码</span>
+                </div>
+
+                <div class="notice" id="sendNotice" role="status">
+                  <svg fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                    <path d="M12 10v6m0-9h.01" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                  </svg>
+                  <span data-i18n="sendNotice">如果账号信息匹配，验证码将发送至绑定的手机或邮箱。</span>
+                </div>
+
+                <div class="password-section" id="passwordSection">
+                  <div class="field">
+                    <label class="field-label" for="newPassword" data-i18n="passwordLabel">新密码</label>
+                    <div class="input-wrap">
+                      <input
+                        class="input-control has-suffix"
+                        id="newPassword"
+                        name="newPassword"
+                        type="password"
+                        autocomplete="new-password"
+                        data-i18n-placeholder="passwordPlaceholder"
+                        placeholder="请输入新密码"
+                      />
+                      <button
+                        class="suffix-button password-toggle"
+                        data-target="newPassword"
+                        type="button"
+                        aria-label="显示密码"
+                      >
+                        <svg fill="none" viewBox="0 0 24 24">
+                          <path
+                            d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                          />
+                          <circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.7" />
+                        </svg>
+                      </button>
+                    </div>
+                    <span class="field-error" id="passwordError" data-i18n="passwordError">新密码不符合安全要求</span>
+                  </div>
+
+                  <div class="field">
+                    <label class="field-label" for="confirmPassword" data-i18n="confirmLabel">确认新密码</label>
+                    <div class="input-wrap">
+                      <input
+                        class="input-control has-suffix"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        autocomplete="new-password"
+                        data-i18n-placeholder="confirmPlaceholder"
+                        placeholder="请再次输入新密码"
+                      />
+                      <button
+                        class="suffix-button password-toggle"
+                        data-target="confirmPassword"
+                        type="button"
+                        aria-label="显示密码"
+                      >
+                        <svg fill="none" viewBox="0 0 24 24">
+                          <path
+                            d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                          />
+                          <circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.7" />
+                        </svg>
+                      </button>
+                    </div>
+                    <span class="field-error" id="confirmError" data-i18n="confirmError">两次输入的密码不一致</span>
+                  </div>
+
+                  <div class="password-rules" aria-label="密码规则">
+                    <div class="rule" id="lengthRule">
+                      <span class="rule-dot">✓</span><span data-i18n="lengthRule">至少 8 位</span>
+                    </div>
+                    <div class="rule" id="upperRule">
+                      <span class="rule-dot">✓</span><span data-i18n="upperRule">包含英文大写</span>
+                    </div>
+                    <div class="rule" id="lowerRule">
+                      <span class="rule-dot">✓</span><span data-i18n="lowerRule">包含英文小写</span>
+                    </div>
+                    <div class="rule" id="numberRule">
+                      <span class="rule-dot">✓</span><span data-i18n="numberRule">包含数字</span>
+                    </div>
+                  </div>
+
+                  <button class="primary-button" type="submit" data-i18n="resetButton">重置密码</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="form-footer">
+              <a class="text-button" href="../login/index.html">
+                <span aria-hidden="true">←</span>
+                <span data-i18n="backLogin">返回登录</span>
+              </a>
+              <span class="admin-help" data-i18n="adminHelp">无法验证？请联系管理员</span>
+            </div>
+            <p class="legal" data-i18n="legal">继续操作即表示你同意服务条款和隐私政策</p>
+          </div>
+
+          <section class="success-view" id="successView" aria-live="polite">
+            <div class="success-content">
+              <div class="success-icon">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="m6.5 12.5 3.5 3.5 7.5-8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+              <h2 class="success-title" data-i18n="successTitle">密码已重置</h2>
+              <p class="success-description" data-i18n="successDescription">
+                你现在可以使用新密码登录。为了保障账号安全，其他已登录会话已经退出。
+              </p>
+              <a
+                class="primary-button text-button"
+                href="../login/index.html"
+                style="display: inline-grid; place-items: center"
+                data-i18n="successButton"
+              >
+                返回登录
+              </a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const translations = {
+        'zh-CN': {
+          accountError: '请输入账号',
+          accountLabel: '账号',
+          accountPlaceholder: '请输入用户名、手机号或邮箱',
+          adminHelp: '无法验证？请联系管理员',
+          backLogin: '返回登录',
+          brandDescription: '通过已绑定的手机或邮箱验证身份，重新设置你的登录密码。',
+          brandName: 'Skyroc 管理系统',
+          brandTitle: '安全找回账号，继续高效工作',
+          captchaError: '请输入图形验证码',
+          captchaLabel: '图形验证码',
+          captchaPlaceholder: '请输入图中字符',
+          codeError: '请输入 6 位验证码',
+          codeLabel: '身份验证码',
+          codePlaceholder: '请输入 6 位验证码',
+          confirmError: '两次输入的密码不一致',
+          confirmLabel: '确认新密码',
+          confirmPlaceholder: '请再次输入新密码',
+          emailChannel: '邮箱验证',
+          featureOne: '身份验证，全程安全保护',
+          featureThree: '重置后自动退出其他会话',
+          featureTwo: '验证码限时且仅可使用一次',
+          legal: '继续操作即表示你同意服务条款和隐私政策',
+          lengthRule: '至少 8 位',
+          lowerRule: '包含英文小写',
+          numberRule: '包含数字',
+          passwordError: '新密码不符合安全要求',
+          passwordLabel: '新密码',
+          passwordPlaceholder: '请输入新密码',
+          resetButton: '重置密码',
+          sendCode: '获取验证码',
+          sendNotice: '如果账号信息匹配，验证码将发送至绑定的手机或邮箱。',
+          smsChannel: '手机验证',
+          subtitle: '验证身份后重新设置密码',
+          successButton: '返回登录',
+          successDescription: '你现在可以使用新密码登录。为了保障账号安全，其他已登录会话已经退出。',
+          successTitle: '密码已重置',
+          title: '找回密码',
+          upperRule: '包含英文大写'
+        },
+        'en-US': {
+          accountError: 'Enter your account',
+          accountLabel: 'Account',
+          accountPlaceholder: 'Username, phone number, or email',
+          adminHelp: 'Unable to verify? Contact your administrator',
+          backLogin: 'Back to sign in',
+          brandDescription: 'Verify your identity with a bound phone number or email, then set a new password.',
+          brandName: 'Skyroc Admin',
+          brandTitle: 'Recover securely. Get back to work.',
+          captchaError: 'Enter the image verification code',
+          captchaLabel: 'Image verification code',
+          captchaPlaceholder: 'Enter the characters shown',
+          codeError: 'Enter the 6-digit code',
+          codeLabel: 'Verification code',
+          codePlaceholder: 'Enter the 6-digit code',
+          confirmError: 'The passwords do not match',
+          confirmLabel: 'Confirm new password',
+          confirmPlaceholder: 'Enter the new password again',
+          emailChannel: 'Verify by email',
+          featureOne: 'Identity verification protects every step',
+          featureThree: 'Other sessions end after reset',
+          featureTwo: 'Codes expire and can only be used once',
+          legal: 'By continuing, you agree to the Terms of Service and Privacy Policy',
+          lengthRule: 'At least 8 characters',
+          lowerRule: 'One lowercase letter',
+          numberRule: 'One number',
+          passwordError: 'The password does not meet the requirements',
+          passwordLabel: 'New password',
+          passwordPlaceholder: 'Enter a new password',
+          resetButton: 'Reset password',
+          sendCode: 'Send code',
+          sendNotice: 'If the account details match, a code will be sent to the bound phone number or email.',
+          smsChannel: 'Verify by phone',
+          subtitle: 'Verify your identity to set a new password',
+          successButton: 'Back to sign in',
+          successDescription: 'You can now sign in with your new password. All other signed-in sessions have ended.',
+          successTitle: 'Password reset',
+          title: 'Recover password',
+          upperRule: 'One uppercase letter'
+        }
+      };
+
+      const root = document.documentElement;
+      const recoveryForm = document.querySelector('#recoveryForm');
+      const recoveryView = document.querySelector('#recoveryView');
+      const successView = document.querySelector('#successView');
+      const passwordSection = document.querySelector('#passwordSection');
+      const sendNotice = document.querySelector('#sendNotice');
+      const sendCodeButton = document.querySelector('#sendCodeButton');
+      const accountInput = document.querySelector('#account');
+      const captchaInput = document.querySelector('#captcha');
+      const codeInput = document.querySelector('#verificationCode');
+      const passwordInput = document.querySelector('#newPassword');
+      const confirmInput = document.querySelector('#confirmPassword');
+      const languageMenu = document.querySelector('#languageMenu');
+      const captchaValue = document.querySelector('#captchaValue');
+      let currentLanguage = 'zh-CN';
+      let countdownTimer;
+      let countdown = 0;
+
+      function text(key) {
+        return translations[currentLanguage][key];
+      }
+
+      function applyLanguage(language) {
+        currentLanguage = language;
+        root.lang = language;
+
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+          element.textContent = translations[language][element.dataset.i18n];
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+          element.placeholder = translations[language][element.dataset.i18nPlaceholder];
+        });
+
+        document.querySelectorAll('.language-option').forEach(option => {
+          option.classList.toggle('active', option.dataset.lang === language);
+        });
+
+        if (countdown > 0) {
+          updateCountdown();
+        }
+
+        languageMenu.classList.remove('open');
+      }
+
+      function setError(input, error, visible) {
+        input.classList.toggle('is-error', visible);
+        error.classList.toggle('visible', visible);
+      }
+
+      function refreshCaptcha() {
+        const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        captchaValue.textContent = Array.from(
+          { length: 4 },
+          () => alphabet[Math.floor(Math.random() * alphabet.length)]
+        ).join('');
+        captchaInput.value = '';
+        captchaInput.focus();
+      }
+
+      function updateCountdown() {
+        if (countdown <= 0) {
+          sendCodeButton.disabled = false;
+          sendCodeButton.textContent = text('sendCode');
+          window.clearInterval(countdownTimer);
+          return;
+        }
+
+        sendCodeButton.disabled = true;
+        sendCodeButton.textContent = currentLanguage === 'zh-CN' ? `重新发送 ${countdown}s` : `Resend in ${countdown}s`;
+      }
+
+      function startCountdown() {
+        countdown = 60;
+        updateCountdown();
+        window.clearInterval(countdownTimer);
+        countdownTimer = window.setInterval(() => {
+          countdown -= 1;
+          updateCountdown();
+        }, 1000);
+      }
+
+      function validatePasswordRules() {
+        const password = passwordInput.value;
+        const rules = [
+          ['#lengthRule', password.length >= 8],
+          ['#upperRule', /[A-Z]/.test(password)],
+          ['#lowerRule', /[a-z]/.test(password)],
+          ['#numberRule', /\d/.test(password)]
+        ];
+
+        rules.forEach(([selector, valid]) => {
+          document.querySelector(selector).classList.toggle('met', valid);
+        });
+
+        return rules.every(([, valid]) => valid);
+      }
+
+      document.querySelector('#themeToggle').addEventListener('click', () => {
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      });
+
+      document.querySelector('#languageToggle').addEventListener('click', event => {
+        event.stopPropagation();
+        languageMenu.classList.toggle('open');
+      });
+
+      document.addEventListener('click', () => {
+        languageMenu.classList.remove('open');
+      });
+
+      document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', () => applyLanguage(option.dataset.lang));
+      });
+
+      document.querySelectorAll('.channel-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.channel-tab').forEach(item => {
+            const active = item === tab;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-checked', String(active));
+          });
+
+          passwordSection.classList.remove('visible');
+          sendNotice.classList.remove('visible');
+          codeInput.value = '';
+          passwordInput.value = '';
+          confirmInput.value = '';
+          validatePasswordRules();
+        });
+      });
+
+      document.querySelector('#captchaBox').addEventListener('click', refreshCaptcha);
+
+      sendCodeButton.addEventListener('click', () => {
+        const accountError = document.querySelector('#accountError');
+        const captchaError = document.querySelector('#captchaError');
+        const accountMissing = accountInput.value.trim() === '';
+        const captchaMissing = captchaInput.value.trim() === '';
+
+        setError(accountInput, accountError, accountMissing);
+        setError(captchaInput, captchaError, captchaMissing);
+
+        if (accountMissing || captchaMissing) {
+          (accountMissing ? accountInput : captchaInput).focus();
+          return;
+        }
+
+        sendNotice.classList.add('visible');
+        passwordSection.classList.add('visible');
+        startCountdown();
+        window.setTimeout(() => codeInput.focus(), 100);
+      });
+
+      accountInput.addEventListener('input', () => {
+        setError(accountInput, document.querySelector('#accountError'), false);
+      });
+
+      captchaInput.addEventListener('input', () => {
+        setError(captchaInput, document.querySelector('#captchaError'), false);
+      });
+
+      codeInput.addEventListener('input', () => {
+        codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+        setError(codeInput, document.querySelector('#codeError'), false);
+      });
+
+      passwordInput.addEventListener('input', () => {
+        validatePasswordRules();
+        setError(passwordInput, document.querySelector('#passwordError'), false);
+      });
+
+      confirmInput.addEventListener('input', () => {
+        setError(confirmInput, document.querySelector('#confirmError'), false);
+      });
+
+      document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = document.querySelector(`#${button.dataset.target}`);
+          input.type = input.type === 'password' ? 'text' : 'password';
+        });
+      });
+
+      recoveryForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const codeInvalid = !/^\d{6}$/.test(codeInput.value);
+        const passwordInvalid = !validatePasswordRules();
+        const confirmInvalid = passwordInput.value !== confirmInput.value || confirmInput.value === '';
+
+        setError(codeInput, document.querySelector('#codeError'), codeInvalid);
+        setError(passwordInput, document.querySelector('#passwordError'), passwordInvalid);
+        setError(confirmInput, document.querySelector('#confirmError'), confirmInvalid);
+
+        if (codeInvalid || passwordInvalid || confirmInvalid) {
+          const firstInvalid = document.querySelector('.input-control.is-error');
+          firstInvalid?.focus();
+          return;
+        }
+
+        recoveryView.hidden = true;
+        successView.classList.add('visible');
+      });
+
+      applyLanguage('zh-CN');
+    </script>
+  </body>
+</html>

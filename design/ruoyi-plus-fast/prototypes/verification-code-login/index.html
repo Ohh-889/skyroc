@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Skyroc 管理系统 - 验证码登录设计原型</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #6366f1;
+        --primary-hover: #514fda;
+        --primary-soft: #eef0ff;
+        --primary-border: #bfcaff;
+        --page: #f3f4f8;
+        --panel: #ffffff;
+        --surface: #ffffff;
+        --surface-soft: #f7f7fa;
+        --heading: #29292d;
+        --text: #353535;
+        --text-2: #656565;
+        --text-3: #919191;
+        --placeholder: #a7a7ad;
+        --border: #cfd0d5;
+        --border-soft: #ebebef;
+        --success: #10b981;
+        --success-soft: #e8fff2;
+        --error: #f43f5e;
+        --error-soft: #fff0ef;
+        --brand-start: #1f318d;
+        --brand-middle: #394fd3;
+        --brand-end: #6876f5;
+        --shadow: 0 22px 70px rgb(32 37 74 / 14%), 0 2px 10px rgb(32 37 74 / 7%);
+      }
+
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #8386ff;
+        --primary-hover: #9698ff;
+        --primary-soft: #292b52;
+        --primary-border: #51558d;
+        --page: #111317;
+        --panel: #1d2025;
+        --surface: #25282d;
+        --surface-soft: #212429;
+        --heading: #f2f3f5;
+        --text: #e2e4e9;
+        --text-2: #b0b3bc;
+        --text-3: #858993;
+        --placeholder: #747983;
+        --border: #4a4e57;
+        --border-soft: #34383f;
+        --success-soft: #15382d;
+        --error-soft: #431f29;
+        --brand-start: #071746;
+        --brand-middle: #10275f;
+        --brand-end: #1f377b;
+        --shadow: 0 24px 70px rgb(0 0 0 / 38%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        background: var(--page);
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        background:
+          radial-gradient(circle at 12% 8%, rgb(255 255 255 / 76%), transparent 27%),
+          radial-gradient(circle at 88% 88%, rgb(99 102 241 / 8%), transparent 28%), var(--page);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        transition:
+          background-color 180ms ease,
+          color 180ms ease;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .prototype-shell {
+        width: min(1280px, calc(100vw - 64px));
+        min-height: min(760px, calc(100vh - 64px));
+        display: grid;
+        grid-template-columns: 46.5% 53.5%;
+        overflow: hidden;
+        border: 1px solid rgb(22 27 61 / 8%);
+        border-radius: 14px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .brand-panel {
+        position: relative;
+        min-height: 758px;
+        overflow: hidden;
+        padding: 36px 50px;
+        color: #ffffff;
+        background:
+          radial-gradient(circle at 21% 88%, rgb(139 151 255 / 42%), transparent 34%),
+          linear-gradient(142deg, var(--brand-start), var(--brand-middle) 53%, var(--brand-end));
+      }
+
+      .brand-grid {
+        position: absolute;
+        inset: 0;
+        opacity: 0.12;
+        background-image:
+          linear-gradient(rgb(255 255 255 / 28%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(255 255 255 / 28%) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(145deg, #000, transparent 70%);
+      }
+
+      .orbit {
+        position: absolute;
+        left: -105px;
+        top: 145px;
+        width: 570px;
+        height: 570px;
+        border: 1px solid rgb(255 255 255 / 21%);
+        border-radius: 50%;
+      }
+
+      .orbit::before,
+      .orbit::after {
+        content: '';
+        position: absolute;
+        border: 1px solid rgb(255 255 255 / 16%);
+        border-radius: inherit;
+      }
+
+      .orbit::before {
+        inset: 64px;
+      }
+
+      .orbit::after {
+        inset: 132px;
+      }
+
+      .orbit-dot {
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        border: 1px solid rgb(255 255 255 / 80%);
+        border-radius: 50%;
+        background: rgb(255 255 255 / 15%);
+        box-shadow: 0 0 20px rgb(255 255 255 / 28%);
+      }
+
+      .orbit-dot.one {
+        left: 145px;
+        top: 154px;
+      }
+
+      .orbit-dot.two {
+        right: 50px;
+        top: 230px;
+      }
+
+      .orbit-dot.three {
+        right: 85px;
+        bottom: 92px;
+      }
+
+      .glass-block {
+        position: absolute;
+        right: 56px;
+        bottom: 76px;
+        width: 186px;
+        height: 118px;
+        transform: rotate(-11deg);
+        border: 1px solid rgb(255 255 255 / 24%);
+        border-radius: 30px;
+        background: linear-gradient(145deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 3%));
+        box-shadow: 0 24px 60px rgb(11 24 94 / 24%);
+        backdrop-filter: blur(5px);
+      }
+
+      .brand-content {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        min-height: 686px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .logo-wrap {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: rgb(255 255 255 / 13%);
+        box-shadow: 0 14px 36px rgb(13 28 99 / 18%);
+        backdrop-filter: blur(8px);
+      }
+
+      .logo {
+        width: 34px;
+        height: 34px;
+      }
+
+      .brand-name {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 650;
+        letter-spacing: 1px;
+      }
+
+      .brand-copy {
+        width: 430px;
+        max-width: 100%;
+        margin: auto;
+        padding-bottom: 42px;
+      }
+
+      .eyebrow {
+        margin: 0 0 15px;
+        color: rgb(255 255 255 / 64%);
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+
+      .brand-title {
+        margin: 0;
+        font-size: clamp(31px, 2.7vw, 43px);
+        line-height: 1.28;
+        font-weight: 650;
+        letter-spacing: -0.8px;
+      }
+
+      .brand-description {
+        max-width: 420px;
+        margin: 19px 0 0;
+        color: rgb(255 255 255 / 72%);
+        font-size: 15px;
+        line-height: 26px;
+      }
+
+      .features {
+        display: grid;
+        gap: 13px;
+        margin: 38px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .feature {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 10px 14px;
+        border: 1px solid rgb(255 255 255 / 8%);
+        border-radius: 10px;
+        background: rgb(255 255 255 / 8%);
+        color: rgb(255 255 255 / 88%);
+        backdrop-filter: blur(8px);
+      }
+
+      .feature svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+      }
+
+      .copyright {
+        margin: 0;
+        color: rgb(255 255 255 / 52%);
+        font-size: 12px;
+      }
+
+      .auth-panel {
+        position: relative;
+        min-width: 0;
+        min-height: 758px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 64px 44px 38px;
+        background: var(--panel);
+      }
+
+      .top-actions {
+        position: absolute;
+        right: 22px;
+        top: 18px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .icon-button {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        border-color: var(--primary-border);
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .icon-button svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+      }
+
+      .auth-content {
+        width: min(400px, 100%);
+      }
+
+      .auth-heading {
+        margin-bottom: 25px;
+        text-align: center;
+      }
+
+      .auth-title {
+        margin: 0;
+        color: var(--heading);
+        font-size: 28px;
+        line-height: 38px;
+        font-weight: 650;
+        letter-spacing: -0.5px;
+      }
+
+      .auth-subtitle {
+        margin: 6px 0 0;
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .channel-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 3px;
+        border-radius: 9px;
+        background: var(--surface-soft);
+      }
+
+      .channel-button {
+        height: 35px;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--text-2);
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .channel-button.active {
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgb(41 45 73 / 9%);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .auth-form {
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 19px;
+        font-weight: 500;
+      }
+
+      .control {
+        position: relative;
+      }
+
+      .control-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        width: 17px;
+        height: 17px;
+        transform: translateY(-50%);
+        stroke: var(--text-3);
+        pointer-events: none;
+      }
+
+      .text-input {
+        width: 100%;
+        height: 40px;
+        padding: 0 38px;
+        outline: none;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        transition:
+          border-color 150ms ease,
+          box-shadow 150ms ease;
+      }
+
+      .text-input::placeholder {
+        color: var(--placeholder);
+      }
+
+      .text-input:hover {
+        border-color: var(--primary-border);
+      }
+
+      .text-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgb(99 102 241 / 12%);
+      }
+
+      .text-input.invalid {
+        border-color: var(--error);
+        box-shadow: 0 0 0 3px rgb(244 63 94 / 9%);
+      }
+
+      .field-error {
+        display: none;
+        margin: 5px 0 0;
+        color: var(--error);
+        font-size: 12px;
+        line-height: 17px;
+      }
+
+      .field-error.visible {
+        display: block;
+      }
+
+      .code-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 118px;
+        gap: 10px;
+      }
+
+      .code-input {
+        padding-right: 12px;
+        letter-spacing: 4px;
+      }
+
+      .secondary-button {
+        height: 40px;
+        padding: 0 10px;
+        border: 1px solid var(--primary-border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .secondary-button:hover:not(:disabled) {
+        background: var(--primary-soft);
+        border-color: var(--primary);
+      }
+
+      .secondary-button:disabled {
+        border-color: var(--border-soft);
+        color: var(--text-3);
+        cursor: not-allowed;
+      }
+
+      .captcha-section {
+        display: none;
+        padding: 12px;
+        border: 1px solid #f3d9a4;
+        border-radius: 10px;
+        background: #fffaf0;
+      }
+
+      :root[data-theme='dark'] .captcha-section {
+        border-color: #5f4b28;
+        background: #30291d;
+      }
+
+      .captcha-section.visible {
+        display: block;
+        animation: section-in 180ms ease-out;
+      }
+
+      .risk-note {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0 0 10px;
+        color: #8d5800;
+        font-size: 12px;
+      }
+
+      :root[data-theme='dark'] .risk-note {
+        color: #f4c466;
+      }
+
+      .risk-note svg {
+        width: 15px;
+        height: 15px;
+        stroke: currentColor;
+      }
+
+      .captcha-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 100px;
+        gap: 10px;
+      }
+
+      .captcha-box {
+        height: 40px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 20% 22%, #cbdcd9 0 2px, transparent 3px),
+          radial-gradient(circle at 78% 68%, #d4daee 0 2px, transparent 3px),
+          linear-gradient(135deg, #edf4ef, #f4efe6 48%, #e8edf6);
+        color: #242a35;
+        cursor: pointer;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 21px;
+        letter-spacing: 6px;
+        user-select: none;
+      }
+
+      .captcha-box::after {
+        content: '';
+        position: absolute;
+        width: 120px;
+        height: 1px;
+        transform: rotate(-10deg);
+        background: #687d89;
+        opacity: 0.5;
+      }
+
+      .captcha-value {
+        position: relative;
+        z-index: 1;
+      }
+
+      .options {
+        min-height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-2);
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .checkbox-label input {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .checkbox-box {
+        width: 15px;
+        height: 15px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--surface);
+      }
+
+      .checkbox-label input:checked + .checkbox-box {
+        border-color: var(--primary);
+        background: var(--primary);
+      }
+
+      .checkbox-label input:checked + .checkbox-box::after {
+        content: '';
+        width: 7px;
+        height: 4px;
+        transform: translateY(-1px) rotate(-45deg);
+        border-left: 1.5px solid #ffffff;
+        border-bottom: 1.5px solid #ffffff;
+      }
+
+      .primary-button {
+        width: 100%;
+        height: 40px;
+        border: 0;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #5962ed, #6868ef);
+        box-shadow: 0 7px 18px rgb(82 91 227 / 22%);
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 2px;
+      }
+
+      .primary-button:hover {
+        filter: brightness(1.04);
+      }
+
+      .text-link {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .switch-login {
+        text-align: center;
+      }
+
+      .divider {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 13px;
+        color: var(--text-3);
+        font-size: 11px;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: '';
+        height: 1px;
+        background: var(--border-soft);
+      }
+
+      .social-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .social-button {
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .social-button:hover {
+        border-color: var(--primary-border);
+        background: var(--primary-soft);
+      }
+
+      .provider-dot {
+        width: 17px;
+        height: 17px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 700;
+      }
+
+      .wechat {
+        background: #07c160;
+      }
+
+      .feishu {
+        border-radius: 5px 9px 5px 9px;
+        background: linear-gradient(145deg, #20c8df 0 40%, #3370ff 41% 74%, #7c4dff 75%);
+      }
+
+      .admin-hint {
+        margin: -1px 0 0;
+        color: var(--text-3);
+        font-size: 11px;
+        line-height: 18px;
+        text-align: center;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 21px;
+        color: var(--text-3);
+        font-size: 11px;
+      }
+
+      .footer a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .toast {
+        position: fixed;
+        z-index: 20;
+        left: 50%;
+        top: 24px;
+        min-width: 280px;
+        max-width: calc(100vw - 32px);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 14px;
+        transform: translate(-50%, -16px);
+        border: 1px solid #95feca;
+        border-radius: 9px;
+        background: var(--success-soft);
+        box-shadow: 0 12px 35px rgb(27 37 67 / 16%);
+        color: #006947;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease;
+      }
+
+      :root[data-theme='dark'] .toast {
+        color: #8be3bd;
+      }
+
+      .toast.visible {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      .toast-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--success);
+      }
+
+      .prototype-control {
+        position: fixed;
+        z-index: 15;
+        right: 18px;
+        bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 12px;
+        border: 1px solid var(--border-soft);
+        border-radius: 9px;
+        background: var(--surface);
+        box-shadow: 0 10px 30px rgb(29 35 65 / 12%);
+        color: var(--text-2);
+        font-size: 11px;
+      }
+
+      .prototype-control button {
+        padding: 4px 8px;
+        border: 1px solid var(--primary-border);
+        border-radius: 6px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 11px;
+      }
+
+      @keyframes section-in {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 900px) {
+        body {
+          display: block;
+          padding: 12px;
+          background: var(--page);
+        }
+
+        .prototype-shell {
+          width: 100%;
+          min-height: calc(100vh - 24px);
+          display: block;
+          overflow: visible;
+        }
+
+        .brand-panel {
+          display: none;
+        }
+
+        .auth-panel {
+          min-height: calc(100vh - 26px);
+          align-items: flex-start;
+          padding: 72px 22px 28px;
+        }
+
+        .auth-content::before {
+          content: 'Skyroc 管理系统';
+          display: block;
+          margin-bottom: 25px;
+          color: var(--primary);
+          font-size: 18px;
+          font-weight: 650;
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .code-row {
+          grid-template-columns: minmax(0, 1fr) 106px;
+        }
+
+        .social-buttons {
+          grid-template-columns: 1fr;
+        }
+
+        .prototype-control {
+          right: 10px;
+          bottom: 10px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="prototype-shell">
+      <aside class="brand-panel" aria-label="Skyroc 品牌介绍">
+        <div class="brand-grid" aria-hidden="true"></div>
+        <div class="orbit" aria-hidden="true">
+          <span class="orbit-dot one"></span>
+          <span class="orbit-dot two"></span>
+          <span class="orbit-dot three"></span>
+        </div>
+        <div class="glass-block" aria-hidden="true"></div>
+
+        <div class="brand-content">
+          <header class="brand-header">
+            <span class="logo-wrap">
+              <svg class="logo" aria-hidden="true" viewBox="0 0 160 160">
+                <use href="#skyroc-logo"></use>
+              </svg>
+            </span>
+            <p class="brand-name">Skyroc 管理系统</p>
+          </header>
+
+          <section class="brand-copy">
+            <p class="eyebrow">Skyroc Admin</p>
+            <h1 class="brand-title">让企业管理<br />更清晰、更安全</h1>
+            <p class="brand-description">为组织、权限与关键业务提供统一、可信赖的管理入口。</p>
+            <ul class="features">
+              <li class="feature">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path d="M7 20v-2a5 5 0 0 1 10 0v2M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke-width="1.5" />
+                </svg>
+                统一组织与权限
+              </li>
+              <li class="feature">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="8.5" stroke-width="1.5" />
+                  <path d="M12 7.5v5l3.2 2" stroke-linecap="round" stroke-width="1.5" />
+                </svg>
+                关键操作可追溯
+              </li>
+              <li class="feature">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z" stroke-width="1.5" />
+                  <path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                </svg>
+                安全可靠的管理入口
+              </li>
+            </ul>
+          </section>
+          <p class="copyright">© 2026 Skyroc</p>
+        </div>
+      </aside>
+
+      <section class="auth-panel">
+        <div class="top-actions">
+          <button class="icon-button" id="themeToggle" type="button" aria-label="切换深色主题" title="切换主题">
+            <svg id="sunIcon" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3.5" stroke-width="1.5" />
+              <path
+                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+                stroke-linecap="round"
+                stroke-width="1.5"
+              />
+            </svg>
+            <svg id="moonIcon" fill="none" viewBox="0 0 24 24" hidden>
+              <path d="M20 15.1A8 8 0 0 1 8.9 4a8 8 0 1 0 11.1 11.1Z" stroke-linejoin="round" stroke-width="1.5" />
+            </svg>
+          </button>
+          <button class="icon-button" id="languageButton" type="button" aria-label="切换语言" title="切换语言">
+            <svg fill="none" viewBox="0 0 24 24">
+              <path d="M4 5h9M8.5 3v2M6 8c1.5 2.8 3.8 5 6.5 6.2M11.5 8c-1.2 3.2-3.5 5.8-6.5 7.5" stroke-linecap="round" stroke-width="1.5" />
+              <path d="m14 20 3.5-8 3.5 8M15.4 17h4.2" stroke-linecap="round" stroke-width="1.5" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="auth-content">
+          <header class="auth-heading">
+            <h2 class="auth-title" data-zh="验证码登录" data-en="Verification code login">验证码登录</h2>
+            <p class="auth-subtitle" data-zh="使用手机号或邮箱验证码登录" data-en="Sign in with a phone or email code">
+              使用手机号或邮箱验证码登录
+            </p>
+          </header>
+
+          <div class="channel-switch" role="tablist" aria-label="验证码类型">
+            <button class="channel-button active" type="button" role="tab" aria-selected="true" data-channel="phone">
+              手机验证码
+            </button>
+            <button class="channel-button" type="button" role="tab" aria-selected="false" data-channel="email">
+              邮箱验证码
+            </button>
+          </div>
+
+          <form class="auth-form" id="codeLoginForm" novalidate>
+            <div class="field">
+              <label class="field-label" id="accountLabel" for="account">手机号</label>
+              <div class="control">
+                <svg class="control-icon" id="accountIcon" fill="none" viewBox="0 0 24 24">
+                  <rect x="7" y="2.5" width="10" height="19" rx="2" stroke-width="1.5" />
+                  <path d="M10 5h4M11 18.5h2" stroke-linecap="round" stroke-width="1.5" />
+                </svg>
+                <input
+                  class="text-input"
+                  id="account"
+                  type="tel"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                  placeholder="请输入手机号"
+                />
+              </div>
+              <p class="field-error" id="accountError">请输入正确的手机号</p>
+            </div>
+
+            <section class="captcha-section" id="captchaSection" aria-label="安全验证">
+              <p class="risk-note">
+                <svg fill="none" viewBox="0 0 24 24">
+                  <path d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z" stroke-width="1.5" />
+                  <path d="M12 8v4M12 15.5h.01" stroke-linecap="round" stroke-width="1.5" />
+                </svg>
+                为保障账号安全，请先完成图形验证
+              </p>
+              <label class="field-label" for="captchaInput">图形验证码</label>
+              <div class="captcha-row">
+                <input class="text-input" id="captchaInput" type="text" autocomplete="off" placeholder="请输入图中字符" />
+                <button class="captcha-box" id="captchaBox" type="button" aria-label="刷新图形验证码">
+                  <span class="captcha-value" id="captchaValue">7K9P</span>
+                </button>
+              </div>
+              <p class="field-error" id="captchaError">请输入图形验证码</p>
+            </section>
+
+            <div class="field">
+              <label class="field-label" for="verificationCode">验证码</label>
+              <div class="code-row">
+                <div class="control">
+                  <svg class="control-icon" fill="none" viewBox="0 0 24 24">
+                    <rect x="5" y="10" width="14" height="10" rx="2" stroke-width="1.5" />
+                    <path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke-linecap="round" stroke-width="1.5" />
+                  </svg>
+                  <input
+                    class="text-input code-input"
+                    id="verificationCode"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    maxlength="6"
+                    placeholder="请输入 6 位验证码"
+                  />
+                </div>
+                <button class="secondary-button" id="sendCodeButton" type="button">获取验证码</button>
+              </div>
+              <p class="field-error" id="codeError">请输入 6 位数字验证码</p>
+            </div>
+
+            <div class="options">
+              <label class="checkbox-label">
+                <input type="checkbox" />
+                <span class="checkbox-box"></span>
+                保持登录
+              </label>
+            </div>
+
+            <button class="primary-button" type="submit">登录</button>
+
+            <div class="switch-login">
+              <button class="text-link" type="button" data-prototype-message>使用密码登录</button>
+            </div>
+
+            <div class="divider">其他登录方式</div>
+
+            <div class="social-buttons">
+              <button class="social-button" type="button" data-prototype-message>
+                <span class="provider-dot wechat">微</span>
+                微信登录
+              </button>
+              <button class="social-button" type="button" data-prototype-message>
+                <span class="provider-dot feishu">飞</span>
+                飞书登录
+              </button>
+            </div>
+
+            <p class="admin-hint">账号由管理员创建，如需帮助请联系管理员</p>
+          </form>
+
+          <footer class="footer">
+            <a href="#" data-prototype-message>隐私政策</a>
+            <span>·</span>
+            <a href="#" data-prototype-message>服务条款</a>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-dot"></span>
+      <span id="toastText">如果该账号可用，验证码将发送至填写的手机号或邮箱。</span>
+    </div>
+
+    <aside class="prototype-control" aria-label="原型控制">
+      <span>原型状态</span>
+      <button id="riskToggle" type="button">触发安全验证</button>
+    </aside>
+
+    <svg aria-hidden="true" width="0" height="0" style="position: absolute">
+      <defs>
+        <path
+          id="skyroc-logo"
+          d="M57.8 92.8c1.8-2.1 3.5-4.4 5.4-6.4 7.2-7.8 16.8-11.2 26.8-13.6 11-2.6 22.2-4.8 33.2-7.5 4.9-1.2 9.6-3.2 15.2-5.1-1.8 3.4-3.1 6.5-5 9.3-7.7 11.5-19 17.4-32.4 19.6-5.8 1-11.8.9-17.6 1.7-13.3 1.8-22.4 9.1-26.8 21.5-3 8.5-5 17.3-7.5 25.9-.4 1.3-.2 2.1 1.2 2.7 21.6 9.5 42.9 8.6 63.7-2.3.4-.2.7-.5 1.5-1-14.4-13.6-27-29.3-47.3-35.1 8.3-5.8 22.5-8.6 31.9-2.4 10.8 7.2 19.4 18.2 30.2 25.8 22-23 28-53 16-81 1.8-2.7 3.8-5.8 6.1-9.4 20 48-4 99-51.6 114.9-53 17-109-16-119-70-9-50 20-98 70-106 31-5 58 4 79 26-3 2-6 4-9 6-25-18-59-19-85 0-29 22-35 65-13 94 3 4 6 7 9 10 2-8 4-16 7-24 5-16 15-26 30-32 22-8 46-11 66-24 5-4 10-8 14-14 1 14-4 27-15 35-13 10-31 10-47 15-10 3-18 10-24 18-4 6-6 13-8 20Z"
+          fill="currentColor"
+        />
+      </defs>
+    </svg>
+
+    <script>
+      const root = document.documentElement;
+      const themeToggle = document.querySelector('#themeToggle');
+      const sunIcon = document.querySelector('#sunIcon');
+      const moonIcon = document.querySelector('#moonIcon');
+      const channelButtons = [...document.querySelectorAll('[data-channel]')];
+      const account = document.querySelector('#account');
+      const accountLabel = document.querySelector('#accountLabel');
+      const accountError = document.querySelector('#accountError');
+      const verificationCode = document.querySelector('#verificationCode');
+      const codeError = document.querySelector('#codeError');
+      const sendCodeButton = document.querySelector('#sendCodeButton');
+      const captchaSection = document.querySelector('#captchaSection');
+      const captchaInput = document.querySelector('#captchaInput');
+      const captchaError = document.querySelector('#captchaError');
+      const captchaValue = document.querySelector('#captchaValue');
+      const riskToggle = document.querySelector('#riskToggle');
+      const toast = document.querySelector('#toast');
+      const toastText = document.querySelector('#toastText');
+      const form = document.querySelector('#codeLoginForm');
+      let channel = 'phone';
+      let riskRequired = false;
+      let countdownTimer;
+      let toastTimer;
+
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.add('visible');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('visible'), 3200);
+      }
+
+      function clearFieldError(input, error) {
+        input.classList.remove('invalid');
+        error.classList.remove('visible');
+      }
+
+      function showFieldError(input, error) {
+        input.classList.add('invalid');
+        error.classList.add('visible');
+        input.focus();
+      }
+
+      function validateAccount() {
+        const value = account.value.trim();
+        const valid = channel === 'phone' ? /^1\d{10}$/.test(value) : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        clearFieldError(account, accountError);
+        if (!valid) showFieldError(account, accountError);
+        return valid;
+      }
+
+      function setChannel(nextChannel) {
+        channel = nextChannel;
+        channelButtons.forEach(button => {
+          const active = button.dataset.channel === channel;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-selected', String(active));
+        });
+        const phone = channel === 'phone';
+        account.value = '';
+        account.type = phone ? 'tel' : 'email';
+        account.inputMode = phone ? 'numeric' : 'email';
+        account.autocomplete = phone ? 'tel' : 'email';
+        accountLabel.textContent = phone ? '手机号' : '邮箱';
+        account.placeholder = phone ? '请输入手机号' : '请输入邮箱';
+        accountError.textContent = phone ? '请输入正确的手机号' : '请输入正确的邮箱';
+        verificationCode.value = '';
+        clearFieldError(account, accountError);
+        clearFieldError(verificationCode, codeError);
+        account.focus();
+      }
+
+      function refreshCaptcha() {
+        const alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        captchaValue.textContent = Array.from(
+          { length: 4 },
+          () => alphabet[Math.floor(Math.random() * alphabet.length)]
+        ).join('');
+        captchaInput.value = '';
+        clearFieldError(captchaInput, captchaError);
+      }
+
+      function startCountdown() {
+        let remaining = 59;
+        window.clearInterval(countdownTimer);
+        sendCodeButton.disabled = true;
+        sendCodeButton.textContent = `${remaining}s 后重新获取`;
+        countdownTimer = window.setInterval(() => {
+          remaining -= 1;
+          sendCodeButton.textContent = remaining > 0 ? `${remaining}s 后重新获取` : '重新获取';
+          if (remaining <= 0) {
+            window.clearInterval(countdownTimer);
+            sendCodeButton.disabled = false;
+          }
+        }, 1000);
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const dark = root.dataset.theme !== 'dark';
+        root.dataset.theme = dark ? 'dark' : 'light';
+        sunIcon.hidden = dark;
+        moonIcon.hidden = !dark;
+        themeToggle.setAttribute('aria-label', dark ? '切换浅色主题' : '切换深色主题');
+      });
+
+      document.querySelector('#languageButton').addEventListener('click', () => {
+        showToast('英文版将复用同一布局，并为长文案预留空间。');
+      });
+
+      channelButtons.forEach(button => {
+        button.addEventListener('click', () => setChannel(button.dataset.channel));
+      });
+
+      riskToggle.addEventListener('click', () => {
+        riskRequired = !riskRequired;
+        captchaSection.classList.toggle('visible', riskRequired);
+        riskToggle.textContent = riskRequired ? '关闭安全验证' : '触发安全验证';
+        if (riskRequired) captchaInput.focus();
+      });
+
+      document.querySelector('#captchaBox').addEventListener('click', refreshCaptcha);
+
+      sendCodeButton.addEventListener('click', () => {
+        if (!validateAccount()) return;
+        if (riskRequired && !captchaInput.value.trim()) {
+          showFieldError(captchaInput, captchaError);
+          return;
+        }
+        clearFieldError(captchaInput, captchaError);
+        startCountdown();
+        verificationCode.focus();
+        showToast('如果该账号可用，验证码将发送至填写的手机号或邮箱。');
+      });
+
+      account.addEventListener('input', () => clearFieldError(account, accountError));
+      captchaInput.addEventListener('input', () => clearFieldError(captchaInput, captchaError));
+      verificationCode.addEventListener('input', () => {
+        verificationCode.value = verificationCode.value.replace(/\D/g, '').slice(0, 6);
+        clearFieldError(verificationCode, codeError);
+      });
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (!validateAccount()) return;
+        if (!/^\d{6}$/.test(verificationCode.value)) {
+          showFieldError(verificationCode, codeError);
+          return;
+        }
+        showToast('原型校验完成：正式版本将继续初始化用户信息和菜单。');
+      });
+
+      document.querySelectorAll('[data-prototype-message]').forEach(element => {
+        element.addEventListener('click', event => {
+          event.preventDefault();
+          showToast('这是视觉交互原型，暂未连接对应业务页面。');
+        });
+      });
+    </script>
+  </body>
+</html>
