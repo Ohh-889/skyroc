@@ -1,5 +1,7 @@
 import type { CreateAxiosDefaults } from '@skyroc/axios';
 
+import type { ApiCryptoOptions } from '../crypto';
+
 /**
  * 平台适配器接口
  *
@@ -70,6 +72,8 @@ export interface CreateRequestOptions {
   axiosConfig?: CreateAxiosDefaults;
   /** 后端业务状态码 */
   codes: ServiceCodes;
+  /** 接口传输加密。不配也能跑，但标了 `encrypt: true` 的请求会直接抛错 */
+  crypto?: ApiCryptoOptions;
   /** 自定义后端成功判断（默认：response.data.code === codes.success） */
   isBackendSuccess?: (response: { data: { code: string | number } }) => boolean;
   /** 自定义响应数据转换（默认：response.data.data） */

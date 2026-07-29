@@ -196,6 +196,7 @@ interface CreateRequestOptions {
   adapter: RequestAdapter; // 平台适配器
   codes: ServiceCodes; // 后端业务状态码
   axiosConfig?: CreateAxiosDefaults; // axios 基础配置
+  crypto?: ApiCryptoOptions; // 接口传输加密
   isBackendSuccess?: (response) => boolean; // 自定义成功判断
   transform?: (response) => any; // 自定义响应转换
 }
@@ -235,6 +236,61 @@ request.state.errMsgStack;
     ├─ expiredToken codes → 自动刷新 token + 重试原请求
     └─ 其他              → 抛出 AxiosError（由 onError 兜底展示 toast）
 ```
+
+### 接口传输加密
+
+给个别接口（登录、改密码、实名信息提交）加一层传输加密，让密码这类内容不以明文出现在
+浏览器 devtools、网关访问日志和抓包里。
+
+装配一次：
+
+```ts
+export const request = createAppRequest({
+  adapter,
+  codes,
+  crypto: {
+    header: import.meta.env.VITE_API_CRYPTO_HEADER,
+    publicKey: import.meta.env.VITE_API_CRYPTO_PUBLIC_KEY
+  }
+});
+```
+
+之后每个要加密的接口加一行 `encrypt: true`，没加的接口不进这段逻辑：
+
+```ts
+export function fetchLogin(params: Api.Auth.LoginParams) {
+  return request<Api.Auth.LoginResponse>({
+    data: params,
+    encrypt: true,
+    method: 'post',
+    url: '/auth/login'
+  });
+}
+```
+
+#### 报文格式
+
+两层信封，RSA 只用来传一次性 AES 密钥：
+
+```
+请求头  X-Encrypt-Key: base64( RSA-OAEP-SHA256(服务端公钥, aesKey) )
+请求体  base64( nonce(12B) ‖ AES-256-GCM(aesKey, 明文 JSON) )
+```
+
+公钥从 PEM 载入，换行可以写成字面量 `\n`（环境变量装不下多行）。加解密走浏览器原生
+WebCrypto，不引 crypto-js。
+
+#### 边界
+
+- **先想清楚它挡的是什么。** 公钥在前端 JS 里，AES 密钥也是前端生成的，攻击者照样构造得出
+  合法密文。它挡的是明文落到日志和抓包里，不是主动攻击，别把它当成认证或授权的替代。
+- **只加密请求，不解密响应。** 响应解密要在 `isBackendSuccess` 之前完成，而那个钩子是同步的，
+  WebCrypto 是异步的，接不上；真要做得先给 `@skyroc/axios` 加一个异步的 `onResponse` 钩子。
+- **`crypto.subtle` 只在安全上下文里存在。** 用 `http://192.168.x.x:5173` 这样访问开发服务器
+  时浏览器不提供它，加密请求会直接报错，改用 localhost 或 https。
+- **没配 `publicKey` 时不会退化成明文**：标了 `encrypt: true` 的请求直接抛错。没有加密需求的
+  部署不用配，但配了一半的部署不会安静地把密码明文发出去。
+- **FormData / 二进制请求体不支持**，上传文件的接口去掉 `encrypt: true`。
 
 ### `createQueryClient(options?)`
 

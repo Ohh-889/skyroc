@@ -1,5 +1,6 @@
 import { createRequest } from '@skyroc/axios';
 import type { AxiosResponse } from 'axios';
+import { createRequestSealer } from '../crypto';
 import { backEndFail, handleError } from './error-handler';
 import { getAuthorization } from './shared';
 import type { CreateRequestOptions, RequestInstanceState } from './types';
@@ -11,6 +12,8 @@ import type { CreateRequestOptions, RequestInstanceState } from './types';
  */
 export function createAppRequest(options: CreateRequestOptions) {
   const { adapter, axiosConfig, codes } = options;
+
+  const sealRequest = createRequestSealer(options.crypto);
 
   const request = createRequest<{ code: string | number; data: any; msg: string }, any, RequestInstanceState>(
     axiosConfig,
@@ -33,7 +36,9 @@ export function createAppRequest(options: CreateRequestOptions) {
       async onRequest(config) {
         const Authorization = getAuthorization(adapter);
         Object.assign(config.headers, { Authorization });
-        return config;
+
+        // 加密放在最后：认证头不能跟着 body 一起被加密掉
+        return sealRequest(config);
       },
       transform:
         options.transform ??
