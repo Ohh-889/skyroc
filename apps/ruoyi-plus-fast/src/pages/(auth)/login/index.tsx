@@ -1,6 +1,6 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
-
+import { noop } from '@skyroc/utils'
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
 import { useCaptchaQuery } from '@/service/api';
@@ -58,12 +58,19 @@ const Login = () => {
 
 
   function handlePasswordSubmit(values: LoginFormValues) {
-    login({
-      code: captchaEnabled ? values.code?.trim() : undefined,
+    const form: Api.Auth.LoginParams = {
       password: values.password,
       remember: values.remember,
       userName: values.userName.trim(),
-      uuid: captchaEnabled ? (captcha?.uuid ?? undefined) : undefined
+    }
+
+    if (captchaEnabled) {
+      form.code = values?.code?.trim()
+      form.uuid = String(captcha?.uuid)
+    }
+
+    login(form, {
+      onError: captchaEnabled ? refreshCaptcha : noop
     });
   }
 
@@ -71,7 +78,8 @@ const Login = () => {
 
   function refreshCaptcha() {
     passwordForm.setFieldValue('code', '');
-    refetchCaptcha().catch(() => undefined);
+
+    refetchCaptcha()
   }
 
   function handleUnavailableAction() {
