@@ -1,0 +1,1787 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Skyroc Admin - 部门管理原型</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #5b5ff5;
+        --primary-hover: #4a4ee5;
+        --primary-soft: #f0f1ff;
+        --primary-border: #cfd2ff;
+        --page: #f5f6f9;
+        --surface: #ffffff;
+        --surface-raised: #ffffff;
+        --sidebar: #171922;
+        --sidebar-muted: #9296a5;
+        --sidebar-hover: #242733;
+        --text: #292b32;
+        --text-secondary: #626673;
+        --text-tertiary: #9397a3;
+        --border: #e7e8ed;
+        --border-strong: #d9dbe3;
+        --hover: #f7f7fa;
+        --success: #16a36a;
+        --success-soft: #ebf8f2;
+        --warning: #d97706;
+        --warning-soft: #fff7e8;
+        --danger: #e5484d;
+        --danger-soft: #fff0f0;
+        --shadow: 0 14px 40px rgb(26 30 48 / 10%);
+        --control-shadow: 0 1px 2px rgb(22 24 35 / 4%);
+      }
+
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #7c7fff;
+        --primary-hover: #9294ff;
+        --primary-soft: #292b50;
+        --primary-border: #4e5184;
+        --page: #111318;
+        --surface: #1b1e24;
+        --surface-raised: #22252c;
+        --sidebar: #0d0f14;
+        --sidebar-muted: #858a99;
+        --sidebar-hover: #1d2029;
+        --text: #ecedf2;
+        --text-secondary: #b2b5bf;
+        --text-tertiary: #7f8491;
+        --border: #30333b;
+        --border-strong: #41454f;
+        --hover: #24272e;
+        --success: #44c58a;
+        --success-soft: #18372b;
+        --warning: #f0a13b;
+        --warning-soft: #3a2a17;
+        --danger: #ff7377;
+        --danger-soft: #3f2023;
+        --shadow: 0 16px 48px rgb(0 0 0 / 34%);
+        --control-shadow: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 224px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 12% 8%, rgb(91 95 245 / 19%), transparent 28%),
+          var(--sidebar);
+        color: #f4f5f8;
+      }
+
+      .brand {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 20px;
+        border-bottom: 1px solid rgb(255 255 255 / 7%);
+        font-size: 17px;
+        font-weight: 650;
+        letter-spacing: 0.2px;
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: linear-gradient(145deg, #777aff, #4b4fe0);
+        box-shadow: 0 7px 18px rgb(58 62 211 / 35%);
+      }
+
+      .brand-mark svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .nav {
+        flex: 1;
+        padding: 16px 12px;
+        overflow-y: auto;
+      }
+
+      .nav-label {
+        margin: 16px 10px 8px;
+        color: #696e7c;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.1em;
+      }
+
+      .nav-item {
+        width: 100%;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 3px 0;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--sidebar-muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-item:hover {
+        background: var(--sidebar-hover);
+        color: #ffffff;
+      }
+
+      .nav-item.active {
+        background: linear-gradient(90deg, rgb(91 95 245 / 24%), rgb(91 95 245 / 12%));
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #777aff;
+      }
+
+      .nav-item.child {
+        padding-left: 40px;
+      }
+
+      .nav-item .chevron {
+        margin-left: auto;
+      }
+
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 12px;
+        padding: 12px;
+        border-top: 1px solid rgb(255 255 255 / 7%);
+        color: #d9dbe2;
+      }
+
+      .avatar {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #8d90ff, #5559e9);
+        color: #fff;
+        font-weight: 700;
+      }
+
+      .sidebar-user small {
+        display: block;
+        margin-top: 2px;
+        color: var(--sidebar-muted);
+      }
+
+      .main-shell {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border);
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        backdrop-filter: blur(14px);
+      }
+
+      .breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-tertiary);
+        font-size: 13px;
+      }
+
+      .breadcrumbs strong {
+        color: var(--text);
+        font-weight: 550;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .icon-button {
+        width: 36px;
+        height: 36px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        border-color: var(--border);
+        background: var(--hover);
+        color: var(--text);
+      }
+
+      .content {
+        width: 100%;
+        max-width: 1680px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .page-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .page-heading h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 680;
+        letter-spacing: -0.02em;
+      }
+
+      .page-heading p {
+        margin: 7px 0 0;
+        color: var(--text-secondary);
+      }
+
+      .context-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 11px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .context-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 0 3px var(--success-soft);
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: 0 1px 2px rgb(27 31 46 / 3%);
+      }
+
+      .search-card {
+        margin-bottom: 16px;
+      }
+
+      .card-header {
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 15px;
+        font-weight: 620;
+      }
+
+      .card-title small {
+        color: var(--text-tertiary);
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .search-body {
+        display: grid;
+        grid-template-columns: minmax(180px, 1.4fr) minmax(140px, 0.7fr) minmax(150px, 0.8fr) auto;
+        align-items: end;
+        gap: 16px;
+        padding: 18px;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 520;
+      }
+
+      .field label.required::before {
+        content: '*';
+        margin-right: 4px;
+        color: var(--danger);
+      }
+
+      .control,
+      select {
+        width: 100%;
+        height: 38px;
+        padding: 0 11px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        background: var(--surface-raised);
+        color: var(--text);
+        box-shadow: var(--control-shadow);
+      }
+
+      .control::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      .control:hover,
+      select:hover {
+        border-color: var(--primary-border);
+      }
+
+      .control:focus,
+      select:focus {
+        border-color: var(--primary);
+        outline: 0;
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
+      }
+
+      .search-actions,
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .button {
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 13px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        background: var(--surface-raised);
+        color: var(--text);
+        box-shadow: var(--control-shadow);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .button:hover {
+        border-color: var(--primary-border);
+        color: var(--primary);
+      }
+
+      .button.primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .button.primary:hover {
+        border-color: var(--primary-hover);
+        background: var(--primary-hover);
+        color: #fff;
+      }
+
+      .button.danger {
+        border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+        color: var(--danger);
+      }
+
+      .button.text {
+        height: 30px;
+        padding: 0 5px;
+        border-color: transparent;
+        background: transparent;
+        box-shadow: none;
+        color: var(--primary);
+      }
+
+      .button.text.danger {
+        color: var(--danger);
+      }
+
+      .table-card {
+        overflow: hidden;
+      }
+
+      .toolbar .button {
+        height: 34px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      th {
+        height: 44px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        background: color-mix(in srgb, var(--page) 58%, var(--surface));
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      td {
+        height: 55px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+
+      tbody tr {
+        transition: background 120ms ease;
+      }
+
+      tbody tr:hover {
+        background: var(--hover);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody tr.is-match {
+        background: color-mix(in srgb, var(--primary-soft) 65%, var(--surface));
+      }
+
+      .dept-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+        font-weight: 540;
+      }
+
+      .tree-indent {
+        flex: 0 0 auto;
+      }
+
+      .tree-toggle,
+      .tree-placeholder {
+        width: 22px;
+        height: 22px;
+        display: inline-grid;
+        place-items: center;
+        flex: 0 0 auto;
+      }
+
+      .tree-toggle {
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
+      }
+
+      .tree-toggle:hover {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .tree-toggle svg {
+        width: 14px;
+        height: 14px;
+        transition: transform 150ms ease;
+      }
+
+      .tree-toggle.collapsed svg {
+        transform: rotate(-90deg);
+      }
+
+      .dept-symbol {
+        width: 26px;
+        height: 26px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 7px;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .dept-symbol svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      mark {
+        padding: 0 2px;
+        border-radius: 3px;
+        background: #ffdf70;
+        color: #433500;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 54px;
+        height: 24px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+
+      .tag.success {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .tag.warning {
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .tag.neutral {
+        background: var(--hover);
+        color: var(--text-secondary);
+      }
+
+      .leader {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .mini-avatar {
+        width: 25px;
+        height: 25px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #e6e7ff, #c9ccff);
+        color: #4f53d6;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .row-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .table-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 18px;
+        border-top: 1px solid var(--border);
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .drawer-mask,
+      .modal-mask {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        opacity: 0;
+        visibility: hidden;
+        background: rgb(13 15 23 / 42%);
+        backdrop-filter: blur(2px);
+        transition:
+          opacity 180ms ease,
+          visibility 180ms ease;
+      }
+
+      .drawer-mask.open,
+      .modal-mask.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: min(520px, 100vw);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        background: var(--surface);
+        box-shadow: -18px 0 48px rgb(12 15 30 / 15%);
+        transition: transform 220ms ease;
+      }
+
+      .drawer-mask.open .drawer {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        min-height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .drawer-title {
+        font-size: 17px;
+        font-weight: 650;
+      }
+
+      .drawer-subtitle {
+        margin-top: 4px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 22px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 16px;
+      }
+
+      .form-grid .span-2 {
+        grid-column: 1 / -1;
+      }
+
+      .field-help {
+        margin: 7px 0 0;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .field-help.move-warning {
+        display: none;
+        padding: 9px 10px;
+        border-radius: 7px;
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .field-help.move-warning.show {
+        display: block;
+      }
+
+      .switch-line {
+        height: 38px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .switch {
+        width: 40px;
+        height: 22px;
+        position: relative;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: var(--border-strong);
+        cursor: pointer;
+        transition: background 140ms ease;
+      }
+
+      .switch::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px rgb(30 34 50 / 24%);
+        transition: transform 140ms ease;
+      }
+
+      .switch.on {
+        background: var(--primary);
+      }
+
+      .switch.on::after {
+        transform: translateX(18px);
+      }
+
+      .drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .modal-mask {
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        z-index: 100;
+      }
+
+      .modal {
+        width: min(420px, 100%);
+        transform: translateY(10px) scale(0.98);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transition: transform 180ms ease;
+      }
+
+      .modal-mask.open .modal {
+        transform: translateY(0) scale(1);
+      }
+
+      .modal-content {
+        display: flex;
+        gap: 14px;
+        padding: 22px;
+      }
+
+      .danger-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .modal h2 {
+        margin: 1px 0 8px;
+        font-size: 17px;
+      }
+
+      .modal p {
+        margin: 0;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 13px 22px;
+        border-top: 1px solid var(--border);
+      }
+
+      .toast {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        z-index: 150;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        transform: translate(-50%, -12px);
+        opacity: 0;
+        visibility: hidden;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transition: 180ms ease;
+      }
+
+      .toast.show {
+        transform: translate(-50%, 0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .toast svg {
+        color: var(--success);
+      }
+
+      .prototype-note {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 30;
+        max-width: 270px;
+        padding: 10px 13px;
+        border: 1px solid var(--primary-border);
+        border-radius: 9px;
+        background: color-mix(in srgb, var(--primary-soft) 92%, transparent);
+        color: var(--primary);
+        box-shadow: 0 8px 26px rgb(48 51 160 / 12%);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 72px minmax(0, 1fr);
+        }
+
+        .brand {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .brand span,
+        .nav-label,
+        .nav-item span,
+        .nav-item .chevron,
+        .sidebar-user div {
+          display: none;
+        }
+
+        .nav-item,
+        .nav-item.child {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .sidebar-user {
+          justify-content: center;
+          padding: 10px 0;
+        }
+
+        .search-body {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .search-actions {
+          grid-column: 1 / -1;
+          justify-content: flex-end;
+        }
+
+        .toolbar .button span {
+          display: none;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .app {
+          display: block;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .topbar,
+        .content {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .page-heading {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .search-body {
+          grid-template-columns: 1fr;
+        }
+
+        .search-actions {
+          grid-column: auto;
+        }
+
+        .card-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .toolbar {
+          width: 100%;
+          overflow-x: auto;
+        }
+
+        .toolbar .button span {
+          display: inline;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-grid .span-2 {
+          grid-column: auto;
+        }
+
+        .prototype-note {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </symbol>
+      <symbol id="i-building" viewBox="0 0 24 24">
+        <path d="M3 21h18M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"></path>
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8.5 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3V9.6h.1A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.37.28.6.71.6 1.18v.02h1v4h-.1A1.7 1.7 0 0 0 19.4 15z"></path>
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"></path>
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M20 11a8 8 0 1 0-2.34 5.66L20 14"></path>
+        <path d="M20 8v6h-6"></path>
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6"></path>
+      </symbol>
+      <symbol id="i-columns" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+        <path d="M9 4v16M15 4v16"></path>
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path>
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path>
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24">
+        <path d="M10.3 3.6 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"></path>
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6"></path>
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">
+            <svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>
+          </span>
+          <span>Skyroc Admin</span>
+        </div>
+
+        <nav class="nav" aria-label="主导航">
+          <div class="nav-label">工作空间</div>
+          <button class="nav-item" type="button">
+            <svg class="icon"><use href="#i-grid"></use></svg>
+            <span>工作台</span>
+          </button>
+
+          <div class="nav-label">组织与权限</div>
+          <button class="nav-item" type="button">
+            <svg class="icon"><use href="#i-users"></use></svg>
+            <span>用户管理</span>
+          </button>
+          <button class="nav-item active" type="button">
+            <svg class="icon"><use href="#i-building"></use></svg>
+            <span>部门管理</span>
+          </button>
+          <button class="nav-item" type="button">
+            <svg class="icon"><use href="#i-shield"></use></svg>
+            <span>角色与权限</span>
+          </button>
+
+          <div class="nav-label">系统配置</div>
+          <button class="nav-item" type="button">
+            <svg class="icon"><use href="#i-settings"></use></svg>
+            <span>系统设置</span>
+            <svg class="icon chevron"><use href="#i-chevron"></use></svg>
+          </button>
+        </nav>
+
+        <div class="sidebar-user">
+          <span class="avatar">王</span>
+          <div>
+            <strong>王敏</strong>
+            <small>企业管理员</small>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main-shell">
+        <header class="topbar">
+          <div class="breadcrumbs">
+            <span>组织与用户</span>
+            <span>/</span>
+            <strong>部门管理</strong>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" id="themeButton" type="button" aria-label="切换明暗主题">
+              <svg class="icon"><use href="#i-sun"></use></svg>
+            </button>
+            <button class="icon-button" type="button" aria-label="通知">
+              <svg class="icon"><use href="#i-bell"></use></svg>
+            </button>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <h1>部门管理</h1>
+              <p>维护组织层级、部门负责人以及用户归属基础。</p>
+            </div>
+            <span class="context-pill"><span class="context-dot"></span>当前租户：Skyroc 科技</span>
+          </div>
+
+          <section class="card search-card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg class="icon"><use href="#i-search"></use></svg>
+                查询条件
+              </div>
+              <button class="icon-button" id="collapseSearch" type="button" aria-label="折叠查询条件">
+                <svg class="icon"><use href="#i-chevron"></use></svg>
+              </button>
+            </div>
+            <div class="search-body" id="searchBody">
+              <div class="field">
+                <label for="searchName">部门名称</label>
+                <input class="control" id="searchName" type="search" placeholder="请输入部门名称" />
+              </div>
+              <div class="field">
+                <label for="searchStatus">状态</label>
+                <select id="searchStatus">
+                  <option value="">全部状态</option>
+                  <option value="正常">正常</option>
+                  <option value="停用">停用</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="searchCategory">部门类别</label>
+                <select id="searchCategory">
+                  <option value="">全部类别</option>
+                  <option value="总部">总部</option>
+                  <option value="中心">中心</option>
+                  <option value="部门">部门</option>
+                  <option value="区域">区域</option>
+                </select>
+              </div>
+              <div class="search-actions">
+                <button class="button primary" id="searchButton" type="button">
+                  <svg class="icon"><use href="#i-search"></use></svg>
+                  查询
+                </button>
+                <button class="button" id="resetButton" type="button">重置</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card table-card">
+            <div class="card-header">
+              <div class="card-title">
+                组织架构
+                <small id="resultCount">共 8 个部门</small>
+              </div>
+              <div class="toolbar">
+                <button class="button primary" id="addRootButton" type="button">
+                  <svg class="icon"><use href="#i-plus"></use></svg>
+                  <span>新增顶级部门</span>
+                </button>
+                <button class="button" id="expandButton" type="button">
+                  <svg class="icon"><use href="#i-chevron"></use></svg>
+                  <span>全部收起</span>
+                </button>
+                <button class="button" id="refreshButton" type="button">
+                  <svg class="icon"><use href="#i-refresh"></use></svg>
+                  <span>刷新</span>
+                </button>
+                <button class="button" type="button" data-message="列设置将在正式页面中接入表格配置。">
+                  <svg class="icon"><use href="#i-columns"></use></svg>
+                  <span>列设置</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 31%">部门名称</th>
+                    <th>部门类别</th>
+                    <th>负责人</th>
+                    <th>联系电话</th>
+                    <th>排序</th>
+                    <th>状态</th>
+                    <th style="width: 245px">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="deptRows">
+                  <tr data-id="100" data-parent="0" data-level="0" data-name="Skyroc 集团" data-category="总部" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 0"></span>
+                        <button class="tree-toggle" type="button" aria-label="收起 Skyroc 集团">
+                          <svg class="icon"><use href="#i-chevron"></use></svg>
+                        </button>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">Skyroc 集团</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">总部</span></td>
+                    <td><span class="leader"><span class="mini-avatar">王</span>王敏</span></td>
+                    <td>138****8000</td>
+                    <td>0</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="110" data-parent="100" data-level="1" data-name="产品中心" data-category="中心" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 24px"></span>
+                        <button class="tree-toggle" type="button" aria-label="收起 产品中心">
+                          <svg class="icon"><use href="#i-chevron"></use></svg>
+                        </button>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">产品中心</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">中心</span></td>
+                    <td><span class="leader"><span class="mini-avatar">陈</span>陈晨</span></td>
+                    <td>137****6208</td>
+                    <td>10</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="111" data-parent="110" data-level="2" data-name="产品部" data-category="部门" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 48px"></span>
+                        <span class="tree-placeholder"></span>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">产品部</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">部门</span></td>
+                    <td><span class="leader"><span class="mini-avatar">周</span>周宁</span></td>
+                    <td>136****2721</td>
+                    <td>10</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="112" data-parent="110" data-level="2" data-name="设计部" data-category="部门" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 48px"></span>
+                        <span class="tree-placeholder"></span>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">设计部</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">部门</span></td>
+                    <td><span class="leader"><span class="mini-avatar">林</span>林珊</span></td>
+                    <td>135****9120</td>
+                    <td>20</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="120" data-parent="100" data-level="1" data-name="技术中心" data-category="中心" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 24px"></span>
+                        <button class="tree-toggle" type="button" aria-label="收起 技术中心">
+                          <svg class="icon"><use href="#i-chevron"></use></svg>
+                        </button>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">技术中心</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">中心</span></td>
+                    <td><span class="leader"><span class="mini-avatar">李</span>李岩</span></td>
+                    <td>139****1648</td>
+                    <td>20</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="121" data-parent="120" data-level="2" data-name="前端研发部" data-category="部门" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 48px"></span>
+                        <span class="tree-placeholder"></span>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">前端研发部</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">部门</span></td>
+                    <td><span class="leader"><span class="mini-avatar">赵</span>赵可</span></td>
+                    <td>134****5316</td>
+                    <td>10</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="122" data-parent="120" data-level="2" data-name="平台研发部" data-category="部门" data-status="正常">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 48px"></span>
+                        <span class="tree-placeholder"></span>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">平台研发部</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">部门</span></td>
+                    <td><span class="leader"><span class="mini-avatar">宋</span>宋远</span></td>
+                    <td>133****7102</td>
+                    <td>20</td>
+                    <td><span class="tag success">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text add-child" type="button">新增下级</button>
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr data-id="200" data-parent="0" data-level="0" data-name="华东区域中心" data-category="区域" data-status="停用">
+                    <td>
+                      <div class="dept-cell">
+                        <span class="tree-indent" style="width: 0"></span>
+                        <span class="tree-placeholder"></span>
+                        <span class="dept-symbol"><svg class="icon"><use href="#i-building"></use></svg></span>
+                        <span class="dept-name">华东区域中心</span>
+                      </div>
+                    </td>
+                    <td><span class="tag neutral">区域</span></td>
+                    <td><span style="color: var(--text-tertiary)">未设置</span></td>
+                    <td>—</td>
+                    <td>20</td>
+                    <td><span class="tag warning">停用</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="button text edit-row" type="button">编辑</button>
+                        <button class="button text member-row" type="button">成员</button>
+                        <button class="button text danger delete-row" type="button">删除</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-footer">
+              <span>部门树按层级和同级排序展示</span>
+              <span>最后刷新：刚刚</span>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div class="drawer-mask" id="drawerMask">
+      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+        <header class="drawer-header">
+          <div>
+            <div class="drawer-title" id="drawerTitle">新增部门</div>
+            <div class="drawer-subtitle" id="drawerSubtitle">创建新的组织节点</div>
+          </div>
+          <button class="icon-button" id="closeDrawer" type="button" aria-label="关闭抽屉">
+            <svg class="icon"><use href="#i-x"></use></svg>
+          </button>
+        </header>
+        <div class="drawer-body">
+          <form id="deptForm">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label class="required" for="parentDept">上级部门</label>
+                <select id="parentDept" required>
+                  <option value="0">顶级部门</option>
+                  <option value="100">Skyroc 集团</option>
+                  <option value="110">　产品中心</option>
+                  <option value="111">　　产品部</option>
+                  <option value="112">　　设计部</option>
+                  <option value="120">　技术中心</option>
+                  <option value="121">　　前端研发部</option>
+                  <option value="122">　　平台研发部</option>
+                </select>
+                <p class="field-help move-warning" id="moveWarning">
+                  移动后，该部门及其全部下级将一起迁移，成员归属不变。
+                </p>
+              </div>
+              <div class="field span-2">
+                <label class="required" for="deptName">部门名称</label>
+                <input class="control" id="deptName" maxlength="30" required placeholder="请输入部门名称" />
+              </div>
+              <div class="field">
+                <label for="deptCategory">部门类别</label>
+                <select id="deptCategory">
+                  <option value="">请选择</option>
+                  <option value="总部">总部</option>
+                  <option value="中心">中心</option>
+                  <option value="部门">部门</option>
+                  <option value="区域">区域</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="required" for="orderNum">显示顺序</label>
+                <input class="control" id="orderNum" min="0" required type="number" value="0" />
+              </div>
+              <div class="field span-2">
+                <label for="leader">负责人</label>
+                <select id="leader">
+                  <option value="">未设置</option>
+                  <option>王敏 · wangmin · Skyroc 集团</option>
+                  <option>陈晨 · chenchen · 产品中心</option>
+                  <option>李岩 · liyan · 技术中心</option>
+                  <option>周宁 · zhouning · 产品部</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="phone">联系电话</label>
+                <input class="control" id="phone" maxlength="11" placeholder="请输入联系电话" />
+              </div>
+              <div class="field">
+                <label for="email">联系邮箱</label>
+                <input class="control" id="email" maxlength="50" type="email" placeholder="name@example.com" />
+              </div>
+              <div class="field span-2">
+                <label>部门状态</label>
+                <div class="switch-line">
+                  <button class="switch on" id="statusSwitch" type="button" role="switch" aria-checked="true"></button>
+                  <span id="statusText">正常</span>
+                </div>
+                <p class="field-help">停用部门不能作为新增或移动操作的目标上级。</p>
+              </div>
+            </div>
+          </form>
+        </div>
+        <footer class="drawer-footer">
+          <button class="button" id="cancelDrawer" type="button">取消</button>
+          <button class="button primary" id="saveDept" type="button">保存部门</button>
+        </footer>
+      </aside>
+    </div>
+
+    <div class="modal-mask" id="deleteMask">
+      <section class="modal" role="alertdialog" aria-modal="true" aria-labelledby="deleteTitle">
+        <div class="modal-content">
+          <span class="danger-icon">
+            <svg class="icon"><use href="#i-alert"></use></svg>
+          </span>
+          <div>
+            <h2 id="deleteTitle">删除部门</h2>
+            <p id="deleteMessage">删除后将不能继续分配用户，历史审计记录仍会保留。</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="button" id="cancelDelete" type="button">取消</button>
+          <button class="button danger" id="confirmDelete" type="button">删除部门</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status">
+      <svg class="icon"><use href="#i-check"></use></svg>
+      <span id="toastText">操作成功</span>
+    </div>
+
+    <aside class="prototype-note">
+      交互原型：可以搜索、展开树、打开新增/编辑抽屉、切换状态、查看成员和触发删除确认。
+    </aside>
+
+    <script>
+      const root = document.documentElement;
+      const rows = Array.from(document.querySelectorAll('#deptRows tr'));
+      const drawerMask = document.querySelector('#drawerMask');
+      const deleteMask = document.querySelector('#deleteMask');
+      const parentDept = document.querySelector('#parentDept');
+      const deptName = document.querySelector('#deptName');
+      const deptCategory = document.querySelector('#deptCategory');
+      const orderNum = document.querySelector('#orderNum');
+      const moveWarning = document.querySelector('#moveWarning');
+      const statusSwitch = document.querySelector('#statusSwitch');
+      const statusText = document.querySelector('#statusText');
+      const toast = document.querySelector('#toast');
+      const toastText = document.querySelector('#toastText');
+      let editingRow = null;
+      let deleteTarget = null;
+      let allExpanded = true;
+      let toastTimer;
+
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+
+      function openDrawer(mode, row = null, parentId = '0') {
+        editingRow = mode === 'edit' ? row : null;
+        document.querySelector('#drawerTitle').textContent = mode === 'edit' ? '编辑部门' : '新增部门';
+        document.querySelector('#drawerSubtitle').textContent =
+          mode === 'edit' ? '修改部门信息或调整组织归属' : '创建新的组织节点';
+
+        if (mode === 'edit') {
+          parentDept.value = row.dataset.parent;
+          deptName.value = row.dataset.name;
+          deptCategory.value = row.dataset.category;
+          orderNum.value = row.children[4].textContent.trim();
+          setStatus(row.dataset.status === '正常');
+        } else {
+          parentDept.value = parentId;
+          deptName.value = '';
+          deptCategory.value = '部门';
+          orderNum.value = '0';
+          document.querySelector('#leader').value = '';
+          document.querySelector('#phone').value = '';
+          document.querySelector('#email').value = '';
+          setStatus(true);
+        }
+
+        moveWarning.classList.toggle('show', mode === 'edit' && row.querySelector('.tree-toggle') !== null);
+        drawerMask.classList.add('open');
+        setTimeout(() => deptName.focus(), 230);
+      }
+
+      function closeDrawer() {
+        drawerMask.classList.remove('open');
+        editingRow = null;
+      }
+
+      function setStatus(enabled) {
+        statusSwitch.classList.toggle('on', enabled);
+        statusSwitch.setAttribute('aria-checked', String(enabled));
+        statusText.textContent = enabled ? '正常' : '停用';
+      }
+
+      function descendantRows(parentId) {
+        const direct = rows.filter(row => row.dataset.parent === parentId);
+        return direct.flatMap(row => [row, ...descendantRows(row.dataset.id)]);
+      }
+
+      function toggleRow(row, collapsed) {
+        const button = row.querySelector('.tree-toggle');
+        if (!button) return;
+        button.classList.toggle('collapsed', collapsed);
+        button.setAttribute('aria-label', `${collapsed ? '展开' : '收起'} ${row.dataset.name}`);
+        descendantRows(row.dataset.id).forEach(child => {
+          child.hidden = collapsed;
+          if (collapsed) {
+            child.querySelector('.tree-toggle')?.classList.add('collapsed');
+          }
+        });
+      }
+
+      document.querySelectorAll('.tree-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+          const row = button.closest('tr');
+          toggleRow(row, !button.classList.contains('collapsed'));
+        });
+      });
+
+      document.querySelector('#expandButton').addEventListener('click', event => {
+        allExpanded = !allExpanded;
+        rows.filter(row => row.querySelector('.tree-toggle')).forEach(row => toggleRow(row, !allExpanded));
+        event.currentTarget.querySelector('span').textContent = allExpanded ? '全部收起' : '全部展开';
+      });
+
+      document.querySelector('#collapseSearch').addEventListener('click', event => {
+        const searchBody = document.querySelector('#searchBody');
+        const collapsed = searchBody.hidden;
+        searchBody.hidden = !collapsed;
+        event.currentTarget.querySelector('svg').style.transform = collapsed ? '' : 'rotate(-90deg)';
+      });
+
+      document.querySelector('#themeButton').addEventListener('click', () => {
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      });
+
+      document.querySelector('#addRootButton').addEventListener('click', () => openDrawer('add', null, '0'));
+
+      document.querySelectorAll('.add-child').forEach(button => {
+        button.addEventListener('click', () => {
+          const row = button.closest('tr');
+          openDrawer('add', null, row.dataset.id);
+        });
+      });
+
+      document.querySelectorAll('.edit-row').forEach(button => {
+        button.addEventListener('click', () => openDrawer('edit', button.closest('tr')));
+      });
+
+      document.querySelectorAll('.member-row').forEach(button => {
+        button.addEventListener('click', () => {
+          const name = button.closest('tr').dataset.name;
+          showToast(`将跳转用户管理并筛选“${name}”成员`);
+        });
+      });
+
+      document.querySelectorAll('.delete-row').forEach(button => {
+        button.addEventListener('click', () => {
+          deleteTarget = button.closest('tr');
+          const hasChildren = descendantRows(deleteTarget.dataset.id).length > 0;
+          document.querySelector('#deleteMessage').textContent = hasChildren
+            ? `“${deleteTarget.dataset.name}”存在下级部门，正式系统将阻止删除并说明原因。`
+            : `删除“${deleteTarget.dataset.name}”后将不能继续分配用户，历史审计记录仍会保留。`;
+          document.querySelector('#confirmDelete').textContent = hasChildren ? '我知道了' : '删除部门';
+          deleteMask.classList.add('open');
+        });
+      });
+
+      document.querySelector('#confirmDelete').addEventListener('click', () => {
+        const hasChildren = descendantRows(deleteTarget.dataset.id).length > 0;
+        deleteMask.classList.remove('open');
+        showToast(hasChildren ? '存在下级部门，不能删除' : '原型演示：删除校验已通过');
+        deleteTarget = null;
+      });
+
+      document.querySelector('#cancelDelete').addEventListener('click', () => {
+        deleteMask.classList.remove('open');
+        deleteTarget = null;
+      });
+
+      document.querySelector('#closeDrawer').addEventListener('click', closeDrawer);
+      document.querySelector('#cancelDrawer').addEventListener('click', closeDrawer);
+
+      drawerMask.addEventListener('click', event => {
+        if (event.target === drawerMask) closeDrawer();
+      });
+
+      deleteMask.addEventListener('click', event => {
+        if (event.target === deleteMask) deleteMask.classList.remove('open');
+      });
+
+      statusSwitch.addEventListener('click', () => {
+        const nextStatus = !statusSwitch.classList.contains('on');
+        setStatus(nextStatus);
+        if (!nextStatus) showToast('正式系统会先校验正常子部门和有效成员');
+      });
+
+      parentDept.addEventListener('change', () => {
+        if (editingRow && parentDept.value !== editingRow.dataset.parent) {
+          moveWarning.classList.add('show');
+        }
+      });
+
+      document.querySelector('#saveDept').addEventListener('click', () => {
+        if (!document.querySelector('#deptForm').reportValidity()) return;
+        const action = editingRow ? '部门信息已更新' : '部门已创建';
+        closeDrawer();
+        showToast(`原型演示：${action}`);
+      });
+
+      document.querySelector('#searchButton').addEventListener('click', runSearch);
+
+      document.querySelector('#searchName').addEventListener('keydown', event => {
+        if (event.key === 'Enter') runSearch();
+      });
+
+      function runSearch() {
+        const keyword = document.querySelector('#searchName').value.trim().toLowerCase();
+        const status = document.querySelector('#searchStatus').value;
+        const category = document.querySelector('#searchCategory').value;
+        let count = 0;
+
+        rows.forEach(row => {
+          const matches =
+            (!keyword || row.dataset.name.toLowerCase().includes(keyword)) &&
+            (!status || row.dataset.status === status) &&
+            (!category || row.dataset.category === category);
+          row.hidden = !matches;
+          row.classList.toggle('is-match', matches && Boolean(keyword || status || category));
+          const nameNode = row.querySelector('.dept-name');
+          nameNode.textContent = row.dataset.name;
+          if (matches && keyword) {
+            const index = row.dataset.name.toLowerCase().indexOf(keyword);
+            if (index >= 0) {
+              const before = row.dataset.name.slice(0, index);
+              const match = row.dataset.name.slice(index, index + keyword.length);
+              const after = row.dataset.name.slice(index + keyword.length);
+              nameNode.innerHTML = `${before}<mark>${match}</mark>${after}`;
+            }
+          }
+          if (matches) count += 1;
+        });
+
+        document.querySelector('#resultCount').textContent = `找到 ${count} 个部门`;
+        showToast(count ? `已找到 ${count} 个部门` : '没有找到符合条件的部门');
+      }
+
+      document.querySelector('#resetButton').addEventListener('click', () => {
+        document.querySelector('#searchName').value = '';
+        document.querySelector('#searchStatus').value = '';
+        document.querySelector('#searchCategory').value = '';
+        rows.forEach(row => {
+          row.hidden = false;
+          row.classList.remove('is-match');
+          row.querySelector('.dept-name').textContent = row.dataset.name;
+        });
+        document.querySelector('#resultCount').textContent = '共 8 个部门';
+      });
+
+      document.querySelector('#refreshButton').addEventListener('click', event => {
+        const icon = event.currentTarget.querySelector('svg');
+        icon.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(360deg)' }], {
+          duration: 500,
+          easing: 'ease'
+        });
+        showToast('部门数据已刷新');
+      });
+
+      document.querySelectorAll('[data-message]').forEach(button => {
+        button.addEventListener('click', () => showToast(button.dataset.message));
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        if (deleteMask.classList.contains('open')) deleteMask.classList.remove('open');
+        else if (drawerMask.classList.contains('open')) closeDrawer();
+      });
+    </script>
+  </body>
+</html>
