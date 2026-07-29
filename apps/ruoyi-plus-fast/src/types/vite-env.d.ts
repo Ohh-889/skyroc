@@ -8,12 +8,32 @@ declare namespace Env {
   type RouterHistoryMode = 'hash' | 'history' | 'memory';
 
   interface AppImportMetaEnv {
+    /**
+     * The header carrying the encrypted AES key
+     *
+     * Must match the backend `API_CRYPTO_HEADER`
+     */
+    readonly VITE_API_CRYPTO_HEADER?: string;
+    /**
+     * The RSA public key (PEM) used to encrypt request bodies
+     *
+     * Line breaks are written as literal `\n`. When it is empty, requests marked with `encrypt: true` fail instead of
+     * falling back to plaintext
+     */
+    readonly VITE_API_CRYPTO_PUBLIC_KEY?: string;
     /** The description of the application */
     readonly VITE_APP_DESC: string;
     /** The title of the application */
     readonly VITE_APP_TITLE: string;
     /** Whether image captcha is enabled on the login page */
     readonly VITE_AUTH_CAPTCHA_ENABLED?: Common.YesOrNo;
+    /**
+     * The client id sent with every login request
+     *
+     * Must match a row of the backend `sys_client` table. The backend rejects the login when the client is unknown, has
+     * not opened the `password` grant type, or is disabled
+     */
+    readonly VITE_AUTH_CLIENT_ID: string;
     /** Feishu OAuth authorization URL */
     readonly VITE_AUTH_FEISHU_URL?: string;
     /**

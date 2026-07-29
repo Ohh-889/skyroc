@@ -23,6 +23,10 @@ export const request = createAppRequest({
     logout: import.meta.env.VITE_SERVICE_LOGOUT_CODES?.split(',') || [],
     modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES?.split(',') || [],
     success: import.meta.env.VITE_SERVICE_SUCCESS_CODE
+  },
+  crypto: {
+    header: import.meta.env.VITE_API_CRYPTO_HEADER || 'X-Encrypt-Key',
+    publicKey: import.meta.env.VITE_API_CRYPTO_PUBLIC_KEY || ''
   }
 });
 
