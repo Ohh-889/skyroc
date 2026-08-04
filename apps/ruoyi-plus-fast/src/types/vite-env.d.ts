@@ -129,10 +129,18 @@ declare namespace Env {
     readonly VITE_SERVICE_SUCCESS_CODE: string;
     /** Whether to build with sourcemap */
     readonly VITE_SOURCE_MAP?: Common.YesOrNo;
+    /** Whether to connect to the backend SSE stream after login */
+    readonly VITE_SSE_ENABLED?: Common.YesOrNo;
+    /** Backend SSE endpoint, for example http://127.0.0.1:8000/resource/sse */
+    readonly VITE_SSE_URL?: string;
     /** When the route mode is static, the defined super role */
     readonly VITE_STATIC_SUPER_ROLE: string;
     /** Used to differentiate storage across different domains */
     readonly VITE_STORAGE_PREFIX?: string;
+    /** Whether to connect to the backend WebSocket after login */
+    readonly VITE_WEBSOCKET_ENABLED?: Common.YesOrNo;
+    /** Backend WebSocket endpoint, for example ws://127.0.0.1:8000/resource/websocket */
+    readonly VITE_WEBSOCKET_URL?: string;
   }
 
   type ImportMeta = AppImportMetaEnv;

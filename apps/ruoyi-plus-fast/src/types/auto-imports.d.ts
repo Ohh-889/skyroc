@@ -6,47 +6,22 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const AApp: typeof import('antd').App
   const ABadge: typeof import('antd').Badge
-  const ABreadcrumb: typeof import('antd').Breadcrumb
   const AButton: typeof import('antd').Button
   const ACard: typeof import('antd').Card
   const ACheckbox: typeof import('antd').Checkbox
   const ACol: typeof import('antd').Col
-  const AColorPicker: typeof import('antd').ColorPicker
-  const AConfigProvider: typeof import('antd').ConfigProvider
-  const ADescriptions: typeof import('antd').Descriptions
   const ADivider: typeof import('antd').Divider
-  const ADrawer: typeof import('antd').Drawer
-  const ADropdown: typeof import('antd').Dropdown
   const AEmpty: typeof import('antd').Empty
-  const AFlex: typeof import('antd').Flex
   const AForm: typeof import('antd').Form
   const AInput: typeof import('antd').Input
-  const AInputNumber: typeof import('antd').InputNumber
   const AList: typeof import('antd').List
-  const AMenu: typeof import('antd').Menu
-  const AModal: typeof import('antd').Modal
   const ARow: typeof import('antd').Row
-  const ASegmented: typeof import('antd').Segmented
-  const ASelect: typeof import('antd').Select
   const ASpace: typeof import('antd').Space
-  const AStatistic: typeof import('antd').Statistic
-  const ASwitch: typeof import('antd').Switch
   const ATag: typeof import('antd').Tag
-  const ATooltip: typeof import('antd').Tooltip
-  const AWatermark: typeof import('antd').Watermark
   const Activity: typeof import('react').Activity
   const Fragment: typeof import('react').Fragment
-  const IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined.tsx').default
-  const IconLocalBanner: typeof import('~icons/local/banner.tsx').default
   const IconLocalLogo: typeof import('~icons/local/logo.tsx').default
-  const IconMdiArrowDownThin: typeof import('~icons/mdi/arrow-down-thin.tsx').default
-  const IconMdiArrowUpThin: typeof import('~icons/mdi/arrow-up-thin.tsx').default
-  const IconMdiInformationOutline: typeof import('~icons/mdi/information-outline.tsx').default
-  const IconMdiKeyboardEsc: typeof import('~icons/mdi/keyboard-esc.tsx').default
-  const IconMdiKeyboardReturn: typeof import('~icons/mdi/keyboard-return.tsx').default
-  const IconUilSearch: typeof import('~icons/uil/search.tsx').default
   const SkyrocAvatar: typeof import('../components/SkyrocAvatar').default
   const Suspense: typeof import('react').Suspense
   const SystemLogo: typeof import('../components/SystemLogo').default
@@ -58,7 +33,6 @@ declare global {
   const destroyNotification: typeof import('../config').destroyNotification
   const forwardRef: typeof import('react').forwardRef
   const globalConfig: typeof import('../config').globalConfig
-  const initAntdProvider: typeof import('../config').initAntdProvider
   const initNProgress: typeof import('../config').initNProgress
   const lazy: typeof import('react').lazy
   const memo: typeof import('react').memo

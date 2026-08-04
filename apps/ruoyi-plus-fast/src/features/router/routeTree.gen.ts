@@ -17,6 +17,9 @@ import { Route as errors403RouteImport } from './../../pages/(errors)/403'
 import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out'
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
+import { Route as adminWebsocketTestIndexRouteImport } from './../../pages/(admin)/websocket-test/index'
+import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/stream-test/index'
+import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse-test/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
 
@@ -59,6 +62,21 @@ const authLoginIndexRoute = authLoginIndexRouteImport.update({
   path: '/',
   getParentRoute: () => authLoginLayoutRoute,
 } as any)
+const adminWebsocketTestIndexRoute = adminWebsocketTestIndexRouteImport.update({
+  id: '/websocket-test/',
+  path: '/websocket-test/',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
+const adminStreamTestIndexRoute = adminStreamTestIndexRouteImport.update({
+  id: '/stream-test/',
+  path: '/stream-test/',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
+const adminSseTestIndexRoute = adminSseTestIndexRouteImport.update({
+  id: '/sse-test/',
+  path: '/sse-test/',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
 const adminHomeIndexRoute = adminHomeIndexRouteImport.update({
   id: '/home/',
   path: '/home/',
@@ -79,6 +97,9 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/login/code': typeof authLoginCodeRoute
   '/home/': typeof adminHomeIndexRoute
+  '/sse-test/': typeof adminSseTestIndexRoute
+  '/stream-test/': typeof adminStreamTestIndexRoute
+  '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
 }
 export interface FileRoutesByTo {
@@ -89,6 +110,9 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/login/code': typeof authLoginCodeRoute
   '/home': typeof adminHomeIndexRoute
+  '/sse-test': typeof adminSseTestIndexRoute
+  '/stream-test': typeof adminStreamTestIndexRoute
+  '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
 }
 export interface FileRoutesById {
@@ -102,6 +126,9 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(auth)/login/code': typeof authLoginCodeRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
+  '/(admin)/sse-test/': typeof adminSseTestIndexRoute
+  '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
+  '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
 }
 export interface FileRouteTypes {
@@ -115,6 +142,9 @@ export interface FileRouteTypes {
     | '/500'
     | '/login/code'
     | '/home/'
+    | '/sse-test/'
+    | '/stream-test/'
+    | '/websocket-test/'
     | '/login/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -125,6 +155,9 @@ export interface FileRouteTypes {
     | '/500'
     | '/login/code'
     | '/home'
+    | '/sse-test'
+    | '/stream-test'
+    | '/websocket-test'
     | '/login'
   id:
     | '__root__'
@@ -137,6 +170,9 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(auth)/login/code'
     | '/(admin)/home/'
+    | '/(admin)/sse-test/'
+    | '/(admin)/stream-test/'
+    | '/(admin)/websocket-test/'
     | '/(auth)/login/'
   fileRoutesById: FileRoutesById
 }
@@ -208,6 +244,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginIndexRouteImport
       parentRoute: typeof authLoginLayoutRoute
     }
+    '/(admin)/websocket-test/': {
+      id: '/(admin)/websocket-test/'
+      path: '/websocket-test'
+      fullPath: '/websocket-test/'
+      preLoaderRoute: typeof adminWebsocketTestIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/stream-test/': {
+      id: '/(admin)/stream-test/'
+      path: '/stream-test'
+      fullPath: '/stream-test/'
+      preLoaderRoute: typeof adminStreamTestIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/sse-test/': {
+      id: '/(admin)/sse-test/'
+      path: '/sse-test'
+      fullPath: '/sse-test/'
+      preLoaderRoute: typeof adminSseTestIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
     '/(admin)/home/': {
       id: '/(admin)/home/'
       path: '/home'
@@ -227,10 +284,16 @@ declare module '@tanstack/react-router' {
 
 interface adminLayoutRouteChildren {
   adminHomeIndexRoute: typeof adminHomeIndexRoute
+  adminSseTestIndexRoute: typeof adminSseTestIndexRoute
+  adminStreamTestIndexRoute: typeof adminStreamTestIndexRoute
+  adminWebsocketTestIndexRoute: typeof adminWebsocketTestIndexRoute
 }
 
 const adminLayoutRouteChildren: adminLayoutRouteChildren = {
   adminHomeIndexRoute: adminHomeIndexRoute,
+  adminSseTestIndexRoute: adminSseTestIndexRoute,
+  adminStreamTestIndexRoute: adminStreamTestIndexRoute,
+  adminWebsocketTestIndexRoute: adminWebsocketTestIndexRoute,
 }
 
 const adminLayoutRouteWithChildren = adminLayoutRoute._addFileChildren(
