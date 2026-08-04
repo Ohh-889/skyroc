@@ -22,7 +22,6 @@ const initState: AuthState = {
 
 const authAtom = atom(initState);
 
-
 export function getToken() {
   return localStg.get('token');
 }
@@ -63,7 +62,12 @@ export function useAuth() {
     }
   }
 
-  function clearAuth() {
+  /**
+   * 退出登录：清掉本地这一整套登录状态。
+   *
+   * 声明成 async 是为了给"先请求后端作废令牌、再清本地"留出位置——两件事的顺序不能反， 清本地是同步的，先清了请求就带不上 Authorization。这个 app 的后端没有登出接口， 所以眼下只有清理这一半。
+   */
+  async function logout() {
     if (userInfo) {
       localStg.set('lastLoginUserId', userInfo.userId);
     }
@@ -81,7 +85,7 @@ export function useAuth() {
     token: state.token,
     userInfo: userInfo || undefined,
     isLoggedIn,
-    clearAuth,
+    logout,
     getHomeRoute,
     homeRoute: home,
     initMenus,

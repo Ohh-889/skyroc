@@ -2,7 +2,7 @@ import { globalStore, updateAtomValue } from '@skyroc/core-state';
 import { cacheTabs, useMenus } from '@skyroc/web-admin-layouts';
 import { atom, useAtom } from 'jotai';
 
-import { useUserInfoQuery } from '@/service/api';
+import { fetchLogout, useUserInfoQuery } from '@/service/api';
 import { queryClient } from '@/service/queryClient';
 import { localStg } from '@/utils/storage';
 
@@ -63,7 +63,14 @@ export function useAuth() {
     }
   }
 
-  function clearAuth() {
+  /**
+   * 退出登录：作废服务端的令牌，再清掉本地这一整套登录状态。
+   *
+   * 两件事必须在一个函数里，顺序不能反：清本地是同步的，而请求拦截器要到下一个微任务才去读 token，先清了本地，发出去的就是一条没带 Authorization 的请求（后果见 fetchLogout）。
+   */
+  async function logout() {
+    await fetchLogout();
+
     if (userInfo) {
       localStg.set('lastLoginUserId', userInfo.userId);
     }
@@ -81,7 +88,7 @@ export function useAuth() {
     token: state.token,
     userInfo: userInfo || undefined,
     isLoggedIn,
-    clearAuth,
+    logout,
     getHomeRoute,
     homeRoute: home,
     initMenus,

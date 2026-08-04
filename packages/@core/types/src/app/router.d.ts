@@ -172,8 +172,6 @@ declare global {
     }
 
     interface RouterContext {
-      /** Clear authentication information */
-      clearAuth: () => void;
       /**
        * Initialize authentication information
        *
@@ -184,6 +182,8 @@ declare global {
       isAuthInitialized: boolean;
       /** Whether the user is logged in */
       isLoggedIn: boolean;
+      /** Logout user and clear authentication information */
+      logout: () => Promise<void>;
       /** Query client */
       queryClient: QueryClient;
       /** User information */

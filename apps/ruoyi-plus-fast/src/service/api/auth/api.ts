@@ -40,6 +40,25 @@ export function fetchGetUserInfo() {
   return request<Api.Auth.UserInfo>({ url: AUTH_URLS.GET_USER_INFO });
 }
 
+// 后端认的是 Authorization 里的那张令牌，所以必须赶在清本地存储之前调用：请求拦截器要到下
+// 一个微任务才去读 token，先清了本地，发出去的就是一条没带令牌的请求，后端当成"没带"直接回
+// 成功，而服务端的刷新令牌和在线设备记录会一直留到自己过期。
+//
+// 自带 timeout：登出是个用户已经决定了的动作，不能因为后端不响应就卡在原地退不出去。默认
+// 配置没设 timeout，不给这一条单独设的话最坏情况是一直等下去。
+export function fetchLogout() {
+  // 本来就没令牌（会话已经被强制登出过）就不发了，后端一样回成功，但那是一次白跑的往返
+  if (!getToken()) {
+    return Promise.resolve(null);
+  }
+
+  return request<null>({
+    method: 'post',
+    timeout: 3000,
+    url: AUTH_URLS.LOGOUT
+  });
+}
+
 export function fetchRefreshToken(refreshToken: string) {
   return request<Api.Auth.LoginToken>({
     data: {

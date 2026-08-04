@@ -16,10 +16,11 @@ export const Route = createFileRoute('/(auth)/login-out')({
     title: 'login-out',
     i18nKey: 'route.login-out'
   },
-  beforeLoad: ({ context, search }) => {
+  beforeLoad: async ({ context, search }) => {
     const redirectPath = search.redirect;
 
-    context.clearAuth();
+    // 等它走完再跳，否则跳到 /login 时本地令牌可能还没清掉
+    await context.logout();
 
     throw redirect({ to: '/login', search: redirectPath ? { redirect: redirectPath } : undefined });
   }

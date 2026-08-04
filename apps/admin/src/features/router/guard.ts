@@ -1,8 +1,4 @@
-import {
-  hasAuthorizedRoutePath,
-  hasMatchedRoutePermission,
-  normalizePath
-} from '@skyroc/web-admin-layouts';
+import { hasAuthorizedRoutePath, hasMatchedRoutePermission, normalizePath } from '@skyroc/web-admin-layouts';
 import { redirect } from '@tanstack/react-router';
 
 export interface AdminRouteGuardOptions {
@@ -29,12 +25,12 @@ interface AdminRouteMatch {
 }
 
 interface AdminRouteGuardContext {
-  clearAuth: () => void;
   getHomeRoute: () => string;
   homeRoute?: string;
   initAuth: () => Promise<Api.Auth.UserInfo | null>;
   isAuthInitialized: boolean;
   isLoggedIn: boolean;
+  logout: () => Promise<void>;
   userInfo?: Api.Auth.UserInfo;
 }
 
@@ -88,13 +84,18 @@ function resolveUserInfo(context: AdminRouteGuardContext): UserInfoResult {
   return context.initAuth();
 }
 
-function guardResolvedUserInfo(options: AdminRouteGuardOptions, userInfo: Api.Auth.UserInfo | null) {
+function guardResolvedUserInfo(
+  options: AdminRouteGuardOptions,
+  userInfo: Api.Auth.UserInfo | null
+): AdminRouteGuardResult {
   const { context, location, matches, preload } = options;
 
   if (!userInfo) {
-    context.clearAuth();
-
-    throw redirect({ to: '/login', search: getLoginRedirectSearch(location, context) });
+    // 等登出走完再跳：/login 的守卫会重新读 token，没清完就跳过去会被当成还登录着。
+    // 只有 initAuth 落空才走到这里，那条路本来就是异步的，下面 isPromise 那条同步快路不受影响。
+    return context.logout().then(() => {
+      throw redirect({ to: '/login', search: getLoginRedirectSearch(location, context) });
+    });
   }
 
   if (import.meta.env.VITE_AUTH_ROUTE_MODE === 'static' && !hasMatchedRoutePermission(matches, userInfo)) {

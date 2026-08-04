@@ -18,7 +18,7 @@ import { routeTree } from './routeTree.gen';
 export const router = createRouter({
   context: {
     initAuth: () => Promise.resolve(null),
-    clearAuth: () => {},
+    logout: () => Promise.resolve(),
     getHomeRoute: () => globalConfig.defaultHome,
     homeRoute: globalConfig.defaultHome,
     isAuthInitialized: false,

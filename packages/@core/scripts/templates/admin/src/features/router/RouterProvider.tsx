@@ -5,11 +5,11 @@ import { useAuth } from '../auth/use-auth';
 import { router } from '.';
 
 const RouterProvider = memo(() => {
-  const { clearAuth, getHomeRoute, homeRoute, initAuth, isAuthInitialized, isLoggedIn, userInfo } = useAuth();
+  const { getHomeRoute, homeRoute, initAuth, isAuthInitialized, isLoggedIn, logout, userInfo } = useAuth();
 
   return (
     <TanStackRouterProvider
-      context={{ initAuth, isAuthInitialized, isLoggedIn, userInfo, clearAuth, getHomeRoute, homeRoute }}
+      context={{ initAuth, isAuthInitialized, isLoggedIn, userInfo, logout, getHomeRoute, homeRoute }}
       router={router}
     />
   );
