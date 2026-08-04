@@ -7,27 +7,71 @@
 declare global {
   namespace Api.Auth {
     /**
-     * 登录请求参数
+     * 每种登录方式都要带的字段
      *
-     * 可选的那几个后端其实必填，但它们不是用户填的表单项，由 fetchLogin 统一补上
+     * 它们不是用户填的表单项，由 fetchLogin 统一补上，所以在类型上是可选的
      */
-    type LoginParams = {
+    type LoginContext = {
       /** 客户端 id，对应后端 sys_client.client_id，一行是一个端（PC 后台 / App / 小程序） */
       clientId?: string;
-      /** 图形验证码内容 */
-      code?: string;
-      /** 授权类型，账号密码登录固定 password，后端 /auth/login 只认这一种 */
-      grantType?: string;
-      /** 密码 */
-      password: string;
       /** 是否保持登录，具体会话时长由后端决定 */
       remember?: boolean;
       /** 租户id */
       tenantId?: string;
+    };
+
+    /** 账号密码登录 */
+    type PwdLoginParams = LoginContext & {
+      /** 图形验证码内容 */
+      code?: string;
+      grantType?: 'password';
+      /** 密码 */
+      password: string;
       /** 用户名 */
       userName: string;
       /** 图形验证码唯一标识 */
       uuid?: string;
+    };
+
+    /** 手机验证码登录 */
+    type SmsLoginParams = LoginContext & {
+      grantType: 'sms';
+      /** 账号绑定的手机号 */
+      phone: string;
+      /** POST /auth/sms/code 发到手机上的验证码 */
+      smsCode: string;
+    };
+
+    /** 邮箱验证码登录 */
+    type EmailLoginParams = LoginContext & {
+      /** 账号绑定的邮箱 */
+      email: string;
+      /** POST /auth/email/code 发到邮箱里的验证码 */
+      emailCode: string;
+      grantType: 'email';
+    };
+
+    /**
+     * 登录请求参数，按 grantType 分派
+     *
+     * 和后端那个可辨识联合一一对应：每种方式各要哪些字段是分开声明的，混着传会被后端 422。 加一种登录方式在这里加一个成员，别往某一种上挂可选字段。
+     */
+    type LoginParams = EmailLoginParams | PwdLoginParams | SmsLoginParams;
+
+    /** 发手机登录验证码的参数 */
+    type SmsCodeParams = {
+      /** 收验证码的手机号，必须是某个账号绑定的号码 */
+      phone: string;
+      /** 租户id */
+      tenantId?: string;
+    };
+
+    /** 发邮箱登录验证码的参数 */
+    type EmailCodeParams = {
+      /** 收验证码的邮箱，必须是某个账号绑定的地址 */
+      email: string;
+      /** 租户id */
+      tenantId?: string;
     };
 
     /** 登录响应数据 */

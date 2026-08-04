@@ -4,5 +4,7 @@ export const AUTH_QUERY_KEYS = {
 } as const;
 
 export const AUTH_MUTATION_KEYS = {
-  LOGIN: ['auth', 'login'] as const
+  EMAIL_CODE: ['auth', 'emailCode'] as const,
+  LOGIN: ['auth', 'login'] as const,
+  SMS_CODE: ['auth', 'smsCode'] as const
 } as const;

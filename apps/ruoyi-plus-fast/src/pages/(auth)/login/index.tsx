@@ -1,6 +1,6 @@
+import { noop } from '@skyroc/utils';
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
-import { noop } from '@skyroc/utils'
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
 import { useCaptchaQuery } from '@/service/api';
@@ -16,7 +16,6 @@ interface LoginFormValues {
   /** 用户名、手机号或邮箱 */
   userName: string;
 }
-
 
 const CAPTCHA_ENABLED = import.meta.env.VITE_AUTH_CAPTCHA_ENABLED === 'Y';
 
@@ -42,7 +41,7 @@ const Login = () => {
     formRules: { pwd }
   } = useAuthFormRules();
 
-  const captchaEnabled = CAPTCHA_ENABLED
+  const captchaEnabled = CAPTCHA_ENABLED;
   const captchaSrc = captcha?.img ? `data:image/png;base64,${captcha.img}` : '';
 
   const requiredAccountRule = {
@@ -55,18 +54,16 @@ const Login = () => {
     message: t('page.login.enterprise.captchaRequired')
   };
 
-
-
   function handlePasswordSubmit(values: LoginFormValues) {
-    const form: Api.Auth.LoginParams = {
+    const form: Api.Auth.PwdLoginParams = {
       password: values.password,
       remember: values.remember,
-      userName: values.userName.trim(),
-    }
+      userName: values.userName.trim()
+    };
 
     if (captchaEnabled) {
-      form.code = values?.code?.trim()
-      form.uuid = String(captcha?.uuid)
+      form.code = values?.code?.trim();
+      form.uuid = String(captcha?.uuid);
     }
 
     login(form, {
@@ -74,12 +71,10 @@ const Login = () => {
     });
   }
 
-
-
   function refreshCaptcha() {
     passwordForm.setFieldValue('code', '');
 
-    refetchCaptcha()
+    refetchCaptcha();
   }
 
   function handleUnavailableAction() {
@@ -96,7 +91,6 @@ const Login = () => {
         <h1>{t('page.login.enterprise.title')}</h1>
         <p>{t('page.login.enterprise.subtitle')}</p>
       </header>
-
 
       <AForm
         className="skyroc-login-form"
@@ -171,13 +165,7 @@ const Login = () => {
           </AButton>
         </div>
 
-        <AButton
-          block
-          className='rounded-xl'
-          size='large'
-          htmlType="submit"
-          loading={loading}
-          type="primary">
+        <AButton block className="rounded-xl" size="large" htmlType="submit" loading={loading} type="primary">
           {t('page.login.enterprise.login')}
         </AButton>
 
@@ -188,7 +176,6 @@ const Login = () => {
         </div>
 
         <SocialLogin />
-
       </AForm>
     </>
   );

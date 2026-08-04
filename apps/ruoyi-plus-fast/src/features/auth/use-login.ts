@@ -16,7 +16,9 @@ interface LoginOptions {
 export function useInitLogin() {
   const { endLoading, loading, startLoading } = useLoading();
 
-  const search = useSearch({ from: '/(auth)/login/' });
+  // 取自 layout 路由而不是密码登录那一页：redirect 的 schema 定义在 /(auth)/login 上，
+  // 指向子路由的话，验证码登录页调这个 hook 会匹配不到。
+  const search = useSearch({ from: '/(auth)/login' });
 
   const { t } = useTranslation();
 

@@ -10,25 +10,46 @@ export function fetchCaptcha() {
   });
 }
 
-// 登录请求里除了账号密码，后端还要三个描述"这次登录是从哪来的"的字段，它们都不是用户填的
+// 登录请求里除了用户填的那几项，后端还要几个描述"这次登录是从哪来的"的字段，它们都不是
 // 表单项，所以在这里补齐：放到页面或 use-login 里，每多一个登录入口就要记得抄一遍。
 const LOGIN_CONTEXT = {
   /** 后端 sys_client.client_id，一行是一个端。换个端（App、小程序）就换个值，所以走 .env */
   clientId: import.meta.env.VITE_AUTH_CLIENT_ID,
-  /** 后端 /auth/login 只实现了账号密码登录，客户端开通了 sms 也走不了这条路 */
-  grantType: 'password',
   /** 未开多租户的部署固定 000000 */
   tenantId: '000000'
-} satisfies Partial<Api.Auth.LoginParams>;
+} satisfies Api.Auth.LoginContext;
 
 // encrypt 对应后端 /auth/login 上的 @api_encrypt()，两边必须同时开或同时关
 export function fetchLogin(params: Api.Auth.LoginParams) {
   return request<Api.Auth.LoginResponse>({
-    // params 放后面：调用方显式传了就用它的，没传才落到上面这套默认值
-    data: { ...LOGIN_CONTEXT, ...params },
+    // params 放后面：调用方显式传了就用它的，没传才落到上面这套默认值。
+    // grantType 不传按密码登录算，验证码那两条路自己带 sms / email。
+    data: { grantType: 'password', ...LOGIN_CONTEXT, ...params },
     encrypt: true,
     method: 'post',
     url: AUTH_URLS.LOGIN
+  });
+}
+
+// 发码接口后端没标 @api_encrypt，所以不加密：请求体里只有一个手机号或邮箱，而验证码是后端
+// 生成的，压根不经过这个请求。
+//
+// 两个接口在号码/地址没注册时也回成功，不告诉调用方存不存在——那样它们就成了不要凭据的用户
+// 枚举接口。所以"发送成功"只表示请求被受理了，不代表真发出去了。
+
+export function fetchSmsCode(params: Api.Auth.SmsCodeParams) {
+  return request<null>({
+    data: { tenantId: LOGIN_CONTEXT.tenantId, ...params },
+    method: 'post',
+    url: AUTH_URLS.SMS_CODE
+  });
+}
+
+export function fetchEmailCode(params: Api.Auth.EmailCodeParams) {
+  return request<null>({
+    data: { tenantId: LOGIN_CONTEXT.tenantId, ...params },
+    method: 'post',
+    url: AUTH_URLS.EMAIL_CODE
   });
 }
 
