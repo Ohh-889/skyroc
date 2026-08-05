@@ -1,7 +1,8 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { Card } from 'antd';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
 
 import { ROUTE_QUERY_KEYS } from '@/service/api/route/keys';
@@ -25,11 +26,12 @@ import {
   isRouteMenu,
   normalizeMenuPayload
 } from './modules/menu-utils';
-import MenuDetailCard from './modules/MenuDetailCard';
-import MenuEditorDrawer from './modules/MenuEditorDrawer';
 import type { EditorMode } from './modules/MenuEditorDrawer';
 import MenuResourceCard from './modules/MenuResourceCard';
 import MenuTreePanel from './modules/MenuTreePanel';
+
+const MenuDetailCard = lazy(() => import('./modules/MenuDetailCard'));
+const MenuEditorDrawer = lazy(() => import('./modules/MenuEditorDrawer'));
 
 interface MenuManagementProps {
   /** 首次进入页面时优先选中的菜单 ID。 */
@@ -188,7 +190,7 @@ const MenuManagement = (props: MenuManagementProps) => {
 
   async function handleRefresh() {
     await menuListQuery.refetch();
-    if (selectedMenuId !== undefined) await menuDetailQuery.refetch();
+    if (selectedMenuId) await menuDetailQuery.refetch();
     showSuccessMessage('菜单数据已刷新');
   }
 
@@ -222,13 +224,15 @@ const MenuManagement = (props: MenuManagementProps) => {
         />
 
         <div className="min-w-0 flex flex-col gap-12px">
-          <MenuDetailCard
-            childCount={directChildren.length}
-            menu={selectedMenu}
-            menuPath={selectedMenu ? getMenuPath(menus, selectedMenu.menuId) : ''}
-            onDelete={() => handleDeleteMenu()}
-            onEdit={() => selectedMenu && handleEditMenu(selectedMenu)}
-          />
+          <Suspense fallback={<Card loading className="card-wrapper" title="菜单详情" variant="borderless" />}>
+            <MenuDetailCard
+              childCount={directChildren.length}
+              menu={selectedMenu}
+              menuPath={selectedMenu ? getMenuPath(menus, selectedMenu.menuId) : ''}
+              onDelete={handleDeleteMenu}
+              onEdit={() => selectedMenu && handleEditMenu(selectedMenu)}
+            />
+          </Suspense>
           <MenuResourceCard
             children={directChildren}
             permissions={permissions}
@@ -241,17 +245,19 @@ const MenuManagement = (props: MenuManagementProps) => {
         </div>
       </div>
 
-      <MenuEditorDrawer
-        fixedType={editorState.fixedType}
-        loading={editorLoading}
-        menu={editorMenu}
-        menus={menus}
-        mode={editorState.mode}
-        open={editorState.open}
-        parentId={editorState.parentId}
-        onClose={handleCloseEditor}
-        onSubmit={handleSubmit}
-      />
+      <Suspense fallback={null}>
+        <MenuEditorDrawer
+          fixedType={editorState.fixedType}
+          loading={editorLoading}
+          menu={editorMenu}
+          menus={menus}
+          mode={editorState.mode}
+          open={editorState.open}
+          parentId={editorState.parentId}
+          onClose={handleCloseEditor}
+          onSubmit={handleSubmit}
+        />
+      </Suspense>
     </div>
   );
 };
