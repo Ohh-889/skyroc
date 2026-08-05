@@ -20,6 +20,7 @@ overrides:
   # 确保类型一致性
   '@types/react': ^19.2.7
   '@types/react-dom': ^19.2.3
+  antd: 6.5.3
   typescript: ^6.0.3
 
 catalogs:
@@ -131,7 +132,7 @@ catalogs:
     '@tanstack/router-plugin': ^1.140.0
 
     # UI 组件库
-    antd: ^6.1.0
+    antd: 6.5.3
 
     # 样式工具
     '@unocss/vite': ^66.5.10

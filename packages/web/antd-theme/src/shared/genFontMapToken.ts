@@ -93,6 +93,17 @@ export interface ExtendedFontMapToken extends FontMapToken {
   /** Small font height (px) */
   fontHeightSM: number;
 
+  /** Heading level 1 font size generated in px */
+  fontSizeHeading1: number;
+  /** Heading level 2 font size generated in px */
+  fontSizeHeading2: number;
+  /** Heading level 3 font size generated in px */
+  fontSizeHeading3: number;
+  /** Heading level 4 font size generated in px */
+  fontSizeHeading4: number;
+  /** Heading level 5 font size generated in px */
+  fontSizeHeading5: number;
+
   /** 2x large line height (px) */
   LineHeight2xl: number;
   /** 3x large line height (px) */
