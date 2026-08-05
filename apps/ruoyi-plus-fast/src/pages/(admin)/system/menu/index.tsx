@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
 
+import { deleteModal } from '@/features/antd/deleteModal';
 import { ROUTE_QUERY_KEYS } from '@/service/api/route/keys';
 import {
   SYSTEM_MENU_QUERY_KEYS,
@@ -156,17 +157,19 @@ const MenuManagement = (props: MenuManagementProps) => {
     showSuccessMessage(editorState.mode === 'create' ? '菜单新增成功' : '菜单修改成功');
   }
 
-  function handleDeleteMenu(menu: MenuItem | undefined = selectedMenu) {
-    if (!menu) return;
+  function handleDeleteSelectedMenu() {
+    if (selectedMenu) handleDeleteMenu(selectedMenu);
+  }
+
+  function handleDeleteMenu(menu: MenuItem) {
     const deleteIds = collectDescendantIds(menus, menu.menuId);
     const descendantCount = deleteIds.length - 1;
 
-    showConfirmModal({
+    deleteModal({
       content:
         descendantCount > 0
           ? `将同时删除 ${descendantCount} 个后代节点，并解除相关角色菜单绑定。此操作不可撤销。`
           : '删除前后端会检查角色引用。此操作不可撤销。',
-      okButtonProps: { danger: true },
       okText: descendantCount > 0 ? '级联删除' : '确认删除',
       title: `删除“${menu.menuName}”`,
       onOk: async () => {
@@ -213,7 +216,7 @@ const MenuManagement = (props: MenuManagementProps) => {
           selectedMenuId={selectedMenuId}
           onAddChild={handleAddChild}
           onAddRoot={handleAddRoot}
-          onDelete={handleDeleteMenu}
+          onDelete={handleDeleteSelectedMenu}
           onExpand={setExpandedKeys}
           onRefresh={handleRefresh}
           onRetry={menuListQuery.refetch}
@@ -225,7 +228,7 @@ const MenuManagement = (props: MenuManagementProps) => {
             childCount={directChildren.length}
             menu={selectedMenu}
             menuPath={selectedMenu ? getMenuPath(menus, selectedMenu.menuId) : ''}
-            onDelete={handleDeleteMenu}
+            onDelete={handleDeleteSelectedMenu}
             onEdit={() => selectedMenu && handleEditMenu(selectedMenu)}
           />
 
