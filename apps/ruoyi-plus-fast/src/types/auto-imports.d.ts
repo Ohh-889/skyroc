@@ -11,12 +11,14 @@ declare global {
   const ACard: typeof import('antd').Card
   const ACheckbox: typeof import('antd').Checkbox
   const ACol: typeof import('antd').Col
+  const AConfigProvider: typeof import('antd').ConfigProvider
   const ADivider: typeof import('antd').Divider
   const AEmpty: typeof import('antd').Empty
   const AForm: typeof import('antd').Form
   const AInput: typeof import('antd').Input
   const AList: typeof import('antd').List
   const ARow: typeof import('antd').Row
+  const ASegmented: typeof import('antd').Segmented
   const ASpace: typeof import('antd').Space
   const ATag: typeof import('antd').Tag
   const Activity: typeof import('react').Activity
