@@ -54,6 +54,9 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
         itemMarginInline: 8,
         itemSelectedBg: bgColor,
         subMenuItemBg: 'transparent'
+      },
+      Modal: {
+        borderRadiusLG: 13
       }
     },
     token: {

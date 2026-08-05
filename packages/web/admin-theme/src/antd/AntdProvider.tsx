@@ -49,11 +49,44 @@ const AntdProvider = (props: AntdProviderProps) => {
 
   return (
     <ConfigProvider
-      button={{ classNames: { icon: 'align-1px  text-icon' } }}
-      card={{ styles: { body: { flex: 1, overflow: 'hidden', padding: '12px 16px ' } } }}
+      button={{
+        classNames: {
+          icon: 'align-1px  text-icon'
+        }
+      }}
+      card={{
+        styles: {
+          body: { flex: 1, overflow: 'hidden', padding: '12px 16px ' }
+        }
+      }}
       locale={locale}
-      segmented={{ classNames: { item: 'flex-1', root: 'w-full [&_.ant-segmented-item-selected]:font-600' } }}
-      modal={{ centered: true }}
+      segmented={{
+        classNames: {
+          item: 'flex-1',
+          root: 'w-full [&_.ant-segmented-item-selected]:font-600'
+        }
+      }}
+      modal={{
+        centered: true,
+        mask: { enabled: true, blur: true },
+        classNames: {
+          body: 'text-secondary',
+          footer: 'mt-0 py-13px px-22px',
+          header: 'px-22px',
+          container:
+            '[&_.ant-modal-confirm-btns]:(mt-0 py-13px border-t-1px border-border-secondary mt-22px px-22px) [&_.ant-modal-confirm-body]:px-22px pt-22px px-0 pb-0'
+        }
+      }}
+      drawer={{
+        closable: {
+          placement: 'end'
+        }
+      }}
+      form={{
+        classNames: {
+          label: 'font-600 text-13px'
+        }
+      }}
       theme={antdTheme}
     >
       <App style={{ height: '100%' }}>

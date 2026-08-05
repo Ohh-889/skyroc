@@ -167,7 +167,19 @@ describe('AntdProvider', () => {
     expect(getAntdTheme).toHaveBeenCalledWith(themeState.themeColors, false, themeState.settings);
     expect(antdMocks.configProviderProps?.theme).toBe(antdThemeMock.theme);
     expect(antdMocks.configProviderProps?.locale).toBe(locale);
-    expect(antdMocks.configProviderProps?.modal).toEqual({ centered: true });
+    expect(antdMocks.configProviderProps?.drawer).toEqual({ closable: { placement: 'end' } });
+    expect(antdMocks.configProviderProps?.form).toEqual({ classNames: { label: 'font-600 text-13px' } });
+    expect(antdMocks.configProviderProps?.modal).toEqual({
+      centered: true,
+      mask: { enabled: true, blur: true },
+      classNames: {
+        body: 'text-secondary',
+        footer: 'mt-0 py-13px px-22px',
+        header: 'px-22px',
+        container:
+          '[&_.ant-modal-confirm-btns]:(mt-0 py-13px border-t-1px border-border-secondary mt-22px px-22px) [&_.ant-modal-confirm-body]:px-22px pt-22px px-0 pb-0'
+      }
+    });
     expect(antdMocks.appProps?.style).toEqual({ height: '100%' });
     expect(antdMocks.watermarkProps?.content).toBe('Skyroc - Alice');
     expect(antdMocks.watermarkProps?.gap).toEqual([24, 24]);

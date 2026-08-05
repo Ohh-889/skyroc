@@ -37,12 +37,13 @@ describe('getAntdTheme', () => {
     expect(theme.hashed).toBe(false);
   });
 
-  it('components 中 Button/Collapse/Menu 节点存在', () => {
+  it('components 中 Button/Collapse/Menu/Modal 节点存在', () => {
     const colors = getThemeColors(defaultThemeSettings);
     const theme = getAntdTheme(colors, false, defaultThemeSettings);
 
     expect(theme.components?.Button?.controlHeightSM).toBe(28);
     expect(theme.components?.Collapse?.contentPadding).toBeDefined();
     expect(theme.components?.Menu?.itemSelectedBg).toBeDefined();
+    expect(theme.components?.Modal?.borderRadiusLG).toBe(13);
   });
 });
