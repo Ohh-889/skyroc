@@ -1,3 +1,5 @@
+export { default as AppTree } from './AppTree';
+export type { AppTreeProps } from './AppTree';
 export { default as BeyondHiding } from './BeyondHiding';
 export { default as ButtonIcon } from './ButtonIcon';
 export type { ButtonIconProps, IconHoverAnimation } from './ButtonIcon';

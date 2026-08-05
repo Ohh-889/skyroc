@@ -7,10 +7,19 @@ export default defineConfig({
       include: [/\.tsx($|\?)/],
       exclude: ['node_modules', 'dist']
     },
-    filesystem: ['../../ui-kit/ui', '../../packages/web/ui/shadcn/src/**/*.{ts,tsx}']
+    filesystem: [
+      '../../ui-kit/ui',
+      '../../packages/web/ui/antd/src/**/*.{ts,tsx}',
+      '../../packages/web/ui/shadcn/src/**/*.{ts,tsx}'
+    ]
   },
   presets: [
-    presetWind3({ dark: 'class', variablePrefix: '', important: '.root', preflight: 'on-demand' }),
+    presetWind3({
+      dark: 'class',
+      variablePrefix: '',
+      important: '.root',
+      preflight: 'on-demand'
+    }),
     presetSoybeanAdmin()
   ],
 
