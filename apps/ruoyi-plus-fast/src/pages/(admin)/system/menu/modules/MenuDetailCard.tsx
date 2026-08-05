@@ -73,7 +73,9 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
               : `页面路由 · ${menu.component || '未配置组件路径'}`}
           </div>
         </div>
-        <Tag color={menu.menuType === 'M' ? 'geekblue' : 'blue'}>{getMenuTypeLabel(menu.menuType)}</Tag>
+        <Tag variant="filled" color={menu.menuType === 'M' ? 'geekblue' : 'blue'}>
+          {getMenuTypeLabel(menu.menuType)}
+        </Tag>
       </div>
 
       <Descriptions bordered column={{ lg: 4, md: 2, sm: 2, xs: 1 }} items={descriptionItems} size="small" />

@@ -24,62 +24,79 @@ interface MenuResourceCardProps {
   selectedMenu?: MenuItem;
 }
 
+interface MenuResourceContentProps {
+  /** 当前目录下的直属菜单。 */
+  childMenus: MenuItem[];
+  /** 按钮权限表格列配置。 */
+  columns: TableColumnsType<MenuItem>;
+  /** 当前选中的是否为页面菜单。 */
+  isPageMenu: boolean;
+  /** 切换到直属菜单。 */
+  onSelectChild: (menuId: MenuId) => void;
+  /** 当前页面菜单下的按钮权限。 */
+  permissions: MenuItem[];
+  /** 当前选中的目录或菜单。 */
+  selectedMenu?: MenuItem;
+}
+
+const MenuResourceContent = (props: MenuResourceContentProps) => {
+  const { childMenus, columns, isPageMenu, onSelectChild, permissions, selectedMenu } = props;
+
+  if (!selectedMenu) {
+    return <Empty description="选择菜单后查看关联资源" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+  }
+
+  if (isPageMenu) {
+    return (
+      <Table<MenuItem>
+        columns={columns}
+        dataSource={permissions}
+        locale={{ emptyText: '当前菜单暂无按钮权限' }}
+        pagination={false}
+        rowKey={record => String(record.menuId)}
+        scroll={{ x: 820 }}
+        size="small"
+      />
+    );
+  }
+
+  if (childMenus.length === 0) {
+    return <Empty description="当前目录暂无直属菜单" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+  }
+
+  return (
+    <List<MenuItem>
+      className="p-14px"
+      dataSource={childMenus}
+      grid={{ gutter: 10, lg: 3, md: 2, sm: 2, xs: 1 }}
+      renderItem={menu => (
+        <List.Item>
+          <Card hoverable className="h-full" size="small" onClick={() => onSelectChild(menu.menuId)}>
+            <Flex align="center" gap={10}>
+              <div className="size-32px flex-center shrink-0 rounded-8px bg-info-bg text-info">
+                <SvgIcon icon={getMenuTypeIcon(menu.menuType)} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-600 text-base">{menu.menuName}</div>
+                <div className="mt-2px truncate text-11px text-tertiary">{menu.path || '未配置路由'}</div>
+              </div>
+              <Tag variant="filled" className="m-0 text-10px">
+                {getMenuTypeLabel(menu.menuType)}
+              </Tag>
+            </Flex>
+          </Card>
+        </List.Item>
+      )}
+    />
+  );
+};
+
 const MenuResourceCard = (props: MenuResourceCardProps) => {
   const { children, onAdd, onDeletePermission, onEditPermission, onSelectChild, permissions, selectedMenu } = props;
 
   const isPageMenu = selectedMenu?.menuType === 'C';
   const resourceSubtitle = getResourceSubtitle(selectedMenu);
   const columns = createPermissionColumns(onDeletePermission, onEditPermission);
-
-  function renderResourceContent() {
-    if (!selectedMenu) {
-      return <Empty description="选择菜单后查看关联资源" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-    }
-
-    if (isPageMenu) {
-      return (
-        <Table<MenuItem>
-          columns={columns}
-          dataSource={permissions}
-          locale={{ emptyText: '当前菜单暂无按钮权限' }}
-          pagination={false}
-          rowKey={record => String(record.menuId)}
-          scroll={{ x: 820 }}
-          size="small"
-        />
-      );
-    }
-
-    if (children.length === 0) {
-      return <Empty description="当前目录暂无直属菜单" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-    }
-
-    return (
-      <List<MenuItem>
-        className="p-14px"
-        dataSource={children}
-        grid={{ gutter: 10, lg: 3, md: 2, sm: 2, xs: 1 }}
-        renderItem={menu => (
-          <List.Item>
-            <Card hoverable className="h-full" size="small" onClick={() => onSelectChild(menu.menuId)}>
-              <Flex align="center" gap={10}>
-                <div className="size-32px flex-center shrink-0 rounded-8px bg-info-bg text-info">
-                  <SvgIcon icon={getMenuTypeIcon(menu.menuType)} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-600 text-base">{menu.menuName}</div>
-                  <div className="mt-2px truncate text-11px text-tertiary">{menu.path || '未配置路由'}</div>
-                </div>
-                <Tag bordered={false} className="m-0 text-10px">
-                  {getMenuTypeLabel(menu.menuType)}
-                </Tag>
-              </Flex>
-            </Card>
-          </List.Item>
-        )}
-      />
-    );
-  }
 
   return (
     <Card
@@ -93,7 +110,7 @@ const MenuResourceCard = (props: MenuResourceCardProps) => {
                 权限变更会影响角色授权
               </Typography.Text>
             ) : null}
-            <Button icon={<SvgIcon icon="ph:plus" />} size="small" type="primary" onClick={onAdd}>
+            <Button icon={<SvgIcon icon="ph:plus" />} size="small" type="primary" ghost onClick={onAdd}>
               {isPageMenu ? '新增按钮' : '新增菜单'}
             </Button>
           </Flex>
@@ -107,7 +124,14 @@ const MenuResourceCard = (props: MenuResourceCardProps) => {
       }
       variant="borderless"
     >
-      {renderResourceContent()}
+      <MenuResourceContent
+        childMenus={children}
+        columns={columns}
+        isPageMenu={isPageMenu}
+        permissions={permissions}
+        selectedMenu={selectedMenu}
+        onSelectChild={onSelectChild}
+      />
     </Card>
   );
 };

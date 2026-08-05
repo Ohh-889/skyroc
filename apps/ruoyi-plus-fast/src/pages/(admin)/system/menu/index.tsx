@@ -1,7 +1,6 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Card } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
 
@@ -29,8 +28,8 @@ import {
 import type { EditorMode } from './modules/MenuEditorDrawer';
 import MenuResourceCard from './modules/MenuResourceCard';
 import MenuTreePanel from './modules/MenuTreePanel';
+import MenuDetailCard from './modules/MenuDetailCard'
 
-const MenuDetailCard = lazy(() => import('./modules/MenuDetailCard'));
 const MenuEditorDrawer = lazy(() => import('./modules/MenuEditorDrawer'));
 
 interface MenuManagementProps {
@@ -145,9 +144,9 @@ const MenuManagement = (props: MenuManagementProps) => {
       editorState.mode === 'create'
         ? await createMutation.mutateAsync(payload)
         : await updateMutation.mutateAsync({
-            ...payload,
-            menuId: editorState.menuId as MenuId
-          });
+          ...payload,
+          menuId: editorState.menuId as MenuId
+        });
 
     handleCloseEditor();
     await refreshMenuCaches();
@@ -224,15 +223,14 @@ const MenuManagement = (props: MenuManagementProps) => {
         />
 
         <div className="min-w-0 flex flex-col gap-12px">
-          <Suspense fallback={<Card loading className="card-wrapper" title="菜单详情" variant="borderless" />}>
-            <MenuDetailCard
-              childCount={directChildren.length}
-              menu={selectedMenu}
-              menuPath={selectedMenu ? getMenuPath(menus, selectedMenu.menuId) : ''}
-              onDelete={handleDeleteMenu}
-              onEdit={() => selectedMenu && handleEditMenu(selectedMenu)}
-            />
-          </Suspense>
+          <MenuDetailCard
+            childCount={directChildren.length}
+            menu={selectedMenu}
+            menuPath={selectedMenu ? getMenuPath(menus, selectedMenu.menuId) : ''}
+            onDelete={handleDeleteMenu}
+            onEdit={() => selectedMenu && handleEditMenu(selectedMenu)}
+          />
+
           <MenuResourceCard
             children={directChildren}
             permissions={permissions}
