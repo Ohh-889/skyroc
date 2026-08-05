@@ -1,7 +1,7 @@
 import type { ColorMapToken, SeedToken } from 'antd/lib/theme/interface';
 import type { ColorMap, PaletteGenerators } from '../types';
 
-/** Antd 1-10 indexes */
+/** AntD 1-10 indexes */
 export const ANTD_INDEXES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 /** Tailwind style 50-950 indexes */
@@ -116,18 +116,21 @@ export function genSemanticColors({ colors, config, name }: GenSemanticColorsOpt
 }
 
 /**
- * Generate palette variables (1-10 and 50-950)
+ * Generate palette variables (1-10 and 50-950).
  *
- * Only hyphenated format: name-1 to name-10 and name-50 to name-950
+ * AntD components read compact keys such as `blue1`, while UnoCSS and project styles use hyphenated keys such as
+ * `blue-1`. Both aliases must point to the same palette value.
  */
 export function genPaletteVars(name: string, colors: ColorMap): Record<string, string> {
   const colorName = normalizeColorName(name);
 
   const result: Record<string, string> = {};
 
-  // antd format: name-1 to name-10
+  // AntD internal format: name1 to name10; project palette format: name-1 to name-10.
   for (const i of ANTD_INDEXES) {
-    result[`${colorName}-${i}`] = colors[i] || '';
+    const color = colors[i] || '';
+    result[`${colorName}${i}`] = color;
+    result[`${colorName}-${i}`] = color;
   }
 
   // Tailwind format: name-50 to name-950

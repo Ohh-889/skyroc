@@ -34,7 +34,16 @@ function makeColorMap(): ColorMap {
 }
 
 describe('genPaletteVars', () => {
-  it('应生成 antd 格式 name-1 到 name-10', () => {
+  it('应生成 AntD 内部使用的 name1 到 name10', () => {
+    const map = makeColorMap();
+    const result = genPaletteVars('blue', map);
+
+    for (const i of ANTD_INDEXES) {
+      expect(result[`blue${i}`]).toBe(map[i]);
+    }
+  });
+
+  it('应生成项目调色板使用的 name-1 到 name-10', () => {
     const map = makeColorMap();
     const result = genPaletteVars('colorPrimary', map);
 
@@ -82,6 +91,7 @@ describe('genPaletteVars', () => {
 
     // 所有 antd 和 tailwind 索引均应存在，值为空字符串
     for (const i of ANTD_INDEXES) {
+      expect(result[`blue${i}`]).toBe('');
       expect(result[`blue-${i}`]).toBe('');
     }
     for (const i of TAILWIND_INDEXES) {

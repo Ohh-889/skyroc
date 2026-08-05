@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import derivative from '../src/algorithm/default';
-import derivativeDark from '../src/algorithm/dark';
-import { seedToken } from '../src/seed';
 import type { SeedToken } from 'antd/lib/theme/interface';
+import { describe, expect, it } from 'vitest';
+import derivativeDark from '../src/algorithm/dark';
+import derivative from '../src/algorithm/default';
+import { seedToken } from '../src/seed';
 
 const token = seedToken as unknown as SeedToken;
 
@@ -41,6 +41,12 @@ describe('derivative（light 模式）', () => {
   it('应生成预设颜色的 palette vars（blue-1, blue-500 等）', () => {
     const result = derivative(token);
 
+    expect(result).toHaveProperty('blue1');
+    expect(result).toHaveProperty('blue3');
+    expect(result).toHaveProperty('blue6');
+    expect(result).toHaveProperty('blue7');
+    expect(result).toHaveProperty('geekblue1');
+    expect(result).toHaveProperty('geekblue7');
     expect(result).toHaveProperty('blue-1');
     expect(result).toHaveProperty('blue-500');
     expect(result).toHaveProperty('blue-950');
