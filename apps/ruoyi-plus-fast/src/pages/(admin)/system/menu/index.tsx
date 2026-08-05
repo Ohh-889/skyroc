@@ -214,10 +214,10 @@ const MenuManagement = (props: MenuManagementProps) => {
           selectedMenuId={selectedMenuId}
           onAddChild={handleAddChild}
           onAddRoot={handleAddRoot}
-          onDelete={() => handleDeleteMenu()}
+          onDelete={handleDeleteMenu}
           onExpand={setExpandedKeys}
           onRefresh={handleRefresh}
-          onRetry={() => menuListQuery.refetch()}
+          onRetry={menuListQuery.refetch}
           onSelect={handleSelectMenu}
         />
 
