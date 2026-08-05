@@ -16,12 +16,15 @@ import { Route as errors404RouteImport } from './../../pages/(errors)/404'
 import { Route as errors403RouteImport } from './../../pages/(errors)/403'
 import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out'
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
+import { Route as adminSystemLayoutRouteImport } from './../../pages/(admin)/system/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
 import { Route as adminWebsocketTestIndexRouteImport } from './../../pages/(admin)/websocket-test/index'
 import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/stream-test/index'
 import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse-test/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
+import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
+import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -57,6 +60,11 @@ const authLoginLayoutRoute = authLoginLayoutRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const adminSystemLayoutRoute = adminSystemLayoutRouteImport.update({
+  id: '/system',
+  path: '/system',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
 const authLoginIndexRoute = authLoginIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -87,9 +95,20 @@ const authLoginCodeRoute = authLoginCodeRouteImport.update({
   path: '/code',
   getParentRoute: () => authLoginLayoutRoute,
 } as any)
+const adminSystemUserIndexRoute = adminSystemUserIndexRouteImport.update({
+  id: '/user/',
+  path: '/user/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
+const adminSystemMenuIndexRoute = adminSystemMenuIndexRouteImport.update({
+  id: '/menu/',
+  path: '/menu/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/system': typeof adminSystemLayoutRouteWithChildren
   '/login': typeof authLoginLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
   '/403': typeof errors403Route
@@ -101,9 +120,12 @@ export interface FileRoutesByFullPath {
   '/stream-test/': typeof adminStreamTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
+  '/system/menu/': typeof adminSystemMenuIndexRoute
+  '/system/user/': typeof adminSystemUserIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/system': typeof adminSystemLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -114,11 +136,14 @@ export interface FileRoutesByTo {
   '/stream-test': typeof adminStreamTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
+  '/system/menu': typeof adminSystemMenuIndexRoute
+  '/system/user': typeof adminSystemUserIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(admin)': typeof adminLayoutRouteWithChildren
+  '/(admin)/system': typeof adminSystemLayoutRouteWithChildren
   '/(auth)/login': typeof authLoginLayoutRouteWithChildren
   '/(auth)/login-out': typeof authLoginOutRoute
   '/(errors)/403': typeof errors403Route
@@ -130,11 +155,14 @@ export interface FileRoutesById {
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
+  '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
+  '/(admin)/system/user/': typeof adminSystemUserIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/system'
     | '/login'
     | '/login-out'
     | '/403'
@@ -146,9 +174,12 @@ export interface FileRouteTypes {
     | '/stream-test/'
     | '/websocket-test/'
     | '/login/'
+    | '/system/menu/'
+    | '/system/user/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/system'
     | '/login-out'
     | '/403'
     | '/404'
@@ -159,10 +190,13 @@ export interface FileRouteTypes {
     | '/stream-test'
     | '/websocket-test'
     | '/login'
+    | '/system/menu'
+    | '/system/user'
   id:
     | '__root__'
     | '/'
     | '/(admin)'
+    | '/(admin)/system'
     | '/(auth)/login'
     | '/(auth)/login-out'
     | '/(errors)/403'
@@ -174,6 +208,8 @@ export interface FileRouteTypes {
     | '/(admin)/stream-test/'
     | '/(admin)/websocket-test/'
     | '/(auth)/login/'
+    | '/(admin)/system/menu/'
+    | '/(admin)/system/user/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -237,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(admin)/system': {
+      id: '/(admin)/system'
+      path: '/system'
+      fullPath: '/system'
+      preLoaderRoute: typeof adminSystemLayoutRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
     '/(auth)/login/': {
       id: '/(auth)/login/'
       path: '/'
@@ -279,10 +322,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginCodeRouteImport
       parentRoute: typeof authLoginLayoutRoute
     }
+    '/(admin)/system/user/': {
+      id: '/(admin)/system/user/'
+      path: '/user'
+      fullPath: '/system/user/'
+      preLoaderRoute: typeof adminSystemUserIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
+    '/(admin)/system/menu/': {
+      id: '/(admin)/system/menu/'
+      path: '/menu'
+      fullPath: '/system/menu/'
+      preLoaderRoute: typeof adminSystemMenuIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
   }
 }
 
+interface adminSystemLayoutRouteChildren {
+  adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
+  adminSystemUserIndexRoute: typeof adminSystemUserIndexRoute
+}
+
+const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
+  adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
+  adminSystemUserIndexRoute: adminSystemUserIndexRoute,
+}
+
+const adminSystemLayoutRouteWithChildren =
+  adminSystemLayoutRoute._addFileChildren(adminSystemLayoutRouteChildren)
+
 interface adminLayoutRouteChildren {
+  adminSystemLayoutRoute: typeof adminSystemLayoutRouteWithChildren
   adminHomeIndexRoute: typeof adminHomeIndexRoute
   adminSseTestIndexRoute: typeof adminSseTestIndexRoute
   adminStreamTestIndexRoute: typeof adminStreamTestIndexRoute
@@ -290,6 +361,7 @@ interface adminLayoutRouteChildren {
 }
 
 const adminLayoutRouteChildren: adminLayoutRouteChildren = {
+  adminSystemLayoutRoute: adminSystemLayoutRouteWithChildren,
   adminHomeIndexRoute: adminHomeIndexRoute,
   adminSseTestIndexRoute: adminSseTestIndexRoute,
   adminStreamTestIndexRoute: adminStreamTestIndexRoute,
