@@ -44,6 +44,10 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
         contentPadding: '16px 16px 24px 16px',
         headerBg: containerBgColor
       },
+      Segmented: {
+        trackPadding: 3,
+        itemSelectedColor: primary
+      },
       Menu: {
         darkItemBg: 'transparent',
         darkSubMenuItemBg: 'transparent',
@@ -59,6 +63,7 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
       colorInfo: info,
       fontSize: themeTextSize,
       colorBorder: borderColor,
+      controlHeight: 36,
       colorPrimary: primary,
       borderRadius: themeRadius,
       colorSuccess: success,

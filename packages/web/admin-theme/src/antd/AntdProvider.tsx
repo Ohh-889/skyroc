@@ -52,6 +52,7 @@ const AntdProvider = (props: AntdProviderProps) => {
       button={{ classNames: { icon: 'align-1px  text-icon' } }}
       card={{ styles: { body: { flex: 1, overflow: 'hidden', padding: '12px 16px ' } } }}
       locale={locale}
+      segmented={{ classNames: { item: 'flex-1', root: 'w-full [&_.ant-segmented-item-selected]:font-600' } }}
       modal={{ centered: true }}
       theme={antdTheme}
     >
