@@ -1,7 +1,6 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import type { Key } from 'react';
 
@@ -54,7 +53,6 @@ const MenuManagement = (props: MenuManagementProps) => {
   const { initialSelectedMenuId } = props;
 
   const queryClient = useQueryClient();
-  const [modal, modalContextHolder] = Modal.useModal();
   const [selectedMenuId, setSelectedMenuId] = useState<MenuId | undefined>(initialSelectedMenuId);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const [editorState, setEditorState] = useState<MenuEditorState>(INITIAL_EDITOR_STATE);
@@ -163,7 +161,7 @@ const MenuManagement = (props: MenuManagementProps) => {
     const deleteIds = collectDescendantIds(menus, menu.menuId);
     const descendantCount = deleteIds.length - 1;
 
-    modal.confirm({
+    showConfirmModal({
       content:
         descendantCount > 0
           ? `将同时删除 ${descendantCount} 个后代节点，并解除相关角色菜单绑定。此操作不可撤销。`
@@ -207,7 +205,6 @@ const MenuManagement = (props: MenuManagementProps) => {
 
   return (
     <div className="min-h-full">
-      {modalContextHolder}
       <div className="grid min-h-[calc(100vh-150px)] grid-cols-[286px_minmax(0,1fr)] gap-12px lt-lg:grid-cols-1">
         <MenuTreePanel
           error={menuListQuery.isError}
