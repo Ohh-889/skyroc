@@ -30,10 +30,10 @@ interface MenuEditorDrawerProps {
 }
 
 const MENU_TYPE_OPTIONS = [
-  { label: '目录', value: 'M' },
-  { label: '菜单', value: 'C' },
-  { label: '按钮', value: 'F' }
-] satisfies Array<{ label: string; value: MenuType }>;
+  { description: '导航分组', label: '目录', value: 'M' },
+  { description: '页面路由', label: '菜单', value: 'C' },
+  { description: '操作权限', label: '按钮', value: 'F' }
+] satisfies Array<{ description: string; label: string; value: MenuType }>;
 
 const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
   const { fixedType, loading, menu, menus, mode, onClose, onSubmit, open, parentId } = props;
@@ -88,7 +88,7 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       destroyOnHidden
       footer={
         <Flex justify="space-between">
-          <span className="text-11px text-tertiary">保存后会刷新菜单列表和动态路由缓存</span>
+          <div className="text-11px text-tertiary flex items-center">保存后会刷新菜单列表和动态路由缓存</div>
           <Flex gap={8}>
             <Button onClick={onClose}>取消</Button>
             <Button loading={loading} type="primary" onClick={() => form.submit()}>
@@ -110,35 +110,55 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       onClose={onClose}
     >
       <Form<MenuSavePayload> form={form} layout="vertical" onFinish={handleSubmit}>
-        <Divider plain titlePlacement="start">
-          归属与类型
-        </Divider>
+        <div className="text-14px font-700 mb-1">归属与类型</div>
+        <div className="text-11px text-tertiary mb-12px">路由树只维护目录和菜单，按钮权限从对应菜单详情中新增。</div>
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
               dependencies={['menuType']}
               label="上级菜单"
               name="parentId"
-              rules={[{ validator: validateParent }]}
+              rules={[{ validator: validateParent, required: true }]}
             >
               <Select showSearch optionFilterProp="label" options={parentOptions} placeholder="请选择上级菜单" />
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="菜单类型" name="menuType" rules={[{ message: '请选择菜单类型', required: true }]}>
+            <Form.Item
+              className="mb-0"
+              label="节点类型"
+              name="menuType"
+              rules={[{ message: '请选择节点类型', required: true }]}
+            >
               <Radio.Group
-                buttonStyle="solid"
+                className="grid w-full grid-cols-3 gap-6px rounded-10px bg-layout p-4px"
                 disabled={fixedType === 'F'}
-                optionType="button"
-                options={MENU_TYPE_OPTIONS}
-              />
+              >
+                {MENU_TYPE_OPTIONS.map(option => (
+                  <Radio
+                    className="min-h-51px !m-0 flex items-center rounded-8px border border-transparent border-solid px-10px py-7px text-secondary transition-colors [&_.ant-radio]:hidden [&.ant-radio-wrapper-checked]:(border-primary bg-container text-primary shadow-sm)"
+                    key={option.value}
+                    value={option.value}
+                  >
+                    <span className="flex items-center gap-8px text-left leading-normal">
+                      <SvgIcon className="shrink-0 text-19px" icon={getMenuTypeIcon(option.value)} />
+                      <span>
+                        <strong className="block text-12px">{option.label}</strong>
+                        <small className="mt-2px block text-9px text-tertiary">{option.description}</small>
+                      </span>
+                    </span>
+                  </Radio>
+                ))}
+              </Radio.Group>
             </Form.Item>
           </Col>
         </Row>
 
-        <Divider plain titlePlacement="start">
-          基础信息
-        </Divider>
+        <Divider />
+
+        <div className="text-14px font-700 mb-1">基础信息</div>
+        <div className="text-11px text-tertiary mb-12px">名称和排序用于节点识别与同级展示顺序。</div>
+
         <Row gutter={16}>
           <Col md={12} span={24}>
             <Form.Item
@@ -159,7 +179,7 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
           </Col>
           {menuType !== 'F' ? (
             <Col span={24}>
-              <Form.Item label="菜单图标" name="icon">
+              <Form.Item label="菜单图标" className="mb-0" name="icon">
                 <Input
                   allowClear
                   placeholder="Iconify 图标，例如 ph:menu"
@@ -177,9 +197,12 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
 
         {menuType !== 'F' ? (
           <>
-            <Divider plain titlePlacement="start">
-              路由配置
-            </Divider>
+            <Divider />
+
+            <div className="text-14px font-700 mb-1">路由配置</div>
+            <div className="text-11px text-tertiary mb-12px">
+              配置访问路径、打开方式和显示状态；菜单还需填写组件路径，可按需设置路由参数与页面缓存。
+            </div>
             <Row gutter={16}>
               <Col md={12} span={24}>
                 <Form.Item label="打开方式" name="isFrame">
@@ -242,9 +265,11 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
           </>
         ) : null}
 
-        <Divider plain titlePlacement="start">
-          权限与状态
-        </Divider>
+        <Divider className="mt-0" />
+
+        <div className="text-14px font-700 mb-1">权限与状态</div>
+        <div className="text-11px text-tertiary mb-12px">按钮权限必须填写权限字符，目录不配置权限字符。</div>
+
         <Row gutter={16}>
           {menuType !== 'M' ? (
             <Col span={24}>
