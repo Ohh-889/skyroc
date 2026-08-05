@@ -1,4 +1,3 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy, useEffect, useState } from 'react';
@@ -25,10 +24,10 @@ import {
   isRouteMenu,
   normalizeMenuPayload
 } from './modules/menu-utils';
+import MenuDetailCard from './modules/MenuDetailCard';
 import type { EditorMode } from './modules/MenuEditorDrawer';
 import MenuResourceCard from './modules/MenuResourceCard';
 import MenuTreePanel from './modules/MenuTreePanel';
-import MenuDetailCard from './modules/MenuDetailCard'
 
 const MenuEditorDrawer = lazy(() => import('./modules/MenuEditorDrawer'));
 
@@ -144,9 +143,9 @@ const MenuManagement = (props: MenuManagementProps) => {
       editorState.mode === 'create'
         ? await createMutation.mutateAsync(payload)
         : await updateMutation.mutateAsync({
-          ...payload,
-          menuId: editorState.menuId as MenuId
-        });
+            ...payload,
+            menuId: editorState.menuId as MenuId
+          });
 
     handleCloseEditor();
     await refreshMenuCaches();
@@ -167,7 +166,6 @@ const MenuManagement = (props: MenuManagementProps) => {
         descendantCount > 0
           ? `将同时删除 ${descendantCount} 个后代节点，并解除相关角色菜单绑定。此操作不可撤销。`
           : '删除前后端会检查角色引用。此操作不可撤销。',
-      icon: <SvgIcon className="text-warning" icon="ph:warning-circle" />,
       okButtonProps: { danger: true },
       okText: descendantCount > 0 ? '级联删除' : '确认删除',
       title: `删除“${menu.menuName}”`,
