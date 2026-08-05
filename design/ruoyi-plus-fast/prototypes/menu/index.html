@@ -1,0 +1,2517 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Skyroc Admin - 菜单管理原型</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #6366f1;
+        --primary-hover: #514fda;
+        --primary-soft: #eef0ff;
+        --primary-border: #cfd5ff;
+        --page: #f6f7f9;
+        --surface: #ffffff;
+        --surface-raised: #ffffff;
+        --sidebar: #171922;
+        --sidebar-muted: #9296a5;
+        --sidebar-hover: #242733;
+        --text: #2f3036;
+        --text-secondary: #676a75;
+        --text-tertiary: #9699a3;
+        --border: #e7e8ed;
+        --border-strong: #d7d9e1;
+        --hover: #f7f7fa;
+        --selected: #f2f3ff;
+        --success: #10a36f;
+        --success-soft: #eaf9f2;
+        --warning: #d2850b;
+        --warning-soft: #fff7e8;
+        --danger: #e04755;
+        --danger-soft: #fff0f1;
+        --info: #1686d9;
+        --info-soft: #edf7ff;
+        --mask: rgb(18 20 28 / 46%);
+        --shadow: 0 18px 52px rgb(25 29 48 / 14%);
+        --control-shadow: 0 1px 2px rgb(22 24 35 / 5%);
+      }
+
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #8183ff;
+        --primary-hover: #9a9bff;
+        --primary-soft: #292b50;
+        --primary-border: #4d5083;
+        --page: #111318;
+        --surface: #1b1e24;
+        --surface-raised: #22252c;
+        --sidebar: #0d0f14;
+        --sidebar-muted: #878b99;
+        --sidebar-hover: #1d2029;
+        --text: #ecedf2;
+        --text-secondary: #b5b8c2;
+        --text-tertiary: #808591;
+        --border: #30333b;
+        --border-strong: #424650;
+        --hover: #24272e;
+        --selected: #242644;
+        --success: #46c58b;
+        --success-soft: #18372b;
+        --warning: #f0a13b;
+        --warning-soft: #3a2a17;
+        --danger: #ff737d;
+        --danger-soft: #3f2024;
+        --info: #55aef0;
+        --info-soft: #183044;
+        --mask: rgb(0 0 0 / 62%);
+        --shadow: 0 20px 56px rgb(0 0 0 / 42%);
+        --control-shadow: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
+          'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 224px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: radial-gradient(circle at 10% 6%, rgb(99 102 241 / 20%), transparent 27%), var(--sidebar);
+        color: #f4f5f8;
+      }
+
+      .brand {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 20px;
+        border-bottom: 1px solid rgb(255 255 255 / 7%);
+        font-size: 17px;
+        font-weight: 660;
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: linear-gradient(145deg, #8587ff, #5559e9);
+        box-shadow: 0 7px 18px rgb(58 62 211 / 35%);
+      }
+
+      .brand-mark .icon {
+        width: 19px;
+        height: 19px;
+      }
+
+      .nav {
+        flex: 1;
+        padding: 16px 12px;
+        overflow-y: auto;
+      }
+
+      .nav-label {
+        margin: 16px 10px 8px;
+        color: #696e7c;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.1em;
+      }
+
+      .nav-item {
+        width: 100%;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 3px 0;
+        padding: 0 12px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--sidebar-muted);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .nav-item:hover {
+        background: var(--sidebar-hover);
+        color: #fff;
+      }
+
+      .nav-item.active {
+        background: linear-gradient(90deg, rgb(99 102 241 / 25%), rgb(99 102 241 / 10%));
+        box-shadow: inset 3px 0 0 #8183ff;
+        color: #fff;
+      }
+
+      .nav-item.child {
+        padding-left: 40px;
+      }
+
+      .nav-item .chevron {
+        margin-left: auto;
+      }
+
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 12px;
+        padding: 12px;
+        border-top: 1px solid rgb(255 255 255 / 7%);
+        color: #d9dbe2;
+      }
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 11px;
+        background: linear-gradient(145deg, #8d90ff, #5559e9);
+        color: #fff;
+        font-weight: 700;
+      }
+
+      .sidebar-user small {
+        display: block;
+        margin-top: 2px;
+        color: var(--sidebar-muted);
+      }
+
+      .main-shell {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border);
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        backdrop-filter: blur(14px);
+      }
+
+      .breadcrumbs,
+      .top-actions,
+      .toolbar,
+      .inline,
+      .row-actions,
+      .status,
+      .pagination,
+      .drawer-actions,
+      .selection-summary {
+        display: flex;
+        align-items: center;
+      }
+
+      .breadcrumbs {
+        gap: 8px;
+        color: var(--text-tertiary);
+        font-size: 13px;
+      }
+
+      .breadcrumbs strong {
+        color: var(--text-secondary);
+      }
+
+      .top-actions,
+      .toolbar,
+      .row-actions,
+      .drawer-actions {
+        gap: 8px;
+      }
+
+      .icon-button {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        border-color: var(--border);
+        background: var(--hover);
+        color: var(--text);
+      }
+
+      .content {
+        width: 100%;
+        padding: 24px;
+      }
+
+      .page-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+
+      .page-heading h1 {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 680;
+        letter-spacing: -0.02em;
+      }
+
+      .page-heading p {
+        margin: 6px 0 0;
+        color: var(--text-secondary);
+      }
+
+      .context-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 11px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .context-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 0 3px var(--success-soft);
+      }
+
+      .card {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgb(30 34 50 / 3%);
+      }
+
+      .filter-card {
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        margin-bottom: 14px;
+        padding: 16px 18px;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      .field.grow {
+        flex: 1 1 290px;
+        max-width: 390px;
+      }
+
+      .field.compact {
+        flex: 0 1 180px;
+      }
+
+      .field label,
+      .field-label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .required::before {
+        content: '*';
+        margin-right: 4px;
+        color: var(--danger);
+      }
+
+      input,
+      select,
+      textarea,
+      .fake-select {
+        width: 100%;
+        min-height: 36px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--control-shadow);
+      }
+
+      input,
+      select,
+      textarea {
+        padding: 8px 11px;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      textarea {
+        min-height: 78px;
+        resize: vertical;
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+
+      .input-wrap .icon {
+        position: absolute;
+        top: 9px;
+        left: 10px;
+        width: 17px;
+        height: 17px;
+        color: var(--text-tertiary);
+        pointer-events: none;
+      }
+
+      .input-wrap input {
+        padding-left: 34px;
+      }
+
+      .filter-actions {
+        margin-left: auto;
+        padding-bottom: 1px;
+        white-space: nowrap;
+      }
+
+      .button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 7px 13px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        box-shadow: var(--control-shadow);
+        cursor: pointer;
+        font-weight: 550;
+      }
+
+      .button:hover {
+        border-color: var(--primary-border);
+        color: var(--primary);
+      }
+
+      .button.primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .button.primary:hover {
+        border-color: var(--primary-hover);
+        background: var(--primary-hover);
+        color: #fff;
+      }
+
+      .button.danger {
+        border-color: color-mix(in srgb, var(--danger) 35%, var(--border));
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .button.ghost {
+        border-color: transparent;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .button.small {
+        min-height: 30px;
+        padding: 4px 9px;
+        font-size: 12px;
+      }
+
+      .button:disabled,
+      .icon-button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .button .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .resource-card {
+        min-height: 580px;
+      }
+
+      .resource-head {
+        min-height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .resource-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .resource-title strong {
+        font-size: 15px;
+      }
+
+      .count-badge {
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .split {
+        width: 1px;
+        height: 22px;
+        background: var(--border);
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        height: 44px;
+        padding: 0 12px;
+        background: color-mix(in srgb, var(--page) 72%, var(--surface));
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      td {
+        height: 60px;
+        padding: 8px 12px;
+        color: var(--text-secondary);
+      }
+
+      tbody tr:hover td {
+        background: var(--hover);
+      }
+
+      tbody tr.flash td {
+        animation: flash 1.2s ease;
+      }
+
+      @keyframes flash {
+        0%,
+        55% {
+          background: var(--selected);
+        }
+      }
+
+      .menu-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .tree-spacer {
+        width: calc(var(--level, 0) * 20px);
+        flex: 0 0 auto;
+      }
+
+      .tree-toggle,
+      .tree-placeholder {
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+      }
+
+      .tree-toggle {
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
+      }
+
+      .tree-toggle:hover {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .tree-toggle .icon {
+        width: 15px;
+        height: 15px;
+        transition: transform 160ms ease;
+      }
+
+      .tree-toggle[aria-expanded='true'] .icon {
+        transform: rotate(90deg);
+      }
+
+      .node-icon {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 8px;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .node-icon.menu {
+        background: var(--info-soft);
+        color: var(--info);
+      }
+
+      .node-icon.button-node {
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .node-icon .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .node-title {
+        min-width: 0;
+      }
+
+      .node-title strong {
+        display: block;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 610;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .node-title small {
+        display: block;
+        margin-top: 2px;
+        color: var(--text-tertiary);
+        font-size: 11px;
+      }
+
+      mark {
+        border-radius: 3px;
+        background: #ffe8a3;
+        color: #6f4b00;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--hover);
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .tag.directory {
+        border-color: var(--primary-border);
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .tag.page {
+        border-color: color-mix(in srgb, var(--info) 28%, var(--border));
+        background: var(--info-soft);
+        color: var(--info);
+      }
+
+      .tag.permission {
+        border-color: color-mix(in srgb, var(--warning) 28%, var(--border));
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .route-stack {
+        min-width: 0;
+      }
+
+      .route-stack code,
+      .permission-code {
+        display: block;
+        overflow: hidden;
+        color: var(--text-secondary);
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .route-stack small {
+        display: block;
+        margin-top: 4px;
+        overflow: hidden;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .permission-wrap {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .permission-wrap .permission-code {
+        min-width: 0;
+      }
+
+      .copy-button {
+        width: 25px;
+        height: 25px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
+      }
+
+      .copy-button:hover {
+        background: var(--hover);
+        color: var(--primary);
+      }
+
+      .copy-button .icon {
+        width: 14px;
+        height: 14px;
+      }
+
+      .status {
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 550;
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 0 3px var(--success-soft);
+      }
+
+      .status.disabled {
+        color: var(--text-tertiary);
+      }
+
+      .status.disabled .status-dot {
+        background: var(--danger);
+        box-shadow: 0 0 0 3px var(--danger-soft);
+      }
+
+      .link-button {
+        min-height: 28px;
+        padding: 3px 5px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .link-button:hover {
+        background: var(--primary-soft);
+      }
+
+      .table-footer {
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 18px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .empty-state {
+        display: none;
+        min-height: 350px;
+        place-items: center;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .empty-state.show {
+        display: grid;
+      }
+
+      .empty-icon {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 14px;
+        border-radius: 16px;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .empty-state h3 {
+        margin: 0 0 6px;
+        font-size: 16px;
+      }
+
+      .empty-state p {
+        margin: 0 0 16px;
+        color: var(--text-secondary);
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        background: var(--mask);
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .overlay.show {
+        display: block;
+        opacity: 1;
+      }
+
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 60;
+        width: min(720px, 100vw);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--border);
+        background: var(--surface-raised);
+        box-shadow: var(--shadow);
+        transform: translateX(102%);
+        transition: transform 200ms ease;
+      }
+
+      .drawer.show {
+        transform: translateX(0);
+      }
+
+      .drawer-head {
+        min-height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .drawer-head h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .drawer-head p {
+        margin: 4px 0 0;
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .drawer-footer {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--border);
+        background: var(--surface-raised);
+      }
+
+      .drawer-footer small {
+        color: var(--text-tertiary);
+      }
+
+      .form-section {
+        margin-bottom: 22px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .form-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .section-heading {
+        margin-bottom: 14px;
+      }
+
+      .section-heading strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .section-heading span {
+        display: block;
+        margin-top: 3px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+      }
+
+      .type-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 4px;
+        border-radius: 10px;
+        background: var(--page);
+      }
+
+      .type-tab {
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 12px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .type-tab:hover {
+        color: var(--text);
+      }
+
+      .type-tab.active {
+        border-color: var(--primary-border);
+        background: var(--surface);
+        box-shadow: var(--control-shadow);
+        color: var(--primary);
+      }
+
+      .type-tab .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .type-tab strong,
+      .type-tab small {
+        display: block;
+      }
+
+      .type-tab strong {
+        font-size: 13px;
+      }
+
+      .type-tab small {
+        margin-top: 2px;
+        color: var(--text-tertiary);
+        font-size: 10px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px 16px;
+      }
+
+      .form-grid .span-2 {
+        grid-column: 1 / -1;
+      }
+
+      .help {
+        margin-top: 5px;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .fake-select {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 11px;
+        cursor: pointer;
+      }
+
+      .fake-select .icon {
+        width: 15px;
+        height: 15px;
+        color: var(--text-tertiary);
+      }
+
+      .radio-row {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .radio-row label,
+      .check-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .radio-row input,
+      .check-row input {
+        width: 16px;
+        min-height: 16px;
+        margin: 0;
+        accent-color: var(--primary);
+        box-shadow: none;
+      }
+
+      .conditional.hidden {
+        display: none;
+      }
+
+      .info-callout,
+      .warning-callout,
+      .danger-callout {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 11px 12px;
+        border: 1px solid color-mix(in srgb, var(--info) 28%, var(--border));
+        border-radius: 9px;
+        background: var(--info-soft);
+        color: color-mix(in srgb, var(--info) 74%, var(--text));
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .warning-callout {
+        border-color: color-mix(in srgb, var(--warning) 28%, var(--border));
+        background: var(--warning-soft);
+        color: color-mix(in srgb, var(--warning) 70%, var(--text));
+      }
+
+      .danger-callout {
+        border-color: color-mix(in srgb, var(--danger) 28%, var(--border));
+        background: var(--danger-soft);
+        color: color-mix(in srgb, var(--danger) 72%, var(--text));
+      }
+
+      .info-callout .icon,
+      .warning-callout .icon,
+      .danger-callout .icon {
+        width: 17px;
+        height: 17px;
+        margin-top: 1px;
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        z-index: 70;
+        width: min(620px, calc(100vw - 32px));
+        max-height: calc(100vh - 48px);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-raised);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.98);
+        transition: 180ms ease;
+      }
+
+      .modal.show {
+        display: flex;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .modal-head,
+      .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 15px 18px;
+      }
+
+      .modal-head {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-head h2 {
+        margin: 0;
+        font-size: 17px;
+      }
+
+      .modal-body {
+        overflow-y: auto;
+        padding: 18px;
+      }
+
+      .modal-footer {
+        border-top: 1px solid var(--border);
+      }
+
+      .cascade-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .cascade-tree,
+      .impact-panel {
+        min-height: 282px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: color-mix(in srgb, var(--page) 45%, var(--surface));
+      }
+
+      .cascade-node {
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 7px;
+        border-radius: 6px;
+      }
+
+      .cascade-node:hover {
+        background: var(--hover);
+      }
+
+      .cascade-node.level-1 {
+        padding-left: 27px;
+      }
+
+      .cascade-node.level-2 {
+        padding-left: 47px;
+      }
+
+      .cascade-node input {
+        width: 16px;
+        min-height: 16px;
+        margin: 0;
+        accent-color: var(--danger);
+        box-shadow: none;
+      }
+
+      .cascade-node .icon {
+        width: 15px;
+        height: 15px;
+        color: var(--text-tertiary);
+      }
+
+      .impact-panel h3 {
+        margin: 0 0 12px;
+        font-size: 13px;
+      }
+
+      .impact-stat {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .impact-stat strong {
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      .impact-hint {
+        margin: 12px 0 0;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .selection-summary {
+        gap: 6px;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .selection-summary strong {
+        color: var(--danger);
+      }
+
+      .confirm-title {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+
+      .confirm-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .confirm-copy {
+        margin: 2px 0 16px 49px;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+
+      .toast-stack {
+        position: fixed;
+        top: 78px;
+        right: 20px;
+        z-index: 100;
+        display: grid;
+        gap: 9px;
+        pointer-events: none;
+      }
+
+      .toast {
+        min-width: 260px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 13px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface-raised);
+        box-shadow: 0 12px 32px rgb(24 28 45 / 15%);
+        animation: toast-in 180ms ease;
+        color: var(--text-secondary);
+        pointer-events: auto;
+      }
+
+      .toast .icon {
+        color: var(--success);
+      }
+
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+      }
+
+      body.compact td {
+        height: 48px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      body.compact .node-icon {
+        width: 26px;
+        height: 26px;
+      }
+
+      @media (max-width: 1120px) {
+        .app {
+          grid-template-columns: 76px minmax(0, 1fr);
+        }
+
+        .brand {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .brand span,
+        .nav-item span,
+        .nav-label,
+        .nav-item .chevron,
+        .sidebar-user > div:not(.avatar) {
+          display: none;
+        }
+
+        .nav-item,
+        .nav-item.child {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .sidebar-user {
+          justify-content: center;
+          padding: 10px 0;
+        }
+
+        .hide-medium {
+          display: none;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .app {
+          display: block;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .topbar {
+          padding: 0 16px;
+        }
+
+        .content {
+          padding: 16px;
+        }
+
+        .page-heading {
+          display: block;
+        }
+
+        .context-pill {
+          margin-top: 12px;
+        }
+
+        .filter-card {
+          align-items: stretch;
+          flex-wrap: wrap;
+        }
+
+        .field.grow,
+        .field.compact {
+          flex: 1 1 220px;
+          max-width: none;
+        }
+
+        .filter-actions {
+          width: 100%;
+          margin-left: 0;
+        }
+
+        .resource-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .toolbar {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 2px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-grid .span-2 {
+          grid-column: auto;
+        }
+
+        .type-tabs {
+          grid-template-columns: 1fr;
+        }
+
+        .cascade-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .cascade-tree,
+        .impact-panel {
+          min-height: auto;
+        }
+
+        .drawer-footer {
+          align-items: flex-end;
+        }
+
+        .drawer-footer small {
+          max-width: 45%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="m3 11 9-8 9 8" />
+        <path d="M5 10v10h14V10M9 20v-6h6v6" />
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09a1.7 1.7 0 0 0-1.1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.64 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.5 4.64a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.36.7.64.96.3.28.69.43 1.1.44H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
+        />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="i-file" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+        <path d="M14 2v6h6M8 13h8M8 17h6" />
+      </symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24">
+        <path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+      </symbol>
+      <symbol id="i-key" viewBox="0 0 24 24">
+        <circle cx="8" cy="15" r="4" />
+        <path d="m11 12 9-9M17 6l2 2M14 9l2 2" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" /></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M20 11a8 8 0 1 0-2.34 5.66L20 14" />
+        <path d="M20 7v4h-4" />
+      </symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" /></symbol>
+      <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
+        />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" /></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="12" height="12" rx="2" />
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12" /></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5" /></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
+        <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+        <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></symbol>
+      <symbol id="i-columns" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M9 4v16M15 4v16" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon"><use href="#i-grid" /></svg>
+          </div>
+          <span>Skyroc Admin</span>
+        </div>
+        <nav class="nav">
+          <div class="nav-label">工作台</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-home" /></svg><span>仪表盘</span>
+          </button>
+          <div class="nav-label">系统管理</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-users" /></svg><span>用户管理</span>
+          </button>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-shield" /></svg><span>角色管理</span>
+          </button>
+          <button class="nav-item active" aria-current="page">
+            <svg class="icon"><use href="#i-menu" /></svg><span>菜单管理</span>
+          </button>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-settings" /></svg><span>系统配置</span
+            ><svg class="icon chevron"><use href="#i-chevron" /></svg>
+          </button>
+          <div class="nav-label">系统监控</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-file" /></svg><span>操作日志</span>
+          </button>
+        </nav>
+        <div class="sidebar-user">
+          <div class="avatar">WS</div>
+          <div><strong>王管理员</strong><small>超级管理员</small></div>
+        </div>
+      </aside>
+
+      <main class="main-shell">
+        <header class="topbar">
+          <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>菜单管理</strong></div>
+          <div class="top-actions">
+            <button class="icon-button" id="densityButton" title="切换表格密度" aria-label="切换表格密度">
+              <svg class="icon"><use href="#i-columns" /></svg>
+            </button>
+            <button class="icon-button" id="themeButton" title="切换明暗主题" aria-label="切换明暗主题">
+              <svg class="icon"><use id="themeIcon" href="#i-moon" /></svg>
+            </button>
+            <div class="avatar">WS</div>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="page-heading">
+            <div>
+              <h1>菜单管理</h1>
+              <p>维护导航结构、页面路由与按钮权限，变更会影响角色授权和动态路由。</p>
+            </div>
+            <div class="context-pill"><span class="context-dot"></span>动态路由已连接 · 平台级资源</div>
+          </div>
+
+          <section class="card filter-card" aria-label="菜单查询">
+            <div class="field grow">
+              <label for="keyword">菜单名称</label>
+              <div class="input-wrap">
+                <svg class="icon"><use href="#i-search" /></svg
+                ><input id="keyword" placeholder="输入菜单名称或权限标识" autocomplete="off" />
+              </div>
+            </div>
+            <div class="field compact">
+              <label for="statusFilter">节点状态</label>
+              <select id="statusFilter">
+                <option value="all">全部状态</option>
+                <option value="normal">正常</option>
+                <option value="disabled">停用</option>
+              </select>
+            </div>
+            <div class="field compact">
+              <label for="typeFilter">节点类型</label>
+              <select id="typeFilter">
+                <option value="all">全部类型</option>
+                <option value="M">目录</option>
+                <option value="C">菜单</option>
+                <option value="F">按钮</option>
+              </select>
+            </div>
+            <div class="filter-actions toolbar">
+              <button class="button primary" id="searchButton">
+                <svg class="icon"><use href="#i-search" /></svg>查询
+              </button>
+              <button class="button" id="resetButton">
+                <svg class="icon"><use href="#i-refresh" /></svg>重置
+              </button>
+            </div>
+          </section>
+
+          <section class="card resource-card">
+            <div class="resource-head">
+              <div class="resource-title">
+                <strong>菜单资源</strong><span class="count-badge" id="resourceCount">42 个节点</span>
+              </div>
+              <div class="toolbar">
+                <button class="button primary" id="addRootButton">
+                  <svg class="icon"><use href="#i-plus" /></svg>新增根节点
+                </button>
+                <button class="button danger" id="cascadeButton">
+                  <svg class="icon"><use href="#i-trash" /></svg>级联删除
+                </button>
+                <span class="split"></span>
+                <button class="button" id="expandButton">
+                  <svg class="icon"><use href="#i-expand" /></svg><span>展开全部</span>
+                </button>
+                <button class="icon-button" id="refreshButton" title="刷新列表" aria-label="刷新列表">
+                  <svg class="icon"><use href="#i-refresh" /></svg>
+                </button>
+                <button class="icon-button" title="列设置" aria-label="列设置">
+                  <svg class="icon"><use href="#i-columns" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-scroll" id="tableWrap">
+              <table aria-label="菜单资源树表格">
+                <colgroup>
+                  <col style="width: 250px" />
+                  <col style="width: 82px" />
+                  <col style="width: 62px" />
+                  <col style="width: 205px" />
+                  <col style="width: 180px" />
+                  <col style="width: 84px" />
+                  <col class="hide-medium" style="width: 120px" />
+                  <col style="width: 145px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>菜单名称</th>
+                    <th>类型</th>
+                    <th>排序</th>
+                    <th>路由资源</th>
+                    <th>权限标识</th>
+                    <th>状态</th>
+                    <th class="hide-medium">创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="menuBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="emptyState">
+              <div>
+                <div class="empty-icon">
+                  <svg class="icon"><use href="#i-search" /></svg>
+                </div>
+                <h3>未找到匹配的菜单</h3>
+                <p>请调整名称、状态或节点类型后重试。</p>
+                <button class="button" id="emptyReset">清空筛选</button>
+              </div>
+            </div>
+            <div class="table-footer">
+              <span id="visibleCount">当前展示 4 / 42 个节点</span><span>最近更新 2026-08-05 10:32</span>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="drawer" id="editorDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div class="drawer-head">
+        <div>
+          <h2 id="drawerTitle">新增菜单</h2>
+          <p id="drawerSubtitle">上级：主类目</p>
+        </div>
+        <button class="icon-button" data-close="drawer" aria-label="关闭">
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <section class="form-section">
+          <div class="section-heading"><strong>归属与类型</strong><span>先确定节点在资源树中的位置和用途。</span></div>
+          <div class="form-grid">
+            <div class="field span-2">
+              <label class="required">上级菜单</label
+              ><button class="fake-select" id="parentSelect">
+                <span id="parentLabel">主类目</span><svg class="icon"><use href="#i-chevron" /></svg>
+              </button>
+              <div class="help">不能选择当前节点或其下级；按钮节点不能作为上级。</div>
+            </div>
+            <div class="field span-2">
+              <span class="field-label required">菜单类型</span>
+              <div class="type-tabs" role="radiogroup">
+                <button class="type-tab active" data-type="M">
+                  <svg class="icon"><use href="#i-folder" /></svg
+                  ><span><strong>目录</strong><small>导航分组或父级容器</small></span>
+                </button>
+                <button class="type-tab" data-type="C">
+                  <svg class="icon"><use href="#i-file" /></svg
+                  ><span><strong>菜单</strong><small>可访问页面或链接</small></span>
+                </button>
+                <button class="type-tab" data-type="F">
+                  <svg class="icon"><use href="#i-key" /></svg
+                  ><span><strong>按钮</strong><small>页面内操作权限</small></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <strong>基础信息</strong><span>名称和排序用于识别节点及控制同级展示顺序。</span>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label class="required" for="menuName">菜单名称</label
+              ><input id="menuName" maxlength="50" placeholder="例如：菜单管理" />
+            </div>
+            <div class="field">
+              <label class="required" for="orderNum">显示排序</label
+              ><input id="orderNum" type="number" min="0" value="1" />
+            </div>
+            <div class="field span-2 conditional route-field">
+              <label>菜单图标</label
+              ><button class="fake-select">
+                <span class="inline" style="gap: 8px"
+                  ><span class="node-icon" style="width: 25px; height: 25px"
+                    ><svg class="icon"><use href="#i-menu" /></svg></span
+                  ><span>menu-2-line</span></span
+                ><svg class="icon"><use href="#i-chevron" /></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section conditional route-field">
+          <div class="section-heading">
+            <strong>路由配置</strong><span>路径和组件由动态路由服务转换，表单只维护原始资源字段。</span>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <span class="field-label">打开方式</span>
+              <div class="radio-row">
+                <label><input type="radio" name="frame" value="1" checked />内部路由</label
+                ><label><input type="radio" name="frame" value="0" />外部链接</label>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-label">显示状态</span>
+              <div class="radio-row">
+                <label><input type="radio" name="visible" value="0" checked />显示</label
+                ><label><input type="radio" name="visible" value="1" />隐藏</label>
+              </div>
+            </div>
+            <div class="field span-2">
+              <label class="required" for="routePath">路由地址</label
+              ><input id="routePath" maxlength="200" placeholder="例如：menu；外链需以 http(s):// 开头" />
+              <div class="help">一级目录会由后端转换为以 / 开头的路由，不需要手动拼接。</div>
+            </div>
+            <div class="field conditional menu-only">
+              <label class="required" for="componentPath">组件路径</label
+              ><input id="componentPath" maxlength="255" placeholder="system/menu/index" />
+            </div>
+            <div class="field conditional menu-only">
+              <label for="queryParam">路由参数</label
+              ><input id="queryParam" maxlength="255" placeholder='例如：{"source":"menu"}' />
+            </div>
+            <div class="field conditional menu-only">
+              <span class="field-label">页面缓存</span>
+              <div class="radio-row">
+                <label><input type="radio" name="cache" value="0" checked />缓存</label
+                ><label><input type="radio" name="cache" value="1" />不缓存</label>
+              </div>
+            </div>
+            <div class="field conditional menu-only hidden" id="activePathField">
+              <label for="activePath">激活路由</label><input id="activePath" placeholder="例如：/system/menu" />
+              <div class="help">隐藏页面访问时，侧栏默认高亮的可见菜单。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <strong>权限与状态</strong><span>权限字符用于角色授权和页面操作显隐。</span>
+          </div>
+          <div class="form-grid">
+            <div class="field span-2 conditional permission-field hidden">
+              <label id="permissionLabel" for="permissionInput">权限标识</label
+              ><input id="permissionInput" maxlength="100" placeholder="例如：system:menu:list" />
+              <div class="help">建议使用“模块:资源:动作”格式，按钮节点必须填写且全局不能冲突。</div>
+            </div>
+            <div class="field span-2">
+              <span class="field-label">菜单状态</span>
+              <div class="radio-row">
+                <label><input type="radio" name="nodeStatus" value="normal" checked />正常</label
+                ><label><input type="radio" name="nodeStatus" value="disabled" />停用</label>
+              </div>
+            </div>
+            <div class="info-callout span-2">
+              <svg class="icon"><use href="#i-info" /></svg>
+              <div>保存菜单配置后可能影响在线用户的导航和按钮权限。正式实现需按后端策略刷新动态路由与权限缓存。</div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="drawer-footer">
+        <small id="drawerMeta">新节点将创建在当前选择的父级下</small>
+        <div class="drawer-actions">
+          <button class="button" data-close="drawer">取消</button
+          ><button class="button primary" id="saveButton">保存菜单</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="modal" id="cascadeModal" role="dialog" aria-modal="true" aria-labelledby="cascadeTitle">
+      <div class="modal-head">
+        <div><h2 id="cascadeTitle">级联删除菜单</h2></div>
+        <button class="icon-button" data-close="modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="danger-callout">
+          <svg class="icon"><use href="#i-info" /></svg>
+          <div>勾选父节点会包含全部后代。提交前应由后端重新计算角色、租户套餐和系统保护资源影响。</div>
+        </div>
+        <div class="cascade-layout">
+          <div class="cascade-tree" id="cascadeTree">
+            <label class="cascade-node"
+              ><input type="checkbox" value="system" /><svg class="icon"><use href="#i-folder" /></svg
+              ><span>系统管理</span></label
+            >
+            <label class="cascade-node level-1"
+              ><input type="checkbox" value="user" data-parent="system" /><svg class="icon"><use href="#i-file" /></svg
+              ><span>用户管理</span></label
+            >
+            <label class="cascade-node level-2"
+              ><input type="checkbox" value="user-query" data-parent="user" /><svg class="icon">
+                <use href="#i-key" /></svg
+              ><span>用户查询</span></label
+            >
+            <label class="cascade-node level-2"
+              ><input type="checkbox" value="user-add" data-parent="user" /><svg class="icon"><use href="#i-key" /></svg
+              ><span>用户新增</span></label
+            >
+            <label class="cascade-node level-1"
+              ><input type="checkbox" value="menu" data-parent="system" /><svg class="icon"><use href="#i-file" /></svg
+              ><span>菜单管理</span></label
+            >
+            <label class="cascade-node level-2"
+              ><input type="checkbox" value="menu-query" data-parent="menu" /><svg class="icon">
+                <use href="#i-key" /></svg
+              ><span>菜单查询</span></label
+            >
+            <label class="cascade-node"
+              ><input type="checkbox" value="monitor" /><svg class="icon"><use href="#i-folder" /></svg
+              ><span>系统监控</span></label
+            >
+          </div>
+          <aside class="impact-panel">
+            <h3>预计影响</h3>
+            <div class="impact-stat"><span>选中节点</span><strong id="impactNodes">0</strong></div>
+            <div class="impact-stat"><span>目录 / 菜单 / 按钮</span><strong id="impactTypes">0 / 0 / 0</strong></div>
+            <div class="impact-stat"><span>关联角色</span><strong id="impactRoles">0</strong></div>
+            <div class="impact-stat"><span>租户套餐</span><strong id="impactPackages">0</strong></div>
+            <p class="impact-hint">原型展示的是预估值。正式删除前需再次从服务端获取并确认最终影响。</p>
+          </aside>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="selection-summary">已选择 <strong id="selectionCount">0</strong> 个节点</div>
+        <div class="toolbar">
+          <button class="button" data-close="modal">取消</button
+          ><button class="button danger" id="cascadeConfirm" disabled>查看影响并确认</button>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="modal"
+      id="deleteModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deleteTitle"
+      style="width: min(480px, calc(100vw - 32px))"
+    >
+      <div class="modal-head">
+        <div class="confirm-title">
+          <div class="confirm-icon">
+            <svg class="icon"><use href="#i-trash" /></svg>
+          </div>
+          <h2 id="deleteTitle">删除菜单</h2>
+        </div>
+        <button class="icon-button" data-close="modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-copy" id="deleteCopy">删除前将检查子节点、角色和租户套餐引用。该操作无法撤销。</p>
+        <div class="warning-callout">
+          <svg class="icon"><use href="#i-info" /></svg>
+          <div>此原型不会删除真实数据，确认后仅展示交互反馈。</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span></span>
+        <div class="toolbar">
+          <button class="button" data-close="modal">取消</button
+          ><button class="button danger" id="deleteConfirm">确认删除</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+    <script>
+      const menus = [
+        {
+          id: 1,
+          parent: null,
+          name: '系统管理',
+          type: 'M',
+          order: 1,
+          path: '/system',
+          component: 'Layout',
+          permission: '',
+          status: 'normal',
+          date: '2026-07-29 09:12',
+          icon: 'folder'
+        },
+        {
+          id: 2,
+          parent: 1,
+          name: '用户管理',
+          type: 'C',
+          order: 1,
+          path: 'user',
+          component: 'system/user/index',
+          permission: 'system:user:list',
+          status: 'normal',
+          date: '2026-07-29 09:13',
+          icon: 'file'
+        },
+        {
+          id: 3,
+          parent: 2,
+          name: '用户查询',
+          type: 'F',
+          order: 1,
+          path: '',
+          component: '',
+          permission: 'system:user:query',
+          status: 'normal',
+          date: '2026-07-29 09:13',
+          icon: 'key'
+        },
+        {
+          id: 4,
+          parent: 2,
+          name: '用户新增',
+          type: 'F',
+          order: 2,
+          path: '',
+          component: '',
+          permission: 'system:user:add',
+          status: 'normal',
+          date: '2026-07-29 09:14',
+          icon: 'key'
+        },
+        {
+          id: 5,
+          parent: 2,
+          name: '用户修改',
+          type: 'F',
+          order: 3,
+          path: '',
+          component: '',
+          permission: 'system:user:edit',
+          status: 'normal',
+          date: '2026-07-29 09:14',
+          icon: 'key'
+        },
+        {
+          id: 6,
+          parent: 1,
+          name: '角色管理',
+          type: 'C',
+          order: 2,
+          path: 'role',
+          component: 'system/role/index',
+          permission: 'system:role:list',
+          status: 'normal',
+          date: '2026-07-29 09:18',
+          icon: 'file'
+        },
+        {
+          id: 7,
+          parent: 6,
+          name: '角色查询',
+          type: 'F',
+          order: 1,
+          path: '',
+          component: '',
+          permission: 'system:role:query',
+          status: 'normal',
+          date: '2026-07-29 09:19',
+          icon: 'key'
+        },
+        {
+          id: 8,
+          parent: 1,
+          name: '菜单管理',
+          type: 'C',
+          order: 3,
+          path: 'menu',
+          component: 'system/menu/index',
+          permission: 'system:menu:list',
+          status: 'normal',
+          date: '2026-08-01 15:26',
+          icon: 'file'
+        },
+        {
+          id: 9,
+          parent: 8,
+          name: '菜单查询',
+          type: 'F',
+          order: 1,
+          path: '',
+          component: '',
+          permission: 'system:menu:query',
+          status: 'normal',
+          date: '2026-08-01 15:27',
+          icon: 'key'
+        },
+        {
+          id: 10,
+          parent: 8,
+          name: '菜单新增',
+          type: 'F',
+          order: 2,
+          path: '',
+          component: '',
+          permission: 'system:menu:add',
+          status: 'normal',
+          date: '2026-08-01 15:27',
+          icon: 'key'
+        },
+        {
+          id: 11,
+          parent: null,
+          name: '系统监控',
+          type: 'M',
+          order: 2,
+          path: '/monitor',
+          component: 'Layout',
+          permission: '',
+          status: 'normal',
+          date: '2026-07-29 09:32',
+          icon: 'folder'
+        },
+        {
+          id: 12,
+          parent: 11,
+          name: '在线用户',
+          type: 'C',
+          order: 1,
+          path: 'online',
+          component: 'monitor/online/index',
+          permission: 'monitor:online:list',
+          status: 'normal',
+          date: '2026-07-29 09:33',
+          icon: 'file'
+        },
+        {
+          id: 13,
+          parent: 11,
+          name: '缓存监控',
+          type: 'C',
+          order: 2,
+          path: 'cache',
+          component: 'monitor/cache/index',
+          permission: 'monitor:cache:list',
+          status: 'disabled',
+          date: '2026-07-29 09:35',
+          icon: 'file'
+        }
+      ];
+
+      const expanded = new Set([1, 2, 8]);
+      let currentType = 'M';
+      let editingId = null;
+      let deleteTargetId = null;
+      let allExpanded = false;
+
+      const menuBody = document.querySelector('#menuBody');
+      const tableWrap = document.querySelector('#tableWrap');
+      const emptyState = document.querySelector('#emptyState');
+      const overlay = document.querySelector('#overlay');
+      const drawer = document.querySelector('#editorDrawer');
+      const cascadeModal = document.querySelector('#cascadeModal');
+      const deleteModal = document.querySelector('#deleteModal');
+      const keywordInput = document.querySelector('#keyword');
+      const statusFilter = document.querySelector('#statusFilter');
+      const typeFilter = document.querySelector('#typeFilter');
+
+      function icon(name) {
+        return `<svg class="icon"><use href="#i-${name}"></use></svg>`;
+      }
+
+      function typeLabel(type) {
+        return type === 'M' ? '目录' : type === 'C' ? '菜单' : '按钮';
+      }
+
+      function typeClass(type) {
+        return type === 'M' ? 'directory' : type === 'C' ? 'page' : 'permission';
+      }
+
+      function childNodes(parentId) {
+        return menus.filter(item => item.parent === parentId).sort((a, b) => a.order - b.order || a.id - b.id);
+      }
+
+      function matches(item, keyword, status, type) {
+        const textMatch =
+          !keyword || item.name.toLowerCase().includes(keyword) || item.permission.toLowerCase().includes(keyword);
+        return textMatch && (status === 'all' || item.status === status) && (type === 'all' || item.type === type);
+      }
+
+      function matchingIds(keyword, status, type) {
+        if (!keyword && status === 'all' && type === 'all') return null;
+        const ids = new Set();
+        menus
+          .filter(item => matches(item, keyword, status, type))
+          .forEach(item => {
+            let current = item;
+            while (current) {
+              ids.add(current.id);
+              current = menus.find(candidate => candidate.id === current.parent);
+            }
+          });
+        return ids;
+      }
+
+      function highlight(text, keyword) {
+        if (!keyword) return text;
+        const safe = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return text.replace(new RegExp(`(${safe})`, 'ig'), '<mark>$1</mark>');
+      }
+
+      function flattenVisible(nodes, level, allowedIds, forceExpand) {
+        const rows = [];
+        nodes.forEach(item => {
+          if (allowedIds && !allowedIds.has(item.id)) return;
+          rows.push({ item, level });
+          const children = childNodes(item.id);
+          if (children.length && (forceExpand || expanded.has(item.id)))
+            rows.push(...flattenVisible(children, level + 1, allowedIds, forceExpand));
+        });
+        return rows;
+      }
+
+      function renderTable(flashId) {
+        const keyword = keywordInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const type = typeFilter.value;
+        const allowedIds = matchingIds(keyword, status, type);
+        const filtering = allowedIds !== null;
+        const rows = flattenVisible(childNodes(null), 0, allowedIds, filtering);
+        menuBody.innerHTML = rows
+          .map(({ item, level }) => {
+            const children = childNodes(item.id);
+            const toggle = children.length
+              ? `<button class="tree-toggle" data-toggle="${item.id}" aria-label="${expanded.has(item.id) ? '收起' : '展开'}${item.name}" aria-expanded="${filtering || expanded.has(item.id)}">${icon('chevron')}</button>`
+              : '<span class="tree-placeholder"></span>';
+            const route =
+              item.type === 'F'
+                ? '<span>—</span>'
+                : `<div class="route-stack"><code>${item.path}</code><small>${item.component || '由路由服务自动解析'}</small></div>`;
+            const permission = item.permission
+              ? `<div class="permission-wrap"><code class="permission-code" title="${item.permission}">${highlight(item.permission, keyword)}</code><button class="copy-button" data-copy="${item.permission}" aria-label="复制权限标识">${icon('copy')}</button></div>`
+              : '<span>—</span>';
+            const addButton =
+              item.type === 'F' ? '' : `<button class="link-button" data-add-child="${item.id}">新增子级</button>`;
+            return `<tr data-row="${item.id}" class="${flashId === item.id ? 'flash' : ''}">
+            <td><div class="menu-cell"><span class="tree-spacer" style="--level:${level}"></span>${toggle}<span class="node-icon ${item.type === 'C' ? 'menu' : item.type === 'F' ? 'button-node' : ''}">${icon(item.icon)}</span><span class="node-title"><strong>${highlight(item.name, keyword)}</strong><small>ID ${item.id}${children.length ? ` · ${children.length} 个直接子级` : ''}</small></span></div></td>
+            <td><span class="tag ${typeClass(item.type)}">${typeLabel(item.type)}</span></td><td>${item.order}</td><td>${route}</td><td>${permission}</td>
+            <td><span class="status ${item.status === 'disabled' ? 'disabled' : ''}"><span class="status-dot"></span>${item.status === 'normal' ? '正常' : '停用'}</span></td>
+            <td class="hide-medium">${item.date}</td><td><div class="row-actions">${addButton}<button class="link-button" data-edit="${item.id}">编辑</button><button class="icon-button" data-delete="${item.id}" title="删除" aria-label="删除${item.name}">${icon('more')}</button></div></td>
+          </tr>`;
+          })
+          .join('');
+        const hasRows = rows.length > 0;
+        tableWrap.style.display = hasRows ? 'block' : 'none';
+        emptyState.classList.toggle('show', !hasRows);
+        document.querySelector('#visibleCount').textContent = `当前展示 ${rows.length} / 42 个节点`;
+        document.querySelector('#resourceCount').textContent = filtering ? `${rows.length} 个匹配节点` : '42 个节点';
+      }
+
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `${icon('check')}<span>${message}</span>`;
+        document.querySelector('#toastStack').appendChild(toast);
+        setTimeout(() => toast.remove(), 2800);
+      }
+
+      function showLayer(target) {
+        overlay.classList.add('show');
+        target.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLayers() {
+        drawer.classList.remove('show');
+        cascadeModal.classList.remove('show');
+        deleteModal.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      function setType(type) {
+        currentType = type;
+        document
+          .querySelectorAll('.type-tab')
+          .forEach(tab => tab.classList.toggle('active', tab.dataset.type === type));
+        document.querySelectorAll('.route-field').forEach(field => field.classList.toggle('hidden', type === 'F'));
+        document.querySelectorAll('.menu-only').forEach(field => field.classList.toggle('hidden', type !== 'C'));
+        const permissionField = document.querySelector('.permission-field');
+        permissionField.classList.toggle('hidden', type === 'M');
+        document.querySelector('#permissionLabel').classList.toggle('required', type === 'F');
+        updateActivePath();
+      }
+
+      function updateActivePath() {
+        const hiddenVisible = document.querySelector('input[name="visible"]:checked')?.value === '1';
+        document.querySelector('#activePathField').classList.toggle('hidden', currentType !== 'C' || !hiddenVisible);
+      }
+
+      function resetEditor() {
+        document.querySelector('#menuName').value = '';
+        document.querySelector('#orderNum').value = '1';
+        document.querySelector('#routePath').value = '';
+        document.querySelector('#componentPath').value = '';
+        document.querySelector('#queryParam').value = '';
+        document.querySelector('#permissionInput').value = '';
+        document.querySelector('#activePath').value = '';
+        document.querySelector('input[name="frame"][value="1"]').checked = true;
+        document.querySelector('input[name="visible"][value="0"]').checked = true;
+        document.querySelector('input[name="cache"][value="0"]').checked = true;
+        document.querySelector('input[name="nodeStatus"][value="normal"]').checked = true;
+      }
+
+      function openEditor(mode, parentId, itemId) {
+        resetEditor();
+        editingId = mode === 'edit' ? itemId : null;
+        const parent = menus.find(item => item.id === parentId);
+        document.querySelector('#drawerTitle').textContent = mode === 'edit' ? '编辑菜单' : '新增菜单';
+        if (mode === 'edit') {
+          const item = menus.find(candidate => candidate.id === itemId);
+          const actualParent = menus.find(candidate => candidate.id === item.parent);
+          document.querySelector('#drawerSubtitle').textContent =
+            `上级：${actualParent?.name || '主类目'} · 菜单 ID ${item.id}`;
+          document.querySelector('#parentLabel').textContent = actualParent?.name || '主类目';
+          document.querySelector('#menuName').value = item.name;
+          document.querySelector('#orderNum').value = String(item.order);
+          document.querySelector('#routePath').value = item.path;
+          document.querySelector('#componentPath').value = item.component;
+          document.querySelector('#permissionInput').value = item.permission;
+          document.querySelector(`input[name="nodeStatus"][value="${item.status}"]`).checked = true;
+          document.querySelector('#drawerMeta').textContent = `最近更新 ${item.date} · 保存时需要并发校验`;
+          setType(item.type);
+        } else {
+          document.querySelector('#drawerSubtitle').textContent = `上级：${parent?.name || '主类目'}`;
+          document.querySelector('#parentLabel').textContent = parent?.name || '主类目';
+          document.querySelector('#drawerMeta').textContent = '新节点将创建在当前选择的父级下';
+          setType(parent?.type === 'C' ? 'F' : 'M');
+        }
+        showLayer(drawer);
+        setTimeout(() => document.querySelector('#menuName').focus(), 210);
+      }
+
+      function saveMenu() {
+        const name = document.querySelector('#menuName').value.trim();
+        const permission = document.querySelector('#permissionInput').value.trim();
+        const path = document.querySelector('#routePath').value.trim();
+        if (!name) {
+          showToast('请先填写菜单名称');
+          document.querySelector('#menuName').focus();
+          return;
+        }
+        if (currentType !== 'F' && !path) {
+          showToast('目录或菜单需要填写路由地址');
+          document.querySelector('#routePath').focus();
+          return;
+        }
+        if (currentType === 'F' && !permission) {
+          showToast('按钮节点必须填写权限标识');
+          document.querySelector('#permissionInput').focus();
+          return;
+        }
+        if (editingId) {
+          const item = menus.find(candidate => candidate.id === editingId);
+          item.name = name;
+          item.type = currentType;
+          item.path = currentType === 'F' ? '' : path;
+          item.component =
+            currentType === 'C'
+              ? document.querySelector('#componentPath').value.trim()
+              : currentType === 'M'
+                ? 'Layout'
+                : '';
+          item.permission = currentType === 'M' ? '' : permission;
+          item.order = Number(document.querySelector('#orderNum').value) || 0;
+          item.status = document.querySelector('input[name="nodeStatus"]:checked').value;
+          closeLayers();
+          renderTable(item.id);
+          showToast(`“${name}”已更新（原型数据）`);
+        } else {
+          closeLayers();
+          showToast(`已预留新增“${name}”交互，待接口对接`);
+        }
+      }
+
+      function updateCascadeImpact() {
+        const checked = [...document.querySelectorAll('#cascadeTree input:checked')];
+        const values = checked.map(input => input.value);
+        const directory = values.filter(value => ['system', 'monitor'].includes(value)).length;
+        const page = values.filter(value => ['user', 'menu'].includes(value)).length;
+        const permission = values.length - directory - page;
+        document.querySelector('#selectionCount').textContent = String(values.length);
+        document.querySelector('#impactNodes').textContent = String(values.length);
+        document.querySelector('#impactTypes').textContent = `${directory} / ${page} / ${permission}`;
+        document.querySelector('#impactRoles').textContent = String(
+          values.length ? Math.min(6, page * 2 + permission) : 0
+        );
+        document.querySelector('#impactPackages').textContent = String(directory ? 2 : page ? 1 : 0);
+        document.querySelector('#cascadeConfirm').disabled = values.length === 0;
+      }
+
+      menuBody.addEventListener('click', event => {
+        const toggle = event.target.closest('[data-toggle]');
+        const add = event.target.closest('[data-add-child]');
+        const edit = event.target.closest('[data-edit]');
+        const remove = event.target.closest('[data-delete]');
+        const copy = event.target.closest('[data-copy]');
+        if (toggle) {
+          const id = Number(toggle.dataset.toggle);
+          expanded.has(id) ? expanded.delete(id) : expanded.add(id);
+          renderTable();
+        } else if (add) {
+          openEditor('add', Number(add.dataset.addChild));
+        } else if (edit) {
+          openEditor('edit', null, Number(edit.dataset.edit));
+        } else if (remove) {
+          deleteTargetId = Number(remove.dataset.delete);
+          const item = menus.find(candidate => candidate.id === deleteTargetId);
+          document.querySelector('#deleteTitle').textContent = `删除“${item.name}”`;
+          document.querySelector('#deleteCopy').textContent = childNodes(item.id).length
+            ? `该节点包含 ${childNodes(item.id).length} 个直接子节点，普通删除将被阻止，请先迁移子节点或使用级联删除。`
+            : `删除前将检查“${item.name}”的角色和租户套餐引用。该操作无法撤销。`;
+          showLayer(deleteModal);
+        } else if (copy) {
+          navigator.clipboard?.writeText(copy.dataset.copy);
+          showToast(`已复制 ${copy.dataset.copy}`);
+        }
+      });
+
+      document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeLayers));
+      overlay.addEventListener('click', closeLayers);
+      document
+        .querySelectorAll('.type-tab')
+        .forEach(tab => tab.addEventListener('click', () => setType(tab.dataset.type)));
+      document
+        .querySelectorAll('input[name="visible"]')
+        .forEach(input => input.addEventListener('change', updateActivePath));
+      document.querySelector('#saveButton').addEventListener('click', saveMenu);
+      document.querySelector('#addRootButton').addEventListener('click', () => openEditor('add', null));
+      document.querySelector('#searchButton').addEventListener('click', () => renderTable());
+      keywordInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') renderTable();
+      });
+
+      function resetFilters() {
+        keywordInput.value = '';
+        statusFilter.value = 'all';
+        typeFilter.value = 'all';
+        renderTable();
+      }
+
+      document.querySelector('#resetButton').addEventListener('click', resetFilters);
+      document.querySelector('#emptyReset').addEventListener('click', resetFilters);
+      document.querySelector('#expandButton').addEventListener('click', event => {
+        allExpanded = !allExpanded;
+        expanded.clear();
+        if (allExpanded) menus.filter(item => childNodes(item.id).length).forEach(item => expanded.add(item.id));
+        event.currentTarget.querySelector('span').textContent = allExpanded ? '收起全部' : '展开全部';
+        event.currentTarget.querySelector('use').setAttribute('href', allExpanded ? '#i-collapse' : '#i-expand');
+        renderTable();
+      });
+
+      document.querySelector('#refreshButton').addEventListener('click', event => {
+        event.currentTarget
+          .querySelector('.icon')
+          .animate([{ transform: 'rotate(0)' }, { transform: 'rotate(360deg)' }], { duration: 480, easing: 'ease' });
+        setTimeout(() => showToast('菜单资源已刷新，筛选和展开状态已保留'), 320);
+      });
+
+      document.querySelector('#cascadeButton').addEventListener('click', () => {
+        document.querySelectorAll('#cascadeTree input').forEach(input => {
+          input.checked = false;
+        });
+        updateCascadeImpact();
+        showLayer(cascadeModal);
+      });
+
+      document.querySelector('#cascadeTree').addEventListener('change', event => {
+        const input = event.target;
+        if (input.checked) {
+          let changed = true;
+          while (changed) {
+            changed = false;
+            document.querySelectorAll('#cascadeTree input').forEach(candidate => {
+              if (
+                candidate.dataset.parent &&
+                document.querySelector(`#cascadeTree input[value="${candidate.dataset.parent}"]`)?.checked &&
+                !candidate.checked
+              ) {
+                candidate.checked = true;
+                changed = true;
+              }
+            });
+          }
+        } else {
+          const uncheckChildren = parent => {
+            document.querySelectorAll(`#cascadeTree input[data-parent="${parent}"]`).forEach(child => {
+              child.checked = false;
+              uncheckChildren(child.value);
+            });
+          };
+          uncheckChildren(input.value);
+        }
+        updateCascadeImpact();
+      });
+
+      document.querySelector('#cascadeConfirm').addEventListener('click', () => {
+        const count = document.querySelectorAll('#cascadeTree input:checked').length;
+        closeLayers();
+        showToast(`已完成 ${count} 个节点的影响确认演示，未删除真实数据`);
+      });
+
+      document.querySelector('#deleteConfirm').addEventListener('click', () => {
+        const item = menus.find(candidate => candidate.id === deleteTargetId);
+        const children = childNodes(deleteTargetId);
+        closeLayers();
+        showToast(
+          children.length ? `“${item.name}”包含子节点，普通删除已拦截` : `已预留删除“${item.name}”交互，待接口对接`
+        );
+      });
+
+      document.querySelector('#themeButton').addEventListener('click', () => {
+        const dark = document.documentElement.dataset.theme === 'dark';
+        document.documentElement.dataset.theme = dark ? 'light' : 'dark';
+        document.querySelector('#themeIcon').setAttribute('href', dark ? '#i-moon' : '#i-sun');
+      });
+
+      document.querySelector('#densityButton').addEventListener('click', () => {
+        document.body.classList.toggle('compact');
+        showToast(document.body.classList.contains('compact') ? '已切换为紧凑密度' : '已切换为默认密度');
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeLayers();
+      });
+      renderTable();
+    </script>
+  </body>
+</html>
