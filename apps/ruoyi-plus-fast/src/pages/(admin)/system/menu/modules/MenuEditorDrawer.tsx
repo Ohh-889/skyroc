@@ -88,7 +88,7 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       destroyOnHidden
       footer={
         <Flex justify="space-between">
-          <span className="text-11px text-text-3">保存后会刷新菜单列表和动态路由缓存</span>
+          <span className="text-11px text-tertiary">保存后会刷新菜单列表和动态路由缓存</span>
           <Flex gap={8}>
             <Button onClick={onClose}>取消</Button>
             <Button loading={loading} type="primary" onClick={() => form.submit()}>
@@ -102,7 +102,7 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       title={
         <div>
           <div>{drawerTitle}</div>
-          <div className="mt-2px text-11px text-text-3 font-normal">
+          <div className="mt-2px text-11px text-tertiary font-normal">
             上级：{resolveParentLabel(menus, watchedParentId ?? parentId)}
           </div>
         </div>

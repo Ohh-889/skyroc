@@ -58,9 +58,9 @@ const MenuTreeTitle = (props: MenuTreeTitleProps) => {
 
   return (
     <Flex align="center" className="group min-w-0" gap={7}>
-      <SvgIcon className={selected ? 'text-primary' : 'text-text-3'} icon={getMenuTypeIcon(menu.menuType)} />
+      <SvgIcon className={selected ? 'text-primary' : 'text-tertiary'} icon={getMenuTypeIcon(menu.menuType)} />
       <span className="min-w-0 flex-1 truncate">{menu.menuName}</span>
-      <Tag bordered={false} className="m-0 text-10px text-text-3">
+      <Tag variant="filled" className="m-0 text-10px text-tertiary">
         {menu.menuType === 'M' ? '目录' : '菜单'}
       </Tag>
       {allowAddChild ? (
@@ -118,7 +118,7 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
 
   function handleSelect(keys: Key[]) {
     const selectedKey = keys[0];
-    if (selectedKey !== undefined) onSelect(String(selectedKey));
+    if (selectedKey) onSelect(String(selectedKey));
   }
 
   function renderTreeContent() {
@@ -126,11 +126,11 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
       return (
         <Alert
           action={
-            <Button size="small" onClick={onRetry}>
+            <Button size="small" type="primary" onClick={onRetry}>
               重试
             </Button>
           }
-          message="菜单列表加载失败，请确认当前账号具有菜单管理权限"
+          title="菜单列表加载失败，请确认当前账号具有菜单管理权限"
           showIcon
           type="error"
         />
@@ -145,7 +145,7 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
       <AppTree
         blockNode
         expandedKeys={keyword ? collectTreeKeys(treeData) : expandedKeys}
-        selectedKeys={selectedMenuId === undefined ? [] : [String(selectedMenuId)]}
+        selectedKeys={selectedMenuId ? [String(selectedMenuId)] : []}
         treeData={treeData}
         onExpand={onExpand}
         onSelect={handleSelect}
@@ -168,7 +168,7 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
           <ButtonIcon
             aria-label="删除当前菜单"
             className="h-28px w-28px text-15px text-error"
-            disabled={selectedMenuId === undefined}
+            disabled={!selectedMenuId}
             icon="ph:trash"
             tooltipContent="删除当前菜单"
             onClick={onDelete}
@@ -187,7 +187,7 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
       title={
         <div>
           <div>菜单列表</div>
-          <div className="mt-2px text-11px text-text-3 font-normal">目录与页面路由</div>
+          <div className="mt-2px text-11px text-tertiary font-normal">目录与页面路由</div>
         </div>
       }
       variant="borderless"
@@ -196,11 +196,11 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
         allowClear
         className="mb-8px"
         placeholder="搜索菜单名称或路由"
-        prefix={<SvgIcon className="text-text-3" icon="ph:magnifying-glass" />}
+        prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
         value={keyword}
         onChange={event => setKeyword(event.target.value)}
       />
-      <div className="mb-8px text-11px text-text-3">选择菜单后查看详情和按钮权限</div>
+      <div className="mb-8px text-11px text-tertiary">选择菜单后查看详情和按钮权限</div>
       <Spin spinning={loading}>
         <div className="max-h-[calc(100vh-260px)] min-h-360px overflow-y-auto pr-2px">{renderTreeContent()}</div>
       </Spin>

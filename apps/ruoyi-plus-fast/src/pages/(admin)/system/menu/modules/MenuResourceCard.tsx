@@ -67,8 +67,8 @@ const MenuResourceCard = (props: MenuResourceCardProps) => {
                   <SvgIcon icon={getMenuTypeIcon(menu.menuType)} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-600 text-text-1">{menu.menuName}</div>
-                  <div className="mt-2px truncate text-11px text-text-3">{menu.path || '未配置路由'}</div>
+                  <div className="truncate font-600 text-base">{menu.menuName}</div>
+                  <div className="mt-2px truncate text-11px text-tertiary">{menu.path || '未配置路由'}</div>
                 </div>
                 <Tag bordered={false} className="m-0 text-10px">
                   {getMenuTypeLabel(menu.menuType)}
@@ -102,7 +102,7 @@ const MenuResourceCard = (props: MenuResourceCardProps) => {
       title={
         <div>
           <div>{isPageMenu ? '按钮权限列表' : '直属菜单'}</div>
-          <div className="mt-2px text-11px text-text-3 font-normal">{resourceSubtitle}</div>
+          <div className="mt-2px text-11px text-tertiary font-normal">{resourceSubtitle}</div>
         </div>
       }
       variant="borderless"
@@ -139,7 +139,7 @@ function createPermissionColumns(
           <div className="size-28px flex-center shrink-0 rounded-7px bg-warning-bg text-warning">
             <SvgIcon icon="ph:key" />
           </div>
-          <span className="font-600 text-text-1">{value}</span>
+          <span className="font-600 text-base">{value}</span>
         </Flex>
       ),
       title: '按钮名称',
@@ -162,7 +162,7 @@ function createPermissionColumns(
             />
           </Flex>
         ) : (
-          <span className="text-text-3">—</span>
+          <span className="text-tertiary">—</span>
         ),
       title: '权限字符'
     },
@@ -176,7 +176,7 @@ function createPermissionColumns(
     {
       dataIndex: 'createTime',
       key: 'createTime',
-      render: value => value || <span className="text-text-3">—</span>,
+      render: value => value || <span className="text-tertiary">—</span>,
       title: '创建时间',
       width: 170
     },

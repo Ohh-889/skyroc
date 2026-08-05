@@ -50,7 +50,7 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
       title={
         <div>
           <div>菜单详情</div>
-          <div className="mt-2px text-11px text-text-3 font-normal">{menuPath}</div>
+          <div className="mt-2px text-11px text-tertiary font-normal">{menuPath}</div>
         </div>
       }
       variant="borderless"
@@ -66,8 +66,8 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
           <SvgIcon icon={getMenuTypeIcon(menu.menuType)} />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-17px font-650 text-text-1">{menu.menuName}</div>
-          <div className="mt-3px truncate text-12px text-text-3">
+          <div className="truncate text-17px font-650 text-base">{menu.menuName}</div>
+          <div className="mt-3px truncate text-12px text-tertiary">
             {menu.menuType === 'M'
               ? `包含 ${childCount} 个直属路由节点`
               : `页面路由 · ${menu.component || '未配置组件路径'}`}
@@ -136,7 +136,7 @@ function renderStatus(status: MenuItem['status']) {
 }
 
 function renderCode(value: string | null) {
-  if (!value) return <span className="text-text-3">—</span>;
+  if (!value) return <span className="text-tertiary">—</span>;
   return <code className="text-12px">{value}</code>;
 }
 
