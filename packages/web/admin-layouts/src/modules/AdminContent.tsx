@@ -8,8 +8,8 @@ import type { ReactNode } from 'react';
 
 import { useAdminLayoutContext } from '../context';
 import { useRoute } from '../features/use-route';
-import { useAdminTab } from '../state/tabs/use-admin-tab';
 import { getTabIdByRoute } from '../state/tabs/shared';
+import { useAdminTab } from '../state/tabs/use-admin-tab';
 import { useAdminState } from '../state/use-admin-state';
 
 const pageAnimationVariants: Record<Theme.ThemePageAnimateMode, Variants> = {
@@ -210,7 +210,7 @@ const CachedRoutePane = (props: CachedRoutePaneProps) => {
           animate="animate"
           className="h-full"
           data-page-animation={animationMode}
-          initial="initial"
+          initial={false}
           key={contentKey}
           transition={transition}
           variants={variants}
