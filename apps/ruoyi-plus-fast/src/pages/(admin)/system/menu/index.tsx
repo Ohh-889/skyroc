@@ -179,10 +179,12 @@ const MenuManagement = (props: MenuManagementProps) => {
           await deleteMutation.mutateAsync(menu.menuId);
         }
 
-        const parentId = menu.parentId;
-        await refreshMenuCaches();
-        const parent = findMenu(menus, parentId);
+        const parent = findMenu(menus, menu.parentId);
         setSelectedMenuId(parent && isRouteMenu(parent) ? parent.menuId : undefined);
+        await refreshMenuCaches(SYSTEM_MENU_QUERY_KEYS.LISTS);
+        deleteIds.forEach(menuId => {
+          queryClient.removeQueries({ exact: true, queryKey: SYSTEM_MENU_QUERY_KEYS.DETAIL(menuId) });
+        });
         showSuccessMessage('菜单删除成功');
       }
     });
@@ -194,10 +196,10 @@ const MenuManagement = (props: MenuManagementProps) => {
     showSuccessMessage('菜单数据已刷新');
   }
 
-  async function refreshMenuCaches() {
+  async function refreshMenuCaches(queryKey: readonly unknown[] = SYSTEM_MENU_QUERY_KEYS.ALL) {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: SYSTEM_MENU_QUERY_KEYS.ALL
+        queryKey
       }),
       queryClient.invalidateQueries({
         queryKey: ROUTE_QUERY_KEYS.USER_ROUTES

@@ -1,6 +1,6 @@
 import { AppTree, ButtonIcon } from '@skyroc/web-ui-antd';
 import { SvgIcon } from '@skyroc/web-ui-compose';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import {
   Alert,
   Avatar,
@@ -20,6 +20,7 @@ import {
   Typography
 } from 'antd';
 import type { MenuProps, TableColumnsType, TablePaginationConfig, TreeDataNode } from 'antd';
+import { z } from 'zod';
 
 import { useDeptTreeQuery, useUserListQuery } from '@/service/api/system-user';
 import type { DeptTreeNode, UserId, UserListItem, UserListParams, UserStatus } from '@/service/api/system-user';
@@ -49,6 +50,8 @@ const STATUS_OPTIONS = [
   { label: '正常', value: '0' },
   { label: '停用', value: '1' }
 ] satisfies Array<{ label: string; value: UserStatus }>;
+
+const userRouteApi = getRouteApi('/(admin)/system/user/');
 
 function buildUserListParams(submittedFilters: SubmittedFilters, page: number, size: number): UserListParams {
   const params: UserListParams = {
@@ -108,7 +111,7 @@ function createColumns(
           <Avatar className="shrink-0 bg-primary text-white">{getAvatarText(record)}</Avatar>
           <div className="min-w-0">
             <div className="truncate font-600 text-text-1">{record.nickName || record.userName}</div>
-            <div className="mt-2px truncate text-12px text-text-3">{record.userName}</div>
+            <div className="mt-2px truncate text-12px text-tertiary">{record.userName}</div>
           </div>
         </Flex>
       ),
@@ -119,7 +122,7 @@ function createColumns(
       dataIndex: 'deptName',
       key: 'deptName',
       minWidth: 140,
-      render: value => value || <span className="text-text-3">未分配</span>,
+      render: value => value || <span className="text-tertiary">未分配</span>,
       title: '部门',
       width: 160
     },
@@ -137,7 +140,7 @@ function createColumns(
       render: (_value, record) => (
         <div>
           <div>{record.phonenumber ? maskPhone(record.phonenumber) : '—'}</div>
-          {record.email ? <div className="mt-2px text-12px text-text-3">{maskEmail(record.email)}</div> : null}
+          {record.email ? <div className="mt-2px text-12px text-tertiary">{maskEmail(record.email)}</div> : null}
         </div>
       ),
       title: '联系方式',
@@ -160,7 +163,7 @@ function createColumns(
             <span>{formatRelativeTime(value)}</span>
           </Tooltip>
         ) : (
-          <span className="text-text-3">从未登录</span>
+          <span className="text-tertiary">从未登录</span>
         ),
       title: '最近登录',
       width: 160
@@ -242,7 +245,7 @@ function getAvatarText(user: UserListItem) {
 }
 
 function renderRoles(roles: UserListItem['roles']) {
-  if (!roles?.length) return <span className="text-text-3">—</span>;
+  if (!roles?.length) return <span className="text-tertiary">—</span>;
 
   const visibleRoles = roles.slice(0, 2);
   return (
@@ -288,6 +291,8 @@ function formatRelativeTime(value: string) {
 const UserManagement = (props: UserManagementProps) => {
   const { initialPageSize = 20 } = props;
 
+  const { deptId: routeDeptId } = userRouteApi.useSearch();
+
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [deptKeyword, setDeptKeyword] = useState('');
@@ -296,6 +301,7 @@ const UserManagement = (props: UserManagementProps) => {
   const [status, setStatus] = useState<UserStatus>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [filters, setFilters] = useState<SubmittedFilters>({
+    deptId: routeDeptId,
     keyword: '',
     searchField: 'username'
   });
@@ -334,6 +340,15 @@ const UserManagement = (props: UserManagementProps) => {
       label: '导出当前结果'
     }
   ];
+
+  useEffect(() => {
+    if (!routeDeptId) return;
+    setCurrent(1);
+    setFilters(previous => ({
+      ...previous,
+      deptId: routeDeptId
+    }));
+  }, [routeDeptId]);
 
   function handleSearch() {
     setCurrent(1);
@@ -448,7 +463,7 @@ const UserManagement = (props: UserManagementProps) => {
             allowClear
             className="mb-12px"
             placeholder="搜索部门"
-            prefix={<SvgIcon className="text-text-3" icon="ph:magnifying-glass" />}
+            prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
             value={deptKeyword}
             onChange={event => setDeptKeyword(event.target.value)}
           />
@@ -609,5 +624,8 @@ export const Route = createFileRoute('/(admin)/system/user/')({
       order: 1
     },
     title: '用户管理'
-  }
+  },
+  validateSearch: z.object({
+    deptId: z.string().optional()
+  })
 });
