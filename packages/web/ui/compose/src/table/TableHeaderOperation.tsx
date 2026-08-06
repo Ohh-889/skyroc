@@ -12,10 +12,16 @@ import type { TableColumnCheck } from './types';
 interface TableHeaderOperationProps {
   /** 添加按钮点击事件 */
   add?: () => Promise<void> | void;
+  /** 添加按钮文案，默认使用 common.add */
+  addText?: string;
+  /** 批量删除按钮文案，默认使用 common.batchDelete */
+  batchDeleteText?: string;
   /** 自定义操作按钮（会替换默认的添加和批量删除按钮） */
   children?: ReactNode;
   /** 表格列配置 */
   columns: TableColumnCheck[];
+  /** 列设置按钮文案，默认使用 common.columnSetting */
+  columnSettingText?: string;
   /** 是否禁用删除按钮 */
   disabledDelete?: boolean;
   /** Space 组件的对齐方式 */
@@ -28,6 +34,8 @@ interface TableHeaderOperationProps {
   prefix?: ReactNode;
   /** 刷新按钮点击事件 */
   refresh: () => Promise<void> | void;
+  /** 刷新按钮文案，默认使用 common.refresh */
+  refreshText?: string;
   /** 更新列配置的回调 */
   setColumnChecks: (checks: TableColumnCheck[]) => void;
   /** 后缀内容（显示在最后面） */
@@ -55,14 +63,18 @@ interface TableHeaderOperationProps {
 const TableHeaderOperation = (props: TableHeaderOperationProps) => {
   const {
     add,
+    addText,
+    batchDeleteText,
     children,
     columns,
+    columnSettingText,
     disabledDelete = false,
     itemAlign,
     loading = false,
     onDelete,
     prefix,
     refresh,
+    refreshText,
     setColumnChecks,
     suffix
   } = props;
@@ -83,7 +95,7 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
               type="primary"
               onClick={add}
             >
-              {t('common.add')}
+              {addText ?? t('common.add')}
             </Button>
           )}
 
@@ -96,7 +108,7 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
                 icon={<SvgIcon className="text-icon" icon="ic:round-delete" />}
                 size="small"
               >
-                {t('common.batchDelete')}
+                {batchDeleteText ?? t('common.batchDelete')}
               </Button>
             </Popconfirm>
           )}
@@ -115,7 +127,7 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
         }
         onClick={refresh}
       >
-        {t('common.refresh')}
+        {refreshText ?? t('common.refresh')}
       </Button>
 
       <Popover
@@ -124,7 +136,7 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
         content={<DragContent columns={columns} setColumnChecks={setColumnChecks} />}
       >
         <Button icon={<SvgIcon icon="ant-design:setting-outlined" />} size="small">
-          {t('common.columnSetting')}
+          {columnSettingText ?? t('common.columnSetting')}
         </Button>
       </Popover>
 
