@@ -1,13 +1,15 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import type { QueryKey, UseQueryOptions } from '@tanstack/react-query';
 
 import {
   createUser,
   deleteUsers,
   fetchDeptTree,
+  fetchGetUserInfo,
   fetchUserAuthRole,
   fetchUserDetail,
   fetchUserList,
+  fetchUserOptions,
   fetchUserPostOptions,
   fetchUsersByDept,
   resetUserPassword,
@@ -19,6 +21,7 @@ import { SYSTEM_USER_MUTATION_KEYS, SYSTEM_USER_QUERY_KEYS } from './keys';
 import type {
   UserId,
   UserListParams,
+  UserOptionParams,
   UserPasswordPayload,
   UserRolePayload,
   UserSavePayload,
@@ -31,6 +34,20 @@ type UserListQueryOptions<Data = Awaited<ReturnType<typeof fetchUserList>>> = Om
   'queryFn' | 'queryKey'
 >;
 
+export function queryUserInfoOptions() {
+  return queryOptions({
+    gcTime: Infinity,
+    queryFn: fetchGetUserInfo,
+    queryKey: SYSTEM_USER_QUERY_KEYS.USER_INFO,
+    retry: false,
+    staleTime: Infinity
+  });
+}
+
+export function useUserInfoQuery() {
+  return useQuery(queryUserInfoOptions());
+}
+
 export function useUserListQuery<Data = Awaited<ReturnType<typeof fetchUserList>>>(
   params: UserListParams,
   options?: UserListQueryOptions<Data>
@@ -40,6 +57,15 @@ export function useUserListQuery<Data = Awaited<ReturnType<typeof fetchUserList>
     placeholderData: keepPreviousData,
     queryFn: () => fetchUserList(params),
     queryKey: SYSTEM_USER_QUERY_KEYS.USER_LIST(params)
+  });
+}
+
+export function useUserOptionsQuery(params: UserOptionParams = {}, enabled = true) {
+  return useQuery({
+    enabled,
+    queryFn: () => fetchUserOptions(params),
+    queryKey: SYSTEM_USER_QUERY_KEYS.USER_OPTIONS(params),
+    staleTime: 1000 * 60 * 5
   });
 }
 

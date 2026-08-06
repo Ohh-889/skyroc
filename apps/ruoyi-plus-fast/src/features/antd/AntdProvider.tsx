@@ -3,7 +3,7 @@ import { AntdProvider } from '@skyroc/web-admin-theme';
 import type { PropsWithChildren } from 'react';
 
 import { antdLocales } from '@/locales/antd';
-import { useUserInfoQuery } from '@/service/api';
+import { useUserInfoQuery } from '@/service/api/system-user';
 
 const AppAntdProvider = (props: PropsWithChildren) => {
   const { children } = props;

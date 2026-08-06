@@ -2,7 +2,8 @@ import { globalStore, updateAtomValue } from '@skyroc/core-state';
 import { cacheTabs, useMenus } from '@skyroc/web-admin-layouts';
 import { atom, useAtom, useAtomValue } from 'jotai';
 
-import { fetchLogout, useUserInfoQuery } from '@/service/api';
+import { fetchLogout } from '@/service/api/auth';
+import { useUserInfoQuery } from '@/service/api/system-user';
 import { queryClient } from '@/service/queryClient';
 import { localStg } from '@/utils/storage';
 

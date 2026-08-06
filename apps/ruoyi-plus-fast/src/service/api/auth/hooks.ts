@@ -1,6 +1,6 @@
-import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { fetchCaptcha, fetchEmailCode, fetchGetUserInfo, fetchLogin, fetchSmsCode } from './api';
+import { fetchCaptcha, fetchEmailCode, fetchLogin, fetchSmsCode } from './api';
 import { AUTH_MUTATION_KEYS, AUTH_QUERY_KEYS } from './keys';
 
 export function useCaptchaQuery(enabled: boolean) {
@@ -9,16 +9,6 @@ export function useCaptchaQuery(enabled: boolean) {
     gcTime: 0,
     queryFn: fetchCaptcha,
     queryKey: AUTH_QUERY_KEYS.CAPTCHA,
-    retry: false,
-    staleTime: Infinity
-  });
-}
-
-export function queryUserInfoOptions() {
-  return queryOptions({
-    gcTime: Infinity,
-    queryFn: fetchGetUserInfo,
-    queryKey: AUTH_QUERY_KEYS.USER_INFO,
     retry: false,
     staleTime: Infinity
   });
@@ -46,10 +36,4 @@ export function useEmailCodeMutation() {
     mutationKey: AUTH_MUTATION_KEYS.EMAIL_CODE,
     retry: false
   });
-}
-
-export function useUserInfoQuery() {
-  const query = queryUserInfoOptions();
-
-  return useQuery(query);
 }

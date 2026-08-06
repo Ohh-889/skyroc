@@ -12,6 +12,11 @@ export interface UserListParams {
   userName?: string;
 }
 
+export interface UserOptionParams {
+  deptId?: UserId;
+  userIds?: UserId[];
+}
+
 export interface UserRoleSummary {
   admin?: boolean;
   roleId?: UserId;
@@ -84,6 +89,12 @@ export interface UserDetailResponse {
   roleIds: UserId[] | null;
   roles: UserRoleOption[];
   user: UserListItem | null;
+}
+
+export interface CurrentUserInfoResponse {
+  permissions: string[];
+  roles: string[];
+  user: UserListItem;
 }
 
 export interface UserSavePayload {

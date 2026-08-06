@@ -6,7 +6,7 @@ import { Button as AButton, Dropdown as ADropdown, type MenuProps } from 'antd';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useUserInfoQuery } from '@/service/api';
+import { useUserInfoQuery } from '@/service/api/system-user';
 
 import { useAuth } from '../use-auth';
 

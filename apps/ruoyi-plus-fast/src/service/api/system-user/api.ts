@@ -1,12 +1,16 @@
 import { request } from '../../request';
 
+import { getToken } from '@/features/auth/use-auth';
+
 import type {
+  CurrentUserInfoResponse,
   DeptTreeNode,
   UserDetailResponse,
   UserId,
   UserListItem,
   UserListPage,
   UserListParams,
+  UserOptionParams,
   UserPasswordPayload,
   UserPostOption,
   UserRolePayload,
@@ -15,6 +19,22 @@ import type {
   UserUpdatePayload
 } from './types';
 import { SYSTEM_USER_URLS } from './urls';
+
+export async function fetchGetUserInfo() {
+  if (!getToken()) {
+    return null;
+  }
+
+  const data = await request<CurrentUserInfoResponse>({ url: SYSTEM_USER_URLS.GET_USER_INFO });
+
+  return {
+    buttons: data.permissions,
+    nickname: data.user.nickName,
+    roles: data.roles,
+    userId: String(data.user.userId),
+    userName: data.user.userName
+  } satisfies Api.Auth.UserInfo;
+}
 
 export function fetchUserList(params: UserListParams) {
   return request<UserListPage>({
@@ -38,10 +58,21 @@ export function fetchUsersByDept(deptId: UserId) {
   });
 }
 
+export function fetchUserOptions(params: UserOptionParams = {}) {
+  return request<UserListItem[]>({
+    method: 'get',
+    params: {
+      deptId: params.deptId,
+      userIds: params.userIds?.map(String).join(',')
+    },
+    url: SYSTEM_USER_URLS.OPTIONS
+  });
+}
+
 export function fetchUserDetail(userId?: UserId) {
   return request<UserDetailResponse>({
     method: 'get',
-    url: userId === undefined ? SYSTEM_USER_URLS.FORM_OPTIONS : SYSTEM_USER_URLS.DETAIL(userId)
+    url: userId  ? SYSTEM_USER_URLS.DETAIL(userId): SYSTEM_USER_URLS.FORM_OPTIONS
   });
 }
 

@@ -31,12 +31,8 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
   });
 }
 
-// 发码接口后端没标 @api_encrypt，所以不加密：请求体里只有一个手机号或邮箱，而验证码是后端
-// 生成的，压根不经过这个请求。
-//
 // 两个接口在号码/地址没注册时也回成功，不告诉调用方存不存在——那样它们就成了不要凭据的用户
 // 枚举接口。所以"发送成功"只表示请求被受理了，不代表真发出去了。
-
 export function fetchSmsCode(params: Api.Auth.SmsCodeParams) {
   return request<null>({
     data: { tenantId: LOGIN_CONTEXT.tenantId, ...params },
@@ -51,14 +47,6 @@ export function fetchEmailCode(params: Api.Auth.EmailCodeParams) {
     method: 'post',
     url: AUTH_URLS.EMAIL_CODE
   });
-}
-
-export function fetchGetUserInfo() {
-  if (!getToken()) {
-    return Promise.resolve(null);
-  }
-
-  return request<Api.Auth.UserInfo>({ url: AUTH_URLS.GET_USER_INFO });
 }
 
 // 后端认的是 Authorization 里的那张令牌，所以必须赶在清本地存储之前调用：请求拦截器要到下
