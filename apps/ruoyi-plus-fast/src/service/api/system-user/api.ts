@@ -7,6 +7,8 @@ import type {
   DeptTreeNode,
   UserDetailResponse,
   UserId,
+  UserImportPayload,
+  UserImportResponse,
   UserListItem,
   UserListPage,
   UserListParams,
@@ -41,6 +43,35 @@ export function fetchUserList(params: UserListParams) {
     method: 'get',
     params,
     url: SYSTEM_USER_URLS.USER_LIST
+  });
+}
+
+export function exportUsers(params: UserListParams) {
+  return request<Blob, 'blob'>({
+    method: 'post',
+    params,
+    responseType: 'blob',
+    url: SYSTEM_USER_URLS.USER_EXPORT
+  });
+}
+
+export function downloadUserImportTemplate() {
+  return request<Blob, 'blob'>({
+    method: 'post',
+    responseType: 'blob',
+    url: SYSTEM_USER_URLS.IMPORT_TEMPLATE
+  });
+}
+
+export function importUsers(payload: UserImportPayload) {
+  const data = new FormData();
+  data.append('file', payload.file);
+  data.append('updateSupport', String(payload.updateSupport));
+
+  return request<UserImportResponse>({
+    data,
+    method: 'post',
+    url: SYSTEM_USER_URLS.IMPORT_DATA
   });
 }
 

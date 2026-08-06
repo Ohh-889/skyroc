@@ -17,6 +17,7 @@ export const SYSTEM_USER_MUTATION_KEYS = {
   CHANGE_STATUS: ['system-user', 'change-status'] as const,
   CREATE: ['system-user', 'create'] as const,
   DELETE: ['system-user', 'delete'] as const,
+  IMPORT: ['system-user', 'import'] as const,
   RESET_PASSWORD: ['system-user', 'reset-password'] as const,
   UPDATE: ['system-user', 'update'] as const
 } as const;

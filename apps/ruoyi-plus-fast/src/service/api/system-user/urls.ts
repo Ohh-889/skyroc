@@ -8,10 +8,13 @@ export const SYSTEM_USER_URLS = {
   DEPT_TREE: '/system/dept/deptTree',
   FORM_OPTIONS: '/system/user/',
   GET_USER_INFO: '/system/user/getInfo',
+  IMPORT_DATA: '/system/user/importData',
+  IMPORT_TEMPLATE: '/system/user/importTemplate',
   LIST_BY_DEPT: (deptId: number | string) => `/system/user/list/dept/${deptId}`,
   OPTIONS: '/system/user/optionselect',
   POST_OPTIONS: '/system/post/optionselect',
   RESET_PASSWORD: '/system/user/resetPwd',
   UPDATE: '/system/user',
+  USER_EXPORT: '/system/user/export',
   USER_LIST: '/system/user/list'
 } as const;

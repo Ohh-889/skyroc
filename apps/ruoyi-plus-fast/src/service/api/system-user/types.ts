@@ -129,3 +129,21 @@ export interface UserRolePayload {
   roleIds: UserId[];
   userId: UserId;
 }
+
+export interface UserImportFailure {
+  message: string;
+  row: number;
+}
+
+export interface UserImportResponse {
+  created: number;
+  failed: number;
+  failures: UserImportFailure[];
+  total: number;
+  updated: number;
+}
+
+export interface UserImportPayload {
+  file: File;
+  updateSupport: boolean;
+}

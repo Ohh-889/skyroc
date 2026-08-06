@@ -1,10 +1,11 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
 import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
-import { Alert, Avatar, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Tooltip } from 'antd';
+import { Alert, Avatar, Badge, Button, Card, Checkbox, Collapse, Dropdown, Empty, Flex, Modal, Table, Tag, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
@@ -16,12 +17,14 @@ import {
   useCreateUserMutation,
   useDeleteUsersMutation,
   useDeptTreeQuery,
+  useImportUsersMutation,
   useResetUserPasswordMutation,
   useUpdateUserMutation,
   useUpdateUserRolesMutation,
   useUpdateUserStatusMutation,
   useUserListQuery
 } from '@/service/api/system-user';
+import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-user/api';
 import type {
   UserId,
   UserListItem,
@@ -92,11 +95,16 @@ const UserManagement = (props: UserManagementProps) => {
   const [detailUserId, setDetailUserId] = useState<UserId>();
   const [roleUser, setRoleUser] = useState<UserListItem>();
   const [passwordUser, setPasswordUser] = useState<UserListItem>();
+  const [importFile, setImportFile] = useState<File>();
+  const [updateSupport, setUpdateSupport] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
 
   const deptQuery = useDeptTreeQuery();
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
   const deleteMutation = useDeleteUsersMutation();
+  const importMutation = useImportUsersMutation();
   const statusMutation = useUpdateUserStatusMutation();
   const passwordMutation = useResetUserPasswordMutation();
   const roleMutation = useUpdateUserRolesMutation();
@@ -339,6 +347,49 @@ const UserManagement = (props: UserManagementProps) => {
     showSuccessMessage('用户和部门数据已刷新');
   }
 
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const params = toUserListParams({ ...searchProps.searchParams, current: 1, size: 20 } as UserTableParams);
+      const blob = await exportUsers(params);
+      downloadFileFromBlob({ fileName: '用户数据.xlsx', source: blob });
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleDownloadTemplate() {
+    setTemplateLoading(true);
+    try {
+      const blob = await downloadUserImportTemplate();
+      downloadFileFromBlob({ fileName: '用户导入模板.xlsx', source: blob });
+    } finally {
+      setTemplateLoading(false);
+    }
+  }
+
+  async function handleImport() {
+    if (!importFile) return;
+    const result = await importMutation.mutateAsync({ file: importFile, updateSupport });
+    setImportFile(undefined);
+    setSelectedRowKeys([]);
+    await refreshUserData();
+    showSuccessMessage(`导入完成：新增 ${result.created}，覆盖 ${result.updated}，失败 ${result.failed}`);
+    if (result.failed > 0) {
+      showWarningModal({
+        content: (
+          <div>
+            {result.failures.slice(0, 20).map(failure => (
+              <div key={`${failure.row}-${failure.message}`}>第 {failure.row} 行：{failure.message}</div>
+            ))}
+            {result.failures.length > 20 ? <div>其余失败记录请查看导入结果。</div> : null}
+          </div>
+        ),
+        title: `有 ${result.failed} 行数据导入失败`
+      });
+    }
+  }
+
   async function refreshUserData() {
     await queryClient.invalidateQueries({ queryKey: SYSTEM_USER_QUERY_KEYS.ALL });
   }
@@ -374,9 +425,15 @@ const UserManagement = (props: UserManagementProps) => {
                   batchDeleteText="批量删除"
                   columns={columnChecks}
                   disabledDelete={selectedUsers.length === 0}
+                  downloadTemplate={handleDownloadTemplate}
+                  exportData={handleExport}
+                  exportLoading={exporting}
+                  importData={file => setImportFile(file)}
+                  importLoading={importMutation.isPending}
                   loading={tableProps.loading || deptQuery.isFetching}
                   refresh={handleRefresh}
                   setColumnChecks={setColumnChecks}
+                  templateLoading={templateLoading}
                   onDelete={handleBatchDelete}
                 />
               }
@@ -418,6 +475,24 @@ const UserManagement = (props: UserManagementProps) => {
           </div>
         </div>
       </div>
+
+      <Modal
+        cancelText="取消"
+        okButtonProps={{ loading: importMutation.isPending }}
+        okText="开始导入"
+        classNames={{ body: 'px-22px' }}
+        open={Boolean(importFile)}
+        title="导入用户数据"
+        onCancel={() => setImportFile(undefined)}
+        onOk={handleImport}
+      >
+        <p className='mb-2'>已选择：{importFile?.name}</p>
+        <Checkbox
+          checked={updateSupport}
+          onChange={event => setUpdateSupport(event.target.checked)}>
+          账号已存在时覆盖原有信息
+        </Checkbox>
+      </Modal>
 
       <Suspense fallback={null}>
         <UserDetailDrawer

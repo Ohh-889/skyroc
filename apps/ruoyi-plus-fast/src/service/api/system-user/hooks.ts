@@ -12,6 +12,7 @@ import {
   fetchUserOptions,
   fetchUserPostOptions,
   fetchUsersByDept,
+  importUsers,
   resetUserPassword,
   updateUser,
   updateUserRoles,
@@ -20,6 +21,7 @@ import {
 import { SYSTEM_USER_MUTATION_KEYS, SYSTEM_USER_QUERY_KEYS } from './keys';
 import type {
   UserId,
+  UserImportPayload,
   UserListParams,
   UserOptionParams,
   UserPasswordPayload,
@@ -127,6 +129,13 @@ export function useDeleteUsersMutation() {
   return useMutation({
     mutationFn: (ids: UserId[]) => deleteUsers(ids),
     mutationKey: SYSTEM_USER_MUTATION_KEYS.DELETE
+  });
+}
+
+export function useImportUsersMutation() {
+  return useMutation({
+    mutationFn: (payload: UserImportPayload) => importUsers(payload),
+    mutationKey: SYSTEM_USER_MUTATION_KEYS.IMPORT
   });
 }
 
