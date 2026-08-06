@@ -24,7 +24,10 @@ import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
 import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
+import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/system/role/index'
+import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
 import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
+import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -100,9 +103,24 @@ const adminSystemUserIndexRoute = adminSystemUserIndexRouteImport.update({
   path: '/user/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminSystemRoleIndexRoute = adminSystemRoleIndexRouteImport.update({
+  id: '/role/',
+  path: '/role/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
+const adminSystemPostIndexRoute = adminSystemPostIndexRouteImport.update({
+  id: '/post/',
+  path: '/post/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 const adminSystemMenuIndexRoute = adminSystemMenuIndexRouteImport.update({
   id: '/menu/',
   path: '/menu/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
+const adminSystemDeptIndexRoute = adminSystemDeptIndexRouteImport.update({
+  id: '/dept/',
+  path: '/dept/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
 
@@ -120,7 +138,10 @@ export interface FileRoutesByFullPath {
   '/stream-test/': typeof adminStreamTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
+  '/system/dept/': typeof adminSystemDeptIndexRoute
   '/system/menu/': typeof adminSystemMenuIndexRoute
+  '/system/post/': typeof adminSystemPostIndexRoute
+  '/system/role/': typeof adminSystemRoleIndexRoute
   '/system/user/': typeof adminSystemUserIndexRoute
 }
 export interface FileRoutesByTo {
@@ -136,7 +157,10 @@ export interface FileRoutesByTo {
   '/stream-test': typeof adminStreamTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
+  '/system/dept': typeof adminSystemDeptIndexRoute
   '/system/menu': typeof adminSystemMenuIndexRoute
+  '/system/post': typeof adminSystemPostIndexRoute
+  '/system/role': typeof adminSystemRoleIndexRoute
   '/system/user': typeof adminSystemUserIndexRoute
 }
 export interface FileRoutesById {
@@ -155,7 +179,10 @@ export interface FileRoutesById {
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
+  '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
   '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
+  '/(admin)/system/post/': typeof adminSystemPostIndexRoute
+  '/(admin)/system/role/': typeof adminSystemRoleIndexRoute
   '/(admin)/system/user/': typeof adminSystemUserIndexRoute
 }
 export interface FileRouteTypes {
@@ -174,7 +201,10 @@ export interface FileRouteTypes {
     | '/stream-test/'
     | '/websocket-test/'
     | '/login/'
+    | '/system/dept/'
     | '/system/menu/'
+    | '/system/post/'
+    | '/system/role/'
     | '/system/user/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -190,7 +220,10 @@ export interface FileRouteTypes {
     | '/stream-test'
     | '/websocket-test'
     | '/login'
+    | '/system/dept'
     | '/system/menu'
+    | '/system/post'
+    | '/system/role'
     | '/system/user'
   id:
     | '__root__'
@@ -208,7 +241,10 @@ export interface FileRouteTypes {
     | '/(admin)/stream-test/'
     | '/(admin)/websocket-test/'
     | '/(auth)/login/'
+    | '/(admin)/system/dept/'
     | '/(admin)/system/menu/'
+    | '/(admin)/system/post/'
+    | '/(admin)/system/role/'
     | '/(admin)/system/user/'
   fileRoutesById: FileRoutesById
 }
@@ -329,6 +365,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemUserIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/role/': {
+      id: '/(admin)/system/role/'
+      path: '/role'
+      fullPath: '/system/role/'
+      preLoaderRoute: typeof adminSystemRoleIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
+    '/(admin)/system/post/': {
+      id: '/(admin)/system/post/'
+      path: '/post'
+      fullPath: '/system/post/'
+      preLoaderRoute: typeof adminSystemPostIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/system/menu/': {
       id: '/(admin)/system/menu/'
       path: '/menu'
@@ -336,16 +386,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemMenuIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/dept/': {
+      id: '/(admin)/system/dept/'
+      path: '/dept'
+      fullPath: '/system/dept/'
+      preLoaderRoute: typeof adminSystemDeptIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
   }
 }
 
 interface adminSystemLayoutRouteChildren {
+  adminSystemDeptIndexRoute: typeof adminSystemDeptIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
+  adminSystemPostIndexRoute: typeof adminSystemPostIndexRoute
+  adminSystemRoleIndexRoute: typeof adminSystemRoleIndexRoute
   adminSystemUserIndexRoute: typeof adminSystemUserIndexRoute
 }
 
 const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
+  adminSystemDeptIndexRoute: adminSystemDeptIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
+  adminSystemPostIndexRoute: adminSystemPostIndexRoute,
+  adminSystemRoleIndexRoute: adminSystemRoleIndexRoute,
   adminSystemUserIndexRoute: adminSystemUserIndexRoute,
 }
 
