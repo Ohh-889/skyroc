@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Popover, Space } from 'antd';
+import { Button, Popconfirm, Popover, Space, Upload } from 'antd';
 import type { SpaceProps } from 'antd';
 import classNames from 'clsx';
 import type { ReactNode } from 'react';
@@ -24,6 +24,20 @@ interface TableHeaderOperationProps {
   columnSettingText?: string;
   /** 是否禁用删除按钮 */
   disabledDelete?: boolean;
+  /** 下载导入模板点击事件 */
+  downloadTemplate?: () => Promise<void> | void;
+  /** 导出按钮点击事件 */
+  exportData?: () => Promise<void> | void;
+  /** 导出按钮加载状态 */
+  exportLoading?: boolean;
+  /** 导出按钮文案 */
+  exportText?: string;
+  /** 导入文件选择事件 */
+  importData?: (file: File) => Promise<void> | void;
+  /** 导入按钮加载状态 */
+  importLoading?: boolean;
+  /** 导入按钮文案 */
+  importText?: string;
   /** Space 组件的对齐方式 */
   itemAlign?: SpaceProps['align'];
   /** 加载状态（刷新按钮图标会旋转） */
@@ -40,6 +54,10 @@ interface TableHeaderOperationProps {
   setColumnChecks: (checks: TableColumnCheck[]) => void;
   /** 后缀内容（显示在最后面） */
   suffix?: ReactNode;
+  /** 下载模板按钮加载状态 */
+  templateLoading?: boolean;
+  /** 下载模板按钮文案 */
+  templateText?: string;
 }
 
 /**
@@ -69,6 +87,13 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
     columns,
     columnSettingText,
     disabledDelete = false,
+    downloadTemplate,
+    exportData,
+    exportLoading = false,
+    exportText = '导出数据',
+    importData,
+    importLoading = false,
+    importText = '导入数据',
     itemAlign,
     loading = false,
     onDelete,
@@ -76,7 +101,9 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
     refresh,
     refreshText,
     setColumnChecks,
-    suffix
+    suffix,
+    templateLoading = false,
+    templateText = '下载模板'
   } = props;
 
   const { t } = useTranslation();
@@ -113,6 +140,41 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
             </Popconfirm>
           )}
         </>
+      )}
+
+      {importData && (
+        <Upload
+          accept=".xlsx,.xls"
+          beforeUpload={file => {
+            Promise.resolve(importData(file)).catch(() => undefined);
+            return false;
+          }}
+          maxCount={1}
+          showUploadList={false}
+        >
+          <Button
+            disabled={importLoading} icon={<SvgIcon icon="mdi:upload" />} loading={importLoading} size="small">
+            {importText}
+          </Button>
+        </Upload>
+      )}
+
+      {exportData && (
+        <Button
+          icon={<SvgIcon icon="mdi:download" />} loading={exportLoading} size="small" onClick={exportData}>
+          {exportText}
+        </Button>
+      )}
+
+      {downloadTemplate && (
+        <Button
+          icon={<SvgIcon icon="mdi:file-download-outline" />}
+          loading={templateLoading}
+          size="small"
+          onClick={downloadTemplate}
+        >
+          {templateText}
+        </Button>
       )}
 
       <Button
