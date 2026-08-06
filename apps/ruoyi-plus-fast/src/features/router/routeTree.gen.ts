@@ -29,8 +29,10 @@ import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/
 import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
 import { Route as adminSystemNoticeIndexRouteImport } from './../../pages/(admin)/system/notice/index'
 import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
+import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/system/dict/index'
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
 import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
+import { Route as adminMonitorCacheIndexRouteImport } from './../../pages/(admin)/monitor/cache/index'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -131,6 +133,11 @@ const adminSystemMenuIndexRoute = adminSystemMenuIndexRouteImport.update({
   path: '/menu/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminSystemDictIndexRoute = adminSystemDictIndexRouteImport.update({
+  id: '/dict/',
+  path: '/dict/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 const adminSystemDeptIndexRoute = adminSystemDeptIndexRouteImport.update({
   id: '/dept/',
   path: '/dept/',
@@ -139,6 +146,11 @@ const adminSystemDeptIndexRoute = adminSystemDeptIndexRouteImport.update({
 const adminMonitorOnlineIndexRoute = adminMonitorOnlineIndexRouteImport.update({
   id: '/online/',
   path: '/online/',
+  getParentRoute: () => adminMonitorLayoutRoute,
+} as any)
+const adminMonitorCacheIndexRoute = adminMonitorCacheIndexRouteImport.update({
+  id: '/cache/',
+  path: '/cache/',
   getParentRoute: () => adminMonitorLayoutRoute,
 } as any)
 
@@ -157,8 +169,10 @@ export interface FileRoutesByFullPath {
   '/stream-test/': typeof adminStreamTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
+  '/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/monitor/online/': typeof adminMonitorOnlineIndexRoute
   '/system/dept/': typeof adminSystemDeptIndexRoute
+  '/system/dict/': typeof adminSystemDictIndexRoute
   '/system/menu/': typeof adminSystemMenuIndexRoute
   '/system/notice/': typeof adminSystemNoticeIndexRoute
   '/system/post/': typeof adminSystemPostIndexRoute
@@ -179,8 +193,10 @@ export interface FileRoutesByTo {
   '/stream-test': typeof adminStreamTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
+  '/monitor/cache': typeof adminMonitorCacheIndexRoute
   '/monitor/online': typeof adminMonitorOnlineIndexRoute
   '/system/dept': typeof adminSystemDeptIndexRoute
+  '/system/dict': typeof adminSystemDictIndexRoute
   '/system/menu': typeof adminSystemMenuIndexRoute
   '/system/notice': typeof adminSystemNoticeIndexRoute
   '/system/post': typeof adminSystemPostIndexRoute
@@ -204,8 +220,10 @@ export interface FileRoutesById {
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
+  '/(admin)/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/(admin)/monitor/online/': typeof adminMonitorOnlineIndexRoute
   '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
+  '/(admin)/system/dict/': typeof adminSystemDictIndexRoute
   '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
   '/(admin)/system/notice/': typeof adminSystemNoticeIndexRoute
   '/(admin)/system/post/': typeof adminSystemPostIndexRoute
@@ -229,8 +247,10 @@ export interface FileRouteTypes {
     | '/stream-test/'
     | '/websocket-test/'
     | '/login/'
+    | '/monitor/cache/'
     | '/monitor/online/'
     | '/system/dept/'
+    | '/system/dict/'
     | '/system/menu/'
     | '/system/notice/'
     | '/system/post/'
@@ -251,8 +271,10 @@ export interface FileRouteTypes {
     | '/stream-test'
     | '/websocket-test'
     | '/login'
+    | '/monitor/cache'
     | '/monitor/online'
     | '/system/dept'
+    | '/system/dict'
     | '/system/menu'
     | '/system/notice'
     | '/system/post'
@@ -275,8 +297,10 @@ export interface FileRouteTypes {
     | '/(admin)/stream-test/'
     | '/(admin)/websocket-test/'
     | '/(auth)/login/'
+    | '/(admin)/monitor/cache/'
     | '/(admin)/monitor/online/'
     | '/(admin)/system/dept/'
+    | '/(admin)/system/dict/'
     | '/(admin)/system/menu/'
     | '/(admin)/system/notice/'
     | '/(admin)/system/post/'
@@ -436,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemMenuIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/dict/': {
+      id: '/(admin)/system/dict/'
+      path: '/dict'
+      fullPath: '/system/dict/'
+      preLoaderRoute: typeof adminSystemDictIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/system/dept/': {
       id: '/(admin)/system/dept/'
       path: '/dept'
@@ -450,14 +481,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminMonitorOnlineIndexRouteImport
       parentRoute: typeof adminMonitorLayoutRoute
     }
+    '/(admin)/monitor/cache/': {
+      id: '/(admin)/monitor/cache/'
+      path: '/cache'
+      fullPath: '/monitor/cache/'
+      preLoaderRoute: typeof adminMonitorCacheIndexRouteImport
+      parentRoute: typeof adminMonitorLayoutRoute
+    }
   }
 }
 
 interface adminMonitorLayoutRouteChildren {
+  adminMonitorCacheIndexRoute: typeof adminMonitorCacheIndexRoute
   adminMonitorOnlineIndexRoute: typeof adminMonitorOnlineIndexRoute
 }
 
 const adminMonitorLayoutRouteChildren: adminMonitorLayoutRouteChildren = {
+  adminMonitorCacheIndexRoute: adminMonitorCacheIndexRoute,
   adminMonitorOnlineIndexRoute: adminMonitorOnlineIndexRoute,
 }
 
@@ -466,6 +506,7 @@ const adminMonitorLayoutRouteWithChildren =
 
 interface adminSystemLayoutRouteChildren {
   adminSystemDeptIndexRoute: typeof adminSystemDeptIndexRoute
+  adminSystemDictIndexRoute: typeof adminSystemDictIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
   adminSystemNoticeIndexRoute: typeof adminSystemNoticeIndexRoute
   adminSystemPostIndexRoute: typeof adminSystemPostIndexRoute
@@ -475,6 +516,7 @@ interface adminSystemLayoutRouteChildren {
 
 const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
   adminSystemDeptIndexRoute: adminSystemDeptIndexRoute,
+  adminSystemDictIndexRoute: adminSystemDictIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
   adminSystemNoticeIndexRoute: adminSystemNoticeIndexRoute,
   adminSystemPostIndexRoute: adminSystemPostIndexRoute,
