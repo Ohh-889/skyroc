@@ -1,11 +1,7 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type {
-  TableColumn,
-  TableDataWithIndex,
-  TableQueryHookOptions
-} from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Typography } from 'antd';
@@ -445,39 +441,36 @@ const RoleManagement = (props: RoleManagementProps) => {
       </div>
 
       <Suspense fallback={null}>
-        {detailRoleId !== undefined ? (
-          <RoleDetailDrawer
-            open
-            roleId={detailRoleId}
-            onClose={() => setDetailRoleId(undefined)}
-            onEdit={() => {
-              const roleId = detailRoleId;
-              setDetailRoleId(undefined);
-              setEditorState({ initialTab: 'basic', mode: 'update', open: true, roleId });
-            }}
-          />
-        ) : null}
-        {editorState.open ? (
-          <RoleEditorDrawer
-            open
-            initialTab={editorState.initialTab}
-            loading={saving}
-            mode={editorState.mode}
-            roleId={editorState.roleId}
-            onClose={handleCloseEditor}
-            onSubmit={handleSubmit}
-          />
-        ) : null}
-        {scopeRole ? (
-          <RoleDataScopeModal
-            open
-            loading={dataScopeMutation.isPending}
-            role={scopeRole}
-            onClose={() => setScopeRole(undefined)}
-            onSubmit={handleDataScopeSubmit}
-          />
-        ) : null}
-        {memberRole ? <RoleMemberDrawer open role={memberRole} onClose={() => setMemberRole(undefined)} /> : null}
+        <RoleDetailDrawer
+          open={Boolean(detailRoleId)}
+          roleId={detailRoleId}
+          onClose={() => setDetailRoleId(undefined)}
+          onEdit={() => {
+            const roleId = detailRoleId;
+            setDetailRoleId(undefined);
+            setEditorState({ initialTab: 'basic', mode: 'update', open: true, roleId });
+          }}
+        />
+
+        <RoleEditorDrawer
+          open={editorState.open}
+          initialTab={editorState.initialTab}
+          loading={saving}
+          mode={editorState.mode}
+          roleId={editorState.roleId}
+          onClose={handleCloseEditor}
+          onSubmit={handleSubmit}
+        />
+
+        <RoleDataScopeModal
+          open={Boolean(scopeRole)}
+          loading={dataScopeMutation.isPending}
+          role={scopeRole}
+          onClose={() => setScopeRole(undefined)}
+          onSubmit={handleDataScopeSubmit}
+        />
+
+        <RoleMemberDrawer open={Boolean(memberRole)} role={memberRole} onClose={() => setMemberRole(undefined)} />
       </Suspense>
     </div>
   );
