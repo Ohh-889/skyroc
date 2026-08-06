@@ -1,5 +1,5 @@
 import { ButtonIcon } from '@skyroc/web-ui-antd';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon, useTableScroll } from '@skyroc/web-ui-compose';
 import { Badge, Button, Card, Empty, Flex, List, Space, Table, Tag, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 
@@ -35,12 +35,14 @@ interface MenuResourceContentProps {
   onSelectChild: (menuId: MenuId) => void;
   /** 当前页面菜单下的按钮权限。 */
   permissions: MenuItem[];
+  /** 按钮权限表格的滚动区域。 */
+  scroll: { x: number; y: number | undefined };
   /** 当前选中的目录或菜单。 */
   selectedMenu?: MenuItem;
 }
 
 const MenuResourceContent = (props: MenuResourceContentProps) => {
-  const { childMenus, columns, isPageMenu, onSelectChild, permissions, selectedMenu } = props;
+  const { childMenus, columns, isPageMenu, onSelectChild, permissions, scroll, selectedMenu } = props;
 
   if (!selectedMenu) {
     return <Empty description="选择菜单后查看关联资源" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
@@ -54,7 +56,7 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
         locale={{ emptyText: '当前菜单暂无按钮权限' }}
         pagination={false}
         rowKey={record => String(record.menuId)}
-        scroll={{ x: 820 }}
+        scroll={scroll}
         size="small"
       />
     );
@@ -94,45 +96,49 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
 const MenuResourceCard = (props: MenuResourceCardProps) => {
   const { children, onAdd, onDeletePermission, onEditPermission, onSelectChild, permissions, selectedMenu } = props;
 
+  const { scrollConfig, tableWrapperRef } = useTableScroll(820);
   const isPageMenu = selectedMenu?.menuType === 'C';
   const resourceSubtitle = getResourceSubtitle(selectedMenu);
   const columns = createPermissionColumns(onDeletePermission, onEditPermission);
 
   return (
-    <Card
-      className="card-wrapper min-h-320px overflow-hidden"
-      extra={
-        selectedMenu ? (
-          <Flex align="center" gap={10}>
-            {isPageMenu ? (
-              <Typography.Text className="lt-lg:hidden" type="secondary">
-                <span className="mr-6px inline-block size-6px rounded-full bg-primary" />
-                权限变更会影响角色授权
-              </Typography.Text>
-            ) : null}
-            <Button icon={<SvgIcon icon="ph:plus" />} size="small" type="primary" ghost onClick={onAdd}>
-              {isPageMenu ? '新增按钮' : '新增菜单'}
-            </Button>
-          </Flex>
-        ) : null
-      }
-      title={
-        <div>
-          <div>{isPageMenu ? '按钮权限列表' : '直属菜单'}</div>
-          <div className="mt-2px text-11px text-tertiary font-normal">{resourceSubtitle}</div>
-        </div>
-      }
-      variant="borderless"
-    >
-      <MenuResourceContent
-        childMenus={children}
-        columns={columns}
-        isPageMenu={isPageMenu}
-        permissions={permissions}
-        selectedMenu={selectedMenu}
-        onSelectChild={onSelectChild}
-      />
-    </Card>
+    <div className="min-h-320px flex flex-1 flex-col" ref={tableWrapperRef}>
+      <Card
+        className="h-full overflow-hidden card-wrapper"
+        extra={
+          selectedMenu ? (
+            <Flex align="center" gap={10}>
+              {isPageMenu ? (
+                <Typography.Text className="lt-lg:hidden" type="secondary">
+                  <span className="mr-6px inline-block size-6px rounded-full bg-primary" />
+                  权限变更会影响角色授权
+                </Typography.Text>
+              ) : null}
+              <Button icon={<SvgIcon icon="ph:plus" />} size="small" type="primary" ghost onClick={onAdd}>
+                {isPageMenu ? '新增按钮' : '新增菜单'}
+              </Button>
+            </Flex>
+          ) : null
+        }
+        title={
+          <div>
+            <div>{isPageMenu ? '按钮权限列表' : '直属菜单'}</div>
+            <div className="mt-2px text-11px text-tertiary font-normal">{resourceSubtitle}</div>
+          </div>
+        }
+        variant="borderless"
+      >
+        <MenuResourceContent
+          childMenus={children}
+          columns={columns}
+          isPageMenu={isPageMenu}
+          permissions={permissions}
+          scroll={scrollConfig}
+          selectedMenu={selectedMenu}
+          onSelectChild={onSelectChild}
+        />
+      </Card>
+    </div>
   );
 };
 

@@ -74,7 +74,7 @@ const MenuManagement = (props: MenuManagementProps) => {
   useEffect(() => {
     const routeMenus = menus.filter(isRouteMenu);
     if (routeMenus.length === 0) {
-      setSelectedMenuId(undefined);
+      setSelectedMenuId('');
       return;
     }
 
@@ -144,9 +144,9 @@ const MenuManagement = (props: MenuManagementProps) => {
       editorState.mode === 'create'
         ? await createMutation.mutateAsync(payload)
         : await updateMutation.mutateAsync({
-            ...payload,
-            menuId: editorState.menuId as MenuId
-          });
+          ...payload,
+          menuId: editorState.menuId as MenuId
+        });
 
     handleCloseEditor();
     await refreshMenuCaches();
@@ -180,7 +180,7 @@ const MenuManagement = (props: MenuManagementProps) => {
         }
 
         const parent = findMenu(menus, menu.parentId);
-        setSelectedMenuId(parent && isRouteMenu(parent) ? parent.menuId : undefined);
+        setSelectedMenuId(parent && isRouteMenu(parent) ? parent.menuId : '');
         await refreshMenuCaches(SYSTEM_MENU_QUERY_KEYS.LISTS);
         deleteIds.forEach(menuId => {
           queryClient.removeQueries({ exact: true, queryKey: SYSTEM_MENU_QUERY_KEYS.DETAIL(menuId) });
@@ -208,8 +208,8 @@ const MenuManagement = (props: MenuManagementProps) => {
   }
 
   return (
-    <div className="min-h-full">
-      <div className="grid min-h-[calc(100vh-150px)] grid-cols-[286px_minmax(0,1fr)] gap-12px lt-lg:grid-cols-1">
+    <div className="h-full min-h-500px overflow-hidden lt-lg:overflow-auto">
+      <div className="grid h-full min-h-0 grid-cols-[286px_minmax(0,1fr)] gap-12px lt-lg:h-auto lt-lg:grid-cols-1">
         <MenuTreePanel
           error={menuListQuery.isError}
           expandedKeys={expandedKeys}
@@ -225,7 +225,7 @@ const MenuManagement = (props: MenuManagementProps) => {
           onSelect={handleSelectMenu}
         />
 
-        <div className="min-w-0 flex flex-col gap-12px">
+        <div className="h-full min-h-0 min-w-0 flex flex-col gap-12px lt-lg:h-auto">
           <MenuDetailCard
             childCount={directChildren.length}
             menu={selectedMenu}
