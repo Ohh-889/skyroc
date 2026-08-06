@@ -17,6 +17,7 @@ import { Route as errors403RouteImport } from './../../pages/(errors)/403'
 import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out'
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
 import { Route as adminSystemLayoutRouteImport } from './../../pages/(admin)/system/layout'
+import { Route as adminMonitorLayoutRouteImport } from './../../pages/(admin)/monitor/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
 import { Route as adminWebsocketTestIndexRouteImport } from './../../pages/(admin)/websocket-test/index'
 import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/stream-test/index'
@@ -26,8 +27,10 @@ import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/co
 import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
 import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/system/role/index'
 import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
+import { Route as adminSystemNoticeIndexRouteImport } from './../../pages/(admin)/system/notice/index'
 import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
+import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -66,6 +69,11 @@ const authLoginLayoutRoute = authLoginLayoutRouteImport.update({
 const adminSystemLayoutRoute = adminSystemLayoutRouteImport.update({
   id: '/system',
   path: '/system',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
+const adminMonitorLayoutRoute = adminMonitorLayoutRouteImport.update({
+  id: '/monitor',
+  path: '/monitor',
   getParentRoute: () => adminLayoutRoute,
 } as any)
 const authLoginIndexRoute = authLoginIndexRouteImport.update({
@@ -113,6 +121,11 @@ const adminSystemPostIndexRoute = adminSystemPostIndexRouteImport.update({
   path: '/post/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminSystemNoticeIndexRoute = adminSystemNoticeIndexRouteImport.update({
+  id: '/notice/',
+  path: '/notice/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 const adminSystemMenuIndexRoute = adminSystemMenuIndexRouteImport.update({
   id: '/menu/',
   path: '/menu/',
@@ -123,9 +136,15 @@ const adminSystemDeptIndexRoute = adminSystemDeptIndexRouteImport.update({
   path: '/dept/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminMonitorOnlineIndexRoute = adminMonitorOnlineIndexRouteImport.update({
+  id: '/online/',
+  path: '/online/',
+  getParentRoute: () => adminMonitorLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/system': typeof adminSystemLayoutRouteWithChildren
   '/login': typeof authLoginLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
@@ -138,14 +157,17 @@ export interface FileRoutesByFullPath {
   '/stream-test/': typeof adminStreamTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
+  '/monitor/online/': typeof adminMonitorOnlineIndexRoute
   '/system/dept/': typeof adminSystemDeptIndexRoute
   '/system/menu/': typeof adminSystemMenuIndexRoute
+  '/system/notice/': typeof adminSystemNoticeIndexRoute
   '/system/post/': typeof adminSystemPostIndexRoute
   '/system/role/': typeof adminSystemRoleIndexRoute
   '/system/user/': typeof adminSystemUserIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/system': typeof adminSystemLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
   '/403': typeof errors403Route
@@ -157,8 +179,10 @@ export interface FileRoutesByTo {
   '/stream-test': typeof adminStreamTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
+  '/monitor/online': typeof adminMonitorOnlineIndexRoute
   '/system/dept': typeof adminSystemDeptIndexRoute
   '/system/menu': typeof adminSystemMenuIndexRoute
+  '/system/notice': typeof adminSystemNoticeIndexRoute
   '/system/post': typeof adminSystemPostIndexRoute
   '/system/role': typeof adminSystemRoleIndexRoute
   '/system/user': typeof adminSystemUserIndexRoute
@@ -167,6 +191,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(admin)': typeof adminLayoutRouteWithChildren
+  '/(admin)/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/(admin)/system': typeof adminSystemLayoutRouteWithChildren
   '/(auth)/login': typeof authLoginLayoutRouteWithChildren
   '/(auth)/login-out': typeof authLoginOutRoute
@@ -179,8 +204,10 @@ export interface FileRoutesById {
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
+  '/(admin)/monitor/online/': typeof adminMonitorOnlineIndexRoute
   '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
   '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
+  '/(admin)/system/notice/': typeof adminSystemNoticeIndexRoute
   '/(admin)/system/post/': typeof adminSystemPostIndexRoute
   '/(admin)/system/role/': typeof adminSystemRoleIndexRoute
   '/(admin)/system/user/': typeof adminSystemUserIndexRoute
@@ -189,6 +216,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/monitor'
     | '/system'
     | '/login'
     | '/login-out'
@@ -201,14 +229,17 @@ export interface FileRouteTypes {
     | '/stream-test/'
     | '/websocket-test/'
     | '/login/'
+    | '/monitor/online/'
     | '/system/dept/'
     | '/system/menu/'
+    | '/system/notice/'
     | '/system/post/'
     | '/system/role/'
     | '/system/user/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/monitor'
     | '/system'
     | '/login-out'
     | '/403'
@@ -220,8 +251,10 @@ export interface FileRouteTypes {
     | '/stream-test'
     | '/websocket-test'
     | '/login'
+    | '/monitor/online'
     | '/system/dept'
     | '/system/menu'
+    | '/system/notice'
     | '/system/post'
     | '/system/role'
     | '/system/user'
@@ -229,6 +262,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/(admin)'
+    | '/(admin)/monitor'
     | '/(admin)/system'
     | '/(auth)/login'
     | '/(auth)/login-out'
@@ -241,8 +275,10 @@ export interface FileRouteTypes {
     | '/(admin)/stream-test/'
     | '/(admin)/websocket-test/'
     | '/(auth)/login/'
+    | '/(admin)/monitor/online/'
     | '/(admin)/system/dept/'
     | '/(admin)/system/menu/'
+    | '/(admin)/system/notice/'
     | '/(admin)/system/post/'
     | '/(admin)/system/role/'
     | '/(admin)/system/user/'
@@ -316,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemLayoutRouteImport
       parentRoute: typeof adminLayoutRoute
     }
+    '/(admin)/monitor': {
+      id: '/(admin)/monitor'
+      path: '/monitor'
+      fullPath: '/monitor'
+      preLoaderRoute: typeof adminMonitorLayoutRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
     '/(auth)/login/': {
       id: '/(auth)/login/'
       path: '/'
@@ -379,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemPostIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/notice/': {
+      id: '/(admin)/system/notice/'
+      path: '/notice'
+      fullPath: '/system/notice/'
+      preLoaderRoute: typeof adminSystemNoticeIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/system/menu/': {
       id: '/(admin)/system/menu/'
       path: '/menu'
@@ -393,12 +443,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemDeptIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/monitor/online/': {
+      id: '/(admin)/monitor/online/'
+      path: '/online'
+      fullPath: '/monitor/online/'
+      preLoaderRoute: typeof adminMonitorOnlineIndexRouteImport
+      parentRoute: typeof adminMonitorLayoutRoute
+    }
   }
 }
+
+interface adminMonitorLayoutRouteChildren {
+  adminMonitorOnlineIndexRoute: typeof adminMonitorOnlineIndexRoute
+}
+
+const adminMonitorLayoutRouteChildren: adminMonitorLayoutRouteChildren = {
+  adminMonitorOnlineIndexRoute: adminMonitorOnlineIndexRoute,
+}
+
+const adminMonitorLayoutRouteWithChildren =
+  adminMonitorLayoutRoute._addFileChildren(adminMonitorLayoutRouteChildren)
 
 interface adminSystemLayoutRouteChildren {
   adminSystemDeptIndexRoute: typeof adminSystemDeptIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
+  adminSystemNoticeIndexRoute: typeof adminSystemNoticeIndexRoute
   adminSystemPostIndexRoute: typeof adminSystemPostIndexRoute
   adminSystemRoleIndexRoute: typeof adminSystemRoleIndexRoute
   adminSystemUserIndexRoute: typeof adminSystemUserIndexRoute
@@ -407,6 +476,7 @@ interface adminSystemLayoutRouteChildren {
 const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
   adminSystemDeptIndexRoute: adminSystemDeptIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
+  adminSystemNoticeIndexRoute: adminSystemNoticeIndexRoute,
   adminSystemPostIndexRoute: adminSystemPostIndexRoute,
   adminSystemRoleIndexRoute: adminSystemRoleIndexRoute,
   adminSystemUserIndexRoute: adminSystemUserIndexRoute,
@@ -416,6 +486,7 @@ const adminSystemLayoutRouteWithChildren =
   adminSystemLayoutRoute._addFileChildren(adminSystemLayoutRouteChildren)
 
 interface adminLayoutRouteChildren {
+  adminMonitorLayoutRoute: typeof adminMonitorLayoutRouteWithChildren
   adminSystemLayoutRoute: typeof adminSystemLayoutRouteWithChildren
   adminHomeIndexRoute: typeof adminHomeIndexRoute
   adminSseTestIndexRoute: typeof adminSseTestIndexRoute
@@ -424,6 +495,7 @@ interface adminLayoutRouteChildren {
 }
 
 const adminLayoutRouteChildren: adminLayoutRouteChildren = {
+  adminMonitorLayoutRoute: adminMonitorLayoutRouteWithChildren,
   adminSystemLayoutRoute: adminSystemLayoutRouteWithChildren,
   adminHomeIndexRoute: adminHomeIndexRoute,
   adminSseTestIndexRoute: adminSseTestIndexRoute,
