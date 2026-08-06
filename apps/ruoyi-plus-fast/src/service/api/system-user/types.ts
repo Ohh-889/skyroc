@@ -58,3 +58,63 @@ export interface DeptTreeNode {
   parentId: UserId;
   weight: number;
 }
+
+export interface UserRoleOption {
+  dataScope: string;
+  flag: boolean;
+  roleId: UserId;
+  roleKey: string;
+  roleName: string;
+  status: string;
+  superAdmin: boolean;
+}
+
+export interface UserPostOption {
+  deptId: UserId;
+  deptName: string;
+  postCode: string;
+  postId: UserId;
+  postName: string;
+  status: string;
+}
+
+export interface UserDetailResponse {
+  postIds: UserId[] | null;
+  posts: UserPostOption[] | null;
+  roleIds: UserId[] | null;
+  roles: UserRoleOption[];
+  user: UserListItem | null;
+}
+
+export interface UserSavePayload {
+  deptId?: null | UserId;
+  email?: null | string;
+  nickName: string;
+  password?: null | string;
+  phonenumber?: null | string;
+  postIds: UserId[];
+  remark?: null | string;
+  roleIds: UserId[];
+  sex: string;
+  status: UserStatus;
+  userName: string;
+}
+
+export interface UserUpdatePayload extends UserSavePayload {
+  userId: UserId;
+}
+
+export interface UserStatusPayload {
+  status: UserStatus;
+  userId: UserId;
+}
+
+export interface UserPasswordPayload {
+  password: string;
+  userId: UserId;
+}
+
+export interface UserRolePayload {
+  roleIds: UserId[];
+  userId: UserId;
+}

@@ -1,5 +1,15 @@
 export const SYSTEM_USER_URLS = {
+  AUTH_ROLE: '/system/user/authRole',
+  AUTH_ROLE_DETAIL: (userId: number | string) => `/system/user/authRole/${userId}`,
+  CHANGE_STATUS: '/system/user/changeStatus',
+  CREATE: '/system/user',
+  DELETE: (userIds: Array<number | string>) => `/system/user/${userIds.map(String).join(',')}`,
+  DETAIL: (userId: number | string) => `/system/user/${userId}`,
   DEPT_TREE: '/system/dept/deptTree',
+  FORM_OPTIONS: '/system/user/',
   LIST_BY_DEPT: (deptId: number | string) => `/system/user/list/dept/${deptId}`,
+  POST_OPTIONS: '/system/post/optionselect',
+  RESET_PASSWORD: '/system/user/resetPwd',
+  UPDATE: '/system/user',
   USER_LIST: '/system/user/list'
 } as const;
