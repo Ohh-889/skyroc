@@ -420,49 +420,44 @@ const UserManagement = (props: UserManagementProps) => {
       </div>
 
       <Suspense fallback={null}>
-        {detailUserId !== undefined ? (
-          <UserDetailDrawer
-            open
-            userId={detailUserId}
-            onClose={() => setDetailUserId(undefined)}
-            onEdit={() => {
-              const userId = detailUserId;
-              setDetailUserId(undefined);
-              setEditorState({ mode: 'update', open: true, userId });
-            }}
-          />
-        ) : null}
-        {editorState.open ? (
-          <UserEditorDrawer
-            open
-            departments={deptQuery.data ?? []}
-            loading={saving}
-            mode={editorState.mode}
-            userId={editorState.userId}
-            onClose={() => {
-              if (!saving) setEditorState(INITIAL_EDITOR_STATE);
-            }}
-            onSubmit={handleSubmit}
-          />
-        ) : null}
-        {roleUser ? (
-          <UserRoleDrawer
-            open
-            loading={roleMutation.isPending}
-            userId={roleUser.userId}
-            onClose={() => setRoleUser(undefined)}
-            onSubmit={handleRoleSubmit}
-          />
-        ) : null}
-        {passwordUser ? (
-          <UserPasswordModal
-            open
-            loading={passwordMutation.isPending}
-            userName={passwordUser.nickName || passwordUser.userName}
-            onClose={() => setPasswordUser(undefined)}
-            onSubmit={handlePasswordSubmit}
-          />
-        ) : null}
+        <UserDetailDrawer
+          open={Boolean(detailUserId)}
+          userId={String(detailUserId)}
+          onClose={() => setDetailUserId(undefined)}
+          onEdit={() => {
+            const userId = detailUserId;
+            setDetailUserId(undefined);
+            setEditorState({ mode: 'update', open: true, userId });
+          }}
+        />
+
+        <UserEditorDrawer
+          departments={deptQuery.data ?? []}
+          loading={saving}
+          mode={editorState.mode}
+          open={editorState.open}
+          userId={editorState.userId}
+          onClose={() => {
+            if (!saving) setEditorState(INITIAL_EDITOR_STATE);
+          }}
+          onSubmit={handleSubmit}
+        />
+
+        <UserRoleDrawer
+          loading={roleMutation.isPending}
+          open={Boolean(roleUser)}
+          userId={roleUser?.userId ?? ''}
+          onClose={() => setRoleUser(undefined)}
+          onSubmit={handleRoleSubmit}
+        />
+
+        <UserPasswordModal
+          loading={passwordMutation.isPending}
+          open={Boolean(passwordUser)}
+          userName={passwordUser?.nickName || passwordUser?.userName || ''}
+          onClose={() => setPasswordUser(undefined)}
+          onSubmit={handlePasswordSubmit}
+        />
       </Suspense>
     </div>
   );

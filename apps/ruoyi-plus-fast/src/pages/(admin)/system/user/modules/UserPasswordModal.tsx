@@ -32,8 +32,13 @@ const UserPasswordModal = (props: UserPasswordModalProps) => {
   }
 
   return (
-    <Modal confirmLoading={loading} open={open} title={`重置“${userName}”的密码`} onCancel={onClose} onOk={handleOk}>
-      <Form form={form} layout="vertical">
+    <Modal
+      confirmLoading={loading}
+      open={open}
+      title={`重置“${userName}”的密码`}
+      onCancel={onClose}
+      onOk={handleOk}>
+      <Form className='px-22px pt-1' form={form} layout="vertical">
         <Form.Item
           label="新密码"
           name="password"
