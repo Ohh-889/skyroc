@@ -102,8 +102,8 @@ const StreamTest = () => {
       <ACard
         extra={
           <ASpace size={12}>
-            {firstByteMs === null ? null : <span className="text-text-3">首字 {firstByteMs}ms</span>}
-            <span className="text-text-3">{output.length} 字</span>
+            {firstByteMs === null ? null : <span className="text-tertiary">首字 {firstByteMs}ms</span>}
+            <span className="text-tertiary">{output.length} 字</span>
           </ASpace>
         }
         title="输出"

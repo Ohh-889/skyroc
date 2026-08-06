@@ -157,7 +157,7 @@ const WebSocketTest = () => {
               <AList.Item>
                 <ASpace>
                   <ATag color={directionColors[item.direction]}>{directionLabels[item.direction]}</ATag>
-                  <span className="text-text-3">{new Date(item.timestamp).toLocaleTimeString()}</span>
+                  <span className="text-tertiary">{new Date(item.timestamp).toLocaleTimeString()}</span>
                   <span className="break-all">{item.message}</span>
                 </ASpace>
               </AList.Item>

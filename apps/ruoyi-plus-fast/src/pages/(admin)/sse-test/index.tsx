@@ -61,7 +61,7 @@ const SseTest = () => {
               status={status === 'connected' ? 'success' : 'error'}
               text={status === 'connected' ? '已连接' : '未连接'}
             />
-            {connectionId ? <span className="ml-8px text-text-3">连接 ID：{connectionId}</span> : null}
+            {connectionId ? <span className="ml-8px text-tertiary">连接 ID：{connectionId}</span> : null}
           </div>
           <div className="text-text-2">
             SSE 是单向的，前端只能收不能发，要给后端发东西请走普通 HTTP 接口。断线重连由浏览器的 EventSource
@@ -103,7 +103,7 @@ const SseTest = () => {
               <AList.Item>
                 <ASpace>
                   <ATag color={directionColors[item.direction]}>{directionLabels[item.direction]}</ATag>
-                  <span className="text-text-3">{new Date(item.timestamp).toLocaleTimeString()}</span>
+                  <span className="text-tertiary">{new Date(item.timestamp).toLocaleTimeString()}</span>
                   <span className="break-all">{item.message}</span>
                 </ASpace>
               </AList.Item>
