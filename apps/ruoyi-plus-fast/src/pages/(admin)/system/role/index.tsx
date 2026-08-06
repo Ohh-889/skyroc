@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import type { Key } from 'react';
 
 import { deleteModal } from '@/features/antd/deleteModal';
@@ -34,13 +34,14 @@ import type {
   RoleUpdatePayload
 } from '@/service/api/system-role';
 
-import RoleDataScopeModal from './modules/RoleDataScopeModal';
-import RoleDetailDrawer from './modules/RoleDetailDrawer';
-import RoleEditorDrawer from './modules/RoleEditorDrawer';
 import type { RoleEditorMode, RoleEditorTab } from './modules/RoleEditorDrawer';
-import RoleMemberDrawer from './modules/RoleMemberDrawer';
 import RoleSearch from './modules/RoleSearch';
 import type { RoleTableParams } from './modules/RoleSearch';
+
+const RoleDataScopeModal = lazy(() => import('./modules/RoleDataScopeModal'));
+const RoleDetailDrawer = lazy(() => import('./modules/RoleDetailDrawer'));
+const RoleEditorDrawer = lazy(() => import('./modules/RoleEditorDrawer'));
+const RoleMemberDrawer = lazy(() => import('./modules/RoleMemberDrawer'));
 
 const ROLE_TABLE_SCROLL_X = 1080;
 const ROLE_SEARCH_INITIAL_PARAMS: Partial<RoleTableParams> = {
@@ -443,35 +444,41 @@ const RoleManagement = (props: RoleManagementProps) => {
         </Card>
       </div>
 
-      <RoleDetailDrawer
-        open={detailRoleId !== undefined}
-        roleId={detailRoleId}
-        onClose={() => setDetailRoleId(undefined)}
-        onEdit={() => {
-          const roleId = detailRoleId;
-          setDetailRoleId(undefined);
-          if (roleId !== undefined) {
-            setEditorState({ initialTab: 'basic', mode: 'update', open: true, roleId });
-          }
-        }}
-      />
-      <RoleEditorDrawer
-        initialTab={editorState.initialTab}
-        loading={saving}
-        mode={editorState.mode}
-        open={editorState.open}
-        roleId={editorState.roleId}
-        onClose={handleCloseEditor}
-        onSubmit={handleSubmit}
-      />
-      <RoleDataScopeModal
-        loading={dataScopeMutation.isPending}
-        open={scopeRole !== undefined}
-        role={scopeRole}
-        onClose={() => setScopeRole(undefined)}
-        onSubmit={handleDataScopeSubmit}
-      />
-      <RoleMemberDrawer open={memberRole !== undefined} role={memberRole} onClose={() => setMemberRole(undefined)} />
+      <Suspense fallback={null}>
+        {detailRoleId !== undefined ? (
+          <RoleDetailDrawer
+            open
+            roleId={detailRoleId}
+            onClose={() => setDetailRoleId(undefined)}
+            onEdit={() => {
+              const roleId = detailRoleId;
+              setDetailRoleId(undefined);
+              setEditorState({ initialTab: 'basic', mode: 'update', open: true, roleId });
+            }}
+          />
+        ) : null}
+        {editorState.open ? (
+          <RoleEditorDrawer
+            open
+            initialTab={editorState.initialTab}
+            loading={saving}
+            mode={editorState.mode}
+            roleId={editorState.roleId}
+            onClose={handleCloseEditor}
+            onSubmit={handleSubmit}
+          />
+        ) : null}
+        {scopeRole ? (
+          <RoleDataScopeModal
+            open
+            loading={dataScopeMutation.isPending}
+            role={scopeRole}
+            onClose={() => setScopeRole(undefined)}
+            onSubmit={handleDataScopeSubmit}
+          />
+        ) : null}
+        {memberRole ? <RoleMemberDrawer open role={memberRole} onClose={() => setMemberRole(undefined)} /> : null}
+      </Suspense>
     </div>
   );
 };
