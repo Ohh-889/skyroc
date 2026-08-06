@@ -24,7 +24,7 @@ const UserDetailDrawer = (props: UserDetailDrawerProps) => {
       extra={<Button onClick={onEdit}>编辑资料</Button>}
       open={open}
       title="用户详情"
-      width={560}
+      size={560}
       onClose={onClose}
     >
       <Spin spinning={query.isLoading}>

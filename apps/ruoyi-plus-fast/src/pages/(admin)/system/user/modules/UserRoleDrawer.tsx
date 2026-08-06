@@ -50,7 +50,7 @@ const UserRoleDrawer = (props: UserRoleDrawerProps) => {
       }
       open={open}
       title={`分配角色${query.data?.user ? ` · ${query.data.user.nickName}` : ''}`}
-      width={520}
+      size={520}
       onClose={onClose}
     >
       <Input

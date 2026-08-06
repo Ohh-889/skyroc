@@ -122,7 +122,6 @@ function renderBasicTab() {
         </Form.Item>
         <Form.Item label="角色状态" name="status">
           <Radio.Group
-            optionType="button"
             options={[
               { label: '正常', value: '0' },
               { label: '停用', value: '1' }
@@ -396,7 +395,9 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
           ) : null}
         </Flex>
       }
-      maskClosable={!loading}
+      mask={{
+        closable: !loading
+      }}
       open={open}
       title={
         <div>

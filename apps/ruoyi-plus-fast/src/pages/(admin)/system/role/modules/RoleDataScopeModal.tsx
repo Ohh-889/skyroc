@@ -84,6 +84,7 @@ const RoleDataScopeModal = (props: RoleDataScopeModalProps) => {
   return (
     <Modal
       destroyOnHidden
+      classNames={{ body: 'px-22px pb-2' }}
       mask={{ closable: !loading }}
       okButtonProps={{ loading }}
       okText="保存数据范围"
