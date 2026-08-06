@@ -74,7 +74,7 @@ const AntdProvider = (props: AntdProviderProps) => {
           footer: 'mt-0 py-13px px-22px',
           header: 'px-22px',
           container:
-            '[&_.ant-modal-confirm-btns]:(mt-0 py-13px border-t-1px border-border-secondary mt-22px px-22px) [&_.ant-modal-confirm-body]:px-22px pt-22px px-0 pb-0'
+            '[&_.ant-modal-confirm-btns]:(mt-0 py-13px border-t-1px border-border-secondary mt-22px px-22px) [&_.ant-modal-confirm-body]:px-22px  pt-22px px-0 pb-0'
         }
       }}
       drawer={{
