@@ -63,6 +63,15 @@ interface PostEditorDrawerProps {
   presetDeptId?: PostId;
 }
 
+function buildDepartmentTreeData(nodes: PostDeptTreeNode[]): PostDeptTreeOption[] {
+  return nodes.map(node => ({
+    children: node.children?.length ? buildDepartmentTreeData(node.children) : [],
+    disabled: node.disabled,
+    title: node.label,
+    value: node.id
+  }));
+}
+
 const PostEditorDrawer = (props: PostEditorDrawerProps) => {
   const { departments, loading, mode, onClose, onSubmit, open, postId, presetDeptId } = props;
 
@@ -77,11 +86,11 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
       form.resetFields();
       form.setFieldsValue({
         deptId: presetDeptId,
-        postCategory: undefined,
+        postCategory: '',
         postCode: '',
         postName: '',
         postSort: 0,
-        remark: undefined,
+        remark: '',
         status: '0'
       });
       return;
@@ -90,23 +99,16 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
 
     form.setFieldsValue({
       deptId: detailQuery.data.deptId,
-      postCategory: detailQuery.data.postCategory ?? undefined,
+      postCategory: detailQuery.data.postCategory ?? '',
       postCode: detailQuery.data.postCode,
       postName: detailQuery.data.postName,
       postSort: detailQuery.data.postSort,
-      remark: detailQuery.data.remark ?? undefined,
+      remark: detailQuery.data.remark ?? '',
       status: detailQuery.data.status
     });
   }, [detailQuery.data, form, isUpdate, open, presetDeptId]);
 
-  function buildDepartmentTreeData(nodes: PostDeptTreeNode[]): PostDeptTreeOption[] {
-    return nodes.map(node => ({
-      children: node.children?.length ? buildDepartmentTreeData(node.children) : undefined,
-      disabled: node.disabled,
-      title: node.label,
-      value: node.id
-    }));
-  }
+
 
   async function handleFinish(values: PostFormValues) {
     await onSubmit({
@@ -136,7 +138,9 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
           </Button>
         </Flex>
       }
-      maskClosable={!loading}
+      mask={{
+        closable: !loading
+      }}
       open={open}
       title={
         <div>
@@ -144,7 +148,7 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
           <div className="mt-3px text-12px text-tertiary">{drawerSubtitle}</div>
         </div>
       }
-      width={560}
+      size={560}
       onClose={onClose}
     >
       {detailQuery.isError ? (
@@ -155,7 +159,7 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
             </Button>
           }
           className="mb-16px"
-          message="岗位详情加载失败"
+          title="岗位详情加载失败"
           showIcon
           type="error"
         />
@@ -176,11 +180,12 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
             rules={[{ message: '请选择所属部门', required: true }]}
           >
             <TreeSelect
-              showSearch
+              showSearch={{
+                treeNodeFilterProp: "title"
+              }}
               placeholder="请选择所属部门"
               treeData={departmentTreeData}
               treeDefaultExpandAll
-              treeNodeFilterProp="title"
             />
           </Form.Item>
 
@@ -231,7 +236,6 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
 
           <Form.Item extra="已分配用户的岗位不能停用。" label="岗位状态" name="status">
             <Radio.Group
-              optionType="button"
               options={[
                 { label: '正常', value: '0' },
                 { label: '停用', value: '1' }
