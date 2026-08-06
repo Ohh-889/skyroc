@@ -1,3 +1,4 @@
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
@@ -29,6 +30,7 @@ import type {
   RoleStatus,
   RoleUpdatePayload
 } from '@/service/api/system-role';
+import { exportRoles } from '@/service/api/system-role/api';
 
 import type { RoleEditorMode, RoleEditorTab } from './modules/RoleEditorDrawer';
 import RoleSearch from './modules/RoleSearch';
@@ -87,6 +89,7 @@ const RoleManagement = (props: RoleManagementProps) => {
   const [detailRoleId, setDetailRoleId] = useState<RoleItem['roleId']>();
   const [scopeRole, setScopeRole] = useState<RoleItem>();
   const [memberRole, setMemberRole] = useState<RoleItem>();
+  const [exporting, setExporting] = useState(false);
 
   const createMutation = useCreateRoleMutation();
   const updateMutation = useUpdateRoleMutation();
@@ -354,6 +357,17 @@ const RoleManagement = (props: RoleManagementProps) => {
     showSuccessMessage('角色数据已刷新');
   }
 
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const params = toRoleListParams({ ...searchProps.searchParams, current: 1, size: 20 } as RoleTableParams);
+      const blob = await exportRoles(params);
+      downloadFileFromBlob({ fileName: '角色数据.xlsx', source: blob });
+    } finally {
+      setExporting(false);
+    }
+  }
+
   async function invalidateRoleData() {
     await queryClient.invalidateQueries({ queryKey: SYSTEM_ROLE_QUERY_KEYS.ALL });
   }
@@ -383,6 +397,8 @@ const RoleManagement = (props: RoleManagementProps) => {
               batchDeleteText="批量删除"
               columns={columnChecks}
               disabledDelete={selectedRoles.length === 0}
+              exportData={handleExport}
+              exportLoading={exporting}
               loading={tableProps.loading}
               refresh={handleRefresh}
               setColumnChecks={setColumnChecks}

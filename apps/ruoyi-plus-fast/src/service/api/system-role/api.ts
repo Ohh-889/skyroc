@@ -23,6 +23,15 @@ export function fetchRoleList(params: RoleListParams) {
   return request<RoleListPage>({ method: 'get', params, url: SYSTEM_ROLE_URLS.LIST });
 }
 
+export function exportRoles(params: RoleListParams) {
+  return request<Blob, 'blob'>({
+    method: 'post',
+    params,
+    responseType: 'blob',
+    url: SYSTEM_ROLE_URLS.EXPORT
+  });
+}
+
 export async function fetchAllRoles() {
   const firstPage = await fetchRoleList({ current: 1, size: 100 });
   const pageCount = Math.ceil(firstPage.total / firstPage.size);

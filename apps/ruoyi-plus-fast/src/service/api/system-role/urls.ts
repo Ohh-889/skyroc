@@ -11,6 +11,7 @@ export const SYSTEM_ROLE_URLS = {
   DELETE: (roleIds: RoleId[]) => `/system/role/${roleIds.map(String).join(',')}`,
   DEPT_TREE: (roleId: RoleId) => `/system/role/deptTree/${roleId}`,
   DETAIL: (roleId: RoleId) => `/system/role/${roleId}`,
+  EXPORT: '/system/role/export',
   LIST: '/system/role/list',
   MENU_TREE: (roleId: RoleId) => `/system/menu/roleMenuTreeselect/${roleId}`,
   MENU_TREE_CREATE: '/system/menu/treeselect',
