@@ -258,6 +258,7 @@ const NoticeManagement = (props: NoticeManagementProps) => {
           ) : null}
           <Table<NoticeTableRecord>
             {...tableProps}
+            column={{ align: 'center' }}
             locale={{
               emptyText: (
                 <Empty
@@ -266,7 +267,7 @@ const NoticeManagement = (props: NoticeManagementProps) => {
                 />
               )
             }}
-            rowSelection={{ preserveSelectedRowKeys: false, selectedRowKeys, onChange: setSelectedRowKeys }}
+            rowSelection={{ align: 'center', preserveSelectedRowKeys: false, selectedRowKeys, onChange: setSelectedRowKeys }}
             scroll={scrollConfig}
             size="small"
           />

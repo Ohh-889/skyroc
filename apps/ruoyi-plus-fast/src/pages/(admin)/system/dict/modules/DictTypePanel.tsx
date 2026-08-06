@@ -89,11 +89,13 @@ const DictTypePanel = (props: DictTypePanelProps) => {
       <div className="min-h-0 flex-1 overflow-auto">
         <Table<DictTypeTableRecord>
           {...tableProps}
+          column={{ align: 'center' }}
           columns={columns}
           dataSource={tableProps.dataSource ?? []}
           locale={{
             emptyText: <Empty description="暂无字典类型" image={Empty.PRESENTED_IMAGE_SIMPLE} />
           }}
+          rowSelection={{ align: 'center' }}
           rowClassName={item => (String(item.dictId) === String(selectedTypeId) ? 'bg-primary-1' : '')}
           rowKey={item => String(item.dictId)}
           showHeader={false}

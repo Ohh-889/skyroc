@@ -463,6 +463,7 @@ const PostManagement = (props: PostManagementProps) => {
 
               <Table<PostTableRecord>
                 {...tableProps}
+                column={{ align: 'center' }}
                 locale={{
                   emptyText: (
                     <Empty
@@ -472,6 +473,7 @@ const PostManagement = (props: PostManagementProps) => {
                   )
                 }}
                 rowSelection={{
+                  align: 'center',
                   preserveSelectedRowKeys: false,
                   selectedRowKeys,
                   onChange: setSelectedRowKeys

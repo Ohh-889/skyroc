@@ -351,6 +351,7 @@ const DeptManagement = (props: DeptManagementProps) => {
 
           <Table<DeptTableRecord>
             {...tableProps}
+            column={{ align: 'center' }}
             dataSource={deptTree}
             expandable={{
               expandedRowKeys,
@@ -365,6 +366,7 @@ const DeptManagement = (props: DeptManagementProps) => {
                 />
               )
             }}
+            rowSelection={{ align: 'center' }}
             scroll={scrollConfig}
             size="small"
           />

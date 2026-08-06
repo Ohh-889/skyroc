@@ -459,6 +459,8 @@ const UserManagement = (props: UserManagementProps) => {
               ) : null}
               <Table<UserTableRecord>
                 {...tableProps}
+                column={{ align: 'center' }}
+
                 locale={{
                   emptyText: (
                     <Empty
@@ -467,7 +469,12 @@ const UserManagement = (props: UserManagementProps) => {
                     />
                   )
                 }}
-                rowSelection={{ preserveSelectedRowKeys: false, selectedRowKeys, onChange: setSelectedRowKeys }}
+                rowSelection={{
+                  preserveSelectedRowKeys: false,
+                  selectedRowKeys,
+                  onChange: setSelectedRowKeys,
+                  align: 'center'
+                }}
                 scroll={scrollConfig}
                 size="small"
               />

@@ -288,6 +288,7 @@ const DictManagement = (props: DictManagementProps) => {
               ) : null}
               <Table<DictDataTableRecord>
                 {...dataTable.tableProps}
+                column={{ align: 'center' }}
                 locale={{
                   emptyText: (
                     <Empty
@@ -296,7 +297,7 @@ const DictManagement = (props: DictManagementProps) => {
                     />
                   )
                 }}
-                rowSelection={{ selectedRowKeys: selectedDataKeys, onChange: setSelectedDataKeys }}
+                rowSelection={{ align: 'center', selectedRowKeys: selectedDataKeys, onChange: setSelectedDataKeys }}
                 scroll={scrollConfig}
                 size="small"
               />

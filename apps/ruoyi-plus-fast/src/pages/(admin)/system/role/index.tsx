@@ -436,6 +436,7 @@ const RoleManagement = (props: RoleManagementProps) => {
 
           <Table<RoleTableRecord>
             {...tableProps}
+            column={{ align: 'center' }}
             locale={{
               emptyText: (
                 <Empty
@@ -445,6 +446,7 @@ const RoleManagement = (props: RoleManagementProps) => {
               )
             }}
             rowSelection={{
+              align: 'center',
               getCheckboxProps: role => ({ disabled: role.superAdmin, name: role.roleName }),
               preserveSelectedRowKeys: false,
               selectedRowKeys,
