@@ -60,6 +60,8 @@
     "@skyroc/web-ui-compose": "workspace:*",
     "@tanstack/react-query": "catalog:core",
     "@tanstack/react-router": "catalog:web",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-react": "^1.0.6",
     "ahooks": "catalog:utils",
     "antd": "catalog:web",
     "clsx": "catalog:utils",
