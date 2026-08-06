@@ -1,6 +1,6 @@
 import { ButtonIcon } from '@skyroc/web-ui-antd';
 import { SvgIcon, useTableScroll } from '@skyroc/web-ui-compose';
-import { Badge, Button, Card, Empty, Flex, List, Space, Table, Tag, Typography } from 'antd';
+import { Badge, Button, Card, Empty, Flex, List, Table, Tag, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 
 import type { MenuId, MenuItem } from '@/service/api/system-menu';
@@ -51,11 +51,13 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
   if (isPageMenu) {
     return (
       <Table<MenuItem>
+        column={{ align: 'center' }}
         columns={columns}
         dataSource={permissions}
         locale={{ emptyText: '当前菜单暂无按钮权限' }}
         pagination={false}
         rowKey={record => String(record.menuId)}
+        rowSelection={{ align: 'center' }}
         scroll={scroll}
         size="small"
       />
@@ -164,8 +166,9 @@ function createPermissionColumns(
     {
       dataIndex: 'menuName',
       key: 'menuName',
+      align: 'center',
       render: value => (
-        <Flex align="center" gap={8}>
+        <Flex align="center" gap={8} justify="center">
           <div className="size-28px flex-center shrink-0 rounded-7px bg-warning-bg text-warning">
             <SvgIcon icon="ph:key" />
           </div>
@@ -178,10 +181,11 @@ function createPermissionColumns(
     {
       dataIndex: 'perms',
       key: 'perms',
+      align: 'center',
       minWidth: 220,
       render: value =>
         value ? (
-          <Flex align="center" gap={4}>
+          <Flex align="center" gap={4} justify="center">
             <code className="truncate text-12px">{value}</code>
             <ButtonIcon
               aria-label="复制权限字符"
@@ -214,22 +218,14 @@ function createPermissionColumns(
       fixed: 'right',
       key: 'actions',
       render: (_value, record) => (
-        <Space size={2}>
-          <ButtonIcon
-            aria-label={`编辑${record.menuName}`}
-            className="h-28px w-28px text-14px"
-            icon="ph:pencil-simple"
-            tooltipContent="编辑"
-            onClick={() => onEdit(record)}
-          />
-          <ButtonIcon
-            aria-label={`删除${record.menuName}`}
-            className="h-28px w-28px text-14px text-error"
-            icon="ph:trash"
-            tooltipContent="删除"
-            onClick={() => onDelete(record)}
-          />
-        </Space>
+        <Flex justify="end" gap={4}>
+          <Button size="small" onClick={() => onEdit(record)}>
+            编辑
+          </Button>
+          <Button danger size="small" onClick={() => onDelete(record)}>
+            删除
+          </Button>
+        </Flex>
       ),
       title: '操作',
       width: 100
