@@ -1,11 +1,11 @@
 import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
-import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
+import { TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
 import type { TableColumn, TableDataWithIndex, TableOnChange, TableQueryHookOptions } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
+import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { Key } from 'react';
 import { useState } from 'react';
 
@@ -151,14 +151,9 @@ const OperLogManagement = (props: OperLogManagementProps) => {
         fixed: 'right',
         key: 'actions',
         render: (_value, record) => (
-          <Tooltip title="查看详情">
-            <Button
-              aria-label={`查看 ${record.title} 日志详情`}
-              icon={<SvgIcon icon="mdi:eye-outline" />}
-              size="small"
-              onClick={() => setDetailRecord(record)}
-            />
-          </Tooltip>
+          <Button size="small" onClick={() => setDetailRecord(record)}>
+            详情
+          </Button>
         ),
         title: '操作',
         width: 80

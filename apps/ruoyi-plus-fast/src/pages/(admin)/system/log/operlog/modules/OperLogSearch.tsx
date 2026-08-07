@@ -49,37 +49,37 @@ const OperLogSearch = (props: OperLogSearchProps) => {
   return (
     <Form form={form} initialValues={searchParams} labelCol={{ md: 7, span: 5 }}>
       <Row gutter={[16, 16]} wrap>
-        <Col lg={6} md={12} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="系统模块" name="title">
             <Input allowClear placeholder="请输入系统模块" onPressEnter={handleSearch} />
           </Form.Item>
         </Col>
-        <Col lg={6} md={12} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="操作类型" name="businessType">
             <Select allowClear options={BUSINESS_TYPE_OPTIONS} placeholder="请选择操作类型" />
           </Form.Item>
         </Col>
-        <Col lg={6} md={12} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="操作人员" name="operName">
             <Input allowClear placeholder="请输入操作人员" onPressEnter={handleSearch} />
           </Form.Item>
         </Col>
-        <Col lg={6} md={12} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="操作 IP" name="operIp">
             <Input allowClear placeholder="请输入操作 IP" onPressEnter={handleSearch} />
           </Form.Item>
         </Col>
-        <Col lg={6} md={12} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="操作状态" name="status">
             <Select allowClear options={STATUS_OPTIONS} placeholder="请选择操作状态" />
           </Form.Item>
         </Col>
-        <Col lg={10} md={16} span={24}>
+        <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0" label="操作时间" name="operTimeRange">
             <DatePicker.RangePicker className="w-full" showTime />
           </Form.Item>
         </Col>
-        <Col className="lg:ml-auto" lg={8} md={24} span={24}>
+        <Col className="lg:ml-auto" lg={8} md={12} span={24}>
           <Form.Item className="m-0">
             <Flex align="center" gap={12} justify="end">
               <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={reset}>
