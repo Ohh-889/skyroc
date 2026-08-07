@@ -11,7 +11,7 @@
   "jsdoc": true,
   "arrowParens": "avoid",
   "endOfLine": "lf",
-  "singleAttributePerLine": false,
+  "singleAttributePerLine": true,
   "sortImports": {
     "partitionByNewline": true,
     "newlinesBetween": false

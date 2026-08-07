@@ -67,6 +67,12 @@
   },
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  },
   "json.format.keepLines": true,
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
@@ -75,6 +81,7 @@
     "editor.defaultFormatter": "vscode.json-language-features"
   },
   "oxc.enable": true,
+  "oxc.enable.oxfmt": true,
   "oxc.enable.oxlint": true,
   "prettier.enable": false,
 
@@ -209,14 +216,12 @@
     "**/.next",
     "**/coverage"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  // 这个 monorepo 单个 project 就有约 5000 个文件 / 1GB，默认 3072MB 会让 tsserver 反复 OOM 重启，
-  // 表现为补全、跳转、类型提示全部失效。本机 24GB 内存，放宽到 8GB。
-  "typescript.tsserver.maxTsServerMemory": 8192,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsserver.maxMemory": 4096,
   // 详细日志会持续写入几十 MB 文件并明显拖慢 tsserver，只在排查问题时临时打开
-  "typescript.tsserver.log": "off",
+  "js/ts.tsserver.log": "off",
   // 关闭 @types 自动获取，monorepo 里依赖已由 pnpm 管理，避免额外的解析开销
-  "typescript.disableAutomaticTypeAcquisition": true,
+  "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
 
 
   "vitest.configSearchPatternExclude": "**/packages/**",
