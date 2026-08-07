@@ -79,7 +79,7 @@ const OperLogSearch = (props: OperLogSearchProps) => {
             <DatePicker.RangePicker className="w-full" showTime />
           </Form.Item>
         </Col>
-        <Col lg={8} md={24} span={24}>
+        <Col className="lg:ml-auto" lg={8} md={24} span={24}>
           <Form.Item className="m-0">
             <Flex align="center" gap={12} justify="end">
               <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={reset}>

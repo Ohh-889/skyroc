@@ -79,7 +79,7 @@ const UserDepartmentPanel = (props: UserDepartmentPanelProps) => {
       <div className="min-h-0 flex-1 overflow-auto lt-xl:max-h-360px">
         <Spin spinning={loading}>{renderTree()}</Spin>
       </div>
-      <div className="mt-12px border-t border-border-2 pt-10px text-11px text-tertiary">当前接口仅支持精确部门筛选</div>
+      <div className="mt-12px border-t border-border-2 pt-10px text-11px text-tertiary">当前接口支持部门模糊筛选</div>
     </Card>
   );
 };
