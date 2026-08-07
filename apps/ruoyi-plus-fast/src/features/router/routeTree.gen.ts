@@ -24,6 +24,7 @@ import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/
 import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse-test/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
+import { Route as adminSystemLogLayoutRouteImport } from './../../pages/(admin)/system/log/layout'
 import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
 import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/system/role/index'
 import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
@@ -33,6 +34,7 @@ import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
 import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
 import { Route as adminMonitorCacheIndexRouteImport } from './../../pages/(admin)/monitor/cache/index'
+import { Route as adminSystemLogOperlogIndexRouteImport } from './../../pages/(admin)/system/log/operlog/index'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -108,6 +110,11 @@ const authLoginCodeRoute = authLoginCodeRouteImport.update({
   path: '/code',
   getParentRoute: () => authLoginLayoutRoute,
 } as any)
+const adminSystemLogLayoutRoute = adminSystemLogLayoutRouteImport.update({
+  id: '/log',
+  path: '/log',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 const adminSystemUserIndexRoute = adminSystemUserIndexRouteImport.update({
   id: '/user/',
   path: '/user/',
@@ -153,6 +160,12 @@ const adminMonitorCacheIndexRoute = adminMonitorCacheIndexRouteImport.update({
   path: '/cache/',
   getParentRoute: () => adminMonitorLayoutRoute,
 } as any)
+const adminSystemLogOperlogIndexRoute =
+  adminSystemLogOperlogIndexRouteImport.update({
+    id: '/operlog/',
+    path: '/operlog/',
+    getParentRoute: () => adminSystemLogLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -163,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home/': typeof adminHomeIndexRoute
   '/sse-test/': typeof adminSseTestIndexRoute
@@ -178,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/system/post/': typeof adminSystemPostIndexRoute
   '/system/role/': typeof adminSystemRoleIndexRoute
   '/system/user/': typeof adminSystemUserIndexRoute
+  '/system/log/operlog/': typeof adminSystemLogOperlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -187,6 +202,7 @@ export interface FileRoutesByTo {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home': typeof adminHomeIndexRoute
   '/sse-test': typeof adminSseTestIndexRoute
@@ -202,6 +218,7 @@ export interface FileRoutesByTo {
   '/system/post': typeof adminSystemPostIndexRoute
   '/system/role': typeof adminSystemRoleIndexRoute
   '/system/user': typeof adminSystemUserIndexRoute
+  '/system/log/operlog': typeof adminSystemLogOperlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,6 +231,7 @@ export interface FileRoutesById {
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
+  '/(admin)/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/(auth)/login/code': typeof authLoginCodeRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
   '/(admin)/sse-test/': typeof adminSseTestIndexRoute
@@ -229,6 +247,7 @@ export interface FileRoutesById {
   '/(admin)/system/post/': typeof adminSystemPostIndexRoute
   '/(admin)/system/role/': typeof adminSystemRoleIndexRoute
   '/(admin)/system/user/': typeof adminSystemUserIndexRoute
+  '/(admin)/system/log/operlog/': typeof adminSystemLogOperlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +260,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/500'
+    | '/system/log'
     | '/login/code'
     | '/home/'
     | '/sse-test/'
@@ -256,6 +276,7 @@ export interface FileRouteTypes {
     | '/system/post/'
     | '/system/role/'
     | '/system/user/'
+    | '/system/log/operlog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +286,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/500'
+    | '/system/log'
     | '/login/code'
     | '/home'
     | '/sse-test'
@@ -280,6 +302,7 @@ export interface FileRouteTypes {
     | '/system/post'
     | '/system/role'
     | '/system/user'
+    | '/system/log/operlog'
   id:
     | '__root__'
     | '/'
@@ -291,6 +314,7 @@ export interface FileRouteTypes {
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
+    | '/(admin)/system/log'
     | '/(auth)/login/code'
     | '/(admin)/home/'
     | '/(admin)/sse-test/'
@@ -306,6 +330,7 @@ export interface FileRouteTypes {
     | '/(admin)/system/post/'
     | '/(admin)/system/role/'
     | '/(admin)/system/user/'
+    | '/(admin)/system/log/operlog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -425,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginCodeRouteImport
       parentRoute: typeof authLoginLayoutRoute
     }
+    '/(admin)/system/log': {
+      id: '/(admin)/system/log'
+      path: '/log'
+      fullPath: '/system/log'
+      preLoaderRoute: typeof adminSystemLogLayoutRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/system/user/': {
       id: '/(admin)/system/user/'
       path: '/user'
@@ -488,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminMonitorCacheIndexRouteImport
       parentRoute: typeof adminMonitorLayoutRoute
     }
+    '/(admin)/system/log/operlog/': {
+      id: '/(admin)/system/log/operlog/'
+      path: '/operlog'
+      fullPath: '/system/log/operlog/'
+      preLoaderRoute: typeof adminSystemLogOperlogIndexRouteImport
+      parentRoute: typeof adminSystemLogLayoutRoute
+    }
   }
 }
 
@@ -504,7 +543,19 @@ const adminMonitorLayoutRouteChildren: adminMonitorLayoutRouteChildren = {
 const adminMonitorLayoutRouteWithChildren =
   adminMonitorLayoutRoute._addFileChildren(adminMonitorLayoutRouteChildren)
 
+interface adminSystemLogLayoutRouteChildren {
+  adminSystemLogOperlogIndexRoute: typeof adminSystemLogOperlogIndexRoute
+}
+
+const adminSystemLogLayoutRouteChildren: adminSystemLogLayoutRouteChildren = {
+  adminSystemLogOperlogIndexRoute: adminSystemLogOperlogIndexRoute,
+}
+
+const adminSystemLogLayoutRouteWithChildren =
+  adminSystemLogLayoutRoute._addFileChildren(adminSystemLogLayoutRouteChildren)
+
 interface adminSystemLayoutRouteChildren {
+  adminSystemLogLayoutRoute: typeof adminSystemLogLayoutRouteWithChildren
   adminSystemDeptIndexRoute: typeof adminSystemDeptIndexRoute
   adminSystemDictIndexRoute: typeof adminSystemDictIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
@@ -515,6 +566,7 @@ interface adminSystemLayoutRouteChildren {
 }
 
 const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
+  adminSystemLogLayoutRoute: adminSystemLogLayoutRouteWithChildren,
   adminSystemDeptIndexRoute: adminSystemDeptIndexRoute,
   adminSystemDictIndexRoute: adminSystemDictIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
