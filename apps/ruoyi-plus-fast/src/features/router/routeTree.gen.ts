@@ -32,6 +32,8 @@ import { Route as adminSystemNoticeIndexRouteImport } from './../../pages/(admin
 import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
 import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/system/dict/index'
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
+import { Route as adminSystemConfigIndexRouteImport } from './../../pages/(admin)/system/config/index'
+import { Route as adminSystemClientIndexRouteImport } from './../../pages/(admin)/system/client/index'
 import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
 import { Route as adminMonitorCacheIndexRouteImport } from './../../pages/(admin)/monitor/cache/index'
 import { Route as adminSystemLogOperlogIndexRouteImport } from './../../pages/(admin)/system/log/operlog/index'
@@ -151,6 +153,16 @@ const adminSystemDeptIndexRoute = adminSystemDeptIndexRouteImport.update({
   path: '/dept/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminSystemConfigIndexRoute = adminSystemConfigIndexRouteImport.update({
+  id: '/config/',
+  path: '/config/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
+const adminSystemClientIndexRoute = adminSystemClientIndexRouteImport.update({
+  id: '/client/',
+  path: '/client/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
 const adminMonitorOnlineIndexRoute = adminMonitorOnlineIndexRouteImport.update({
   id: '/online/',
   path: '/online/',
@@ -192,6 +204,8 @@ export interface FileRoutesByFullPath {
   '/login/': typeof authLoginIndexRoute
   '/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/monitor/online/': typeof adminMonitorOnlineIndexRoute
+  '/system/client/': typeof adminSystemClientIndexRoute
+  '/system/config/': typeof adminSystemConfigIndexRoute
   '/system/dept/': typeof adminSystemDeptIndexRoute
   '/system/dict/': typeof adminSystemDictIndexRoute
   '/system/menu/': typeof adminSystemMenuIndexRoute
@@ -219,6 +233,8 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
   '/monitor/cache': typeof adminMonitorCacheIndexRoute
   '/monitor/online': typeof adminMonitorOnlineIndexRoute
+  '/system/client': typeof adminSystemClientIndexRoute
+  '/system/config': typeof adminSystemConfigIndexRoute
   '/system/dept': typeof adminSystemDeptIndexRoute
   '/system/dict': typeof adminSystemDictIndexRoute
   '/system/menu': typeof adminSystemMenuIndexRoute
@@ -249,6 +265,8 @@ export interface FileRoutesById {
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(admin)/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/(admin)/monitor/online/': typeof adminMonitorOnlineIndexRoute
+  '/(admin)/system/client/': typeof adminSystemClientIndexRoute
+  '/(admin)/system/config/': typeof adminSystemConfigIndexRoute
   '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
   '/(admin)/system/dict/': typeof adminSystemDictIndexRoute
   '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
@@ -279,6 +297,8 @@ export interface FileRouteTypes {
     | '/login/'
     | '/monitor/cache/'
     | '/monitor/online/'
+    | '/system/client/'
+    | '/system/config/'
     | '/system/dept/'
     | '/system/dict/'
     | '/system/menu/'
@@ -306,6 +326,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/monitor/cache'
     | '/monitor/online'
+    | '/system/client'
+    | '/system/config'
     | '/system/dept'
     | '/system/dict'
     | '/system/menu'
@@ -335,6 +357,8 @@ export interface FileRouteTypes {
     | '/(auth)/login/'
     | '/(admin)/monitor/cache/'
     | '/(admin)/monitor/online/'
+    | '/(admin)/system/client/'
+    | '/(admin)/system/config/'
     | '/(admin)/system/dept/'
     | '/(admin)/system/dict/'
     | '/(admin)/system/menu/'
@@ -519,6 +543,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemDeptIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/config/': {
+      id: '/(admin)/system/config/'
+      path: '/config'
+      fullPath: '/system/config/'
+      preLoaderRoute: typeof adminSystemConfigIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
+    '/(admin)/system/client/': {
+      id: '/(admin)/system/client/'
+      path: '/client'
+      fullPath: '/system/client/'
+      preLoaderRoute: typeof adminSystemClientIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/monitor/online/': {
       id: '/(admin)/monitor/online/'
       path: '/online'
@@ -578,6 +616,8 @@ const adminSystemLogLayoutRouteWithChildren =
 
 interface adminSystemLayoutRouteChildren {
   adminSystemLogLayoutRoute: typeof adminSystemLogLayoutRouteWithChildren
+  adminSystemClientIndexRoute: typeof adminSystemClientIndexRoute
+  adminSystemConfigIndexRoute: typeof adminSystemConfigIndexRoute
   adminSystemDeptIndexRoute: typeof adminSystemDeptIndexRoute
   adminSystemDictIndexRoute: typeof adminSystemDictIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
@@ -589,6 +629,8 @@ interface adminSystemLayoutRouteChildren {
 
 const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
   adminSystemLogLayoutRoute: adminSystemLogLayoutRouteWithChildren,
+  adminSystemClientIndexRoute: adminSystemClientIndexRoute,
+  adminSystemConfigIndexRoute: adminSystemConfigIndexRoute,
   adminSystemDeptIndexRoute: adminSystemDeptIndexRoute,
   adminSystemDictIndexRoute: adminSystemDictIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
