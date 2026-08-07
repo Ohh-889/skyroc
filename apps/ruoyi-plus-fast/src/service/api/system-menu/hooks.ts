@@ -13,7 +13,7 @@ export function useMenuListQuery(params: MenuListParams = {}) {
 
 export function useMenuDetailQuery(menuId: MenuId | undefined) {
   return useQuery({
-    enabled: menuId !== undefined,
+    enabled: Boolean(menuId),
     queryFn: () => fetchMenuDetail(menuId as MenuId),
     queryKey: SYSTEM_MENU_QUERY_KEYS.DETAIL(menuId ?? 'none')
   });
