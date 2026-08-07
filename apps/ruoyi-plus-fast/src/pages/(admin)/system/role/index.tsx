@@ -360,7 +360,7 @@ const RoleManagement = (props: RoleManagementProps) => {
   async function handleExport() {
     setExporting(true);
     try {
-      const params = toRoleListParams({ ...searchProps.searchParams, current: 1, size: 20 } as RoleTableParams);
+      const params = toRoleListParams({ ...searchProps.searchParams } as RoleTableParams);
       const blob = await exportRoles(params);
       downloadFileFromBlob({ fileName: '角色数据.xlsx', source: blob });
     } finally {

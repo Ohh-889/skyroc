@@ -26,6 +26,7 @@ import {
 } from '@/service/api/system-user';
 import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-user/api';
 import type {
+  UserExportParams,
   UserId,
   UserListItem,
   UserListPage,
@@ -350,7 +351,7 @@ const UserManagement = (props: UserManagementProps) => {
   async function handleExport() {
     setExporting(true);
     try {
-      const params = toUserListParams({ ...searchProps.searchParams, current: 1, size: 20 } as UserTableParams);
+      const params = toUserExportParams(searchProps.searchParams);
       const blob = await exportUsers(params);
       downloadFileFromBlob({ fileName: '用户数据.xlsx', source: blob });
     } finally {
@@ -556,6 +557,11 @@ function toUserListParams(params: UserTableParams): UserListParams {
   if (keyword && searchField === 'phone') result.phonenumber = keyword;
   if (keyword && searchField === 'username') result.userName = keyword;
   return result;
+}
+
+function toUserExportParams(params: UserTableParams): UserExportParams {
+  const { current: _current, size: _size, ...filters } = toUserListParams(params);
+  return filters;
 }
 
 function useUserTableQuery<Data = UserListPage>(

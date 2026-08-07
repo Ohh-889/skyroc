@@ -12,6 +12,8 @@ export interface UserListParams {
   userName?: string;
 }
 
+export type UserExportParams = Omit<UserListParams, 'current' | 'size'>;
+
 export interface UserOptionParams {
   deptId?: UserId;
   userIds?: UserId[];

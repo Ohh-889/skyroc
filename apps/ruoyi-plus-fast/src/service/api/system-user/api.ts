@@ -6,6 +6,7 @@ import type {
   CurrentUserInfoResponse,
   DeptTreeNode,
   UserDetailResponse,
+  UserExportParams,
   UserId,
   UserImportPayload,
   UserImportResponse,
@@ -46,7 +47,7 @@ export function fetchUserList(params: UserListParams) {
   });
 }
 
-export function exportUsers(params: UserListParams) {
+export function exportUsers(params: UserExportParams) {
   return request<Blob, 'blob'>({
     method: 'post',
     params,
