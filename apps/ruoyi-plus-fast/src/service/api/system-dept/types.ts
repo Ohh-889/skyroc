@@ -8,6 +8,10 @@ export interface DeptListParams {
   status?: DeptStatus;
 }
 
+export interface DeptOptionParams {
+  deptIds?: DeptId[];
+}
+
 export interface DeptItem {
   ancestors: string;
   children: DeptItem[];

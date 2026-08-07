@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import { useEffect, useMemo } from 'react';
 
-import { useDeptDetailQuery, useDeptListExcludingSubtreeQuery, useDeptListQuery } from '@/service/api/system-dept';
+import { useDeptDetailQuery, useDeptListExcludingSubtreeQuery, useDeptOptionsQuery } from '@/service/api/system-dept';
 import type { DeptId, DeptSavePayload, DeptStatus } from '@/service/api/system-dept';
 import { useUserOptionsQuery } from '@/service/api/system-user';
 import type { UserListItem } from '@/service/api/system-user';
@@ -96,7 +96,7 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
   const detailQuery = useDeptDetailQuery(deptId, open && isUpdate);
   const excludeQuery = useDeptListExcludingSubtreeQuery(deptId, open && isUpdate);
   const leaderQuery = useUserOptionsQuery({ deptId }, open && isUpdate);
-  const createOptionsQuery = useDeptListQuery({}, { enabled: open && !isUpdate });
+  const createOptionsQuery = useDeptOptionsQuery({}, open && !isUpdate);
   const selectedParentId = Form.useWatch('parentId', form);
   const optionDepartments = isUpdate ? (excludeQuery.data ?? []) : (createOptionsQuery.data ?? []);
   const parentTreeData = useMemo(() => buildDeptSelectTree(optionDepartments), [optionDepartments]);

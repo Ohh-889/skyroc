@@ -16,9 +16,10 @@ import {
   useUpdateDeptMutation
 } from '@/service/api/system-dept';
 import type { DeptId, DeptItem, DeptListParams, DeptSavePayload } from '@/service/api/system-dept';
-import { SYSTEM_USER_QUERY_KEYS } from '@/service/api/system-user';
 
+import { SYSTEM_USER_QUERY_KEYS } from '@/service/api/system-user';
 import { buildDeptTree, collectExpandableDeptKeys, hasDirectChildren, maskDeptPhone } from './modules/dept-utils';
+
 import type { DeptEditorMode } from './modules/DeptEditorDrawer';
 import DeptSearch from './modules/DeptSearch';
 
@@ -55,8 +56,14 @@ function renderLeader(department: DeptItem) {
   if (department.leader === null) return <span className="text-tertiary">未设置</span>;
   const label = department.leaderName || `用户 #${department.leader}`;
   return (
-    <Flex align="center" gap={8}>
-      <Avatar className="shrink-0 bg-primary-bg text-primary" size={25}>
+    <Flex
+      align="center"
+      gap={8}
+    >
+      <Avatar
+        className="shrink-0 bg-primary-bg text-primary"
+        size={25}
+      >
         {label.slice(0, 1)}
       </Avatar>
       <span className="truncate">{label}</span>
@@ -121,7 +128,10 @@ const DeptManagement = (props: DeptManagementProps) => {
         key: 'deptName',
         minWidth: 240,
         render: value => (
-          <Flex align="center" gap={9}>
+          <Flex
+            align="center"
+            gap={9}
+          >
             <span className="size-27px grid shrink-0 place-items-center rounded-7px bg-primary-1 text-primary">
               <SvgIcon icon="ph:buildings" />
             </span>
@@ -136,7 +146,10 @@ const DeptManagement = (props: DeptManagementProps) => {
         key: 'deptCategory',
         render: value =>
           value ? (
-            <Tag variant="filled" className="m-0">
+            <Tag
+              variant="filled"
+              className="m-0"
+            >
               {value}
             </Tag>
           ) : (
@@ -169,7 +182,10 @@ const DeptManagement = (props: DeptManagementProps) => {
         dataIndex: 'status',
         key: 'status',
         render: value => (
-          <Tag variant="filled" color={value === '0' ? 'success' : 'warning'}>
+          <Tag
+            variant="filled"
+            color={value === '0' ? 'success' : 'warning'}
+          >
             {value === '0' ? '正常' : '停用'}
           </Tag>
         ),
@@ -189,23 +205,43 @@ const DeptManagement = (props: DeptManagementProps) => {
         render: (_value, department) => (
           <div className="flex-center justify-end gap-8px">
             {department.status === '0' ? (
-              <Button ghost size="small" type="primary" onClick={() => handleAddChild(department)}>
+              <Button
+                ghost
+                size="small"
+                type="primary"
+                onClick={() => handleAddChild(department)}
+              >
                 新增下级
               </Button>
             ) : (
               <Tooltip title="停用部门不能新增下级">
-                <Button disabled ghost size="small" type="primary">
+                <Button
+                  disabled
+                  ghost
+                  size="small"
+                  type="primary"
+                >
                   新增下级
                 </Button>
               </Tooltip>
             )}
-            <Button size="small" onClick={() => handleEdit(department)}>
+            <Button
+              size="small"
+              onClick={() => handleEdit(department)}
+            >
               编辑
             </Button>
-            <Button size="small" onClick={() => handleViewMembers(department)}>
+            <Button
+              size="small"
+              onClick={() => handleViewMembers(department)}
+            >
               成员
             </Button>
-            <Button danger size="small" onClick={() => handleDelete(department)}>
+            <Button
+              danger
+              size="small"
+              onClick={() => handleDelete(department)}
+            >
               删除
             </Button>
           </div>
@@ -284,7 +320,7 @@ const DeptManagement = (props: DeptManagementProps) => {
   async function refreshDeptCaches() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: SYSTEM_DEPT_QUERY_KEYS.ALL }),
-      queryClient.invalidateQueries({ queryKey: SYSTEM_USER_QUERY_KEYS.DEPT_TREE }),
+      queryClient.invalidateQueries({ queryKey: SYSTEM_USER_QUERY_KEYS.DEPT_TREE })
     ]);
   }
 
@@ -303,7 +339,10 @@ const DeptManagement = (props: DeptManagementProps) => {
         ]}
       />
 
-      <div className="min-h-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -326,7 +365,10 @@ const DeptManagement = (props: DeptManagementProps) => {
             />
           }
           title={
-            <Flex align="center" gap={8}>
+            <Flex
+              align="center"
+              gap={8}
+            >
               <Typography.Text strong>组织架构</Typography.Text>
               <Typography.Text type="secondary">
                 {hasActiveFilters ? '命中' : '共'} {departments.length} 个部门
@@ -338,7 +380,10 @@ const DeptManagement = (props: DeptManagementProps) => {
           {query.isError ? (
             <Alert
               action={
-                <Button size="small" onClick={getData}>
+                <Button
+                  size="small"
+                  onClick={getData}
+                >
                   重试
                 </Button>
               }

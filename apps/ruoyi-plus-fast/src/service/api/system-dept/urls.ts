@@ -6,5 +6,6 @@ export const SYSTEM_DEPT_URLS = {
   DETAIL: (deptId: DeptId) => `/system/dept/${deptId}`,
   EXCLUDE_SUBTREE: (deptId: DeptId) => `/system/dept/list/exclude/${deptId}`,
   LIST: '/system/dept/list',
+  OPTIONS: '/system/dept/optionselect',
   UPDATE: '/system/dept'
 } as const;

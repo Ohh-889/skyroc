@@ -1,6 +1,6 @@
 import { request } from '../../request';
 
-import type { DeptId, DeptItem, DeptListParams, DeptSavePayload, DeptUpdatePayload } from './types';
+import type { DeptId, DeptItem, DeptListParams, DeptOptionParams, DeptSavePayload, DeptUpdatePayload } from './types';
 import { SYSTEM_DEPT_URLS } from './urls';
 
 export function fetchDeptList(params: DeptListParams = {}) {
@@ -22,6 +22,16 @@ export function fetchDeptListExcludingSubtree(deptId: DeptId) {
   return request<DeptItem[]>({
     method: 'get',
     url: SYSTEM_DEPT_URLS.EXCLUDE_SUBTREE(deptId)
+  });
+}
+
+export function fetchDeptOptions(params: DeptOptionParams = {}) {
+  return request<DeptItem[]>({
+    method: 'get',
+    params: {
+      deptIds: params.deptIds?.map(String).join(',')
+    },
+    url: SYSTEM_DEPT_URLS.OPTIONS
   });
 }
 

@@ -7,10 +7,11 @@ import {
   fetchDeptDetail,
   fetchDeptList,
   fetchDeptListExcludingSubtree,
+  fetchDeptOptions,
   updateDept
 } from './api';
 import { SYSTEM_DEPT_MUTATION_KEYS, SYSTEM_DEPT_QUERY_KEYS } from './keys';
-import type { DeptId, DeptListParams, DeptSavePayload, DeptUpdatePayload } from './types';
+import type { DeptId, DeptListParams, DeptOptionParams, DeptSavePayload, DeptUpdatePayload } from './types';
 
 type DeptListQueryOptions<Data = Awaited<ReturnType<typeof fetchDeptList>>> = Omit<
   UseQueryOptions<Awaited<ReturnType<typeof fetchDeptList>>, Error, Data, QueryKey>,
@@ -30,7 +31,7 @@ export function useDeptListQuery<Data = Awaited<ReturnType<typeof fetchDeptList>
 
 export function useDeptDetailQuery(deptId: DeptId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && deptId !== undefined,
+    enabled: enabled && Boolean(deptId),
     queryFn: () => fetchDeptDetail(deptId as DeptId),
     queryKey: SYSTEM_DEPT_QUERY_KEYS.DETAIL(deptId ?? 'none')
   });
@@ -38,9 +39,18 @@ export function useDeptDetailQuery(deptId: DeptId | undefined, enabled = true) {
 
 export function useDeptListExcludingSubtreeQuery(deptId: DeptId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && deptId !== undefined,
+    enabled: enabled && Boolean(deptId),
     queryFn: () => fetchDeptListExcludingSubtree(deptId as DeptId),
     queryKey: SYSTEM_DEPT_QUERY_KEYS.EXCLUDE_SUBTREE(deptId ?? 'none')
+  });
+}
+
+export function useDeptOptionsQuery(params: DeptOptionParams = {}, enabled = true) {
+  return useQuery({
+    enabled,
+    queryFn: () => fetchDeptOptions(params),
+    queryKey: SYSTEM_DEPT_QUERY_KEYS.OPTIONS(params),
+    staleTime: 1000 * 60 * 5
   });
 }
 
