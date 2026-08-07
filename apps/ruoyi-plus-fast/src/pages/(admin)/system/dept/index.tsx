@@ -390,8 +390,8 @@ const DeptManagement = (props: DeptManagementProps) => {
 
 function normalizeDeptSearchParams(params: DeptListParams): DeptListParams {
   return {
-    deptCategory: params.deptCategory?.trim() || undefined,
-    deptName: params.deptName?.trim() || undefined,
+    deptCategory: params.deptCategory?.trim(),
+    deptName: params.deptName?.trim(),
     status: params.status
   };
 }
