@@ -54,6 +54,8 @@ export function showErrorMsg(adapter: RequestAdapter, state: RequestInstanceStat
   if (!isExist) {
     state.errMsgStack.push(message);
 
+
+
     adapter.showErrorMessage(message, () => {
       state.errMsgStack = state.errMsgStack.filter(msg => msg !== message);
 
