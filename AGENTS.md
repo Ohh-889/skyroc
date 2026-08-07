@@ -81,6 +81,12 @@ If information is incomplete, request clarification.
 Do not rush to code.
 Reason carefully and transparently before acting.
 
+### Boolean condition rules
+
+- When a condition only needs truthiness, always write `Boolean(value)`.
+- Do not use explicit nullish comparisons such as `value !== undefined` or `value != null` merely to produce a boolean condition.
+- Explicit nullish comparisons are allowed only when `undefined` must remain distinct from `0`, an empty string, `false`, or `null`.
+
 ## React Component Coding Workflow & Rules
 
 ### 1. This is a workflow, not just style
