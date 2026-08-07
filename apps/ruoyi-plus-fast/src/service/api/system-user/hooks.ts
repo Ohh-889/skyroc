@@ -81,7 +81,7 @@ export function useUserDetailQuery(userId: UserId | undefined, enabled = true) {
 
 export function useUserAuthRoleQuery(userId: UserId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && userId !== undefined,
+    enabled: enabled && Boolean(userId),
     queryFn: () => fetchUserAuthRole(userId as UserId),
     queryKey: SYSTEM_USER_QUERY_KEYS.AUTH_ROLE(userId ?? 'none')
   });
@@ -89,7 +89,7 @@ export function useUserAuthRoleQuery(userId: UserId | undefined, enabled = true)
 
 export function useUserPostOptionsQuery(deptId: UserId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && deptId !== undefined,
+    enabled: enabled && Boolean(deptId),
     queryFn: () => fetchUserPostOptions(deptId as UserId),
     queryKey: SYSTEM_USER_QUERY_KEYS.POST_OPTIONS(deptId ?? 'none')
   });
@@ -105,7 +105,7 @@ export function useDeptTreeQuery() {
 
 export function useUsersByDeptQuery(deptId: UserId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && deptId !== undefined,
+    enabled: enabled && Boolean(deptId),
     queryFn: () => fetchUsersByDept(deptId as UserId),
     queryKey: SYSTEM_USER_QUERY_KEYS.LIST_BY_DEPT(deptId ?? 'none')
   });

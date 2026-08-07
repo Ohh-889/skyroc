@@ -24,7 +24,7 @@ export function useNoticeListQuery<Data = Awaited<ReturnType<typeof fetchNoticeL
 
 export function useNoticeDetailQuery(noticeId: NoticeId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && noticeId !== undefined,
+    enabled: enabled && Boolean(noticeId),
     queryFn: () => fetchNoticeDetail(noticeId as NoticeId),
     queryKey: SYSTEM_NOTICE_QUERY_KEYS.DETAIL(noticeId ?? 'none')
   });

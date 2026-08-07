@@ -57,7 +57,7 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       return menuType === 'F' ? '编辑按钮权限' : '编辑菜单';
     }
     if (menuType === 'F') return '新增按钮权限';
-    if (parentId !== undefined && String(parentId) !== '0') return '新增子菜单';
+    if (Boolean(parentId) && String(parentId) !== '0') return '新增子菜单';
     return '新增根菜单';
   }
 

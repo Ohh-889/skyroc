@@ -44,7 +44,7 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
   const isUpdate = mode === 'update';
   const deptId = Form.useWatch('deptId', form);
   const detailQuery = useUserDetailQuery(userId, open);
-  const postQuery = useUserPostOptionsQuery(deptId, open && deptId !== undefined);
+  const postQuery = useUserPostOptionsQuery(deptId, open && Boolean(deptId));
 
   useEffect(() => {
     if (!open || !detailQuery.data) return;

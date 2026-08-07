@@ -37,7 +37,7 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
   const { onClose, onEdit, open, roleId } = props;
 
   const detailQuery = useRoleDetailQuery(roleId, open);
-  const menuTreeQuery = useRoleMenuTreeQuery(roleId, open && roleId !== undefined);
+  const menuTreeQuery = useRoleMenuTreeQuery(roleId, open && Boolean(roleId));
   const role = detailQuery.data;
   const menuTreeData = buildRoleTreeData(menuTreeQuery.data?.menus ?? []);
   const permissionCount = countRoleTreeSelection(menuTreeData, menuTreeQuery.data?.checkedKeys ?? []);

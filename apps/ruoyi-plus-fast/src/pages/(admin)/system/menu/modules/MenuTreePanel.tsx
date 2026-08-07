@@ -109,7 +109,7 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
         <MenuTreeTitle
           allowAddChild={node.menu.menuType === 'M'}
           menu={node.menu}
-          selected={selectedMenuId !== undefined && isSameMenuId(node.menu.menuId, selectedMenuId)}
+          selected={Boolean(selectedMenuId) && isSameMenuId(node.menu.menuId, selectedMenuId as MenuId)}
           onAddChild={onAddChild}
         />
       )

@@ -244,7 +244,7 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
       roleSort: values.roleSort,
       status: values.status
     };
-    await onSubmit(isUpdate && roleId !== undefined ? { ...payload, roleId } : payload);
+    await onSubmit(isUpdate && Boolean(roleId) ? { ...payload, roleId } : payload);
   }
 
   function renderPermissionTab() {

@@ -58,7 +58,7 @@ export function useRoleOverviewQuery() {
 
 export function useRoleDetailQuery(roleId: RoleId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && roleId !== undefined,
+    enabled: enabled && Boolean(roleId),
     queryFn: () => fetchRoleDetail(roleId as RoleId),
     queryKey: SYSTEM_ROLE_QUERY_KEYS.DETAIL(roleId ?? 'none')
   });
@@ -75,7 +75,7 @@ export function useRoleMenuTreeQuery(roleId: RoleId | undefined, enabled = true)
 
 export function useRoleDeptTreeQuery(roleId: RoleId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && roleId !== undefined,
+    enabled: enabled && Boolean(roleId),
     queryFn: () => fetchRoleDeptTree(roleId as RoleId),
     queryKey: SYSTEM_ROLE_QUERY_KEYS.DEPT_TREE(roleId ?? 'none')
   });

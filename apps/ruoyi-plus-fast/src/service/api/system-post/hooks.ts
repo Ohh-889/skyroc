@@ -32,7 +32,7 @@ export function usePostDeptTreeQuery() {
 
 export function usePostDetailQuery(postId: PostId | undefined, enabled = true) {
   return useQuery({
-    enabled: enabled && postId !== undefined,
+    enabled: enabled && Boolean(postId),
     queryFn: () => fetchPostDetail(postId as PostId),
     queryKey: SYSTEM_POST_QUERY_KEYS.DETAIL(postId ?? 'none')
   });

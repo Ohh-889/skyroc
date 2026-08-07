@@ -260,7 +260,7 @@ const PostManagement = (props: PostManagementProps) => {
   }
 
   function handleExactDepartmentChange(deptId?: PostId) {
-    if (deptId !== undefined) setSelectedDeptId(undefined);
+    if (Boolean(deptId)) setSelectedDeptId(undefined);
   }
 
   function handleDepartmentSelect(keys: Key[]) {
