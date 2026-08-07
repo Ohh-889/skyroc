@@ -1,6 +1,6 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { ButtonIcon } from '@skyroc/web-ui-antd';
 import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
-import { Alert, Button, Card, Empty, Flex, Input, Table, Typography } from 'antd';
+import { Alert, Card, Empty, Flex, Input, Table, Typography } from 'antd';
 import type { TableProps } from 'antd';
 
 import type { DictTypeItem, DictTypeListParams } from '@/service/api/system-dict';
@@ -9,12 +9,18 @@ export type DictTypeTableParams = DictTypeListParams;
 export type DictTypeTableRecord = TableDataWithIndex<DictTypeItem>;
 
 interface DictTypePanelProps {
+  /** 导出请求是否进行中。 */
+  exportLoading?: boolean;
   /** 新增类型回调。 */
   onAdd: () => void;
   /** 删除类型回调。 */
   onDelete: (item: DictTypeItem) => void;
   /** 编辑类型回调。 */
   onEdit: (item: DictTypeItem) => void;
+  /** 导出当前筛选到的字典类型。 */
+  onExport: () => Promise<void> | void;
+  /** 刷新字典类型列表。 */
+  onRefresh: () => Promise<void> | void;
   /** 关键词变化时重新查询字典类型。 */
   onSearch: (dictName?: string) => void;
   /** 类型行点击回调。 */
@@ -26,7 +32,18 @@ interface DictTypePanelProps {
 }
 
 const DictTypePanel = (props: DictTypePanelProps) => {
-  const { onAdd, onDelete, onEdit, onSearch, onSelect, selectedTypeId, tableProps } = props;
+  const {
+    exportLoading = false,
+    onAdd,
+    onDelete,
+    onEdit,
+    onExport,
+    onRefresh,
+    onSearch,
+    onSelect,
+    selectedTypeId,
+    tableProps
+  } = props;
 
   const columns: TableColumn<DictTypeTableRecord>[] = [
     {
@@ -48,19 +65,19 @@ const DictTypePanel = (props: DictTypePanelProps) => {
       key: 'actions',
       render: (_value, item) => (
         <Flex gap={2}>
-          <Button
+          <ButtonIcon
             aria-label="编辑字典类型"
-            icon={<SvgIcon icon="ph:pencil-simple" />}
-            size="small"
-            type="text"
+            className="h-26px w-26px text-13px"
+            icon="ph:pencil-simple"
+            tooltipContent="编辑字典类型"
             onClick={() => onEdit(item)}
           />
-          <Button
+          <ButtonIcon
             aria-label="删除字典类型"
+            className="h-26px w-26px text-13px text-error"
             danger
-            icon={<SvgIcon icon="ph:trash" />}
-            size="small"
-            type="text"
+            icon="ph:trash"
+            tooltipContent="删除字典类型"
             onClick={() => onDelete(item)}
           />
         </Flex>
@@ -73,7 +90,34 @@ const DictTypePanel = (props: DictTypePanelProps) => {
     <Card
       className="h-full min-h-0 flex flex-col card-wrapper"
       classNames={{ body: 'min-h-0 flex flex-1 flex-col' }}
-      extra={<Button aria-label="新增字典类型" icon={<SvgIcon icon="ph:plus" />} type="text" onClick={onAdd} />}
+      extra={
+        <Flex gap={2}>
+          <ButtonIcon
+            aria-label="新增字典类型"
+            className="h-28px w-28px text-15px"
+            icon="ph:plus"
+            tooltipContent="新增字典类型"
+            onClick={onAdd}
+          />
+          <ButtonIcon
+            aria-label="导出字典类型"
+            className="h-28px w-28px text-15px"
+            icon="mdi:download"
+            loading={exportLoading}
+            tooltipContent="导出字典类型"
+            onClick={onExport}
+          />
+          <ButtonIcon
+            aria-label="刷新字典类型"
+            className="h-28px w-28px text-15px"
+            hoverAnimation="rotate"
+            icon="ph:arrow-clockwise"
+            loading={tableProps.loading}
+            tooltipContent="刷新字典类型"
+            onClick={onRefresh}
+          />
+        </Flex>
+      }
       title="字典类型列表"
       variant="borderless"
     >
@@ -95,7 +139,6 @@ const DictTypePanel = (props: DictTypePanelProps) => {
           locale={{
             emptyText: <Empty description="暂无字典类型" image={Empty.PRESENTED_IMAGE_SIMPLE} />
           }}
-          rowSelection={{ align: 'center' }}
           rowClassName={item => (String(item.dictId) === String(selectedTypeId) ? 'bg-primary-1' : '')}
           rowKey={item => String(item.dictId)}
           showHeader={false}

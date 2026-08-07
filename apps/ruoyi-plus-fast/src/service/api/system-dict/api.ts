@@ -1,12 +1,14 @@
 import { request } from '../../request';
 
 import type {
+  DictDataExportParams,
   DictDataItem,
   DictDataListParams,
   DictDataSavePayload,
   DictDataUpdatePayload,
   DictId,
   DictListPage,
+  DictTypeExportParams,
   DictTypeItem,
   DictTypeListParams,
   DictTypeSavePayload,
@@ -26,6 +28,15 @@ export function fetchDictTypeOptions() {
   return request<DictTypeItem[]>({
     method: 'get',
     url: SYSTEM_DICT_URLS.TYPE_OPTIONS
+  });
+}
+
+export function exportDictTypes(params: DictTypeExportParams) {
+  return request<Blob, 'blob'>({
+    method: 'post',
+    params,
+    responseType: 'blob',
+    url: SYSTEM_DICT_URLS.TYPE_EXPORT
   });
 }
 
@@ -64,6 +75,15 @@ export function fetchDictData(params: DictDataListParams) {
     method: 'get',
     params,
     url: SYSTEM_DICT_URLS.DATA_LIST
+  });
+}
+
+export function exportDictData(params: DictDataExportParams) {
+  return request<Blob, 'blob'>({
+    method: 'post',
+    params,
+    responseType: 'blob',
+    url: SYSTEM_DICT_URLS.DATA_EXPORT
   });
 }
 

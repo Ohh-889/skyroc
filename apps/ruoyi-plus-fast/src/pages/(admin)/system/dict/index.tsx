@@ -1,3 +1,4 @@
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
 import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
@@ -34,6 +35,7 @@ import type {
   DictTypeSavePayload,
   DictTypeUpdatePayload
 } from '@/service/api/system-dict';
+import { exportDictData, exportDictTypes } from '@/service/api/system-dict/api';
 
 import DictDataSearch from './modules/DictDataSearch';
 import DictTypePanel from './modules/DictTypePanel';
@@ -72,6 +74,8 @@ const DictManagement = (props: DictManagementProps) => {
   const [selectedDataKeys, setSelectedDataKeys] = useState<Key[]>([]);
   const [typeEditor, setTypeEditor] = useState<EditorState>(INITIAL_EDITOR_STATE);
   const [dataEditor, setDataEditor] = useState<EditorState>(INITIAL_EDITOR_STATE);
+  const [typeExporting, setTypeExporting] = useState(false);
+  const [dataExporting, setDataExporting] = useState(false);
   const typeOptionsQuery = useDictTypeOptionsQuery();
 
   const typeTable = useTable<DictTypeTableParams, DictListPage<DictTypeItem>, DictTypeItem>({
@@ -232,14 +236,40 @@ const DictManagement = (props: DictManagementProps) => {
     showSuccessMessage('字典数据已刷新');
   }
 
+  async function handleExportTypes() {
+    setTypeExporting(true);
+    try {
+      const { current: _current, size: _size, ...params } = typeTable.searchProps.searchParams;
+      const blob = await exportDictTypes(params);
+      downloadFileFromBlob({ fileName: '字典类型.xlsx', source: blob });
+    } finally {
+      setTypeExporting(false);
+    }
+  }
+
+  async function handleExportData() {
+    if (!selectedType) return;
+    setDataExporting(true);
+    try {
+      const { current: _current, size: _size, ...params } = dataTable.searchProps.searchParams;
+      const blob = await exportDictData({ ...params, dictType: selectedType.dictType });
+      downloadFileFromBlob({ fileName: '字典数据.xlsx', source: blob });
+    } finally {
+      setDataExporting(false);
+    }
+  }
+
   return (
     <div className="h-full min-h-500px flex flex-col gap-16px overflow-hidden lt-xl:overflow-auto">
       <div className="min-h-0 grid flex-1 grid-cols-[300px_minmax(0,1fr)] gap-16px lt-xl:grid-cols-1">
         <DictTypePanel
           onAdd={() => setTypeEditor({ mode: 'create', open: true })}
+          exportLoading={typeExporting}
+          onExport={handleExportTypes}
           onDelete={removeTypes}
           onEdit={item => setTypeEditor({ id: item.dictId, mode: 'update', open: true })}
           onSearch={dictName => typeTable.updateSearchParams({ current: 1, dictName })}
+          onRefresh={typeTable.getData}
           onSelect={selectType}
           selectedTypeId={selectedType?.dictId}
           tableProps={typeTable.tableProps}
@@ -257,7 +287,7 @@ const DictManagement = (props: DictManagementProps) => {
               }
             ]}
           />
-          <div className="min-h-0 min-w-0 flex flex-col" ref={tableWrapperRef}>
+          <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
             <Card
               className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
               extra={
@@ -267,6 +297,8 @@ const DictManagement = (props: DictManagementProps) => {
                   batchDeleteText="批量删除"
                   columns={dataTable.columnChecks}
                   disabledDelete={!selectedData.length}
+                  exportData={handleExportData}
+                  exportLoading={dataExporting}
                   loading={dataTable.tableProps.loading || refreshMutation.isPending}
                   refresh={refreshAll}
                   setColumnChecks={dataTable.setColumnChecks}

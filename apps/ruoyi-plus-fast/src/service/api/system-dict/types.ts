@@ -42,6 +42,10 @@ export interface DictDataListParams {
   size: number;
 }
 
+export type DictTypeExportParams = Omit<DictTypeListParams, 'current' | 'size'>;
+
+export type DictDataExportParams = Omit<DictDataListParams, 'current' | 'size'>;
+
 export interface DictTypeSavePayload {
   dictName: string;
   dictType: string;
