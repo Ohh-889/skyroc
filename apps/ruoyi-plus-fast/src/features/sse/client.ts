@@ -1,3 +1,4 @@
+import { ServerCloseCode } from '@/features/realtime/close-codes';
 import type { RealtimeReadyPayload } from '@/features/realtime/message';
 import { parseRealtimeReady } from '@/features/realtime/message';
 
@@ -6,9 +7,6 @@ export interface SseCloseInfo {
   code: number;
   reason: string;
 }
-
-/** 1008：这次登录已经结束，拿同一张凭据重连没有意义。 */
-const POLICY_VIOLATION = 1008;
 
 function readCloseInfo(raw: string): SseCloseInfo {
   try {
@@ -22,9 +20,14 @@ function readCloseInfo(raw: string): SseCloseInfo {
   }
 }
 
-interface SseClientOptions {
-  /** 登录时使用的客户端标识，必须与服务端会话一致。 */
-  clientId: string;
+export interface SseClientOptions {
+  /**
+   * 取本次连接的完整地址，每次连接都会调，返回 null 表示现在还不能连。
+   *
+   * 和 WebSocketClient 一样做成函数：EventSource 自带的重连只会重用构造时那个地址，
+   * 令牌换过之后必须由我们重建它，拿到的才是新的。
+   */
+  getUrl: () => string | null;
   /** 服务端主动结束连接时触发。 */
   onClose?: (info: SseCloseInfo) => void;
   /** 连接断开或建立失败时触发，willRetry 说明浏览器还会不会自己重连。 */
@@ -33,19 +36,21 @@ interface SseClientOptions {
   onMessage: (message: string) => void;
   /** 收到 ready 事件时触发，此时服务端已经推得到这条连接。 */
   onReady?: (payload: RealtimeReadyPayload) => void;
-  /** 当前访问令牌。 */
-  token: string;
-  /** 后端 SSE 地址。 */
-  url: string;
+  /** 收到令牌过期码时怎么续签，返回是否换到了新令牌。 */
+  onTokenStale?: () => Promise<boolean>;
 }
 
 /**
  * 基于原生 EventSource 的 SSE 客户端。
  *
- * 比 WebSocketClient 短很多，因为重连、退避、以及"网络恢复后重连"都是 EventSource 自带的 ——这正是选 SSE 的主要理由之一。这里只需要补它没有的两件事：
+ * 比 WebSocketClient 短很多，因为重连、退避、以及「网络恢复后重连」都是 EventSource 自带的
+ * —— 这正是选 SSE 的主要理由之一。这里只需要补它没有的三件事：
  *
- * 1. 用服务端的 close 事件停掉那个自动重连。EventSource 只要连接断了就会一直重试，服务端 单方面断流是拦不住它的，只有客户端调 close() 才停得下来。
- * 2. 把"连上了"的判定推迟到 ready 事件，和 WebSocket 用同一套状态机。
+ * 1. 用服务端的 close 事件停掉那个自动重连。EventSource 只要连接断了就会一直重试，服务端
+ *    单方面断流是拦不住它的，只有客户端调 close() 才停得下来。
+ * 2. 把「连上了」的判定推迟到 ready 事件，和 WebSocket 用同一套状态机。
+ * 3. 令牌过期时先停掉自动重连再续签。自带的那套会拿着 URL 里那张过期令牌一直重试，
+ *    每次都被同样地拒掉。
  */
 export class SseClient {
   private manuallyClosed = true;
@@ -62,20 +67,16 @@ export class SseClient {
 
   disconnect() {
     this.manuallyClosed = true;
-    this.source?.close();
-    this.source = null;
-  }
-
-  private buildUrl() {
-    const url = new URL(this.options.url, window.location.origin);
-    // EventSource 设不了请求头，凭据只能走查询参数
-    url.searchParams.set('Authorization', this.options.token);
-    url.searchParams.set('clientid', this.options.clientId);
-    return url.toString();
+    this.stop();
   }
 
   private open() {
-    const source = new EventSource(this.buildUrl());
+    const url = this.options.getUrl();
+
+    // 没地址通常是还没登录
+    if (!url) return;
+
+    const source = new EventSource(url);
     this.source = source;
 
     source.addEventListener('ready', event => {
@@ -101,8 +102,15 @@ export class SseClient {
 
       // 1008 表示这次登录已经结束，再连也是同样的结果。不主动 close 的话 EventSource
       // 会按 retry 间隔无限重连，直到用户自己关掉页面。
-      if (info.code === POLICY_VIOLATION) {
+      if (info.code === ServerCloseCode.POLICY_VIOLATION) {
         this.disconnect();
+        return;
+      }
+
+      // 4001 表示登录还活着，只是令牌该换了。同样要先停掉自动重连，否则它会带着旧令牌空转
+      if (info.code === ServerCloseCode.TOKEN_STALE) {
+        this.stop();
+        this.recoverFromStaleToken();
       }
     });
 
@@ -120,5 +128,28 @@ export class SseClient {
         this.options.onError?.(willRetry);
       }
     });
+  }
+
+  /**
+   * 续签后重新连一条。
+   *
+   * 没配续签钩子时就停在这里不再连：拿着同一张过期令牌重试只会以 retry 间隔无限空转，
+   * 比断掉更糟。
+   */
+  private async recoverFromStaleToken() {
+    if (!this.options.onTokenStale) return;
+
+    const refreshed = await this.options.onTokenStale();
+
+    // 续签期间用户可能已经登出
+    if (this.manuallyClosed || !refreshed) return;
+
+    this.open();
+  }
+
+  /** 关掉当前连接但不进入「主动断开」状态，续签后还要再连回来。 */
+  private stop() {
+    this.source?.close();
+    this.source = null;
   }
 }

@@ -1,3 +1,4 @@
+import { refreshToken } from '@skyroc/service';
 import type { RequestAdapter } from '@skyroc/service';
 
 import { setAuth } from '@/features/auth/use-auth';
@@ -59,3 +60,13 @@ export const antdAdapter: RequestAdapter = {
     return $t(key);
   }
 };
+
+/**
+ * 续签当前令牌，返回是否成功；失败时已经跳过登录页了。
+ *
+ * WebSocket 和 SSE 拿到「令牌过期」也走这里，和 HTTP 共用同一次在途刷新 —— 各自去调
+ * fetchRefreshToken 的话，后发的那次会拿着已经轮换掉的 refresh token 去换，必定失败。
+ */
+export function refreshAppToken(): Promise<boolean> {
+  return refreshToken(antdAdapter);
+}

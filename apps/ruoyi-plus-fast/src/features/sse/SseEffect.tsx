@@ -1,8 +1,9 @@
 import { useNotificationContext } from '@skyroc/web-admin-notification';
 import { useEffect, useRef } from 'react';
 
-import { useAuthToken } from '@/features/auth/use-auth';
+import { getToken, useAuthToken } from '@/features/auth/use-auth';
 import { parseRealtimeNotification } from '@/features/realtime/message';
+import { refreshAppToken } from '@/service/adapter';
 
 import { SseClient } from './client';
 import { reportSseMessage, reportSseSystemEvent, setSseConnected, setSseDisconnected } from './runtime';
@@ -10,19 +11,39 @@ import { reportSseMessage, reportSseSystemEvent, setSseConnected, setSseDisconne
 const sseEnabled = import.meta.env.VITE_SSE_ENABLED === 'Y';
 const sseUrl = import.meta.env.VITE_SSE_URL;
 
+/** 令牌现取，不缓存：续签之后重连要用的是新的那张。 */
+function buildSseUrl(): string | null {
+  const token = getToken();
+
+  if (!sseEnabled || !sseUrl || !token) {
+    return null;
+  }
+
+  const url = new URL(sseUrl, window.location.origin);
+  // EventSource 设不了请求头，凭据只能走查询参数
+  url.searchParams.set('Authorization', token);
+  url.searchParams.set('clientid', import.meta.env.VITE_AUTH_CLIENT_ID);
+
+  return url.toString();
+}
+
 const SseEffect = () => {
   const token = useAuthToken();
   const { addNotification } = useNotificationContext();
   const addNotificationRef = useRef(addNotification);
   addNotificationRef.current = addNotification;
 
+  const isLoggedIn = Boolean(token);
+
+  // 依赖登录与否而不是令牌本身：续签换了令牌不该断掉一条正常的连接，
+  // 真需要换的时候后端会发 4001，客户端自己会续签重连。
   useEffect(() => {
-    if (!sseEnabled || !sseUrl || !token) {
+    if (!isLoggedIn) {
       return;
     }
 
     const client = new SseClient({
-      clientId: import.meta.env.VITE_AUTH_CLIENT_ID,
+      getUrl: buildSseUrl,
       onClose(info) {
         setSseDisconnected(`${info.reason}（${info.code}）`);
       },
@@ -40,8 +61,7 @@ const SseEffect = () => {
       onReady(payload) {
         setSseConnected(payload.connection_id);
       },
-      token,
-      url: sseUrl
+      onTokenStale: refreshAppToken
     });
 
     client.connect();
@@ -51,7 +71,7 @@ const SseEffect = () => {
       client.disconnect();
       setSseDisconnected('页面已切换或退出登录');
     };
-  }, [token]);
+  }, [isLoggedIn]);
 
   return null;
 };

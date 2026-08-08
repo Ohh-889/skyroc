@@ -73,6 +73,7 @@ export function fetchRefreshToken(refreshToken: string) {
     data: {
       refreshToken
     },
+    isRefreshToken: true,
     method: 'post',
     url: AUTH_URLS.REFRESH_TOKEN
   });

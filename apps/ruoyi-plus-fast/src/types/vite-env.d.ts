@@ -98,6 +98,12 @@ declare namespace Env {
     /** Backend service base url */
     readonly VITE_SERVICE_BASE_URL: string;
     /**
+     * Connection ready code of the realtime stream (WebSocket / SSE)
+     *
+     * When the code is received, the connection is authenticated and usable
+     */
+    readonly VITE_SERVICE_CONNECTED_CODE: string;
+    /**
      * Token expired codes of backend service
      *
      * When the code is received, it will refresh the token and resend the request

@@ -3,17 +3,8 @@ import { useEffect, useRef } from 'react';
 
 import { useAuthToken } from '@/features/auth/use-auth';
 
-import { WebSocketClient } from './client';
 import { parseWebSocketNotification } from './message';
-import {
-  bindWebSocketClient,
-  releaseWebSocketClient,
-  reportWebSocketMessage,
-  setWebSocketConnectionStatus
-} from './runtime';
-
-const websocketEnabled = import.meta.env.VITE_WEBSOCKET_ENABLED === 'Y';
-const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
+import { getAppWebSocketClient } from './use-websocket';
 
 const WebSocketEffect = () => {
   const token = useAuthToken();
@@ -21,41 +12,30 @@ const WebSocketEffect = () => {
   const addNotificationRef = useRef(addNotification);
   addNotificationRef.current = addNotification;
 
+  const isLoggedIn = Boolean(token);
+
+  // 依赖登录与否而不是令牌本身：续签换了令牌不该断掉一条正常的连接，
+  // 重连时 getUrl 会现取新的那张。
   useEffect(() => {
-    if (!websocketEnabled || !websocketUrl || !token) {
-      return;
-    }
+    if (!isLoggedIn) return;
 
-    const client = new WebSocketClient({
-      clientId: import.meta.env.VITE_AUTH_CLIENT_ID,
-      heartbeatInterval: 25_000,
-      heartbeatTimeout: 10_000,
-      onClose() {
-        setWebSocketConnectionStatus('disconnected');
-      },
-      onMessage(message) {
-        reportWebSocketMessage(message);
-        const notification = parseWebSocketNotification(message);
+    const client = getAppWebSocketClient();
 
-        if (notification) {
-          addNotificationRef.current(notification);
-        }
-      },
-      onReady() {
-        setWebSocketConnectionStatus('connected');
-      },
-      token,
-      url: websocketUrl
+    const offMessage = client.on('message', raw => {
+      const notification = parseWebSocketNotification(raw);
+
+      if (notification) {
+        addNotificationRef.current(notification);
+      }
     });
 
-    bindWebSocketClient(client);
     client.connect();
 
     return () => {
-      releaseWebSocketClient(client);
+      offMessage();
       client.disconnect();
     };
-  }, [token]);
+  }, [isLoggedIn]);
 
   return null;
 };
