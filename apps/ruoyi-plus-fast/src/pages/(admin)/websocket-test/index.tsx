@@ -1,9 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
+import { showConfirmModal } from '@skyroc/web-admin-theme';
+import { ButtonIcon } from '@skyroc/web-ui-antd';
+import { SvgIcon } from '@skyroc/web-ui-compose';
+import { Flex, Select, Space } from 'antd';
+import { getToken } from '@/features/auth/use-auth';
 import { sendBroadcast, sendDirectMessage } from '@/features/message/api';
 import { BROADCAST_SEND, DIRECT_SEND } from '@/features/message/constants';
-import { parseRealtimeEnvelope } from '@/features/realtime/message';
+import { parseRealtimeEnvelope, parseRealtimeReady } from '@/features/realtime/message';
 import { pushWebSocketMessage } from '@/features/websocket/api';
 import type { ConnectionState } from '@/features/websocket/types';
 import { useAppWebSocket } from '@/features/websocket/use-websocket';
@@ -12,93 +17,137 @@ import { useUserInfoQuery } from '@/service/api/system-user';
 interface WebSocketLogEntry {
   /** 消息方向，system 表示连接状态变化。 */
   direction: 'in' | 'out' | 'system';
+  /** 原始帧或状态文本。 */
   message: string;
+  /** 记录产生时间。 */
   timestamp: number;
-  /** 信封里的 type，裸文本（心跳）和状态变化没有。 */
+  /** 信封里的 type，裸文本和状态变化没有。 */
   type?: string;
 }
 
-const stateLabels: Record<ConnectionState, string> = {
-  connected: 'WebSocket 已连接',
-  connecting: 'WebSocket 连接中',
-  disconnected: 'WebSocket 已断开',
-  idle: 'WebSocket 未启动'
-};
+interface ReadyInfo {
+  /** 服务端分配的连接标识。 */
+  connectionId: string;
+  /** 服务端报告的传输名称。 */
+  transport: string;
+  /** 连接所属用户。 */
+  userId: number;
+}
 
 const MAX_LOGS = 50;
 const JsonObjectSchema = z.record(z.string(), z.unknown());
-const directionColors = {
-  in: 'green',
-  out: 'blue',
-  system: 'default'
+const stateLabels: Record<ConnectionState, string> = {
+  connected: '已连接',
+  connecting: '连接中',
+  disconnected: '已断开',
+  idle: '未启动'
+};
+const directionColors = { in: 'green', out: 'blue', system: 'default' } as const;
+const directionLabels = { in: '接收', out: '发送', system: '状态' } as const;
+const DEFAULT_BODY = JSON.stringify({ content: '前端主动发送的测试消息', title: '前端消息', type: 'info' }, null, 2);
+const BODY_TEMPLATES = {
+  notification: DEFAULT_BODY,
+  text: JSON.stringify('一段纯文本，会走 fallback 转成通知', null, 2),
+  invalid: '{ title: 前端消息, }'
 } as const;
-const directionLabels = {
-  in: '接收',
-  out: '发送',
-  system: '状态'
-} as const;
+const PUSH_TYPES = ['success', 'info', 'warning', 'error', 'message'] as const;
+type DirectionFilter = 'all' | WebSocketLogEntry['direction'];
+const PANEL_CLASS =
+  'h-full w-full overflow-hidden rounded-10px border-border-secondary bg-container shadow-sm [&_.ant-card-head]:border-b-border-secondary [&_.ant-card-head]:bg-layout [&_.ant-card-head]:px-16px [&_.ant-card-head]:py-12px [&_.ant-card-head-title]:text-14px [&_.ant-card-head-title]:font-600 [&_.ant-card-body]:p-16px';
+const EVENT_PANEL_CLASS =
+  'w-full rounded-10px border-border-secondary bg-container shadow-sm [&_.ant-card-head]:border-b-border-secondary [&_.ant-card-head]:bg-layout [&_.ant-card-head]:px-16px [&_.ant-card-head]:py-12px [&_.ant-card-head-title]:text-14px [&_.ant-card-head-title]:font-600 [&_.ant-card-body]:p-16px';
+const CONTROL_CLASS = 'rounded-6px';
+const ACTION_CLASS = 'rounded-6px font-500';
 
-/** 消息体的默认内容。字段形状由收发双方自己约定，服务端不校验它。 */
-const DEFAULT_BODY = JSON.stringify(
-  {
-    content: '前端主动发送的测试消息',
-    title: '前端消息',
-    type: 'info'
-  },
-  null,
-  2
-);
-
-/** 收件人输入框解析成 userId 列表，有一个填得不对就整体返回 null。 */
 function parseRecipients(raw: string): number[] | null {
   const ids = raw
     .split(/[,，\s]+/)
     .filter(Boolean)
     .map(Number);
 
-  if (!ids.length || ids.some(id => !Number.isInteger(id))) {
-    return null;
-  }
+  return ids.length > 0 && ids.every(id => Number.isInteger(id)) ? ids : null;
+}
 
-  return ids;
+function maskValue(value: string | null | undefined) {
+  if (!value) return '缺失';
+  if (value.length <= 10) return `${value.slice(0, 4)}…`;
+
+  return `${value.slice(0, 7)}…${value.slice(-3)}`;
+}
+
+function getConnectionBadgeStatus(state: ConnectionState) {
+  if (state === 'connected') return 'success';
+  if (state === 'connecting') return 'processing';
+
+  return 'default';
+}
+
+async function copyLog(message: string) {
+  await navigator.clipboard.writeText(message);
+  showSuccessMessage('原始帧已复制');
+}
+
+async function copyText(value: string, message = '内容已复制') {
+  await navigator.clipboard.writeText(value);
+  showSuccessMessage(message);
 }
 
 const WebSocketTest = () => {
   const [logs, setLogs] = useState<WebSocketLogEntry[]>([]);
   const [messageBody, setMessageBody] = useState(DEFAULT_BODY);
+  const [messageTemplate, setMessageTemplate] = useState<keyof typeof BODY_TEMPLATES>('notification');
   const [pushing, setPushing] = useState(false);
   const [recipients, setRecipients] = useState('');
+  const [pushTitle, setPushTitle] = useState('后端主动推送');
+  const [pushType, setPushType] = useState<(typeof PUSH_TYPES)[number]>('success');
   const [serverMessage, setServerMessage] = useState('后端主动推送的测试消息');
+  const [readyInfo, setReadyInfo] = useState<ReadyInfo | null>(null);
+  const [expandedLog, setExpandedLog] = useState<number | null>(null);
+  const [directionFilter, setDirectionFilter] = useState<DirectionFilter>('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [paused, setPaused] = useState(false);
+  const [pausedLogs, setPausedLogs] = useState<WebSocketLogEntry[]>([]);
   const { client, state } = useAppWebSocket();
-  const { data: userInfo } = useUserInfoQuery();
 
-  // 默认发给自己，userId 要等接口回来才有。只在输入框还是空的时候填，否则会把正在编辑的
-  // 内容冲掉。
+  console.log('state', state, client);
+
+  const { data: userInfo } = useUserInfoQuery();
   const selfUserId = userInfo ? Number(userInfo.userId) : null;
 
   useEffect(() => {
-    if (selfUserId === null) return;
-
-    setRecipients(current => current || String(selfUserId));
+    if (selfUserId !== null) setRecipients(current => current || String(selfUserId));
   }, [selfUserId]);
 
   useEffect(() => {
     function append(direction: WebSocketLogEntry['direction'], message: string) {
       const type = direction === 'system' ? undefined : parseRealtimeEnvelope(message)?.type;
 
-      setLogs(current => [{ direction, message, timestamp: Date.now(), type }, ...current].slice(0, MAX_LOGS));
+      const entry = { direction, message, timestamp: Date.now(), type };
+      if (paused) {
+        setPausedLogs(current => [...current, entry]);
+        return;
+      }
+      setLogs(current => [entry, ...current].slice(0, MAX_LOGS));
     }
 
     const offs = [
       client.on('message', raw => append('in', raw)),
       client.on('sent', raw => append('out', raw)),
-      client.on('stateChange', next => append('system', stateLabels[next]))
+      client.on('ready', payload => {
+        const next = parseRealtimeReady(
+          JSON.stringify({ code: '0001', data: payload, msg: 'connected', type: 'system.connection.ready' })
+        );
+        if (next) setReadyInfo({ connectionId: next.connection_id, transport: next.transport, userId: next.user_id });
+      }),
+      client.on('stateChange', next => {
+        if (next !== 'connected') setReadyInfo(null);
+        append('system', `WebSocket ${stateLabels[next]}`);
+      })
     ];
 
     return () => offs.forEach(off => off());
-  }, [client]);
+  }, [client, paused]);
 
-  /** 解出消息体，形状不对时提示并返回 null。两个发送按钮共用。 */
   function readBody(): Record<string, unknown> | null {
     let value: unknown;
     try {
@@ -119,28 +168,19 @@ const WebSocketTest = () => {
 
   function handleDirectSend() {
     const body = readBody();
-    if (!body) return;
-
     const ids = parseRecipients(recipients);
-    if (!ids) {
-      showWarningMessage('收件人要填 userId，多个用逗号隔开');
+    if (!body || !ids) {
+      if (!ids) showWarningMessage('收件人要填 userId，多个用逗号隔开');
       return;
     }
 
-    // 返回的是这条命令的 id，服务端会原样写进回执的 request_id —— 在收发记录里能把两条对上
-    const commandId = sendDirectMessage(ids, body);
-    if (commandId === null) {
-      showWarningMessage('WebSocket 尚未连接');
-    }
+    if (sendDirectMessage(ids, body) === null) showWarningMessage('WebSocket 尚未连接');
   }
 
   function handleBroadcast() {
     const body = readBody();
     if (!body) return;
-
-    if (sendBroadcast(body) === null) {
-      showWarningMessage('WebSocket 尚未连接');
-    }
+    if (sendBroadcast(body) === null) showWarningMessage('WebSocket 尚未连接');
   }
 
   async function handleServerPush() {
@@ -152,163 +192,501 @@ const WebSocketTest = () => {
 
     setPushing(true);
     try {
-      const result = await pushWebSocketMessage({
-        content,
-        title: '后端主动推送',
-        type: 'success'
-      });
+      const result = await pushWebSocketMessage({ content, title: pushTitle.trim() || '后端主动推送', type: pushType });
       showSuccessMessage(`消息已发布，本实例投递 ${result.local_connections} 个连接`);
     } finally {
       setPushing(false);
     }
   }
 
-  return (
-    <ASpace
-      className="w-full"
-      orientation="vertical"
-      size={16}
-    >
-      <ACard title="WebSocket 联调">
-        <ASpace
-          className="w-full"
-          orientation="vertical"
-          size={12}
-        >
-          <div>
-            当前状态：
-            <ABadge
-              status={state === 'connected' ? 'success' : 'error'}
-              text={stateLabels[state]}
-            />
-          </div>
-          <div className="text-text-2">
-            两个按钮走的是 <code>features/message/api</code> 的 <code>sendDirectMessage</code> /
-            <code>sendBroadcast</code>，和真实业务代码同一条路径。信封的
-            <code>id</code> 由客户端自动生成，服务端原样写进回执的 <code>request_id</code>。
-          </div>
-          <div className="text-text-2">
-            <code>{DIRECT_SEND}</code> 的收件人填自己的 userId
-            {selfUserId === null ? '' : `（${selfUserId}）`}会原路发回来，填别人被拒（403）；
-            <code>{BROADCAST_SEND}</code> 群发给本租户，只有超管放行。谁能发给谁是后端 message 模块的规则。
-          </div>
-          <div className="text-text-2">
-            发一条定向消息会收到两条：回执 <code>{`${DIRECT_SEND}.result`}</code>（带 request_id，不进通知中心）和投递
-            <code>message.direct.created</code>（内容在 data.body 里）。
-          </div>
-        </ASpace>
-      </ACard>
+  function handlePauseChange() {
+    if (paused) {
+      setLogs(current => pausedLogs.toReversed().concat(current).slice(0, MAX_LOGS));
+      setPausedLogs([]);
+    }
+    setPaused(current => !current);
+  }
 
-      <ARow gutter={[16, 16]}>
+  function handleDisconnect() {
+    showConfirmModal({
+      content: '这条连接由全应用共用。断开后通知中心也将收不到实时消息，直到手动重连或刷新页面。',
+      okButtonProps: { danger: true },
+      okText: '仍要断开',
+      title: '确认断开 WebSocket 连接？',
+      onOk: () => client.disconnect()
+    });
+  }
+
+  const checks = [
+    {
+      label: 'VITE_WEBSOCKET_ENABLED',
+      note: '传输开关',
+      ok: import.meta.env.VITE_WEBSOCKET_ENABLED === 'Y',
+      value: import.meta.env.VITE_WEBSOCKET_ENABLED || '未配置',
+      fail: '当前环境未开启该传输'
+    },
+    {
+      label: 'VITE_WEBSOCKET_URL',
+      note: '连接地址',
+      ok: Boolean(import.meta.env.VITE_WEBSOCKET_URL),
+      value: import.meta.env.VITE_WEBSOCKET_URL || '未配置',
+      fail: '未配置连接地址'
+    },
+    {
+      label: '登录令牌',
+      note: 'getToken()',
+      ok: Boolean(getToken()),
+      value: maskValue(getToken()),
+      fail: '未登录，连接需要令牌'
+    },
+    {
+      label: 'clientid',
+      note: 'VITE_AUTH_CLIENT_ID',
+      ok: Boolean(import.meta.env.VITE_AUTH_CLIENT_ID),
+      value: maskValue(import.meta.env.VITE_AUTH_CLIENT_ID),
+      fail: '未配置客户端标识'
+    }
+  ];
+  const envReady = checks.every(item => item.ok);
+  const canOperate = state === 'connected';
+  const availableTypes = Array.from(new Set(logs.map(item => item.type).filter(Boolean))) as string[];
+  const filteredLogs = logs.filter(item => {
+    const matchesDirection = directionFilter === 'all' || item.direction === directionFilter;
+    const matchesType = typeFilter === 'all' || item.type === typeFilter;
+    return matchesDirection && matchesType;
+  });
+
+  function renderEventContent() {
+    if (logs.length === 0) return <AEmpty description="暂无 WebSocket 事件" />;
+    if (filteredLogs.length === 0) return <AEmpty description="没有匹配的事件" />;
+
+    return (
+      <ASpace
+        className="w-full"
+        orientation="vertical"
+        size={0}
+      >
+        {filteredLogs.map((item, index) => {
+          const open = expandedLog === index;
+          return (
+            <div
+              className="border-b border-border-secondary py-10px transition-colors hover:bg-layout last:border-b-0"
+              key={`${item.timestamp}-${index}`}
+            >
+              <Flex
+                align="center"
+                gap={8}
+                wrap="wrap"
+              >
+                <ATag color={directionColors[item.direction]}>{directionLabels[item.direction]}</ATag>
+                <ATypography.Text
+                  type="secondary"
+                  className="font-mono text-12px"
+                >
+                  {new Date(item.timestamp).toLocaleTimeString()}
+                </ATypography.Text>
+                {item.type ? <ATag className="m-0 font-mono text-11px">{item.type}</ATag> : null}
+                <ATypography.Text className="min-w-0 flex-1 break-all">
+                  {item.direction === 'system'
+                    ? item.message
+                    : parseRealtimeEnvelope(item.message)?.msg || '原始实时帧'}
+                </ATypography.Text>
+                <Flex gap={2}>
+                  <ButtonIcon
+                    aria-label={open ? '收起原始帧' : '展开原始帧'}
+                    className="h-28px w-28px rounded-6px text-13px"
+                    icon={open ? 'ph:caret-up' : 'ph:caret-down'}
+                    tooltipContent={open ? '收起原始帧' : '展开原始帧'}
+                    onClick={() => setExpandedLog(open ? null : index)}
+                  />
+                  <ButtonIcon
+                    aria-label="复制原始帧"
+                    className="h-28px w-28px rounded-6px text-13px"
+                    icon="ph:copy"
+                    tooltipContent="复制原始帧"
+                    onClick={() => copyLog(item.message)}
+                  />
+                </Flex>
+              </Flex>
+              {open ? (
+                <pre className="m-0 mt-8px max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px border border-border-secondary bg-fill-2 p-12px font-mono text-12px leading-1.6">
+                  {item.message}
+                </pre>
+              ) : null}
+            </div>
+          );
+        })}
+      </ASpace>
+    );
+  }
+
+  return (
+    <div className="h-full min-h-500px min-w-0 flex flex-col gap-16px overflow-x-hidden overflow-y-auto">
+      <ARow
+        className="min-w-0"
+        gutter={[16, 16]}
+        align="stretch"
+      >
         <ACol
           lg={12}
           span={24}
+          className="min-w-0 flex"
         >
-          <ACard title="前端 → 后端">
+          <ACard
+            className={`${PANEL_CLASS} card-wrapper`}
+            title="连接概览"
+            extra={<ATag color={canOperate ? 'success' : 'default'}>{stateLabels[state]}</ATag>}
+          >
+            <ASpace
+              className="w-full"
+              orientation="vertical"
+              size={14}
+            >
+              <Flex
+                align="center"
+                gap={8}
+              >
+                <ABadge status={getConnectionBadgeStatus(state)} />
+                <ATypography.Text className="text-20px font-700 tracking-tight">{stateLabels[state]}</ATypography.Text>
+              </Flex>
+              <ADescriptions
+                column={1}
+                size="small"
+                items={[
+                  {
+                    key: 'connection',
+                    label: '连接 ID',
+                    children: readyInfo ? (
+                      <Flex
+                        align="center"
+                        gap={4}
+                      >
+                        <ATypography.Text className="font-mono">{readyInfo.connectionId}</ATypography.Text>
+                        <ButtonIcon
+                          aria-label="复制连接 ID"
+                          className="h-26px w-26px rounded-6px text-13px"
+                          icon="ph:copy"
+                          tooltipContent="复制连接 ID"
+                          onClick={() => copyText(readyInfo.connectionId, '连接 ID 已复制')}
+                        />
+                      </Flex>
+                    ) : (
+                      '未就绪，等待 ready 事件'
+                    )
+                  },
+                  { key: 'user', label: '用户', children: readyInfo ? `uid ${readyInfo.userId}` : '未就绪' },
+                  { key: 'transport', label: '传输', children: readyInfo?.transport || 'websocket' },
+                  {
+                    key: 'heartbeat',
+                    label: '心跳',
+                    children: (
+                      <Flex gap={8}>
+                        <ATypography.Text>25s / 10s</ATypography.Text>
+                        <ATag>配置值</ATag>
+                      </Flex>
+                    )
+                  },
+                  { key: 'close', label: '最近关闭', children: '—' }
+                ]}
+              />
+              <AAlert
+                description="这条连接由全应用共用，断开会同时影响通知中心。"
+                showIcon
+                type="warning"
+              />
+              <Space>
+                <AButton
+                  className={ACTION_CLASS}
+                  icon={<SvgIcon icon="ph:arrow-clockwise" />}
+                  onClick={() => {
+                    client.disconnect();
+                    client.connect();
+                  }}
+                  disabled={!envReady}
+                >
+                  重新连接
+                </AButton>
+                <AButton
+                  className={ACTION_CLASS}
+                  icon={<SvgIcon icon="ph:plugs" />}
+                  danger
+                  onClick={handleDisconnect}
+                  disabled={state === 'idle'}
+                >
+                  断开
+                </AButton>
+              </Space>
+            </ASpace>
+          </ACard>
+        </ACol>
+        <ACol
+          lg={12}
+          span={24}
+          className="min-w-0 flex"
+        >
+          <ACard
+            className={`${PANEL_CLASS} card-wrapper`}
+            title="环境自检"
+            extra={<ATag color={envReady ? 'success' : 'warning'}>{envReady ? '全部就绪' : '存在缺项'}</ATag>}
+          >
+            <ASpace
+              className="w-full"
+              orientation="vertical"
+              size={0}
+            >
+              {checks.map(item => (
+                <Flex
+                  align="start"
+                  className="border-b border-border-secondary py-10px last:border-b-0"
+                  gap={8}
+                  key={item.label}
+                >
+                  <ATypography.Text className={item.ok ? 'text-success' : 'text-danger'}>
+                    {item.ok ? '✓' : '×'}
+                  </ATypography.Text>
+                  <div className="min-w-0 flex-1">
+                    <ATypography.Text className="block">{item.label}</ATypography.Text>
+                    <ATypography.Text
+                      type="secondary"
+                      className="text-12px"
+                    >
+                      {item.ok ? item.note : item.fail}
+                    </ATypography.Text>
+                  </div>
+                  <ATypography.Text
+                    className="max-w-140px truncate font-mono text-12px"
+                    type="secondary"
+                  >
+                    {item.value}
+                  </ATypography.Text>
+                </Flex>
+              ))}
+              <AAlert
+                className="mt-12px"
+                description={
+                  envReady
+                    ? '全部就绪，连接地址可以安全拼装。完整地址不会展示。'
+                    : `缺少 ${checks.filter(item => !item.ok).length} 项，连接不会发起。`
+                }
+                showIcon
+                type={envReady ? 'info' : 'warning'}
+              />
+            </ASpace>
+          </ACard>
+        </ACol>
+      </ARow>
+
+      <ARow
+        className="min-w-0"
+        gutter={[16, 16]}
+        align="stretch"
+      >
+        <ACol
+          lg={12}
+          span={24}
+          className="min-w-0 flex"
+        >
+          <ACard
+            className={`${PANEL_CLASS} card-wrapper`}
+            title="上行命令"
+            extra={<ATypography.Text type="secondary">{DIRECT_SEND}</ATypography.Text>}
+          >
             <ASpace
               className="w-full"
               orientation="vertical"
               size={12}
             >
               <AInput
-                addonBefore="收件人"
-                placeholder="userId，多个用逗号隔开；群发时忽略"
+                className={CONTROL_CLASS}
                 value={recipients}
+                placeholder="收件人 userId，多个用逗号隔开"
+                addonBefore="收件人"
                 onChange={event => setRecipients(event.target.value)}
               />
+              <Select
+                className="w-full"
+                value={messageTemplate}
+                options={[
+                  { label: '通知消息', value: 'notification' },
+                  { label: '纯文本', value: 'text' },
+                  { label: '非法 JSON', value: 'invalid' }
+                ]}
+                onChange={value => {
+                  setMessageTemplate(value);
+                  setMessageBody(BODY_TEMPLATES[value]);
+                }}
+              />
               <AInput.TextArea
-                autoSize={{ maxRows: 10, minRows: 6 }}
+                className={CONTROL_CLASS}
+                autoSize={{ maxRows: 10, minRows: 7 }}
                 value={messageBody}
                 onChange={event => setMessageBody(event.target.value)}
               />
-              <ASpace size={8}>
+              <Space>
                 <AButton
-                  disabled={state !== 'connected'}
+                  className={ACTION_CLASS}
+                  icon={<SvgIcon icon="ph:paper-plane-tilt" />}
+                  disabled={!canOperate}
                   type="primary"
                   onClick={handleDirectSend}
                 >
                   定向发送
                 </AButton>
                 <AButton
-                  disabled={state !== 'connected'}
+                  className={ACTION_CLASS}
+                  icon={<SvgIcon icon="ph:megaphone" />}
+                  disabled={!canOperate}
                   onClick={handleBroadcast}
                 >
                   群发（仅超管）
                 </AButton>
-              </ASpace>
+              </Space>
+              <AAlert
+                description={`发给自己会原路发回；填别人可能被 403。${BROADCAST_SEND} 的范围由服务端决定。`}
+                type="info"
+              />
             </ASpace>
           </ACard>
         </ACol>
-
         <ACol
           lg={12}
           span={24}
+          className="min-w-0 flex"
         >
-          <ACard title="后端 → 前端">
+          <ACard
+            className={`${PANEL_CLASS} card-wrapper`}
+            title="后端推送"
+            extra={<ATypography.Text type="secondary">POST /websocket/push</ATypography.Text>}
+          >
             <ASpace
               className="w-full"
               orientation="vertical"
               size={12}
             >
+              <AInput
+                className={CONTROL_CLASS}
+                value={pushTitle}
+                addonBefore="标题"
+                onChange={event => setPushTitle(event.target.value)}
+              />
+              <Select
+                className="w-full"
+                value={pushType}
+                options={PUSH_TYPES.map(type => ({ label: type, value: type }))}
+                onChange={value => setPushType(value)}
+              />
               <AInput.TextArea
-                autoSize={{ maxRows: 6, minRows: 4 }}
+                className={CONTROL_CLASS}
+                autoSize={{ maxRows: 6, minRows: 5 }}
                 value={serverMessage}
                 onChange={event => setServerMessage(event.target.value)}
               />
               <AButton
+                className={ACTION_CLASS}
+                icon={<SvgIcon icon="ph:paper-plane-tilt" />}
                 loading={pushing}
                 type="primary"
                 onClick={handleServerPush}
               >
-                调用后端推送接口
+                调用推送接口
               </AButton>
+              <AAlert
+                description="同一账号挂着的另一条传输也会收到消息；local_connections 只统计当前实例。"
+                type="info"
+              />
             </ASpace>
           </ACard>
         </ACol>
       </ARow>
 
       <ACard
-        extra={
-          <AButton
-            disabled={logs.length === 0}
-            size="small"
-            onClick={() => setLogs([])}
+        className={`${EVENT_PANEL_CLASS} card-wrapper`}
+        title={
+          <Flex
+            align="center"
+            gap={8}
           >
-            清空
-          </AButton>
+            <span>事件流</span>
+            <ATypography.Text type="secondary">最近 {logs.length} 条</ATypography.Text>
+          </Flex>
         }
-        title="收发记录"
+        extra={
+          <Flex
+            align="center"
+            gap={4}
+          >
+            <ButtonIcon
+              aria-label={paused ? '继续接收事件' : '暂停接收事件'}
+              className="h-30px w-30px rounded-6px text-15px"
+              icon={paused ? 'ph:play' : 'ph:pause'}
+              tooltipContent={paused ? '继续接收事件' : '暂停接收事件'}
+              onClick={handlePauseChange}
+            />
+            <ButtonIcon
+              aria-label="复制筛选结果"
+              className="h-30px w-30px rounded-6px text-15px"
+              icon="ph:copy"
+              tooltipContent="复制筛选结果"
+              disabled={filteredLogs.length === 0}
+              onClick={() => copyText(filteredLogs.map(item => item.message).join('\n\n'), '筛选结果已复制')}
+            />
+            <ButtonIcon
+              aria-label="清空事件流"
+              className="h-30px w-30px rounded-6px text-15px"
+              icon="ph:trash"
+              tooltipContent="清空事件流"
+              disabled={logs.length === 0}
+              onClick={() => setLogs([])}
+            />
+          </Flex>
+        }
       >
-        {logs.length === 0 ? (
-          <AEmpty description="暂无 WebSocket 事件" />
-        ) : (
-          <AList
-            dataSource={logs}
-            renderItem={item => (
-              <AList.Item>
-                <ASpace>
-                  <ATag color={directionColors[item.direction]}>{directionLabels[item.direction]}</ATag>
-                  <span className="text-tertiary">{new Date(item.timestamp).toLocaleTimeString()}</span>
-                  {item.type ? <ATag>{item.type}</ATag> : null}
-                  <span className="break-all">{item.message}</span>
-                </ASpace>
-              </AList.Item>
-            )}
+        <Flex
+          align="center"
+          className="mb-12px rounded-6px bg-layout px-10px py-8px"
+          gap={8}
+          wrap="wrap"
+        >
+          <Select
+            className="min-w-120px"
+            value={directionFilter}
+            options={[
+              { label: '全部方向', value: 'all' },
+              { label: '发送', value: 'out' },
+              { label: '接收', value: 'in' },
+              { label: '状态', value: 'system' }
+            ]}
+            onChange={value => setDirectionFilter(value)}
           />
-        )}
+          <Select
+            className="min-w-150px"
+            value={typeFilter}
+            options={[
+              { label: '全部类型', value: 'all' },
+              ...availableTypes.map(type => ({ label: type, value: type }))
+            ]}
+            onChange={value => setTypeFilter(value)}
+          />
+          <ATypography.Text type="secondary">
+            {paused
+              ? `已暂停${pausedLogs.length ? `，待处理 ${pausedLogs.length} 条` : ''}`
+              : `显示 ${filteredLogs.length} 条`}
+          </ATypography.Text>
+        </Flex>
+        {renderEventContent()}
+        {logs.length >= MAX_LOGS ? (
+          <AAlert
+            className="mt-12px"
+            description={`已达上限，仅保留最近 ${MAX_LOGS} 条，更早记录已淘汰。`}
+            type="warning"
+          />
+        ) : null}
       </ACard>
-    </ASpace>
+    </div>
   );
 };
 
 export const Route = createFileRoute('/(admin)/websocket-test/')({
   component: WebSocketTest,
-  staticData: {
-    menu: {
-      icon: 'mdi:connection',
-      order: 20
-    },
-    title: 'WebSocket 测试',
-    requiresAuth: false
-  }
+  staticData: { menu: { icon: 'mdi:connection', order: 20 }, title: 'WebSocket 测试', requiresAuth: false }
 });

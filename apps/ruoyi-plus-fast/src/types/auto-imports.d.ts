@@ -6,12 +6,14 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const AAlert: typeof import('antd').Alert
   const ABadge: typeof import('antd').Badge
   const AButton: typeof import('antd').Button
   const ACard: typeof import('antd').Card
   const ACheckbox: typeof import('antd').Checkbox
   const ACol: typeof import('antd').Col
   const AConfigProvider: typeof import('antd').ConfigProvider
+  const ADescriptions: typeof import('antd').Descriptions
   const ADivider: typeof import('antd').Divider
   const AEmpty: typeof import('antd').Empty
   const AForm: typeof import('antd').Form
@@ -21,6 +23,7 @@ declare global {
   const ASegmented: typeof import('antd').Segmented
   const ASpace: typeof import('antd').Space
   const ATag: typeof import('antd').Tag
+  const ATypography: typeof import('antd').Typography
   const Activity: typeof import('react').Activity
   const Fragment: typeof import('react').Fragment
   const IconLocalLogo: typeof import('~icons/local/logo.tsx').default
