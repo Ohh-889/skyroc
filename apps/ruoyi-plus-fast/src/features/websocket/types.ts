@@ -1,5 +1,6 @@
-/** 连接状态。握手成功只算 connecting，收到服务端的就绪消息才算 connected。 */
-export type ConnectionState = 'connected' | 'connecting' | 'disconnected' | 'idle';
+import type { ConnectionState } from '@/features/realtime/state';
+
+export type { ConnectionState };
 
 export interface WebSocketClientOptions {
   /** 首次重连延迟，之后按 2 的幂次增长，默认 1000。 */
@@ -7,8 +8,7 @@ export interface WebSocketClientOptions {
   /**
    * 取本次连接的完整地址，每次连接和重连都会调。
    *
-   * 返回 null 表示现在还不能连（比如没有令牌）。做成函数而不是传字符串，是为了让重连
-   * 自动带上最新令牌 —— 令牌一变就重建整个客户端会白白断掉一条健康的连接。
+   * 返回 null 表示现在还不能连（比如没有令牌）。做成函数而不是传字符串，是为了让重连 自动带上最新令牌 —— 令牌一变就重建整个客户端会白白断掉一条健康的连接。
    */
   getUrl: () => string | null;
   /** 心跳发送间隔，默认 25000。 */
@@ -24,8 +24,7 @@ export interface WebSocketClientOptions {
   /**
    * 收到「令牌过期」关闭码时怎么续签，返回是否换到了新令牌。
    *
-   * 不配的话 4001 退化成普通重连，会拿着同一张过期令牌反复被拒。配了就先等续签完再连，
-   * 省掉那一轮注定失败的重试。
+   * 不配的话 4001 退化成普通重连，会拿着同一张过期令牌反复被拒。配了就先等续签完再连， 省掉那一轮注定失败的重试。
    */
   onTokenStale?: () => Promise<boolean>;
   /** 认出服务端的就绪消息并解出负载，返回 null 表示这条不是就绪消息。 */

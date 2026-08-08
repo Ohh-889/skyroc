@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ServerCloseCode } from '@/features/realtime/close-codes';
 
 import { SseClient } from './client';
-import type { SseClientOptions } from './client';
+import type { ConnectionState, SseClientOptions } from './types';
 
 /** 造一个能从外部决定何时完成的续签，用来观察「续签还没回来」这段时间里的行为。 */
 function createDeferredRefresh() {
@@ -59,6 +59,12 @@ class FakeEventSource {
     this.listeners[type]?.forEach(listener => listener({ data }));
   }
 
+  /** 模拟浏览器报错：readyState 决定它接下来还重不重试。 */
+  fail(readyState: number) {
+    this.readyState = readyState;
+    this.dispatch('error', '');
+  }
+
   /** 模拟服务端下发 close 事件（SSE 没有关闭帧，用一条事件代替）。 */
   serverClose(code: number, reason = '') {
     this.dispatch('close', JSON.stringify({ code, reason }));
@@ -77,13 +83,27 @@ const createdClients: SseClient[] = [];
 function createClient(overrides: Partial<SseClientOptions> = {}) {
   const client = new SseClient({
     getUrl: () => 'http://localhost/sse?token=t1',
-    onMessage: vi.fn(),
     ...overrides
   });
 
   createdClients.push(client);
 
   return client;
+}
+
+/** 连上并收到就绪消息，多数用例的起点。 */
+function connectReady(client: SseClient) {
+  client.connect();
+  FakeEventSource.last.dispatch('ready', READY_FRAME);
+}
+
+/** 记下状态变化的顺序，断言状态机时比逐次读快照清楚。 */
+function trackStates(client: SseClient) {
+  const states: ConnectionState[] = [];
+
+  client.on('stateChange', next => states.push(next));
+
+  return states;
 }
 
 beforeEach(() => {
@@ -93,7 +113,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  createdClients.forEach(client => client.disconnect());
+  createdClients.forEach(client => client.destroy());
   createdClients.length = 0;
   vi.useRealTimers();
   vi.unstubAllGlobals();
@@ -107,6 +127,7 @@ describe('连接', () => {
     client.connect();
 
     expect(FakeEventSource.instances).toHaveLength(0);
+    expect(client.getSnapshot()).toBe('idle');
   });
 
   it('重复 connect 不会再建一条', () => {
@@ -118,54 +139,100 @@ describe('连接', () => {
     expect(FakeEventSource.instances).toHaveLength(1);
   });
 
-  it('ready 事件解出连接信息', () => {
-    const onReady = vi.fn();
-    const client = createClient({ onReady });
+  it('建好流只算连接中，收到 ready 才算连上', () => {
+    const client = createClient();
+    const states = trackStates(client);
 
     client.connect();
+    expect(client.getSnapshot()).toBe('connecting');
+
     FakeEventSource.last.dispatch('ready', READY_FRAME);
 
-    expect(onReady).toHaveBeenCalledWith({ connection_id: 'c1', transport: 'sse', user_id: 1 });
+    expect(states).toEqual(['connecting', 'connected']);
   });
 
-  it('业务消息原样交给 onMessage', () => {
-    const onMessage = vi.fn();
-    const client = createClient({ onMessage });
+  it('ready 事件解出连接信息', () => {
+    const onReady = vi.fn();
+    const client = createClient();
 
-    client.connect();
+    client.on('ready', onReady);
+    connectReady(client);
+
+    expect(onReady).toHaveBeenCalledWith({ connection_id: 'c1', transport: 'sse', user_id: 1 });
+    expect(client.getConnectionId()).toBe('c1');
+  });
+
+  it('状态变成 connected 时连接 ID 已经能读到', () => {
+    const client = createClient();
+    const seen: (string | null)[] = [];
+
+    client.on('stateChange', () => seen.push(client.getConnectionId()));
+    connectReady(client);
+
+    expect(seen).toEqual([null, 'c1']);
+  });
+
+  it('业务消息原样派发给订阅方', () => {
+    const onMessage = vi.fn();
+    const client = createClient();
+
+    client.on('message', onMessage);
+    connectReady(client);
     FakeEventSource.last.dispatch('message', '{"code":"0000"}');
 
     expect(onMessage).toHaveBeenCalledWith('{"code":"0000"}');
   });
 
-  it('主动断开会关掉底层连接', () => {
+  it('一条消息可以有多个订阅方', () => {
+    const first = vi.fn();
+    const second = vi.fn();
     const client = createClient();
 
-    client.connect();
+    client.on('message', first);
+    const off = client.on('message', second);
+    connectReady(client);
+    FakeEventSource.last.dispatch('message', 'a');
+    off();
+    FakeEventSource.last.dispatch('message', 'b');
+
+    expect(first.mock.calls).toEqual([['a'], ['b']]);
+    expect(second.mock.calls).toEqual([['a']]);
+  });
+
+  it('主动断开会关掉底层连接并清掉连接 ID', () => {
+    const client = createClient();
+
+    connectReady(client);
     const source = FakeEventSource.last;
     client.disconnect();
 
     expect(source.closed).toBe(true);
+    expect(client.getSnapshot()).toBe('disconnected');
+    expect(client.getConnectionId()).toBeNull();
   });
 });
 
 describe('服务端结束连接', () => {
   it('收到 1008 要关掉，否则 EventSource 会无限重试', () => {
+    const onAuthFailed = vi.fn();
     const client = createClient();
 
-    client.connect();
+    client.on('authFailed', onAuthFailed);
+    connectReady(client);
     const source = FakeEventSource.last;
     source.serverClose(ServerCloseCode.POLICY_VIOLATION, '登录状态已失效');
 
     expect(source.closed).toBe(true);
     expect(FakeEventSource.instances).toHaveLength(1);
+    expect(onAuthFailed).toHaveBeenCalledWith({ code: 1008, reason: '登录状态已失效' });
+    expect(client.getSnapshot()).toBe('disconnected');
   });
 
   it('收到 4001 先停掉自动重连，再续签重连', async () => {
     const onTokenStale = vi.fn(async () => true);
     const client = createClient({ onTokenStale });
 
-    client.connect();
+    connectReady(client);
     const stale = FakeEventSource.last;
     stale.serverClose(ServerCloseCode.TOKEN_STALE, '登录已过期');
     await vi.advanceTimersByTimeAsync(0);
@@ -185,7 +252,7 @@ describe('服务端结束连接', () => {
       }
     });
 
-    client.connect();
+    connectReady(client);
     FakeEventSource.last.serverClose(ServerCloseCode.TOKEN_STALE);
     await vi.advanceTimersByTimeAsync(0);
 
@@ -195,17 +262,18 @@ describe('服务端结束连接', () => {
   it('续签失败就停在断开状态，不拿旧令牌空转', async () => {
     const client = createClient({ onTokenStale: async () => false });
 
-    client.connect();
+    connectReady(client);
     FakeEventSource.last.serverClose(ServerCloseCode.TOKEN_STALE);
     await vi.advanceTimersByTimeAsync(60_000);
 
     expect(FakeEventSource.instances).toHaveLength(1);
+    expect(client.getSnapshot()).toBe('disconnected');
   });
 
   it('没配续签钩子时也要停下来，而不是带着过期令牌一直重试', async () => {
     const client = createClient();
 
-    client.connect();
+    connectReady(client);
     const source = FakeEventSource.last;
     source.serverClose(ServerCloseCode.TOKEN_STALE);
     await vi.advanceTimersByTimeAsync(60_000);
@@ -218,7 +286,7 @@ describe('服务端结束连接', () => {
     const refresh = createDeferredRefresh();
     const client = createClient({ onTokenStale: refresh.start });
 
-    client.connect();
+    connectReady(client);
     FakeEventSource.last.serverClose(ServerCloseCode.TOKEN_STALE);
     client.disconnect();
     refresh.finish(true);
@@ -228,41 +296,74 @@ describe('服务端结束连接', () => {
   });
 
   it('其他关闭码交给 EventSource 自己重连，不插手', () => {
-    const onClose = vi.fn();
-    const client = createClient({ onClose });
+    const onClosed = vi.fn();
+    const client = createClient();
 
-    client.connect();
+    client.on('closed', onClosed);
+    connectReady(client);
     const source = FakeEventSource.last;
     source.serverClose(1011, '服务异常');
 
-    expect(onClose).toHaveBeenCalledWith({ code: 1011, reason: '服务异常' });
+    expect(onClosed).toHaveBeenCalledWith({ code: 1011, reason: '服务异常' });
     expect(source.closed).toBe(false);
   });
 });
 
 describe('连接错误', () => {
-  it('浏览器还会重试时如实告知调用方', () => {
+  it('浏览器还会重试时退回连接中，等新的 ready', () => {
     const onError = vi.fn();
-    const client = createClient({ onError });
+    const client = createClient();
 
-    client.connect();
-    const source = FakeEventSource.last;
-    source.readyState = FakeEventSource.CONNECTING;
-    source.dispatch('error', '');
+    client.on('error', onError);
+    connectReady(client);
+    FakeEventSource.last.fail(FakeEventSource.CONNECTING);
 
     expect(onError).toHaveBeenCalledWith(true);
+    expect(client.getSnapshot()).toBe('connecting');
+    expect(client.getConnectionId()).toBeNull();
   });
 
-  it('浏览器放弃时关掉连接并告知不会重试', () => {
+  it('浏览器放弃时关掉连接并转成断开', () => {
     const onError = vi.fn();
-    const client = createClient({ onError });
+    const client = createClient();
 
+    client.on('error', onError);
     client.connect();
     const source = FakeEventSource.last;
-    source.readyState = FakeEventSource.CLOSED;
-    source.dispatch('error', '');
+    source.fail(FakeEventSource.CLOSED);
 
     expect(onError).toHaveBeenCalledWith(false);
     expect(source.closed).toBe(true);
+    expect(client.getSnapshot()).toBe('disconnected');
+  });
+});
+
+describe('订阅', () => {
+  it('订阅方抛错不影响别的订阅方', () => {
+    const later = vi.fn();
+    const client = createClient();
+
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    client.on('message', () => {
+      throw new Error('订阅方炸了');
+    });
+    client.on('message', later);
+    connectReady(client);
+    FakeEventSource.last.dispatch('message', 'a');
+
+    expect(later).toHaveBeenCalledWith('a');
+  });
+
+  it('destroy 之后不再收到任何事件', () => {
+    const onMessage = vi.fn();
+    const client = createClient();
+
+    client.on('message', onMessage);
+    connectReady(client);
+    const source = FakeEventSource.last;
+    client.destroy();
+    source.dispatch('message', 'a');
+
+    expect(onMessage).not.toHaveBeenCalled();
   });
 });
