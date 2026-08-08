@@ -7,7 +7,13 @@
   "empty": "No notifications",
   "markAllRead": "Mark All Read",
   "message": "Message",
+  "priority": {
+    "high": "High",
+    "urgent": "Urgent"
+  },
   "sound": "Notification Sound",
   "system": "System",
-  "title": "Notification Center"
+  "title": "Notification Center",
+  "unread": "Unread",
+  "viewAll": "View All Notifications"
 }

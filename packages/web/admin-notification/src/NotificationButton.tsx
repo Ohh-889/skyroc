@@ -13,12 +13,14 @@ import { useNotificationContext } from './useNotificationContext';
 export interface NotificationButtonProps {
   /** Extra class name applied to the icon button. */
   className?: string;
+  /** Jump handler of the notification center entry. The panel footer is hidden when the host does not pass it. */
+  onViewAll?: () => void;
   /** Inline style forwarded to the icon button. */
   style?: CSSProperties;
 }
 
 const NotificationButtonBase = (props: NotificationButtonProps) => {
-  const { className, style } = props;
+  const { className, onViewAll, style } = props;
 
   const { t } = useTranslation();
   const { clearAllNotifications, markAllAsRead, markAsRead, notifications, removeNotification, unreadCount } =
@@ -50,6 +52,11 @@ const NotificationButtonBase = (props: NotificationButtonProps) => {
     setOpen(false);
   }
 
+  function handleViewAll() {
+    setOpen(false);
+    onViewAll?.();
+  }
+
   return (
     <Dropdown
       open={open}
@@ -62,6 +69,7 @@ const NotificationButtonBase = (props: NotificationButtonProps) => {
           onDelete={handleDelete}
           onItemClick={handleNotificationClick}
           onMarkAllRead={handleMarkAllRead}
+          onViewAll={onViewAll && handleViewAll}
         />
       )}
       trigger={['click']}

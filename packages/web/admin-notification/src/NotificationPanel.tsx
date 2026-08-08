@@ -1,16 +1,18 @@
 import { ButtonIcon } from '@skyroc/web-ui-antd';
-import { DarkModeContainer } from '@skyroc/web-ui-compose';
-import { Badge, Button, Empty, List, Tag } from 'antd';
+import { DarkModeContainer, SvgIcon } from '@skyroc/web-ui-compose';
+import { Badge, Button, Empty, Flex, Segmented, Tag, Typography } from 'antd';
 import { clsx } from 'clsx';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { memo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { NotificationItem, NotificationType } from './types';
+import type { NotificationItem, NotificationPriority, NotificationType } from './types';
 
 dayjs.extend(relativeTime);
+
+const { Paragraph, Text } = Typography;
 
 export interface NotificationPanelProps {
   /** Notifications rendered in the panel list. */
@@ -23,15 +25,27 @@ export interface NotificationPanelProps {
   onItemClick: (id: string) => void;
   /** Mark-all-read command handler. */
   onMarkAllRead: () => void;
+  /** Jump handler of the notification center entry. The footer is hidden when the host does not pass it. */
+  onViewAll?: () => void;
   /** Current unread notification count. */
   unreadCount: number;
 }
 
+/** 面板顶部的筛选，只分全部和未读，更细的分类留给通知中心页面。 */
+type PanelFilter = 'all' | 'unread';
+
 interface NotificationTypeConfig {
-  /** Static UnoCSS text color class for the category icon. */
-  colorClassName: string;
+  /** 图标块的底色与图标色，取调色板的浅色档，明暗两套主题都跟着变。 */
+  chipClassName: string;
   /** Iconify icon name for the category. */
   icon: string;
+}
+
+interface PriorityTagConfig {
+  /** Ant Design 语义色名。 */
+  color: string;
+  /** 优先级文案的翻译键。 */
+  labelKey: 'notification.priority.high' | 'notification.priority.urgent';
 }
 
 interface NotificationItemProps {
@@ -45,44 +59,46 @@ interface NotificationItemProps {
 
 const NOTIFICATION_TYPE_CONFIG: Record<NotificationType, NotificationTypeConfig> = {
   error: {
-    colorClassName: 'text-red',
+    chipClassName: 'bg-error-50 text-error',
     icon: 'carbon:close-filled'
   },
   info: {
-    colorClassName: 'text-blue',
+    chipClassName: 'bg-info-50 text-info',
     icon: 'carbon:information-filled'
   },
   message: {
-    colorClassName: 'text-purple',
+    chipClassName: 'bg-purple-50 text-purple',
     icon: 'carbon:chat'
   },
   success: {
-    colorClassName: 'text-green',
+    chipClassName: 'bg-success-50 text-success',
     icon: 'carbon:checkmark-filled'
   },
   warning: {
-    colorClassName: 'text-orange',
+    chipClassName: 'bg-warning-50 text-warning',
     icon: 'carbon:warning-filled'
   }
 };
 
-function getPriorityColor(priority: NotificationItem['priority']) {
-  if (priority === 'urgent') {
-    return 'red';
+/** 只有紧急和高优先级值得占一个标签，普通和低优先级留白反而更清爽。 */
+const PRIORITY_TAG_CONFIG: Partial<Record<NotificationPriority, PriorityTagConfig>> = {
+  high: {
+    color: 'warning',
+    labelKey: 'notification.priority.high'
+  },
+  urgent: {
+    color: 'error',
+    labelKey: 'notification.priority.urgent'
   }
-
-  if (priority === 'high') {
-    return 'orange';
-  }
-
-  return 'default';
-}
+};
 
 const NotificationItemComponentBase = (props: NotificationItemProps) => {
   const { item, onClick, onDelete } = props;
 
-  const config = NOTIFICATION_TYPE_CONFIG[item.type];
-  const priorityColor = getPriorityColor(item.priority);
+  const { t } = useTranslation();
+
+  const typeConfig = NOTIFICATION_TYPE_CONFIG[item.type];
+  const priorityTag = item.priority ? PRIORITY_TAG_CONFIG[item.priority] : undefined;
 
   function handleClick() {
     onClick(item.id);
@@ -94,127 +110,196 @@ const NotificationItemComponentBase = (props: NotificationItemProps) => {
   }
 
   return (
-    <List.Item
-      className={clsx('cursor-pointer transition-all hover:bg-layout px-16px! py-12px!', !item.read && 'bg-primary-50')}
+    <div
+      className={clsx(
+        'group relative cursor-pointer border-b border-border px-16px py-12px transition-colors last:border-b-0',
+        item.read ? 'hover:bg-layout' : 'bg-primary-50 hover:bg-primary-100'
+      )}
       onClick={handleClick}
     >
-      <div className="w-full flex gap-12px">
-        <div className="shrink-0 pt-2px">
-          <span className={clsx(config.colorClassName, 'text-24px')}>
-            <span className={config.icon} />
-          </span>
+      {!item.read && <span className="absolute-lt h-full w-2px bg-primary" />}
+
+      <Flex
+        align="flex-start"
+        className="w-full"
+        gap={12}
+      >
+        <div className={clsx('h-32px w-32px shrink-0 flex-center rounded-lg text-lg', typeConfig.chipClassName)}>
+          <SvgIcon icon={typeConfig.icon} />
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="mb-4px flex-y-center gap-8px">
-            <h4 className="m-0 flex-1 truncate text-14px font-semibold">{item.title}</h4>
-            {!item.read && (
-              <div
-                className="h-8px w-8px shrink-0 rounded-full bg-primary"
-                title="unread"
-              />
-            )}
-          </div>
+          <Flex
+            align="center"
+            gap={6}
+          >
+            <Text
+              ellipsis
+              strong
+              className="min-w-0 text-sm"
+            >
+              {item.title}
+            </Text>
 
-          <p className="line-clamp-2 m-0 text-13px text-secondary">{item.content}</p>
+            {!item.read && <span className="h-6px w-6px shrink-0 rounded-full bg-primary" />}
+          </Flex>
 
-          <div className="mt-8px flex-y-center justify-between">
-            <span className="text-12px text-tertiary">{dayjs(item.timestamp).fromNow()}</span>
+          <Paragraph
+            className="mb-0! mt-4px! text-xs"
+            ellipsis={{ rows: 2 }}
+            type="secondary"
+          >
+            {item.content}
+          </Paragraph>
 
-            {item.priority && item.priority !== 'normal' && (
+          <Flex
+            align="center"
+            className="mt-8px"
+            gap={8}
+          >
+            <Text
+              className="text-xs"
+              type="secondary"
+            >
+              {dayjs(item.timestamp).fromNow()}
+            </Text>
+
+            {priorityTag && (
               <Tag
+                className="m-0!"
+                color={priorityTag.color}
                 variant="filled"
-                color={priorityColor}
               >
-                {item.priority}
+                {t(priorityTag.labelKey)}
               </Tag>
             )}
-          </div>
+          </Flex>
         </div>
 
-        <div className="shrink-0">
-          <ButtonIcon
-            className="h-24px! w-24px!"
-            hoverAnimation="rotate"
-            icon="carbon:close"
-            onClick={handleDelete}
-          />
-        </div>
-      </div>
-    </List.Item>
+        <ButtonIcon
+          className="h-24px! w-24px! opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
+          hoverAnimation="rotate"
+          icon="carbon:close"
+          onClick={handleDelete}
+        />
+      </Flex>
+    </div>
   );
 };
 
 const NotificationItemComponent = memo(NotificationItemComponentBase);
 
 const NotificationPanelBase = (props: NotificationPanelProps) => {
-  const { notifications, onClearAll, onDelete, onItemClick, onMarkAllRead, unreadCount } = props;
+  const { notifications, onClearAll, onDelete, onItemClick, onMarkAllRead, onViewAll, unreadCount } = props;
 
   const { t } = useTranslation();
 
-  function renderNotificationItem(item: NotificationItem) {
-    return (
-      <NotificationItemComponent
-        item={item}
-        onClick={onItemClick}
-        onDelete={onDelete}
-      />
-    );
-  }
+  const [filter, setFilter] = useState<PanelFilter>('all');
+
+  const visibleNotifications = useMemo(
+    () => (filter === 'unread' ? notifications.filter(item => !item.read) : notifications),
+    [filter, notifications]
+  );
+
+  const filterOptions: { label: string; value: PanelFilter }[] = [
+    { label: `${t('notification.all')} ${notifications.length}`, value: 'all' },
+    { label: `${t('notification.unread')} ${unreadCount}`, value: 'unread' }
+  ];
 
   return (
-    <DarkModeContainer className="w-400px rounded-8px shadow-md">
-      <div className="flex-y-center justify-between border-b border-border px-16px py-12px">
-        <div className="flex-y-center gap-8px">
-          <h3 className="m-0 text-16px font-semibold">{t('notification.title')}</h3>
-          {unreadCount > 0 && (
-            <Badge
-              count={unreadCount}
-              overflowCount={99}
-              showZero={false}
-            />
-          )}
-        </div>
+    <DarkModeContainer className="w-390px overflow-hidden border border-border rounded-lg shadow-float">
+      <Flex
+        align="center"
+        className="border-b border-border px-16px py-12px"
+        justify="space-between"
+      >
+        <Flex
+          align="center"
+          gap={8}
+        >
+          <Text
+            strong
+            className="text-md"
+          >
+            {t('notification.title')}
+          </Text>
 
-        <div className="flex-y-center gap-8px">
-          {unreadCount > 0 && (
-            <Button
-              size="small"
-              type="text"
-              onClick={onMarkAllRead}
-            >
-              {t('notification.markAllRead')}
-            </Button>
-          )}
-          {notifications.length > 0 && (
-            <Button
-              danger
-              size="small"
-              type="text"
-              onClick={onClearAll}
-            >
-              {t('notification.clearAll')}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="admin-notification-panel-scroll max-h-500px overflow-y-auto">
-        {notifications.length === 0 ? (
-          <div className="py-40px">
-            <Empty
-              description={t('notification.empty')}
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
-          </div>
-        ) : (
-          <List
-            dataSource={notifications}
-            renderItem={renderNotificationItem}
-            size="small"
+          <Badge
+            count={unreadCount}
+            overflowCount={99}
+            showZero={false}
           />
+        </Flex>
+
+        <Button
+          color="primary"
+          disabled={unreadCount === 0}
+          icon={<SvgIcon icon="carbon:checkmark" />}
+          size="small"
+          variant="link"
+          onClick={onMarkAllRead}
+        >
+          {t('notification.markAllRead')}
+        </Button>
+      </Flex>
+
+      <Flex
+        align="center"
+        className="border-b border-border bg-layout px-16px py-8px"
+        justify="space-between"
+      >
+        <Segmented
+          options={filterOptions}
+          size="small"
+          value={filter}
+          onChange={setFilter}
+        />
+
+        <Button
+          danger
+          disabled={notifications.length === 0}
+          size="small"
+          type="text"
+          onClick={onClearAll}
+        >
+          {t('notification.clearAll')}
+        </Button>
+      </Flex>
+
+      <div className="admin-notification-panel-scroll max-h-420px overflow-y-auto">
+        {visibleNotifications.length === 0 ? (
+          <Empty
+            className="py-40px"
+            description={t('notification.empty')}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        ) : (
+          visibleNotifications.map(item => (
+            <NotificationItemComponent
+              item={item}
+              key={item.id}
+              onClick={onItemClick}
+              onDelete={onDelete}
+            />
+          ))
         )}
       </div>
+
+      {onViewAll && (
+        <div className="border-t border-border px-16px py-8px">
+          <Button
+            block
+            color="primary"
+            icon={<SvgIcon icon="carbon:arrow-right" />}
+            iconPosition="end"
+            size="small"
+            variant="link"
+            onClick={onViewAll}
+          >
+            {t('notification.viewAll')}
+          </Button>
+        </div>
+      )}
     </DarkModeContainer>
   );
 };
