@@ -95,10 +95,7 @@ const NotificationItemComponentBase = (props: NotificationItemProps) => {
 
   return (
     <List.Item
-      className={clsx(
-        'cursor-pointer transition-all hover:bg-layout px-16px! py-12px!',
-        !item.read && 'bg-primary-50'
-      )}
+      className={clsx('cursor-pointer transition-all hover:bg-layout px-16px! py-12px!', !item.read && 'bg-primary-50')}
       onClick={handleClick}
     >
       <div className="w-full flex gap-12px">
@@ -111,7 +108,12 @@ const NotificationItemComponentBase = (props: NotificationItemProps) => {
         <div className="min-w-0 flex-1">
           <div className="mb-4px flex-y-center gap-8px">
             <h4 className="m-0 flex-1 truncate text-14px font-semibold">{item.title}</h4>
-            {!item.read && <div className="h-8px w-8px shrink-0 rounded-full bg-primary" title="unread" />}
+            {!item.read && (
+              <div
+                className="h-8px w-8px shrink-0 rounded-full bg-primary"
+                title="unread"
+              />
+            )}
           </div>
 
           <p className="line-clamp-2 m-0 text-13px text-secondary">{item.content}</p>
@@ -120,7 +122,10 @@ const NotificationItemComponentBase = (props: NotificationItemProps) => {
             <span className="text-12px text-tertiary">{dayjs(item.timestamp).fromNow()}</span>
 
             {item.priority && item.priority !== 'normal' && (
-              <Tag bordered={false} color={priorityColor}>
+              <Tag
+                variant="filled"
+                color={priorityColor}
+              >
                 {item.priority}
               </Tag>
             )}
@@ -128,7 +133,12 @@ const NotificationItemComponentBase = (props: NotificationItemProps) => {
         </div>
 
         <div className="shrink-0">
-          <ButtonIcon className="h-24px! w-24px!" hoverAnimation="rotate" icon="carbon:close" onClick={handleDelete} />
+          <ButtonIcon
+            className="h-24px! w-24px!"
+            hoverAnimation="rotate"
+            icon="carbon:close"
+            onClick={handleDelete}
+          />
         </div>
       </div>
     </List.Item>
@@ -143,7 +153,13 @@ const NotificationPanelBase = (props: NotificationPanelProps) => {
   const { t } = useTranslation();
 
   function renderNotificationItem(item: NotificationItem) {
-    return <NotificationItemComponent item={item} onClick={onItemClick} onDelete={onDelete} />;
+    return (
+      <NotificationItemComponent
+        item={item}
+        onClick={onItemClick}
+        onDelete={onDelete}
+      />
+    );
   }
 
   return (
@@ -151,17 +167,32 @@ const NotificationPanelBase = (props: NotificationPanelProps) => {
       <div className="flex-y-center justify-between border-b border-border px-16px py-12px">
         <div className="flex-y-center gap-8px">
           <h3 className="m-0 text-16px font-semibold">{t('notification.title')}</h3>
-          {unreadCount > 0 && <Badge count={unreadCount} overflowCount={99} showZero={false} />}
+          {unreadCount > 0 && (
+            <Badge
+              count={unreadCount}
+              overflowCount={99}
+              showZero={false}
+            />
+          )}
         </div>
 
         <div className="flex-y-center gap-8px">
           {unreadCount > 0 && (
-            <Button size="small" type="text" onClick={onMarkAllRead}>
+            <Button
+              size="small"
+              type="text"
+              onClick={onMarkAllRead}
+            >
               {t('notification.markAllRead')}
             </Button>
           )}
           {notifications.length > 0 && (
-            <Button danger size="small" type="text" onClick={onClearAll}>
+            <Button
+              danger
+              size="small"
+              type="text"
+              onClick={onClearAll}
+            >
               {t('notification.clearAll')}
             </Button>
           )}
@@ -171,10 +202,17 @@ const NotificationPanelBase = (props: NotificationPanelProps) => {
       <div className="admin-notification-panel-scroll max-h-500px overflow-y-auto">
         {notifications.length === 0 ? (
           <div className="py-40px">
-            <Empty description={t('notification.empty')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            <Empty
+              description={t('notification.empty')}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
           </div>
         ) : (
-          <List dataSource={notifications} renderItem={renderNotificationItem} size="small" />
+          <List
+            dataSource={notifications}
+            renderItem={renderNotificationItem}
+            size="small"
+          />
         )}
       </div>
     </DarkModeContainer>

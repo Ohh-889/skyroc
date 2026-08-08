@@ -1,78 +1,78 @@
-/** Notification visual category. */
+/** 通知的视觉分类。 */
 export type NotificationType = 'error' | 'info' | 'message' | 'success' | 'warning';
 
-/** Notification priority used by the panel metadata. */
+/** 通知在面板中展示的优先级。 */
 export type NotificationPriority = 'high' | 'low' | 'normal' | 'urgent';
 
-/** A notification item managed by the provider. */
+/** 由通知 Provider 管理的通知项。 */
 export interface NotificationItem {
-  /** Main message body shown in the notification panel. */
+  /** 在通知面板中展示的主要内容。 */
   content: string;
-  /** Optional browser notification icon URL. */
+  /** 浏览器原生通知使用的图标地址。 */
   icon?: string;
-  /** Stable notification id. */
+  /** 通知的稳定唯一标识。 */
   id: string;
-  /** Optional destination used when the browser notification is clicked. */
+  /** 点击浏览器通知后跳转的目标地址。 */
   link?: string;
-  /** Extra caller-owned metadata. */
+  /** 由调用方自定义的扩展元数据。 */
   meta?: Record<string, unknown>;
-  /** Priority hint rendered as a panel tag. */
+  /** 在面板标签中展示的优先级提示。 */
   priority?: NotificationPriority;
-  /** Whether the item has been read. */
+  /** 当前通知是否已读。 */
   read: boolean;
-  /** Whether this item should also create a browser notification. */
+  /** 是否同时创建浏览器原生通知。 */
   showBrowserNotification?: boolean;
-  /** Whether this item should skip the notification sound. */
+  /** 是否跳过通知音效。 */
   silent?: boolean;
-  /** Creation timestamp in milliseconds. */
+  /** 通知创建时间，使用毫秒时间戳。 */
   timestamp: number;
-  /** Notification title. */
+  /** 通知标题。 */
   title: string;
-  /** Visual category for icon and color. */
+  /** 用于确定图标和颜色的视觉分类。 */
   type: NotificationType;
 }
 
-/** Notification runtime configuration. */
+/** 通知运行时配置。 */
 export interface NotificationConfig {
-  /** Whether browser notifications are enabled. */
+  /** 是否启用浏览器原生通知。 */
   browserNotificationEnabled: boolean;
-  /** Whether do-not-disturb mode is enabled. */
+  /** 是否启用免打扰模式。 */
   doNotDisturb: boolean;
-  /** Local time range used by do-not-disturb mode. */
+  /** 免打扰模式使用的本地时间范围。 */
   doNotDisturbTime?: {
-    /** End time in HH:mm format. */
+    /** 结束时间，格式为 HH:mm。 */
     end: string;
-    /** Start time in HH:mm format. */
+    /** 开始时间，格式为 HH:mm。 */
     start: string;
   };
-  /** Maximum number of retained notifications. */
+  /** 最多保留的通知数量。 */
   maxNotifications: number;
-  /** Whether notification sound is enabled. */
+  /** 是否启用通知音效。 */
   soundEnabled: boolean;
 }
 
-/** Input used when creating a new notification. */
+/** 创建新通知时使用的输入类型。 */
 export type AddNotificationInput = Omit<NotificationItem, 'id' | 'read' | 'timestamp'> &
   Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
 
-/** Options shared by shortcut notification creators. */
+/** 各类快捷通知创建函数共用的可选参数。 */
 export type NotificationShortcutOptions = Partial<Omit<NotificationItem, 'content' | 'id' | 'read' | 'timestamp' | 'title' | 'type'>> &
   Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
 
-/** Options used by the notification state hook. */
+/** 通知状态 Hook 使用的配置项。 */
 export interface UseNotificationOptions {
-  /** Initial configuration merged with the package defaults. */
+  /** 初始配置，会与包内默认配置合并。 */
   defaultConfig?: Partial<NotificationConfig>;
-  /** Callback fired when a browser notification cannot be displayed. */
+  /** 浏览器通知无法显示时触发的回调。 */
   onBrowserNotificationError?: (error: unknown) => void;
-  /** Callback fired when the current browser has no Notification API. */
+  /** 当前浏览器不支持 Notification API 时触发的回调。 */
   onBrowserNotificationUnsupported?: () => void;
-  /** Callback fired when a browser notification link should be opened. */
+  /** 点击浏览器通知并需要打开链接时触发的回调。 */
   onNavigate?: (link: string, notification: NotificationItem) => void;
-  /** Callback fired when the notification sound cannot be played. */
+  /** 通知音效无法播放时触发的回调。 */
   onPlaySoundError?: (error: unknown) => void;
-  /** Callback fired when requesting notification permission fails. */
+  /** 请求浏览器通知权限失败时触发的回调。 */
   onRequestPermissionError?: (error: unknown) => void;
-  /** Optional notification sound URL owned by the host app. */
+  /** 宿主应用提供的可选通知音效地址。 */
   soundUrl?: string;
 }
