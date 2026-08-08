@@ -11,6 +11,7 @@ import wechatStyleNotification from './assets/audio/wechat-style-notification.wa
 import { globalConfig } from './config';
 import AntdProvider from './features/antd/AntdProvider';
 import GlobalEffect from './features/effects/GlobalEffect';
+import { getAppNotificationStore } from './features/notification/store';
 import { router } from './features/router';
 import RouterProvider from './features/router/RouterProvider';
 import { queryClient } from './service/queryClient';
@@ -37,7 +38,12 @@ const Devtools = () => {
 
   return (
     <Suspense fallback={null}>
-      <AdminDevtools config={config} queryClient={queryClient} router={router} store={globalStore} />
+      <AdminDevtools
+        config={config}
+        queryClient={queryClient}
+        router={router}
+        store={globalStore}
+      />
     </Suspense>
   );
 };
@@ -58,7 +64,10 @@ const Provider = (props: ProviderProps) => {
 const App = () => (
   <Provider>
     <AntdProvider>
-      <NotificationProvider soundUrl={wechatStyleNotification}>
+      <NotificationProvider
+        soundUrl={wechatStyleNotification}
+        store={getAppNotificationStore()}
+      >
         <LazyAnimate>
           <RouterProvider />
           <GlobalEffect />

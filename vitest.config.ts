@@ -34,7 +34,8 @@ const TESTED_PACKAGES = [
   'packages/@core/axios',
   'packages/@core/state',
   'packages/@core/scheduler',
-  'packages/@core/service'
+  'packages/@core/service',
+  'packages/web/admin-notification'
 ];
 const ROOT_SOURCE_PATTERNS = TESTED_PACKAGES.flatMap(pkg => SOURCE_PATTERNS.map(p => `${pkg}/${p}`));
 

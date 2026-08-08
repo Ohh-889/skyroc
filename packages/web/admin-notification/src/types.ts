@@ -1,3 +1,5 @@
+import type { NotificationStore } from './notification-store';
+
 /** 通知的视觉分类。 */
 export type NotificationType = 'error' | 'info' | 'message' | 'success' | 'warning';
 
@@ -56,12 +58,14 @@ export type AddNotificationInput = Omit<NotificationItem, 'id' | 'read' | 'times
   Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
 
 /** 各类快捷通知创建函数共用的可选参数。 */
-export type NotificationShortcutOptions = Partial<Omit<NotificationItem, 'content' | 'id' | 'read' | 'timestamp' | 'title' | 'type'>> &
+export type NotificationShortcutOptions = Partial<
+  Omit<NotificationItem, 'content' | 'id' | 'read' | 'timestamp' | 'title' | 'type'>
+> &
   Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
 
-/** 通知状态 Hook 使用的配置项。 */
-export interface UseNotificationOptions {
-  /** 初始配置，会与包内默认配置合并。 */
+/** 通知仓库的构造选项，全是宿主应用要注入的东西：音效地址和各种失败回调。 */
+export interface NotificationStoreOptions {
+  /** 初始配置，会与包内默认配置合并。仅构造时生效，之后改配置走 updateConfig。 */
   defaultConfig?: Partial<NotificationConfig>;
   /** 浏览器通知无法显示时触发的回调。 */
   onBrowserNotificationError?: (error: unknown) => void;
@@ -75,4 +79,26 @@ export interface UseNotificationOptions {
   onRequestPermissionError?: (error: unknown) => void;
   /** 宿主应用提供的可选通知音效地址。 */
   soundUrl?: string;
+}
+
+/** 通知状态 Hook 使用的配置项。 */
+export interface UseNotificationOptions extends NotificationStoreOptions {
+  /**
+   * 复用外部已有的通知仓库，不传则 Hook 自己建一个。
+   *
+   * 需要在 React 树之外投递通知（WebSocket、SSE 这类连接回调）时传：宿主自己持有单例，推送 那一侧直接调 store.add，不用再绕 Context 拿 addNotification。
+   */
+  store?: NotificationStore;
+}
+
+/** UseSyncExternalStore 读到的快照，写操作时整体重建一次，读的时候直接返回缓存。 */
+export interface NotificationSnapshot {
+  /** 当前生效的运行时配置。 */
+  config: NotificationConfig;
+  /** 按优先级排好序的通知列表。 */
+  notifications: NotificationItem[];
+  /** 浏览器原生通知的授权状态。 */
+  permission: NotificationPermission;
+  /** 未读通知数量。 */
+  unreadCount: number;
 }

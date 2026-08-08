@@ -76,11 +76,11 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@skyroc/utils": "workspace:*",
     "@skyroc/web-ui-antd": "workspace:*",
     "@skyroc/web-ui-compose": "workspace:*",
     "clsx": "catalog:utils",
-    "dayjs": "catalog:utils",
-    "nanoid": "catalog:utils"
+    "dayjs": "catalog:utils"
   },
   "peerDependencies": {
     "antd": ">=6.0.0",
