@@ -1,7 +1,7 @@
-import { useNotificationContext } from '@skyroc/web-admin-notification';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { getToken, useAuthToken } from '@/features/auth/use-auth';
+import { getAppNotificationStore } from '@/features/notification/store';
 import { parseRealtimeNotification } from '@/features/realtime/message';
 import { refreshAppToken } from '@/service/adapter';
 
@@ -29,9 +29,6 @@ function buildSseUrl(): string | null {
 
 const SseEffect = () => {
   const token = useAuthToken();
-  const { addNotification } = useNotificationContext();
-  const addNotificationRef = useRef(addNotification);
-  addNotificationRef.current = addNotification;
 
   const isLoggedIn = Boolean(token);
 
@@ -41,6 +38,8 @@ const SseEffect = () => {
     if (!isLoggedIn) {
       return;
     }
+
+    const notifications = getAppNotificationStore();
 
     const client = new SseClient({
       getUrl: buildSseUrl,
@@ -55,7 +54,7 @@ const SseEffect = () => {
         const notification = parseRealtimeNotification(message);
 
         if (notification) {
-          addNotificationRef.current(notification);
+          notifications.add(notification);
         }
       },
       onReady(payload) {

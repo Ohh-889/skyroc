@@ -104,7 +104,11 @@ function visiblePayload(data: unknown): unknown {
   return data;
 }
 
-/** 消息体没自带 id 时用服务端的 msg_id 兜底，让同一次投递在各条连接上拿到同一个 id。 */
+/**
+ * 消息体没自带 id 时用服务端的 msg_id 兜底，让同一次投递在各条连接上拿到同一个 id。
+ *
+ * 这个应用 WebSocket 和 SSE 是同时连着的，每条推送都会到两次，通知中心靠这个 id 去重。 拿不到 id 的那条（信封都没解出来）会被生成随机 id，等于放弃去重 —— 那种情况本来就该条条都看见。
+ */
 function withMsgId(notification: AddNotificationInput, msgId?: string): AddNotificationInput {
   if (!msgId || notification.id) {
     return notification;
@@ -152,7 +156,7 @@ export function parseRealtimeNotification(message: string): AddNotificationInput
     return null;
   }
   if (envelope.code !== RealtimeCode.SUCCESS) {
-    return fallbackNotification(envelope.msg, 'error');
+    return withMsgId(fallbackNotification(envelope.msg, 'error'), envelope.msg_id);
   }
 
   const payload = visiblePayload(envelope.data);

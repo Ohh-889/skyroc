@@ -1,16 +1,13 @@
-import { useNotificationContext } from '@skyroc/web-admin-notification';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { useAuthToken } from '@/features/auth/use-auth';
+import { getAppNotificationStore } from '@/features/notification/store';
 
 import { parseWebSocketNotification } from './message';
 import { getAppWebSocketClient } from './use-websocket';
 
 const WebSocketEffect = () => {
   const token = useAuthToken();
-  const { addNotification } = useNotificationContext();
-  const addNotificationRef = useRef(addNotification);
-  addNotificationRef.current = addNotification;
 
   const isLoggedIn = Boolean(token);
 
@@ -21,11 +18,13 @@ const WebSocketEffect = () => {
 
     const client = getAppWebSocketClient();
 
+    const notifications = getAppNotificationStore();
+
     const offMessage = client.on('message', raw => {
       const notification = parseWebSocketNotification(raw);
 
       if (notification) {
-        addNotificationRef.current(notification);
+        notifications.add(notification);
       }
     });
 
