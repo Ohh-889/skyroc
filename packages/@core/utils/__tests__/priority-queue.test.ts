@@ -6,7 +6,7 @@ type Task = { createdAt: number; priority: number; taskId: string };
 function createQueue() {
   return new PriorityQueue<Task>({
     getId: t => t.taskId,
-    compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt,
+    compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt
   });
 }
 
@@ -191,6 +191,161 @@ describe('PriorityQueue: removeBy', () => {
 
     expect(removed).toBe(0);
     expect(listener).not.toHaveBeenCalled();
+  });
+});
+
+// ==================== update / updateBy ====================
+
+describe('PriorityQueue: update', () => {
+  it('按 id 更新应替换掉原来的 item', () => {
+    const q = createQueue();
+
+    q.enqueue(task('a', 1));
+    const result = q.update('a', prev => ({ ...prev, priority: 9 }));
+
+    expect(result).toBe(true);
+    expect(q.get('a')?.priority).toBe(9);
+    expect(q.size).toBe(1);
+  });
+
+  it('更新不存在的 id 应返回 false 且不通知', () => {
+    const q = createQueue();
+    const listener = vi.fn();
+
+    q.subscribe(listener);
+    const result = q.update('nope', prev => prev);
+
+    expect(result).toBe(false);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('updater 原样返回入参时应算作没改动', () => {
+    const q = createQueue();
+    const listener = vi.fn();
+
+    q.enqueue(task('a', 1));
+    q.subscribe(listener);
+    const result = q.update('a', prev => prev);
+
+    expect(result).toBe(false);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('更新后应按新的优先级重排', () => {
+    const q = createQueue();
+
+    q.enqueue(task('a', 1));
+    q.enqueue(task('b', 2));
+    q.update('a', prev => ({ ...prev, priority: 99 }));
+
+    expect(q.toArray().map(t => t.taskId)).toEqual(['b', 'a']);
+  });
+
+  it('更新只通知一次，订阅方看不到中间状态', () => {
+    const q = createQueue();
+    const sizes: number[] = [];
+
+    q.enqueue(task('a', 1));
+    q.subscribe(sorted => sizes.push(sorted.length));
+    q.update('a', prev => ({ ...prev, priority: 2 }));
+
+    expect(sizes).toEqual([1]);
+  });
+});
+
+describe('PriorityQueue: updateBy', () => {
+  it('按条件批量更新应返回更新数量', () => {
+    const q = createQueue();
+
+    q.enqueue(task('a', 1));
+    q.enqueue(task('b', 5));
+    q.enqueue(task('c', 10));
+
+    const updated = q.updateBy(
+      t => t.priority >= 5,
+      t => ({ ...t, priority: 0 })
+    );
+
+    expect(updated).toBe(2);
+    expect(q.toArray().map(t => t.priority)).toEqual([0, 0, 1]);
+  });
+
+  it('无匹配时应返回 0 且不触发通知', () => {
+    const q = createQueue();
+    const listener = vi.fn();
+
+    q.enqueue(task('a', 1));
+    q.subscribe(listener);
+
+    const updated = q.updateBy(
+      () => false,
+      t => t
+    );
+
+    expect(updated).toBe(0);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('匹配上但 updater 原样返回的不计入更新数量', () => {
+    const q = createQueue();
+
+    q.enqueue(task('a', 1));
+    q.enqueue(task('b', 2));
+
+    const updated = q.updateBy(
+      () => true,
+      t => (t.taskId === 'a' ? { ...t, priority: 0 } : t)
+    );
+
+    expect(updated).toBe(1);
+  });
+});
+
+// ==================== capacity ====================
+
+describe('PriorityQueue: capacity', () => {
+  function createCappedQueue(capacity: number) {
+    return new PriorityQueue<Task>({
+      capacity,
+      compare: (a, b) => a.priority - b.priority,
+      getId: t => t.taskId
+    });
+  }
+
+  it('超出容量时应裁掉排序后末尾的项', () => {
+    const q = createCappedQueue(2);
+
+    q.enqueue(task('low', 10));
+    q.enqueue(task('high', 1));
+    q.enqueue(task('mid', 5));
+
+    expect(q.toArray().map(t => t.taskId)).toEqual(['high', 'mid']);
+  });
+
+  it('被裁掉的项也应从存储里删掉，has 查不到', () => {
+    const q = createCappedQueue(1);
+
+    q.enqueue(task('high', 1));
+    q.enqueue(task('low', 10));
+
+    expect(q.size).toBe(1);
+    expect(q.has('low')).toBe(false);
+  });
+
+  it('批量入队超容量时也只保留前 capacity 条', () => {
+    const q = createCappedQueue(2);
+
+    q.enqueueMany([task('c', 3), task('a', 1), task('b', 2)]);
+
+    expect(q.toArray().map(t => t.taskId)).toEqual(['a', 'b']);
+  });
+
+  it('不传 capacity 时不裁剪', () => {
+    const q = createQueue();
+
+    q.enqueueMany([task('a', 1), task('b', 2), task('c', 3)]);
+
+    expect(q.size).toBe(3);
   });
 });
 

@@ -6,7 +6,9 @@
  *
  * 1. ID 去重 — 同一 id 不会重复入队
  * 2. 优先级排序 — 由外部注入 compare 函数，队列始终有序
- * 3. 变更订阅 — subscribe 返回 unsubscribe（Zustand 惯例）
+ * 3. 原地更新 — update / updateBy 改已入队的项，不用 remove 再 enqueue
+ * 4. 容量上限 — 可选 capacity，排序后裁掉末尾
+ * 5. 变更订阅 — subscribe 返回 unsubscribe（Zustand 惯例）
  *
  * 命名借鉴：
  *
@@ -32,7 +34,7 @@
  *   q.enqueue({ taskId: '1', priority: 0, createdAt: Date.now() });
  *   q.peek(); // highest-priority item
  *   q.toArray(); // full sorted snapshot
- *   ```
+ *   ```;
  */
 
 // ==================== Types ====================
@@ -43,6 +45,13 @@
  * 只需两个纯函数即可驱动整个队列，不对 T 的形状做任何假设。
  */
 export type QueueConfig<T> = {
+  /**
+   * 队列容量上限，超出时丢弃排序后最末尾的那些
+   *
+   * 裁剪必须发生在排序之后（丢的是优先级最低的），所以放在队列里做而不是交给调用方 —— 外面做要多一轮排序和通知。 不传表示不限。
+   */
+  capacity?: number;
+
   /**
    * 排序比较器
    *
@@ -65,6 +74,7 @@ type Listener<T> = (queue: readonly T[]) => void;
 export class PriorityQueue<T> {
   private readonly getId: (item: T) => string;
   private readonly compare: (a: T, b: T) => number;
+  private capacity: number;
 
   /** 主存储：id → item，保证 O(1) 去重 / 查找 / 删除 */
   private readonly store = new Map<string, T>();
@@ -78,6 +88,7 @@ export class PriorityQueue<T> {
   constructor(config: QueueConfig<T>) {
     this.getId = config.getId;
     this.compare = config.compare;
+    this.capacity = config.capacity ?? Number.POSITIVE_INFINITY;
   }
 
   // ─── Write ────────────────────────────────────────────
@@ -173,6 +184,70 @@ export class PriorityQueue<T> {
     return removed;
   }
 
+  /**
+   * 按 id 更新已入队的 item
+   *
+   * 返回是否真的改了。updater 要返回新对象，原样返回入参表示这次不用改 —— 那样不会排序也不会 通知，订阅方就不会为一次空更新白渲染一轮。
+   *
+   * 这是 enqueue 覆盖不了的场景：enqueue 遇到同 id 直接跳过（幂等），要改已有项只能走这里。 remove 再 enqueue 也能达到同样效果，但会通知两次，订阅方会看到中间那个「少了一条」的状态。
+   */
+  update(id: string, updater: (prev: T) => T): boolean {
+    const prev = this.store.get(id);
+
+    if (prev === undefined) return false;
+
+    const next = updater(prev);
+
+    if (next === prev) return false;
+
+    this.store.set(id, next);
+    this.rebuild();
+
+    return true;
+  }
+
+  /**
+   * 按条件批量更新
+   *
+   * 返回实际更新数量，判定规则同 update：updater 原样返回入参的那些不算改动。 仅在有改动时触发一次排序和通知。
+   *
+   * @example
+   *   // 全部标记已读
+   *   queue.updateBy(
+   *     item => !item.read,
+   *     item => ({ ...item, read: true })
+   *   );
+   */
+  updateBy(predicate: (item: T) => boolean, updater: (prev: T) => T): number {
+    let updated = 0;
+
+    for (const [id, item] of this.store) {
+      const next = predicate(item) ? updater(item) : item;
+
+      if (next !== item) {
+        this.store.set(id, next);
+        updated += 1;
+      }
+    }
+
+    if (updated > 0) this.rebuild();
+
+    return updated;
+  }
+
+  /**
+   * 改容量上限
+   *
+   * 调小之后立刻裁到新上限并通知，不必等下一次写操作 —— 否则「把上限从 99 改成 20」在用户眼里 是没生效。
+   */
+  setCapacity(capacity: number): void {
+    if (this.capacity === capacity) return;
+
+    this.capacity = capacity;
+
+    if (this.store.size > capacity) this.rebuild();
+  }
+
   /** 清空队列 */
   clear(): void {
     if (this.store.size === 0) return;
@@ -255,9 +330,17 @@ export class PriorityQueue<T> {
 
   // ─── Internal ─────────────────────────────────────────
 
-  /** 重建有序缓存并通知所有监听器 */
+  /** 重建有序缓存、裁掉超出容量的部分，再通知所有监听器 */
   private rebuild(): void {
-    this.sorted = [...this.store.values()].sort(this.compare);
+    const sorted = [...this.store.values()].sort(this.compare);
+
+    if (sorted.length > this.capacity) {
+      for (const item of sorted.splice(this.capacity)) {
+        this.store.delete(this.getId(item));
+      }
+    }
+
+    this.sorted = sorted;
     this.notify();
   }
 
