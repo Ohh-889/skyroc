@@ -1,4 +1,5 @@
 export { createAppRequest } from './create-request';
 export { backEndFail, handleError } from './error-handler';
-export { getAuthorization, handleExpiredRequest, handleRefreshToken, showErrorMsg } from './shared';
+export { getAuthorization, showErrorMsg } from './shared';
+export { handleRefreshToken, refreshToken, resetTokenRefresh } from './token-refresh';
 export type { CreateRequestOptions, RequestAdapter, RequestInstanceState, ServiceCodes } from './types';

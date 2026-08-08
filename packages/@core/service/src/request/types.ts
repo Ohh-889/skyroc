@@ -2,6 +2,18 @@ import type { CreateAxiosDefaults } from '@skyroc/axios';
 
 import type { ApiCryptoOptions } from '../crypto';
 
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    /**
+     * 标记这个请求是续签请求本身
+     *
+     * 适配器的 `fetchRefreshToken` 必须带上，否则续签接口返回过期码时会触发自己去续签，
+     * 死等自己那个未完成的刷新 promise。
+     */
+    isRefreshToken?: boolean;
+  }
+}
+
 /**
  * 平台适配器接口
  *
@@ -59,8 +71,6 @@ export interface ServiceCodes {
 export interface RequestInstanceState {
   /** 当前正在展示的错误消息栈（防止重复展示） */
   errMsgStack: string[];
-  /** 刷新 token 的 promise（防止并发刷新） */
-  refreshTokenPromise: Promise<boolean> | null;
   [key: string]: unknown;
 }
 

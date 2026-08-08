@@ -2,7 +2,7 @@ import { createRequest } from '@skyroc/axios';
 import type { AxiosResponse } from 'axios';
 import { createRequestSealer } from '../crypto';
 import { backEndFail, handleError } from './error-handler';
-import { getAuthorization } from './shared';
+import { getAuthorization, normalizeCodes } from './shared';
 import type { CreateRequestOptions, RequestInstanceState } from './types';
 
 /**
@@ -11,7 +11,8 @@ import type { CreateRequestOptions, RequestInstanceState } from './types';
  * 通过 adapter 注入平台差异（UI 反馈、认证、导航、i18n）， 使错误处理、token 刷新等逻辑可跨端复用。
  */
 export function createAppRequest(options: CreateRequestOptions) {
-  const { adapter, axiosConfig, codes } = options;
+  const { adapter, axiosConfig } = options;
+  const codes = normalizeCodes(options.codes);
 
   const sealRequest = createRequestSealer(options.crypto);
 
@@ -19,8 +20,7 @@ export function createAppRequest(options: CreateRequestOptions) {
     axiosConfig,
     {
       defaultState: {
-        errMsgStack: [],
-        refreshTokenPromise: null
+        errMsgStack: []
       },
       isBackendSuccess:
         options.isBackendSuccess ??
@@ -49,7 +49,7 @@ export function createAppRequest(options: CreateRequestOptions) {
   );
 
   // createRequest 内部将 state 初始化为 {}，手动补全默认值
-  const defaultState: RequestInstanceState = { errMsgStack: [], refreshTokenPromise: null };
+  const defaultState: RequestInstanceState = { errMsgStack: [] };
   request.state = Object.assign(defaultState, request.state);
 
   return request;

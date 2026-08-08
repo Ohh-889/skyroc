@@ -1,42 +1,31 @@
-import type { RequestAdapter, RequestInstanceState } from './types';
+import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
+
+/** 与后端约定的成功码，各 app 的 .env 漏配时兜底 */
+const DEFAULT_SUCCESS_CODE = '0000';
+
+function cleanCodeList(list: string[] | undefined) {
+  return (list || []).map(code => code.trim()).filter(Boolean);
+}
+
+/**
+ * 规整调用方传进来的业务码
+ *
+ * 各 app 都是 `import.meta.env.X?.split(',')` 直接传进来的，两种配法会静默失效：
+ * 值里带空格（`8888, 8889`）永远匹配不上，成功码缺失会让每个请求都被判成失败。
+ */
+export function normalizeCodes(codes: ServiceCodes): ServiceCodes {
+  return {
+    expiredToken: cleanCodeList(codes.expiredToken),
+    logout: cleanCodeList(codes.logout),
+    modalLogout: cleanCodeList(codes.modalLogout),
+    success: codes.success?.trim() || DEFAULT_SUCCESS_CODE
+  };
+}
 
 /** 构造 Authorization header 值 */
 export function getAuthorization(adapter: RequestAdapter) {
   const token = adapter.getToken();
   return token ? `Bearer ${token}` : null;
-}
-
-/** 刷新 token 并更新认证信息，失败则重定向到登录页 */
-export async function handleRefreshToken(adapter: RequestAdapter) {
-  const refreshToken = adapter.getRefreshToken() || '';
-  try {
-    const data = await adapter.fetchRefreshToken(refreshToken);
-    adapter.setAuth(data);
-    return true;
-  } catch {
-    const fullPath = adapter.getCurrentPath();
-    adapter.redirectToLogin(fullPath);
-    return false;
-  }
-}
-
-/**
- * 处理 token 过期的请求
- *
- * 通过共享 promise 防止并发刷新
- */
-export async function handleExpiredRequest(adapter: RequestAdapter, state: RequestInstanceState) {
-  if (!state.refreshTokenPromise) {
-    state.refreshTokenPromise = handleRefreshToken(adapter);
-  }
-
-  const success = await state.refreshTokenPromise;
-
-  setTimeout(() => {
-    state.refreshTokenPromise = null;
-  }, 1000);
-
-  return success;
 }
 
 /**

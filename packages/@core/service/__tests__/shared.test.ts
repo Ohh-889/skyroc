@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getAuthorization, handleExpiredRequest, handleRefreshToken, showErrorMsg } from '../src/request/shared';
+import { getAuthorization, normalizeCodes, showErrorMsg } from '../src/request/shared';
 import type { RequestAdapter, RequestInstanceState } from '../src/request/types';
 
 function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdapter {
@@ -21,10 +21,62 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
 function createState(overrides: Partial<RequestInstanceState> = {}): RequestInstanceState {
   return {
     errMsgStack: [],
-    refreshTokenPromise: null,
     ...overrides
   };
 }
+
+describe('normalizeCodes', () => {
+  it('trims codes so a stray space in .env does not silently disable one', () => {
+    const codes = normalizeCodes({
+      success: ' 0000 ',
+      logout: ['8888', ' 8889'],
+      modalLogout: ['7777', '7778 '],
+      expiredToken: [' 9999 ']
+    });
+
+    expect(codes).toEqual({
+      success: '0000',
+      logout: ['8888', '8889'],
+      modalLogout: ['7777', '7778'],
+      expiredToken: ['9999']
+    });
+  });
+
+  it('falls back to 0000 when the success code is missing', () => {
+    const codes = normalizeCodes({
+      success: undefined as unknown as string,
+      logout: [],
+      modalLogout: [],
+      expiredToken: []
+    });
+
+    expect(codes.success).toBe('0000');
+  });
+
+  it('drops empty entries left by a trailing comma', () => {
+    const codes = normalizeCodes({
+      success: '0000',
+      logout: ['8888', '', '  '],
+      modalLogout: [],
+      expiredToken: []
+    });
+
+    expect(codes.logout).toEqual(['8888']);
+  });
+
+  it('tolerates undefined code lists', () => {
+    const codes = normalizeCodes({
+      success: '0000',
+      logout: undefined as unknown as string[],
+      modalLogout: undefined as unknown as string[],
+      expiredToken: undefined as unknown as string[]
+    });
+
+    expect(codes.logout).toEqual([]);
+    expect(codes.modalLogout).toEqual([]);
+    expect(codes.expiredToken).toEqual([]);
+  });
+});
 
 describe('getAuthorization', () => {
   it('returns Bearer token when token exists', () => {
@@ -35,68 +87,6 @@ describe('getAuthorization', () => {
   it('returns null when token is null', () => {
     const adapter = createMockAdapter({ getToken: vi.fn(() => null) });
     expect(getAuthorization(adapter)).toBeNull();
-  });
-});
-
-describe('handleRefreshToken', () => {
-  it('calls fetchRefreshToken and setAuth on success', async () => {
-    const adapter = createMockAdapter();
-    const result = await handleRefreshToken(adapter);
-
-    expect(adapter.fetchRefreshToken).toHaveBeenCalledWith('mock-refresh-token');
-    expect(adapter.setAuth).toHaveBeenCalledWith({ token: 'new-token', refreshToken: 'new-refresh' });
-    expect(result).toBe(true);
-  });
-
-  it('uses empty string when getRefreshToken returns null', async () => {
-    const adapter = createMockAdapter({ getRefreshToken: vi.fn(() => null) });
-    await handleRefreshToken(adapter);
-
-    expect(adapter.fetchRefreshToken).toHaveBeenCalledWith('');
-  });
-
-  it('redirects to login on failure', async () => {
-    const adapter = createMockAdapter({
-      fetchRefreshToken: vi.fn(async () => {
-        throw new Error('fail');
-      })
-    });
-
-    const result = await handleRefreshToken(adapter);
-
-    expect(adapter.redirectToLogin).toHaveBeenCalledWith('/current');
-    expect(result).toBe(false);
-  });
-});
-
-describe('handleExpiredRequest', () => {
-  it('shares the same promise for concurrent calls', async () => {
-    const adapter = createMockAdapter();
-    const state = createState();
-
-    const p1 = handleExpiredRequest(adapter, state);
-    const p2 = handleExpiredRequest(adapter, state);
-
-    expect(state.refreshTokenPromise).not.toBeNull();
-
-    const [r1, r2] = await Promise.all([p1, p2]);
-    expect(r1).toBe(true);
-    expect(r2).toBe(true);
-    expect(adapter.fetchRefreshToken).toHaveBeenCalledTimes(1);
-  });
-
-  it('clears promise after delay', async () => {
-    vi.useFakeTimers();
-    const adapter = createMockAdapter();
-    const state = createState();
-
-    await handleExpiredRequest(adapter, state);
-
-    expect(state.refreshTokenPromise).not.toBeNull();
-    vi.advanceTimersByTime(1000);
-    expect(state.refreshTokenPromise).toBeNull();
-
-    vi.useRealTimers();
   });
 });
 

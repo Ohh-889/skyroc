@@ -57,7 +57,6 @@ describe('createAppRequest', () => {
     expect(request).toBeTypeOf('function');
     expect(request.state).toBeDefined();
     expect(request.state.errMsgStack).toEqual([]);
-    expect(request.state.refreshTokenPromise).toBeNull();
   });
 
   it('has cancelAllRequest method', () => {
@@ -188,7 +187,6 @@ describe('createAppRequest', () => {
       const request = createAppRequest({ adapter, codes: TEST_CODES });
 
       expect(request.state.errMsgStack).toEqual([]);
-      expect(request.state.refreshTokenPromise).toBeNull();
     });
   });
 });

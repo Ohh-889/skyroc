@@ -1,9 +1,15 @@
 import { BACKEND_ERROR_CODE } from '@skyroc/axios';
 import type { RequestInstance } from '@skyroc/axios';
 import type { AxiosError, AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { backEndFail, handleError } from '../src/request/error-handler';
+import { resetTokenRefresh } from '../src/request/token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from '../src/request/types';
+
+// 刷新是模块级单例，刷完还有一秒的结果复用窗口，不重置的话上个用例的结果会漏给下一个
+afterEach(() => {
+  resetTokenRefresh();
+});
 
 const TEST_CODES: ServiceCodes = {
   success: '0000',
@@ -32,16 +38,16 @@ function createMockRequest(stateOverrides: Partial<RequestInstanceState> = {}) {
   return {
     state: {
       errMsgStack: [],
-      refreshTokenPromise: null,
+
       ...stateOverrides
     }
   } as unknown as RequestInstance<any, RequestInstanceState>;
 }
 
-function createMockResponse(code: string, msg = 'error') {
+function createMockResponse(code: string, msg = 'error', config: Record<string, unknown> = {}) {
   return {
     data: { code, data: null, msg },
-    config: { headers: {} }
+    config: { headers: {}, ...config }
   } as unknown as AxiosResponse<{ code: string | number; data: any; msg: string }>;
 }
 
@@ -161,6 +167,19 @@ describe('backEndFail', () => {
     expect(adapter.showErrorModal).toHaveBeenCalled();
   });
 
+  it('does not refresh when the expired code comes from the refresh request itself', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn() } as any;
+    const response = createMockResponse('9999', 'expired', { isRefreshToken: true });
+
+    const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(result).toBeNull();
+    expect(adapter.fetchRefreshToken).not.toHaveBeenCalled();
+    expect(instance.request).not.toHaveBeenCalled();
+  });
+
   it('returns null for unknown codes', async () => {
     const adapter = createMockAdapter();
     const request = createMockRequest();
@@ -184,7 +203,7 @@ describe('handleError', () => {
     expect(adapter.showErrorMessage).toHaveBeenCalledWith('Network Error', expect.any(Function));
   });
 
-  it('uses backend message for BACKEND_ERROR_CODE', () => {
+  it('uses the backend message carried by a business failure', () => {
     const adapter = createMockAdapter();
     const request = createMockRequest();
     const error = {
@@ -196,6 +215,34 @@ describe('handleError', () => {
     handleError(error, request, adapter, TEST_CODES);
 
     expect(adapter.showErrorMessage).toHaveBeenCalledWith('Custom backend error', expect.any(Function));
+  });
+
+  it('uses the backend message when the failure came back as a real http status', () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const error = {
+      message: 'Request failed with status code 409',
+      code: 'ERR_BAD_REQUEST',
+      response: { status: 409, data: { code: '409', msg: '该账号已被占用' } }
+    } as AxiosError<any>;
+
+    handleError(error, request, adapter, TEST_CODES);
+
+    expect(adapter.showErrorMessage).toHaveBeenCalledWith('该账号已被占用', expect.any(Function));
+  });
+
+  it('skips message for logout codes — backEndFail already showed one', () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const error = {
+      message: 'Request failed with status code 401',
+      code: 'ERR_BAD_REQUEST',
+      response: { status: 401, data: { code: '8888', msg: '登录状态已失效，请重新登录' } }
+    } as AxiosError<any>;
+
+    handleError(error, request, adapter, TEST_CODES);
+
+    expect(adapter.showErrorMessage).not.toHaveBeenCalled();
   });
 
   it('skips message for modalLogout codes', () => {
@@ -226,6 +273,20 @@ describe('handleError', () => {
     expect(adapter.showErrorMessage).not.toHaveBeenCalled();
   });
 
+  it('skips message for expiredToken codes delivered as http 401', () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const error = {
+      message: 'Request failed with status code 401',
+      code: 'ERR_BAD_REQUEST',
+      response: { status: 401, data: { code: '9999', msg: '登录已过期' } }
+    } as AxiosError<any>;
+
+    handleError(error, request, adapter, TEST_CODES);
+
+    expect(adapter.showErrorMessage).not.toHaveBeenCalled();
+  });
+
   it('falls back to error.message when response.data.msg is missing', () => {
     const adapter = createMockAdapter();
     const request = createMockRequest();
@@ -240,21 +301,35 @@ describe('handleError', () => {
     expect(adapter.showErrorMessage).toHaveBeenCalledWith('the backend request error', expect.any(Function));
   });
 
-  it('handles BACKEND_ERROR_CODE with no response data', () => {
+  it('falls back to error.message when there is no response at all', () => {
     const adapter = createMockAdapter();
     const request = createMockRequest();
     const error = {
-      message: 'fallback msg',
-      code: BACKEND_ERROR_CODE,
+      message: 'timeout of 10000ms exceeded',
+      code: 'ECONNABORTED',
       response: undefined
     } as AxiosError<any>;
 
     handleError(error, request, adapter, TEST_CODES);
 
-    expect(adapter.showErrorMessage).toHaveBeenCalledWith('fallback msg', expect.any(Function));
+    expect(adapter.showErrorMessage).toHaveBeenCalledWith('timeout of 10000ms exceeded', expect.any(Function));
   });
 
-  it('handles BACKEND_ERROR_CODE with no code in response', () => {
+  it('falls back to error.message when the body is not an envelope', () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const error = {
+      message: 'Request failed with status code 502',
+      code: 'ERR_BAD_RESPONSE',
+      response: { status: 502, data: '<html>502 Bad Gateway</html>' }
+    } as AxiosError<any>;
+
+    handleError(error, request, adapter, TEST_CODES);
+
+    expect(adapter.showErrorMessage).toHaveBeenCalledWith('Request failed with status code 502', expect.any(Function));
+  });
+
+  it('handles a business failure with no code in response', () => {
     const adapter = createMockAdapter();
     const request = createMockRequest();
     const error = {

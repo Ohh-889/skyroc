@@ -1,8 +1,8 @@
 import type { RequestInstance } from '@skyroc/axios';
-import { BACKEND_ERROR_CODE } from '@skyroc/axios';
 /* eslint-disable max-params */
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import { getAuthorization, handleExpiredRequest, showErrorMsg } from './shared';
+import { getAuthorization, showErrorMsg } from './shared';
+import { refreshToken } from './token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
 
 /** 后端业务错误处理（response.data.code 非成功码） */
@@ -55,9 +55,10 @@ export async function backEndFail(
     return null;
   }
 
-  // token 过期码：刷新 token 后重试
-  if (codes.expiredToken.includes(responseCode)) {
-    const success = await handleExpiredRequest(adapter, request.state);
+  // 续签接口自己拿到过期码时不能再去续签：它会 await 自己那次还没完成的刷新，把它和所有
+  // 等着刷新的请求一起永久挂起。这里放行让它 reject，由 handleRefreshToken 跳登录页。
+  if (codes.expiredToken.includes(responseCode) && !response.config?.isRefreshToken) {
+    const success = await refreshToken(adapter);
     if (success) {
       const Authorization = getAuthorization(adapter);
       Object.assign(response.config.headers, { Authorization });
@@ -75,16 +76,14 @@ export function handleError(
   adapter: RequestAdapter,
   codes: ServiceCodes
 ) {
-  let message = error.message;
-  let backendErrorCode = '';
+  // 不看 error.code 是不是 BACKEND_ERROR：真实 HTTP 错误带的是 axios 自己的
+  // ERR_BAD_REQUEST / ERR_BAD_RESPONSE，认它就只剩 error.message 那句"status code 401"。
+  // 有信封就用信封的话，没有（超时、断网）自然回落到 axios 的文案。
+  const message = error.response?.data?.msg || error.message;
+  const backendErrorCode = String(error.response?.data?.code ?? '');
 
-  if (error.code === BACKEND_ERROR_CODE) {
-    message = error.response?.data?.msg || message;
-    backendErrorCode = String(error.response?.data?.code || '');
-  }
-
-  // 弹窗登出码的错误不在此处展示（已由 backEndFail 弹窗处理）
-  if (codes.modalLogout.includes(backendErrorCode)) {
+  // 登出码的提示已由 backEndFail 弹过（消息或弹窗），这里再弹一次就是两条
+  if (codes.logout.includes(backendErrorCode) || codes.modalLogout.includes(backendErrorCode)) {
     return;
   }
 
