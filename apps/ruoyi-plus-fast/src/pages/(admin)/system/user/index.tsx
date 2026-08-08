@@ -1,11 +1,26 @@
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
 import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
-import { Alert, Avatar, Badge, Button, Card, Checkbox, Collapse, Dropdown, Empty, Flex, Modal, Table, Tag, Tooltip } from 'antd';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Collapse,
+  Dropdown,
+  Empty,
+  Flex,
+  Modal,
+  Table,
+  Tag,
+  Tooltip
+} from 'antd';
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
@@ -24,7 +39,6 @@ import {
   useUpdateUserStatusMutation,
   useUserListQuery
 } from '@/service/api/system-user';
-import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-user/api';
 import type {
   UserExportParams,
   UserId,
@@ -34,6 +48,7 @@ import type {
   UserSavePayload,
   UserStatus
 } from '@/service/api/system-user';
+import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-user/api';
 
 import UserDepartmentPanel from './modules/UserDepartmentPanel';
 import type { UserEditorMode } from './modules/UserEditorDrawer';
@@ -157,9 +172,12 @@ const UserManagement = (props: UserManagementProps) => {
         fixed: 'left',
         key: 'userName',
         render: (_value, user) => (
-          <Flex align="center" gap={10}>
+          <Flex
+            align="center"
+            gap={10}
+          >
             <Avatar className="shrink-0 bg-primary text-white">{getAvatarText(user)}</Avatar>
-            <div className="min-w-0">
+            <div className="min-w-0 text-left">
               <div className="truncate font-600">{user.nickName || user.userName}</div>
               <div className="truncate text-12px text-tertiary">{user.userName}</div>
             </div>
@@ -194,10 +212,14 @@ const UserManagement = (props: UserManagementProps) => {
         width: 210
       },
       {
+        align: 'center',
         dataIndex: 'status',
         key: 'status',
         render: value => (
-          <Badge status={value === '0' ? 'success' : 'warning'} text={value === '0' ? '正常' : '停用'} />
+          <Badge
+            status={value === '0' ? 'success' : 'warning'}
+            text={value === '0' ? '正常' : '停用'}
+          />
         ),
         title: '状态',
         width: 100
@@ -225,13 +247,24 @@ const UserManagement = (props: UserManagementProps) => {
         key: 'actions',
         render: (_value, user) => (
           <div className="flex-center justify-end gap-8px">
-            <Button size="small" onClick={() => handleUserOperation('view', user)}>
+            <Button
+              size="small"
+              onClick={() => handleUserOperation('view', user)}
+            >
               查看
             </Button>
-            <Button size="small" onClick={() => handleUserOperation('edit', user)}>
+            <Button
+              size="small"
+              onClick={() => handleUserOperation('edit', user)}
+            >
               编辑
             </Button>
-            <Button ghost size="small" type="primary" onClick={() => handleUserOperation('roles', user)}>
+            <Button
+              ghost
+              size="small"
+              type="primary"
+              onClick={() => handleUserOperation('roles', user)}
+            >
               分配角色
             </Button>
             <Dropdown
@@ -381,7 +414,9 @@ const UserManagement = (props: UserManagementProps) => {
         content: (
           <div>
             {result.failures.slice(0, 20).map(failure => (
-              <div key={`${failure.row}-${failure.message}`}>第 {failure.row} 行：{failure.message}</div>
+              <div key={`${failure.row}-${failure.message}`}>
+                第 {failure.row} 行：{failure.message}
+              </div>
             ))}
             {result.failures.length > 20 ? <div>其余失败记录请查看导入结果。</div> : null}
           </div>
@@ -416,7 +451,10 @@ const UserManagement = (props: UserManagementProps) => {
             defaultActiveKey={isMobile ? undefined : '1'}
             items={[{ children: <UserSearch {...searchProps} />, key: '1', label: '查询条件' }]}
           />
-          <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+          <div
+            className="min-h-0 min-w-0 flex flex-1 flex-col"
+            ref={tableWrapperRef}
+          >
             <Card
               className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
               extra={
@@ -461,7 +499,6 @@ const UserManagement = (props: UserManagementProps) => {
               <Table<UserTableRecord>
                 {...tableProps}
                 column={{ align: 'center' }}
-
                 locale={{
                   emptyText: (
                     <Empty
@@ -494,10 +531,11 @@ const UserManagement = (props: UserManagementProps) => {
         onCancel={() => setImportFile(undefined)}
         onOk={handleImport}
       >
-        <p className='mb-2'>已选择：{importFile?.name}</p>
+        <p className="mb-2">已选择：{importFile?.name}</p>
         <Checkbox
           checked={updateSupport}
-          onChange={event => setUpdateSupport(event.target.checked)}>
+          onChange={event => setUpdateSupport(event.target.checked)}
+        >
           账号已存在时覆盖原有信息
         </Checkbox>
       </Modal>
@@ -582,9 +620,15 @@ function getAvatarText(user: UserListItem) {
 function renderRoles(roles: UserListItem['roles']) {
   if (!roles?.length) return <span className="text-tertiary">—</span>;
   return (
-    <Flex gap={4} wrap="wrap">
+    <Flex
+      gap={4}
+      wrap="wrap"
+    >
       {roles.slice(0, 2).map((role, index) => (
-        <Tag color={index === 0 ? 'geekblue' : undefined} key={String(role.roleId ?? role.roleKey ?? index)}>
+        <Tag
+          color={index === 0 ? 'geekblue' : undefined}
+          key={String(role.roleId ?? role.roleKey ?? index)}
+        >
           {role.roleName || role.roleKey || '未命名角色'}
         </Tag>
       ))}
