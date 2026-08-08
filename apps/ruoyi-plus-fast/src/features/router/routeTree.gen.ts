@@ -22,6 +22,7 @@ import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/i
 import { Route as adminWebsocketTestIndexRouteImport } from './../../pages/(admin)/websocket-test/index'
 import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/stream-test/index'
 import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse-test/index'
+import { Route as adminNotificationIndexRouteImport } from './../../pages/(admin)/notification/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
 import { Route as adminSystemLogLayoutRouteImport } from './../../pages/(admin)/system/log/layout'
@@ -101,6 +102,11 @@ const adminStreamTestIndexRoute = adminStreamTestIndexRouteImport.update({
 const adminSseTestIndexRoute = adminSseTestIndexRouteImport.update({
   id: '/sse-test/',
   path: '/sse-test/',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
+const adminNotificationIndexRoute = adminNotificationIndexRouteImport.update({
+  id: '/notification/',
+  path: '/notification/',
   getParentRoute: () => adminLayoutRoute,
 } as any)
 const adminHomeIndexRoute = adminHomeIndexRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home/': typeof adminHomeIndexRoute
+  '/notification/': typeof adminNotificationIndexRoute
   '/sse-test/': typeof adminSseTestIndexRoute
   '/stream-test/': typeof adminStreamTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home': typeof adminHomeIndexRoute
+  '/notification': typeof adminNotificationIndexRoute
   '/sse-test': typeof adminSseTestIndexRoute
   '/stream-test': typeof adminStreamTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/(admin)/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/(auth)/login/code': typeof authLoginCodeRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
+  '/(admin)/notification/': typeof adminNotificationIndexRoute
   '/(admin)/sse-test/': typeof adminSseTestIndexRoute
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/system/log'
     | '/login/code'
     | '/home/'
+    | '/notification/'
     | '/sse-test/'
     | '/stream-test/'
     | '/websocket-test/'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/system/log'
     | '/login/code'
     | '/home'
+    | '/notification'
     | '/sse-test'
     | '/stream-test'
     | '/websocket-test'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/(admin)/system/log'
     | '/(auth)/login/code'
     | '/(admin)/home/'
+    | '/(admin)/notification/'
     | '/(admin)/sse-test/'
     | '/(admin)/stream-test/'
     | '/(admin)/websocket-test/'
@@ -471,6 +483,13 @@ declare module '@tanstack/react-router' {
       path: '/sse-test'
       fullPath: '/sse-test/'
       preLoaderRoute: typeof adminSseTestIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/notification/': {
+      id: '/(admin)/notification/'
+      path: '/notification'
+      fullPath: '/notification/'
+      preLoaderRoute: typeof adminNotificationIndexRouteImport
       parentRoute: typeof adminLayoutRoute
     }
     '/(admin)/home/': {
@@ -647,6 +666,7 @@ interface adminLayoutRouteChildren {
   adminMonitorLayoutRoute: typeof adminMonitorLayoutRouteWithChildren
   adminSystemLayoutRoute: typeof adminSystemLayoutRouteWithChildren
   adminHomeIndexRoute: typeof adminHomeIndexRoute
+  adminNotificationIndexRoute: typeof adminNotificationIndexRoute
   adminSseTestIndexRoute: typeof adminSseTestIndexRoute
   adminStreamTestIndexRoute: typeof adminStreamTestIndexRoute
   adminWebsocketTestIndexRoute: typeof adminWebsocketTestIndexRoute
@@ -656,6 +676,7 @@ const adminLayoutRouteChildren: adminLayoutRouteChildren = {
   adminMonitorLayoutRoute: adminMonitorLayoutRouteWithChildren,
   adminSystemLayoutRoute: adminSystemLayoutRouteWithChildren,
   adminHomeIndexRoute: adminHomeIndexRoute,
+  adminNotificationIndexRoute: adminNotificationIndexRoute,
   adminSseTestIndexRoute: adminSseTestIndexRoute,
   adminStreamTestIndexRoute: adminStreamTestIndexRoute,
   adminWebsocketTestIndexRoute: adminWebsocketTestIndexRoute,
