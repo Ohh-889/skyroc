@@ -214,6 +214,123 @@ describe('createRequest', () => {
     expect(onError).toHaveBeenCalledOnce();
   });
 
+  it('带业务信封的 HTTP 错误（如 401）应同样触发 onBackendFail', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/expired`, () => {
+        return HttpResponse.json({ code: 9999, data: null, message: '登录已过期' }, { status: 401 });
+      })
+    );
+
+    const onBackendFail = vi.fn().mockResolvedValue(null);
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      onBackendFail
+    });
+
+    await expect(request({ url: '/api/expired' })).rejects.toThrow();
+
+    expect(onBackendFail).toHaveBeenCalledOnce();
+    expect(onBackendFail.mock.calls[0]![0].data.code).toBe(9999);
+  });
+
+  it('HTTP 错误上 onBackendFail 返回新响应时应使用该响应（401 续签场景）', async () => {
+    let callCount = 0;
+
+    server.use(
+      http.get(`${BASE_URL}/api/protected`, () => {
+        callCount += 1;
+
+        if (callCount === 1) {
+          return HttpResponse.json({ code: 9999, data: null, message: '登录已过期' }, { status: 401 });
+        }
+
+        return HttpResponse.json({ code: 200, data: { ok: true }, message: 'ok' });
+      })
+    );
+
+    const request = createRequest<BackendResponse, BackendResponse['data'], Record<string, unknown>>(
+      TEST_AXIOS_CONFIG,
+      {
+        isBackendSuccess: response => response.data.code === 200,
+        transform: async response => response.data.data,
+        onBackendFail: async (_response, instance) => {
+          const retryResponse = await instance.get('/api/protected');
+          return retryResponse;
+        }
+      }
+    );
+
+    const data = await request({ url: '/api/protected' });
+
+    expect(data).toEqual({ ok: true });
+    expect(callCount).toBe(2);
+  });
+
+  it('HTTP 错误的响应体不是信封时不应调用 onBackendFail', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/bad-gateway`, () => {
+        return new HttpResponse('<html>502 Bad Gateway</html>', { status: 502 });
+      })
+    );
+
+    const onBackendFail = vi.fn().mockResolvedValue(null);
+    const onError = vi.fn();
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      onBackendFail,
+      onError
+    });
+
+    await expect(request({ url: '/api/bad-gateway' })).rejects.toThrow();
+
+    expect(onBackendFail).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledOnce();
+  });
+
+  it('网络错误没有 response 时不应调用 onBackendFail', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/offline`, () => {
+        return HttpResponse.error();
+      })
+    );
+
+    const onBackendFail = vi.fn().mockResolvedValue(null);
+    const onError = vi.fn();
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      onBackendFail,
+      onError
+    });
+
+    await expect(request({ url: '/api/offline' })).rejects.toThrow();
+
+    expect(onBackendFail).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledOnce();
+  });
+
+  it('blob 下载失败时应把 JSON 错误体解出来交给 onBackendFail', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/export`, () => {
+        return HttpResponse.json({ code: 403, data: null, message: '无导出权限' }, { status: 403 });
+      })
+    );
+
+    const onBackendFail = vi.fn().mockResolvedValue(null);
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      onBackendFail
+    });
+
+    await expect(request({ url: '/api/export', responseType: 'blob' })).rejects.toThrow();
+
+    expect(onBackendFail).toHaveBeenCalledOnce();
+    expect(onBackendFail.mock.calls[0]![0].data.message).toBe('无导出权限');
+  });
+
   it('HTTP 404 应触发 onError', async () => {
     server.use(
       http.get(`${BASE_URL}/api/not-found`, () => {

@@ -78,6 +78,22 @@ function createCommonRequest<
       return Promise.reject(backendError);
     },
     async (error: AxiosError<ResponseData>) => {
+      // 后端用真实 HTTP 状态码表达失败时，业务信封仍在 response.data 上。不在这里接一次
+      // onBackendFail，续签和登出这些按业务码分岔的流程就只在 HTTP 200 的后端上生效。
+      const { response } = error;
+
+      if (response) {
+        await transformResponse(response);
+
+        // 网关的 HTML 502、空 body 的 500 都会走到这里，onBackendFail 读的是信封字段
+        if (response.data && typeof response.data === 'object') {
+          const fail = await opts.onBackendFail(response, instance);
+          if (fail) {
+            return fail;
+          }
+        }
+      }
+
       await opts.onError(error);
 
       return Promise.reject(error);
