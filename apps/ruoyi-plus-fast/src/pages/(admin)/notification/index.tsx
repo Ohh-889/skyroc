@@ -210,7 +210,7 @@ const NotificationEditor = (props: NotificationEditorProps) => {
         <Form.Item label="正文" name="body">
           <Input.TextArea placeholder="请输入正文，P0 支持纯文本或安全 Markdown" rows={7} />
         </Form.Item>
-        <Divider orientation="left" plain>
+        <Divider plain>
           受众范围
         </Divider>
         <Form.Item name={['audience', 'kind']} rules={[{ required: true }]}>
@@ -341,13 +341,15 @@ const NotificationManagement = (props: NotificationManagementProps) => {
     showSuccessMessage('通知草稿已保存');
   }
 
-  function handlePublish(item: NotificationItem) {
+  async function handlePublish(item: NotificationItem) {
+    const preview = await fetchAudiencePreview(String(item.msgId));
+    const audienceText = preview.count < 0 ? '全体用户' : `${preview.count} 人`;
     modal.confirm({
-      content: '发布前会按当前受众预览做最终校验，确认立即发布这条通知吗？',
+      content: `本次预计发送给 ${audienceText}。发布前会按当前受众预览做最终校验，确认立即发布这条通知吗？`,
       okText: '确认发布',
       title: `发布“${item.title}”？`,
       onOk: async () => {
-        await publishMutation.mutateAsync(String(item.msgId));
+        await publishMutation.mutateAsync({ id: String(item.msgId) });
         await queryClient.invalidateQueries({ queryKey: ['notification', 'list'] });
         showSuccessMessage('通知已发布');
       }
@@ -398,7 +400,7 @@ const NotificationManagement = (props: NotificationManagementProps) => {
         render: (_value, record) => (
           <Space size={4}>
             <Tooltip title="查看消息内容和送达统计"><Button size="small" onClick={() => setDetailId(String(record.msgId))}>详情</Button></Tooltip>
-            {record.status === 'draft' ? <Button size="small" type="link" onClick={() => handlePublish(record)}>发布</Button> : null}
+            {record.status === 'draft' ? <Button size="small" type="link" onClick={() => void handlePublish(record)}>发布</Button> : null}
             {record.status === 'published' ? <Button danger size="small" type="link" onClick={() => void handleRevoke(record)}>撤回</Button> : null}
           </Space>
         ),

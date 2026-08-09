@@ -1,0 +1,14 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { Alert, Button, Card, Col, Divider, Flex, Form, Input, Radio, Row, Select, Space, Statistic, Tag, Typography } from 'antd';
+
+const NotificationPublishPage = () => (
+  <div className="h-full overflow-auto p-16px">
+    <Flex align="center" justify="space-between" className="mb-16px"><div><Typography.Title level={3} className="m-0">发布工作台</Typography.Title><Typography.Text type="secondary">创建草稿、预览受众并安全发布通知</Typography.Text></div><Space><Button>保存草稿</Button><Button type="primary">预览并发布</Button></Space></Flex>
+    <Row gutter={16}>
+      <Col xs={24} lg={16}><Card bordered={false} className="card-wrapper"><Form layout="vertical"><Row gutter={16}><Col span={16}><Form.Item label="标题" required><Input showCount maxLength={255} placeholder="例如：系统维护通知" /></Form.Item></Col><Col span={8}><Form.Item label="分类"><Select defaultValue="announcement" options={[{ label: '系统公告', value: 'announcement' }, { label: '业务提醒', value: 'task' }, { label: '安全通知', value: 'security' }]} /></Form.Item></Col></Row><Row gutter={16}><Col span={12}><Form.Item label="通知意图"><Select defaultValue="informational" options={[{ label: '信息型', value: 'informational' }, { label: '可操作', value: 'actionable' }, { label: '告警型', value: 'alerting' }]} /></Form.Item></Col><Col span={12}><Form.Item label="优先级"><Radio.Group optionType="button" defaultValue="normal" options={[{ label: '普通', value: 'normal' }, { label: '高', value: 'high' }, { label: '紧急', value: 'urgent' }]} /></Form.Item></Col></Row><Form.Item label="摘要" required><Input placeholder="列表中展示的一句话摘要" /></Form.Item><Form.Item label="正文" required><Input.TextArea rows={10} placeholder="请输入正文，支持纯文本或安全 Markdown" /></Form.Item><Divider plain>发布方式</Divider><Radio.Group defaultValue="now" options={[{ label: '立即发布', value: 'now' }, { label: '定时发布', value: 'scheduled' }]} /></Form></Card></Col>
+      <Col xs={24} lg={8}><Space direction="vertical" className="w-full" size={16}><Card bordered={false} className="card-wrapper" title="受众预览"><Statistic title="预计收件人" value={1284} suffix="人" /><Typography.Text type="secondary">发布前必须调用 audience-preview 校验</Typography.Text><Divider plain /><Select className="w-full" defaultValue="all" options={[{ label: '全体用户', value: 'all' }, { label: '按角色选择', value: 'roles' }, { label: '按部门选择', value: 'depts' }, { label: '指定用户', value: 'users' }]} /></Card><Card bordered={false} className="card-wrapper" title="投递渠道"><Flex gap={8} wrap><Tag color="blue">✓ 站内通知</Tag><Tag color="blue">✓ 实时信号</Tag><Tag>邮件</Tag></Flex></Card><Alert showIcon message="发布风险提示" description="已发布消息不能直接覆盖，只能走修订流程；撤回前请先查看已经发出的邮件数量。" type="warning" /></Space></Col>
+    </Row>
+  </div>
+);
+
+export const Route = createFileRoute('/(admin)/notification/publish/')({ component: NotificationPublishPage, staticData: { title: '发布工作台' } });

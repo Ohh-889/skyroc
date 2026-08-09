@@ -35,6 +35,10 @@ import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
 import { Route as adminSystemConfigIndexRouteImport } from './../../pages/(admin)/system/config/index'
 import { Route as adminSystemClientIndexRouteImport } from './../../pages/(admin)/system/client/index'
+import { Route as adminNotificationSettingsIndexRouteImport } from './../../pages/(admin)/notification/settings/index'
+import { Route as adminNotificationPublishIndexRouteImport } from './../../pages/(admin)/notification/publish/index'
+import { Route as adminNotificationInboxIndexRouteImport } from './../../pages/(admin)/notification/inbox/index'
+import { Route as adminNotificationDetailIndexRouteImport } from './../../pages/(admin)/notification/detail/index'
 import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
 import { Route as adminMonitorCacheIndexRouteImport } from './../../pages/(admin)/monitor/cache/index'
 import { Route as adminSystemLogOperlogIndexRouteImport } from './../../pages/(admin)/system/log/operlog/index'
@@ -169,6 +173,30 @@ const adminSystemClientIndexRoute = adminSystemClientIndexRouteImport.update({
   path: '/client/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminNotificationSettingsIndexRoute =
+  adminNotificationSettingsIndexRouteImport.update({
+    id: '/notification/settings/',
+    path: '/notification/settings/',
+    getParentRoute: () => adminLayoutRoute,
+  } as any)
+const adminNotificationPublishIndexRoute =
+  adminNotificationPublishIndexRouteImport.update({
+    id: '/notification/publish/',
+    path: '/notification/publish/',
+    getParentRoute: () => adminLayoutRoute,
+  } as any)
+const adminNotificationInboxIndexRoute =
+  adminNotificationInboxIndexRouteImport.update({
+    id: '/notification/inbox/',
+    path: '/notification/inbox/',
+    getParentRoute: () => adminLayoutRoute,
+  } as any)
+const adminNotificationDetailIndexRoute =
+  adminNotificationDetailIndexRouteImport.update({
+    id: '/notification/detail/',
+    path: '/notification/detail/',
+    getParentRoute: () => adminLayoutRoute,
+  } as any)
 const adminMonitorOnlineIndexRoute = adminMonitorOnlineIndexRouteImport.update({
   id: '/online/',
   path: '/online/',
@@ -211,6 +239,10 @@ export interface FileRoutesByFullPath {
   '/login/': typeof authLoginIndexRoute
   '/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/monitor/online/': typeof adminMonitorOnlineIndexRoute
+  '/notification/detail/': typeof adminNotificationDetailIndexRoute
+  '/notification/inbox/': typeof adminNotificationInboxIndexRoute
+  '/notification/publish/': typeof adminNotificationPublishIndexRoute
+  '/notification/settings/': typeof adminNotificationSettingsIndexRoute
   '/system/client/': typeof adminSystemClientIndexRoute
   '/system/config/': typeof adminSystemConfigIndexRoute
   '/system/dept/': typeof adminSystemDeptIndexRoute
@@ -241,6 +273,10 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
   '/monitor/cache': typeof adminMonitorCacheIndexRoute
   '/monitor/online': typeof adminMonitorOnlineIndexRoute
+  '/notification/detail': typeof adminNotificationDetailIndexRoute
+  '/notification/inbox': typeof adminNotificationInboxIndexRoute
+  '/notification/publish': typeof adminNotificationPublishIndexRoute
+  '/notification/settings': typeof adminNotificationSettingsIndexRoute
   '/system/client': typeof adminSystemClientIndexRoute
   '/system/config': typeof adminSystemConfigIndexRoute
   '/system/dept': typeof adminSystemDeptIndexRoute
@@ -274,6 +310,10 @@ export interface FileRoutesById {
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(admin)/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/(admin)/monitor/online/': typeof adminMonitorOnlineIndexRoute
+  '/(admin)/notification/detail/': typeof adminNotificationDetailIndexRoute
+  '/(admin)/notification/inbox/': typeof adminNotificationInboxIndexRoute
+  '/(admin)/notification/publish/': typeof adminNotificationPublishIndexRoute
+  '/(admin)/notification/settings/': typeof adminNotificationSettingsIndexRoute
   '/(admin)/system/client/': typeof adminSystemClientIndexRoute
   '/(admin)/system/config/': typeof adminSystemConfigIndexRoute
   '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
@@ -307,6 +347,10 @@ export interface FileRouteTypes {
     | '/login/'
     | '/monitor/cache/'
     | '/monitor/online/'
+    | '/notification/detail/'
+    | '/notification/inbox/'
+    | '/notification/publish/'
+    | '/notification/settings/'
     | '/system/client/'
     | '/system/config/'
     | '/system/dept/'
@@ -337,6 +381,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/monitor/cache'
     | '/monitor/online'
+    | '/notification/detail'
+    | '/notification/inbox'
+    | '/notification/publish'
+    | '/notification/settings'
     | '/system/client'
     | '/system/config'
     | '/system/dept'
@@ -369,6 +417,10 @@ export interface FileRouteTypes {
     | '/(auth)/login/'
     | '/(admin)/monitor/cache/'
     | '/(admin)/monitor/online/'
+    | '/(admin)/notification/detail/'
+    | '/(admin)/notification/inbox/'
+    | '/(admin)/notification/publish/'
+    | '/(admin)/notification/settings/'
     | '/(admin)/system/client/'
     | '/(admin)/system/config/'
     | '/(admin)/system/dept/'
@@ -576,6 +628,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemClientIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/notification/settings/': {
+      id: '/(admin)/notification/settings/'
+      path: '/notification/settings'
+      fullPath: '/notification/settings/'
+      preLoaderRoute: typeof adminNotificationSettingsIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/notification/publish/': {
+      id: '/(admin)/notification/publish/'
+      path: '/notification/publish'
+      fullPath: '/notification/publish/'
+      preLoaderRoute: typeof adminNotificationPublishIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/notification/inbox/': {
+      id: '/(admin)/notification/inbox/'
+      path: '/notification/inbox'
+      fullPath: '/notification/inbox/'
+      preLoaderRoute: typeof adminNotificationInboxIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
+    '/(admin)/notification/detail/': {
+      id: '/(admin)/notification/detail/'
+      path: '/notification/detail'
+      fullPath: '/notification/detail/'
+      preLoaderRoute: typeof adminNotificationDetailIndexRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
     '/(admin)/monitor/online/': {
       id: '/(admin)/monitor/online/'
       path: '/online'
@@ -670,6 +750,10 @@ interface adminLayoutRouteChildren {
   adminSseTestIndexRoute: typeof adminSseTestIndexRoute
   adminStreamTestIndexRoute: typeof adminStreamTestIndexRoute
   adminWebsocketTestIndexRoute: typeof adminWebsocketTestIndexRoute
+  adminNotificationDetailIndexRoute: typeof adminNotificationDetailIndexRoute
+  adminNotificationInboxIndexRoute: typeof adminNotificationInboxIndexRoute
+  adminNotificationPublishIndexRoute: typeof adminNotificationPublishIndexRoute
+  adminNotificationSettingsIndexRoute: typeof adminNotificationSettingsIndexRoute
 }
 
 const adminLayoutRouteChildren: adminLayoutRouteChildren = {
@@ -680,6 +764,10 @@ const adminLayoutRouteChildren: adminLayoutRouteChildren = {
   adminSseTestIndexRoute: adminSseTestIndexRoute,
   adminStreamTestIndexRoute: adminStreamTestIndexRoute,
   adminWebsocketTestIndexRoute: adminWebsocketTestIndexRoute,
+  adminNotificationDetailIndexRoute: adminNotificationDetailIndexRoute,
+  adminNotificationInboxIndexRoute: adminNotificationInboxIndexRoute,
+  adminNotificationPublishIndexRoute: adminNotificationPublishIndexRoute,
+  adminNotificationSettingsIndexRoute: adminNotificationSettingsIndexRoute,
 }
 
 const adminLayoutRouteWithChildren = adminLayoutRoute._addFileChildren(
