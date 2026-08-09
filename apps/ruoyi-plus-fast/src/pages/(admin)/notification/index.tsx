@@ -45,6 +45,7 @@ import {
 import type {
   NotificationAudience,
   NotificationCategory,
+  NotificationIntent,
   NotificationItem,
   NotificationListParams,
   NotificationSavePayload,
@@ -74,7 +75,7 @@ interface NotificationFormValues {
   body?: string;
   category: NotificationCategory;
   expireTime?: string;
-  intent: string;
+  intent: NotificationIntent;
   priority: string;
   summary: string;
   title: string;
