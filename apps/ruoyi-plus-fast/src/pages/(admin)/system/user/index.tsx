@@ -159,7 +159,7 @@ const UserManagement = (props: UserManagementProps) => {
   const hasActiveFilters = hasUserFilters(searchProps.searchParams);
 
   useEffect(() => {
-    if (routeDeptId === undefined) return;
+    if (!routeDeptId) return;
     setSelectedDeptId(routeDeptId);
     searchProps.form.setFieldValue('deptId', routeDeptId);
     updateSearchParams({ current: 1, deptId: routeDeptId });
