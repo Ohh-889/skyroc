@@ -1,26 +1,9 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type {
-  TableColumn,
-  TableDataWithIndex,
-  TableOnChange,
-  TableQueryHookOptions
-} from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex, TableOnChange, TableQueryHookOptions } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Collapse,
-  Empty,
-  Flex,
-  Table,
-  Tag,
-  Tooltip,
-  Typography
-} from 'antd';
+import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import { useMemo, useState } from 'react';
 import type { Key } from 'react';
 
@@ -109,11 +92,7 @@ const PostManagement = (props: PostManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<
-    PostTableParams,
-    PostListPage,
-    PostItem
-  >({
+  } = useTable<PostTableParams, PostListPage, PostItem>({
     apiParams: {
       ...POST_SEARCH_INITIAL_PARAMS,
       size: initialPageSize
@@ -146,13 +125,19 @@ const PostManagement = (props: PostManagementProps) => {
         key: 'postName',
         minWidth: 180,
         render: (_value, post) => (
-          <Flex align="center" gap={10}>
+          <Flex
+            align="center"
+            gap={10}
+          >
             <span className="size-30px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
               <SvgIcon icon="ph:briefcase" />
             </span>
             <div className="min-w-0">
               <Typography.Text className="block truncate font-600">{post.postName}</Typography.Text>
-              <Typography.Text className="block truncate font-mono text-11px" type="secondary">
+              <Typography.Text
+                className="block truncate font-mono text-11px"
+                type="secondary"
+              >
                 {post.postCode}
               </Typography.Text>
             </div>
@@ -166,7 +151,11 @@ const PostManagement = (props: PostManagementProps) => {
         key: 'postCode',
         render: value => (
           <Tooltip title="点击复制岗位编码">
-            <Button className="h-auto p-0! font-mono text-12px" type="link" onClick={() => copyPostCode(value)}>
+            <Button
+              className="h-auto p-0! font-mono text-12px"
+              type="link"
+              onClick={() => copyPostCode(value)}
+            >
               {value}
             </Button>
           </Tooltip>
@@ -181,7 +170,10 @@ const PostManagement = (props: PostManagementProps) => {
       key: 'postCategory',
       render: value =>
         value ? (
-          <Tag variant="filled" className="m-0 font-mono text-11px">
+          <Tag
+            variant="filled"
+            className="m-0 font-mono text-11px"
+          >
             {value}
           </Tag>
         ) : (
@@ -197,12 +189,21 @@ const PostManagement = (props: PostManagementProps) => {
         key: 'deptName',
         render: value =>
           value ? (
-            <Flex align="center" gap={6}>
-              <SvgIcon className="text-tertiary" icon="ph:buildings" />
+            <Flex
+              align="center"
+              gap={6}
+            >
+              <SvgIcon
+                className="text-tertiary"
+                icon="ph:buildings"
+              />
               <span className="truncate">{value}</span>
             </Flex>
           ) : (
-            <Tag variant="filled" color="error">
+            <Tag
+              variant="filled"
+              color="error"
+            >
               部门已失效
             </Tag>
           ),
@@ -219,7 +220,10 @@ const PostManagement = (props: PostManagementProps) => {
         dataIndex: 'status',
         key: 'status',
         render: value => (
-          <Badge status={value === '0' ? 'success' : 'warning'} text={value === '0' ? '正常' : '停用'} />
+          <Badge
+            status={value === '0' ? 'success' : 'warning'}
+            text={value === '0' ? '正常' : '停用'}
+          />
         ),
         title: '状态',
         width: 100
@@ -239,10 +243,17 @@ const PostManagement = (props: PostManagementProps) => {
       key: 'actions',
       render: (_value, post) => (
         <div className="flex-center justify-end gap-8px">
-          <Button size="small" onClick={() => handleEdit(post)}>
+          <Button
+            size="small"
+            onClick={() => handleEdit(post)}
+          >
             编辑
           </Button>
-          <Button danger size="small" onClick={() => handleDelete([post])}>
+          <Button
+            danger
+            size="small"
+            onClick={() => handleDelete([post])}
+          >
             删除
           </Button>
         </div>
@@ -260,7 +271,7 @@ const PostManagement = (props: PostManagementProps) => {
   }
 
   function handleExactDepartmentChange(deptId?: PostId) {
-    if (Boolean(deptId)) setSelectedDeptId(undefined);
+    if (deptId) setSelectedDeptId(undefined);
   }
 
   function handleDepartmentSelect(keys: Key[]) {
@@ -381,8 +392,6 @@ const PostManagement = (props: PostManagementProps) => {
 
   return (
     <div className="h-full min-h-500px flex flex-col gap-16px overflow-hidden lt-xl:overflow-auto">
-
-
       <div className="min-h-0 grid flex-1 grid-cols-[240px_minmax(0,1fr)] items-stretch gap-16px lt-xl:grid-cols-1">
         <PostDepartmentPanel
           departments={departmentQuery.data ?? []}
@@ -415,7 +424,10 @@ const PostManagement = (props: PostManagementProps) => {
               }
             ]}
           />
-          <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+          <div
+            className="min-h-0 min-w-0 flex flex-1 flex-col"
+            ref={tableWrapperRef}
+          >
             <Card
               className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
               extra={
@@ -432,14 +444,24 @@ const PostManagement = (props: PostManagementProps) => {
                 />
               }
               title={
-                <Flex align="center" gap={8} wrap="wrap">
+                <Flex
+                  align="center"
+                  gap={8}
+                  wrap="wrap"
+                >
                   <Typography.Text strong>岗位列表</Typography.Text>
                   <Typography.Text type="secondary">共 {total} 个岗位</Typography.Text>
-                  <Tag variant="filled" color="blue">
+                  <Tag
+                    variant="filled"
+                    color="blue"
+                  >
                     {scopeLabel}
                   </Tag>
                   {selectedRowKeys.length > 0 ? (
-                    <Tag variant="filled" color="geekblue">
+                    <Tag
+                      variant="filled"
+                      color="geekblue"
+                    >
                       已选 {selectedRowKeys.length} 项
                     </Tag>
                   ) : null}
@@ -450,7 +472,10 @@ const PostManagement = (props: PostManagementProps) => {
               {query.isError ? (
                 <Alert
                   action={
-                    <Button size="small" onClick={getData}>
+                    <Button
+                      size="small"
+                      onClick={getData}
+                    >
                       重试
                     </Button>
                   }
@@ -573,7 +598,7 @@ export const Route = createFileRoute('/(admin)/system/post/')({
     keepAlive: true,
     menu: {
       icon: 'ph:briefcase',
-      order: 3
+      order: 4
     },
     title: '岗位管理'
   }

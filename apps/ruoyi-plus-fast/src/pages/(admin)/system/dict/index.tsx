@@ -157,11 +157,21 @@ const DictManagement = (props: DictManagementProps) => {
         fixed: 'right',
         key: 'actions',
         render: (_value, item) => (
-          <Flex justify="end" gap={4}>
-            <Button size="small" onClick={() => setDataEditor({ id: item.dictCode, mode: 'update', open: true })}>
+          <Flex
+            justify="end"
+            gap={4}
+          >
+            <Button
+              size="small"
+              onClick={() => setDataEditor({ id: item.dictCode, mode: 'update', open: true })}
+            >
               编辑
             </Button>
-            <Button danger size="small" onClick={() => removeData([item])}>
+            <Button
+              danger
+              size="small"
+              onClick={() => removeData([item])}
+            >
               删除
             </Button>
           </Flex>
@@ -281,13 +291,21 @@ const DictManagement = (props: DictManagementProps) => {
             defaultActiveKey={isMobile ? undefined : '1'}
             items={[
               {
-                children: <DictDataSearch disabled={!selectedType} searchProps={dataTable.searchProps} />,
+                children: (
+                  <DictDataSearch
+                    disabled={!selectedType}
+                    searchProps={dataTable.searchProps}
+                  />
+                ),
                 key: '1',
                 label: '查询条件'
               }
             ]}
           />
-          <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+          <div
+            className="min-h-0 min-w-0 flex flex-1 flex-col"
+            ref={tableWrapperRef}
+          >
             <Card
               className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
               extra={
@@ -306,7 +324,10 @@ const DictManagement = (props: DictManagementProps) => {
                 />
               }
               title={
-                <Flex align="center" gap={8}>
+                <Flex
+                  align="center"
+                  gap={8}
+                >
                   <Typography.Text strong>字典列表</Typography.Text>
                   <Typography.Text type="secondary">
                     {selectedType ? `${selectedType.dictName}（${selectedType.dictType}）` : '请选择字典类型'}
@@ -316,7 +337,12 @@ const DictManagement = (props: DictManagementProps) => {
               variant="borderless"
             >
               {dataTable.query.isError ? (
-                <Alert className="mb-12px" title="字典数据加载失败" showIcon type="error" />
+                <Alert
+                  className="mb-12px"
+                  title="字典数据加载失败"
+                  showIcon
+                  type="error"
+                />
               ) : null}
               <Table<DictDataTableRecord>
                 {...dataTable.tableProps}
@@ -384,5 +410,5 @@ function useDictDataTableQuery<Data = DictListPage<DictDataItem>>(
 export const Route = createFileRoute('/(admin)/system/dict/')({
   component: DictManagement,
   validateSearch: dictSearchSchema,
-  staticData: { keepAlive: true, menu: { icon: 'ph:book-open-text', order: 5 }, title: '字典管理' }
+  staticData: { keepAlive: true, menu: { icon: 'ph:book-open-text', order: 8 }, title: '字典管理' }
 });

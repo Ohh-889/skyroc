@@ -144,9 +144,9 @@ const MenuManagement = (props: MenuManagementProps) => {
       editorState.mode === 'create'
         ? await createMutation.mutateAsync(payload)
         : await updateMutation.mutateAsync({
-          ...payload,
-          menuId: editorState.menuId as MenuId
-        });
+            ...payload,
+            menuId: editorState.menuId as MenuId
+          });
 
     handleCloseEditor();
     await refreshMenuCaches();
@@ -292,7 +292,7 @@ export const Route = createFileRoute('/(admin)/system/menu/')({
     keepAlive: true,
     menu: {
       icon: 'ph:list-dashes',
-      order: 3
+      order: 5
     },
     title: '菜单管理'
   }

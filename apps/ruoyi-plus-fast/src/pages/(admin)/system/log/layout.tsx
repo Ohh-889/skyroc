@@ -5,7 +5,7 @@ export const Route = createFileRoute('/(admin)/system/log')({
   staticData: {
     menu: {
       icon: 'ph:notebook',
-      order: 6
+      order: 10
     },
     title: '日志管理'
   }

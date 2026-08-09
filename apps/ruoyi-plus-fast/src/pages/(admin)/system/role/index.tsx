@@ -136,14 +136,25 @@ const RoleManagement = (props: RoleManagementProps) => {
         fixed: 'left',
         key: 'roleName',
         render: (_value, role) => (
-          <Flex align="center" gap={10}>
+          <Flex
+            align="center"
+            gap={10}
+          >
             <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
               <SvgIcon icon={role.superAdmin ? 'ph:shield-star' : 'ph:shield-check'} />
             </span>
-            <Flex align="center" className="min-w-0" gap={7}>
+            <Flex
+              align="center"
+              className="min-w-0"
+              gap={7}
+            >
               <Typography.Text className="truncate font-600">{role.roleName}</Typography.Text>
               {role.superAdmin ? (
-                <Tag className="m-0 text-10px" color="gold" variant="filled">
+                <Tag
+                  className="m-0 text-10px"
+                  color="gold"
+                  variant="filled"
+                >
                   受保护
                 </Tag>
               ) : null}
@@ -157,7 +168,10 @@ const RoleManagement = (props: RoleManagementProps) => {
         dataIndex: 'roleKey',
         key: 'roleKey',
         render: (value: string) => (
-          <Tag className="m-0 font-mono text-11px" variant="filled">
+          <Tag
+            className="m-0 font-mono text-11px"
+            variant="filled"
+          >
             {value}
           </Tag>
         ),
@@ -168,7 +182,10 @@ const RoleManagement = (props: RoleManagementProps) => {
         dataIndex: 'dataScope',
         key: 'dataScope',
         render: (value: RoleDataScope) => (
-          <Tag color={resolveDataScopeColor(value)} variant="filled">
+          <Tag
+            color={resolveDataScopeColor(value)}
+            variant="filled"
+          >
             {DATA_SCOPE_LABELS[value]}
           </Tag>
         ),
@@ -185,7 +202,10 @@ const RoleManagement = (props: RoleManagementProps) => {
         dataIndex: 'status',
         key: 'status',
         render: value => (
-          <Badge status={value === '0' ? 'success' : 'warning'} text={value === '0' ? '正常' : '停用'} />
+          <Badge
+            status={value === '0' ? 'success' : 'warning'}
+            text={value === '0' ? '正常' : '停用'}
+          />
         ),
         title: '状态',
         width: 100
@@ -211,7 +231,10 @@ const RoleManagement = (props: RoleManagementProps) => {
     if (role.superAdmin) {
       return (
         <div className="flex-center justify-end gap-8px">
-          <Button size="small" onClick={() => handleDetail(role)}>
+          <Button
+            size="small"
+            onClick={() => handleDetail(role)}
+          >
             详情
           </Button>
           <Typography.Text type="secondary">系统保护</Typography.Text>
@@ -221,17 +244,36 @@ const RoleManagement = (props: RoleManagementProps) => {
 
     return (
       <div className="flex-center justify-end gap-8px">
-        <Button size="small" onClick={() => handleDetail(role)}>
+        <Button
+          size="small"
+          onClick={() => handleDetail(role)}
+        >
           详情
         </Button>
-        <Button size="small" onClick={() => handleEdit(role)}>
+        <Button
+          size="small"
+          onClick={() => handleEdit(role)}
+        >
           编辑
         </Button>
-        <Button ghost size="small" type="primary" onClick={() => handlePermission(role)}>
+        <Button
+          ghost
+          size="small"
+          type="primary"
+          onClick={() => handlePermission(role)}
+        >
           授权
         </Button>
-        <Dropdown menu={{ items: createMoreMenu(role) }} placement="bottomRight" trigger={['click']}>
-          <Button aria-label={`${role.roleName}更多操作`} icon={<SvgIcon icon="ph:dots-three" />} size="small" />
+        <Dropdown
+          menu={{ items: createMoreMenu(role) }}
+          placement="bottomRight"
+          trigger={['click']}
+        >
+          <Button
+            aria-label={`${role.roleName}更多操作`}
+            icon={<SvgIcon icon="ph:dots-three" />}
+            size="small"
+          />
         </Dropdown>
       </div>
     );
@@ -387,7 +429,10 @@ const RoleManagement = (props: RoleManagementProps) => {
         ]}
       />
 
-      <div className="min-h-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -406,13 +451,20 @@ const RoleManagement = (props: RoleManagementProps) => {
             />
           }
           title={
-            <Flex align="center" gap={8} wrap="wrap">
+            <Flex
+              align="center"
+              gap={8}
+              wrap="wrap"
+            >
               <Typography.Text strong>角色列表</Typography.Text>
               <Typography.Text type="secondary">
                 {hasActiveFilters ? '命中' : '共'} {total} 个角色
               </Typography.Text>
               {selectedRowKeys.length > 0 ? (
-                <Tag color="geekblue" variant="filled">
+                <Tag
+                  color="geekblue"
+                  variant="filled"
+                >
                   已选 {selectedRowKeys.length} 项
                 </Tag>
               ) : null}
@@ -423,7 +475,10 @@ const RoleManagement = (props: RoleManagementProps) => {
           {query.isError ? (
             <Alert
               action={
-                <Button size="small" onClick={getData}>
+                <Button
+                  size="small"
+                  onClick={getData}
+                >
                   重试
                 </Button>
               }
@@ -488,7 +543,11 @@ const RoleManagement = (props: RoleManagementProps) => {
           onSubmit={handleDataScopeSubmit}
         />
 
-        <RoleMemberDrawer open={Boolean(memberRole)} role={memberRole} onClose={() => setMemberRole(undefined)} />
+        <RoleMemberDrawer
+          open={Boolean(memberRole)}
+          role={memberRole}
+          onClose={() => setMemberRole(undefined)}
+        />
       </Suspense>
     </div>
   );
@@ -534,7 +593,7 @@ export const Route = createFileRoute('/(admin)/system/role/')({
     keepAlive: true,
     menu: {
       icon: 'ph:shield-check',
-      order: 4
+      order: 2
     },
     title: '角色管理'
   }

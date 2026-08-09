@@ -456,7 +456,7 @@ export const Route = createFileRoute('/(admin)/system/dept/')({
     keepAlive: true,
     menu: {
       icon: 'ph:buildings',
-      order: 2
+      order: 3
     },
     title: '部门管理'
   }

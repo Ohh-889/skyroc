@@ -103,13 +103,19 @@ const NoticeManagement = (props: NoticeManagementProps) => {
         fixed: 'left',
         key: 'noticeTitle',
         render: (value, notice) => (
-          <Flex align="center" gap={10}>
+          <Flex
+            align="center"
+            gap={10}
+          >
             <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
               <SvgIcon icon={notice.noticeType === '1' ? 'ph:bell' : 'ph:megaphone'} />
             </span>
             <div className="min-w-0">
               <Typography.Text className="block truncate font-600">{value}</Typography.Text>
-              <Typography.Text className="block max-w-360px truncate text-12px" type="secondary">
+              <Typography.Text
+                className="block max-w-360px truncate text-12px"
+                type="secondary"
+              >
                 {getNoticeSummary(notice.noticeContent)}
               </Typography.Text>
             </div>
@@ -152,11 +158,18 @@ const NoticeManagement = (props: NoticeManagementProps) => {
         render: (_value, notice) => (
           <div className="flex-center justify-end gap-8px">
             <Tooltip title="修改公告内容、类型和状态">
-              <Button size="small" onClick={() => handleEdit(notice)}>
+              <Button
+                size="small"
+                onClick={() => handleEdit(notice)}
+              >
                 编辑
               </Button>
             </Tooltip>
-            <Button danger size="small" onClick={() => handleDelete([notice])}>
+            <Button
+              danger
+              size="small"
+              onClick={() => handleDelete([notice])}
+            >
               删除
             </Button>
           </div>
@@ -222,7 +235,10 @@ const NoticeManagement = (props: NoticeManagementProps) => {
         items={[{ children: <NoticeSearch {...searchProps} />, key: '1', label: '查询条件' }]}
       />
 
-      <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 min-w-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -239,7 +255,11 @@ const NoticeManagement = (props: NoticeManagementProps) => {
             />
           }
           title={
-            <Flex align="center" gap={8} wrap="wrap">
+            <Flex
+              align="center"
+              gap={8}
+              wrap="wrap"
+            >
               <Typography.Text strong>通知公告列表</Typography.Text>
               <Typography.Text type="secondary">共 {total} 条</Typography.Text>
               {selectedRowKeys.length ? <Tag color="blue">已选 {selectedRowKeys.length} 项</Tag> : null}
@@ -267,7 +287,12 @@ const NoticeManagement = (props: NoticeManagementProps) => {
                 />
               )
             }}
-            rowSelection={{ align: 'center', preserveSelectedRowKeys: false, selectedRowKeys, onChange: setSelectedRowKeys }}
+            rowSelection={{
+              align: 'center',
+              preserveSelectedRowKeys: false,
+              selectedRowKeys,
+              onChange: setSelectedRowKeys
+            }}
             scroll={scrollConfig}
             size="small"
           />
@@ -342,7 +367,7 @@ export const Route = createFileRoute('/(admin)/system/notice/')({
   component: NoticeManagement,
   staticData: {
     keepAlive: true,
-    menu: { icon: 'ph:bell-ringing', order: 4 },
+    menu: { icon: 'ph:bell-ringing', order: 9 },
     title: '通知公告'
   }
 });

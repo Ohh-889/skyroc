@@ -364,5 +364,5 @@ function hasFilters(params: Partial<ConfigTableParams>) {
 }
 export const Route = createFileRoute('/(admin)/system/config/')({
   component: ConfigManagement,
-  staticData: { keepAlive: true, menu: { icon: 'ph:sliders-horizontal', order: 5 }, title: '参数配置' }
+  staticData: { keepAlive: true, menu: { icon: 'ph:sliders-horizontal', order: 7 }, title: '参数配置' }
 });
