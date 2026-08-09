@@ -13,9 +13,9 @@ export const request = createAppRequest({
     baseURL,
   },
   codes: {
-    expiredToken: import.meta.env.VITE_SERVICE_EXPIRED_TOKEN_CODES?.split(',') || [],
-    logout: import.meta.env.VITE_SERVICE_LOGOUT_CODES?.split(',') || [],
-    modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES?.split(',') || [],
+    expiredToken: import.meta.env.VITE_SERVICE_EXPIRED_TOKEN_CODES.split(',') ,
+    logout: import.meta.env.VITE_SERVICE_LOGOUT_CODES.split(',') ,
+    modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES.split(',') ,
     success: import.meta.env.VITE_SERVICE_SUCCESS_CODE
   },
   crypto: {
