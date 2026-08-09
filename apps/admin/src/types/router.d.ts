@@ -8,11 +8,6 @@ declare global {
     interface MenuExtraRegistry extends Record<import('@/features/menus/extras').ExtraKey, true> {}
 
     interface MenuCategoryRegistry extends Record<import('@/features/menus/menu-category').MenuCategoryKey, true> {}
-
-    interface RouterContext {
-      getHomeRoute: () => RoutePath;
-      homeRoute: RoutePath;
-    }
   }
 }
 
