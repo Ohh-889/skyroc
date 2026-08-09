@@ -172,6 +172,11 @@ declare global {
     }
 
     interface RouterContext {
+      /** 获取系统首页路由路径 */
+      getHomeRoute: () => RoutePath;
+
+      /** 系统首页路由路径 */
+      homeRoute: RoutePath;
       /**
        * Initialize authentication information
        *
@@ -184,6 +189,7 @@ declare global {
       isLoggedIn: boolean;
       /** Logout user and clear authentication information */
       logout: () => Promise<void>;
+
       /** Query client */
       queryClient: QueryClient;
       /** User information */
