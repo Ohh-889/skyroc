@@ -33,6 +33,7 @@ const PRIORITY_WEIGHT: Record<NotificationPriority, number> = {
  */
 type QueuedNotification = NotificationItem & { seq: number };
 
+/** 把优先级换算成排序权重。未标优先级的按 normal 算，让 compareNotifications 不用到处判空。 */
 function getWeight(priority: NotificationPriority | undefined): number {
   return PRIORITY_WEIGHT[priority ?? 'normal'];
 }
@@ -42,6 +43,11 @@ function compareNotifications(a: QueuedNotification, b: QueuedNotification): num
   return getWeight(a.priority) - getWeight(b.priority) || b.timestamp - a.timestamp || b.seq - a.seq;
 }
 
+/**
+ * 取当前本地时间的 HH:mm 文本。
+ *
+ * 免打扰配置里的 start / end 就是这个格式，统一成字符串后可以直接比大小，不用先解析成分钟数。
+ */
 function getCurrentTimeText(): string {
   const now = new Date();
   const hour = now.getHours().toString().padStart(2, '0');
@@ -73,6 +79,7 @@ export class NotificationStore {
   /** 变更监听器集合，快照重建后统一回调。 */
   private readonly listeners = new Set<() => void>();
 
+  /** 宿主注入的音效地址和各类失败回调。随 Provider 每次渲染整体替换，见 setOptions。 */
   private options: NotificationStoreOptions;
 
   /** 浏览器原生通知的授权状态。构造时不读，见 syncPermission。 */
@@ -87,13 +94,20 @@ export class NotificationStore {
   /** 快照缓存。useSyncExternalStore 按引用比较，每次现算会一直重渲染。 */
   private snapshot: NotificationSnapshot;
 
+  /** 缓存的音频实例，全部通知共用一个。每条通知新建一个的话，连着来几条会同时响。 */
   private sound: HTMLAudioElement | null = null;
 
   /** 上次创建音频用的地址，用来判断 soundUrl 换了没有。 */
   private soundUrl: string | undefined = undefined;
 
+  /** 解绑「队列变化 → 重建快照」这条链的函数。只在构造时接一次，destroy 时调它断开。 */
   private readonly unsubscribeQueue: () => void;
 
+  /**
+   * 装配队列、合并默认配置、接上队列订阅。
+   *
+   * 这里一个浏览器 API 都不碰：读权限推到 syncPermission，建 Audio 推到第一次播放。 服务端渲染时 new 出来是安全的。
+   */
   constructor(options: NotificationStoreOptions = {}) {
     this.options = options;
     this.config = { ...DEFAULT_NOTIFICATION_CONFIG, ...options.defaultConfig };
@@ -168,27 +182,35 @@ export class NotificationStore {
     return item.id;
   };
 
+  // 下面五个只是把 type 填好后转给 add，行为和 add 完全一致。选哪个看这条通知要给用户什么
+  // 语义，type 决定的是面板里的图标和颜色。
+
+  /** 中性告知，用户不需要做任何处理（版本更新、任务已开始）。 */
   addInfo = (title: string, content: string, options: NotificationShortcutOptions = {}): string =>
     this.add({ ...options, content, title, type: 'info' });
 
+  /** 操作成功的回执（导出完成、审批通过）。 */
   addSuccess = (title: string, content: string, options: NotificationShortcutOptions = {}): string =>
     this.add({ ...options, content, title, type: 'success' });
 
+  /** 需要用户留意但没有中断流程（配额快用完、证书快到期）。 */
   addWarning = (title: string, content: string, options: NotificationShortcutOptions = {}): string =>
     this.add({ ...options, content, title, type: 'warning' });
 
+  /** 出错了，通常要用户重试或介入（同步失败、任务中断）。 */
   addError = (title: string, content: string, options: NotificationShortcutOptions = {}): string =>
     this.add({ ...options, content, title, type: 'error' });
 
+  /** 来自其他人的消息（站内信、@ 提醒），区别于上面四种由系统发出的状态通知。 */
   addMessage = (title: string, content: string, options: NotificationShortcutOptions = {}): string =>
     this.add({ ...options, content, title, type: 'message' });
 
-  /** 将指定通知标记为已读。 */
+  /** 用户点开某条通知时调。已经是已读的原样返回，避免白重建一次快照、让整棵订阅树重渲染。 */
   markAsRead = (id: string): void => {
     this.queue.update(id, prev => (prev.read ? prev : { ...prev, read: true }));
   };
 
-  /** 将所有通知标记为已读。 */
+  /** 面板上「全部已读」按钮调。通知本身留着，只是 unreadCount 归零。 */
   markAllAsRead = (): void => {
     this.queue.updateBy(
       item => !item.read,
@@ -196,24 +218,32 @@ export class NotificationStore {
     );
   };
 
-  /** 移除指定通知。 */
+  /**
+   * 删掉某条通知，用户在面板上单条删除时调。
+   *
+   * 删掉之后这个 id 就不再参与去重，同 id 的通知再推进来会重新展示一次。
+   */
   remove = (id: string): void => {
     this.queue.remove(id);
   };
 
-  /** 清空全部通知。 */
+  /** 清空面板，已读未读一起删。用户点「清空」时调。 */
   clearAll = (): void => {
     this.queue.clear();
   };
 
-  /** 仅清除已读通知，保留未读通知。 */
+  /** 只删已读、保留未读。用户想收拾面板又不想漏掉没看过的东西时用。 */
   clearRead = (): void => {
     this.queue.removeBy(item => item.read);
   };
 
   // ==================== 配置与权限 ====================
 
-  /** 更新运行时配置，未传入的字段保持不变。 */
+  /**
+   * 更新运行时配置，未传入的字段保持不变。设置面板上改开关走这里。
+   *
+   * 队列容量跟着 maxNotifications 一起改，调小会立刻挤掉超出的那部分。
+   */
   updateConfig = (updates: Partial<NotificationConfig>): void => {
     this.config = { ...this.config, ...updates };
     this.queue.setCapacity(this.config.maxNotifications);
@@ -242,7 +272,11 @@ export class NotificationStore {
     this.setPermission(window.Notification.permission);
   };
 
-  /** 请求浏览器通知权限，并同步权限状态。 */
+  /**
+   * 弹浏览器的授权框，返回用户最终是不是给了权限。
+   *
+   * 必须由用户手势触发（点按钮），页面一加载就调会被浏览器直接拒掉，而且拒过一次之后 再调也不会重新弹框。
+   */
   requestPermission = async (): Promise<boolean> => {
     if (typeof window === 'undefined' || !('Notification' in window)) {
       this.options.onBrowserNotificationUnsupported?.();
@@ -262,6 +296,11 @@ export class NotificationStore {
 
   // ==================== 内部 ====================
 
+  /**
+   * 现算一个全新的快照对象，供 getSnapshot 缓存起来返回。
+   *
+   * 每次都返回新引用是故意的，useSyncExternalStore 靠引用变化判断要不要重渲染。 unreadCount 也在这里算好，省得每个消费组件各遍历一遍列表。
+   */
   private buildSnapshot(): NotificationSnapshot {
     const notifications = [...this.queue.toArray()];
 
@@ -273,7 +312,11 @@ export class NotificationStore {
     };
   }
 
-  /** 判断当前时间是否处于免打扰时段。 */
+  /**
+   * 当前是不是在免打扰时段里。音效和浏览器通知都要先过这一关。
+   *
+   * 免打扰只静音，不拦截：通知照样进队列、照样算未读数，用户回来能在面板里看到全部。
+   */
   private isDoNotDisturbTime(): boolean {
     if (!this.config.doNotDisturb || !this.config.doNotDisturbTime) {
       return false;
@@ -284,7 +327,11 @@ export class NotificationStore {
     return isWithinTimeRange(getCurrentTimeText(), start, end);
   }
 
-  /** 获取并缓存通知音频实例，音频地址变化时重新创建。 */
+  /**
+   * 拿到可用的音频实例，没配 soundUrl 或环境里没有 Audio 就返回 null。
+   *
+   * 惰性创建：构造时不碰 Audio，服务端渲染才不会炸。宿主换了 soundUrl 会重新建一个。
+   */
   private getSound(): HTMLAudioElement | null {
     const { soundUrl } = this.options;
 
@@ -300,7 +347,11 @@ export class NotificationStore {
     return this.sound;
   }
 
-  /** 播放通知音效，并将播放失败交给宿主应用处理。 */
+  /**
+   * 播一次提示音。新通知进队列时由 add 调。
+   *
+   * 播放前把 currentTime 归零，上一条还没播完时也能重新触发。 用户还没和页面交互过时浏览器会拒绝 play，所以失败是常态而不是异常，交给宿主决定要不要提示。
+   */
   private playSound(): void {
     if (!this.config.soundEnabled || this.isDoNotDisturbTime()) {
       return;
@@ -331,6 +382,7 @@ export class NotificationStore {
     }
   };
 
+  /** 写入授权状态。值没变就早退，否则每次 syncPermission 都会白刷一遍快照。 */
   private setPermission(permission: NotificationPermission): void {
     if (this.permission === permission) return;
 
@@ -338,7 +390,11 @@ export class NotificationStore {
     this.refresh();
   }
 
-  /** 根据当前配置显示浏览器原生通知。 */
+  /**
+   * 弹一条浏览器原生通知（页面切到后台也能看到）。新通知进队列时由 add 调。
+   *
+   * 开头四道闸门任意一道不过就安静跳过，面板里那条通知不受影响。 点击后聚焦回本页；带 link 的优先交给宿主的 onNavigate 走前端路由，没注入才硬跳。
+   */
   private showBrowserNotification(notification: NotificationItem): void {
     if (!this.config.browserNotificationEnabled || this.isDoNotDisturbTime()) {
       return;
