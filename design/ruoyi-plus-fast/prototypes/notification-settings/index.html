@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Skyroc Admin - 通知设置原型</title>
+    <style>
+      :root {
+        --primary: #5b5ff5;
+        --primary-soft: #f0f1ff;
+        --page: #f5f6f9;
+        --surface: #fff;
+        --text: #282a32;
+        --muted: #6f7280;
+        --quiet: #9699a5;
+        --border: #e7e8ed;
+        --warning: #b86d08;
+        --warning-soft: #fff5e5;
+        --success: #16875e;
+        --success-soft: #e9f7f0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+        font:
+          14px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          'PingFang SC',
+          sans-serif;
+      }
+      button,
+      select {
+        font: inherit;
+      }
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 220px 1fr;
+      }
+      .side {
+        background: #171922;
+        color: #fff;
+        padding: 18px 12px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px 18px;
+        font-weight: 700;
+      }
+      .mark {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--primary);
+      }
+      .group {
+        margin: 18px 10px 8px;
+        color: #6e7180;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+      }
+      .nav {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 3px 0;
+        padding: 0 12px;
+        border-radius: 8px;
+        color: #9a9eab;
+      }
+      .nav.active {
+        background: #2b2d51;
+        color: #fff;
+        box-shadow: inset 3px 0 var(--primary);
+      }
+      .main {
+        min-width: 0;
+      }
+      .top {
+        height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .crumb {
+        color: var(--quiet);
+      }
+      .crumb strong {
+        color: var(--text);
+      }
+      .content {
+        max-width: 1280px;
+        margin: auto;
+        padding: 28px;
+      }
+      .head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .head h1 {
+        margin: 0;
+        font-size: 25px;
+      }
+      .head p {
+        margin: 6px 0 0;
+        color: var(--muted);
+      }
+      .btn {
+        height: 36px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .btn.primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+      .alert {
+        display: flex;
+        gap: 11px;
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border: 1px solid #cadcff;
+        border-radius: 9px;
+        background: #f1f7ff;
+      }
+      .alert strong,
+      .alert span {
+        display: block;
+      }
+      .alert span {
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 17px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .panel-head h2 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .legend {
+        color: var(--quiet);
+        font-size: 12px;
+      }
+      .matrix {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .matrix th,
+      .matrix td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: center;
+      }
+      .matrix th {
+        background: #fafbfc;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .matrix th:first-child,
+      .matrix td:first-child {
+        width: 290px;
+        text-align: left;
+      }
+      .intent {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .intent-icon {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .intent strong,
+      .intent small {
+        display: block;
+      }
+      .intent small {
+        margin-top: 2px;
+        color: var(--quiet);
+      }
+      .fixed {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 99px;
+        background: var(--success-soft);
+        color: var(--success);
+        font-size: 12px;
+      }
+      .pref {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .pref select {
+        min-width: 116px;
+        height: 34px;
+        padding: 0 28px 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: #fff;
+        color: var(--text);
+      }
+      .lock {
+        color: var(--warning);
+        font-size: 13px;
+      }
+      .locked select {
+        border-color: #efd9b7;
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .card {
+        display: flex;
+        gap: 11px;
+        padding: 17px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface);
+      }
+      .card-icon {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 10px;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .card strong,
+      .card span {
+        display: block;
+      }
+      .card span {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        padding: 11px 15px;
+        border-radius: 8px;
+        background: #1d2a24;
+        color: #fff;
+        box-shadow: 0 10px 30px #0002;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: 0.2s;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: none;
+      }
+      @media (max-width: 900px) {
+        .app {
+          display: block;
+        }
+        .side {
+          display: none;
+        }
+        .content {
+          padding: 18px;
+        }
+        .matrix {
+          min-width: 760px;
+        }
+        .panel {
+          overflow: auto;
+        }
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .head {
+          display: block;
+        }
+        .head .btn {
+          margin-top: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><span class="mark">S</span>Skyroc 管理系统</div>
+        <div class="group">通知模块</div>
+        <div class="nav">▤　通知详情</div>
+        <div class="nav">☷　通知中心</div>
+        <div class="nav">➤　发布工作台</div>
+        <div class="nav active">⚙　通知设置</div>
+        <div class="group">系统管理</div>
+        <div class="nav">⌂　用户管理</div>
+        <div class="nav">◇　角色管理</div>
+        <div class="nav">☰　菜单管理</div>
+      </aside>
+      <section class="main">
+        <header class="top">
+          <div class="crumb">首页　/　通知模块　/　<strong>通知设置</strong></div>
+          <div>⌕　◉　 admin</div>
+        </header>
+        <main class="content">
+          <div class="head">
+            <div>
+              <h1>通知设置</h1>
+              <p>按通知意图管理外部投递渠道，修改后立即在所有设备生效。</p>
+            </div>
+            <button
+              class="btn primary"
+              onclick="save()"
+            >
+              保存设置
+            </button>
+          </div>
+          <div class="alert">
+            <b>ⓘ</b>
+            <div>
+              <strong>站内通知始终开启</strong
+              ><span>站内收件箱是已读状态与跨设备同步的唯一真相，因此不提供关闭入口。</span>
+            </div>
+          </div>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>渠道偏好矩阵</h2>
+              <span class="legend">🔒 表示系统安全策略锁定</span>
+            </div>
+            <table class="matrix">
+              <thead>
+                <tr>
+                  <th>通知意图</th>
+                  <th>站内</th>
+                  <th>邮件</th>
+                  <th>推送</th>
+                  <th>短信</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="intent">
+                      <span class="intent-icon">↻</span>
+                      <div><strong>事务型</strong><small>审批、任务和状态变化</small></div>
+                    </div>
+                  </td>
+                  <td><span class="fixed">✓ 始终开启</span></td>
+                  <td>
+                    <span class="pref locked"
+                      ><select disabled>
+                        <option>即时接收</option></select
+                      ><b class="lock">🔒</b></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>即时接收</option>
+                        <option>每日摘要</option>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>关闭</option>
+                        <option>即时接收</option>
+                      </select></span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="intent">
+                      <span class="intent-icon">✓</span>
+                      <div><strong>可操作</strong><small>需要你完成一项业务操作</small></div>
+                    </div>
+                  </td>
+                  <td><span class="fixed">✓ 始终开启</span></td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>即时接收</option>
+                        <option>每日摘要</option>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>即时接收</option>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>关闭</option>
+                        <option>即时接收</option>
+                      </select></span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="intent">
+                      <span class="intent-icon">i</span>
+                      <div><strong>信息型</strong><small>公告、动态和低频信息</small></div>
+                    </div>
+                  </td>
+                  <td><span class="fixed">✓ 始终开启</span></td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>每日摘要</option>
+                        <option>即时接收</option>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>关闭</option>
+                        <option>即时接收</option>
+                      </select></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select disabled>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="intent">
+                      <span class="intent-icon">!</span>
+                      <div><strong>告警型</strong><small>异常、安全和紧急事件</small></div>
+                    </div>
+                  </td>
+                  <td><span class="fixed">✓ 始终开启</span></td>
+                  <td>
+                    <span class="pref locked"
+                      ><select disabled>
+                        <option>即时接收</option></select
+                      ><b class="lock">🔒</b></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref locked"
+                      ><select disabled>
+                        <option>即时接收</option></select
+                      ><b class="lock">🔒</b></span
+                    >
+                  </td>
+                  <td>
+                    <span class="pref"
+                      ><select>
+                        <option>即时接收</option>
+                        <option>关闭</option>
+                      </select></span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <div class="cards">
+            <div class="card">
+              <span class="card-icon">▣</span>
+              <div><strong>跨设备一致</strong><span>设置保存在服务端，所有浏览器和设备统一生效。</span></div>
+            </div>
+            <div class="card">
+              <span class="card-icon">◇</span>
+              <div><strong>安全策略优先</strong><span>关键告警渠道不可关闭，服务端同样会拒绝绕过。</span></div>
+            </div>
+            <div class="card">
+              <span class="card-icon">◷</span>
+              <div><strong>支持每日摘要</strong><span>低频内容聚合发送，减少即时打扰。</span></div>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+    <div
+      class="toast"
+      id="toast"
+    >
+      通知偏好已保存
+    </div>
+    <script>
+      function save() {
+        const el = document.querySelector('#toast');
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 1800);
+      }
+      document.querySelectorAll('select').forEach(el => el.addEventListener('change', save));
+    </script>
+  </body>
+</html>
