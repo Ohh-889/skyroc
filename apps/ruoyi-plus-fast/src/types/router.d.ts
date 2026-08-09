@@ -9,10 +9,6 @@ declare global {
 
     interface MenuCategoryRegistry extends Record<import('@/features/menus/menu-category').MenuCategoryKey, true> {}
 
-    interface RouterContext {
-      getHomeRoute: () => RoutePath;
-      homeRoute: RoutePath;
-    }
   }
 }
 

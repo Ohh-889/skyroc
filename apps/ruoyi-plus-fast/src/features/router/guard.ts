@@ -96,8 +96,9 @@ export async function guardAdminRoute(options: AdminRouteGuardOptions) {
     throw redirect({ to: '/login', search: getLoginRedirectSearch(location, context) });
   }
 
-  const userInfo =await resolveUserInfo(context);
+  const userInfo = await resolveUserInfo(context);
 
+  console.log('userInfo',userInfo);
 
   return await guardResolvedUserInfo(options, userInfo);
 }
