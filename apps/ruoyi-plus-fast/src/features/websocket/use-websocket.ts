@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
+import type { RealtimeReadyPayload } from '@/features/realtime/message';
 import { parseRealtimeReady } from '@/features/realtime/message';
 import { buildRealtimeUrl } from '@/features/realtime/url';
 import { refreshAppToken } from '@/service/adapter';
@@ -13,14 +14,14 @@ function buildAppWebSocketUrl(): string | null {
   return buildRealtimeUrl({ enabled: websocketEnabled, url: websocketUrl });
 }
 
-let appClient: WebSocketClient | null = null;
+let appClient: WebSocketClient<RealtimeReadyPayload> | null = null;
 
 /**
  * 全应用共用的那一条连接。
  *
  * 惰性建单例而不是交给某个组件持有：挂载它的 WebSocketEffect 和用它的联调页在两棵子树上， 组件持有的话后者拿不到。
  */
-export function getAppWebSocketClient(): WebSocketClient {
+export function getAppWebSocketClient(): WebSocketClient<RealtimeReadyPayload> {
   appClient ??= new WebSocketClient({
     getUrl: buildAppWebSocketUrl,
     isPong: raw => raw === 'pong',

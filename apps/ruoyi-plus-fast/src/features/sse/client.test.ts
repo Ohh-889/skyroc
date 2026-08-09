@@ -159,14 +159,26 @@ describe('连接', () => {
     connectReady(client);
 
     expect(onReady).toHaveBeenCalledWith({ connection_id: 'c1', transport: 'sse', user_id: 1 });
-    expect(client.getConnectionId()).toBe('c1');
+    expect(client.getReady()).toEqual({ connection_id: 'c1', transport: 'sse', user_id: 1 });
   });
 
-  it('状态变成 connected 时连接 ID 已经能读到', () => {
+  it('晚订阅的一方虽然错过 ready 事件，但读得到快照', () => {
+    const client = createClient();
+
+    connectReady(client);
+
+    const late = vi.fn();
+    client.on('ready', late);
+
+    expect(late).not.toHaveBeenCalled();
+    expect(client.getReady()).toEqual({ connection_id: 'c1', transport: 'sse', user_id: 1 });
+  });
+
+  it('状态变成 connected 时就绪信息已经能读到', () => {
     const client = createClient();
     const seen: (string | null)[] = [];
 
-    client.on('stateChange', () => seen.push(client.getConnectionId()));
+    client.on('stateChange', () => seen.push(client.getReady()?.connection_id ?? null));
     connectReady(client);
 
     expect(seen).toEqual([null, 'c1']);
@@ -199,7 +211,7 @@ describe('连接', () => {
     expect(second.mock.calls).toEqual([['a']]);
   });
 
-  it('主动断开会关掉底层连接并清掉连接 ID', () => {
+  it('主动断开会关掉底层连接并清掉就绪信息', () => {
     const client = createClient();
 
     connectReady(client);
@@ -208,7 +220,7 @@ describe('连接', () => {
 
     expect(source.closed).toBe(true);
     expect(client.getSnapshot()).toBe('disconnected');
-    expect(client.getConnectionId()).toBeNull();
+    expect(client.getReady()).toBeNull();
   });
 });
 
@@ -320,7 +332,7 @@ describe('连接错误', () => {
 
     expect(onError).toHaveBeenCalledWith(true);
     expect(client.getSnapshot()).toBe('connecting');
-    expect(client.getConnectionId()).toBeNull();
+    expect(client.getReady()).toBeNull();
   });
 
   it('浏览器放弃时关掉连接并转成断开', () => {

@@ -2,7 +2,7 @@ import type { ConnectionState } from '@/features/realtime/state';
 
 export type { ConnectionState };
 
-export interface WebSocketClientOptions {
+export interface WebSocketClientOptions<TReady = unknown> {
   /** 首次重连延迟，之后按 2 的幂次增长，默认 1000。 */
   baseReconnectDelay?: number;
   /**
@@ -27,21 +27,29 @@ export interface WebSocketClientOptions {
    * 不配的话 4001 退化成普通重连，会拿着同一张过期令牌反复被拒。配了就先等续签完再连， 省掉那一轮注定失败的重试。
    */
   onTokenStale?: () => Promise<boolean>;
-  /** 认出服务端的就绪消息并解出负载，返回 null 表示这条不是就绪消息。 */
-  parseReady?: (raw: string) => unknown;
+  /**
+   * 认出服务端的就绪消息并解出负载，返回 null 表示这条不是就绪消息。
+   *
+   * 就绪负载的形状由这个函数决定，整个客户端的 TReady 都由它推出来：协议知识只在这一处 注入，类本身仍然不认识任何业务字段。
+   */
+  parseReady?: (raw: string) => TReady | null;
   /** 心跳帧内容，默认裸字符串 ping。 */
   pingFrame?: string;
 }
 
-export interface WebSocketEventMap {
+export interface WebSocketEventMap<TReady = unknown> {
   /** 收到 1008：这次登录结束了，不会再重连。 */
   authFailed: () => void;
   /** 底层 socket 报错。close 总会跟着来，这个事件只用于诊断。 */
   error: (event: Event) => void;
   /** 收到业务消息（已排除就绪消息和心跳响应）。 */
   message: (raw: string) => void;
-  /** 服务端确认连接就绪。 */
-  ready: (payload: unknown) => void;
+  /**
+   * 服务端确认连接就绪。
+   *
+   * 只在就绪帧到达的那一刻发一次，晚挂载的订阅方注定错过；要拿当前连接的就绪信息，先读 `getReady()` 补上快照，再订阅这个事件接后续的重连。
+   */
+  ready: (payload: TReady) => void;
   /** 消息已发出。 */
   sent: (raw: string) => void;
   /** 连接状态变化。 */

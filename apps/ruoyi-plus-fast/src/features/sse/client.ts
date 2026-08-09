@@ -1,4 +1,5 @@
 import { ServerCloseCode } from '@/features/realtime/close-codes';
+import type { RealtimeReadyPayload } from '@/features/realtime/message';
 import { parseRealtimeReady } from '@/features/realtime/message';
 import type { ConnectionState } from '@/features/realtime/state';
 
@@ -29,9 +30,6 @@ function readCloseInfo(raw: string): SseCloseInfo {
  * 状态和监听器都收在实例里，React 侧用 subscribe / getSnapshot 直接订阅，不需要另建一个模块 转发状态 —— 那样会多出一份和这里同步不上的镜像。
  */
 export class SseClient {
-  /** 服务端给的连接标识，报障时给后端能捞出整条连接的日志。 */
-  private connectionId: string | null = null;
-
   /** 事件监听表。每种事件一个 Set，同一个事件可以有多个订阅方。 */
   private listeners: { [K in SseEventName]: Set<SseEventMap[K]> } = {
     authFailed: new Set(),
@@ -49,6 +47,13 @@ export class SseClient {
    * 初值是 true：构造了但还没 connect 的实例不该自己连上去。
    */
   private manuallyClosed = true;
+
+  /**
+   * 最近一次就绪负载，null 表示当前没有就绪的连接。
+   *
+   * ready 是瞬时事件，但它带的连接信息在整条连接活着期间一直有效。留一份在这里，晚挂载 的订阅方（比如联调页）才答得上「当前连接是哪一条」—— 否则它只能等下一次重连。
+   */
+  private readyPayload: RealtimeReadyPayload | null = null;
 
   /**
    * 当前这条流，null 表示没有活着的连接。
@@ -86,9 +91,13 @@ export class SseClient {
     Object.values(this.listeners).forEach(set => set.clear());
   }
 
-  /** 读当前连接标识，没连上时是 null。 */
-  getConnectionId(): string | null {
-    return this.connectionId;
+  /**
+   * 读当前连接的就绪信息，没有就绪的连接时返回 null。
+   *
+   * 挂载晚于 ready 事件的订阅方用它补上错过的那次，之后再靠事件接重连。不并进 getSnapshot： 那个快照要按引用比较，返回对象会让每次订阅通知都判定成变了。
+   */
+  getReady(): RealtimeReadyPayload | null {
+    return this.readyPayload;
   }
 
   /**
@@ -140,7 +149,7 @@ export class SseClient {
     const willRetry = source.readyState === EventSource.CONNECTING;
 
     if (willRetry) {
-      this.connectionId = null;
+      this.readyPayload = null;
       this.setState('connecting');
     } else {
       this.stop();
@@ -196,8 +205,8 @@ export class SseClient {
 
       if (!payload) return;
 
-      // 先落 connectionId 再改状态：订阅方在 stateChange 里读它，反过来会读到上一条连接的
-      this.connectionId = payload.connection_id;
+      // 先落快照再改状态：订阅方在 stateChange 里读它，反过来会读到上一条连接的
+      this.readyPayload = payload;
       this.setState('connected');
       this.emit('ready', payload);
     });
@@ -243,7 +252,7 @@ export class SseClient {
 
   /** 关掉当前连接但不改状态，也不进入「主动断开」—— 续签后还要再连回来。 */
   private stop() {
-    this.connectionId = null;
+    this.readyPayload = null;
 
     // 先摘掉引用再关：close 触发的迟到回调身份对不上，就不会作用到下一条连接上
     const source = this.source;

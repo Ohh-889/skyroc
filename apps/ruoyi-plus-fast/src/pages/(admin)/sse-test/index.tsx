@@ -5,7 +5,8 @@ import { ButtonIcon } from '@skyroc/web-ui-antd';
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import { Flex, Select, Space } from 'antd';
 import { getToken } from '@/features/auth/use-auth';
-import { parseRealtimeEnvelope, parseRealtimeReady } from '@/features/realtime/message';
+import type { RealtimeReadyPayload } from '@/features/realtime/message';
+import { parseRealtimeEnvelope } from '@/features/realtime/message';
 import { pushSseMessage } from '@/features/sse/api';
 import type { ConnectionState } from '@/features/sse/types';
 import { useAppSse } from '@/features/sse/use-sse';
@@ -19,15 +20,6 @@ interface SseLogEntry {
   timestamp: number;
   /** 信封里的 type，状态变化没有。 */
   type?: string;
-}
-
-interface ReadyInfo {
-  /** 服务端分配的连接标识。 */
-  connectionId: string;
-  /** 服务端报告的传输名称。 */
-  transport: string;
-  /** 连接所属用户。 */
-  userId: number;
 }
 
 const MAX_LOGS = 50;
@@ -80,17 +72,34 @@ const SseTest = () => {
   const [pushTitle, setPushTitle] = useState('后端主动推送');
   const [pushType, setPushType] = useState<(typeof PUSH_TYPES)[number]>('success');
   const [serverMessage, setServerMessage] = useState('后端主动推送的测试消息');
-  const [readyInfo, setReadyInfo] = useState<ReadyInfo | null>(null);
+  const [readyInfo, setReadyInfo] = useState<RealtimeReadyPayload | null>(null);
   const [expandedLog, setExpandedLog] = useState<number | null>(null);
   const [directionFilter, setDirectionFilter] = useState<DirectionFilter>('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [paused, setPaused] = useState(false);
   const [pausedLogs, setPausedLogs] = useState<SseLogEntry[]>([]);
+  // 暂停只决定新事件落哪个桶，不影响订阅关系，放 ref 才不会每次切换都退订重订一轮
+  const pausedRef = useRef(false);
+
+  // 就绪信息的真相在客户端上，这里只做镜像。ready 是瞬时事件，连接早在本页挂载前就就绪
+  // 了，那一帧不会重放，所以先读一次快照补上；之后重连（ready）和断开（stateChange 时
+  // 客户端已把它清空）都各自触发一次同步。
+  useEffect(() => {
+    function syncReady() {
+      setReadyInfo(client.getReady());
+    }
+
+    syncReady();
+
+    const offs = [client.on('ready', syncReady), client.on('stateChange', syncReady)];
+
+    return () => offs.forEach(off => off());
+  }, [client]);
 
   useEffect(() => {
     function append(direction: SseLogEntry['direction'], message: string, type?: string) {
       const entry = { direction, message, timestamp: Date.now(), type };
-      if (paused) {
+      if (pausedRef.current) {
         setPausedLogs(current => [...current, entry]);
         return;
       }
@@ -99,24 +108,15 @@ const SseTest = () => {
 
     const offs = [
       client.on('message', raw => append('in', raw, parseRealtimeEnvelope(raw)?.type)),
-      client.on('ready', payload => {
-        const next = parseRealtimeReady(
-          JSON.stringify({ code: '0001', data: payload, msg: 'connected', type: 'system.connection.ready' })
-        );
-        if (next) setReadyInfo({ connectionId: next.connection_id, transport: next.transport, userId: next.user_id });
-      }),
       client.on('closed', info => append('system', `服务端结束连接：${info.reason || '未说明'}（${info.code}）`)),
       client.on('error', willRetry =>
         append('system', willRetry ? '连接中断，浏览器将自动重连' : '连接失败，不会重连')
       ),
-      client.on('stateChange', next => {
-        if (next !== 'connected') setReadyInfo(null);
-        append('system', `SSE ${stateLabels[next]}`);
-      })
+      client.on('stateChange', next => append('system', `SSE ${stateLabels[next]}`))
     ];
 
     return () => offs.forEach(off => off());
-  }, [client, paused]);
+  }, [client]);
 
   async function handleServerPush() {
     const content = serverMessage.trim();
@@ -135,11 +135,16 @@ const SseTest = () => {
   }
 
   function handlePauseChange() {
-    if (paused) {
+    const next = !pausedRef.current;
+
+    pausedRef.current = next;
+    setPaused(next);
+
+    // 恢复接收时把暂停期间攒下的补回事件流，顺序保持「新的在上」
+    if (!next) {
       setLogs(current => pausedLogs.toReversed().concat(current).slice(0, MAX_LOGS));
       setPausedLogs([]);
     }
-    setPaused(current => !current);
   }
 
   function handleDisconnect() {
@@ -319,20 +324,20 @@ const SseTest = () => {
                         align="center"
                         gap={4}
                       >
-                        <ATypography.Text className="font-mono">{readyInfo.connectionId}</ATypography.Text>
+                        <ATypography.Text className="font-mono">{readyInfo.connection_id}</ATypography.Text>
                         <ButtonIcon
                           aria-label="复制连接 ID"
                           className="h-26px w-26px rounded-6px text-13px"
                           icon="ph:copy"
                           tooltipContent="复制连接 ID"
-                          onClick={() => copyText(readyInfo.connectionId, '连接 ID 已复制')}
+                          onClick={() => copyText(readyInfo.connection_id, '连接 ID 已复制')}
                         />
                       </Flex>
                     ) : (
                       '未就绪，等待 ready 事件'
                     )
                   },
-                  { key: 'user', label: '用户', children: readyInfo ? `uid ${readyInfo.userId}` : '未就绪' },
+                  { key: 'user', label: '用户', children: readyInfo ? `uid ${readyInfo.user_id}` : '未就绪' },
                   { key: 'transport', label: '传输', children: readyInfo?.transport || 'sse' },
                   {
                     key: 'reconnect',

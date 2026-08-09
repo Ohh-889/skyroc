@@ -179,6 +179,60 @@ describe('连接与就绪', () => {
   });
 });
 
+describe('就绪信息快照', () => {
+  it('就绪前读不到，就绪后读得到', () => {
+    const client = createClient();
+
+    expect(client.getReady()).toBeNull();
+
+    connectAndReady(client);
+
+    expect(client.getReady()).toEqual({ connection_id: 'c1' });
+  });
+
+  it('晚订阅的一方虽然错过 ready 事件，但读得到快照', () => {
+    const client = createClient();
+
+    connectAndReady(client);
+
+    const late = vi.fn();
+    client.on('ready', late);
+
+    expect(late).not.toHaveBeenCalled();
+    expect(client.getReady()).toEqual({ connection_id: 'c1' });
+  });
+
+  it('连接断开后清空，connection_id 不能留到下一条连接', () => {
+    const client = createClient();
+
+    connectAndReady(client);
+    FakeWebSocket.last.serverClose(1006);
+
+    expect(client.getReady()).toBeNull();
+  });
+
+  it('主动断开也清空', () => {
+    const client = createClient();
+
+    connectAndReady(client);
+    client.disconnect();
+
+    expect(client.getReady()).toBeNull();
+  });
+
+  it('stateChange 报 connected 时快照已经就位', () => {
+    const client = createClient();
+    const seen: unknown[] = [];
+    client.on('stateChange', next => {
+      if (next === 'connected') seen.push(client.getReady());
+    });
+
+    connectAndReady(client);
+
+    expect(seen).toEqual([{ connection_id: 'c1' }]);
+  });
+});
+
 describe('重连', () => {
   it('按 2 的幂次退避，并在上限处封顶', () => {
     const client = createClient({ baseReconnectDelay: 1_000, maxReconnectDelay: 4_000 });

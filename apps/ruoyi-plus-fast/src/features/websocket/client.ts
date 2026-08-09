@@ -30,12 +30,12 @@ const DEFAULT_PING_FRAME = 'ping';
  *
  * 状态和监听器都收在实例里，React 侧用 subscribe / getSnapshot 直接订阅，不需要 另建一个模块转发状态 —— 那样会多出一份和这里同步不上的镜像。
  */
-export class WebSocketClient {
+export class WebSocketClient<TReady = unknown> {
   /** 心跳发送定时器，非 null 表示心跳正在跑。 */
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
   /** 事件监听表。每种事件一个 Set，同一个事件可以有多个订阅方。 */
-  private listeners: { [K in WebSocketEventName]: Set<WebSocketEventMap[K]> } = {
+  private listeners: { [K in WebSocketEventName]: Set<WebSocketEventMap<TReady>[K]> } = {
     authFailed: new Set(),
     error: new Set(),
     message: new Set(),
@@ -55,6 +55,13 @@ export class WebSocketClient {
   /** 心跳响应超时定时器，收到响应就清掉；烧完说明连接已经半开。 */
   private pongTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * 最近一次就绪负载，null 表示当前没有就绪的连接。
+   *
+   * ready 是瞬时事件，但它带的连接信息在整条连接活着期间一直有效。留一份在这里，晚挂载 的订阅方（比如联调页）才答得上「当前连接是哪一条」—— 否则它只能等下一次重连。
+   */
+  private readyPayload: TReady | null = null;
+
   /** 已经排过几次重连，用来算退避时长；连接就绪后归零。 */
   private reconnectAttempt = 0;
 
@@ -71,7 +78,7 @@ export class WebSocketClient {
   /** 对外可见的连接状态，唯一真相，React 侧读的就是它。 */
   private state: ConnectionState = 'idle';
 
-  constructor(private readonly options: WebSocketClientOptions) {}
+  constructor(private readonly options: WebSocketClientOptions<TReady>) {}
 
   // ==================== 公开 API ====================
 
@@ -110,6 +117,13 @@ export class WebSocketClient {
   }
 
   /**
+   * 读当前连接的就绪信息，没有就绪的连接时返回 null。
+   *
+   * 挂载晚于就绪帧的订阅方用它补上错过的那次 ready，之后再靠事件接重连。不并进 getSnapshot： 那个快照要按引用比较，返回对象会让每次订阅通知都判定成变了。
+   */
+  getReady = (): TReady | null => this.readyPayload;
+
+  /**
    * 读当前状态。
    *
    * 返回字符串而不是对象：useSyncExternalStore 按引用比较快照，返回对象会每次都判定成 变了，一直重渲染。
@@ -117,13 +131,13 @@ export class WebSocketClient {
   getSnapshot = (): ConnectionState => this.state;
 
   /** 退订。一般用不上，直接调 on 返回的那个函数更省事。 */
-  off<K extends WebSocketEventName>(event: K, listener: WebSocketEventMap[K]) {
-    (this.listeners[event] as Set<WebSocketEventMap[K]>).delete(listener);
+  off<K extends WebSocketEventName>(event: K, listener: WebSocketEventMap<TReady>[K]) {
+    (this.listeners[event] as Set<WebSocketEventMap<TReady>[K]>).delete(listener);
   }
 
   /** 订阅事件，返回取消订阅函数，可以直接当 useEffect 的清理函数用。 */
-  on<K extends WebSocketEventName>(event: K, listener: WebSocketEventMap[K]): () => void {
-    (this.listeners[event] as Set<WebSocketEventMap[K]>).add(listener);
+  on<K extends WebSocketEventName>(event: K, listener: WebSocketEventMap<TReady>[K]): () => void {
+    (this.listeners[event] as Set<WebSocketEventMap<TReady>[K]>).add(listener);
 
     return () => this.off(event, listener);
   }
@@ -191,6 +205,7 @@ export class WebSocketClient {
   private cleanup() {
     this.stopHeartbeat();
     this.cancelReconnect();
+    this.readyPayload = null;
 
     if (this.socket) {
       const socket = this.socket;
@@ -204,8 +219,8 @@ export class WebSocketClient {
   // ==================== 内部：事件 ====================
 
   /** 把事件派发给所有订阅方。 */
-  private emit<K extends WebSocketEventName>(event: K, ...args: Parameters<WebSocketEventMap[K]>) {
-    const listeners = this.listeners[event] as Set<(...a: Parameters<WebSocketEventMap[K]>) => void>;
+  private emit<K extends WebSocketEventName>(event: K, ...args: Parameters<WebSocketEventMap<TReady>[K]>) {
+    const listeners = this.listeners[event] as Set<(...a: Parameters<WebSocketEventMap<TReady>[K]>) => void>;
 
     listeners.forEach(listener => {
       try {
@@ -220,6 +235,7 @@ export class WebSocketClient {
   /** 连接关闭后的分流：按关闭码决定是重连、还是停下来等重新登录。 */
   private handleClose(event: CloseEvent) {
     this.socket = null;
+    this.readyPayload = null;
     this.stopHeartbeat();
     this.setState('disconnected');
 
@@ -253,6 +269,8 @@ export class WebSocketClient {
     // 就绪消息到了才算真正连上：握手成功只说明服务端 accept 了，认证还没结论
     if (ready !== null) {
       this.reconnectAttempt = 0;
+      // 先落快照再改状态：stateChange 的订阅方看到 connected 时，getReady() 就该有值了
+      this.readyPayload = ready;
       this.setState('connected');
       this.startHeartbeat();
       this.emit('ready', ready);
