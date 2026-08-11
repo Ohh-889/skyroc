@@ -5,6 +5,7 @@ export const SYSTEM_TENANT_PACKAGE_QUERY_KEYS = {
   DETAIL: (id: TenantPackageId) => ['system-tenant-package', 'detail', String(id)] as const,
   LIST: (params: TenantPackageListParams) => ['system-tenant-package', 'list', params] as const,
   LISTS: ['system-tenant-package', 'list'] as const,
+  MENU_TREE: (packageId: TenantPackageId) => ['system-tenant-package', 'menu-tree', String(packageId)] as const,
   SELECT_LIST: ['system-tenant-package', 'select-list'] as const
 } as const;
 

@@ -6,6 +6,7 @@ import type {
   TenantPackageItem,
   TenantPackageListPage,
   TenantPackageListParams,
+  TenantPackageMenuTreeResponse,
   TenantPackageOption,
   TenantPackageSavePayload,
   TenantPackageStatusPayload,
@@ -24,6 +25,18 @@ export function fetchTenantPackageOptions() {
 
 export function fetchTenantPackageDetail(id: TenantPackageId) {
   return request<TenantPackageItem>({ method: 'get', url: SYSTEM_TENANT_PACKAGE_URLS.DETAIL(id) });
+}
+
+/**
+ * 配套餐用的菜单树，外加这个套餐已经勾中的节点。
+ *
+ * 新增时传 0：后端拿它区分"只要树"和"树加已勾选项"。树里不含"租户管理"那一支， 否则套餐就能把平台控制面授权给普通租户。
+ */
+export function fetchTenantPackageMenuTree(packageId: TenantPackageId = 0) {
+  return request<TenantPackageMenuTreeResponse>({
+    method: 'get',
+    url: SYSTEM_TENANT_PACKAGE_URLS.MENU_TREE(packageId)
+  });
 }
 
 /** 导出的是筛选条件命中的全部数据，所以不收分页参数 */

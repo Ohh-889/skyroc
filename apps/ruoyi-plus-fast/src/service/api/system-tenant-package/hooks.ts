@@ -7,6 +7,7 @@ import {
   exportTenantPackages,
   fetchTenantPackageDetail,
   fetchTenantPackageList,
+  fetchTenantPackageMenuTree,
   fetchTenantPackageOptions,
   updateTenantPackage,
   updateTenantPackageStatus
@@ -42,6 +43,17 @@ export function useTenantPackageOptionsQuery(enabled = true) {
     enabled,
     queryFn: fetchTenantPackageOptions,
     queryKey: SYSTEM_TENANT_PACKAGE_QUERY_KEYS.SELECT_LIST
+  });
+}
+
+/** 新增时不传 packageId，退回 0：后端用它区分"只要树"和"树加已勾选项"。 */
+export function useTenantPackageMenuTreeQuery(packageId: TenantPackageId | undefined, enabled = true) {
+  const treeId = packageId ?? 0;
+
+  return useQuery({
+    enabled,
+    queryFn: () => fetchTenantPackageMenuTree(treeId),
+    queryKey: SYSTEM_TENANT_PACKAGE_QUERY_KEYS.MENU_TREE(treeId)
   });
 }
 
