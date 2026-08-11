@@ -6,19 +6,23 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ### Project Skills Overview
 
-This project has 11 skills located in `.Codex/skills/`:
+This project has 15 skills located in `.agents/skills/`:
 
 1. code-simplifier
-2. component-refactoring
-3. doc-coauthoring
-4. feature-dev
-5. frontend-code-review
-6. frontend-design
-7. frontend-testing
-8. senior-frontend
-9. skill-creator
-10. ui-ux-pro-max
-11. vercel-react-best-practices
+2. component-doc
+3. component-refactoring
+4. doc-coauthoring
+5. feature-dev
+6. frontend-code-review
+7. frontend-design
+8. frontend-testing
+9. migrate-oxfmt
+10. migrate-oxlint
+11. senior-frontend
+12. skill-creator
+13. skyroc-admin-prd-prototype
+14. ui-ux-pro-max
+15. vercel-react-best-practices
 
 ### ❗ Absolute Skill Invocation Rules
 
@@ -40,19 +44,20 @@ Skills are only used when the user explicitly instructs which one to use.
 
 When directed by the user, use skills according to these scenarios:
 
-| User Intent / Scenario         | Skill                                        |
-| ------------------------------ | -------------------------------------------- |
-| 写完代码后（统一收尾）         | `.Codex/skills/code-simplifier`             |
-| 写文档 / 技术文档 / 方案文档   | `.Codex/skills/doc-coauthoring`             |
-| 重构已有组件                   | `.Codex/skills/component-refactoring`       |
-| 遵循 / 对齐最佳实践            | `.Codex/skills/vercel-react-best-practices` |
-| 完成较大的需求 / 系统级改动    | `.Codex/skills/vercel-react-best-practices` |
-| 让我像设计师一样思考 UI / UX   | `.Codex/skills/ui-ux-pro-max`               |
-| 开发一个明确的功能需求         | `.Codex/skills/feature-dev`                 |
-| 我让你**主动**做代码审查       | `.Codex/skills/frontend-code-review`        |
-| 前端视觉 / 界面设计            | `.Codex/skills/frontend-design`             |
-| 前端测试 / 测试策略 / 测试用例 | `.Codex/skills/frontend-testing`            |
-| 设计组件 / 项目 / 需求的架构   | `.Codex/skills/senior-frontend`             |
+| User Intent / Scenario                   | Skill                                        |
+| ---------------------------------------- | -------------------------------------------- |
+| 写完代码后（统一收尾）                   | `.agents/skills/code-simplifier`             |
+| 写文档 / 技术文档 / 方案文档             | `.agents/skills/doc-coauthoring`             |
+| 重构已有组件                             | `.agents/skills/component-refactoring`       |
+| 遵循 / 对齐最佳实践                      | `.agents/skills/vercel-react-best-practices` |
+| 完成较大的需求 / 系统级改动              | `.agents/skills/vercel-react-best-practices` |
+| 让我像设计师一样思考 UI / UX             | `.agents/skills/ui-ux-pro-max`               |
+| 开发一个明确的功能需求                   | `.agents/skills/feature-dev`                 |
+| 我让你**主动**做代码审查                 | `.agents/skills/frontend-code-review`        |
+| 前端视觉 / 界面设计                      | `.agents/skills/frontend-design`             |
+| 前端测试 / 测试策略 / 测试用例           | `.agents/skills/frontend-testing`            |
+| 设计组件 / 项目 / 需求的架构             | `.agents/skills/senior-frontend`             |
+| 编写 Skyroc Admin PRD 和独立 HTML 设计图 | `.agents/skills/skyroc-admin-prd-prototype`  |
 
 ## Important Notes
 
