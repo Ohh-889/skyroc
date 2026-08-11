@@ -30,6 +30,8 @@ import { Route as adminSystemLogLayoutRouteImport } from './../../pages/(admin)/
 import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
 import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/system/role/index'
 import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
+import { Route as adminSystemOssIndexRouteImport } from './../../pages/(admin)/system/oss/index'
+import { Route as adminSystemOssConfigIndexRouteImport } from './../../pages/(admin)/system/oss-config/index'
 import { Route as adminSystemNoticeIndexRouteImport } from './../../pages/(admin)/system/notice/index'
 import { Route as adminSystemMenuIndexRouteImport } from './../../pages/(admin)/system/menu/index'
 import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/system/dict/index'
@@ -149,6 +151,17 @@ const adminSystemPostIndexRoute = adminSystemPostIndexRouteImport.update({
   path: '/post/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
+const adminSystemOssIndexRoute = adminSystemOssIndexRouteImport.update({
+  id: '/oss/',
+  path: '/oss/',
+  getParentRoute: () => adminSystemLayoutRoute,
+} as any)
+const adminSystemOssConfigIndexRoute =
+  adminSystemOssConfigIndexRouteImport.update({
+    id: '/oss-config/',
+    path: '/oss-config/',
+    getParentRoute: () => adminSystemLayoutRoute,
+  } as any)
 const adminSystemNoticeIndexRoute = adminSystemNoticeIndexRouteImport.update({
   id: '/notice/',
   path: '/notice/',
@@ -256,6 +269,8 @@ export interface FileRoutesByFullPath {
   '/system/dict/': typeof adminSystemDictIndexRoute
   '/system/menu/': typeof adminSystemMenuIndexRoute
   '/system/notice/': typeof adminSystemNoticeIndexRoute
+  '/system/oss-config/': typeof adminSystemOssConfigIndexRoute
+  '/system/oss/': typeof adminSystemOssIndexRoute
   '/system/post/': typeof adminSystemPostIndexRoute
   '/system/role/': typeof adminSystemRoleIndexRoute
   '/system/user/': typeof adminSystemUserIndexRoute
@@ -291,6 +306,8 @@ export interface FileRoutesByTo {
   '/system/dict': typeof adminSystemDictIndexRoute
   '/system/menu': typeof adminSystemMenuIndexRoute
   '/system/notice': typeof adminSystemNoticeIndexRoute
+  '/system/oss-config': typeof adminSystemOssConfigIndexRoute
+  '/system/oss': typeof adminSystemOssIndexRoute
   '/system/post': typeof adminSystemPostIndexRoute
   '/system/role': typeof adminSystemRoleIndexRoute
   '/system/user': typeof adminSystemUserIndexRoute
@@ -329,6 +346,8 @@ export interface FileRoutesById {
   '/(admin)/system/dict/': typeof adminSystemDictIndexRoute
   '/(admin)/system/menu/': typeof adminSystemMenuIndexRoute
   '/(admin)/system/notice/': typeof adminSystemNoticeIndexRoute
+  '/(admin)/system/oss-config/': typeof adminSystemOssConfigIndexRoute
+  '/(admin)/system/oss/': typeof adminSystemOssIndexRoute
   '/(admin)/system/post/': typeof adminSystemPostIndexRoute
   '/(admin)/system/role/': typeof adminSystemRoleIndexRoute
   '/(admin)/system/user/': typeof adminSystemUserIndexRoute
@@ -367,6 +386,8 @@ export interface FileRouteTypes {
     | '/system/dict/'
     | '/system/menu/'
     | '/system/notice/'
+    | '/system/oss-config/'
+    | '/system/oss/'
     | '/system/post/'
     | '/system/role/'
     | '/system/user/'
@@ -402,6 +423,8 @@ export interface FileRouteTypes {
     | '/system/dict'
     | '/system/menu'
     | '/system/notice'
+    | '/system/oss-config'
+    | '/system/oss'
     | '/system/post'
     | '/system/role'
     | '/system/user'
@@ -439,6 +462,8 @@ export interface FileRouteTypes {
     | '/(admin)/system/dict/'
     | '/(admin)/system/menu/'
     | '/(admin)/system/notice/'
+    | '/(admin)/system/oss-config/'
+    | '/(admin)/system/oss/'
     | '/(admin)/system/post/'
     | '/(admin)/system/role/'
     | '/(admin)/system/user/'
@@ -605,6 +630,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminSystemPostIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
     }
+    '/(admin)/system/oss/': {
+      id: '/(admin)/system/oss/'
+      path: '/oss'
+      fullPath: '/system/oss/'
+      preLoaderRoute: typeof adminSystemOssIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
+    '/(admin)/system/oss-config/': {
+      id: '/(admin)/system/oss-config/'
+      path: '/oss-config'
+      fullPath: '/system/oss-config/'
+      preLoaderRoute: typeof adminSystemOssConfigIndexRouteImport
+      parentRoute: typeof adminSystemLayoutRoute
+    }
     '/(admin)/system/notice/': {
       id: '/(admin)/system/notice/'
       path: '/notice'
@@ -740,6 +779,8 @@ interface adminSystemLayoutRouteChildren {
   adminSystemDictIndexRoute: typeof adminSystemDictIndexRoute
   adminSystemMenuIndexRoute: typeof adminSystemMenuIndexRoute
   adminSystemNoticeIndexRoute: typeof adminSystemNoticeIndexRoute
+  adminSystemOssConfigIndexRoute: typeof adminSystemOssConfigIndexRoute
+  adminSystemOssIndexRoute: typeof adminSystemOssIndexRoute
   adminSystemPostIndexRoute: typeof adminSystemPostIndexRoute
   adminSystemRoleIndexRoute: typeof adminSystemRoleIndexRoute
   adminSystemUserIndexRoute: typeof adminSystemUserIndexRoute
@@ -753,6 +794,8 @@ const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
   adminSystemDictIndexRoute: adminSystemDictIndexRoute,
   adminSystemMenuIndexRoute: adminSystemMenuIndexRoute,
   adminSystemNoticeIndexRoute: adminSystemNoticeIndexRoute,
+  adminSystemOssConfigIndexRoute: adminSystemOssConfigIndexRoute,
+  adminSystemOssIndexRoute: adminSystemOssIndexRoute,
   adminSystemPostIndexRoute: adminSystemPostIndexRoute,
   adminSystemRoleIndexRoute: adminSystemRoleIndexRoute,
   adminSystemUserIndexRoute: adminSystemUserIndexRoute,
