@@ -188,7 +188,7 @@ const NotificationSettings = (props: NotificationSettingsProps) => {
           className="card-wrapper"
         >
           <Flex gap={10}>
-            <span className="size-38px grid place-items-center rounded-10px bg-primary-1 text-primary">
+            <span className="size-38px grid place-items-center rounded-10px bg-primary-50 text-primary">
               <SvgIcon icon="ph:devices" />
             </span>
             <div>
@@ -207,7 +207,7 @@ const NotificationSettings = (props: NotificationSettingsProps) => {
           className="card-wrapper"
         >
           <Flex gap={10}>
-            <span className="size-38px grid place-items-center rounded-10px bg-warning-1 text-warning">
+            <span className="size-38px grid place-items-center rounded-10px bg-warning-50 text-warning">
               <SvgIcon icon="ph:shield-check" />
             </span>
             <div>
@@ -226,7 +226,7 @@ const NotificationSettings = (props: NotificationSettingsProps) => {
           className="card-wrapper"
         >
           <Flex gap={10}>
-            <span className="size-38px grid place-items-center rounded-10px bg-success-1 text-success">
+            <span className="size-38px grid place-items-center rounded-10px bg-success-50 text-success">
               <SvgIcon icon="ph:calendar-dots" />
             </span>
             <div>

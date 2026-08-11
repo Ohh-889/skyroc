@@ -141,7 +141,7 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
             <div className="grid grid-cols-2 gap-12px">
               <Card size="small">
                 <Flex align="center" gap={10}>
-                  <span className="size-36px grid place-items-center rounded-9px bg-primary-1 text-primary">
+                  <span className="size-36px grid place-items-center rounded-9px bg-primary-50 text-primary">
                     <SvgIcon className="text-19px" icon="ph:browser" />
                   </span>
                   <div>

@@ -74,7 +74,7 @@ const OnlineManagement = (props: OnlineManagementProps) => {
         key: 'userName',
         render: value => (
           <Flex align="center" gap={8}>
-            <span className="size-30px grid shrink-0 place-items-center rounded-full bg-primary-1 text-primary">
+            <span className="size-30px grid shrink-0 place-items-center rounded-full bg-primary-50 text-primary">
               <SvgIcon icon="ph:user" />
             </span>
             <Typography.Text strong>{value}</Typography.Text>
@@ -163,7 +163,7 @@ const OnlineManagement = (props: OnlineManagementProps) => {
       content: (
         <div>
           <div>强退后，这个会话的访问令牌和刷新令牌都会立即失效。</div>
-          <div className="mt-10px rounded-6px bg-fill-2 px-10px py-8px text-12px text-text-2">
+          <div className="mt-10px rounded-6px bg-layout px-10px py-8px text-12px text-secondary">
             {session.userName} · {session.ipaddr || '未知 IP'} · {getDeviceTypeLabel(session.deviceType)}
           </div>
         </div>

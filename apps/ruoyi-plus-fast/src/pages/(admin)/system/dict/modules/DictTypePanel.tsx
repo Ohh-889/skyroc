@@ -139,7 +139,7 @@ const DictTypePanel = (props: DictTypePanelProps) => {
           locale={{
             emptyText: <Empty description="暂无字典类型" image={Empty.PRESENTED_IMAGE_SIMPLE} />
           }}
-          rowClassName={item => (String(item.dictId) === String(selectedTypeId) ? 'bg-primary-1' : '')}
+          rowClassName={item => (String(item.dictId) === String(selectedTypeId) ? 'bg-primary-50' : '')}
           rowKey={item => String(item.dictId)}
           showHeader={false}
           size="small"

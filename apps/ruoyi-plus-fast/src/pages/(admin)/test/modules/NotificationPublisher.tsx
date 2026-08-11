@@ -461,7 +461,7 @@ const NotificationPublisher = (props: NotificationPublisherProps) => {
                 align="center"
                 gap={10}
               >
-                <span className="size-40px grid place-items-center rounded-10px bg-primary-1 text-primary">
+                <span className="size-40px grid place-items-center rounded-10px bg-primary-50 text-primary">
                   <SvgIcon icon="ph:bell-ringing" />
                 </span>
                 <div>

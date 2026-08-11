@@ -49,12 +49,12 @@ export function categoryIcon(value: NotificationCategory) {
 
 export function categorySurfaceClass(value: NotificationCategory) {
   return {
-    alert: 'bg-error-1 text-error',
-    announcement: 'bg-warning-1 text-warning',
-    event: 'bg-info-1 text-info',
-    message: 'bg-primary-1 text-primary',
-    security: 'bg-error-1 text-error',
-    task: 'bg-primary-1 text-primary'
+    alert: 'bg-error-50 text-error',
+    announcement: 'bg-warning-50 text-warning',
+    event: 'bg-info-50 text-info',
+    message: 'bg-primary-50 text-primary',
+    security: 'bg-error-50 text-error',
+    task: 'bg-primary-50 text-primary'
   }[value];
 }
 

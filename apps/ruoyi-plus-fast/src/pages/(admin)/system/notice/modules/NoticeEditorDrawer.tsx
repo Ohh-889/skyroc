@@ -56,7 +56,7 @@ const RichTextEditor = (props: RichTextEditorProps) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-6px border border-border-2 bg-white dark:bg-black">
+    <div className="overflow-hidden rounded-6px border border-border-secondary bg-white dark:bg-black">
       <Toolbar editor={editor} defaultConfig={TOOLBAR_CONFIG} mode="default" />
       <Editor
         defaultConfig={EDITOR_CONFIG}

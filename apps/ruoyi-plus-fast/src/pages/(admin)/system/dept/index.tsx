@@ -132,7 +132,7 @@ const DeptManagement = (props: DeptManagementProps) => {
             align="center"
             gap={9}
           >
-            <span className="size-27px grid shrink-0 place-items-center rounded-7px bg-primary-1 text-primary">
+            <span className="size-27px grid shrink-0 place-items-center rounded-7px bg-primary-50 text-primary">
               <SvgIcon icon="ph:buildings" />
             </span>
             <Typography.Text className="min-w-0 truncate font-600">{value}</Typography.Text>

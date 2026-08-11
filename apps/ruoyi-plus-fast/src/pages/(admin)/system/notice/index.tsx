@@ -107,7 +107,7 @@ const NoticeManagement = (props: NoticeManagementProps) => {
             align="center"
             gap={10}
           >
-            <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
+            <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-50 text-primary">
               <SvgIcon icon={notice.noticeType === '1' ? 'ph:bell' : 'ph:megaphone'} />
             </span>
             <div className="min-w-0">

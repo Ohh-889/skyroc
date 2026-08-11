@@ -252,7 +252,7 @@ const NotificationGovernance = (props: NotificationGovernanceProps) => {
             align="center"
             gap={10}
           >
-            <span className="size-36px grid shrink-0 place-items-center rounded-10px bg-primary-1 text-primary">
+            <span className="size-36px grid shrink-0 place-items-center rounded-10px bg-primary-50 text-primary">
               <SvgIcon icon={item.priority === 'urgent' ? 'ph:warning' : 'ph:bell-ringing'} />
             </span>
             <div className="min-w-0">

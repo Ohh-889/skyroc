@@ -76,7 +76,7 @@ const ClientDetailDrawer = (props: ClientDetailDrawerProps) => {
               align="center"
               gap={12}
             >
-              <span className="size-48px grid place-items-center rounded-8px bg-primary-1 text-18px text-primary font-700">
+              <span className="size-48px grid place-items-center rounded-8px bg-primary-50 text-18px text-primary font-700">
                 <SvgIcon icon="ph:devices" />
               </span>
               <div>

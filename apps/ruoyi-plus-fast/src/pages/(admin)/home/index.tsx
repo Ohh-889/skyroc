@@ -15,14 +15,14 @@ const Home = () => {
         <ASpace className="w-full" orientation="vertical" size={16}>
           <div>
             <h1 className="m-0 text-28px font-600 text-primary">{t('system.title')}</h1>
-            <p className="m-0 mt-8px text-14px text-text-2">A minimal admin starter is ready.</p>
+            <p className="m-0 mt-8px text-14px text-secondary">A minimal admin starter is ready.</p>
           </div>
 
           <ARow gutter={[16, 16]}>
             {quickStartItems.map(item => {
               return (
                 <ACol key={item} lg={8} span={24}>
-                  <div className="rounded-8px bg-layout p-16px text-14px text-text-1">{item}</div>
+                  <div className="rounded-8px bg-layout p-16px text-14px text-base">{item}</div>
                 </ACol>
               );
             })}

@@ -249,7 +249,7 @@ const SseTest = () => {
                 </Flex>
               </Flex>
               {open ? (
-                <pre className="m-0 mt-8px max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px border border-border-secondary bg-fill-2 p-12px font-mono text-12px leading-1.6">
+                <pre className="m-0 mt-8px max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px border border-border-secondary bg-layout p-12px font-mono text-12px leading-1.6">
                   {item.message}
                 </pre>
               ) : null}
@@ -274,7 +274,7 @@ const SseTest = () => {
             <span className="h-10px w-10px rounded-full bg-primary shadow-[0_0_0_4px_var(--primary-1)]" />
             <h1 className="m-0 text-24px font-700 tracking-tight">SSE 联调</h1>
           </div>
-          <div className="mt-6px text-13px text-text-2">单向连接，只收不发。要给后端发东西请走普通 HTTP 接口。</div>
+          <div className="mt-6px text-13px text-secondary">单向连接，只收不发。要给后端发东西请走普通 HTTP 接口。</div>
         </div>
         <AButton
           className={ACTION_CLASS}
@@ -404,7 +404,7 @@ const SseTest = () => {
                   gap={8}
                   key={item.label}
                 >
-                  <ATypography.Text className={item.ok ? 'text-success' : 'text-danger'}>
+                  <ATypography.Text className={item.ok ? 'text-success' : 'text-error'}>
                     {item.ok ? '✓' : '×'}
                   </ATypography.Text>
                   <div className="min-w-0 flex-1">

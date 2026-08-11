@@ -64,7 +64,7 @@ const UserRoleDrawer = (props: UserRoleDrawerProps) => {
         {roles.length ? (
           roles.map(role => (
             <label
-              className="mb-8px flex cursor-pointer items-start gap-10px rounded-8px border border-border-2 p-12px"
+              className="mb-8px flex cursor-pointer items-start gap-10px rounded-8px border border-border-secondary p-12px"
               key={String(role.roleId)}
             >
               <Checkbox

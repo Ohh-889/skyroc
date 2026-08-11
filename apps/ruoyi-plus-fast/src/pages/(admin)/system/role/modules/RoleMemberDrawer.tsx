@@ -118,7 +118,7 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
             }}
           />
         ) : null}
-        <Avatar className="shrink-0 bg-primary-2 text-primary">
+        <Avatar className="shrink-0 bg-primary-100 text-primary">
           {(member.nickName || member.userName).slice(0, 1)}
         </Avatar>
         <div className="min-w-0 flex-1">
@@ -180,7 +180,7 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
     >
       <div className="mb-14px rounded-10px bg-layout p-14px">
         <Flex align="center" gap={12}>
-          <span className="size-38px grid shrink-0 place-items-center rounded-9px bg-primary-1 text-primary">
+          <span className="size-38px grid shrink-0 place-items-center rounded-9px bg-primary-50 text-primary">
             <SvgIcon className="text-20px" icon="ph:users-three" />
           </span>
           <div>

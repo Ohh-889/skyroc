@@ -115,8 +115,6 @@ const WebSocketTest = () => {
   // 客户端已把它清空）都各自触发一次同步。
   useEffect(() => {
     function syncReady() {
-      console.log('client.getReady()', client.getReady());
-
       setReadyInfo(client.getReady());
     }
 
@@ -314,7 +312,7 @@ const WebSocketTest = () => {
                 </Flex>
               </Flex>
               {open ? (
-                <pre className="m-0 mt-8px max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px border border-border-secondary bg-fill-2 p-12px font-mono text-12px leading-1.6">
+                <pre className="m-0 mt-8px max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px border border-border-secondary bg-layout p-12px font-mono text-12px leading-1.6">
                   {item.message}
                 </pre>
               ) : null}
@@ -446,7 +444,7 @@ const WebSocketTest = () => {
                   gap={8}
                   key={item.label}
                 >
-                  <ATypography.Text className={item.ok ? 'text-success' : 'text-danger'}>
+                  <ATypography.Text className={item.ok ? 'text-success' : 'text-error'}>
                     {item.ok ? '✓' : '×'}
                   </ATypography.Text>
                   <div className="min-w-0 flex-1">

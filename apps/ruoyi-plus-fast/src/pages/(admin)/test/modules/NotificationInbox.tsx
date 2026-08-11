@@ -159,7 +159,7 @@ const NotificationInbox = (props: NotificationInboxProps) => {
               <div className="mt-4px text-26px font-700">{counts?.unreadThreads ?? '—'}</div>
             </div>
             <Badge count={counts?.unreadThreads || 0}>
-              <span className="size-42px grid place-items-center rounded-12px bg-primary-1 text-primary">
+              <span className="size-42px grid place-items-center rounded-12px bg-primary-50 text-primary">
                 <SvgIcon icon="ph:chat-circle-dots" />
               </span>
             </Badge>
@@ -177,7 +177,7 @@ const NotificationInbox = (props: NotificationInboxProps) => {
               <Typography.Text type="secondary">未读消息</Typography.Text>
               <div className="mt-4px text-26px font-700">{counts?.unread ?? '—'}</div>
             </div>
-            <span className="size-42px grid place-items-center rounded-12px bg-info-1 text-info">
+            <span className="size-42px grid place-items-center rounded-12px bg-info-50 text-info">
               <SvgIcon icon="ph:envelope-simple" />
             </span>
           </Flex>
@@ -194,7 +194,7 @@ const NotificationInbox = (props: NotificationInboxProps) => {
               <Typography.Text type="secondary">待处理事项</Typography.Text>
               <div className="mt-4px text-26px font-700">{counts?.pending ?? '—'}</div>
             </div>
-            <span className="size-42px grid place-items-center rounded-12px bg-warning-1 text-warning">
+            <span className="size-42px grid place-items-center rounded-12px bg-warning-50 text-warning">
               <SvgIcon icon="ph:timer" />
             </span>
           </Flex>
@@ -261,7 +261,7 @@ const NotificationInbox = (props: NotificationInboxProps) => {
             locale={{ emptyText: <Empty description="当前筛选下没有通知" /> }}
             renderItem={item => (
               <List.Item
-                className={`cursor-pointer rounded-10px px-12px transition-colors ${selectedId === item.msgId ? 'bg-primary-1' : item.readTime ? '' : 'bg-fill-1'}`}
+                className={`cursor-pointer rounded-10px px-12px transition-colors ${selectedId === item.msgId ? 'bg-primary-50' : item.readTime ? '' : 'bg-layout'}`}
                 onClick={() => handleSelect(item)}
               >
                 <List.Item.Meta
@@ -371,7 +371,7 @@ const NotificationInbox = (props: NotificationInboxProps) => {
                 </Typography.Title>
                 <Typography.Paragraph type="secondary">{detail.summary}</Typography.Paragraph>
               </div>
-              <div className="rounded-10px bg-fill-1 p-14px">
+              <div className="rounded-10px bg-layout p-14px">
                 <Typography.Paragraph className="mb-0 whitespace-pre-wrap">
                   {detail.retracted ? '发布者已撤回这条通知。历史记录仍会保留。' : detail.body || '暂无正文'}
                 </Typography.Paragraph>

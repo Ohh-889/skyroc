@@ -109,7 +109,7 @@ const RoleDataScopeModal = (props: RoleDataScopeModalProps) => {
         <div className="grid grid-cols-2 gap-8px lt-sm:grid-cols-1">
           {DATA_SCOPE_OPTIONS.map(option => (
             <label
-              className={`cursor-pointer rounded-8px border p-12px transition-colors ${dataScope === option.value ? 'border-primary bg-primary-1' : 'border-border-secondary'}`}
+              className={`cursor-pointer rounded-8px border p-12px transition-colors ${dataScope === option.value ? 'border-primary bg-primary-50' : 'border-border-secondary'}`}
               key={option.value}
             >
               <Flex align="flex-start" gap={8}>

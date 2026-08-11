@@ -140,7 +140,7 @@ const RoleManagement = (props: RoleManagementProps) => {
             align="center"
             gap={10}
           >
-            <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
+            <span className="size-32px grid shrink-0 place-items-center rounded-8px bg-primary-50 text-primary">
               <SvgIcon icon={role.superAdmin ? 'ph:shield-star' : 'ph:shield-check'} />
             </span>
             <Flex

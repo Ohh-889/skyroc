@@ -297,15 +297,15 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
           <Card className="h-fit bg-layout" size="small" title="已选权限摘要">
             <div className="grid gap-12px">
               <Flex justify="space-between">
-                <span className="text-text-2">菜单</span>
+                <span className="text-secondary">菜单</span>
                 <strong>{selectionCount.menus} 项</strong>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">按钮</span>
+                <span className="text-secondary">按钮</span>
                 <strong>{selectionCount.buttons} 项</strong>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">父子联动</span>
+                <span className="text-secondary">父子联动</span>
                 <strong>{menuCheckStrictly ? '已开启' : '已关闭'}</strong>
               </Flex>
             </div>
@@ -330,15 +330,15 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
           <Card size="small" title="基本信息">
             <div className="grid gap-10px text-13px">
               <Flex justify="space-between">
-                <span className="text-text-2">角色名称</span>
+                <span className="text-secondary">角色名称</span>
                 <strong>{roleName || '未填写'}</strong>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">权限字符</span>
+                <span className="text-secondary">权限字符</span>
                 <Tag className="m-0 font-mono">{roleKey || '未填写'}</Tag>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">角色状态</span>
+                <span className="text-secondary">角色状态</span>
                 <strong>{status === '0' ? '正常' : '停用'}</strong>
               </Flex>
             </div>
@@ -346,15 +346,15 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
           <Card size="small" title="授权摘要">
             <div className="grid gap-10px text-13px">
               <Flex justify="space-between">
-                <span className="text-text-2">菜单</span>
+                <span className="text-secondary">菜单</span>
                 <strong>{selectionCount.menus} 项</strong>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">按钮</span>
+                <span className="text-secondary">按钮</span>
                 <strong>{selectionCount.buttons} 项</strong>
               </Flex>
               <Flex justify="space-between">
-                <span className="text-text-2">数据范围</span>
+                <span className="text-secondary">数据范围</span>
                 <strong>{dataScopeLabel(effectiveDataScope)}</strong>
               </Flex>
             </div>

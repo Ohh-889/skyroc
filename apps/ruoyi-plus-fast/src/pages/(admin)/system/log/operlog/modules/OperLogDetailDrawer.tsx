@@ -68,7 +68,7 @@ function renderJson(value: string) {
   try {
     const parsed = JSON.parse(value) as unknown;
     return (
-      <pre className="m-0 max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px bg-fill-2 p-10px text-12px">
+      <pre className="m-0 max-h-280px overflow-auto whitespace-pre-wrap break-all rounded-6px bg-layout p-10px text-12px">
         {JSON.stringify(parsed, null, 2)}
       </pre>
     );

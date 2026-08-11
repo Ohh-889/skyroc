@@ -16,7 +16,7 @@ const NotificationInboxPage = () => (
     </Flex>
     <Card bordered={false} className="card-wrapper">
       <Flex align="center" justify="space-between" className="mb-12px"><Segmented defaultValue="全部" options={['全部', '待办', '公告', '消息', '异常', '安全']} /><Badge count={3} /></Flex>
-      <List dataSource={items} locale={{ emptyText: <Empty description="暂无通知" /> }} renderItem={item => <List.Item actions={[<Button key="open" type={item.unread ? 'primary' : 'link'}>查看详情</Button>]}><List.Item.Meta avatar={<Badge dot={item.unread}><span className="size-36px grid place-items-center rounded-10px bg-primary-1 text-primary">◉</span></Badge>} title={<Flex gap={8}><span>{item.title}</span><Tag color={item.color}>{item.category}</Tag></Flex>} description={<><div>{item.summary}</div><Typography.Text type="secondary" className="text-12px">{item.time}{item.unread ? ' · 未读' : ' · 已读'}</Typography.Text></>} /></List.Item>} />
+      <List dataSource={items} locale={{ emptyText: <Empty description="暂无通知" /> }} renderItem={item => <List.Item actions={[<Button key="open" type={item.unread ? 'primary' : 'link'}>查看详情</Button>]}><List.Item.Meta avatar={<Badge dot={item.unread}><span className="size-36px grid place-items-center rounded-10px bg-primary-50 text-primary">◉</span></Badge>} title={<Flex gap={8}><span>{item.title}</span><Tag color={item.color}>{item.category}</Tag></Flex>} description={<><div>{item.summary}</div><Typography.Text type="secondary" className="text-12px">{item.time}{item.unread ? ' · 未读' : ' · 已读'}</Typography.Text></>} /></List.Item>} />
     </Card>
   </div>
 );

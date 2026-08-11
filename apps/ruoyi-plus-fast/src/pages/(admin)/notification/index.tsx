@@ -278,7 +278,7 @@ const NotificationDetail = (props: NotificationDetailProps) => {
                     {detail.title}
                   </Typography.Title>
                   <Typography.Paragraph type="secondary">{detail.summary}</Typography.Paragraph>
-                  <Card size="small" className="bg-fill-1">
+                  <Card size="small" className="bg-layout">
                     <Typography.Paragraph className="whitespace-pre-wrap mb-0">{detail.body || '暂无正文'}</Typography.Paragraph>
                   </Card>
                   <Descriptions column={1} size="small" bordered>
@@ -380,7 +380,7 @@ const NotificationManagement = (props: NotificationManagementProps) => {
         fixed: 'left',
         render: (value: string, record) => (
           <Flex align="center" gap={10}>
-            <span className="size-36px grid shrink-0 place-items-center rounded-10px bg-primary-1 text-primary">
+            <span className="size-36px grid shrink-0 place-items-center rounded-10px bg-primary-50 text-primary">
               <SvgIcon icon={record.priority === 'urgent' ? 'ph:warning' : 'ph:bell-ringing'} />
             </span>
             <div className="min-w-0">

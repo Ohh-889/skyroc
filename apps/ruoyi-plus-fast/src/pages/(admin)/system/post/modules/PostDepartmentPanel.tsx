@@ -104,7 +104,7 @@ const PostDepartmentPanel = (props: PostDepartmentPanelProps) => {
       <div className="min-h-0 flex-1 overflow-auto lt-xl:max-h-360px">
         <Spin spinning={loading}>{renderDepartmentTree()}</Spin>
       </div>
-      <div className="mt-12px border-t border-border-2 pt-10px text-11px text-tertiary">
+      <div className="mt-12px border-t border-border-secondary pt-10px text-11px text-tertiary">
         单击部门查看该部门及全部下级岗位
       </div>
     </Card>

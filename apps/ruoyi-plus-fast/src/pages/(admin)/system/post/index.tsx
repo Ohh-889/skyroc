@@ -129,7 +129,7 @@ const PostManagement = (props: PostManagementProps) => {
             align="center"
             gap={10}
           >
-            <span className="size-30px grid shrink-0 place-items-center rounded-8px bg-primary-1 text-primary">
+            <span className="size-30px grid shrink-0 place-items-center rounded-8px bg-primary-50 text-primary">
               <SvgIcon icon="ph:briefcase" />
             </span>
             <div className="min-w-0">
@@ -357,7 +357,7 @@ const PostManagement = (props: PostManagementProps) => {
               ? '批量删除是原子操作：任一岗位已分配用户或数据过期时，整批都不会删除。'
               : '删除后不可恢复；如果岗位已分配用户，系统将拒绝删除。'}
           </div>
-          <div className="mt-10px rounded-6px bg-fill-2 px-10px py-8px text-12px text-text-2">
+          <div className="mt-10px rounded-6px bg-layout px-10px py-8px text-12px text-secondary">
             {isBatch
               ? `${targetNames.slice(0, 3).join('、')}${targetNames.length > 3 ? ` 等 ${targetNames.length} 个岗位` : ''}`
               : `岗位编码：${targetPosts[0]?.postCode} · 所属部门：${targetPosts[0]?.deptName || '部门已失效'}`}
