@@ -1,24 +1,21 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
 import { AutoComplete, Button, Col, DatePicker, Flex, Form, Input, InputNumber, Row } from 'antd';
-import type { Dayjs } from 'dayjs';
 
 import type { OssListParams } from '@/service/api/system-oss';
 
-export interface OssTableParams extends OssListParams {
-  /** 查询表单里的创建时间范围，提交前拆成 beginTime / endTime。 */
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
-}
+import { formatOssTime, toOssCreatedRange } from './shared';
+import type { OssCreatedRange } from './shared';
 
 interface OssSearchProps {
   /** 由表格 Hook 管理的查询表单实例。 */
-  form: TableSearchProps<OssTableParams>['form'];
+  form: TableSearchProps<OssListParams>['form'];
   /** 重置查询表单和已提交参数。 */
-  reset: TableSearchProps<OssTableParams>['reset'];
+  reset: TableSearchProps<OssListParams>['reset'];
   /** 提交查询表单。 */
-  search: TableSearchProps<OssTableParams>['search'];
+  search: TableSearchProps<OssListParams>['search'];
   /** 当前已经提交的文件查询参数。 */
-  searchParams: TableSearchProps<OssTableParams>['searchParams'];
+  searchParams: TableSearchProps<OssListParams>['searchParams'];
   /** 当前页出现过的存储配置 key，只作为输入建议，不限制取值。 */
   serviceOptions: string[];
 }
@@ -31,8 +28,19 @@ const SUFFIX_OPTIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.pdf', '.docx
 const OssSearch = (props: OssSearchProps) => {
   const { form, reset, search, searchParams, serviceOptions } = props;
 
+  const beginTime = Form.useWatch('beginTime', form);
+  const endTime = Form.useWatch('endTime', form);
+
   async function handleSearch() {
     await search();
+  }
+
+  /** RangePicker 只认 Dayjs，但参数、URL 和接口统一用字符串，所以选完立刻拆回表单里那两个字段。 */
+  function handleCreatedRangeChange(value: OssCreatedRange) {
+    form.setFieldsValue({
+      beginTime: formatOssTime(value?.[0]),
+      endTime: formatOssTime(value?.[1])
+    });
   }
 
   return (
@@ -146,14 +154,27 @@ const OssSearch = (props: OssSearchProps) => {
           span={24}
         >
           <Form.Item
+            hidden
+            name="beginTime"
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            hidden
+            name="endTime"
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
             className="m-0"
             label="创建时间"
             labelCol={{ lg: 4, md: 4, span: 6 }}
-            name="createdRange"
           >
             <DatePicker.RangePicker
               className="w-full"
               showTime={{ format: 'HH:mm' }}
+              value={toOssCreatedRange(beginTime, endTime)}
+              onChange={handleCreatedRangeChange}
             />
           </Form.Item>
         </Col>

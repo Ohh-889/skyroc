@@ -4,6 +4,8 @@ export type OssSortField = 'createTime' | 'fileName' | 'fileSuffix' | 'originalN
 
 export interface OssItem {
   createBy: null | OssId;
+  /** 上传人账号名，由后端查用户表补上。账号已注销或查不到时是空串 */
+  createByName: string;
   createTime: null | string;
   ext1: null | string;
   /** 对象 key，下载和删除按它找文件 */

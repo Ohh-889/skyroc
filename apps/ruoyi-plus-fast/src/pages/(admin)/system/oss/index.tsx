@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showSuccessMessage } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableOnChange, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex, TableOnChange } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
@@ -19,10 +19,16 @@ import {
 } from '@/service/api/system-oss';
 import type { OssId, OssItem, OssListPage, OssListParams } from '@/service/api/system-oss';
 
-import OssSearch from './modules/OssSearch';
-import type { OssTableParams } from './modules/OssSearch';
-import OssThumbnail from './modules/OssThumbnail';
 import { formatFileSize, formatSuffixLabel, getFileVisual, isPreviewableImage, parseOssExt } from './modules/oss-utils';
+import OssSearch from './modules/OssSearch';
+import OssThumbnail from './modules/OssThumbnail';
+import {
+  OssSearchSchema,
+  getOssSearchInitialParams,
+  hasOssFilters,
+  normalizeOssSearchParams,
+  toOssSearchQuery
+} from './modules/shared';
 
 const OssPreviewDrawer = lazy(() => import('./modules/OssPreviewDrawer'));
 const OssUploadDrawer = lazy(() => import('./modules/OssUploadDrawer'));
@@ -30,17 +36,6 @@ const OssUploadDrawer = lazy(() => import('./modules/OssUploadDrawer'));
 const OSS_TABLE_SCROLL_X = 1120;
 /** 上传成功后高亮新记录的时长，超时自动褪掉。 */
 const HIGHLIGHT_DURATION = 4000;
-
-const OSS_SEARCH_INITIAL_PARAMS: Partial<OssTableParams> = {
-  createBy: undefined,
-  createdRange: undefined,
-  fileName: undefined,
-  fileSuffix: undefined,
-  isAsc: 'desc',
-  orderByColumn: 'createTime',
-  originalName: undefined,
-  service: undefined
-};
 
 type OssTableRecord = TableDataWithIndex<OssItem>;
 
@@ -52,7 +47,8 @@ interface OssManagementProps {
 const OssManagement = (props: OssManagementProps) => {
   const { initialPageSize = 10 } = props;
 
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: '/system/oss/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(OSS_TABLE_SCROLL_X);
@@ -75,23 +71,22 @@ const OssManagement = (props: OssManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<OssTableParams, OssListPage, OssItem>({
-    apiParams: {
-      ...OSS_SEARCH_INITIAL_PARAMS,
-      size: initialPageSize
-    },
+  } = useTable<OssListParams, OssListPage, OssItem>({
+    apiParams: getOssSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
     onChange: handleTableChange,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: useOssTableQuery,
+    queryHook: useOssListQuery,
     // 私有桶的 url 是约 120 秒的签名地址，缓存不能活得比它久
     queryOptions: { staleTime: 30_000 },
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: file => String(file.ossId),
     transformParams: normalizeOssSearchParams
   });
@@ -101,13 +96,10 @@ const OssManagement = (props: OssManagementProps) => {
   const hasActiveFilters = hasOssFilters(searchProps.searchParams);
   const serviceOptions = [...new Set(files.map(file => file.service).filter(Boolean))];
 
-  useEffect(() => {
-    if (!highlightId) return;
-
-    const timer = window.setTimeout(() => setHighlightId(undefined), HIGHLIGHT_DURATION);
-
-    return () => window.clearTimeout(timer);
-  }, [highlightId]);
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<OssListParams>) {
+    navigate({ search: () => toOssSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<OssTableRecord>[] {
     return [
@@ -148,16 +140,11 @@ const OssManagement = (props: OssManagementProps) => {
         width: 150
       },
       {
-        dataIndex: 'createBy',
-        key: 'createBy',
-        render: value =>
-          value ? (
-            <Typography.Text className="font-mono text-12px">#{value}</Typography.Text>
-          ) : (
-            <span className="text-tertiary">未知</span>
-          ),
+        dataIndex: 'createByName',
+        key: 'createByName',
+        render: (_value, file) => renderUploaderCell(file),
         title: '上传人',
-        width: 120
+        width: 140
       },
       {
         dataIndex: 'createTime',
@@ -186,7 +173,6 @@ const OssManagement = (props: OssManagementProps) => {
       >
         <Button
           size="small"
-          type="link"
           onClick={() => setPreviewFile(file)}
         >
           {isPreviewableImage(file) ? '预览' : '查看'}
@@ -194,7 +180,6 @@ const OssManagement = (props: OssManagementProps) => {
         <Button
           loading={String(downloadingId) === String(file.ossId)}
           size="small"
-          type="link"
           onClick={() => handleDownload(file)}
         >
           下载
@@ -202,7 +187,6 @@ const OssManagement = (props: OssManagementProps) => {
         <Button
           danger
           size="small"
-          type="link"
           onClick={() => handleDelete([file])}
         >
           删除
@@ -211,7 +195,7 @@ const OssManagement = (props: OssManagementProps) => {
     );
   }
 
-  function handleTableChange(...args: TableOnChange<OssTableRecord>): Partial<OssTableParams> {
+  function handleTableChange(...args: TableOnChange<OssTableRecord>): Partial<OssListParams> {
     const [pagination, , sorter] = args;
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
     const field = activeSorter.field;
@@ -297,6 +281,14 @@ const OssManagement = (props: OssManagementProps) => {
   async function invalidateOssData() {
     await queryClient.invalidateQueries({ queryKey: SYSTEM_OSS_QUERY_KEYS.ALL });
   }
+
+  useEffect(() => {
+    if (!highlightId) return;
+
+    const timer = window.setTimeout(() => setHighlightId(undefined), HIGHLIGHT_DURATION);
+
+    return () => window.clearTimeout(timer);
+  }, [highlightId]);
 
   return (
     <div className="h-full min-h-500px flex flex-col gap-16px overflow-hidden lt-sm:overflow-auto">
@@ -476,6 +468,24 @@ function renderFileCell(file: OssItem) {
   );
 }
 
+/**
+ * 上传人列：有账号名就显示账号名，只剩 id 时退回 `#id`。
+ *
+ * 两种情况会只剩 id：账号被彻底删了，或者这条记录是定时任务/脚本写进来的（那种连 id 都没有）。
+ * 退回 id 而不是显示“未知”，是因为排查时那个 id 仍然能拿去查。
+ */
+function renderUploaderCell(file: OssItem) {
+  if (file.createByName) {
+    return <Typography.Text ellipsis={{ tooltip: file.createByName }}>{file.createByName}</Typography.Text>;
+  }
+
+  if (file.createBy) {
+    return <Typography.Text className="font-mono text-12px">#{file.createBy}</Typography.Text>;
+  }
+
+  return <span className="text-tertiary">未知</span>;
+}
+
 function renderTypeCell(file: OssItem) {
   const meta = parseOssExt(file.ext1);
   const visual = getFileVisual(file.fileSuffix);
@@ -503,36 +513,6 @@ function resolveSortField(field: unknown): OssListParams['orderByColumn'] {
   return 'createTime';
 }
 
-function normalizeOssSearchParams(params: OssTableParams): OssTableParams {
-  return {
-    ...params,
-    fileName: params.fileName?.trim() || undefined,
-    fileSuffix: params.fileSuffix?.trim().toLowerCase() || undefined,
-    originalName: params.originalName?.trim() || undefined,
-    service: params.service?.trim() || undefined
-  };
-}
-
-function toOssListParams(params: OssTableParams): OssListParams {
-  const { createdRange, ...listParams } = params;
-
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useOssTableQuery<Data = OssListPage>(params: OssTableParams, options?: TableQueryHookOptions<OssListPage, Data>) {
-  return useOssListQuery(toOssListParams(params), options);
-}
-
-function hasOssFilters(params: Partial<OssTableParams>) {
-  return Boolean(
-    params.createBy || params.createdRange || params.fileName || params.fileSuffix || params.originalName || params.service
-  );
-}
-
 export const Route = createFileRoute('/(admin)/system/oss/')({
   component: OssManagement,
   staticData: {
@@ -542,5 +522,6 @@ export const Route = createFileRoute('/(admin)/system/oss/')({
       order: 12
     },
     title: '文件管理'
-  }
+  },
+  validateSearch: OssSearchSchema
 });

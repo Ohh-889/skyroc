@@ -166,9 +166,9 @@ const OssPreviewDrawer = (props: OssPreviewDrawerProps) => {
                 label: '存储配置'
               },
               {
-                children: file.createBy ? `#${file.createBy}` : <span className="text-tertiary">未知</span>,
+                children: renderUploader(file),
                 key: 'createBy',
-                label: '上传人 ID'
+                label: '上传人'
               },
               {
                 children: file.createTime || <span className="text-tertiary">—</span>,
@@ -189,5 +189,13 @@ const OssPreviewDrawer = (props: OssPreviewDrawerProps) => {
     </Drawer>
   );
 };
+
+/** 有账号名就显示账号名，账号被删掉时退回 `#id` —— 那个 id 排查时仍然查得动。 */
+function renderUploader(file: OssItem) {
+  if (file.createByName) return file.createByName;
+  if (file.createBy) return `#${file.createBy}`;
+
+  return <span className="text-tertiary">未知</span>;
+}
 
 export default OssPreviewDrawer;
