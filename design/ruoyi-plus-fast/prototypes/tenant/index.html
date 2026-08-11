@@ -1,0 +1,2608 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-size='18' font-weight='700' fill='white'%3ES%3C/text%3E%3C/svg%3E"
+    />
+    <title>Skyroc Admin - 租户管理设计稿</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #6366f1;
+        --primary-strong: #514fda;
+        --primary-soft: #eef0ff;
+        --page: #f5f6f8;
+        --surface: #ffffff;
+        --surface-soft: #fafbfc;
+        --text: #303139;
+        --muted: #686b76;
+        --quiet: #9396a0;
+        --border: #e4e6eb;
+        --border-strong: #d1d4db;
+        --sidebar: #171922;
+        --sidebar-hover: #252833;
+        --success: #0f9f6e;
+        --success-soft: #eaf9f2;
+        --warning: #c97a08;
+        --warning-soft: #fff7e8;
+        --danger: #df4053;
+        --danger-soft: #fff0f2;
+        --info: #1686d9;
+        --info-soft: #edf7ff;
+        --mask: rgb(20 22 30 / 48%);
+        --shadow: 0 22px 60px rgb(25 29 48 / 16%);
+      }
+
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #898bff;
+        --primary-strong: #a2a3ff;
+        --primary-soft: #292b50;
+        --page: #111318;
+        --surface: #1b1e24;
+        --surface-soft: #20232a;
+        --text: #eceef3;
+        --muted: #b2b5bf;
+        --quiet: #808591;
+        --border: #30333b;
+        --border-strong: #424650;
+        --sidebar: #0d0f14;
+        --sidebar-hover: #1d2029;
+        --success: #49c991;
+        --success-soft: #18372b;
+        --warning: #f0a13b;
+        --warning-soft: #3a2a17;
+        --danger: #ff737d;
+        --danger-soft: #3f2024;
+        --info: #55aef0;
+        --info-soft: #183044;
+        --mask: rgb(0 0 0 / 66%);
+        --shadow: 0 24px 64px rgb(0 0 0 / 45%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        overflow-x: hidden;
+        background: var(--page);
+        color: var(--text);
+        font:
+          14px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          'Noto Sans',
+          'PingFang SC',
+          sans-serif;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button,
+      a {
+        color: inherit;
+      }
+
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      a:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .icon {
+        width: 17px;
+        height: 17px;
+        flex: 0 0 auto;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--sidebar);
+        color: #f5f6f8;
+      }
+
+      .brand {
+        height: 58px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 18px;
+        border-bottom: 1px solid rgb(255 255 255 / 7%);
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .nav {
+        flex: 1;
+        padding: 14px 10px;
+        overflow-y: auto;
+      }
+
+      .nav-label {
+        margin: 16px 10px 7px;
+        color: #6f7380;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .nav-item {
+        width: 100%;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 2px 0;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #9296a5;
+        cursor: pointer;
+        text-align: left;
+        text-decoration: none;
+      }
+
+      .nav-item:hover {
+        background: var(--sidebar-hover);
+        color: #fff;
+      }
+
+      .nav-item.child {
+        padding-left: 39px;
+      }
+
+      .nav-item.active {
+        background: rgb(99 102 241 / 20%);
+        box-shadow: inset 3px 0 0 #8183ff;
+        color: #fff;
+      }
+
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px;
+        padding: 12px 10px;
+        border-top: 1px solid rgb(255 255 255 / 7%);
+      }
+
+      .avatar {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: #384152;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .sidebar-user strong,
+      .sidebar-user small {
+        display: block;
+      }
+
+      .sidebar-user small {
+        margin-top: 2px;
+        color: #7d8190;
+      }
+
+      .shell {
+        min-width: 0;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border);
+        background: color-mix(in srgb, var(--surface) 94%, transparent);
+        backdrop-filter: blur(12px);
+      }
+
+      .breadcrumbs,
+      .top-actions,
+      .page-actions,
+      .toolbar,
+      .filter-actions,
+      .row-actions,
+      .drawer-actions,
+      .modal-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .breadcrumbs {
+        color: var(--quiet);
+        font-size: 13px;
+      }
+
+      .breadcrumbs strong {
+        color: var(--text);
+      }
+
+      main {
+        padding: 24px;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 16px;
+      }
+
+      .page-head h1 {
+        margin: 0;
+        font-size: 25px;
+        line-height: 1.25;
+      }
+
+      .page-head p {
+        margin: 7px 0 0;
+        color: var(--muted);
+      }
+
+      .link-button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 13px;
+        border: 1px solid color-mix(in srgb, var(--primary) 32%, var(--border));
+        border-radius: 6px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-weight: 650;
+        text-decoration: none;
+      }
+
+      .control-note {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border: 1px solid color-mix(in srgb, var(--warning) 25%, var(--border));
+        border-radius: 8px;
+        background: var(--warning-soft);
+      }
+
+      .note-mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: color-mix(in srgb, var(--warning) 14%, transparent);
+        color: var(--warning);
+      }
+
+      .control-note strong,
+      .control-note small {
+        display: block;
+      }
+
+      .control-note small {
+        margin-top: 2px;
+        color: var(--muted);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .metric {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .metric span {
+        color: var(--muted);
+      }
+
+      .metric strong {
+        font-size: 22px;
+      }
+
+      .metric small {
+        color: var(--quiet);
+      }
+
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .filters {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(130px, 1fr)) auto;
+        gap: 14px;
+        align-items: end;
+      }
+
+      .field label {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .control {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 11px;
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      textarea.control {
+        min-height: 82px;
+        resize: vertical;
+      }
+
+      .more-filters {
+        display: none;
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px dashed var(--border);
+      }
+
+      .more-filters.show {
+        display: grid;
+      }
+
+      .btn,
+      .icon-btn {
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .btn {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 13px;
+        white-space: nowrap;
+      }
+
+      .btn:hover,
+      .icon-btn:hover {
+        background: var(--surface-soft);
+      }
+
+      .btn.primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .btn.primary:hover {
+        background: var(--primary-strong);
+      }
+
+      .btn.danger {
+        border-color: color-mix(in srgb, var(--danger) 36%, var(--border));
+        color: var(--danger);
+      }
+
+      .btn.danger-solid {
+        border-color: var(--danger);
+        background: var(--danger);
+        color: #fff;
+      }
+
+      .btn.text {
+        min-height: 30px;
+        padding: 0 5px;
+        border-color: transparent;
+        background: transparent;
+        color: var(--primary);
+      }
+
+      .btn.text.danger {
+        color: var(--danger);
+      }
+
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-grid;
+        place-items: center;
+      }
+
+      .list-head {
+        min-height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 20px;
+      }
+
+      .list-title strong,
+      .list-title small {
+        display: block;
+      }
+
+      .list-title strong {
+        font-size: 16px;
+      }
+
+      .list-title small {
+        margin-top: 2px;
+        color: var(--quiet);
+      }
+
+      .selection {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin: 0 20px 12px;
+        padding: 9px 12px;
+        border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+        border-radius: 6px;
+        background: var(--primary-soft);
+        color: var(--muted);
+      }
+
+      .selection.show {
+        display: flex;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      table {
+        width: 100%;
+        min-width: 1160px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      tbody tr:hover {
+        background: color-mix(in srgb, var(--primary-soft) 34%, transparent);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .company strong,
+      .company code,
+      .contact strong,
+      .contact span,
+      .date strong,
+      .date span {
+        display: block;
+      }
+
+      .company strong,
+      .contact strong,
+      .date strong {
+        font-weight: 650;
+      }
+
+      .company code,
+      .contact span,
+      .date span {
+        margin-top: 3px;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+
+      code,
+      .mono {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      }
+
+      .tag,
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .tag {
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        color: var(--muted);
+      }
+
+      .tag.protected {
+        border-color: color-mix(in srgb, var(--warning) 25%, var(--border));
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .status::before {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        content: '';
+      }
+
+      .status.normal {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .status.disabled {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .expiry-warning {
+        color: var(--warning) !important;
+      }
+
+      .footer {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 20px;
+        color: var(--muted);
+      }
+
+      .pages {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .page-btn {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .page-btn.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: none;
+        background: var(--mask);
+      }
+
+      .overlay.show {
+        display: block;
+      }
+
+      .drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: min(640px, 100%);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .drawer.detail {
+        width: min(560px, 100%);
+      }
+
+      .drawer-head {
+        min-height: 74px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .drawer-head h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+
+      .drawer-head p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 22px;
+      }
+
+      .drawer-foot {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .form-section + .form-section {
+        margin-top: 24px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+      }
+
+      .section-title {
+        margin: 0 0 14px;
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      .required {
+        color: var(--danger);
+      }
+
+      .help {
+        margin-top: 6px;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+
+      .notice {
+        display: flex;
+        gap: 9px;
+        margin-top: 14px;
+        padding: 10px 11px;
+        border: 1px solid color-mix(in srgb, var(--info) 23%, var(--border));
+        border-radius: 6px;
+        background: var(--info-soft);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .detail-hero {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+
+      .detail-mark {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .detail-hero h3,
+      .detail-hero p {
+        margin: 0;
+      }
+
+      .detail-hero p {
+        margin-top: 4px;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+
+      .detail-block {
+        margin-top: 20px;
+      }
+
+      .detail-block h4 {
+        margin: 0 0 10px;
+        font-size: 13px;
+      }
+
+      .detail-list {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+      }
+
+      .detail-row {
+        display: grid;
+        grid-template-columns: 128px minmax(0, 1fr);
+        gap: 12px;
+        min-height: 48px;
+        align-items: center;
+        padding: 10px 13px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .detail-row:last-child {
+        border-bottom: 0;
+      }
+
+      .detail-row span:first-child {
+        color: var(--muted);
+      }
+
+      .modal-wrap {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        display: none;
+        place-items: center;
+        padding: 20px;
+        background: var(--mask);
+      }
+
+      .modal-wrap.show {
+        display: grid;
+      }
+
+      .modal {
+        width: min(480px, 100%);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .modal-body {
+        padding: 22px;
+      }
+
+      .modal-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+        border-radius: 8px;
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .modal-icon.danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .modal h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .modal p {
+        margin: 9px 0 0;
+        color: var(--muted);
+      }
+
+      .impact {
+        margin-top: 14px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+      }
+
+      .maintenance-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .maintenance-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+      }
+
+      .maintenance-card strong,
+      .maintenance-card small {
+        display: block;
+      }
+
+      .maintenance-card small {
+        margin-top: 3px;
+        color: var(--quiet);
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        z-index: 120;
+        max-width: min(520px, calc(100% - 28px));
+        transform: translate(-50%, 20px);
+        padding: 10px 15px;
+        border-radius: 6px;
+        background: #20232a;
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.2s ease;
+      }
+
+      .toast.show {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 72px minmax(0, 1fr);
+        }
+
+        .brand {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .brand span,
+        .nav-label,
+        .nav-item span,
+        .sidebar-user div {
+          display: none;
+        }
+
+        .nav-item,
+        .nav-item.child {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .sidebar-user {
+          justify-content: center;
+        }
+
+        .filter-grid {
+          grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+
+        .more-filters {
+          grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+
+        .filter-actions {
+          justify-content: flex-end;
+        }
+
+        .hide-medium {
+          display: none;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          display: block;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .topbar {
+          padding: 0 14px;
+        }
+
+        main {
+          padding: 14px;
+        }
+
+        .page-head,
+        .list-head,
+        .footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .page-head h1 {
+          font-size: 22px;
+        }
+
+        .page-actions,
+        .toolbar {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 2px;
+        }
+
+        .control-note {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .control-note .tag {
+          grid-column: 2;
+          justify-self: start;
+        }
+
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+
+        .filters,
+        .list-head {
+          padding: 16px;
+        }
+
+        .filter-grid,
+        .more-filters,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+          justify-content: stretch;
+          flex-wrap: wrap;
+        }
+
+        .filter-actions .btn {
+          flex: 1;
+        }
+
+        .selection {
+          margin: 0 16px 12px;
+        }
+
+        .drawer {
+          width: 100%;
+        }
+
+        .drawer-foot {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .drawer-actions {
+          width: 100%;
+        }
+
+        .drawer-actions .btn {
+          flex: 1;
+        }
+
+        .maintenance-card {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      width="0"
+      height="0"
+      aria-hidden="true"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-home"
+        viewBox="0 0 24 24"
+      >
+        <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
+        <path d="M9 21v-8h6v8" />
+      </symbol>
+      <symbol
+        id="i-building"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 21h18M5 21V5l7-3v19M19 21V9l-7-3" />
+        <path d="M8 8h1M8 12h1M8 16h1M15 12h1M15 16h1" />
+      </symbol>
+      <symbol
+        id="i-package"
+        viewBox="0 0 24 24"
+      >
+        <path d="m21 8-9 5-9-5 9-5 9 5Z" />
+        <path d="m3 8 9 5 9-5M3 12l9 5 9-5M3 16l9 5 9-5" />
+      </symbol>
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        />
+        <path d="m20 20-4-4" />
+      </symbol>
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
+        <path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7" />
+      </symbol>
+      <symbol
+        id="i-download"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16" />
+      </symbol>
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <path d="M4 4h16v16H4zM10 4v16M16 4v16" />
+      </symbol>
+      <symbol
+        id="i-moon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z" />
+      </symbol>
+      <symbol
+        id="i-alert"
+        viewBox="0 0 24 24"
+      >
+        <path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z" />
+        <path d="M12 9v4M12 17h.01" />
+      </symbol>
+      <symbol
+        id="i-x"
+        viewBox="0 0 24 24"
+      >
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol
+        id="i-arrow"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol
+        id="i-tools"
+        viewBox="0 0 24 24"
+      >
+        <path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5l7.2 7.2a2 2 0 0 1-2.8 2.8l-7.2-7.2" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">S</span>
+          <span>Skyroc Admin</span>
+        </div>
+        <nav
+          class="nav"
+          aria-label="主导航"
+        >
+          <div class="nav-label">工作台</div>
+          <a
+            class="nav-item"
+            href="#home"
+            ><svg class="icon"><use href="#i-home" /></svg><span>首页</span></a
+          >
+          <div class="nav-label">平台控制台</div>
+          <a
+            class="nav-item"
+            href="#users"
+            ><svg class="icon"><use href="#i-building" /></svg><span>组织与用户</span></a
+          >
+          <a
+            class="nav-item child active"
+            href="./index.html"
+            aria-current="page"
+            ><span>租户管理</span></a
+          >
+          <a
+            class="nav-item child"
+            href="../tenant-package/index.html"
+            ><span>租户套餐</span></a
+          >
+          <a
+            class="nav-item"
+            href="#permission"
+            ><svg class="icon"><use href="#i-package" /></svg><span>角色与权限</span></a
+          >
+        </nav>
+        <div class="sidebar-user">
+          <span class="avatar">平</span>
+          <div><strong>平台管理员</strong><small>管理租户 · 000000</small></div>
+        </div>
+      </aside>
+
+      <div class="shell">
+        <header class="topbar">
+          <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>租户管理</strong></div>
+          <div class="top-actions">
+            <button
+              class="icon-btn"
+              id="themeButton"
+              type="button"
+              aria-label="切换明暗主题"
+            >
+              <svg class="icon"><use href="#i-moon" /></svg>
+            </button>
+            <button
+              class="icon-btn"
+              id="topRefresh"
+              type="button"
+              aria-label="刷新租户列表"
+            >
+              <svg class="icon"><use href="#i-refresh" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <main>
+          <div class="page-head">
+            <div>
+              <h1>租户管理</h1>
+              <p>开通企业、维护租户生命周期，并显式同步套餐与平台基础数据。</p>
+            </div>
+            <div class="page-actions">
+              <a
+                class="link-button"
+                href="../tenant-package/index.html"
+                >管理租户套餐<svg class="icon"><use href="#i-arrow" /></svg
+              ></a>
+            </div>
+          </div>
+
+          <section
+            class="control-note"
+            aria-label="平台控制面说明"
+          >
+            <span class="note-mark"
+              ><svg class="icon"><use href="#i-alert" /></svg
+            ></span>
+            <div>
+              <strong>这是平台级控制面</strong
+              ><small>管理租户是系统基座，不能修改、停用或删除；原型数据不会提交到真实后端。</small>
+            </div>
+            <span class="tag protected">超级管理员专属</span>
+          </section>
+
+          <section
+            class="metrics"
+            aria-label="当前页概览"
+          >
+            <div class="metric">
+              <div><span>正常租户</span><small>当前页</small></div>
+              <strong id="normalMetric">2</strong>
+            </div>
+            <div class="metric">
+              <div><span>30 天内到期</span><small>当前页</small></div>
+              <strong id="expiringMetric">1</strong>
+            </div>
+            <div class="metric">
+              <div><span>停用租户</span><small>当前页</small></div>
+              <strong id="disabledMetric">1</strong>
+            </div>
+          </section>
+
+          <section
+            class="panel"
+            aria-label="租户列表工作区"
+          >
+            <div class="filters">
+              <div class="filter-grid">
+                <div class="field">
+                  <label for="tenantIdFilter">租户编号</label
+                  ><input
+                    class="control"
+                    id="tenantIdFilter"
+                    maxlength="6"
+                    placeholder="如 084216"
+                  />
+                </div>
+                <div class="field">
+                  <label for="companyFilter">企业名称</label
+                  ><input
+                    class="control"
+                    id="companyFilter"
+                    maxlength="30"
+                    placeholder="输入企业名称"
+                  />
+                </div>
+                <div class="field">
+                  <label for="contactFilter">联系人</label
+                  ><input
+                    class="control"
+                    id="contactFilter"
+                    maxlength="20"
+                    placeholder="输入联系人"
+                  />
+                </div>
+                <div class="field">
+                  <label for="statusFilter">状态</label
+                  ><select
+                    class="control"
+                    id="statusFilter"
+                  >
+                    <option value="">全部状态</option>
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                  </select>
+                </div>
+                <div class="filter-actions">
+                  <button
+                    class="btn primary"
+                    id="queryButton"
+                    type="button"
+                  >
+                    <svg class="icon"><use href="#i-search" /></svg>查询
+                  </button>
+                  <button
+                    class="btn"
+                    id="resetButton"
+                    type="button"
+                  >
+                    重置
+                  </button>
+                  <button
+                    class="btn"
+                    id="moreButton"
+                    type="button"
+                    aria-expanded="false"
+                  >
+                    更多筛选
+                  </button>
+                </div>
+              </div>
+              <div
+                class="more-filters"
+                id="moreFilters"
+              >
+                <div class="field">
+                  <label for="phoneFilter">联系电话</label
+                  ><input
+                    class="control"
+                    id="phoneFilter"
+                    maxlength="20"
+                    placeholder="精确匹配"
+                  />
+                </div>
+                <div class="field">
+                  <label for="licenseFilter">社会信用代码</label
+                  ><input
+                    class="control"
+                    id="licenseFilter"
+                    maxlength="30"
+                    placeholder="输入信用代码"
+                  />
+                </div>
+                <div class="field">
+                  <label for="domainFilter">绑定域名</label
+                  ><input
+                    class="control"
+                    id="domainFilter"
+                    maxlength="200"
+                    placeholder="如 acme.example.com"
+                  />
+                </div>
+                <div class="field">
+                  <label for="packageFilter">租户套餐</label
+                  ><select
+                    class="control"
+                    id="packageFilter"
+                  >
+                    <option value="">全部套餐</option>
+                    <option value="1">平台基座</option>
+                    <option value="2">标准版</option>
+                    <option value="3">旗舰版</option>
+                    <option value="4">试用版</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-head">
+              <div class="list-title">
+                <strong>租户列表</strong><small id="resultSummary">4 条演示数据 · 服务端分页</small>
+              </div>
+              <div class="toolbar">
+                <button
+                  class="btn primary"
+                  id="addButton"
+                  type="button"
+                >
+                  <svg class="icon"><use href="#i-plus" /></svg>新增租户
+                </button>
+                <button
+                  class="btn danger"
+                  id="batchDeleteButton"
+                  type="button"
+                  disabled
+                >
+                  批量删除
+                </button>
+                <button
+                  class="btn"
+                  id="exportButton"
+                  type="button"
+                >
+                  <svg class="icon"><use href="#i-download" /></svg>导出
+                </button>
+                <button
+                  class="btn"
+                  id="maintenanceButton"
+                  type="button"
+                >
+                  <svg class="icon"><use href="#i-tools" /></svg>平台同步
+                </button>
+                <button
+                  class="icon-btn"
+                  id="refreshButton"
+                  type="button"
+                  aria-label="刷新列表"
+                >
+                  <svg class="icon"><use href="#i-refresh" /></svg>
+                </button>
+                <button
+                  class="icon-btn"
+                  id="columnsButton"
+                  type="button"
+                  aria-label="设置表格列"
+                >
+                  <svg class="icon"><use href="#i-columns" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="selection"
+              id="selectionBar"
+            >
+              <span>已选择 <strong id="selectedCount">0</strong> 家租户；批量操作最多 100 条。</span
+              ><button
+                class="btn text"
+                id="clearSelection"
+                type="button"
+              >
+                取消选择
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 44px">
+                      <input
+                        id="selectAll"
+                        type="checkbox"
+                        aria-label="选择当前页可操作租户"
+                      />
+                    </th>
+                    <th>企业 / 租户编号</th>
+                    <th>联系方式</th>
+                    <th>套餐</th>
+                    <th class="hide-medium">用户上限</th>
+                    <th>有效期</th>
+                    <th>状态</th>
+                    <th class="hide-medium">创建时间</th>
+                    <th style="width: 180px">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tenantRows">
+                  <tr
+                    data-id="1"
+                    data-tenant="000000"
+                    data-company="管理租户"
+                    data-contact="平台管理员"
+                    data-phone="010-00000000"
+                    data-license="PLATFORM-BASE"
+                    data-domain="admin.skyroc.local"
+                    data-package="1"
+                    data-package-name="平台基座"
+                    data-limit="-1"
+                    data-expiry=""
+                    data-status="0"
+                    data-address="平台控制面"
+                    data-intro="承载全平台菜单、字典和初始配置"
+                    data-remark="系统保护记录"
+                    data-created="2026-01-01 09:00"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        disabled
+                        aria-label="管理租户不可选择"
+                      />
+                    </td>
+                    <td>
+                      <div class="company">
+                        <strong>管理租户 <span class="tag protected">平台基座</span></strong
+                        ><code>000000</code>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="contact"><strong>平台管理员</strong><span>010-00000000</span></div>
+                    </td>
+                    <td><span class="tag">平台基座</span></td>
+                    <td class="hide-medium">不限制</td>
+                    <td>
+                      <div class="date"><strong>永不过期</strong><span>系统保护</span></div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td class="hide-medium">2026-01-01 09:00</td>
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          class="btn text row-detail"
+                          type="button"
+                        >
+                          详情</button
+                        ><button
+                          class="btn text row-edit"
+                          type="button"
+                          disabled
+                          title="管理租户受保护"
+                        >
+                          编辑
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="2"
+                    data-tenant="084216"
+                    data-company="星澜科技"
+                    data-contact="林悦"
+                    data-phone="13800138001"
+                    data-license="91310000STAR0001"
+                    data-domain="console.starlan.cn"
+                    data-package="3"
+                    data-package-name="旗舰版"
+                    data-limit="200"
+                    data-expiry="2027-12-31 23:59"
+                    data-status="0"
+                    data-address="上海市浦东新区"
+                    data-intro="企业数字化协作平台"
+                    data-remark="年度旗舰客户"
+                    data-created="2026-04-18 10:24"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择星澜科技"
+                      />
+                    </td>
+                    <td>
+                      <div class="company"><strong>星澜科技</strong><code>084216</code></div>
+                    </td>
+                    <td>
+                      <div class="contact"><strong>林悦</strong><span>13800138001</span></div>
+                    </td>
+                    <td><span class="tag">旗舰版</span></td>
+                    <td class="hide-medium">200 人</td>
+                    <td>
+                      <div class="date"><strong>2027-12-31</strong><span>剩余 507 天</span></div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td class="hide-medium">2026-04-18 10:24</td>
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          class="btn text row-detail"
+                          type="button"
+                        >
+                          详情</button
+                        ><button
+                          class="btn text row-edit"
+                          type="button"
+                        >
+                          编辑</button
+                        ><button
+                          class="btn text row-more"
+                          type="button"
+                        >
+                          更多
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="3"
+                    data-tenant="301572"
+                    data-company="青禾设计"
+                    data-contact="陈果"
+                    data-phone="13600001234"
+                    data-license="91440101QH000002"
+                    data-domain="work.qinghe.design"
+                    data-package="2"
+                    data-package-name="标准版"
+                    data-limit="50"
+                    data-expiry="2026-08-28 23:59"
+                    data-status="0"
+                    data-address="广州市天河区"
+                    data-intro="品牌与数字体验设计团队"
+                    data-remark="到期前跟进续费"
+                    data-created="2026-03-02 15:40"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择青禾设计"
+                      />
+                    </td>
+                    <td>
+                      <div class="company"><strong>青禾设计</strong><code>301572</code></div>
+                    </td>
+                    <td>
+                      <div class="contact"><strong>陈果</strong><span>13600001234</span></div>
+                    </td>
+                    <td><span class="tag">标准版</span></td>
+                    <td class="hide-medium">50 人</td>
+                    <td>
+                      <div class="date">
+                        <strong class="expiry-warning">2026-08-28</strong
+                        ><span class="expiry-warning">17 天后到期</span>
+                      </div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td class="hide-medium">2026-03-02 15:40</td>
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          class="btn text row-detail"
+                          type="button"
+                        >
+                          详情</button
+                        ><button
+                          class="btn text row-edit"
+                          type="button"
+                        >
+                          编辑</button
+                        ><button
+                          class="btn text row-more"
+                          type="button"
+                        >
+                          更多
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="4"
+                    data-tenant="775904"
+                    data-company="北辰实验室"
+                    data-contact="周原"
+                    data-phone="13900007654"
+                    data-license="91110108BC000003"
+                    data-domain="lab.beichen.example"
+                    data-package="4"
+                    data-package-name="试用版"
+                    data-limit="20"
+                    data-expiry="2026-07-31 23:59"
+                    data-status="1"
+                    data-address="北京市海淀区"
+                    data-intro="研发协作试点"
+                    data-remark="试用到期停用"
+                    data-created="2026-06-16 08:55"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择北辰实验室"
+                      />
+                    </td>
+                    <td>
+                      <div class="company"><strong>北辰实验室</strong><code>775904</code></div>
+                    </td>
+                    <td>
+                      <div class="contact"><strong>周原</strong><span>13900007654</span></div>
+                    </td>
+                    <td><span class="tag">试用版</span></td>
+                    <td class="hide-medium">20 人</td>
+                    <td>
+                      <div class="date">
+                        <strong class="expiry-warning">2026-07-31</strong><span class="expiry-warning">已过期</span>
+                      </div>
+                    </td>
+                    <td><span class="status disabled">停用</span></td>
+                    <td class="hide-medium">2026-06-16 08:55</td>
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          class="btn text row-detail"
+                          type="button"
+                        >
+                          详情</button
+                        ><button
+                          class="btn text row-edit"
+                          type="button"
+                        >
+                          编辑</button
+                        ><button
+                          class="btn text row-more"
+                          type="button"
+                        >
+                          更多
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="footer">
+              <span>列表只展示演示数据；概览口径为当前页。</span>
+              <div class="pages">
+                <span>10 条/页</span
+                ><button
+                  class="page-btn"
+                  type="button"
+                  aria-label="上一页"
+                >
+                  ‹</button
+                ><button
+                  class="page-btn active"
+                  type="button"
+                  aria-current="page"
+                >
+                  1</button
+                ><button
+                  class="page-btn"
+                  type="button"
+                >
+                  2</button
+                ><button
+                  class="page-btn"
+                  type="button"
+                  aria-label="下一页"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div
+      class="overlay"
+      id="formOverlay"
+    >
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="formTitle"
+      >
+        <div class="drawer-head">
+          <div>
+            <h2 id="formTitle">新增租户</h2>
+            <p id="formSubtitle">一次完成企业开通和管理员账号初始化。</p>
+          </div>
+          <button
+            class="icon-btn close-form"
+            type="button"
+            aria-label="关闭租户表单"
+          >
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <form
+          id="tenantForm"
+          class="drawer-body"
+        >
+          <input
+            id="formId"
+            type="hidden"
+          />
+          <div class="form-section">
+            <h3 class="section-title">企业资料</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="formCompany">企业名称 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formCompany"
+                  maxlength="30"
+                  required
+                  placeholder="请输入企业名称"
+                />
+              </div>
+              <div class="field">
+                <label for="formContact">联系人 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formContact"
+                  maxlength="20"
+                  required
+                  placeholder="请输入联系人"
+                />
+              </div>
+              <div class="field">
+                <label for="formPhone">联系电话 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formPhone"
+                  maxlength="20"
+                  required
+                  placeholder="请输入联系电话"
+                />
+              </div>
+              <div class="field">
+                <label for="formLicense">社会信用代码</label
+                ><input
+                  class="control"
+                  id="formLicense"
+                  maxlength="30"
+                  placeholder="可选"
+                />
+              </div>
+              <div class="field full">
+                <label for="formDomain">绑定域名</label
+                ><input
+                  class="control"
+                  id="formDomain"
+                  maxlength="200"
+                  placeholder="如 console.example.com"
+                />
+                <div class="help">登录页可能按访问域名筛选可选租户。</div>
+              </div>
+              <div class="field full">
+                <label for="formAddress">企业地址</label
+                ><input
+                  class="control"
+                  id="formAddress"
+                  maxlength="200"
+                  placeholder="可选"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-section"
+            id="adminSection"
+          >
+            <h3 class="section-title">管理员账号</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="formUsername">管理员账号 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formUsername"
+                  minlength="2"
+                  maxlength="30"
+                  required
+                  autocomplete="off"
+                  placeholder="2-30 个字符"
+                />
+              </div>
+              <div class="field">
+                <label for="formPassword">管理员密码 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formPassword"
+                  type="password"
+                  minlength="5"
+                  maxlength="20"
+                  required
+                  autocomplete="new-password"
+                  placeholder="5-20 个字符"
+                />
+              </div>
+            </div>
+            <div class="notice">
+              <svg class="icon"><use href="#i-alert" /></svg
+              ><span>账号和密码只用于开通管理员用户；密码不写入租户表。真实新增请求必须启用请求体加密。</span>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3 class="section-title">套餐与生命周期</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="formPackage">租户套餐 <span class="required">*</span></label
+                ><select
+                  class="control"
+                  id="formPackage"
+                  required
+                >
+                  <option value="">请选择正常套餐</option>
+                  <option value="2">标准版</option>
+                  <option value="3">旗舰版</option>
+                  <option value="4">试用版</option>
+                </select>
+                <div
+                  class="help"
+                  id="packageHelp"
+                >
+                  创建后普通编辑不能更换套餐。
+                </div>
+              </div>
+              <div class="field">
+                <label for="formLimit">用户上限 <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formLimit"
+                  type="number"
+                  min="-1"
+                  required
+                  value="-1"
+                />
+                <div class="help">-1 表示不限制。</div>
+              </div>
+              <div class="field">
+                <label for="formExpiry">到期时间</label
+                ><input
+                  class="control"
+                  id="formExpiry"
+                  type="datetime-local"
+                />
+                <div class="help">留空表示永不过期。</div>
+              </div>
+              <div class="field">
+                <label for="formStatus">状态</label
+                ><select
+                  class="control"
+                  id="formStatus"
+                >
+                  <option value="0">正常</option>
+                  <option value="1">停用</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="formIntro">企业简介</label
+                ><textarea
+                  class="control"
+                  id="formIntro"
+                  maxlength="200"
+                  placeholder="最多 200 字"
+                ></textarea>
+              </div>
+              <div class="field full">
+                <label for="formRemark">备注</label
+                ><textarea
+                  class="control"
+                  id="formRemark"
+                  maxlength="200"
+                  placeholder="最多 200 字"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="drawer-foot">
+          <span
+            class="help"
+            id="formFootnote"
+            >保存只更新原型内存数据。</span
+          >
+          <div class="drawer-actions">
+            <button
+              class="btn close-form"
+              type="button"
+            >
+              取消</button
+            ><button
+              class="btn primary"
+              id="saveTenant"
+              type="submit"
+              form="tenantForm"
+            >
+              开通租户
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div
+      class="overlay"
+      id="detailOverlay"
+    >
+      <aside
+        class="drawer detail"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+      >
+        <div class="drawer-head">
+          <div>
+            <h2 id="detailTitle">租户详情</h2>
+            <p>只展示当前接口已经返回的租户字段。</p>
+          </div>
+          <button
+            class="icon-btn close-detail"
+            type="button"
+            aria-label="关闭租户详情"
+          >
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <div class="drawer-body">
+          <div class="detail-hero">
+            <span
+              class="detail-mark"
+              id="detailMark"
+              >星</span
+            >
+            <div>
+              <h3 id="detailCompany">星澜科技</h3>
+              <p
+                class="mono"
+                id="detailTenant"
+              >
+                租户编号 084216
+              </p>
+            </div>
+          </div>
+          <div class="detail-block">
+            <h4>企业资料</h4>
+            <div
+              class="detail-list"
+              id="detailList"
+            ></div>
+          </div>
+          <div
+            class="notice"
+            id="detailNotice"
+          >
+            <svg class="icon"><use href="#i-alert" /></svg
+            ><span>修改套餐内容不会自动改变该租户；需要单独执行“同步套餐”。</span>
+          </div>
+        </div>
+        <div class="drawer-foot">
+          <span></span>
+          <div class="drawer-actions">
+            <button
+              class="btn close-detail"
+              type="button"
+            >
+              关闭</button
+            ><button
+              class="btn primary"
+              id="editFromDetail"
+              type="button"
+            >
+              编辑资料
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div
+      class="modal-wrap"
+      id="confirmModal"
+    >
+      <div
+        class="modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirmTitle"
+      >
+        <div class="modal-body">
+          <div
+            class="modal-icon"
+            id="confirmIcon"
+          >
+            <svg class="icon"><use href="#i-alert" /></svg>
+          </div>
+          <h3 id="confirmTitle">确认操作</h3>
+          <p id="confirmMessage"></p>
+          <div
+            class="impact"
+            id="confirmImpact"
+          ></div>
+        </div>
+        <div class="modal-foot">
+          <button
+            class="btn"
+            id="confirmCancel"
+            type="button"
+          >
+            取消</button
+          ><button
+            class="btn primary"
+            id="confirmOk"
+            type="button"
+          >
+            确认
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal-wrap"
+      id="maintenanceModal"
+    >
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="maintenanceTitle"
+      >
+        <div class="modal-body">
+          <div class="modal-icon">
+            <svg class="icon"><use href="#i-tools" /></svg>
+          </div>
+          <h3 id="maintenanceTitle">平台基础数据同步</h3>
+          <p>默认租户是同步源，只向状态正常的租户补充缺失项。当前接口不返回目标数量或进度。</p>
+          <div class="maintenance-grid">
+            <div class="maintenance-card">
+              <div><strong>同步租户字典</strong><small>补充默认租户新增的字典类型与字典项。</small></div>
+              <button
+                class="btn"
+                id="syncDictButton"
+                type="button"
+              >
+                开始同步
+              </button>
+            </div>
+            <div class="maintenance-card">
+              <div><strong>同步租户参数</strong><small>补充默认租户新增的系统参数配置。</small></div>
+              <button
+                class="btn"
+                id="syncConfigButton"
+                type="button"
+              >
+                开始同步
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button
+            class="btn"
+            id="maintenanceClose"
+            type="button"
+          >
+            关闭
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="toast"
+      id="toast"
+      role="status"
+      aria-live="polite"
+    >
+      操作成功
+    </div>
+
+    <script>
+      const $ = selector => document.querySelector(selector);
+      const $$ = selector => [...document.querySelectorAll(selector)];
+      let activeRow = null;
+      let confirmAction = null;
+      let lastTrigger = null;
+
+      function toast(message) {
+        const node = $('#toast');
+        node.textContent = message;
+        node.classList.add('show');
+        window.clearTimeout(node.hideTimer);
+        node.hideTimer = window.setTimeout(() => node.classList.remove('show'), 2300);
+      }
+
+      function visibleRows() {
+        return $$('#tenantRows tr').filter(row => row.style.display !== 'none');
+      }
+
+      function selectableRows() {
+        return visibleRows().filter(row => !row.querySelector('.row-check').disabled);
+      }
+
+      function selectedRows() {
+        return $$('#tenantRows .row-check:checked').map(check => check.closest('tr'));
+      }
+
+      function updateSelection() {
+        const count = selectedRows().length;
+        $('#selectedCount').textContent = count;
+        $('#selectionBar').classList.toggle('show', count > 0);
+        $('#batchDeleteButton').disabled = count === 0;
+        const candidates = selectableRows();
+        $('#selectAll').checked =
+          candidates.length > 0 && candidates.every(row => row.querySelector('.row-check').checked);
+      }
+
+      function applyFilters() {
+        const filters = {
+          company: $('#companyFilter').value.trim().toLowerCase(),
+          contact: $('#contactFilter').value.trim().toLowerCase(),
+          domain: $('#domainFilter').value.trim().toLowerCase(),
+          license: $('#licenseFilter').value.trim().toLowerCase(),
+          package: $('#packageFilter').value,
+          phone: $('#phoneFilter').value.trim(),
+          status: $('#statusFilter').value,
+          tenant: $('#tenantIdFilter').value.trim()
+        };
+        let count = 0;
+        $$('#tenantRows tr').forEach(row => {
+          const match =
+            (!filters.tenant || row.dataset.tenant.includes(filters.tenant)) &&
+            (!filters.company || row.dataset.company.toLowerCase().includes(filters.company)) &&
+            (!filters.contact || row.dataset.contact.toLowerCase().includes(filters.contact)) &&
+            (!filters.phone || row.dataset.phone === filters.phone) &&
+            (!filters.license || row.dataset.license.toLowerCase().includes(filters.license)) &&
+            (!filters.domain || row.dataset.domain.toLowerCase().includes(filters.domain)) &&
+            (!filters.package || row.dataset.package === filters.package) &&
+            (!filters.status || row.dataset.status === filters.status);
+          row.style.display = match ? '' : 'none';
+          row.querySelector('.row-check').checked = false;
+          if (match) count += 1;
+        });
+        $('#resultSummary').textContent = `${count} 条演示数据 · 已应用当前筛选`;
+        updateSelection();
+        toast(count ? `已找到 ${count} 家租户` : '没有找到符合条件的租户');
+      }
+
+      function resetFilters() {
+        ['tenantIdFilter', 'companyFilter', 'contactFilter', 'phoneFilter', 'licenseFilter', 'domainFilter'].forEach(
+          id => {
+            $(`#${id}`).value = '';
+          }
+        );
+        ['statusFilter', 'packageFilter'].forEach(id => {
+          $(`#${id}`).value = '';
+        });
+        $$('#tenantRows tr').forEach(row => {
+          row.style.display = '';
+          row.querySelector('.row-check').checked = false;
+        });
+        $('#resultSummary').textContent = '4 条演示数据 · 服务端分页';
+        updateSelection();
+        toast('筛选条件与选择已重置');
+      }
+
+      function openForm(row = null) {
+        lastTrigger = document.activeElement;
+        activeRow = row;
+        const editing = Boolean(row);
+        $('#formTitle').textContent = editing ? '编辑租户资料' : '新增租户';
+        $('#formSubtitle').textContent = editing
+          ? '租户编号、管理员账号和套餐不可在普通编辑中修改。'
+          : '一次完成企业开通和管理员账号初始化。';
+        $('#saveTenant').textContent = editing ? '保存修改' : '开通租户';
+        $('#formFootnote').textContent = editing ? '保存不会更换套餐或修改租户编号。' : '保存只更新原型内存数据。';
+        $('#adminSection').style.display = editing ? 'none' : '';
+        $('#formUsername').required = !editing;
+        $('#formPassword').required = !editing;
+        $('#formPackage').disabled = editing;
+        $('#packageHelp').textContent = editing
+          ? `当前套餐：${row.dataset.packageName}。同步套餐不会更换套餐。`
+          : '创建后普通编辑不能更换套餐。';
+        $('#formId').value = row?.dataset.id || '';
+        $('#formCompany').value = row?.dataset.company || '';
+        $('#formContact').value = row?.dataset.contact || '';
+        $('#formPhone').value = row?.dataset.phone || '';
+        $('#formLicense').value = row?.dataset.license || '';
+        $('#formDomain').value = row?.dataset.domain || '';
+        $('#formAddress').value = row?.dataset.address || '';
+        $('#formUsername').value = '';
+        $('#formPassword').value = '';
+        $('#formPackage').value = row?.dataset.package || '';
+        $('#formLimit').value = row?.dataset.limit || '-1';
+        $('#formExpiry').value = row?.dataset.expiry ? row.dataset.expiry.replace(' ', 'T').slice(0, 16) : '';
+        $('#formStatus').value = row?.dataset.status || '0';
+        $('#formIntro').value = row?.dataset.intro || '';
+        $('#formRemark').value = row?.dataset.remark || '';
+        $('#formOverlay').classList.add('show');
+        window.setTimeout(() => $('#formCompany').focus(), 0);
+      }
+
+      function closeForm() {
+        $('#formOverlay').classList.remove('show');
+        lastTrigger?.focus();
+      }
+
+      function openDetail(row) {
+        lastTrigger = document.activeElement;
+        activeRow = row;
+        const data = row.dataset;
+        $('#detailMark').textContent = data.company.slice(0, 1);
+        $('#detailCompany').textContent = data.company;
+        $('#detailTenant').textContent = `租户编号 ${data.tenant}`;
+        const fields = [
+          ['联系人', `${data.contact} · ${data.phone}`],
+          ['租户套餐', data.packageName],
+          ['用户上限', data.limit === '-1' ? '不限制' : `${data.limit} 人`],
+          ['有效期', data.expiry || '永不过期'],
+          ['状态', data.status === '0' ? '正常' : '停用'],
+          ['绑定域名', data.domain || '—'],
+          ['社会信用代码', data.license || '—'],
+          ['企业地址', data.address || '—'],
+          ['企业简介', data.intro || '—'],
+          ['备注', data.remark || '—'],
+          ['创建时间', data.created]
+        ];
+        $('#detailList').innerHTML = fields
+          .map(([label, value]) => `<div class="detail-row"><span>${label}</span><strong>${value}</strong></div>`)
+          .join('');
+        $('#editFromDetail').disabled = data.id === '1';
+        $('#detailNotice').innerHTML =
+          data.id === '1'
+            ? '<svg class="icon"><use href="#i-alert" /></svg><span>管理租户承载平台菜单和初始数据，不能修改、停用或删除。</span>'
+            : '<svg class="icon"><use href="#i-alert" /></svg><span>修改套餐内容不会自动改变该租户；需要单独执行“同步套餐”。</span>';
+        $('#detailOverlay').classList.add('show');
+        window.setTimeout(() => $('.close-detail').focus(), 0);
+      }
+
+      function closeDetail() {
+        $('#detailOverlay').classList.remove('show');
+        lastTrigger?.focus();
+      }
+
+      function openConfirm(options) {
+        lastTrigger = document.activeElement;
+        $('#confirmTitle').textContent = options.title;
+        $('#confirmMessage').textContent = options.message;
+        $('#confirmImpact').textContent = options.impact;
+        $('#confirmOk').textContent = options.confirmText || '确认';
+        $('#confirmOk').className = `btn ${options.danger ? 'danger-solid' : 'primary'}`;
+        $('#confirmIcon').classList.toggle('danger', Boolean(options.danger));
+        confirmAction = options.action;
+        $('#confirmModal').classList.add('show');
+        window.setTimeout(() => $('#confirmCancel').focus(), 0);
+      }
+
+      function closeConfirm() {
+        $('#confirmModal').classList.remove('show');
+        confirmAction = null;
+        lastTrigger?.focus();
+      }
+
+      function handleMore(row) {
+        const disabled = row.dataset.status === '1';
+        openConfirm({
+          title: disabled ? `启用“${row.dataset.company}”` : `停用“${row.dataset.company}”`,
+          message: disabled ? '启用后，该租户的用户可以再次发起登录。' : '停用后，该租户的用户不能再发起新的登录。',
+          impact: disabled
+            ? '已过期的租户即使启用，登录仍会因过期被拒绝。'
+            : '已经建立的会话不会立即退出，最长可能持续到刷新令牌失效。',
+          confirmText: disabled ? '确认启用' : '确认停用',
+          danger: !disabled,
+          action() {
+            row.dataset.status = disabled ? '0' : '1';
+            row.querySelector('.status').className = `status ${disabled ? 'normal' : 'disabled'}`;
+            row.querySelector('.status').textContent = disabled ? '正常' : '停用';
+            updateMetrics();
+            toast(disabled ? '租户已启用（原型演示）' : '租户已停用（原型演示）');
+          }
+        });
+      }
+
+      function updateMetrics() {
+        const rows = $$('#tenantRows tr');
+        $('#normalMetric').textContent = rows.filter(
+          row => row.dataset.status === '0' && row.dataset.id !== '1'
+        ).length;
+        $('#disabledMetric').textContent = rows.filter(row => row.dataset.status === '1').length;
+      }
+
+      function bindRows() {
+        $$('#tenantRows .row-check').forEach(check => {
+          check.onchange = updateSelection;
+        });
+        $$('#tenantRows .row-detail').forEach(button => {
+          button.onclick = () => openDetail(button.closest('tr'));
+        });
+        $$('#tenantRows .row-edit').forEach(button => {
+          button.onclick = () => openForm(button.closest('tr'));
+        });
+        $$('#tenantRows .row-more').forEach(button => {
+          button.onclick = () => handleMore(button.closest('tr'));
+        });
+      }
+
+      $('#themeButton').onclick = () => {
+        const root = document.documentElement;
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      };
+      $('#moreButton').onclick = event => {
+        const shown = $('#moreFilters').classList.toggle('show');
+        event.currentTarget.setAttribute('aria-expanded', String(shown));
+        event.currentTarget.textContent = shown ? '收起筛选' : '更多筛选';
+      };
+      $('#queryButton').onclick = applyFilters;
+      $('#resetButton').onclick = resetFilters;
+      ['tenantIdFilter', 'companyFilter', 'contactFilter', 'phoneFilter', 'licenseFilter', 'domainFilter'].forEach(
+        id => {
+          $(`#${id}`).onkeydown = event => {
+            if (event.key === 'Enter') applyFilters();
+          };
+        }
+      );
+      $('#selectAll').onchange = event => {
+        selectableRows().forEach(row => {
+          row.querySelector('.row-check').checked = event.target.checked;
+        });
+        updateSelection();
+      };
+      $('#clearSelection').onclick = () => {
+        $$('#tenantRows .row-check').forEach(check => {
+          check.checked = false;
+        });
+        updateSelection();
+      };
+      $('#addButton').onclick = () => openForm();
+      $$('.close-form').forEach(button => {
+        button.onclick = closeForm;
+      });
+      $$('.close-detail').forEach(button => {
+        button.onclick = closeDetail;
+      });
+      $('#editFromDetail').onclick = () => {
+        const row = activeRow;
+        closeDetail();
+        openForm(row);
+      };
+      $('#tenantForm').onsubmit = event => {
+        event.preventDefault();
+        if (!event.currentTarget.reportValidity()) return;
+        const editing = Boolean(activeRow);
+        if (editing) {
+          activeRow.dataset.company = $('#formCompany').value.trim();
+          activeRow.dataset.contact = $('#formContact').value.trim();
+          activeRow.dataset.phone = $('#formPhone').value.trim();
+          activeRow.dataset.license = $('#formLicense').value.trim();
+          activeRow.dataset.domain = $('#formDomain').value.trim();
+          activeRow.dataset.address = $('#formAddress').value.trim();
+          activeRow.dataset.limit = $('#formLimit').value;
+          activeRow.dataset.expiry = $('#formExpiry').value ? $('#formExpiry').value.replace('T', ' ') : '';
+          activeRow.dataset.status = $('#formStatus').value;
+          activeRow.dataset.intro = $('#formIntro').value.trim();
+          activeRow.dataset.remark = $('#formRemark').value.trim();
+          activeRow.querySelector('.company strong').childNodes[0].textContent = `${activeRow.dataset.company} `;
+          activeRow.querySelector('.contact strong').textContent = activeRow.dataset.contact;
+          activeRow.querySelector('.contact span').textContent = activeRow.dataset.phone;
+          activeRow.querySelector('.status').className =
+            `status ${activeRow.dataset.status === '0' ? 'normal' : 'disabled'}`;
+          activeRow.querySelector('.status').textContent = activeRow.dataset.status === '0' ? '正常' : '停用';
+          closeForm();
+          updateMetrics();
+          toast('租户资料已更新（原型演示）');
+        } else {
+          const generated = String(Math.floor(100000 + Math.random() * 900000));
+          closeForm();
+          toast(`租户开通成功（原型演示），租户编号 ${generated}`);
+        }
+      };
+      $('#batchDeleteButton').onclick = () => {
+        const rows = selectedRows();
+        openConfirm({
+          title: `删除 ${rows.length} 家租户`,
+          message: '这是软删除，但当前没有恢复接口。',
+          impact: '租户名下的用户和业务数据不会删除，租户编号也不会回收。任一目标已变化时整批不执行。',
+          confirmText: '确认删除',
+          danger: true,
+          action() {
+            rows.forEach(row => row.remove());
+            updateSelection();
+            updateMetrics();
+            toast('租户已删除（原型演示）');
+          }
+        });
+      };
+      $('#exportButton').onclick = () => toast('将由后端导出当前筛选命中的全部租户为 xlsx（原型不生成假文件）');
+      $('#maintenanceButton').onclick = () => {
+        lastTrigger = document.activeElement;
+        $('#maintenanceModal').classList.add('show');
+        window.setTimeout(() => $('#syncDictButton').focus(), 0);
+      };
+      $('#maintenanceClose').onclick = () => {
+        $('#maintenanceModal').classList.remove('show');
+        lastTrigger?.focus();
+      };
+      $('#syncDictButton').onclick = () => {
+        $('#maintenanceModal').classList.remove('show');
+        toast('租户字典同步成功（原型演示；真实接口不返回进度）');
+      };
+      $('#syncConfigButton').onclick = () => {
+        $('#maintenanceModal').classList.remove('show');
+        toast('租户参数同步成功（原型演示；真实接口不返回进度）');
+      };
+      ['refreshButton', 'topRefresh'].forEach(id => {
+        $(`#${id}`).onclick = () => toast('列表已刷新，筛选条件保留');
+      });
+      $('#columnsButton').onclick = () => toast('列设置：企业、有效期、状态和操作列固定显示');
+      $$('.page-btn').forEach(button => {
+        button.onclick = () => toast('分页由服务端处理（原型演示）');
+      });
+      $('#confirmCancel').onclick = closeConfirm;
+      $('#confirmOk').onclick = () => {
+        const action = confirmAction;
+        closeConfirm();
+        action?.();
+      };
+      ['formOverlay', 'detailOverlay'].forEach(id => {
+        $(`#${id}`).onclick = event => {
+          if (event.target.id === id) id === 'formOverlay' ? closeForm() : closeDetail();
+        };
+      });
+      ['confirmModal', 'maintenanceModal'].forEach(id => {
+        $(`#${id}`).onclick = event => {
+          if (event.target.id === id) {
+            $(`#${id}`).classList.remove('show');
+            lastTrigger?.focus();
+          }
+        };
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        if ($('#confirmModal').classList.contains('show')) closeConfirm();
+        else if ($('#maintenanceModal').classList.contains('show')) {
+          $('#maintenanceModal').classList.remove('show');
+          lastTrigger?.focus();
+        } else if ($('#detailOverlay').classList.contains('show')) closeDetail();
+        else if ($('#formOverlay').classList.contains('show')) closeForm();
+      });
+
+      bindRows();
+      updateSelection();
+    </script>
+  </body>
+</html>
