@@ -64,6 +64,7 @@ export function downloadUserImportTemplate() {
   });
 }
 
+/** 同 `uploadOssFile`：不显式声明 multipart，FormData 会被默认的 application/json 头转成 JSON。 */
 export function importUsers(payload: UserImportPayload) {
   const data = new FormData();
   data.append('file', payload.file);
@@ -71,6 +72,7 @@ export function importUsers(payload: UserImportPayload) {
 
   return request<UserImportResponse>({
     data,
+    headers: { 'Content-Type': 'multipart/form-data' },
     method: 'post',
     url: SYSTEM_USER_URLS.IMPORT_DATA
   });
