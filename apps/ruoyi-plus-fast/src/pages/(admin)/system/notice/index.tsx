@@ -1,8 +1,8 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import { Suspense, lazy, useState } from 'react';
 import type { Key } from 'react';
@@ -27,7 +27,13 @@ import type {
 
 import type { NoticeEditorMode } from './modules/NoticeEditorDrawer';
 import NoticeSearch from './modules/NoticeSearch';
-import type { NoticeTableParams } from './modules/NoticeSearch';
+import {
+  NoticeSearchSchema,
+  getNoticeSearchInitialParams,
+  hasNoticeFilters,
+  normalizeNoticeSearchParams,
+  toNoticeSearchQuery
+} from './modules/shared';
 
 const NoticeEditorDrawer = lazy(() => import('./modules/NoticeEditorDrawer'));
 
@@ -43,19 +49,15 @@ interface NoticeManagementProps {
 }
 
 const INITIAL_EDITOR_STATE: NoticeEditorState = { mode: 'create', open: false };
-const NOTICE_SEARCH_INITIAL_PARAMS: Partial<NoticeTableParams> = {
-  createByName: undefined,
-  createdRange: undefined,
-  noticeTitle: undefined,
-  noticeType: undefined,
-  status: undefined
-};
 const NOTICE_TABLE_SCROLL_X = 1120;
 
 type NoticeTableRecord = TableDataWithIndex<NoticeItem>;
 
 const NoticeManagement = (props: NoticeManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/notice/' });
+  const location = useLocation();
 
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
@@ -78,23 +80,30 @@ const NoticeManagement = (props: NoticeManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<NoticeTableParams, NoticeListPage, NoticeItem>({
-    apiParams: { ...NOTICE_SEARCH_INITIAL_PARAMS, size: initialPageSize },
+  } = useTable<NoticeListParams, NoticeListPage, NoticeItem>({
+    apiParams: getNoticeSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: useNoticeTableQuery,
+    queryHook: useNoticeListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: notice => String(notice.noticeId),
     transformParams: normalizeNoticeSearchParams
   });
   const notices = data;
   const saving = createMutation.isPending || updateMutation.isPending;
   const selectedNotices = notices.filter(notice => selectedRowKeys.map(String).includes(String(notice.noticeId)));
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<NoticeListParams>) {
+    navigate({ search: () => toNoticeSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<NoticeTableRecord>[] {
     return [
@@ -315,36 +324,6 @@ const NoticeManagement = (props: NoticeManagementProps) => {
   );
 };
 
-function normalizeNoticeSearchParams(params: NoticeTableParams): NoticeTableParams {
-  return {
-    ...params,
-    createByName: params.createByName?.trim() || undefined,
-    noticeTitle: params.noticeTitle?.trim() || undefined
-  };
-}
-
-function toNoticeListParams(params: NoticeTableParams): NoticeListParams {
-  const { createdRange, ...listParams } = params;
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useNoticeTableQuery<Data = NoticeListPage>(
-  params: NoticeTableParams,
-  options?: TableQueryHookOptions<NoticeListPage, Data>
-) {
-  return useNoticeListQuery(toNoticeListParams(params), options);
-}
-
-function hasNoticeFilters(params: Partial<NoticeTableParams>) {
-  return Boolean(
-    params.createByName || params.createdRange || params.noticeTitle || params.noticeType || params.status
-  );
-}
-
 function getNoticeTypeLabel(type: NoticeType) {
   return type === '1' ? '通知' : '公告';
 }
@@ -369,5 +348,6 @@ export const Route = createFileRoute('/(admin)/system/notice/')({
     keepAlive: true,
     menu: { icon: 'ph:bell-ringing', order: 9 },
     title: '通知公告'
-  }
+  },
+  validateSearch: NoticeSearchSchema
 });

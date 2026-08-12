@@ -1,8 +1,6 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
-
 import type { PostId, PostListParams, PostStatus } from '@/service/api/system-post';
 
 export interface PostDepartmentOption {
@@ -16,26 +14,21 @@ export interface PostDepartmentOption {
   value: PostId;
 }
 
-export interface PostTableParams extends PostListParams {
-  /** 查询表单使用的创建时间范围。 */
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
-}
-
 interface PostSearchProps {
   /** 岗位查询可选择的部门。 */
   departments: PostDepartmentOption[];
   /** 由表格 Hook 管理的查询表单。 */
-  form: TableSearchProps<PostTableParams>['form'];
+  form: TableSearchProps<PostListParams>['form'];
   /** 精确部门发生变化时同步左侧部门树。 */
   onExactDepartmentChange: (deptId?: PostId) => void;
   /** 重置岗位查询以及左侧部门范围。 */
   onReset: () => void;
   /** 重置表单和已提交查询参数。 */
-  reset: TableSearchProps<PostTableParams>['reset'];
+  reset: TableSearchProps<PostListParams>['reset'];
   /** 提交岗位查询。 */
-  search: TableSearchProps<PostTableParams>['search'];
+  search: TableSearchProps<PostListParams>['search'];
   /** 当前已经提交的查询参数。 */
-  searchParams: TableSearchProps<PostTableParams>['searchParams'];
+  searchParams: TableSearchProps<PostListParams>['searchParams'];
 }
 
 const STATUS_OPTIONS = [

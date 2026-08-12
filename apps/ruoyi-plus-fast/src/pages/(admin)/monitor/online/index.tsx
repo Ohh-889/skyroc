@@ -1,9 +1,9 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 
@@ -15,22 +15,28 @@ import {
 import type { OnlineSession, OnlineSessionListParams, OnlineSessionPage } from '@/service/api/monitor-online';
 
 import OnlineSearch from './modules/OnlineSearch';
+import {
+  OnlineSearchSchema,
+  getOnlineSearchInitialParams,
+  hasOnlineFilters,
+  normalizeOnlineSearchParams,
+  toOnlineSearchQuery
+} from './modules/shared';
 
 interface OnlineManagementProps {
   /** 页面首次加载时使用的分页大小。 */
   initialPageSize?: number;
 }
 
-const ONLINE_SEARCH_INITIAL_PARAMS: Partial<OnlineSessionListParams> = {
-  ipaddr: undefined,
-  userName: undefined
-};
 const ONLINE_TABLE_SCROLL_X = 1640;
 
 type OnlineTableRecord = TableDataWithIndex<OnlineSession>;
 
 const OnlineManagement = (props: OnlineManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/monitor/online/' });
+  const location = useLocation();
 
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
@@ -41,19 +47,26 @@ const OnlineManagement = (props: OnlineManagementProps) => {
     OnlineSessionPage,
     OnlineSession
   >({
-    apiParams: { ...ONLINE_SEARCH_INITIAL_PARAMS, size: initialPageSize },
+    apiParams: getOnlineSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 个在线会话`
     },
-    queryHook: useOnlineTableQuery,
+    queryHook: useOnlineSessionListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: session => session.tokenId,
     transformParams: normalizeOnlineSearchParams
   });
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<OnlineSessionListParams>) {
+    navigate({ search: () => toOnlineSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<OnlineTableRecord>[] {
     return [
@@ -241,25 +254,6 @@ const OnlineManagement = (props: OnlineManagementProps) => {
   );
 };
 
-function normalizeOnlineSearchParams(params: OnlineSessionListParams): OnlineSessionListParams {
-  return {
-    ...params,
-    ipaddr: params.ipaddr?.trim() || undefined,
-    userName: params.userName?.trim() || undefined
-  };
-}
-
-function useOnlineTableQuery<Data = OnlineSessionPage>(
-  params: OnlineSessionListParams,
-  options?: TableQueryHookOptions<OnlineSessionPage, Data>
-) {
-  return useOnlineSessionListQuery(params, options);
-}
-
-function hasOnlineFilters(params: Partial<OnlineSessionListParams>) {
-  return Boolean(params.ipaddr || params.userName);
-}
-
 function formatTimestamp(value: number) {
   return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
 }
@@ -281,5 +275,6 @@ export const Route = createFileRoute('/(admin)/monitor/online/')({
       order: 1
     },
     title: '在线用户'
-  }
+  },
+  validateSearch: OnlineSearchSchema
 });

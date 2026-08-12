@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import type { Key } from 'react';
 import { Suspense, lazy, useState } from 'react';
@@ -21,13 +21,20 @@ import type {
   ClientId,
   ClientItem,
   ClientListPage,
+  ClientListParams,
   ClientSavePayload,
   ClientStatus
 } from '@/service/api/system-client';
 import { useDictDataQuery } from '@/service/api/system-dict';
 import type { ClientEditorMode } from './modules/ClientEditorDrawer';
 import ClientSearch from './modules/ClientSearch';
-import type { ClientTableParams } from './modules/ClientSearch';
+import {
+  ClientSearchSchema,
+  getClientSearchInitialParams,
+  hasClientFilters,
+  normalizeClientSearchParams,
+  toClientSearchQuery
+} from './modules/shared';
 import {
   FALLBACK_DEVICE_OPTIONS,
   FALLBACK_GRANT_OPTIONS,
@@ -57,18 +64,13 @@ interface ClientManagementProps {
 
 const INITIAL_EDITOR_STATE: ClientEditorState = { mode: 'create', open: false };
 const INITIAL_DETAIL_STATE: ClientDetailState = { open: false };
-const INITIAL_PARAMS: Partial<ClientTableParams> = {
-  clientId: undefined,
-  clientKey: undefined,
-  isAsc: 'desc',
-  orderByColumn: 'id',
-  status: undefined
-};
-
 type ClientRecord = TableDataWithIndex<ClientItem>;
 
 const ClientManagement = (props: ClientManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/client/' });
+  const location = useLocation();
   const { isMobile } = useAdminState();
   const queryClient = useQueryClient();
   const { scrollConfig, tableWrapperRef } = useTableScroll(1120);
@@ -95,18 +97,25 @@ const ClientManagement = (props: ClientManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<ClientTableParams, ClientListPage, ClientItem>({
-    apiParams: { ...INITIAL_PARAMS, current: 1, size: initialPageSize },
+  } = useTable<ClientListParams, ClientListPage, ClientItem>({
+    apiParams: getClientSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: { pageSizeOptions: [10, 20, 50, 100], showQuickJumper: true, showTotal: value => `共 ${value} 条` },
-    queryHook: useClientTableQuery,
+    queryHook: useClientListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: item => String(item.id),
-    transformParams: normalizeParams
+    transformParams: normalizeClientSearchParams
   });
   const selected = data.filter(item => selectedRowKeys.map(String).includes(String(item.id)));
   const saving = createMutation.isPending || updateMutation.isPending;
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<ClientListParams>) {
+    navigate({ search: () => toClientSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<ClientRecord>[] {
     return [
@@ -329,7 +338,7 @@ const ClientManagement = (props: ClientManagementProps) => {
       okText: '确认导出',
       title: '导出客户端数据？',
       onOk: async () => {
-        const { current: _current, size: _size, ...params } = normalizeParams(searchParams as ClientTableParams);
+        const { current: _current, size: _size, ...params } = normalizeClientSearchParams(searchParams);
         const blob = await exportClients(params);
         downloadFileFromBlob({ fileName: '客户端管理.xlsx', source: blob });
         showSuccessMessage('客户端数据导出成功');
@@ -400,7 +409,7 @@ const ClientManagement = (props: ClientManagementProps) => {
             locale={{
               emptyText: (
                 <Empty
-                  description={hasFilters(searchParams) ? '没有找到符合条件的客户端' : '当前还没有客户端'}
+                  description={hasClientFilters(searchParams) ? '没有找到符合条件的客户端' : '当前还没有客户端'}
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               )
@@ -444,26 +453,8 @@ const ClientManagement = (props: ClientManagementProps) => {
   );
 };
 
-function normalizeParams(params: ClientTableParams): ClientTableParams {
-  return {
-    ...params,
-    clientId: params.clientId?.trim() || undefined,
-    clientKey: params.clientKey?.trim() || undefined
-  };
-}
-
-function useClientTableQuery<Data = ClientListPage>(
-  params: ClientTableParams,
-  options?: TableQueryHookOptions<ClientListPage, Data>
-) {
-  return useClientListQuery(params, options);
-}
-
-function hasFilters(params: Partial<ClientTableParams>) {
-  return Boolean(params.clientId || params.clientKey || params.status);
-}
-
 export const Route = createFileRoute('/(admin)/system/client/')({
   component: ClientManagement,
-  staticData: { keepAlive: true, menu: { icon: 'ph:devices', order: 6 }, title: '客户端管理' }
+  staticData: { keepAlive: true, menu: { icon: 'ph:devices', order: 6 }, title: '客户端管理' },
+  validateSearch: ClientSearchSchema
 });

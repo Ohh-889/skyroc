@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useState } from 'react';
@@ -32,10 +32,13 @@ import { formatTenantMinute } from '../modules/tenant-utils';
 
 import {
   TENANT_PACKAGE_DELETE_LIMIT,
+  TenantPackageSearchSchema,
   formatPackageMenuScope,
-  hasTenantPackageFilters
+  getTenantPackageSearchInitialParams,
+  hasTenantPackageFilters,
+  normalizeTenantPackageSearchParams,
+  toTenantPackageSearchQuery
 } from './modules/tenant-package-utils';
-import type { TenantPackageTableParams } from './modules/tenant-package-utils';
 import type { TenantPackageEditorMode, TenantPackageEditorSubmitValues } from './modules/TenantPackageEditorDrawer';
 import TenantPackageSearch from './modules/TenantPackageSearch';
 
@@ -43,12 +46,6 @@ const TenantPackageDetailDrawer = lazy(() => import('./modules/TenantPackageDeta
 const TenantPackageEditorDrawer = lazy(() => import('./modules/TenantPackageEditorDrawer'));
 
 const TENANT_PACKAGE_TABLE_SCROLL_X = 1080;
-const TENANT_PACKAGE_SEARCH_INITIAL_PARAMS: Partial<TenantPackageTableParams> = {
-  createdRange: undefined,
-  packageName: undefined,
-  status: undefined
-};
-
 interface TenantPackageEditorState {
   mode: TenantPackageEditorMode;
   open: boolean;
@@ -67,7 +64,8 @@ interface TenantPackageManagementProps {
 const TenantPackageManagement = (props: TenantPackageManagementProps) => {
   const { initialPageSize = 10 } = props;
 
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: '/tenant/package/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(TENANT_PACKAGE_TABLE_SCROLL_X);
@@ -92,20 +90,19 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<TenantPackageTableParams, TenantPackageListPage, TenantPackageItem>({
-    apiParams: {
-      ...TENANT_PACKAGE_SEARCH_INITIAL_PARAMS,
-      size: initialPageSize
-    },
+  } = useTable<TenantPackageListParams, TenantPackageListPage, TenantPackageItem>({
+    apiParams: getTenantPackageSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: useTenantPackageTableQuery,
+    queryHook: useTenantPackageListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: item => String(item.packageId),
     transformParams: normalizeTenantPackageSearchParams
   });
@@ -114,6 +111,11 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
   const saving = createMutation.isPending || updateMutation.isPending;
   const hasActiveFilters = hasTenantPackageFilters(searchProps.searchParams);
   const selectedPackages = packages.filter(item => selectedRowKeys.map(String).includes(String(item.packageId)));
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<TenantPackageListParams>) {
+    navigate({ search: () => toTenantPackageSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<TenantPackageTableRecord>[] {
     return [
@@ -379,7 +381,7 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
     setExporting(true);
 
     try {
-      const { current: _current, size: _size, ...exportParams } = toPackageListParams(searchProps.searchParams);
+      const { current: _current, size: _size, ...exportParams } = normalizeTenantPackageSearchParams(searchProps.searchParams);
 
       const blob = await exportTenantPackages(exportParams);
 
@@ -569,30 +571,6 @@ function resolveListErrorDescription(error: unknown) {
   return '请检查网络后重试；筛选条件和已选项都已保留。';
 }
 
-function normalizeTenantPackageSearchParams(params: TenantPackageTableParams): TenantPackageTableParams {
-  return {
-    ...params,
-    packageName: params.packageName?.trim() || undefined
-  };
-}
-
-function toPackageListParams(params: TenantPackageTableParams): TenantPackageListParams {
-  const { createdRange, ...listParams } = params;
-
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useTenantPackageTableQuery<Data = TenantPackageListPage>(
-  params: TenantPackageTableParams,
-  options?: TableQueryHookOptions<TenantPackageListPage, Data>
-) {
-  return useTenantPackageListQuery(toPackageListParams(params), options);
-}
-
 export const Route = createFileRoute('/(admin)/tenant/package/')({
   component: TenantPackageManagement,
   staticData: {
@@ -602,5 +580,6 @@ export const Route = createFileRoute('/(admin)/tenant/package/')({
       order: 13
     },
     title: '租户套餐'
-  }
+  },
+  validateSearch: TenantPackageSearchSchema
 });

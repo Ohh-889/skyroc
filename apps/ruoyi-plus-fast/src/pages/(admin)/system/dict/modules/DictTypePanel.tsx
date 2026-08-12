@@ -3,12 +3,13 @@ import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { Alert, Card, Empty, Flex, Input, Table, Typography } from 'antd';
 import type { TableProps } from 'antd';
 
-import type { DictTypeItem, DictTypeListParams } from '@/service/api/system-dict';
+import type { DictTypeItem } from '@/service/api/system-dict';
 
-export type DictTypeTableParams = DictTypeListParams;
 export type DictTypeTableRecord = TableDataWithIndex<DictTypeItem>;
 
 interface DictTypePanelProps {
+  /** 从地址栏还原的关键词，只作为输入框初值。 */
+  defaultKeyword?: string;
   /** 导出请求是否进行中。 */
   exportLoading?: boolean;
   /** 新增类型回调。 */
@@ -33,6 +34,7 @@ interface DictTypePanelProps {
 
 const DictTypePanel = (props: DictTypePanelProps) => {
   const {
+    defaultKeyword,
     exportLoading = false,
     onAdd,
     onDelete,
@@ -124,6 +126,7 @@ const DictTypePanel = (props: DictTypePanelProps) => {
       <Input
         allowClear
         className="mb-12px"
+        defaultValue={defaultKeyword}
         placeholder="请输入关键词搜索"
         onChange={event => onSearch(event.target.value)}
       />

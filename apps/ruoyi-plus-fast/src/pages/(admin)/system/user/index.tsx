@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, getRouteApi } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi, useLocation, useNavigate } from '@tanstack/react-router';
 import {
   Alert,
   Avatar,
@@ -24,7 +24,6 @@ import {
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import type { Key } from 'react';
-import { z } from 'zod';
 
 import { deleteModal } from '@/features/antd/deleteModal';
 import {
@@ -36,15 +35,12 @@ import {
   useResetUserPasswordMutation,
   useUpdateUserMutation,
   useUpdateUserRolesMutation,
-  useUpdateUserStatusMutation,
-  useUserListQuery
+  useUpdateUserStatusMutation
 } from '@/service/api/system-user';
 import type {
-  UserExportParams,
   UserId,
   UserListItem,
   UserListPage,
-  UserListParams,
   UserSavePayload,
   UserStatus
 } from '@/service/api/system-user';
@@ -52,8 +48,17 @@ import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-us
 
 import UserDepartmentPanel from './modules/UserDepartmentPanel';
 import type { UserEditorMode } from './modules/UserEditorDrawer';
+import {
+  UserSearchSchema,
+  getUserSearchInitialParams,
+  hasUserFilters,
+  normalizeUserSearchParams,
+  toUserExportParams,
+  toUserSearchQuery,
+  useUserTableQuery
+} from './modules/shared';
+import type { UserTableParams } from './modules/shared';
 import UserSearch from './modules/UserSearch';
-import type { UserTableParams } from './modules/UserSearch';
 
 const UserDetailDrawer = lazy(() => import('./modules/UserDetailDrawer'));
 const UserEditorDrawer = lazy(() => import('./modules/UserEditorDrawer'));
@@ -61,12 +66,6 @@ const UserPasswordModal = lazy(() => import('./modules/UserPasswordModal'));
 const UserRoleDrawer = lazy(() => import('./modules/UserRoleDrawer'));
 
 const USER_TABLE_SCROLL_X = 1520;
-const USER_SEARCH_INITIAL_PARAMS: Partial<UserTableParams> = {
-  deptId: undefined,
-  keyword: undefined,
-  searchField: 'username',
-  status: undefined
-};
 
 type UserOperation = 'delete' | 'edit' | 'reset-password' | 'roles' | 'status' | 'view';
 type UserTableRecord = TableDataWithIndex<UserListItem>;
@@ -102,6 +101,8 @@ const UserManagement = (props: UserManagementProps) => {
   const { initialPageSize = 20 } = props;
 
   const { deptId: routeDeptId } = userRouteApi.useSearch();
+  const navigate = useNavigate({ from: '/system/user/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(USER_TABLE_SCROLL_X);
@@ -136,20 +137,18 @@ const UserManagement = (props: UserManagementProps) => {
     total,
     updateSearchParams
   } = useTable<UserTableParams, UserListPage, UserListItem>({
-    apiParams: {
-      ...USER_SEARCH_INITIAL_PARAMS,
-      deptId: routeDeptId,
-      size: initialPageSize
-    },
+    apiParams: getUserSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
     queryHook: useUserTableQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: user => String(user.userId),
     transformParams: normalizeUserSearchParams
   });
@@ -158,12 +157,19 @@ const UserManagement = (props: UserManagementProps) => {
   const saving = createMutation.isPending || updateMutation.isPending;
   const hasActiveFilters = hasUserFilters(searchProps.searchParams);
 
+  // 从部门页带 deptId 跳进来时对齐左侧部门树。页面自己写 URL 时两边已经一致，不必再查一次。
   useEffect(() => {
-    if (!routeDeptId) return;
+    if (!routeDeptId || String(routeDeptId) === String(searchProps.searchParams.deptId)) return;
+
     setSelectedDeptId(routeDeptId);
     searchProps.form.setFieldValue('deptId', routeDeptId);
     updateSearchParams({ current: 1, deptId: routeDeptId });
   }, [routeDeptId]);
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<UserTableParams>) {
+    navigate({ search: () => toUserSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<UserTableRecord>[] {
     return [
@@ -584,35 +590,6 @@ const UserManagement = (props: UserManagementProps) => {
   );
 };
 
-function normalizeUserSearchParams(params: UserTableParams): UserTableParams {
-  return { ...params, keyword: params.keyword?.trim() || undefined };
-}
-
-function toUserListParams(params: UserTableParams): UserListParams {
-  const { keyword, searchField, ...listParams } = params;
-  const result: UserListParams = { ...listParams, nickName: undefined, phonenumber: undefined, userName: undefined };
-  if (keyword && searchField === 'nickname') result.nickName = keyword;
-  if (keyword && searchField === 'phone') result.phonenumber = keyword;
-  if (keyword && searchField === 'username') result.userName = keyword;
-  return result;
-}
-
-function toUserExportParams(params: UserTableParams): UserExportParams {
-  const { current: _current, size: _size, ...filters } = toUserListParams(params);
-  return filters;
-}
-
-function useUserTableQuery<Data = UserListPage>(
-  params: UserTableParams,
-  options?: TableQueryHookOptions<UserListPage, Data>
-) {
-  return useUserListQuery(toUserListParams(params), options);
-}
-
-function hasUserFilters(params: Partial<UserTableParams>) {
-  return Boolean(params.deptId || params.keyword || params.status);
-}
-
 function getAvatarText(user: UserListItem) {
   return (user.nickName.trim() || user.userName.trim()).slice(0, 1).toLocaleUpperCase();
 }
@@ -660,5 +637,5 @@ function formatRelativeTime(value: string) {
 export const Route = createFileRoute('/(admin)/system/user/')({
   component: UserManagement,
   staticData: { keepAlive: true, menu: { icon: 'ph:users-three', order: 1 }, title: '用户管理' },
-  validateSearch: z.object({ deptId: z.string().optional() })
+  validateSearch: UserSearchSchema
 });

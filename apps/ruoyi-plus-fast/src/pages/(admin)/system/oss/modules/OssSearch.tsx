@@ -1,11 +1,9 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { AutoComplete, Button, Col, DatePicker, Flex, Form, Input, InputNumber, Row } from 'antd';
+import { AutoComplete, Button, Col, Flex, Form, Input, InputNumber, Row } from 'antd';
 
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { OssListParams } from '@/service/api/system-oss';
-
-import { formatOssTime, toOssCreatedRange } from './shared';
-import type { OssCreatedRange } from './shared';
 
 interface OssSearchProps {
   /** 由表格 Hook 管理的查询表单实例。 */
@@ -28,19 +26,8 @@ const SUFFIX_OPTIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.pdf', '.docx
 const OssSearch = (props: OssSearchProps) => {
   const { form, reset, search, searchParams, serviceOptions } = props;
 
-  const beginTime = Form.useWatch('beginTime', form);
-  const endTime = Form.useWatch('endTime', form);
-
   async function handleSearch() {
     await search();
-  }
-
-  /** RangePicker 只认 Dayjs，但参数、URL 和接口统一用字符串，所以选完立刻拆回表单里那两个字段。 */
-  function handleCreatedRangeChange(value: OssCreatedRange) {
-    form.setFieldsValue({
-      beginTime: formatOssTime(value?.[0]),
-      endTime: formatOssTime(value?.[1])
-    });
   }
 
   return (
@@ -153,30 +140,12 @@ const OssSearch = (props: OssSearchProps) => {
           md={24}
           span={24}
         >
-          <Form.Item
-            hidden
-            name="beginTime"
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            hidden
-            name="endTime"
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            className="m-0"
+          <SearchRangePicker
+            showTime
+            form={form}
             label="创建时间"
             labelCol={{ lg: 4, md: 4, span: 6 }}
-          >
-            <DatePicker.RangePicker
-              className="w-full"
-              showTime={{ format: 'HH:mm' }}
-              value={toOssCreatedRange(beginTime, endTime)}
-              onChange={handleCreatedRangeChange}
-            />
-          </Form.Item>
+          />
         </Col>
 
         <Col

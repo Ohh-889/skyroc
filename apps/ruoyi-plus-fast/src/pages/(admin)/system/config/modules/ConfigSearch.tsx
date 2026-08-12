@@ -1,17 +1,15 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
+
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { ConfigListParams, ConfigType } from '@/service/api/system-config';
 
-export interface ConfigTableParams extends ConfigListParams {
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
-}
 interface ConfigSearchProps {
-  /** 查询表单及提交状态。 */ form: TableSearchProps<ConfigTableParams>['form'];
-  /** 重置查询。 */ reset: TableSearchProps<ConfigTableParams>['reset'];
-  /** 提交查询。 */ search: TableSearchProps<ConfigTableParams>['search'];
-  /** 当前查询条件。 */ searchParams: TableSearchProps<ConfigTableParams>['searchParams'];
+  /** 查询表单及提交状态。 */ form: TableSearchProps<ConfigListParams>['form'];
+  /** 重置查询。 */ reset: TableSearchProps<ConfigListParams>['reset'];
+  /** 提交查询。 */ search: TableSearchProps<ConfigListParams>['search'];
+  /** 当前查询条件。 */ searchParams: TableSearchProps<ConfigListParams>['searchParams'];
 }
 const ConfigSearch = (props: ConfigSearchProps) => {
   const { form, reset, search, searchParams } = props;
@@ -88,13 +86,12 @@ const ConfigSearch = (props: ConfigSearchProps) => {
           md={12}
           span={24}
         >
-          <Form.Item
-            className="m-0"
+          <SearchRangePicker
+            beginField="rangeBegin"
+            endField="rangeEnd"
+            form={form}
             label="创建时间"
-            name="createdRange"
-          >
-            <DatePicker.RangePicker className="w-full" />
-          </Form.Item>
+          />
         </Col>
         <Col
           lg={24}

@@ -1,24 +1,19 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { OperLogBusinessType, OperLogListParams, OperLogStatus } from '@/service/api/monitor-operlog';
-
-export interface OperLogTableParams extends OperLogListParams {
-  /** 查询表单中的操作时间范围。 */
-  operTimeRange?: [Dayjs | null, Dayjs | null] | null;
-}
 
 interface OperLogSearchProps {
   /** 由表格 Hook 管理的查询表单。 */
-  form: TableSearchProps<OperLogTableParams>['form'];
+  form: TableSearchProps<OperLogListParams>['form'];
   /** 重置表单和已提交查询参数。 */
-  reset: TableSearchProps<OperLogTableParams>['reset'];
+  reset: TableSearchProps<OperLogListParams>['reset'];
   /** 提交操作日志查询。 */
-  search: TableSearchProps<OperLogTableParams>['search'];
+  search: TableSearchProps<OperLogListParams>['search'];
   /** 当前已提交的操作日志查询参数。 */
-  searchParams: TableSearchProps<OperLogTableParams>['searchParams'];
+  searchParams: TableSearchProps<OperLogListParams>['searchParams'];
 }
 
 const BUSINESS_TYPE_OPTIONS = [
@@ -75,9 +70,11 @@ const OperLogSearch = (props: OperLogSearchProps) => {
           </Form.Item>
         </Col>
         <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="操作时间" name="operTimeRange">
-            <DatePicker.RangePicker className="w-full" showTime />
-          </Form.Item>
+          <SearchRangePicker
+            showTime
+            form={form}
+            label="操作时间"
+          />
         </Col>
         <Col className="lg:ml-auto" lg={8} md={12} span={24}>
           <Form.Item className="m-0">

@@ -2,16 +2,9 @@ import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 
-import type { UserListParams, UserStatus } from '@/service/api/system-user';
+import type { UserStatus } from '@/service/api/system-user';
 
-export type UserSearchField = 'nickname' | 'phone' | 'username';
-
-export interface UserTableParams extends UserListParams {
-  /** 尚未转换为接口字段的查询关键词。 */
-  keyword?: string;
-  /** 关键词匹配的用户字段。 */
-  searchField?: UserSearchField;
-}
+import type { UserSearchField, UserTableParams } from './shared';
 
 interface UserSearchProps {
   /** 由表格 Hook 管理的查询表单实例。 */

@@ -1,24 +1,19 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { NoticeListParams, NoticeStatus, NoticeType } from '@/service/api/system-notice';
-
-export interface NoticeTableParams extends NoticeListParams {
-  /** 查询表单使用的创建时间范围。 */
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
-}
 
 interface NoticeSearchProps {
   /** 由表格 Hook 管理的查询表单。 */
-  form: TableSearchProps<NoticeTableParams>['form'];
+  form: TableSearchProps<NoticeListParams>['form'];
   /** 重置表单和已提交查询参数。 */
-  reset: TableSearchProps<NoticeTableParams>['reset'];
+  reset: TableSearchProps<NoticeListParams>['reset'];
   /** 提交公告查询。 */
-  search: TableSearchProps<NoticeTableParams>['search'];
+  search: TableSearchProps<NoticeListParams>['search'];
   /** 当前已经提交的公告查询参数。 */
-  searchParams: TableSearchProps<NoticeTableParams>['searchParams'];
+  searchParams: TableSearchProps<NoticeListParams>['searchParams'];
 }
 
 const NOTICE_TYPE_OPTIONS = [
@@ -62,9 +57,11 @@ const NoticeSearch = (props: NoticeSearchProps) => {
           </Form.Item>
         </Col>
         <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="创建时间" name="createdRange">
-            <DatePicker.RangePicker className="w-full" />
-          </Form.Item>
+          <SearchRangePicker
+            form={form}
+            granularity="day"
+            label="创建时间"
+          />
         </Col>
         <Col lg={8} md={12} span={24}>
           <Form.Item className="m-0">

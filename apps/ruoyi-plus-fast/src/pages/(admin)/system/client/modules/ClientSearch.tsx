@@ -3,17 +3,16 @@ import type { TableSearchProps } from '@skyroc/web-ui-compose';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 import type { ClientListParams, ClientStatus } from '@/service/api/system-client';
 
-export type ClientTableParams = ClientListParams;
 
 interface ClientSearchProps {
   /** 查询表单实例。 */
-  form: TableSearchProps<ClientTableParams>['form'];
+  form: TableSearchProps<ClientListParams>['form'];
   /** 重置查询条件。 */
-  reset: TableSearchProps<ClientTableParams>['reset'];
+  reset: TableSearchProps<ClientListParams>['reset'];
   /** 提交查询。 */
-  search: TableSearchProps<ClientTableParams>['search'];
+  search: TableSearchProps<ClientListParams>['search'];
   /** 当前查询条件。 */
-  searchParams: TableSearchProps<ClientTableParams>['searchParams'];
+  searchParams: TableSearchProps<ClientListParams>['searchParams'];
 }
 
 const ClientSearch = (props: ClientSearchProps) => {

@@ -1,8 +1,8 @@
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableOnChange, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex, TableOnChange } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import { useMemo, useState } from 'react';
 import type { Key } from 'react';
@@ -29,7 +29,14 @@ import PostDepartmentPanel from './modules/PostDepartmentPanel';
 import PostEditorDrawer from './modules/PostEditorDrawer';
 import type { PostEditorMode } from './modules/PostEditorDrawer';
 import PostSearch from './modules/PostSearch';
-import type { PostDepartmentOption, PostTableParams } from './modules/PostSearch';
+import type { PostDepartmentOption } from './modules/PostSearch';
+import {
+  PostSearchSchema,
+  getPostSearchInitialParams,
+  hasPostFilters,
+  normalizePostSearchParams,
+  toPostSearchQuery
+} from './modules/shared';
 
 interface PostEditorState {
   mode: PostEditorMode;
@@ -48,22 +55,15 @@ const INITIAL_EDITOR_STATE: PostEditorState = {
   open: false
 };
 
-const POST_SEARCH_INITIAL_PARAMS: Partial<PostTableParams> = {
-  belongDeptId: undefined,
-  createdRange: undefined,
-  deptId: undefined,
-  postCategory: undefined,
-  postCode: undefined,
-  postName: undefined,
-  status: undefined
-};
-
 const POST_TABLE_SCROLL_X = 1120;
 
 type PostTableRecord = TableDataWithIndex<PostItem>;
 
 const PostManagement = (props: PostManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/post/' });
+  const location = useLocation();
 
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
@@ -92,23 +92,22 @@ const PostManagement = (props: PostManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<PostTableParams, PostListPage, PostItem>({
-    apiParams: {
-      ...POST_SEARCH_INITIAL_PARAMS,
-      size: initialPageSize
-    },
+  } = useTable<PostListParams, PostListPage, PostItem>({
+    apiParams: getPostSearchInitialParams(initialPageSize),
     columns: createPostColumns,
-    isChangeURL: false,
     isMobile,
     onChange: handleTableChange,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: usePostTableQuery,
+    queryHook: usePostListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: post => String(post.postId),
-    transformParams: normalizePostTableSearchParams
+    transformParams: normalizePostSearchParams
   });
   const posts = data;
   const saving = createMutation.isPending || updateMutation.isPending;
@@ -116,6 +115,11 @@ const PostManagement = (props: PostManagementProps) => {
   const selectedDepartment = departmentOptions.find(option => String(option.value) === String(selectedDeptId));
   const exactDepartment = departmentOptions.find(option => String(option.value) === String(searchParams.deptId));
   const scopeLabel = getScopeLabel(exactDepartment, selectedDepartment);
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<PostListParams>) {
+    navigate({ search: () => toPostSearchQuery(params) });
+  }
 
   function createPostColumns(): TableColumn<PostTableRecord>[] {
     const result: TableColumn<PostTableRecord>[] = [
@@ -294,7 +298,7 @@ const PostManagement = (props: PostManagementProps) => {
     updateSearchParams({ belongDeptId: undefined, current: 1, deptId: undefined });
   }
 
-  function handleTableChange(...args: TableOnChange<PostTableRecord>): Partial<PostTableParams> {
+  function handleTableChange(...args: TableOnChange<PostTableRecord>): Partial<PostListParams> {
     const [pagination, , sorter] = args;
     setSelectedRowKeys([]);
 
@@ -540,43 +544,6 @@ function flattenDepartments(nodes: PostDeptTreeNode[], parentPath = ''): PostDep
   });
 }
 
-function normalizePostTableSearchParams(params: PostTableParams): PostTableParams {
-  return {
-    ...params,
-    postCategory: params.postCategory?.trim() || undefined,
-    postCode: params.postCode?.trim() || undefined,
-    postName: params.postName?.trim() || undefined
-  };
-}
-
-function toPostListParams(params: PostTableParams): PostListParams {
-  const { createdRange, ...listParams } = params;
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function usePostTableQuery<Data = PostListPage>(
-  params: PostTableParams,
-  options?: TableQueryHookOptions<PostListPage, Data>
-) {
-  return usePostListQuery(toPostListParams(params), options);
-}
-
-function hasPostFilters(params: Partial<PostTableParams>) {
-  return Boolean(
-    params.belongDeptId ||
-    params.createdRange ||
-    params.deptId ||
-    params.postCategory ||
-    params.postCode ||
-    params.postName ||
-    params.status
-  );
-}
-
 function getScopeLabel(exactDepartment?: PostDepartmentOption, selectedDepartment?: PostDepartmentOption) {
   if (exactDepartment) return `${exactDepartment.shortLabel}（精确）`;
   if (selectedDepartment) return `${selectedDepartment.shortLabel}及下级`;
@@ -601,5 +568,6 @@ export const Route = createFileRoute('/(admin)/system/post/')({
       order: 4
     },
     title: '岗位管理'
-  }
+  },
+  validateSearch: PostSearchSchema
 });

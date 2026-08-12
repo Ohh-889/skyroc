@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
 import { TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableOnChange, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex, TableOnChange } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { Key } from 'react';
 import { useState } from 'react';
@@ -26,26 +26,27 @@ import type {
 
 import OperLogDetailDrawer from './modules/OperLogDetailDrawer';
 import OperLogSearch from './modules/OperLogSearch';
-import type { OperLogTableParams } from './modules/OperLogSearch';
+import {
+  OperLogSearchSchema,
+  getOperLogSearchInitialParams,
+  hasOperLogFilters,
+  normalizeOperLogSearchParams,
+  toOperLogSearchQuery
+} from './modules/shared';
 
 interface OperLogManagementProps {
   /** 页面首次加载时使用的分页大小。 */
   initialPageSize?: number;
 }
 
-const OPERLOG_SEARCH_INITIAL_PARAMS: Partial<OperLogTableParams> = {
-  businessType: undefined,
-  operIp: undefined,
-  operName: undefined,
-  operTimeRange: undefined,
-  status: undefined,
-  title: undefined
-};
 const OPERLOG_TABLE_SCROLL_X = 1360;
 type OperLogTableRecord = TableDataWithIndex<OperLogItem>;
 
 const OperLogManagement = (props: OperLogManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/log/operlog/' });
+  const location = useLocation();
   const { isMobile } = useAdminState();
   const queryClient = useQueryClient();
   const { scrollConfig, tableWrapperRef } = useTableScroll(OPERLOG_TABLE_SCROLL_X);
@@ -66,19 +67,26 @@ const OperLogManagement = (props: OperLogManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<OperLogTableParams, OperLogListPage, OperLogItem>({
-    apiParams: { ...OPERLOG_SEARCH_INITIAL_PARAMS, size: initialPageSize },
+  } = useTable<OperLogListParams, OperLogListPage, OperLogItem>({
+    apiParams: getOperLogSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
     onChange: handleTableChange,
+    onSearchParamsChange: syncSearchParams,
     pagination: { pageSizeOptions: [10, 20, 50, 100], showQuickJumper: true, showTotal: value => `共 ${value} 条` },
-    queryHook: useOperLogTableQuery,
+    queryHook: useOperLogListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: record => String(record.operId),
     transformParams: normalizeOperLogSearchParams
   });
 
   const selectedRecords = data.filter(record => selectedRowKeys.includes(String(record.operId)));
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<OperLogListParams>) {
+    navigate({ search: () => toOperLogSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<OperLogTableRecord>[] {
     return [
@@ -161,7 +169,7 @@ const OperLogManagement = (props: OperLogManagementProps) => {
     ];
   }
 
-  function handleTableChange(...args: TableOnChange<OperLogTableRecord>): Partial<OperLogTableParams> {
+  function handleTableChange(...args: TableOnChange<OperLogTableRecord>): Partial<OperLogListParams> {
     const [pagination, , sorter] = args;
     setSelectedRowKeys([]);
     const activeSorter = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -223,7 +231,7 @@ const OperLogManagement = (props: OperLogManagementProps) => {
   async function handleExport() {
     setExporting(true);
     try {
-      const { current: _current, size: _size, ...params } = toOperLogListParams(searchProps.searchParams);
+      const { current: _current, size: _size, ...params } = normalizeOperLogSearchParams(searchProps.searchParams);
       const blob = await exportOperLogs(params);
       downloadFileFromBlob({ fileName: '操作日志.xlsx', source: blob });
     } finally {
@@ -310,42 +318,6 @@ const OperLogManagement = (props: OperLogManagementProps) => {
   );
 };
 
-function normalizeOperLogSearchParams(params: OperLogTableParams): OperLogTableParams {
-  return {
-    ...params,
-    operIp: params.operIp?.trim() || undefined,
-    operName: params.operName?.trim() || undefined,
-    title: params.title?.trim() || undefined
-  };
-}
-
-function toOperLogListParams(params: OperLogTableParams): OperLogListParams {
-  const { operTimeRange, ...listParams } = params;
-  return {
-    ...listParams,
-    beginTime: operTimeRange?.[0]?.format('YYYY-MM-DD HH:mm:ss'),
-    endTime: operTimeRange?.[1]?.format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useOperLogTableQuery<Data = OperLogListPage>(
-  params: OperLogTableParams,
-  options?: TableQueryHookOptions<OperLogListPage, Data>
-) {
-  return useOperLogListQuery(toOperLogListParams(params), options);
-}
-
-function hasOperLogFilters(params: Partial<OperLogTableParams>) {
-  return Boolean(
-    params.businessType !== undefined ||
-    params.operIp ||
-    params.operName ||
-    params.operTimeRange ||
-    params.status !== undefined ||
-    params.title
-  );
-}
-
 function getBusinessTypeLabel(value: OperLogBusinessType) {
   return ['其它', '新增', '修改', '删除', '授权', '导出', '导入', '强退', '生成代码', '清空数据'][value] ?? '未知';
 }
@@ -366,5 +338,6 @@ export const Route = createFileRoute('/(admin)/system/log/operlog/')({
     keepAlive: true,
     menu: { icon: 'ph:file-text', order: 5 },
     title: '操作日志'
-  }
+  },
+  validateSearch: OperLogSearchSchema
 });

@@ -1,19 +1,21 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
+
+import SearchRangePicker from '@/features/table/SearchRangePicker';
+import type { TenantPackageListParams } from '@/service/api/system-tenant-package';
 
 import { TENANT_PACKAGE_FIELD_LIMITS, TENANT_PACKAGE_STATUS_OPTIONS } from './tenant-package-utils';
-import type { TenantPackageTableParams } from './tenant-package-utils';
 
 interface TenantPackageSearchProps {
   /** 由表格 Hook 管理的查询表单实例。 */
-  form: TableSearchProps<TenantPackageTableParams>['form'];
+  form: TableSearchProps<TenantPackageListParams>['form'];
   /** 重置查询表单和已提交参数。 */
-  reset: TableSearchProps<TenantPackageTableParams>['reset'];
+  reset: TableSearchProps<TenantPackageListParams>['reset'];
   /** 提交查询表单。 */
-  search: TableSearchProps<TenantPackageTableParams>['search'];
+  search: TableSearchProps<TenantPackageListParams>['search'];
   /** 当前已经提交的套餐查询参数。 */
-  searchParams: TableSearchProps<TenantPackageTableParams>['searchParams'];
+  searchParams: TableSearchProps<TenantPackageListParams>['searchParams'];
 }
 
 const TenantPackageSearch = (props: TenantPackageSearchProps) => {
@@ -75,13 +77,11 @@ const TenantPackageSearch = (props: TenantPackageSearchProps) => {
           md={12}
           span={24}
         >
-          <Form.Item
-            className="m-0"
+          <SearchRangePicker
+            form={form}
+            granularity="day"
             label="创建时间"
-            name="createdRange"
-          >
-            <DatePicker.RangePicker className="w-full" />
-          </Form.Item>
+          />
         </Col>
 
         <Col

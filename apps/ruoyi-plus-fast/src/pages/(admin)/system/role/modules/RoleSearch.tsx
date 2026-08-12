@@ -1,24 +1,19 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { RoleListParams, RoleStatus } from '@/service/api/system-role';
-
-export interface RoleTableParams extends RoleListParams {
-  /** 查询表单使用的创建时间范围。 */
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
-}
 
 interface RoleSearchProps {
   /** 由表格 Hook 管理的查询表单实例。 */
-  form: TableSearchProps<RoleTableParams>['form'];
+  form: TableSearchProps<RoleListParams>['form'];
   /** 重置查询表单和已提交参数。 */
-  reset: TableSearchProps<RoleTableParams>['reset'];
+  reset: TableSearchProps<RoleListParams>['reset'];
   /** 提交查询表单。 */
-  search: TableSearchProps<RoleTableParams>['search'];
+  search: TableSearchProps<RoleListParams>['search'];
   /** 当前已经提交的角色查询参数。 */
-  searchParams: TableSearchProps<RoleTableParams>['searchParams'];
+  searchParams: TableSearchProps<RoleListParams>['searchParams'];
 }
 
 const STATUS_OPTIONS = [
@@ -55,9 +50,11 @@ const RoleSearch = (props: RoleSearchProps) => {
         </Col>
 
         <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label="创建时间" name="createdRange">
-            <DatePicker.RangePicker className="w-full" />
-          </Form.Item>
+          <SearchRangePicker
+            form={form}
+            granularity="day"
+            label="创建时间"
+          />
         </Col>
 
         <Col lg={24} span={24}>

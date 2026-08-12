@@ -1,14 +1,55 @@
-import type { Dayjs } from 'dayjs';
+import { z } from 'zod';
 
+import {
+  optionalSearchEnum,
+  optionalSearchText,
+  optionalSearchTime,
+  resolveSearchPagination,
+  searchPaginationShape
+} from '@/features/table/search-params';
 import type { TenantPackageListParams, TenantPackageStatus } from '@/service/api/system-tenant-package';
 
-export interface TenantPackageTableParams extends TenantPackageListParams {
-  /** 查询表单使用的创建时间范围，提交前拆成 beginTime / endTime。 */
-  createdRange?: [Dayjs | null, Dayjs | null] | null;
+/** URL 查询串的契约，同时也是发请求前的清洗规则。默认值不写在这里，见 getTenantPackageSearchInitialParams。 */
+export const TenantPackageSearchSchema = z.object({
+  ...searchPaginationShape,
+  beginTime: optionalSearchTime,
+  endTime: optionalSearchTime,
+  isAsc: optionalSearchEnum(['asc', 'desc']),
+  orderByColumn: optionalSearchEnum(['createTime', 'packageId', 'packageName', 'status']),
+  packageName: optionalSearchText,
+  status: optionalSearchEnum(['0', '1'])
+});
+
+export type TenantPackageSearchQuery = z.infer<typeof TenantPackageSearchSchema>;
+
+/** 表格首次加载、以及点重置时回到的参数。URL 上带了参数时会覆盖掉这里的值。 */
+export function getTenantPackageSearchInitialParams(pageSize: number): TenantPackageListParams {
+  return {
+    // 这些 undefined 不是占位：reset 用 form.setFieldsValue 清表单，而它是合并语义，
+    // 对象里没有的 key 会被原样留在输入框里。新增筛选项时必须同步加进来。
+    beginTime: undefined,
+    current: 1,
+    endTime: undefined,
+    packageName: undefined,
+    size: pageSize,
+    status: undefined
+  };
 }
 
-export function hasTenantPackageFilters(params: Partial<TenantPackageTableParams>) {
-  return Boolean(params.createdRange || params.packageName || params.status);
+/** 表格参数写回 URL。 */
+export function toTenantPackageSearchQuery(params: Partial<TenantPackageListParams>): TenantPackageSearchQuery {
+  return TenantPackageSearchSchema.parse(params);
+}
+
+/** 发请求前的参数整形。从 URL 回填的参数全是字符串，统一过一遍 schema 再发出去。 */
+export function normalizeTenantPackageSearchParams(params: Partial<TenantPackageListParams>): TenantPackageListParams {
+  const query = TenantPackageSearchSchema.parse(params);
+
+  return { ...query, ...resolveSearchPagination(query) };
+}
+
+export function hasTenantPackageFilters(params: Partial<TenantPackageListParams>) {
+  return Boolean(params.beginTime || params.endTime || params.packageName || params.status);
 }
 
 export const TENANT_PACKAGE_STATUS_OPTIONS = [

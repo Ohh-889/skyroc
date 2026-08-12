@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
 import { TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import type { Key } from 'react';
 import { Suspense, lazy, useState } from 'react';
@@ -17,10 +17,16 @@ import {
   useRefreshConfigCacheMutation,
   useUpdateConfigMutation
 } from '@/service/api/system-config';
-import type { ConfigItem, ConfigListPage, ConfigSavePayload } from '@/service/api/system-config';
+import type { ConfigItem, ConfigListPage, ConfigListParams, ConfigSavePayload } from '@/service/api/system-config';
 import type { ConfigEditorMode } from './modules/ConfigEditorDrawer';
 import ConfigSearch from './modules/ConfigSearch';
-import type { ConfigTableParams } from './modules/ConfigSearch';
+import {
+  ConfigSearchSchema,
+  getConfigSearchInitialParams,
+  hasConfigFilters,
+  normalizeConfigSearchParams,
+  toConfigSearchQuery
+} from './modules/shared';
 const ConfigEditorDrawer = lazy(() => import('./modules/ConfigEditorDrawer'));
 interface ConfigEditorState {
   configId?: ConfigItem['configId'];
@@ -31,15 +37,12 @@ interface ConfigManagementProps {
   /** 首次加载分页大小。 */ initialPageSize?: number;
 }
 const INITIAL_EDITOR_STATE: ConfigEditorState = { mode: 'create', open: false };
-const INITIAL_PARAMS: Partial<ConfigTableParams> = {
-  configKey: undefined,
-  configName: undefined,
-  configType: undefined,
-  createdRange: undefined
-};
 type ConfigRecord = TableDataWithIndex<ConfigItem>;
 const ConfigManagement = (props: ConfigManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/config/' });
+  const location = useLocation();
   const { isMobile } = useAdminState();
   const queryClient = useQueryClient();
   const { scrollConfig, tableWrapperRef } = useTableScroll(1120);
@@ -61,15 +64,17 @@ const ConfigManagement = (props: ConfigManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<ConfigTableParams, ConfigListPage, ConfigItem>({
-    apiParams: { ...INITIAL_PARAMS, current: 1, size: initialPageSize },
+  } = useTable<ConfigListParams, ConfigListPage, ConfigItem>({
+    apiParams: getConfigSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: { pageSizeOptions: [10, 20, 50, 100], showQuickJumper: true, showTotal: value => `共 ${value} 条` },
-    queryHook: useConfigTableQuery,
+    queryHook: useConfigListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: item => String(item.configId),
-    transformParams: normalizeParams
+    transformParams: normalizeConfigSearchParams
   });
   const selected = data.filter(item => selectedRowKeys.map(String).includes(String(item.configId)));
   const saving = createMutation.isPending || updateMutation.isPending;
@@ -229,13 +234,13 @@ const ConfigManagement = (props: ConfigManagementProps) => {
     });
   }
 
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<ConfigListParams>) {
+    navigate({ search: () => toConfigSearchQuery(params) });
+  }
+
   async function handleExport() {
-    const { createdRange, ...params } = normalizeParams(searchParams as ConfigTableParams);
-    const blob = await exportConfigs({
-      ...params,
-      rangeBegin: createdRange?.[0]?.format('YYYY-MM-DD HH:mm:ss'),
-      rangeEnd: createdRange?.[1]?.format('YYYY-MM-DD HH:mm:ss')
-    });
+    const blob = await exportConfigs(normalizeConfigSearchParams(searchParams));
     downloadFileFromBlob({ fileName: '参数数据.xlsx', source: blob });
   }
 
@@ -306,7 +311,7 @@ const ConfigManagement = (props: ConfigManagementProps) => {
             locale={{
               emptyText: (
                 <Empty
-                  description={hasFilters(searchParams) ? '没有找到符合条件的参数' : '当前还没有参数配置'}
+                  description={hasConfigFilters(searchParams) ? '没有找到符合条件的参数' : '当前还没有参数配置'}
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               )
@@ -338,31 +343,8 @@ const ConfigManagement = (props: ConfigManagementProps) => {
     </div>
   );
 };
-function normalizeParams(params: ConfigTableParams): ConfigTableParams {
-  return {
-    ...params,
-    configKey: params.configKey?.trim() || undefined,
-    configName: params.configName?.trim() || undefined
-  };
-}
-function useConfigTableQuery<Data = ConfigListPage>(
-  params: ConfigTableParams,
-  options?: TableQueryHookOptions<ConfigListPage, Data>
-) {
-  const { createdRange, ...listParams } = params;
-  return useConfigListQuery(
-    {
-      ...listParams,
-      rangeBegin: createdRange?.[0]?.format('YYYY-MM-DD HH:mm:ss'),
-      rangeEnd: createdRange?.[1]?.format('YYYY-MM-DD HH:mm:ss')
-    },
-    options
-  );
-}
-function hasFilters(params: Partial<ConfigTableParams>) {
-  return Boolean(params.configKey || params.configName || params.configType || params.createdRange);
-}
 export const Route = createFileRoute('/(admin)/system/config/')({
   component: ConfigManagement,
-  staticData: { keepAlive: true, menu: { icon: 'ph:sliders-horizontal', order: 7 }, title: '参数配置' }
+  staticData: { keepAlive: true, menu: { icon: 'ph:sliders-horizontal', order: 7 }, title: '参数配置' },
+  validateSearch: ConfigSearchSchema
 });

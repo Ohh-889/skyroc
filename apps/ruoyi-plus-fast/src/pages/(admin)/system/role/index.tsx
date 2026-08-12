@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useState } from 'react';
@@ -34,7 +34,13 @@ import { exportRoles } from '@/service/api/system-role/api';
 
 import type { RoleEditorMode, RoleEditorTab } from './modules/RoleEditorDrawer';
 import RoleSearch from './modules/RoleSearch';
-import type { RoleTableParams } from './modules/RoleSearch';
+import {
+  RoleSearchSchema,
+  getRoleSearchInitialParams,
+  hasRoleFilters,
+  normalizeRoleSearchParams,
+  toRoleSearchQuery
+} from './modules/shared';
 
 const RoleDataScopeModal = lazy(() => import('./modules/RoleDataScopeModal'));
 const RoleDetailDrawer = lazy(() => import('./modules/RoleDetailDrawer'));
@@ -42,13 +48,6 @@ const RoleEditorDrawer = lazy(() => import('./modules/RoleEditorDrawer'));
 const RoleMemberDrawer = lazy(() => import('./modules/RoleMemberDrawer'));
 
 const ROLE_TABLE_SCROLL_X = 1080;
-const ROLE_SEARCH_INITIAL_PARAMS: Partial<RoleTableParams> = {
-  createdRange: undefined,
-  roleKey: undefined,
-  roleName: undefined,
-  status: undefined
-};
-
 const DATA_SCOPE_LABELS: Record<RoleDataScope, string> = {
   '1': '全部数据',
   '2': '自定义部门',
@@ -81,6 +80,8 @@ interface RoleManagementProps {
 const RoleManagement = (props: RoleManagementProps) => {
   const { initialPageSize = 10 } = props;
 
+  const navigate = useNavigate({ from: '/system/role/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(ROLE_TABLE_SCROLL_X);
@@ -107,20 +108,19 @@ const RoleManagement = (props: RoleManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<RoleTableParams, RoleListPage, RoleItem>({
-    apiParams: {
-      ...ROLE_SEARCH_INITIAL_PARAMS,
-      size: initialPageSize
-    },
+  } = useTable<RoleListParams, RoleListPage, RoleItem>({
+    apiParams: getRoleSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: useRoleTableQuery,
+    queryHook: useRoleListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: role => String(role.roleId),
     transformParams: normalizeRoleSearchParams
   });
@@ -128,6 +128,11 @@ const RoleManagement = (props: RoleManagementProps) => {
   const selectedRoles = roles.filter(role => selectedRowKeys.map(String).includes(String(role.roleId)));
   const saving = createMutation.isPending || updateMutation.isPending;
   const hasActiveFilters = hasRoleFilters(searchProps.searchParams);
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<RoleListParams>) {
+    navigate({ search: () => toRoleSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<RoleTableRecord>[] {
     return [
@@ -402,7 +407,7 @@ const RoleManagement = (props: RoleManagementProps) => {
   async function handleExport() {
     setExporting(true);
     try {
-      const params = toRoleListParams({ ...searchProps.searchParams } as RoleTableParams);
+      const params = normalizeRoleSearchParams(searchProps.searchParams);
       const blob = await exportRoles(params);
       downloadFileFromBlob({ fileName: '角色数据.xlsx', source: blob });
     } finally {
@@ -553,34 +558,6 @@ const RoleManagement = (props: RoleManagementProps) => {
   );
 };
 
-function normalizeRoleSearchParams(params: RoleTableParams): RoleTableParams {
-  return {
-    ...params,
-    roleKey: params.roleKey?.trim() || undefined,
-    roleName: params.roleName?.trim() || undefined
-  };
-}
-
-function toRoleListParams(params: RoleTableParams): RoleListParams {
-  const { createdRange, ...listParams } = params;
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useRoleTableQuery<Data = RoleListPage>(
-  params: RoleTableParams,
-  options?: TableQueryHookOptions<RoleListPage, Data>
-) {
-  return useRoleListQuery(toRoleListParams(params), options);
-}
-
-function hasRoleFilters(params: Partial<RoleTableParams>) {
-  return Boolean(params.createdRange || params.roleKey || params.roleName || params.status);
-}
-
 function resolveDataScopeColor(value: RoleDataScope) {
   if (value === '1') return 'gold';
   if (value === '2') return 'blue';
@@ -596,5 +573,6 @@ export const Route = createFileRoute('/(admin)/system/role/')({
       order: 2
     },
     title: '角色管理'
-  }
+  },
+  validateSearch: RoleSearchSchema
 });

@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage, showSuccessModal } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import { Suspense, lazy, useState } from 'react';
@@ -28,15 +28,18 @@ import { useTenantPackageOptionsQuery } from '@/service/api/system-tenant-packag
 
 import {
   TENANT_DELETE_LIMIT,
+  TenantSearchSchema,
   formatAccountCount,
   formatTenantMinute,
+  getTenantSearchInitialParams,
   hasTenantFilters,
   isManagementTenant,
+  normalizeTenantSearchParams,
   resolveTenantExpiry,
   resolveTenantExpiryColor,
-  resolveTenantPackageName
+  resolveTenantPackageName,
+  toTenantSearchQuery
 } from './modules/tenant-utils';
-import type { TenantTableParams } from './modules/tenant-utils';
 import type { TenantEditorMode, TenantEditorSubmitValues } from './modules/TenantEditorDrawer';
 import TenantSearch from './modules/TenantSearch';
 
@@ -45,18 +48,6 @@ const TenantEditorDrawer = lazy(() => import('./modules/TenantEditorDrawer'));
 const TenantSyncModal = lazy(() => import('./modules/TenantSyncModal'));
 
 const TENANT_TABLE_SCROLL_X = 1280;
-const TENANT_SEARCH_INITIAL_PARAMS: Partial<TenantTableParams> = {
-  companyName: undefined,
-  contactPhone: undefined,
-  contactUserName: undefined,
-  createdRange: undefined,
-  domain: undefined,
-  licenseNumber: undefined,
-  packageId: undefined,
-  status: undefined,
-  tenantId: undefined
-};
-
 interface TenantEditorState {
   mode: TenantEditorMode;
   open: boolean;
@@ -113,7 +104,8 @@ const OverviewCard = (props: OverviewCardProps) => {
 const TenantManagement = (props: TenantManagementProps) => {
   const { initialPageSize = 10 } = props;
 
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: '/tenant/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(TENANT_TABLE_SCROLL_X);
@@ -143,20 +135,19 @@ const TenantManagement = (props: TenantManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<TenantTableParams, TenantListPage, TenantItem>({
-    apiParams: {
-      ...TENANT_SEARCH_INITIAL_PARAMS,
-      size: initialPageSize
-    },
+  } = useTable<TenantListParams, TenantListPage, TenantItem>({
+    apiParams: getTenantSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: {
       pageSizeOptions: [10, 20, 50, 100],
       showQuickJumper: true,
       showTotal: value => `共 ${value} 条`
     },
-    queryHook: useTenantTableQuery,
+    queryHook: useTenantListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: tenant => String(tenant.id),
     transformParams: normalizeTenantSearchParams
   });
@@ -176,6 +167,11 @@ const TenantManagement = (props: TenantManagementProps) => {
     }).length,
     normal: tenants.filter(tenant => tenant.status === '0').length
   };
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<TenantListParams>) {
+    navigate({ search: () => toTenantSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<TenantTableRecord>[] {
     return [
@@ -542,7 +538,7 @@ const TenantManagement = (props: TenantManagementProps) => {
 
     try {
       // 导出的是筛选命中的全部数据，分页参数带上去也不生效
-      const { current: _current, size: _size, ...exportParams } = toTenantListParams(searchProps.searchParams);
+      const { current: _current, size: _size, ...exportParams } = normalizeTenantSearchParams(searchProps.searchParams);
 
       const blob = await exportTenants(exportParams);
 
@@ -786,35 +782,6 @@ function resolveListErrorDescription(error: unknown) {
   return '请检查网络后重试；筛选条件和已选项都已保留。';
 }
 
-function normalizeTenantSearchParams(params: TenantTableParams): TenantTableParams {
-  return {
-    ...params,
-    companyName: params.companyName?.trim() || undefined,
-    contactPhone: params.contactPhone?.trim() || undefined,
-    contactUserName: params.contactUserName?.trim() || undefined,
-    domain: params.domain?.trim() || undefined,
-    licenseNumber: params.licenseNumber?.trim() || undefined,
-    tenantId: params.tenantId?.trim() || undefined
-  };
-}
-
-function toTenantListParams(params: TenantTableParams): TenantListParams {
-  const { createdRange, ...listParams } = params;
-
-  return {
-    ...listParams,
-    beginTime: createdRange?.[0]?.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-    endTime: createdRange?.[1]?.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-
-function useTenantTableQuery<Data = TenantListPage>(
-  params: TenantTableParams,
-  options?: TableQueryHookOptions<TenantListPage, Data>
-) {
-  return useTenantListQuery(toTenantListParams(params), options);
-}
-
 export const Route = createFileRoute('/(admin)/tenant/')({
   component: TenantManagement,
   staticData: {
@@ -824,5 +791,6 @@ export const Route = createFileRoute('/(admin)/tenant/')({
       order: 12
     },
     title: '租户管理'
-  }
+  },
+  validateSearch: TenantSearchSchema
 });

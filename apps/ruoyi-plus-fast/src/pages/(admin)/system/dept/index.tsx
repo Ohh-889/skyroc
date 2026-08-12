@@ -2,7 +2,7 @@ import { useAdminState } from '@skyroc/web-admin-layouts';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
 import type { PaginationData, TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Avatar, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import type { Key } from 'react';
@@ -22,15 +22,17 @@ import { buildDeptTree, collectExpandableDeptKeys, hasDirectChildren, maskDeptPh
 
 import type { DeptEditorMode } from './modules/DeptEditorDrawer';
 import DeptSearch from './modules/DeptSearch';
+import {
+  DeptSearchSchema,
+  getDeptSearchInitialParams,
+  hasDeptFilters,
+  normalizeDeptSearchParams,
+  toDeptSearchQuery
+} from './modules/shared';
 
 const DeptEditorDrawer = lazy(() => import('./modules/DeptEditorDrawer'));
 
 const DEPT_TABLE_SCROLL_X = 1150;
-const DEPT_SEARCH_INITIAL_PARAMS: DeptListParams = {
-  deptCategory: undefined,
-  deptName: undefined,
-  status: undefined
-};
 const EMPTY_DEPARTMENTS: DeptTableRecord[] = [];
 
 type DeptTableRecord = TableDataWithIndex<DeptItem>;
@@ -74,7 +76,8 @@ function renderLeader(department: DeptItem) {
 const DeptManagement = (props: DeptManagementProps) => {
   const { initialExpandAll = true } = props;
 
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: '/system/dept/' });
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(DEPT_TABLE_SCROLL_X);
@@ -89,13 +92,15 @@ const DeptManagement = (props: DeptManagementProps) => {
     DeptItem[],
     DeptItem
   >({
-    apiParams: DEPT_SEARCH_INITIAL_PARAMS,
+    apiParams: getDeptSearchInitialParams(),
     columns: createColumns,
     getColumnVisible: column => column.key !== 'createTime',
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: false,
     queryHook: useDeptListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: department => String(department.deptId),
     transformer: transformDeptList,
     transformParams: normalizeDeptSearchParams
@@ -103,9 +108,7 @@ const DeptManagement = (props: DeptManagementProps) => {
   const departments = data.length > 0 ? data : EMPTY_DEPARTMENTS;
   const deptTree = useMemo(() => buildDeptTree(departments), [departments]);
   const allExpandableKeys = useMemo(() => collectExpandableDeptKeys(deptTree), [deptTree]);
-  const hasActiveFilters = Boolean(
-    searchProps.searchParams.deptCategory || searchProps.searchParams.deptName || searchProps.searchParams.status
-  );
+  const hasActiveFilters = hasDeptFilters(searchProps.searchParams);
   const saving = createMutation.isPending || updateMutation.isPending;
   const areAllExpanded =
     allExpandableKeys.length > 0 && allExpandableKeys.every(key => expandedRowKeys.map(String).includes(String(key)));
@@ -119,6 +122,11 @@ const DeptManagement = (props: DeptManagementProps) => {
       return unchanged ? currentKeys : nextExpandedRowKeys;
     });
   }, [allExpandableKeys, initialExpandAll]);
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<DeptListParams>) {
+    navigate({ search: () => toDeptSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<DeptTableRecord>[] {
     return [
@@ -433,14 +441,6 @@ const DeptManagement = (props: DeptManagementProps) => {
   );
 };
 
-function normalizeDeptSearchParams(params: DeptListParams): DeptListParams {
-  return {
-    deptCategory: params.deptCategory?.trim(),
-    deptName: params.deptName?.trim(),
-    status: params.status
-  };
-}
-
 function transformDeptList(response: DeptItem[]): PaginationData<DeptItem> {
   return {
     data: response,
@@ -459,5 +459,6 @@ export const Route = createFileRoute('/(admin)/system/dept/')({
       order: 3
     },
     title: '部门管理'
-  }
+  },
+  validateSearch: DeptSearchSchema
 });

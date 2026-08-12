@@ -1,13 +1,12 @@
 import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, getRouteApi } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { Key } from 'react';
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
-import { z } from 'zod';
 
 import { deleteModal } from '@/features/antd/deleteModal';
 import {
@@ -38,16 +37,19 @@ import type {
 import { exportDictData, exportDictTypes } from '@/service/api/system-dict/api';
 
 import DictDataSearch from './modules/DictDataSearch';
+import {
+  DictSearchSchema,
+  getDictDataSearchInitialParams,
+  getDictTypeSearchInitialParams,
+  toDictDataSearchQuery,
+  toDictTypeSearchQuery
+} from './modules/shared';
 import DictTypePanel from './modules/DictTypePanel';
-import type { DictTypeTableParams } from './modules/DictTypePanel';
 
 const DictDataEditorDrawer = lazy(() => import('./modules/DictDataEditorDrawer'));
 const DictTypeEditorDrawer = lazy(() => import('./modules/DictTypeEditorDrawer'));
 
 const dictRouteApi = getRouteApi('/(admin)/system/dict/');
-const dictSearchSchema = z.object({ dictType: z.string().optional() });
-const DICT_INITIAL_PARAMS: Partial<DictTypeListParams> = { dictName: undefined, dictType: undefined };
-const DATA_INITIAL_PARAMS: Partial<DictDataListParams> = { dictLabel: undefined, dictType: undefined };
 const DATA_TABLE_SCROLL_X = 760;
 type DictDataTableRecord = TableDataWithIndex<DictDataItem>;
 
@@ -66,7 +68,9 @@ const INITIAL_EDITOR_STATE: EditorState = { mode: 'create', open: false };
 
 const DictManagement = (props: DictManagementProps) => {
   const { initialPageSize = 10 } = props;
-  const { dictType: routeDictType } = dictRouteApi.useSearch();
+  const routeSearch = dictRouteApi.useSearch();
+  const routeDictType = routeSearch.dictType;
+  const navigate = useNavigate({ from: '/system/dict/' });
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
   const { scrollConfig, tableWrapperRef } = useTableScroll(DATA_TABLE_SCROLL_X);
@@ -78,21 +82,22 @@ const DictManagement = (props: DictManagementProps) => {
   const [dataExporting, setDataExporting] = useState(false);
   const typeOptionsQuery = useDictTypeOptionsQuery();
 
-  const typeTable = useTable<DictTypeTableParams, DictListPage<DictTypeItem>, DictTypeItem>({
-    apiParams: { ...DICT_INITIAL_PARAMS, current: 1, size: initialPageSize },
+  // 两张表共用一条地址栏，各自只覆盖自己那几个 key，别把对方的条件冲掉。
+  const typeTable = useTable<DictTypeListParams, DictListPage<DictTypeItem>, DictTypeItem>({
+    apiParams: getDictTypeSearchInitialParams(routeSearch, initialPageSize),
     columns: createTypeColumns,
-    isChangeURL: false,
+    onSearchParamsChange: params => navigate({ search: prev => ({ ...prev, ...toDictTypeSearchQuery(params) }) }),
     pagination: { pageSizeOptions: [10, 20, 50], showSizeChanger: false, showTotal: total => `共 ${total} 条` },
-    queryHook: useDictTypeTableQuery,
+    queryHook: useDictTypesQuery,
     rowKey: item => String(item.dictId)
   });
 
   const dataTable = useTable<DictDataListParams, DictListPage<DictDataItem>, DictDataItem>({
-    apiParams: { ...DATA_INITIAL_PARAMS, current: 1, dictType: selectedType?.dictType, size: initialPageSize },
+    apiParams: getDictDataSearchInitialParams(routeSearch, initialPageSize),
     columns: createDataColumns,
-    isChangeURL: false,
+    onSearchParamsChange: params => navigate({ search: prev => ({ ...prev, ...toDictDataSearchQuery(params) }) }),
     pagination: { pageSizeOptions: [10, 20, 50], showQuickJumper: true, showTotal: total => `共 ${total} 条` },
-    queryHook: useDictDataTableQuery,
+    queryHook: useDictDataQuery,
     rowKey: item => String(item.dictCode)
   });
 
@@ -184,6 +189,18 @@ const DictManagement = (props: DictManagementProps) => {
 
   function selectType(item: DictTypeItem) {
     setSelectedType(item);
+    navigate({ search: prev => ({ ...prev, dictType: item.dictType }) });
+  }
+
+  /**
+   * 字典数据的重置。
+   *
+   * 不能直接用表格 Hook 的 reset：它把表单清回 apiParams，而这一页的 apiParams 是从 URL 还原出来的， 清了等于又把 URL
+   * 上那个关键词填回去。这里显式清空。
+   */
+  function resetDataSearch() {
+    dataTable.searchProps.form.setFieldsValue({ dictLabel: undefined });
+    dataTable.updateSearchParams({ current: 1, dictLabel: undefined });
   }
 
   function removeTypes(item: DictTypeItem) {
@@ -278,6 +295,7 @@ const DictManagement = (props: DictManagementProps) => {
           onExport={handleExportTypes}
           onDelete={removeTypes}
           onEdit={item => setTypeEditor({ id: item.dictId, mode: 'update', open: true })}
+          defaultKeyword={routeSearch.dictName}
           onSearch={dictName => typeTable.updateSearchParams({ current: 1, dictName })}
           onRefresh={typeTable.getData}
           onSelect={selectType}
@@ -294,7 +312,7 @@ const DictManagement = (props: DictManagementProps) => {
                 children: (
                   <DictDataSearch
                     disabled={!selectedType}
-                    searchProps={dataTable.searchProps}
+                    searchProps={{ ...dataTable.searchProps, reset: resetDataSearch }}
                   />
                 ),
                 key: '1',
@@ -393,22 +411,8 @@ function createTypeColumns(): TableColumn<TableDataWithIndex<DictTypeItem>>[] {
   return [];
 }
 
-function useDictTypeTableQuery<Data = DictListPage<DictTypeItem>>(
-  params: DictTypeTableParams,
-  options?: TableQueryHookOptions<DictListPage<DictTypeItem>, Data>
-) {
-  return useDictTypesQuery(params, options);
-}
-
-function useDictDataTableQuery<Data = DictListPage<DictDataItem>>(
-  params: DictDataListParams,
-  options?: TableQueryHookOptions<DictListPage<DictDataItem>, Data>
-) {
-  return useDictDataQuery(params, options);
-}
-
 export const Route = createFileRoute('/(admin)/system/dict/')({
   component: DictManagement,
-  validateSearch: dictSearchSchema,
+  validateSearch: DictSearchSchema,
   staticData: { keepAlive: true, menu: { icon: 'ph:book-open-text', order: 8 }, title: '字典管理' }
 });
