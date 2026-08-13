@@ -3,9 +3,11 @@ import { SvgIcon } from '@skyroc/web-ui-compose';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
+import { useLoginTenant } from '@/features/auth/use-login-tenant';
 import { useCaptchaQuery } from '@/service/api';
 import LoginActions from './modules/LoginActions';
 import LoginHeader from './modules/LoginHeader';
+import TenantSelect from './modules/TenantSelect';
 
 interface LoginFormValues {
   /** 图形验证码内容 */
@@ -30,6 +32,8 @@ const Login = () => {
   const [passwordForm] = AForm.useForm<LoginFormValues>();
 
   const { loading, login } = useInitLogin();
+
+  const { selectTenant, showTenantSelect, tenantId, tenantLoading, tenantOptions } = useLoginTenant();
 
   const {
     data: captcha,
@@ -59,6 +63,7 @@ const Login = () => {
     const form: Api.Auth.PwdLoginParams = {
       password: values.password,
       remember: values.remember,
+      tenantId,
       userName: values.userName.trim()
     };
 
@@ -101,6 +106,15 @@ const Login = () => {
         requiredMark={false}
         onFinish={handlePasswordSubmit}
       >
+        {showTenantSelect ? (
+          <TenantSelect
+            loading={tenantLoading}
+            options={tenantOptions}
+            value={tenantId}
+            onChange={selectTenant}
+          />
+        ) : null}
+
         <AForm.Item
           label={t('page.login.enterprise.accountLabel')}
           name="userName"

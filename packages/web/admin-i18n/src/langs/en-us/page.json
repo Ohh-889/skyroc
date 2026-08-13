@@ -172,6 +172,8 @@
       "socialFeishu": "Continue with Feishu",
       "socialWechat": "Continue with WeChat",
       "subtitle": "Continue with your enterprise account",
+      "tenantLabel": "Company",
+      "tenantPlaceholder": "Select your company",
       "terms": "Terms of Service",
       "title": "Welcome to Skyroc",
       "verificationLabel": "Verification code",

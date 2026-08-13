@@ -36,7 +36,8 @@ export function useInitLogin() {
 
     startLoading();
 
-    // clientId / grantType / tenantId 由 fetchLogin 补，这里只管用户填的那几项
+    // clientId / grantType 由 fetchLogin 补，tenantId 由登录页的租户下拉框（useLoginTenant）
+    // 带进来，这里只管把参数原样交给接口
     toLogin(params, {
       onError: () => {
         endLoading();

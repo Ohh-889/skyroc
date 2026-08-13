@@ -172,6 +172,8 @@
       "socialFeishu": "飞书登录",
       "socialWechat": "微信登录",
       "subtitle": "使用企业账号继续",
+      "tenantLabel": "所属企业",
+      "tenantPlaceholder": "请选择所属企业",
       "terms": "服务条款",
       "title": "欢迎登录 Skyroc",
       "verificationLabel": "验证码",

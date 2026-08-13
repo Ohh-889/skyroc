@@ -5,9 +5,11 @@ import { useState } from 'react';
 
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
+import { useLoginTenant } from '@/features/auth/use-login-tenant';
 import { useEmailCodeMutation, useSmsCodeMutation } from '@/service/api';
 import LoginActions from './modules/LoginActions';
 import LoginHeader from './modules/LoginHeader';
+import TenantSelect from './modules/TenantSelect';
 
 interface CodeLoginFormValues {
   /** 六位一次性验证码 */
@@ -53,6 +55,8 @@ const CodeLogin = () => {
 
   const { loading, login } = useInitLogin();
 
+  const { selectTenant, showTenantSelect, tenantId, tenantLoading, tenantOptions } = useLoginTenant();
+
   const { mutateAsync: sendSmsCode } = useSmsCodeMutation();
   const { mutateAsync: sendEmailCode } = useEmailCodeMutation();
 
@@ -67,7 +71,8 @@ const CodeLogin = () => {
     request: async target => {
       // 发失败会把异常抛出去，useCaptcha 那边就不会开始倒计时——让用户干等一分钟才能重试
       // 是这里最容易犯的错。
-      await sendSmsCode({ phone: target });
+      // 带上租户：两家租户绑同一个手机号时，后端要靠它才知道该给谁发码
+      await sendSmsCode({ phone: target, tenantId });
 
       // 不说"发送成功"：号码没注册时后端同样回成功，那句话对这部分人是假的
       showSuccessMessage(t('page.login.enterprise.codeSentPhone'));
@@ -84,7 +89,7 @@ const CodeLogin = () => {
     loading: emailCodeSending
   } = useCaptcha(t('page.login.enterprise.getCode'), count => t('page.login.codeLogin.reGetCode', { time: count }), {
     request: async target => {
-      await sendEmailCode({ email: target });
+      await sendEmailCode({ email: target, tenantId });
 
       showSuccessMessage(t('page.login.enterprise.codeSentEmail'));
       setCodeSentByChannel(prev => ({ ...prev, email: true }));
@@ -128,8 +133,8 @@ const CodeLogin = () => {
 
     const params: Api.Auth.LoginParams =
       channel === 'sms'
-        ? { grantType: 'sms', phone: String(sms).trim(), remember, smsCode: code.trim() }
-        : { email: String(email).trim(), emailCode: code.trim(), grantType: 'email', remember };
+        ? { grantType: 'sms', phone: String(sms).trim(), remember, smsCode: code.trim(), tenantId }
+        : { email: String(email).trim(), emailCode: code.trim(), grantType: 'email', remember, tenantId };
 
     login(params);
   }
@@ -144,6 +149,16 @@ const CodeLogin = () => {
         subtitle={t('page.login.enterprise.codeSubtitle')}
         title={t('page.login.enterprise.codeTitle')}
       />
+
+      {/* 排在渠道之前：先确定是哪家企业，验证码才知道往哪个账号发 */}
+      {showTenantSelect ? (
+        <TenantSelect
+          loading={tenantLoading}
+          options={tenantOptions}
+          value={tenantId}
+          onChange={selectTenant}
+        />
+      ) : null}
 
       <ASegmented<CodeChannel>
         aria-label={t('page.login.enterprise.codeChannelLabel')}

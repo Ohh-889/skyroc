@@ -14,17 +14,31 @@ export function fetchCaptcha() {
 // 表单项，所以在这里补齐：放到页面或 use-login 里，每多一个登录入口就要记得抄一遍。
 const LOGIN_CONTEXT = {
   /** 后端 sys_client.client_id，一行是一个端。换个端（App、小程序）就换个值，所以走 .env */
-  clientId: import.meta.env.VITE_AUTH_CLIENT_ID,
-  /** 未开多租户的部署固定 000000 */
-  tenantId: '000000'
+  clientId: import.meta.env.VITE_AUTH_CLIENT_ID
 } satisfies Api.Auth.LoginContext;
+
+/** 未开多租户的部署固定用它，对齐后端的默认租户 */
+export const DEFAULT_TENANT_ID = '000000';
+
+// 开了多租户之后 tenantId 由登录页的租户下拉框决定，但下拉框在 /auth/tenant/list 回来之前
+// 是空的，关掉多租户时它压根不存在——两种情况都落回默认租户，而不是把 undefined 发出去。
+function withDefaultTenant<T extends { tenantId?: string }>(params: T) {
+  return { ...params, tenantId: params.tenantId || DEFAULT_TENANT_ID };
+}
+
+// 不需要令牌：登录页得先知道能选哪几家租户，才谈得上登录。带了令牌且是超管的话拿到的是全部。
+export function fetchLoginTenants() {
+  return request<Api.Auth.LoginTenantInfo>({
+    url: AUTH_URLS.TENANT_LIST
+  });
+}
 
 // encrypt 对应后端 /auth/login 上的 @api_encrypt()，两边必须同时开或同时关
 export function fetchLogin(params: Api.Auth.LoginParams) {
   return request<Api.Auth.LoginResponse>({
     // params 放后面：调用方显式传了就用它的，没传才落到上面这套默认值。
     // grantType 不传按密码登录算，验证码那两条路自己带 sms / email。
-    data: { grantType: 'password', ...LOGIN_CONTEXT, ...params },
+    data: { grantType: 'password', ...LOGIN_CONTEXT, ...withDefaultTenant(params) },
     encrypt: true,
     method: 'post',
     url: AUTH_URLS.LOGIN
@@ -35,7 +49,7 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
 // 枚举接口。所以"发送成功"只表示请求被受理了，不代表真发出去了。
 export function fetchSmsCode(params: Api.Auth.SmsCodeParams) {
   return request<null>({
-    data: { tenantId: LOGIN_CONTEXT.tenantId, ...params },
+    data: withDefaultTenant(params),
     method: 'post',
     url: AUTH_URLS.SMS_CODE
   });
@@ -43,7 +57,7 @@ export function fetchSmsCode(params: Api.Auth.SmsCodeParams) {
 
 export function fetchEmailCode(params: Api.Auth.EmailCodeParams) {
   return request<null>({
-    data: { tenantId: LOGIN_CONTEXT.tenantId, ...params },
+    data: withDefaultTenant(params),
     method: 'post',
     url: AUTH_URLS.EMAIL_CODE
   });

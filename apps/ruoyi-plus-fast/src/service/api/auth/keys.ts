@@ -1,5 +1,6 @@
 export const AUTH_QUERY_KEYS = {
-  CAPTCHA: ['auth', 'captcha'] as const
+  CAPTCHA: ['auth', 'captcha'] as const,
+  TENANT_LIST: ['auth', 'tenantList'] as const
 } as const;
 
 export const AUTH_MUTATION_KEYS = {

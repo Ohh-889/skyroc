@@ -4,6 +4,8 @@ declare global {
     interface Local {
       /** The i18n language selected by the admin app. */
       lang: I18n.LangType;
+      /** The tenant picked on the login page last time, used to preselect it on the next visit. */
+      lastLoginTenantId: string;
       /** The last login user id, used to reset cached tabs after account changes. */
       lastLoginUserId: string;
       /** The refresh token owned by the admin auth flow. */

@@ -77,6 +77,24 @@ declare global {
     /** 登录响应数据 */
     type LoginResponse = LoginToken;
 
+    /** 登录页租户下拉框里的一项 */
+    interface LoginTenantOption {
+      /** 企业名称，下拉框显示的就是它 */
+      companyName: string;
+      /** 绑定的域名，没配就是空串 */
+      domain: string;
+      /** 租户编号，登录和发码时原样带回后端 */
+      tenantId: string;
+    }
+
+    /** GET /auth/tenant/list 的响应，不需要登录就能拿 */
+    interface LoginTenantInfo {
+      /** 这个部署是不是多租户，false 时登录页不显示下拉框 */
+      tenantEnabled: boolean;
+      /** 字段名跟着后端（RuoYi 的 LoginTenantVo）叫 voList，关闭多租户时是空数组 */
+      voList: LoginTenantOption[];
+    }
+
     /** 图形验证码 */
     interface CaptchaInfo {
       /** 当前是否启用图形验证码 */

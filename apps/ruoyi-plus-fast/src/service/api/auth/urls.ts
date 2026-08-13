@@ -6,5 +6,6 @@ export const AUTH_URLS = {
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
   REFRESH_TOKEN: '/auth/refreshToken',
-  SMS_CODE: '/auth/sms/code'
+  SMS_CODE: '/auth/sms/code',
+  TENANT_LIST: '/auth/tenant/list'
 } as const;
