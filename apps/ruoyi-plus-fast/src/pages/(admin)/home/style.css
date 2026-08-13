@@ -1,0 +1,443 @@
+.skyroc-home {
+  --home-border: #ebeef5;
+  --home-card: #fff;
+  --home-heading: #1d2538;
+  --home-muted: #7b8498;
+  display: grid;
+  gap: 16px;
+  min-height: 100%;
+}
+
+.dark .skyroc-home {
+  --home-border: #353a45;
+  --home-card: #202327;
+  --home-heading: #f1f3f7;
+  --home-muted: #9299a8;
+}
+
+.skyroc-home-hero {
+  position: relative;
+  min-height: 224px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 38px 44px;
+  border: 1px solid rgb(94 106 223 / 9%);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 83% 20%, rgb(112 130 248 / 14%), transparent 29%),
+    linear-gradient(125deg, #f2f5ff 0%, #f7f8ff 52%, #edf4ff 100%);
+}
+
+.dark .skyroc-home-hero {
+  background:
+    radial-gradient(circle at 83% 20%, rgb(112 130 248 / 18%), transparent 29%),
+    linear-gradient(125deg, #1b2131 0%, #202431 52%, #172439 100%);
+}
+
+.skyroc-home-hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 610px;
+}
+
+.skyroc-home-date {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgb(94 100 234 / 9%);
+  color: #6069d9;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.skyroc-home-hero h1 {
+  margin: 17px 0 8px;
+  color: var(--home-heading);
+  font-size: clamp(25px, 2.1vw, 34px);
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.skyroc-home-hero p {
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 14px;
+}
+
+.skyroc-home-hero-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.skyroc-home-hero-actions .ant-btn {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 9px;
+}
+
+.skyroc-home-hero-visual {
+  position: absolute;
+  right: clamp(30px, 8vw, 130px);
+  width: 230px;
+  height: 190px;
+}
+
+.skyroc-home-orbit {
+  position: absolute;
+  border: 1px solid rgb(101 112 231 / 20%);
+  border-radius: 50%;
+}
+
+.skyroc-home-orbit-one {
+  inset: 16px 37px;
+}
+
+.skyroc-home-orbit-two {
+  inset: 43px 64px;
+}
+
+.skyroc-home-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #5866e7, #7784f4);
+  box-shadow: 0 18px 38px rgb(80 96 216 / 30%);
+  color: #fff;
+}
+
+.skyroc-home-core svg {
+  width: 42px;
+  height: 42px;
+}
+
+.skyroc-home-node {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(112 123 221 / 12%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 82%);
+  box-shadow: 0 10px 24px rgb(60 73 141 / 13%);
+  color: #6672df;
+  font-size: 19px;
+}
+
+.dark .skyroc-home-node {
+  background: rgb(41 47 62 / 90%);
+}
+
+.skyroc-home-node.is-users {
+  left: 5px;
+  top: 72px;
+}
+
+.skyroc-home-node.is-shield {
+  right: 12px;
+  top: 23px;
+}
+
+.skyroc-home-node.is-bell {
+  right: 1px;
+  bottom: 20px;
+}
+
+.skyroc-home-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.skyroc-home-metrics article {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--home-border);
+  border-radius: 14px;
+  background: var(--home-card);
+}
+
+.skyroc-home-metric-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  border-radius: 13px;
+  font-size: 22px;
+}
+
+.skyroc-home-metric-icon.is-purple {
+  background: #f0edff;
+  color: #7764dc;
+}
+.skyroc-home-metric-icon.is-orange {
+  background: #fff2e6;
+  color: #e58a3d;
+}
+.skyroc-home-metric-icon.is-cyan {
+  background: #e8f8f5;
+  color: #2ba68f;
+}
+.skyroc-home-metric-icon.is-blue {
+  background: #eaf2ff;
+  color: #4d7fd8;
+}
+
+.skyroc-home-metrics article > div {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.skyroc-home-metrics small,
+.skyroc-home-metrics em,
+.skyroc-home-metrics button {
+  overflow: hidden;
+  color: var(--home-muted);
+  font-size: 12px;
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skyroc-home-metrics strong {
+  color: var(--home-heading);
+  font-size: 25px;
+  line-height: 1;
+}
+
+.skyroc-home-metrics button {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.skyroc-home-metrics button:hover {
+  color: #5e68dc;
+}
+
+.skyroc-home-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.85fr) minmax(460px, 1.15fr);
+  gap: 16px;
+}
+
+.skyroc-home-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--home-border);
+  border-radius: 14px;
+  background: var(--home-card);
+}
+
+.skyroc-home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.skyroc-home-card-header h2 {
+  margin: 0;
+  color: var(--home-heading);
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.skyroc-home-card-header p {
+  margin: 4px 0 0;
+  color: var(--home-muted);
+  font-size: 12px;
+}
+
+.skyroc-home-quick-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.skyroc-home-quick-list button,
+.skyroc-home-notice-list > button {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--home-border);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.skyroc-home-quick-list button {
+  gap: 11px;
+  padding: 15px;
+  border-radius: 11px;
+}
+
+.skyroc-home-quick-list button:hover {
+  border-color: rgb(97 108 222 / 35%);
+  background: rgb(98 108 222 / 3%);
+}
+
+.skyroc-home-quick-list button > span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 19px;
+}
+
+.skyroc-home-quick-list span.is-blue {
+  background: #edf3ff;
+  color: #527cd7;
+}
+.skyroc-home-quick-list span.is-purple {
+  background: #f2edff;
+  color: #8064d7;
+}
+.skyroc-home-quick-list span.is-cyan {
+  background: #e8f8f5;
+  color: #289c88;
+}
+.skyroc-home-quick-list span.is-orange {
+  background: #fff2e8;
+  color: #dc8747;
+}
+
+.skyroc-home-quick-list button > div,
+.skyroc-home-notice-list button > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.skyroc-home-quick-list strong,
+.skyroc-home-notice-list strong {
+  overflow: hidden;
+  color: var(--home-heading);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skyroc-home-quick-list small,
+.skyroc-home-notice-list small,
+.skyroc-home-notice-list time {
+  overflow: hidden;
+  color: var(--home-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skyroc-home-entry-arrow {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #a2a9b7;
+}
+
+.skyroc-home-notice-list {
+  min-height: 158px;
+}
+
+.skyroc-home-notice-list > button {
+  width: 100%;
+  gap: 11px;
+  padding: 11px 0;
+  border-width: 0 0 1px;
+}
+
+.skyroc-home-notice-list > button:last-child {
+  border-bottom: 0;
+}
+
+.skyroc-home-notice-list > button > span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: #edf1ff;
+  color: #6170da;
+  font-size: 16px;
+}
+
+.skyroc-home-notice-list > button > span.is-security,
+.skyroc-home-notice-list > button > span.is-alert {
+  background: #fff0f0;
+  color: #db6565;
+}
+.skyroc-home-notice-list > button > span.is-task {
+  background: #fff2e9;
+  color: #dc8448;
+}
+.skyroc-home-notice-list > button > span.is-announcement {
+  background: #fff7df;
+  color: #c9962d;
+}
+
+.skyroc-home-notice-list time {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+@media (max-width: 1100px) {
+  .skyroc-home-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .skyroc-home-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .skyroc-home-hero {
+    min-height: auto;
+    padding: 26px 22px;
+  }
+  .skyroc-home-hero-visual {
+    display: none;
+  }
+  .skyroc-home-hero-actions {
+    flex-wrap: wrap;
+  }
+  .skyroc-home-metrics {
+    grid-template-columns: 1fr;
+  }
+  .skyroc-home-quick-list {
+    grid-template-columns: 1fr;
+  }
+  .skyroc-home-card {
+    padding: 18px;
+  }
+  .skyroc-home-notice-list time {
+    display: none;
+  }
+}

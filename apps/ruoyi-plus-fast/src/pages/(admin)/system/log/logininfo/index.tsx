@@ -2,9 +2,9 @@ import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@skyroc/web-admin-layouts';
 import { showConfirmModal, showSuccessMessage } from '@skyroc/web-admin-theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex, TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
 import { useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
 import type { Key } from 'react';
 import { useState } from 'react';
@@ -27,24 +27,27 @@ import { getBrowserIcon, getOsIcon } from '@/utils/icon-tag-format';
 
 import LoginInfoDetailDrawer from './modules/LoginInfoDetailDrawer';
 import LoginInfoSearch from './modules/LoginInfoSearch';
-import type { LoginInfoTableParams } from './modules/LoginInfoSearch';
+import {
+  LoginInfoSearchSchema,
+  getLoginInfoSearchInitialParams,
+  hasLoginInfoFilters,
+  normalizeLoginInfoSearchParams,
+  toLoginInfoSearchQuery
+} from './modules/shared';
 
 interface LoginInfoManagementProps {
   /** 页面首次加载时使用的分页大小。 */
   initialPageSize?: number;
 }
 
-const LOGININFO_SEARCH_INITIAL_PARAMS: Partial<LoginInfoTableParams> = {
-  ipaddr: undefined,
-  loginTimeRange: undefined,
-  status: undefined,
-  userName: undefined
-};
 const LOGININFO_TABLE_SCROLL_X = 1180;
 type LoginInfoTableRecord = TableDataWithIndex<LoginInfoItem>;
 
 const LoginInfoManagement = (props: LoginInfoManagementProps) => {
   const { initialPageSize = 10 } = props;
+
+  const navigate = useNavigate({ from: '/system/log/logininfo/' });
+  const location = useLocation();
   const { isMobile } = useAdminState();
   const queryClient = useQueryClient();
   const { scrollConfig, tableWrapperRef } = useTableScroll(LOGININFO_TABLE_SCROLL_X);
@@ -66,17 +69,24 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
     tableProps,
     total,
     updateSearchParams
-  } = useTable<LoginInfoTableParams, LoginInfoListPage, LoginInfoItem>({
-    apiParams: { ...LOGININFO_SEARCH_INITIAL_PARAMS, size: initialPageSize },
+  } = useTable<LoginInfoListParams, LoginInfoListPage, LoginInfoItem>({
+    apiParams: getLoginInfoSearchInitialParams(initialPageSize),
     columns: createColumns,
-    isChangeURL: false,
     isMobile,
+    onSearchParamsChange: syncSearchParams,
     pagination: { pageSizeOptions: [10, 20, 50, 100], showQuickJumper: true, showTotal: value => `共 ${value} 条` },
-    queryHook: useLoginInfoTableQuery,
+    queryHook: useLoginInfoListQuery,
+    // 查询条件写在 URL 上，刷新和分享链接都能回到同一屏
+    routeSearch: location.searchStr,
     rowKey: record => String(record.infoId),
     transformParams: normalizeLoginInfoSearchParams
   });
   const selectedRecords = data.filter(record => selectedRowKeys.includes(String(record.infoId)));
+
+  /** 把提交后的查询条件写回地址栏，刷新后由 routeSearch 原样读回来。 */
+  function syncSearchParams(params: Partial<LoginInfoListParams>) {
+    navigate({ search: () => toLoginInfoSearchQuery(params) });
+  }
 
   function createColumns(): TableColumn<LoginInfoTableRecord>[] {
     return [
@@ -207,7 +217,7 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
   async function handleExport() {
     setExporting(true);
     try {
-      const { current: _current, size: _size, ...params } = toLoginInfoListParams(searchProps.searchParams);
+      const { current: _current, size: _size, ...params } = normalizeLoginInfoSearchParams(searchProps.searchParams);
       const blob = await exportLoginInfos(params);
       downloadFileFromBlob({ fileName: '登录日志.xlsx', source: blob });
     } finally {
@@ -302,26 +312,6 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
   );
 };
 
-function normalizeLoginInfoSearchParams(params: LoginInfoTableParams): LoginInfoTableParams {
-  return { ...params, ipaddr: params.ipaddr?.trim() || undefined, userName: params.userName?.trim() || undefined };
-}
-function toLoginInfoListParams(params: LoginInfoTableParams): LoginInfoListParams {
-  const { loginTimeRange, ...listParams } = params;
-  return {
-    ...listParams,
-    beginTime: loginTimeRange?.[0]?.format('YYYY-MM-DD HH:mm:ss'),
-    endTime: loginTimeRange?.[1]?.format('YYYY-MM-DD HH:mm:ss')
-  };
-}
-function useLoginInfoTableQuery<Data = LoginInfoListPage>(
-  params: LoginInfoTableParams,
-  options?: TableQueryHookOptions<LoginInfoListPage, Data>
-) {
-  return useLoginInfoListQuery(toLoginInfoListParams(params), options);
-}
-function hasLoginInfoFilters(params: Partial<LoginInfoTableParams>) {
-  return Boolean(params.ipaddr || params.loginTimeRange || params.status !== undefined || params.userName);
-}
 function getStatusLabel(value: LoginInfoStatus) {
   return value === '0' ? '成功' : '失败';
 }
@@ -331,5 +321,6 @@ function getDeviceTypeLabel(value: string) {
 
 export const Route = createFileRoute('/(admin)/system/log/logininfo/')({
   component: LoginInfoManagement,
-  staticData: { keepAlive: true, menu: { icon: 'ph:sign-in', order: 6 }, title: '登录日志' }
+  staticData: { keepAlive: true, menu: { icon: 'ph:sign-in', order: 6 }, title: '登录日志' },
+  validateSearch: LoginInfoSearchSchema
 });

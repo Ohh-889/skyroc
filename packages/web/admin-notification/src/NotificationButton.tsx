@@ -23,8 +23,7 @@ const NotificationButtonBase = (props: NotificationButtonProps) => {
   const { className, onViewAll, style } = props;
 
   const { t } = useTranslation();
-  const { clearAllNotifications, markAllAsRead, markAsRead, notifications, removeNotification, unreadCount } =
-    useNotificationContext();
+  const { markAllAsRead, markAsRead, notifications, unreadCount } = useNotificationContext();
   const [open, setOpen] = useState(false);
 
   const hasUnread = unreadCount > 0;
@@ -39,17 +38,8 @@ const NotificationButtonBase = (props: NotificationButtonProps) => {
     markAsRead(id);
   }
 
-  function handleDelete(id: string) {
-    removeNotification(id);
-  }
-
   function handleMarkAllRead() {
     markAllAsRead();
-  }
-
-  function handleClearAll() {
-    clearAllNotifications();
-    setOpen(false);
   }
 
   function handleViewAll() {
@@ -65,8 +55,6 @@ const NotificationButtonBase = (props: NotificationButtonProps) => {
         <NotificationPanel
           notifications={notifications}
           unreadCount={unreadCount}
-          onClearAll={handleClearAll}
-          onDelete={handleDelete}
           onItemClick={handleNotificationClick}
           onMarkAllRead={handleMarkAllRead}
           onViewAll={onViewAll && handleViewAll}

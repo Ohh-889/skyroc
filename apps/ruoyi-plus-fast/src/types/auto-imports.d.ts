@@ -21,6 +21,7 @@ declare global {
   const AList: typeof import('antd').List
   const ARow: typeof import('antd').Row
   const ASegmented: typeof import('antd').Segmented
+  const ASkeleton: typeof import('antd').Skeleton
   const ASpace: typeof import('antd').Space
   const ATag: typeof import('antd').Tag
   const ATypography: typeof import('antd').Typography

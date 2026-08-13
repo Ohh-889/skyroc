@@ -250,7 +250,7 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
         key: 'tenants',
         // 只切页面，不带筛选条件过去：租户页的查询参数不进 URL，带过去也不会生效
         label: '去租户页查看占用',
-        onClick: () => navigate({ to: '/tenant' })
+        onClick: () => navigate({ to: '/tenant/list' })
       },
       { type: 'divider' },
       {
@@ -302,7 +302,7 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
       okText: '去租户管理',
       cancelText: '稍后处理',
       title: `套餐「${values.payload.packageName}」已更新`,
-      onOk: () => navigate({ to: '/tenant' })
+      onOk: () => navigate({ to: '/tenant/list' })
     });
   }
 
@@ -412,7 +412,7 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
           <Button
             icon={<SvgIcon icon="ph:buildings" />}
             size="small"
-            onClick={() => navigate({ to: '/tenant' })}
+            onClick={() => navigate({ to: '/tenant/list' })}
           >
             查看租户
           </Button>
@@ -577,7 +577,7 @@ export const Route = createFileRoute('/(admin)/tenant/package/')({
     keepAlive: true,
     menu: {
       icon: 'ph:package',
-      order: 13
+      order: 2
     },
     title: '租户套餐'
   },

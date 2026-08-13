@@ -1,24 +1,19 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 import type { TableSearchProps } from '@skyroc/web-ui-compose';
-import { Button, Col, DatePicker, Flex, Form, Input, Row, Select } from 'antd';
-import type { Dayjs } from 'dayjs';
+import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 
+import SearchRangePicker from '@/features/table/SearchRangePicker';
 import type { LoginInfoListParams, LoginInfoStatus } from '@/service/api/monitor-logininfo';
-
-export interface LoginInfoTableParams extends LoginInfoListParams {
-  /** 查询表单中的访问时间范围。 */
-  loginTimeRange?: [Dayjs | null, Dayjs | null] | null;
-}
 
 interface LoginInfoSearchProps {
   /** 由表格 Hook 管理的查询表单。 */
-  form: TableSearchProps<LoginInfoTableParams>['form'];
+  form: TableSearchProps<LoginInfoListParams>['form'];
   /** 重置表单和已提交查询参数。 */
-  reset: TableSearchProps<LoginInfoTableParams>['reset'];
+  reset: TableSearchProps<LoginInfoListParams>['reset'];
   /** 提交登录日志查询。 */
-  search: TableSearchProps<LoginInfoTableParams>['search'];
+  search: TableSearchProps<LoginInfoListParams>['search'];
   /** 当前已提交的登录日志查询参数。 */
-  searchParams: TableSearchProps<LoginInfoTableParams>['searchParams'];
+  searchParams: TableSearchProps<LoginInfoListParams>['searchParams'];
 }
 
 const STATUS_OPTIONS = [
@@ -52,9 +47,11 @@ const LoginInfoSearch = (props: LoginInfoSearchProps) => {
           </Form.Item>
         </Col>
         <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="访问时间" name="loginTimeRange">
-            <DatePicker.RangePicker className="w-full" showTime />
-          </Form.Item>
+          <SearchRangePicker
+            showTime
+            form={form}
+            label="访问时间"
+          />
         </Col>
         <Col className="lg:ml-auto" lg={8} md={12} span={24}>
           <Form.Item className="m-0">

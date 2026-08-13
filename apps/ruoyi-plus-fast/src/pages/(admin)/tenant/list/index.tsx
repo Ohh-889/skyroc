@@ -39,13 +39,13 @@ import {
   resolveTenantExpiryColor,
   resolveTenantPackageName,
   toTenantSearchQuery
-} from './modules/tenant-utils';
-import type { TenantEditorMode, TenantEditorSubmitValues } from './modules/TenantEditorDrawer';
-import TenantSearch from './modules/TenantSearch';
+} from '../modules/tenant-utils';
+import type { TenantEditorMode, TenantEditorSubmitValues } from '../modules/TenantEditorDrawer';
+import TenantSearch from '../modules/TenantSearch';
 
-const TenantDetailDrawer = lazy(() => import('./modules/TenantDetailDrawer'));
-const TenantEditorDrawer = lazy(() => import('./modules/TenantEditorDrawer'));
-const TenantSyncModal = lazy(() => import('./modules/TenantSyncModal'));
+const TenantDetailDrawer = lazy(() => import('../modules/TenantDetailDrawer'));
+const TenantEditorDrawer = lazy(() => import('../modules/TenantEditorDrawer'));
+const TenantSyncModal = lazy(() => import('../modules/TenantSyncModal'));
 
 const TENANT_TABLE_SCROLL_X = 1280;
 interface TenantEditorState {
@@ -104,7 +104,7 @@ const OverviewCard = (props: OverviewCardProps) => {
 const TenantManagement = (props: TenantManagementProps) => {
   const { initialPageSize = 10 } = props;
 
-  const navigate = useNavigate({ from: '/tenant/' });
+  const navigate = useNavigate({ from: '/tenant/list/' });
   const location = useLocation();
   const queryClient = useQueryClient();
   const { isMobile } = useAdminState();
@@ -782,15 +782,15 @@ function resolveListErrorDescription(error: unknown) {
   return '请检查网络后重试；筛选条件和已选项都已保留。';
 }
 
-export const Route = createFileRoute('/(admin)/tenant/')({
+export const Route = createFileRoute('/(admin)/tenant/list/')({
   component: TenantManagement,
   staticData: {
     keepAlive: true,
     menu: {
-      icon: 'ph:buildings',
-      order: 12
+      icon: 'ph:building',
+      order: 1
     },
-    title: '租户管理'
+    title: '租户列表'
   },
   validateSearch: TenantSearchSchema
 });

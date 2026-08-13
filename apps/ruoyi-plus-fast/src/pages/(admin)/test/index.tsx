@@ -86,5 +86,13 @@ const NotificationWorkspace = (props: NotificationWorkspaceProps) => {
 
 export const Route = createFileRoute('/(admin)/test/')({
   component: NotificationWorkspace,
-  staticData: { keepAlive: true, title: '通知模块设计验收' }
+  staticData: {
+    keepAlive: true,
+    title: '通知模块设计验收',
+    menu: {
+      activeMenu: '/system/oss',
+      hide: true,
+      icon: 'ph:gear-six'
+    }
+  }
 });

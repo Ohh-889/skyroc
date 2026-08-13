@@ -16,19 +16,19 @@ import { Route as errors404RouteImport } from './../../pages/(errors)/404'
 import { Route as errors403RouteImport } from './../../pages/(errors)/403'
 import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out'
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
+import { Route as adminTenantLayoutRouteImport } from './../../pages/(admin)/tenant/layout'
 import { Route as adminSystemLayoutRouteImport } from './../../pages/(admin)/system/layout'
 import { Route as adminMonitorLayoutRouteImport } from './../../pages/(admin)/monitor/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
 import { Route as adminWebsocketTestIndexRouteImport } from './../../pages/(admin)/websocket-test/index'
 import { Route as adminTestIndexRouteImport } from './../../pages/(admin)/test/index'
-import { Route as adminTenantIndexRouteImport } from './../../pages/(admin)/tenant/index'
 import { Route as adminStreamTestIndexRouteImport } from './../../pages/(admin)/stream-test/index'
 import { Route as adminSseTestIndexRouteImport } from './../../pages/(admin)/sse-test/index'
-import { Route as adminNotificationIndexRouteImport } from './../../pages/(admin)/notification/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
 import { Route as authLoginCodeRouteImport } from './../../pages/(auth)/login/code'
 import { Route as adminSystemLogLayoutRouteImport } from './../../pages/(admin)/system/log/layout'
 import { Route as adminTenantPackageIndexRouteImport } from './../../pages/(admin)/tenant/package/index'
+import { Route as adminTenantListIndexRouteImport } from './../../pages/(admin)/tenant/list/index'
 import { Route as adminSystemUserIndexRouteImport } from './../../pages/(admin)/system/user/index'
 import { Route as adminSystemRoleIndexRouteImport } from './../../pages/(admin)/system/role/index'
 import { Route as adminSystemPostIndexRouteImport } from './../../pages/(admin)/system/post/index'
@@ -40,10 +40,6 @@ import { Route as adminSystemDictIndexRouteImport } from './../../pages/(admin)/
 import { Route as adminSystemDeptIndexRouteImport } from './../../pages/(admin)/system/dept/index'
 import { Route as adminSystemConfigIndexRouteImport } from './../../pages/(admin)/system/config/index'
 import { Route as adminSystemClientIndexRouteImport } from './../../pages/(admin)/system/client/index'
-import { Route as adminNotificationSettingsIndexRouteImport } from './../../pages/(admin)/notification/settings/index'
-import { Route as adminNotificationPublishIndexRouteImport } from './../../pages/(admin)/notification/publish/index'
-import { Route as adminNotificationInboxIndexRouteImport } from './../../pages/(admin)/notification/inbox/index'
-import { Route as adminNotificationDetailIndexRouteImport } from './../../pages/(admin)/notification/detail/index'
 import { Route as adminMonitorOnlineIndexRouteImport } from './../../pages/(admin)/monitor/online/index'
 import { Route as adminMonitorCacheIndexRouteImport } from './../../pages/(admin)/monitor/cache/index'
 import { Route as adminSystemLogOperlogIndexRouteImport } from './../../pages/(admin)/system/log/operlog/index'
@@ -83,6 +79,11 @@ const authLoginLayoutRoute = authLoginLayoutRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const adminTenantLayoutRoute = adminTenantLayoutRouteImport.update({
+  id: '/tenant',
+  path: '/tenant',
+  getParentRoute: () => adminLayoutRoute,
+} as any)
 const adminSystemLayoutRoute = adminSystemLayoutRouteImport.update({
   id: '/system',
   path: '/system',
@@ -108,11 +109,6 @@ const adminTestIndexRoute = adminTestIndexRouteImport.update({
   path: '/test/',
   getParentRoute: () => adminLayoutRoute,
 } as any)
-const adminTenantIndexRoute = adminTenantIndexRouteImport.update({
-  id: '/tenant/',
-  path: '/tenant/',
-  getParentRoute: () => adminLayoutRoute,
-} as any)
 const adminStreamTestIndexRoute = adminStreamTestIndexRouteImport.update({
   id: '/stream-test/',
   path: '/stream-test/',
@@ -121,11 +117,6 @@ const adminStreamTestIndexRoute = adminStreamTestIndexRouteImport.update({
 const adminSseTestIndexRoute = adminSseTestIndexRouteImport.update({
   id: '/sse-test/',
   path: '/sse-test/',
-  getParentRoute: () => adminLayoutRoute,
-} as any)
-const adminNotificationIndexRoute = adminNotificationIndexRouteImport.update({
-  id: '/notification/',
-  path: '/notification/',
   getParentRoute: () => adminLayoutRoute,
 } as any)
 const adminHomeIndexRoute = adminHomeIndexRouteImport.update({
@@ -144,9 +135,14 @@ const adminSystemLogLayoutRoute = adminSystemLogLayoutRouteImport.update({
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
 const adminTenantPackageIndexRoute = adminTenantPackageIndexRouteImport.update({
-  id: '/tenant/package/',
-  path: '/tenant/package/',
-  getParentRoute: () => adminLayoutRoute,
+  id: '/package/',
+  path: '/package/',
+  getParentRoute: () => adminTenantLayoutRoute,
+} as any)
+const adminTenantListIndexRoute = adminTenantListIndexRouteImport.update({
+  id: '/list/',
+  path: '/list/',
+  getParentRoute: () => adminTenantLayoutRoute,
 } as any)
 const adminSystemUserIndexRoute = adminSystemUserIndexRouteImport.update({
   id: '/user/',
@@ -204,30 +200,6 @@ const adminSystemClientIndexRoute = adminSystemClientIndexRouteImport.update({
   path: '/client/',
   getParentRoute: () => adminSystemLayoutRoute,
 } as any)
-const adminNotificationSettingsIndexRoute =
-  adminNotificationSettingsIndexRouteImport.update({
-    id: '/notification/settings/',
-    path: '/notification/settings/',
-    getParentRoute: () => adminLayoutRoute,
-  } as any)
-const adminNotificationPublishIndexRoute =
-  adminNotificationPublishIndexRouteImport.update({
-    id: '/notification/publish/',
-    path: '/notification/publish/',
-    getParentRoute: () => adminLayoutRoute,
-  } as any)
-const adminNotificationInboxIndexRoute =
-  adminNotificationInboxIndexRouteImport.update({
-    id: '/notification/inbox/',
-    path: '/notification/inbox/',
-    getParentRoute: () => adminLayoutRoute,
-  } as any)
-const adminNotificationDetailIndexRoute =
-  adminNotificationDetailIndexRouteImport.update({
-    id: '/notification/detail/',
-    path: '/notification/detail/',
-    getParentRoute: () => adminLayoutRoute,
-  } as any)
 const adminMonitorOnlineIndexRoute = adminMonitorOnlineIndexRouteImport.update({
   id: '/online/',
   path: '/online/',
@@ -255,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/system': typeof adminSystemLayoutRouteWithChildren
+  '/tenant': typeof adminTenantLayoutRouteWithChildren
   '/login': typeof authLoginLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
   '/403': typeof errors403Route
@@ -263,19 +236,13 @@ export interface FileRoutesByFullPath {
   '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home/': typeof adminHomeIndexRoute
-  '/notification/': typeof adminNotificationIndexRoute
   '/sse-test/': typeof adminSseTestIndexRoute
   '/stream-test/': typeof adminStreamTestIndexRoute
-  '/tenant/': typeof adminTenantIndexRoute
   '/test/': typeof adminTestIndexRoute
   '/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/login/': typeof authLoginIndexRoute
   '/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/monitor/online/': typeof adminMonitorOnlineIndexRoute
-  '/notification/detail/': typeof adminNotificationDetailIndexRoute
-  '/notification/inbox/': typeof adminNotificationInboxIndexRoute
-  '/notification/publish/': typeof adminNotificationPublishIndexRoute
-  '/notification/settings/': typeof adminNotificationSettingsIndexRoute
   '/system/client/': typeof adminSystemClientIndexRoute
   '/system/config/': typeof adminSystemConfigIndexRoute
   '/system/dept/': typeof adminSystemDeptIndexRoute
@@ -287,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/system/post/': typeof adminSystemPostIndexRoute
   '/system/role/': typeof adminSystemRoleIndexRoute
   '/system/user/': typeof adminSystemUserIndexRoute
+  '/tenant/list/': typeof adminTenantListIndexRoute
   '/tenant/package/': typeof adminTenantPackageIndexRoute
   '/system/log/logininfo/': typeof adminSystemLogLogininfoIndexRoute
   '/system/log/operlog/': typeof adminSystemLogOperlogIndexRoute
@@ -295,6 +263,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/system': typeof adminSystemLayoutRouteWithChildren
+  '/tenant': typeof adminTenantLayoutRouteWithChildren
   '/login-out': typeof authLoginOutRoute
   '/403': typeof errors403Route
   '/404': typeof errors404Route
@@ -302,19 +271,13 @@ export interface FileRoutesByTo {
   '/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/login/code': typeof authLoginCodeRoute
   '/home': typeof adminHomeIndexRoute
-  '/notification': typeof adminNotificationIndexRoute
   '/sse-test': typeof adminSseTestIndexRoute
   '/stream-test': typeof adminStreamTestIndexRoute
-  '/tenant': typeof adminTenantIndexRoute
   '/test': typeof adminTestIndexRoute
   '/websocket-test': typeof adminWebsocketTestIndexRoute
   '/login': typeof authLoginIndexRoute
   '/monitor/cache': typeof adminMonitorCacheIndexRoute
   '/monitor/online': typeof adminMonitorOnlineIndexRoute
-  '/notification/detail': typeof adminNotificationDetailIndexRoute
-  '/notification/inbox': typeof adminNotificationInboxIndexRoute
-  '/notification/publish': typeof adminNotificationPublishIndexRoute
-  '/notification/settings': typeof adminNotificationSettingsIndexRoute
   '/system/client': typeof adminSystemClientIndexRoute
   '/system/config': typeof adminSystemConfigIndexRoute
   '/system/dept': typeof adminSystemDeptIndexRoute
@@ -326,6 +289,7 @@ export interface FileRoutesByTo {
   '/system/post': typeof adminSystemPostIndexRoute
   '/system/role': typeof adminSystemRoleIndexRoute
   '/system/user': typeof adminSystemUserIndexRoute
+  '/tenant/list': typeof adminTenantListIndexRoute
   '/tenant/package': typeof adminTenantPackageIndexRoute
   '/system/log/logininfo': typeof adminSystemLogLogininfoIndexRoute
   '/system/log/operlog': typeof adminSystemLogOperlogIndexRoute
@@ -336,6 +300,7 @@ export interface FileRoutesById {
   '/(admin)': typeof adminLayoutRouteWithChildren
   '/(admin)/monitor': typeof adminMonitorLayoutRouteWithChildren
   '/(admin)/system': typeof adminSystemLayoutRouteWithChildren
+  '/(admin)/tenant': typeof adminTenantLayoutRouteWithChildren
   '/(auth)/login': typeof authLoginLayoutRouteWithChildren
   '/(auth)/login-out': typeof authLoginOutRoute
   '/(errors)/403': typeof errors403Route
@@ -344,19 +309,13 @@ export interface FileRoutesById {
   '/(admin)/system/log': typeof adminSystemLogLayoutRouteWithChildren
   '/(auth)/login/code': typeof authLoginCodeRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
-  '/(admin)/notification/': typeof adminNotificationIndexRoute
   '/(admin)/sse-test/': typeof adminSseTestIndexRoute
   '/(admin)/stream-test/': typeof adminStreamTestIndexRoute
-  '/(admin)/tenant/': typeof adminTenantIndexRoute
   '/(admin)/test/': typeof adminTestIndexRoute
   '/(admin)/websocket-test/': typeof adminWebsocketTestIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(admin)/monitor/cache/': typeof adminMonitorCacheIndexRoute
   '/(admin)/monitor/online/': typeof adminMonitorOnlineIndexRoute
-  '/(admin)/notification/detail/': typeof adminNotificationDetailIndexRoute
-  '/(admin)/notification/inbox/': typeof adminNotificationInboxIndexRoute
-  '/(admin)/notification/publish/': typeof adminNotificationPublishIndexRoute
-  '/(admin)/notification/settings/': typeof adminNotificationSettingsIndexRoute
   '/(admin)/system/client/': typeof adminSystemClientIndexRoute
   '/(admin)/system/config/': typeof adminSystemConfigIndexRoute
   '/(admin)/system/dept/': typeof adminSystemDeptIndexRoute
@@ -368,6 +327,7 @@ export interface FileRoutesById {
   '/(admin)/system/post/': typeof adminSystemPostIndexRoute
   '/(admin)/system/role/': typeof adminSystemRoleIndexRoute
   '/(admin)/system/user/': typeof adminSystemUserIndexRoute
+  '/(admin)/tenant/list/': typeof adminTenantListIndexRoute
   '/(admin)/tenant/package/': typeof adminTenantPackageIndexRoute
   '/(admin)/system/log/logininfo/': typeof adminSystemLogLogininfoIndexRoute
   '/(admin)/system/log/operlog/': typeof adminSystemLogOperlogIndexRoute
@@ -378,6 +338,7 @@ export interface FileRouteTypes {
     | '/'
     | '/monitor'
     | '/system'
+    | '/tenant'
     | '/login'
     | '/login-out'
     | '/403'
@@ -386,19 +347,13 @@ export interface FileRouteTypes {
     | '/system/log'
     | '/login/code'
     | '/home/'
-    | '/notification/'
     | '/sse-test/'
     | '/stream-test/'
-    | '/tenant/'
     | '/test/'
     | '/websocket-test/'
     | '/login/'
     | '/monitor/cache/'
     | '/monitor/online/'
-    | '/notification/detail/'
-    | '/notification/inbox/'
-    | '/notification/publish/'
-    | '/notification/settings/'
     | '/system/client/'
     | '/system/config/'
     | '/system/dept/'
@@ -410,6 +365,7 @@ export interface FileRouteTypes {
     | '/system/post/'
     | '/system/role/'
     | '/system/user/'
+    | '/tenant/list/'
     | '/tenant/package/'
     | '/system/log/logininfo/'
     | '/system/log/operlog/'
@@ -418,6 +374,7 @@ export interface FileRouteTypes {
     | '/'
     | '/monitor'
     | '/system'
+    | '/tenant'
     | '/login-out'
     | '/403'
     | '/404'
@@ -425,19 +382,13 @@ export interface FileRouteTypes {
     | '/system/log'
     | '/login/code'
     | '/home'
-    | '/notification'
     | '/sse-test'
     | '/stream-test'
-    | '/tenant'
     | '/test'
     | '/websocket-test'
     | '/login'
     | '/monitor/cache'
     | '/monitor/online'
-    | '/notification/detail'
-    | '/notification/inbox'
-    | '/notification/publish'
-    | '/notification/settings'
     | '/system/client'
     | '/system/config'
     | '/system/dept'
@@ -449,6 +400,7 @@ export interface FileRouteTypes {
     | '/system/post'
     | '/system/role'
     | '/system/user'
+    | '/tenant/list'
     | '/tenant/package'
     | '/system/log/logininfo'
     | '/system/log/operlog'
@@ -458,6 +410,7 @@ export interface FileRouteTypes {
     | '/(admin)'
     | '/(admin)/monitor'
     | '/(admin)/system'
+    | '/(admin)/tenant'
     | '/(auth)/login'
     | '/(auth)/login-out'
     | '/(errors)/403'
@@ -466,19 +419,13 @@ export interface FileRouteTypes {
     | '/(admin)/system/log'
     | '/(auth)/login/code'
     | '/(admin)/home/'
-    | '/(admin)/notification/'
     | '/(admin)/sse-test/'
     | '/(admin)/stream-test/'
-    | '/(admin)/tenant/'
     | '/(admin)/test/'
     | '/(admin)/websocket-test/'
     | '/(auth)/login/'
     | '/(admin)/monitor/cache/'
     | '/(admin)/monitor/online/'
-    | '/(admin)/notification/detail/'
-    | '/(admin)/notification/inbox/'
-    | '/(admin)/notification/publish/'
-    | '/(admin)/notification/settings/'
     | '/(admin)/system/client/'
     | '/(admin)/system/config/'
     | '/(admin)/system/dept/'
@@ -490,6 +437,7 @@ export interface FileRouteTypes {
     | '/(admin)/system/post/'
     | '/(admin)/system/role/'
     | '/(admin)/system/user/'
+    | '/(admin)/tenant/list/'
     | '/(admin)/tenant/package/'
     | '/(admin)/system/log/logininfo/'
     | '/(admin)/system/log/operlog/'
@@ -556,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(admin)/tenant': {
+      id: '/(admin)/tenant'
+      path: '/tenant'
+      fullPath: '/tenant'
+      preLoaderRoute: typeof adminTenantLayoutRouteImport
+      parentRoute: typeof adminLayoutRoute
+    }
     '/(admin)/system': {
       id: '/(admin)/system'
       path: '/system'
@@ -591,13 +546,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminTestIndexRouteImport
       parentRoute: typeof adminLayoutRoute
     }
-    '/(admin)/tenant/': {
-      id: '/(admin)/tenant/'
-      path: '/tenant'
-      fullPath: '/tenant/'
-      preLoaderRoute: typeof adminTenantIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
-    }
     '/(admin)/stream-test/': {
       id: '/(admin)/stream-test/'
       path: '/stream-test'
@@ -610,13 +558,6 @@ declare module '@tanstack/react-router' {
       path: '/sse-test'
       fullPath: '/sse-test/'
       preLoaderRoute: typeof adminSseTestIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
-    }
-    '/(admin)/notification/': {
-      id: '/(admin)/notification/'
-      path: '/notification'
-      fullPath: '/notification/'
-      preLoaderRoute: typeof adminNotificationIndexRouteImport
       parentRoute: typeof adminLayoutRoute
     }
     '/(admin)/home/': {
@@ -642,10 +583,17 @@ declare module '@tanstack/react-router' {
     }
     '/(admin)/tenant/package/': {
       id: '/(admin)/tenant/package/'
-      path: '/tenant/package'
+      path: '/package'
       fullPath: '/tenant/package/'
       preLoaderRoute: typeof adminTenantPackageIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
+      parentRoute: typeof adminTenantLayoutRoute
+    }
+    '/(admin)/tenant/list/': {
+      id: '/(admin)/tenant/list/'
+      path: '/list'
+      fullPath: '/tenant/list/'
+      preLoaderRoute: typeof adminTenantListIndexRouteImport
+      parentRoute: typeof adminTenantLayoutRoute
     }
     '/(admin)/system/user/': {
       id: '/(admin)/system/user/'
@@ -723,34 +671,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/system/client/'
       preLoaderRoute: typeof adminSystemClientIndexRouteImport
       parentRoute: typeof adminSystemLayoutRoute
-    }
-    '/(admin)/notification/settings/': {
-      id: '/(admin)/notification/settings/'
-      path: '/notification/settings'
-      fullPath: '/notification/settings/'
-      preLoaderRoute: typeof adminNotificationSettingsIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
-    }
-    '/(admin)/notification/publish/': {
-      id: '/(admin)/notification/publish/'
-      path: '/notification/publish'
-      fullPath: '/notification/publish/'
-      preLoaderRoute: typeof adminNotificationPublishIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
-    }
-    '/(admin)/notification/inbox/': {
-      id: '/(admin)/notification/inbox/'
-      path: '/notification/inbox'
-      fullPath: '/notification/inbox/'
-      preLoaderRoute: typeof adminNotificationInboxIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
-    }
-    '/(admin)/notification/detail/': {
-      id: '/(admin)/notification/detail/'
-      path: '/notification/detail'
-      fullPath: '/notification/detail/'
-      preLoaderRoute: typeof adminNotificationDetailIndexRouteImport
-      parentRoute: typeof adminLayoutRoute
     }
     '/(admin)/monitor/online/': {
       id: '/(admin)/monitor/online/'
@@ -842,38 +762,39 @@ const adminSystemLayoutRouteChildren: adminSystemLayoutRouteChildren = {
 const adminSystemLayoutRouteWithChildren =
   adminSystemLayoutRoute._addFileChildren(adminSystemLayoutRouteChildren)
 
+interface adminTenantLayoutRouteChildren {
+  adminTenantListIndexRoute: typeof adminTenantListIndexRoute
+  adminTenantPackageIndexRoute: typeof adminTenantPackageIndexRoute
+}
+
+const adminTenantLayoutRouteChildren: adminTenantLayoutRouteChildren = {
+  adminTenantListIndexRoute: adminTenantListIndexRoute,
+  adminTenantPackageIndexRoute: adminTenantPackageIndexRoute,
+}
+
+const adminTenantLayoutRouteWithChildren =
+  adminTenantLayoutRoute._addFileChildren(adminTenantLayoutRouteChildren)
+
 interface adminLayoutRouteChildren {
   adminMonitorLayoutRoute: typeof adminMonitorLayoutRouteWithChildren
   adminSystemLayoutRoute: typeof adminSystemLayoutRouteWithChildren
+  adminTenantLayoutRoute: typeof adminTenantLayoutRouteWithChildren
   adminHomeIndexRoute: typeof adminHomeIndexRoute
-  adminNotificationIndexRoute: typeof adminNotificationIndexRoute
   adminSseTestIndexRoute: typeof adminSseTestIndexRoute
   adminStreamTestIndexRoute: typeof adminStreamTestIndexRoute
-  adminTenantIndexRoute: typeof adminTenantIndexRoute
   adminTestIndexRoute: typeof adminTestIndexRoute
   adminWebsocketTestIndexRoute: typeof adminWebsocketTestIndexRoute
-  adminNotificationDetailIndexRoute: typeof adminNotificationDetailIndexRoute
-  adminNotificationInboxIndexRoute: typeof adminNotificationInboxIndexRoute
-  adminNotificationPublishIndexRoute: typeof adminNotificationPublishIndexRoute
-  adminNotificationSettingsIndexRoute: typeof adminNotificationSettingsIndexRoute
-  adminTenantPackageIndexRoute: typeof adminTenantPackageIndexRoute
 }
 
 const adminLayoutRouteChildren: adminLayoutRouteChildren = {
   adminMonitorLayoutRoute: adminMonitorLayoutRouteWithChildren,
   adminSystemLayoutRoute: adminSystemLayoutRouteWithChildren,
+  adminTenantLayoutRoute: adminTenantLayoutRouteWithChildren,
   adminHomeIndexRoute: adminHomeIndexRoute,
-  adminNotificationIndexRoute: adminNotificationIndexRoute,
   adminSseTestIndexRoute: adminSseTestIndexRoute,
   adminStreamTestIndexRoute: adminStreamTestIndexRoute,
-  adminTenantIndexRoute: adminTenantIndexRoute,
   adminTestIndexRoute: adminTestIndexRoute,
   adminWebsocketTestIndexRoute: adminWebsocketTestIndexRoute,
-  adminNotificationDetailIndexRoute: adminNotificationDetailIndexRoute,
-  adminNotificationInboxIndexRoute: adminNotificationInboxIndexRoute,
-  adminNotificationPublishIndexRoute: adminNotificationPublishIndexRoute,
-  adminNotificationSettingsIndexRoute: adminNotificationSettingsIndexRoute,
-  adminTenantPackageIndexRoute: adminTenantPackageIndexRoute,
 }
 
 const adminLayoutRouteWithChildren = adminLayoutRoute._addFileChildren(
