@@ -1,10 +1,8 @@
 import { SvgIcon } from '@skyroc/web-ui-compose';
 
-
 type SocialProvider = 'feishu' | 'wechat';
 
 const SocialLogin = () => {
-
   const { t } = useTranslation();
 
   function handleSocialLogin(provider: SocialProvider) {
@@ -19,31 +17,46 @@ const SocialLogin = () => {
     window.location.assign(authorizationUrl);
   }
 
-  return <>
-    <ADivider className="skyroc-login-divider">{t('page.login.enterprise.otherLogin')}</ADivider>
+  return (
+    <>
+      <ADivider className="!my-15px !text-12px !text-tertiary ">{t('page.login.enterprise.otherLogin')}</ADivider>
 
-    <div className="skyroc-social-buttons">
-      <AButton
-        className="skyroc-social-button"
-        icon={<SvgIcon className="skyroc-wechat-icon" icon="simple-icons:wechat" />}
-        onClick={() => handleSocialLogin('wechat')}
-      >
-        {t('page.login.enterprise.socialWechat')}
-      </AButton>
-      <AButton
-        className="skyroc-social-button"
-        icon={<SvgIcon className="skyroc-feishu-icon" icon="simple-icons:lark" />}
-        onClick={() => handleSocialLogin('feishu')}
-      >
-        {t('page.login.enterprise.socialFeishu')}
-      </AButton>
-    </div>
+      <div className="grid grid-cols-2 gap-12px lt-md:grid-cols-1">
+        <AButton
+          className="h-40px rounded-6px border-border bg-container text-13px text-base hover:border-primary hover:bg-primary-bg"
+          icon={
+            <SvgIcon
+              className="text-18px !text-#09bb07"
+              icon="simple-icons:wechat"
+            />
+          }
+          onClick={() => handleSocialLogin('wechat')}
+        >
+          {t('page.login.enterprise.socialWechat')}
+        </AButton>
+        <AButton
+          className="h-40px rounded-6px border-border bg-container text-13px text-base hover:border-primary hover:bg-primary-bg"
+          icon={
+            <SvgIcon
+              className="text-18px !text-#3468ff"
+              icon="icon-park-outline:new-lark"
+            />
+          }
+          onClick={() => handleSocialLogin('feishu')}
+        >
+          {t('page.login.enterprise.socialFeishu')}
+        </AButton>
+      </div>
 
-    <p className="skyroc-admin-hint">
-      <SvgIcon icon="ph:info" />
-      <span>{t('page.login.enterprise.adminHint')}</span>
-    </p>
-  </>
-}
+      <p className="mb-0 mt-15px flex-center gap-7px text-center text-11px text-tertiary leading-18px lt-md:mt-26px">
+        <SvgIcon
+          className="shrink-0 text-14px"
+          icon="ph:info"
+        />
+        <span>{t('page.login.enterprise.adminHint')}</span>
+      </p>
+    </>
+  );
+};
 
-export default SocialLogin
+export default SocialLogin;

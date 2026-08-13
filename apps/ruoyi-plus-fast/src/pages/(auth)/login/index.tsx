@@ -4,7 +4,8 @@ import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
 import { useCaptchaQuery } from '@/service/api';
-import SocialLogin from './modules/SocialLogin';
+import LoginActions from './modules/LoginActions';
+import LoginHeader from './modules/LoginHeader';
 
 interface LoginFormValues {
   /** 图形验证码内容 */
@@ -87,43 +88,56 @@ const Login = () => {
 
   return (
     <>
-      <header className="skyroc-auth-heading">
-        <h1>{t('page.login.enterprise.title')}</h1>
-        <p>{t('page.login.enterprise.subtitle')}</p>
-      </header>
+      <LoginHeader
+        subtitle={t('page.login.enterprise.subtitle')}
+        title={t('page.login.enterprise.title')}
+      />
 
       <AForm
-        className="skyroc-login-form"
+        className="[&_.ant-form-item]:mb-15px [&_.ant-form-item-label]:pb-6px [&_.ant-form-item-label>label]:h-18px [&_.ant-form-item-label>label]:text-13px [&_.ant-form-item-label>label]:text-base [&_.ant-form-item-label>label]:font-500 [&_.ant-form-item-label>label]:leading-18px lt-md:[&_.ant-form-item]:mb-18px"
         form={passwordForm}
         initialValues={{ remember: false }}
         layout="vertical"
         requiredMark={false}
         onFinish={handlePasswordSubmit}
       >
-        <AForm.Item label={t('page.login.enterprise.accountLabel')} name="userName" rules={[requiredAccountRule]}>
+        <AForm.Item
+          label={t('page.login.enterprise.accountLabel')}
+          name="userName"
+          rules={[requiredAccountRule]}
+        >
           <AInput
             autoComplete="username"
-            className="skyroc-login-control"
+            className="h-40px rounded-6px border-border bg-container text-base shadow-none [&_.ant-input]:bg-transparent [&_.ant-input]:text-13px [&_.ant-input-prefix]:me-9px [&_.ant-input-prefix]:text-17px [&_.ant-input-prefix]:text-tertiary hover:border-primary focus:border-primary"
             placeholder={t('page.login.enterprise.accountPlaceholder')}
             prefix={<SvgIcon icon="ph:user" />}
           />
         </AForm.Item>
 
-        <AForm.Item label={t('page.login.enterprise.passwordLabel')} name="password" rules={pwd}>
+        <AForm.Item
+          label={t('page.login.enterprise.passwordLabel')}
+          name="password"
+          rules={pwd}
+        >
           <AInput.Password
             autoComplete="current-password"
-            className="skyroc-login-control"
+            className="h-40px rounded-6px border-border bg-container text-base shadow-none [&_.ant-input]:bg-transparent [&_.ant-input]:text-13px [&_.ant-input-prefix]:me-9px [&_.ant-input-prefix]:text-17px [&_.ant-input-prefix]:text-tertiary hover:border-primary focus:border-primary"
             placeholder={t('page.login.enterprise.passwordPlaceholder')}
             prefix={<SvgIcon icon="ph:lock" />}
           />
         </AForm.Item>
 
         {captchaEnabled ? (
-          <div className="skyroc-captcha-field">
-            <AForm.Item label={t('page.login.enterprise.captchaLabel')} name="code" rules={[requiredCaptchaRule]}>
+          <div className="mb-15px grid grid-cols-[minmax(0,1fr)_96px_64px] items-end gap-10px lt-md:mb-18px lt-xs:grid-cols-[minmax(0,1fr)_92px_58px] lt-xs:gap-8px">
+            <AForm.Item
+              className="!mb-0"
+              label={t('page.login.enterprise.captchaLabel')}
+              name="code"
+              rules={[requiredCaptchaRule]}
+            >
               <AInput
                 autoComplete="off"
-                className="skyroc-login-control"
+                className="h-40px rounded-6px border-border bg-container text-base shadow-none hover:border-primary focus:border-primary"
                 disabled={!captchaSrc}
                 placeholder={t('page.login.enterprise.captchaPlaceholder')}
               />
@@ -131,14 +145,23 @@ const Login = () => {
 
             <button
               aria-label={t('page.login.enterprise.captchaRefresh')}
-              className="skyroc-captcha-image"
+              className="relative h-40px grid cursor-pointer place-items-center overflow-hidden rounded-5px border border-border-secondary border-solid bg-layout p-0 text-10px text-tertiary disabled:cursor-wait"
               disabled={captchaLoading}
               type="button"
               onClick={refreshCaptcha}
             >
-              {captchaLoading ? <SvgIcon className="skyroc-captcha-loading" icon="ph:circle-notch" /> : null}
+              {captchaLoading ? (
+                <SvgIcon
+                  className="animate-spin text-20px motion-reduce:animate-none"
+                  icon="ph:circle-notch"
+                />
+              ) : null}
               {!captchaLoading && captchaSrc ? (
-                <img alt={t('page.login.enterprise.captchaAlt')} src={captchaSrc} />
+                <img
+                  className="size-full object-cover"
+                  alt={t('page.login.enterprise.captchaAlt')}
+                  src={captchaSrc}
+                />
               ) : null}
               {!captchaLoading && !captchaSrc ? (
                 <span>
@@ -149,33 +172,26 @@ const Login = () => {
               ) : null}
             </button>
 
-            <button className="skyroc-captcha-refresh" type="button" onClick={refreshCaptcha}>
-              <SvgIcon icon="ph:arrows-clockwise" />
+            <button
+              className="h-40px i-flex-y-center cursor-pointer gap-4px whitespace-nowrap border-0 bg-transparent p-0 text-12px text-secondary hover:text-primary"
+              type="button"
+              onClick={refreshCaptcha}
+            >
+              <SvgIcon
+                className="text-15px"
+                icon="ph:arrows-clockwise"
+              />
               <span>{t('page.login.enterprise.captchaRefreshShort')}</span>
             </button>
           </div>
         ) : null}
 
-        <div className="skyroc-form-options">
-          <AForm.Item name="remember" noStyle valuePropName="checked">
-            <ACheckbox>{t('page.login.enterprise.keepSignedIn')}</ACheckbox>
-          </AForm.Item>
-          <AButton type="link" onClick={handleUnavailableAction}>
-            {t('page.login.enterprise.forgetPassword')}
-          </AButton>
-        </div>
-
-        <AButton block className="rounded-xl" size="large" htmlType="submit" loading={loading} type="primary">
-          {t('page.login.enterprise.login')}
-        </AButton>
-
-        <div className="skyroc-switch-mode">
-          <AButton type="link" onClick={() => navigate({ search, to: '/login/code' })}>
-            {t('page.login.enterprise.codeLogin')}
-          </AButton>
-        </div>
-
-        <SocialLogin />
+        <LoginActions
+          loading={loading}
+          onForgotPassword={handleUnavailableAction}
+          onSwitchMode={() => navigate({ search, to: '/login/code' })}
+          switchModeLabel={t('page.login.enterprise.codeLogin')}
+        />
       </AForm>
     </>
   );

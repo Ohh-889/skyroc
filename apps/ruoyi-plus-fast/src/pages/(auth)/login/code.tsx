@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
 import { useEmailCodeMutation, useSmsCodeMutation } from '@/service/api';
-import SocialLogin from './modules/SocialLogin';
+import LoginActions from './modules/LoginActions';
+import LoginHeader from './modules/LoginHeader';
 
 interface CodeLoginFormValues {
   /** 六位一次性验证码 */
@@ -41,7 +42,10 @@ const CodeLogin = () => {
 
   // 发过码之后才提示"没收到怎么办"。后端对没注册的号码也回成功（否则这个不带凭据的接口
   // 就成了枚举器），所以"已发送"之后什么都收不到是正常结局，得让用户知道往哪儿找。
-  const [codeSent, setCodeSent] = useState(false);
+  const [codeSentByChannel, setCodeSentByChannel] = useState<Record<CodeChannel, boolean>>({
+    email: false,
+    sms: false
+  });
 
   const {
     formRules: { code: codeRules, email: emailRules, phone: phoneRules }
@@ -52,37 +56,53 @@ const CodeLogin = () => {
   const { mutateAsync: sendSmsCode } = useSmsCodeMutation();
   const { mutateAsync: sendEmailCode } = useEmailCodeMutation();
 
-  // 目标已经由 validateFields 校过了，这里不再校一遍，否则两处规则会各长各的
+  // 目标已经由 validateFields 校过了，这里不再校一遍，否则两处规则会各长各的。
+  // 短信和邮箱各自有后端限流，前端倒计时也必须分开，否则切换渠道时会像没切换。
   const {
-    getCaptcha,
-    isCounting,
-    label: codeButtonLabel,
-    loading: codeSending
+    getCaptcha: getSmsCaptcha,
+    isCounting: isSmsCounting,
+    label: smsCodeButtonLabel,
+    loading: smsCodeSending
   } = useCaptcha(t('page.login.enterprise.getCode'), count => t('page.login.codeLogin.reGetCode', { time: count }), {
     request: async target => {
       // 发失败会把异常抛出去，useCaptcha 那边就不会开始倒计时——让用户干等一分钟才能重试
       // 是这里最容易犯的错。
-      if (channel === 'sms') {
-        await sendSmsCode({ phone: target });
-      } else {
-        await sendEmailCode({ email: target });
-      }
+      await sendSmsCode({ phone: target });
 
       // 不说"发送成功"：号码没注册时后端同样回成功，那句话对这部分人是假的
-      showSuccessMessage(
-        t(channel === 'sms' ? 'page.login.enterprise.codeSentPhone' : 'page.login.enterprise.codeSentEmail')
-      );
-      setCodeSent(true);
+      showSuccessMessage(t('page.login.enterprise.codeSentPhone'));
+      setCodeSentByChannel(prev => ({ ...prev, sms: true }));
     },
     seconds: RESEND_SECONDS,
     validateTarget: target => target.trim() !== ''
   });
 
+  const {
+    getCaptcha: getEmailCaptcha,
+    isCounting: isEmailCounting,
+    label: emailCodeButtonLabel,
+    loading: emailCodeSending
+  } = useCaptcha(t('page.login.enterprise.getCode'), count => t('page.login.codeLogin.reGetCode', { time: count }), {
+    request: async target => {
+      await sendEmailCode({ email: target });
+
+      showSuccessMessage(t('page.login.enterprise.codeSentEmail'));
+      setCodeSentByChannel(prev => ({ ...prev, email: true }));
+    },
+    seconds: RESEND_SECONDS,
+    validateTarget: target => target.trim() !== ''
+  });
+
+  const codeButtonLabel = channel === 'sms' ? smsCodeButtonLabel : emailCodeButtonLabel;
+  const codeSending = channel === 'sms' ? smsCodeSending : emailCodeSending;
+  const codeSent = codeSentByChannel[channel];
+  const getCaptcha = channel === 'sms' ? getSmsCaptcha : getEmailCaptcha;
+  const isCounting = channel === 'sms' ? isSmsCounting : isEmailCounting;
+
   function switchChannel(nextChannel: CodeChannel) {
     if (nextChannel === channel) return;
 
     setChannel(nextChannel);
-    setCodeSent(false);
     form.setFieldValue('code', '');
     form.setFields([
       { errors: [], name: 'code' },
@@ -120,34 +140,26 @@ const CodeLogin = () => {
 
   return (
     <>
-      <header className="skyroc-auth-heading">
-        <h1>{t('page.login.enterprise.codeTitle')}</h1>
-        <p>{t('page.login.enterprise.codeSubtitle')}</p>
-      </header>
+      <LoginHeader
+        subtitle={t('page.login.enterprise.codeSubtitle')}
+        title={t('page.login.enterprise.codeTitle')}
+      />
 
-      <div aria-label={t('page.login.enterprise.codeChannelLabel')} className="skyroc-code-tabs" role="tablist">
-        <button
-          aria-selected={channel === 'sms'}
-          className={channel === 'sms' ? 'is-active' : ''}
-          role="tab"
-          type="button"
-          onClick={() => switchChannel('sms')}
-        >
-          {t('page.login.enterprise.phoneCode')}
-        </button>
-        <button
-          aria-selected={channel === 'email'}
-          className={channel === 'email' ? 'is-active' : ''}
-          role="tab"
-          type="button"
-          onClick={() => switchChannel('email')}
-        >
-          {t('page.login.enterprise.emailCode')}
-        </button>
-      </div>
+      <ASegmented<CodeChannel>
+        aria-label={t('page.login.enterprise.codeChannelLabel')}
+        block
+        className="mb-20px"
+        size="large"
+        options={[
+          { label: t('page.login.enterprise.phoneCode'), value: 'sms' },
+          { label: t('page.login.enterprise.emailCode'), value: 'email' }
+        ]}
+        value={channel}
+        onChange={switchChannel}
+      />
 
       <AForm
-        className="skyroc-login-form skyroc-code-login-form"
+        className="[&_.ant-form-item]:mb-15px [&_.ant-form-item-label]:pb-6px [&_.ant-form-item-label>label]:h-18px [&_.ant-form-item-label>label]:text-13px [&_.ant-form-item-label>label]:text-base [&_.ant-form-item-label>label]:font-500 [&_.ant-form-item-label>label]:leading-18px lt-md:[&_.ant-form-item]:mb-18px"
         form={form}
         initialValues={{ remember: false }}
         layout="vertical"
@@ -155,20 +167,28 @@ const CodeLogin = () => {
         onFinish={handleSubmit}
       >
         {channel === 'sms' ? (
-          <AForm.Item label={t('page.login.enterprise.phoneLabel')} name="sms" rules={phoneRules}>
+          <AForm.Item
+            label={t('page.login.enterprise.phoneLabel')}
+            name="sms"
+            rules={phoneRules}
+          >
             <AInput
               autoComplete="tel"
-              className="skyroc-login-control"
+              className="h-40px rounded-6px border-border bg-container text-base shadow-none [&_.ant-input]:bg-transparent [&_.ant-input]:text-13px [&_.ant-input-prefix]:me-9px [&_.ant-input-prefix]:text-17px [&_.ant-input-prefix]:text-tertiary hover:border-primary focus:border-primary"
               inputMode="numeric"
               placeholder={t('page.login.enterprise.phonePlaceholder')}
               prefix={<SvgIcon icon="ph:device-mobile" />}
             />
           </AForm.Item>
         ) : (
-          <AForm.Item label={t('page.login.enterprise.emailLabel')} name="email" rules={emailRules}>
+          <AForm.Item
+            label={t('page.login.enterprise.emailLabel')}
+            name="email"
+            rules={emailRules}
+          >
             <AInput
               autoComplete="email"
-              className="skyroc-login-control"
+              className="h-40px rounded-6px border-border bg-container text-base shadow-none [&_.ant-input]:bg-transparent [&_.ant-input]:text-13px [&_.ant-input-prefix]:me-9px [&_.ant-input-prefix]:text-17px [&_.ant-input-prefix]:text-tertiary hover:border-primary focus:border-primary"
               inputMode="email"
               placeholder={t('page.login.enterprise.emailPlaceholder')}
               prefix={<SvgIcon icon="ph:envelope" />}
@@ -176,41 +196,38 @@ const CodeLogin = () => {
           </AForm.Item>
         )}
 
-        <div className="skyroc-verification-field">
-          <AForm.Item label={t('page.login.enterprise.verificationLabel')} name="code" rules={codeRules}>
+        <div className="grid grid-cols-[minmax(0,1fr)_118px] items-end gap-10px">
+          <AForm.Item
+            label={t('page.login.enterprise.verificationLabel')}
+            name="code"
+            rules={codeRules}
+          >
             <AInput
               autoComplete="one-time-code"
-              className="skyroc-login-control"
+              className="h-40px rounded-6px border-border bg-container text-base shadow-none [&_.ant-input]:bg-transparent [&_.ant-input]:text-13px [&_.ant-input-prefix]:me-9px [&_.ant-input-prefix]:text-17px [&_.ant-input-prefix]:text-tertiary hover:border-primary focus:border-primary"
               inputMode="numeric"
               maxLength={6}
               placeholder={t('page.login.enterprise.verificationPlaceholder')}
               prefix={<SvgIcon icon="ph:lock" />}
             />
           </AForm.Item>
-          <AButton className="skyroc-get-code-button" disabled={isCounting} loading={codeSending} onClick={sendCode}>
+          <AButton
+            className="mb-15px h-40px rounded-8px border-primary-border bg-container text-12px text-primary hover:border-primary hover:bg-primary-bg lt-md:mb-18px"
+            disabled={isCounting}
+            loading={codeSending}
+            onClick={sendCode}
+          >
             {codeButtonLabel}
           </AButton>
         </div>
 
         <div className="mb-2 text-secondary">{codeSent ? t('page.login.enterprise.codeNotReceived') : null}</div>
 
-        <div className="skyroc-form-options">
-          <AForm.Item name="remember" noStyle valuePropName="checked">
-            <ACheckbox>{t('page.login.enterprise.keepSignedIn')}</ACheckbox>
-          </AForm.Item>
-        </div>
-
-        <AButton block className="rounded-xl" size="large" htmlType="submit" loading={loading} type="primary">
-          {t('page.login.enterprise.login')}
-        </AButton>
-
-        <div className="skyroc-switch-mode">
-          <AButton type="link" onClick={() => navigate({ search, to: '/login' })}>
-            {t('page.login.enterprise.passwordLogin')}
-          </AButton>
-        </div>
-
-        <SocialLogin />
+        <LoginActions
+          loading={loading}
+          onSwitchMode={() => navigate({ search, to: '/login' })}
+          switchModeLabel={t('page.login.enterprise.passwordLogin')}
+        />
       </AForm>
     </>
   );
