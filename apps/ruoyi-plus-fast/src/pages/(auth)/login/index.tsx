@@ -22,6 +22,13 @@ interface LoginFormValues {
 
 const CAPTCHA_ENABLED = import.meta.env.VITE_AUTH_CAPTCHA_ENABLED === 'Y';
 
+/** 表单默认值：预填演示账号，便于开发调试 */
+const DEFAULT_FORM_VALUES: LoginFormValues = {
+  password: 'admin123',
+  remember: false,
+  userName: 'admin'
+};
+
 const Login = () => {
   const { t } = useTranslation();
 
@@ -101,7 +108,7 @@ const Login = () => {
       <AForm
         className="[&_.ant-form-item]:mb-15px [&_.ant-form-item-label]:pb-6px [&_.ant-form-item-label>label]:h-18px [&_.ant-form-item-label>label]:text-13px [&_.ant-form-item-label>label]:text-base [&_.ant-form-item-label>label]:font-500 [&_.ant-form-item-label>label]:leading-18px lt-md:[&_.ant-form-item]:mb-18px"
         form={passwordForm}
-        initialValues={{ remember: false }}
+        initialValues={DEFAULT_FORM_VALUES}
         layout="vertical"
         requiredMark={false}
         onFinish={handlePasswordSubmit}
