@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 
-import { useOnlineSessionListQuery } from '@/service/api/monitor-online';
-import { fetchNotificationCounts, fetchNotificationInbox } from '@/service/api/notification';
-import type { NotificationCategory, NotificationCounts, NotificationInboxItem } from '@/service/api/notification';
+import { fetchNotificationInbox } from '@/service/api/notification';
+import type { NotificationCategory, NotificationInboxItem } from '@/service/api/notification';
 import { useUserInfoQuery } from '@/service/api/system-user';
 
 import './style.css';
@@ -16,21 +15,6 @@ interface HomeHeroProps {
   nickname: string;
   /** 页面跳转入口。 */
   onOpenPage: (path: Router.RoutePath) => void;
-}
-
-interface HomeMetricsProps {
-  /** 通知统计接口是否失败。 */
-  countsError: boolean;
-  /** 当前用户通知统计。 */
-  notificationCounts?: NotificationCounts;
-  /** 在线会话接口是否失败。 */
-  onlineError: boolean;
-  /** 在线会话总数。 */
-  onlineTotal?: number;
-  /** 页面跳转入口。 */
-  onOpenPage: (path: Router.RoutePath) => void;
-  /** 当前用户信息。 */
-  userInfo?: Api.Auth.UserInfo | null;
 }
 
 interface HomeQuickEntriesProps {
@@ -98,7 +82,7 @@ function getGreeting(hour: number) {
 }
 
 const HomeHero = (props: HomeHeroProps) => {
-  const { nickname, onOpenPage } = props;
+  const { nickname } = props;
   const greeting = getGreeting(dayjs().hour());
   const today = dayjs().format('M 月 D 日 · dddd');
 
@@ -110,19 +94,6 @@ const HomeHero = (props: HomeHeroProps) => {
           {greeting}，{nickname}
         </h1>
         <p>这里是你的管理工作台。先处理重要事项，再继续今天的工作。</p>
-        <div className="skyroc-home-hero-actions">
-          <AButton
-            type="primary"
-            onClick={() => onOpenPage('/notification')}
-          >
-            <SvgIcon icon="ph:bell" />
-            查看通知
-          </AButton>
-          <AButton onClick={() => onOpenPage('/system/user')}>
-            <SvgIcon icon="ph:user-plus" />
-            管理成员
-          </AButton>
-        </div>
       </div>
       <div
         className="skyroc-home-hero-visual"
@@ -143,68 +114,6 @@ const HomeHero = (props: HomeHeroProps) => {
           <SvgIcon icon="ph:bell" />
         </span>
       </div>
-    </section>
-  );
-};
-
-const HomeMetrics = (props: HomeMetricsProps) => {
-  const { countsError, notificationCounts, onlineError, onlineTotal, onOpenPage, userInfo } = props;
-
-  return (
-    <section
-      className="skyroc-home-metrics"
-      aria-label="工作台概览"
-    >
-      <article>
-        <span className="skyroc-home-metric-icon is-purple">
-          <SvgIcon icon="ph:bell-ringing" />
-        </span>
-        <div>
-          <small>未读通知</small>
-          <strong>{countsError ? '—' : (notificationCounts?.unread ?? 0)}</strong>
-        </div>
-        <button
-          type="button"
-          onClick={() => onOpenPage('/notification')}
-        >
-          去处理 <SvgIcon icon="ph:arrow-right" />
-        </button>
-      </article>
-      <article>
-        <span className="skyroc-home-metric-icon is-orange">
-          <SvgIcon icon="ph:check-square-offset" />
-        </span>
-        <div>
-          <small>待处理事项</small>
-          <strong>{countsError ? '—' : (notificationCounts?.pending ?? 0)}</strong>
-        </div>
-        <em>来自通知中心</em>
-      </article>
-      <article>
-        <span className="skyroc-home-metric-icon is-cyan">
-          <SvgIcon icon="ph:broadcast" />
-        </span>
-        <div>
-          <small>在线会话</small>
-          <strong>{onlineError ? '—' : (onlineTotal ?? 0)}</strong>
-        </div>
-        <button
-          type="button"
-          onClick={() => onOpenPage('/monitor/online')}
-        >
-          查看会话 <SvgIcon icon="ph:arrow-right" />
-        </button>
-      </article>
-      <article>
-        <span className="skyroc-home-metric-icon is-blue">
-          <SvgIcon icon="ph:identification-card" />
-        </span>
-        <div>
-          <small>我的角色</small>
-          <strong>{userInfo?.roles.length ?? 0}</strong>
-        </div>
-        <em>{userInfo?.roles[0] || '普通用户'}</em>
-      </article>
     </section>
   );
 };
@@ -310,11 +219,7 @@ const HomeNotifications = (props: HomeNotificationsProps) => {
 const Home = () => {
   const navigate = useNavigate();
   const { data: userInfo } = useUserInfoQuery();
-  const { data: notificationCounts, isError: countsError } = useQuery({
-    queryFn: fetchNotificationCounts,
-    queryKey: ['home', 'notification-counts'],
-    retry: false
-  });
+
   const {
     data: inbox,
     isError: inboxError,
@@ -324,10 +229,7 @@ const Home = () => {
     queryKey: ['home', 'notification-inbox'],
     retry: false
   });
-  const { data: onlinePage, isError: onlineError } = useOnlineSessionListQuery(
-    { current: 1, size: 1 },
-    { retry: false }
-  );
+
   const nickname = userInfo?.nickname || userInfo?.userName || '管理员';
 
   function openPage(path: Router.RoutePath) {
@@ -340,14 +242,7 @@ const Home = () => {
         nickname={nickname}
         onOpenPage={openPage}
       />
-      <HomeMetrics
-        countsError={countsError}
-        notificationCounts={notificationCounts}
-        onlineError={onlineError}
-        onlineTotal={onlinePage?.total}
-        onOpenPage={openPage}
-        userInfo={userInfo}
-      />
+
       <section className="skyroc-home-grid">
         <HomeQuickEntries onOpenPage={openPage} />
         <HomeNotifications
