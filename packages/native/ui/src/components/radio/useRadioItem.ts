@@ -105,7 +105,7 @@ function useRadioItem(options: UseRadioItemOptions): UseRadioItemResult {
 
   // 组内缺少 name 会静默退化成独立开关（既不互斥也不受组控制），开发期必须显式提示
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') return;
+    if (!__DEV__) return;
     if (!hasGroup || name !== undefined) return;
 
     console.warn(`[${caller}] 位于 RadioGroup 内但缺少 name，该项不会参与单选互斥。`);
