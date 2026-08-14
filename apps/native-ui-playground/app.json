@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "scheme": "dev.expo.eastestsexample",
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-status-bar"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "android": {
+      "package": "dev.expo.eastestsexample"
+    },
+    "ios": {
+      "bundleIdentifier": "dev.expo.eastestsexample"
+    },
+    "name": "native-ui-playground",
+    "slug": "native-ui-playground"
+  }
+}
