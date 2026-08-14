@@ -156,6 +156,15 @@ catalogs:
     '@tanstack/devtools-vite': ^0.7.0
     '@tanstack/react-router-devtools': ^1.140.0
 
+  # ==================== Native 端专用 ====================
+  native:
+    # React Native 运行时（版本跟随 Expo SDK 57 的锁定值）
+    react: 19.2.3
+    'react-native': 0.86.0
+
+    # 样式方案：Tailwind CSS v4 for React Native
+    uniwind: ^1.10.1
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具
