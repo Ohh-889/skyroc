@@ -1,20 +1,30 @@
-import type { ReactNode } from 'react';
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
+import type { ReactNode } from 'react';
 
 /** Radio icon shape */
 export type RadioShape = 'round' | 'square';
 
+/** Horizontal placement shared by label position and card radio position */
+export type RadioSide = 'left' | 'right';
+
 /** Label position relative to the icon */
-export type RadioLabelPosition = 'left' | 'right';
+export type RadioLabelPosition = RadioSide;
+
+/** Position of the radio control in a card */
+export type RadioPosition = RadioSide;
+
+/**
+ * 单选值的取值范围约束。
+ *
+ * Group 组件对它做泛型化而非直接用作值类型，`useState('a')` 配 `onChange={setState}` 才不会因为形参逆变而报错。
+ */
+export type RadioValue = number | string;
 
 /** Layout direction for RadioGroup */
 export type RadioGroupDirection = 'horizontal' | 'vertical';
 
-/** Position of the radio control in a card */
-export type RadioPosition = 'left' | 'right';
-
 export interface RadioProps {
-  /** Controlled checked state */
+  /** Controlled checked state, ignored when the radio belongs to a RadioGroup */
   checked?: boolean;
 
   /** Custom icon when checked, replaces default indicator */
@@ -26,38 +36,38 @@ export interface RadioProps {
   /** NativeWind className for the root container */
   className?: string;
 
-  /** Theme color preset (primary, destructive, success, etc.) */
+  /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
 
   /** Initial checked state for uncontrolled usage */
   defaultChecked?: boolean;
 
-  /** Whether the radio is disabled */
+  /** Disables this radio, a disabled group disables it as well */
   disabled?: boolean;
 
-  /** Size of the radio icon in pixels, overrides size prop */
+  /** Outer control size in pixels, the inner dot and check scale with it */
   iconSize?: number;
 
   /** When true, only the icon toggles the radio, label tap is ignored */
   labelDisabled?: boolean;
 
-  /** Position of the label relative to the icon */
+  /** Position of the label relative to the icon, falls back to the group value then `right` */
   labelPosition?: RadioLabelPosition;
 
   /** Unique identifier, required when used inside RadioGroup */
-  name?: string;
+  name?: RadioValue;
 
-  /** Callback fired when checked state changes */
+  /** Callback fired when this radio becomes checked */
   onCheckedChange?: (checked: boolean) => void;
 
-  /** Icon shape: round (circle with dot) or square (with check) */
+  /** Icon shape, falls back to the group value then `round` */
   shape?: RadioShape;
 
-  /** Component size preset */
+  /** Component size preset, falls back to the group value then `md` */
   size?: ThemeSize;
 }
 
-export interface RadioGroupProps {
+export interface RadioGroupProps<T extends RadioValue = RadioValue> {
   /** Custom icon when checked, applied to all children */
   checkedIcon?: ReactNode;
 
@@ -71,7 +81,7 @@ export interface RadioGroupProps {
   color?: ThemeColor;
 
   /** Initial value for uncontrolled usage */
-  defaultValue?: string;
+  defaultValue?: T;
 
   /** Layout direction of the radios */
   direction?: RadioGroupDirection;
@@ -79,11 +89,14 @@ export interface RadioGroupProps {
   /** Whether to disable all child radios */
   disabled?: boolean;
 
-  /** Icon size for all child radios in pixels */
+  /** Outer control size in pixels for all child radios */
   iconSize?: number;
 
+  /** Label position for all child radios */
+  labelPosition?: RadioLabelPosition;
+
   /** Callback fired when the selected value changes */
-  onChange?: (value: string) => void;
+  onChange?: (value: T) => void;
 
   /** Icon shape for all child radios */
   shape?: RadioShape;
@@ -92,7 +105,7 @@ export interface RadioGroupProps {
   size?: ThemeSize;
 
   /** Controlled selected radio name */
-  value?: string;
+  value?: T;
 }
 
 export interface RadioGroupContextValue {
@@ -105,14 +118,17 @@ export interface RadioGroupContextValue {
   /** Whether the group is disabled */
   disabled?: boolean;
 
-  /** Icon size from group */
+  /** Outer control size from group */
   iconSize?: number;
 
   /** Check if a name is the selected value */
-  isChecked: (name: string) => boolean;
+  isChecked: (name: RadioValue) => boolean;
+
+  /** Label position from group */
+  labelPosition?: RadioLabelPosition;
 
   /** Select a radio by name */
-  select: (name: string) => void;
+  select: (name: RadioValue) => void;
 
   /** Shape from group */
   shape?: RadioShape;
@@ -122,7 +138,7 @@ export interface RadioGroupContextValue {
 }
 
 export interface RadioCardProps {
-  /** Controlled checked state */
+  /** Controlled checked state, ignored when the card belongs to a RadioGroup */
   checked?: boolean;
 
   /** Custom icon when checked */
@@ -131,7 +147,7 @@ export interface RadioCardProps {
   /** NativeWind className for the card container */
   className?: string;
 
-  /** Theme color preset */
+  /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
 
   /** Initial checked state for uncontrolled usage */
@@ -140,35 +156,35 @@ export interface RadioCardProps {
   /** Description text below the label */
   description?: ReactNode;
 
-  /** Whether disabled */
+  /** Disables this card, a disabled group disables it as well */
   disabled?: boolean;
 
   /** Icon element to display on the card */
   icon?: ReactNode;
 
-  /** Size of the radio icon in pixels */
+  /** Outer control size in pixels, the inner dot and check scale with it */
   iconSize?: number;
 
   /** Label text or element */
   label?: ReactNode;
 
-  /** Unique identifier */
-  name?: string;
+  /** Unique identifier, required when used inside RadioGroup */
+  name?: RadioValue;
 
-  /** Callback fired when checked state changes */
+  /** Callback fired when this card becomes checked */
   onCheckedChange?: (checked: boolean) => void;
 
   /** Position of the radio relative to card content */
   radioPosition?: RadioPosition;
 
-  /** Icon shape */
+  /** Icon shape, falls back to the group value then `round` */
   shape?: RadioShape;
 
-  /** Component size preset */
+  /** Component size preset, falls back to the group value then `md` */
   size?: ThemeSize;
 }
 
-export interface RadioGroupCardItem {
+export interface RadioGroupCardItem<T extends RadioValue = RadioValue> {
   /** Description text */
   description?: ReactNode;
 
@@ -182,10 +198,13 @@ export interface RadioGroupCardItem {
   label: ReactNode;
 
   /** Unique value identifier */
-  value: string;
+  value: T;
 }
 
-export interface RadioGroupCardProps {
+export interface RadioGroupCardProps<T extends RadioValue = RadioValue> {
+  /** Custom icon when checked, applied to all cards */
+  checkedIcon?: ReactNode;
+
   /** NativeWind className for the group container */
   className?: string;
 
@@ -193,7 +212,7 @@ export interface RadioGroupCardProps {
   color?: ThemeColor;
 
   /** Initial value for uncontrolled usage */
-  defaultValue?: string;
+  defaultValue?: T;
 
   /** Layout direction */
   direction?: RadioGroupDirection;
@@ -201,14 +220,14 @@ export interface RadioGroupCardProps {
   /** Disable all items */
   disabled?: boolean;
 
-  /** Icon size */
+  /** Outer control size in pixels */
   iconSize?: number;
 
   /** Items to render */
-  items: RadioGroupCardItem[];
+  items: RadioGroupCardItem<T>[];
 
   /** Callback when value changes */
-  onChange?: (value: string) => void;
+  onChange?: (value: T) => void;
 
   /** Position of radio relative to card content */
   radioPosition?: RadioPosition;
@@ -220,5 +239,5 @@ export interface RadioGroupCardProps {
   size?: ThemeSize;
 
   /** Controlled selected value */
-  value?: string;
+  value?: T;
 }

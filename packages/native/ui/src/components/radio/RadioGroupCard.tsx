@@ -1,62 +1,51 @@
-import { View } from 'react-native';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { cn } from '@skyroc/utils';
 import { RadioCard } from './RadioCard';
-import { radioGroupVariants } from './radio-variants';
-import type { RadioGroupCardProps } from './types';
+import { RadioGroup } from './RadioGroup';
+import type { RadioGroupCardProps, RadioValue } from './types';
 
-const RadioGroupCard = (props: RadioGroupCardProps) => {
+/** RadioGroup 的数据驱动封装，选中态与互斥逻辑完全复用 RadioGroupContext */
+const RadioGroupCard = <T extends RadioValue = RadioValue>(props: RadioGroupCardProps<T>) => {
   const {
+    checkedIcon,
     className,
     color,
-    defaultValue = '',
+    defaultValue,
     direction = 'vertical',
     disabled = false,
     iconSize,
     items,
     onChange,
     radioPosition = 'left',
-    shape = 'round',
+    shape,
     size,
-    value: valueProp
+    value
   } = props;
 
-  const [value, setValue] = useControllableState({
-    caller: 'radio-group-card',
-    defaultProp: defaultValue,
-    onChange,
-    prop: valueProp
-  });
-
-  function handleItemChange(itemValue: string) {
-    setValue(itemValue);
-  }
-
   return (
-    <View className={cn(radioGroupVariants({ direction, size }), className)}>
-      {items.map(item => {
-        const isChecked = value === item.value;
-        const isDisabled = disabled || (item.disabled ?? false);
-
-        return (
-          <RadioCard
-            key={item.value}
-            checked={isChecked}
-            color={color}
-            description={item.description}
-            disabled={isDisabled}
-            icon={item.icon}
-            iconSize={iconSize}
-            label={item.label}
-            name={item.value}
-            radioPosition={radioPosition}
-            shape={shape}
-            size={size}
-            onCheckedChange={() => handleItemChange(item.value)}
-          />
-        );
-      })}
-    </View>
+    <RadioGroup<T>
+      checkedIcon={checkedIcon}
+      className={className}
+      color={color}
+      defaultValue={defaultValue}
+      direction={direction}
+      disabled={disabled}
+      iconSize={iconSize}
+      shape={shape}
+      size={size}
+      value={value}
+      onChange={onChange}
+    >
+      {items.map(item => (
+        <RadioCard
+          key={String(item.value)}
+          description={item.description}
+          disabled={item.disabled}
+          icon={item.icon}
+          label={item.label}
+          name={item.value}
+          radioPosition={radioPosition}
+        />
+      ))}
+    </RadioGroup>
   );
 };
 

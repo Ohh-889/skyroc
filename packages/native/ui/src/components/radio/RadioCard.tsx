@@ -1,55 +1,41 @@
-/* eslint-disable no-nested-ternary */
+import { cn, isNumber, isString } from '@skyroc/utils';
+import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { cn, isString } from '@skyroc/utils';
 import { Text } from '../text/Typography';
-import {
-  SIZE_CONTROL_MAP,
-  SIZE_DOT_MAP,
-  SIZE_INNER_ICON_MAP,
-  radioCardVariants,
-  radioVariants
-} from './radio-variants';
+import { radioCardVariants } from './radio-variants';
+import { RadioIndicator } from './RadioIndicator';
 import type { RadioCardProps } from './types';
-
-const INDICATOR_COLOR = '#fff';
+import { useRadioItem } from './useRadioItem';
 
 const RadioCard = (props: RadioCardProps) => {
   const {
-    checked: checkedProp,
+    checked,
     checkedIcon,
     className,
-    color = 'primary',
-    defaultChecked = false,
+    color,
+    defaultChecked,
     description,
-    disabled = false,
+    disabled,
     icon,
-    iconSize: iconSizeProp,
+    iconSize,
     label,
-    name: _name,
+    name,
     onCheckedChange,
     radioPosition = 'left',
-    shape = 'round',
-    size = 'md'
+    shape,
+    size
   } = props;
 
-  const [internalChecked, setInternalChecked] = useControllableState({
-    caller: 'radio-card',
-    defaultProp: defaultChecked,
-    onChange: onCheckedChange,
-    prop: checkedProp
-  });
-
-  const isChecked = internalChecked;
-
-  const controlSize = iconSizeProp ?? SIZE_CONTROL_MAP[size];
-  const innerIconSize = SIZE_INNER_ICON_MAP[size];
-  const dotSize = SIZE_DOT_MAP[size];
-
-  const { control: controlCls, dot: dotCls } = radioVariants({
-    active: isChecked,
+  const item = useRadioItem({
+    caller: 'RadioCard',
+    checked,
+    checkedIcon,
     color,
+    defaultChecked,
+    disabled,
+    iconSize,
+    name,
+    onCheckedChange,
     shape,
     size
   });
@@ -59,72 +45,46 @@ const RadioCard = (props: RadioCardProps) => {
     cardContent: cardContentCls,
     cardDescription: cardDescriptionCls,
     cardLabel: cardLabelCls
-  } = radioCardVariants({ disabled });
+  } = radioCardVariants({ disabled: item.disabled });
 
-  function handleToggle() {
-    if (disabled) return;
-    setInternalChecked(!isChecked);
+  function renderText(content: ReactNode, textCls: string) {
+    if (content === null || content === undefined) return null;
+
+    if (isString(content) || isNumber(content)) return <Text className={textCls}>{content}</Text>;
+
+    return content;
   }
 
-  function renderRadio() {
-    if (isChecked && checkedIcon) {
-      return checkedIcon;
-    }
-
+  function renderIndicator() {
     return (
-      <View style={{ height: controlSize, width: controlSize }}>
-        <View className={controlCls()}>
-          {isChecked ? (
-            shape === 'square' ? (
-              <Feather
-                color={INDICATOR_COLOR}
-                name="check"
-                size={innerIconSize}
-              />
-            ) : (
-              <View style={{ height: dotSize, width: dotSize }}>
-                <View className={dotCls()} />
-              </View>
-            )
-          ) : null}
-        </View>
-      </View>
-    );
-  }
-
-  function renderLabel() {
-    if (!label) return null;
-    if (isString(label)) return <Text className={cardLabelCls()}>{label}</Text>;
-    return label;
-  }
-
-  function renderDescription() {
-    if (!description) return null;
-    if (isString(description)) return <Text className={cardDescriptionCls()}>{description}</Text>;
-    return description;
-  }
-
-  function renderContent() {
-    return (
-      <View className={cardContentCls()}>
-        {icon ? <View className="shrink-0">{icon}</View> : null}
-        <View className="flex-1 gap-0.5">
-          {renderLabel()}
-          {renderDescription()}
-        </View>
-      </View>
+      <RadioIndicator
+        checked={item.checked}
+        checkedIcon={item.checkedIcon}
+        color={item.color}
+        shape={item.shape}
+        sizes={item.sizes}
+      />
     );
   }
 
   return (
     <Pressable
       className={cn(cardCls(), className)}
-      disabled={disabled}
-      onPress={handleToggle}
+      disabled={item.disabled}
+      onPress={item.select}
     >
-      {radioPosition === 'left' && renderRadio()}
-      {renderContent()}
-      {radioPosition === 'right' && renderRadio()}
+      {radioPosition === 'left' && renderIndicator()}
+
+      <View className={cardContentCls()}>
+        {icon ? <View className="shrink-0">{icon}</View> : null}
+
+        <View className="flex-1 gap-0.5">
+          {renderText(label, cardLabelCls())}
+          {renderText(description, cardDescriptionCls())}
+        </View>
+      </View>
+
+      {radioPosition === 'right' && renderIndicator()}
     </Pressable>
   );
 };
