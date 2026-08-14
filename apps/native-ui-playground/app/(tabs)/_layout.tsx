@@ -13,6 +13,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: () => null,
           tabBarLabelStyle: {
             fontSize: 18
