@@ -209,20 +209,15 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
 
   function renderPackageActions(item: TenantPackageItem) {
     return (
-      <Flex
-        gap={4}
-        justify="center"
-      >
+      <div className="flex-center justify-end gap-8px">
         <Button
           size="small"
-          type="link"
           onClick={() => setDetailPackageId(item.packageId)}
         >
           详情
         </Button>
         <Button
           size="small"
-          type="link"
           onClick={() => handleEdit(item)}
         >
           编辑
@@ -236,10 +231,9 @@ const TenantPackageManagement = (props: TenantPackageManagementProps) => {
             aria-label={`${item.packageName || `套餐 #${item.packageId}`}的更多操作`}
             icon={<SvgIcon icon="ph:dots-three" />}
             size="small"
-            type="text"
           />
         </Dropdown>
-      </Flex>
+      </div>
     );
   }
 

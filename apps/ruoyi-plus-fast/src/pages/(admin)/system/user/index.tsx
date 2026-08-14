@@ -599,6 +599,7 @@ function renderRoles(roles: UserListItem['roles']) {
   return (
     <Flex
       gap={4}
+      justify="center"
       wrap="wrap"
     >
       {roles.slice(0, 2).map((role, index) => (

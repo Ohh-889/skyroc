@@ -307,50 +307,51 @@ const TenantManagement = (props: TenantManagementProps) => {
   function renderTenantActions(tenant: TenantItem) {
     const protectedTenant = isManagementTenant(tenant);
 
+    if (protectedTenant) {
+      return (
+        <div className="flex-center justify-end gap-8px">
+          <Button
+            size="small"
+            onClick={() => setDetailTenantId(tenant.id)}
+          >
+            详情
+          </Button>
+          <Tag
+            color="warning"
+            className="m-0"
+          >
+            系统保护
+          </Tag>
+        </div>
+      );
+    }
+
     return (
-      <Flex
-        gap={4}
-        justify="center"
-      >
+      <div className="flex-center justify-end gap-8px">
         <Button
           size="small"
-          type="link"
           onClick={() => setDetailTenantId(tenant.id)}
         >
           详情
         </Button>
-
-        {protectedTenant ? (
-          <Typography.Text
-            className="text-12px"
-            type="secondary"
-          >
-            系统保护
-          </Typography.Text>
-        ) : (
-          <>
-            <Button
-              size="small"
-              type="link"
-              onClick={() => handleEdit(tenant)}
-            >
-              编辑
-            </Button>
-            <Dropdown
-              menu={{ items: createMoreMenu(tenant) }}
-              placement="bottomRight"
-              trigger={['click']}
-            >
-              <Button
-                aria-label={`${tenant.companyName || tenant.tenantId}的更多操作`}
-                icon={<SvgIcon icon="ph:dots-three" />}
-                size="small"
-                type="text"
-              />
-            </Dropdown>
-          </>
-        )}
-      </Flex>
+        <Button
+          size="small"
+          onClick={() => handleEdit(tenant)}
+        >
+          编辑
+        </Button>
+        <Dropdown
+          menu={{ items: createMoreMenu(tenant) }}
+          placement="bottomRight"
+          trigger={['click']}
+        >
+          <Button
+            aria-label={`${tenant.companyName || tenant.tenantId}的更多操作`}
+            icon={<SvgIcon icon="ph:dots-three" />}
+            size="small"
+          />
+        </Dropdown>
+      </div>
     );
   }
 

@@ -95,35 +95,76 @@ function toRoutePayload(router: RuoYiRouter, parentPath: string, index: number):
 }
 
 /**
- * RuoYi 的菜单表里没有首页——Vue 端把它写死在前端路由上，后端只管权限菜单。
+ * 只活在前端路由树里、RuoYi 菜单表从来没有的页面。
+ *
+ * 首页是 Vue 端写死在前端路由上的，后端只管权限菜单；三个联调用的测试页同理，它们是这个壳自带
+ * 的调试入口，不该为了能访问就去后台建菜单。
  *
  * 但动态模式下「后端菜单」同时是权限白名单：`hasAuthorizedRoutePath` 只认 quickReferenceMenus
- * 里的路径，首页不在里面会被守卫打到 /403；`initHomeTab` 也拿不到菜单信息，返回 null 之后整条
- * 标签栏会渲染成空。所以首页由前端在这一层补，后端契约不用动。
+ * 里的路径，不在里面的页面会被守卫打到 /403（首页还会让 `initHomeTab` 拿不到菜单信息，返回
+ * null 之后整条标签栏渲染成空）。所以这几条由前端在这一层补，后端契约不用动。
  *
- * 字段和 `(admin)/home/index.tsx` 的 staticData 对齐，静态/动态两种模式下表现一致。
+ * 字段和各页面自己的 staticData 对齐，静态/动态两种模式下菜单表现一致；order 沿用静态模式的相
+ * 对顺序，后端顶层菜单的 order 从 0 开始排，首页取负数排在最前，测试页取大数排在最后。
  */
-function createHomeRoutePayload(): Api.Route.BackendRoutePayload {
-  return {
+const FRONTEND_ROUTE_PAYLOADS: Api.Route.BackendRoutePayload[] = [
+  {
     handle: {
       i18nKey: 'route.home',
       icon: 'mdi:monitor-dashboard',
-      // 后端顶层菜单的 order 从 0 开始排，负数保证首页永远在最前面。
       order: -1,
       title: '首页'
     },
     name: 'Home',
     path: HOME_ROUTE_PATH
-  };
+  },
+  {
+    handle: {
+      icon: 'mdi:connection',
+      order: 20,
+      title: 'WebSocket 测试'
+    },
+    name: 'WebsocketTest',
+    path: '/websocket-test'
+  },
+  {
+    handle: {
+      icon: 'mdi:broadcast',
+      order: 21,
+      title: 'SSE 测试'
+    },
+    name: 'SseTest',
+    path: '/sse-test'
+  },
+  {
+    handle: {
+      icon: 'mdi:text-box-search-outline',
+      order: 22,
+      title: '流式输出测试'
+    },
+    name: 'StreamTest',
+    path: '/stream-test'
+  }
+];
+
+/** 后台真配了同路径的菜单就以后台那条为准，否则菜单里会出现两个一样的节点。 */
+function collectPaths(routes: Api.Route.BackendRoutePayload[], paths: Set<string>) {
+  for (const route of routes) {
+    paths.add(route.path);
+
+    if (route.children?.length) collectPaths(route.children, paths);
+  }
+
+  return paths;
 }
 
 export function toBackendRouteResponse(routers: RuoYiRouter[]): Api.Route.BackendRouteResponse {
   const routes = toRoutePayloads(routers, '');
-  // 后台真配了首页菜单就用后台那条，否则菜单里会出现两个首页。
-  const hasHomeRoute = routes.some(route => route.path === HOME_ROUTE_PATH);
+  const backendPaths = collectPaths(routes, new Set<string>());
+  const frontendRoutes = FRONTEND_ROUTE_PAYLOADS.filter(route => !backendPaths.has(route.path));
 
   return {
     home: HOME_ROUTE_PATH,
-    routes: hasHomeRoute ? routes : [createHomeRoutePayload(), ...routes]
+    routes: [...frontendRoutes, ...routes]
   };
 }
