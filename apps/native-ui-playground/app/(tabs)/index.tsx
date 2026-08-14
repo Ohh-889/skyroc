@@ -17,6 +17,14 @@ export default function HomeScreen() {
       >
         Press Me
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/radio')}
+      >
+        Press Me
+      </Button>
     </View>
   );
 }
