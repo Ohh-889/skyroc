@@ -8,7 +8,31 @@
     "class",
     "className",
     "headerClassName",
-    "classNames"
+    "contentContainerClassName",
+    "columnWrapperClassName",
+    "endFillColorClassName",
+    "imageClassName",
+    "tintColorClassName",
+    "ios_backgroundColorClassName",
+    "thumbColorClassName",
+    "trackColorOnClassName",
+    "trackColorOffClassName",
+    "selectionColorClassName",
+    "cursorColorClassName",
+    "underlineColorAndroidClassName",
+    "placeholderTextColorClassName",
+    "selectionHandleColorClassName",
+    "colorsClassName",
+    "progressBackgroundColorClassName",
+    "titleColorClassName",
+    "underlayColorClassName",
+    "colorClassName",
+    "drawerBackgroundColorClassName",
+    "statusBarBackgroundColorClassName",
+    "backdropColorClassName",
+    "backgroundColorClassName",
+    "ListFooterComponentClassName",
+    "ListHeaderComponentClassName"
   ],
   "tailwindCSS.experimental.classRegex": [
     [
@@ -20,7 +44,9 @@
       "[\"'`]([^\"'`]*).*?[\"'`]"
     ]
   ],
-
+  "tailwindCSS.classFunctions": [
+    "useResolveClassNames"
+  ],
 
   // workbench
   "workbench.list.smoothScrolling": true,
@@ -237,5 +263,5 @@
 
 
   "errorLens.enabledDiagnosticLevels": [ "warning", "error" ],
-  "errorLens.excludeBySource": [ "cSpell", "Grammarly" ],
+  "errorLens.excludeBySource": [ "cSpell", "Grammarly" ]
 }
