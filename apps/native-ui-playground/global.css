@@ -1,9 +1,8 @@
 @import 'tailwindcss';
 @import 'uniwind';
-@import '@skyroc/native-ui/theme.css';
 
-/**
- * Tailwind v4 scans for classNames starting from the directory holding this file, so anything outside
- * apps/native-ui-playground needs an explicit @source. Without this the library's classes compile to nothing.
- */
-@source '../../packages/native/ui/src';
+@plugin "@skyroc/tailwind-plugin" {
+  platform: 'native';
+}
+
+@source "./node_modules/@skyroc/native-ui/src";
