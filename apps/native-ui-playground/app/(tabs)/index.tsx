@@ -1,8 +1,6 @@
-import type { ThemeColor } from '@skyroc/native-ui';
 import { Button, Text } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-const COLORS: ThemeColor[] = ['primary', 'secondary', 'accent', 'destructive', 'success', 'warning', 'info', 'carbon'];
 
 export default function HomeScreen() {
   const router = useRouter();
