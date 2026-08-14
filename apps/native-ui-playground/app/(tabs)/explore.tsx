@@ -1,4 +1,4 @@
-import { StyleSheet, Text, SafeAreaView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 
