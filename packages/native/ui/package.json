@@ -51,8 +51,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./components": "./src/components/index.ts",
-    "./theme.css": "./src/styles/theme.css"
+    "./components": "./src/components/index.ts"
   },
   "publishConfig": {
     "access": "public",
@@ -68,8 +67,7 @@
           "types": "./dist/components/index.d.ts",
           "default": "./dist/components/index.js"
         }
-      },
-      "./theme.css": "./dist/styles/theme.css"
+      }
     },
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -84,11 +82,13 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@rn-primitives/slot": "^1.2.0",
     "@skyroc/utils": "workspace:*",
     "tailwind-variants": "catalog:utils"
   },
   "devDependencies": {
+    "@expo/vector-icons": "catalog:native",
     "@skyroc/tsconfig": "workspace:*",
     "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
@@ -103,6 +103,7 @@
     "uniwind": "catalog:native"
   },
   "peerDependencies": {
+    "@expo/vector-icons": ">=15.0.0",
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
     "tailwindcss": ">=4",

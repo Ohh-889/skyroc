@@ -165,6 +165,9 @@ catalogs:
     # 样式方案：Tailwind CSS v4 for React Native
     uniwind: ^1.10.1
 
+    # 图标（版本跟随 Expo SDK 57 的锁定值）
+    '@expo/vector-icons': 15.1.1
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具
