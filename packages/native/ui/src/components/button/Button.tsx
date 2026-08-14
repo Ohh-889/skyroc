@@ -1,49 +1,62 @@
-/* eslint-disable complexity */
+import { cn } from '@skyroc/utils';
 import { ActivityIndicator, Pressable } from 'react-native';
-import { cn, isString } from '@skyroc/utils';
 import { Text, TextClassContext } from '../text/Typography';
-import { buttonTextVariants, buttonVariants } from './button-variants';
-import type { ButtonProps } from './types';
+import { DEFAULT_BUTTON_SIZE, buttonIndicatorVariants, buttonTextVariants, buttonVariants } from './button-variants';
+import type { ButtonProps, ButtonSize } from './types';
+
+/** 各尺寸补偿的触摸热区，保证实际可点区域不低于 44pt */
+const HIT_SLOP: Record<ButtonSize, number> = {
+  sm: 6,
+  md: 2,
+  lg: 0,
+  icon: 2
+};
 
 const Button = (props: ButtonProps) => {
   const {
-    block = false,
+    block,
     children,
     className,
-    color = 'primary',
+    color,
     disabled = false,
     leading,
     loading = false,
-    shape = 'rounded',
-    size = 'md',
+    shape,
+    size,
     textClassName,
     trailing,
-    variant = 'solid',
+    variant,
     ...rest
   } = props;
 
   const isDisabled = disabled || loading;
 
+  const isTextChild = typeof children === 'string' || typeof children === 'number';
+
   const textClass = cn(buttonTextVariants({ variant, color, size }), textClassName);
 
-  const slots = buttonVariants({ variant, color, size, shape, block });
+  const rootClass = cn(buttonVariants({ variant, color, size, shape, block }), isDisabled && 'opacity-50', className);
 
   return (
     <TextClassContext.Provider value={textClass}>
       <Pressable
-        className={cn(slots, isDisabled && 'opacity-50', className)}
+        accessibilityState={{ busy: loading, disabled: isDisabled }}
+        className={rootClass}
         disabled={isDisabled}
+        hitSlop={HIT_SLOP[size ?? DEFAULT_BUTTON_SIZE]}
         role="button"
         {...rest}
       >
-        {loading && (
+        {/* loading 时占用 leading 位，避免额外插入节点导致按钮宽度跳动 */}
+        {loading ? (
           <ActivityIndicator
-            className={cn(textClass)}
+            colorClassName={buttonIndicatorVariants({ variant, color })}
             size="small"
           />
+        ) : (
+          leading
         )}
-        {leading}
-        {isString(children) ? <Text className={textClass}>{children}</Text> : children}
+        {isTextChild ? <Text>{children}</Text> : children}
         {trailing}
       </Pressable>
     </TextClassContext.Provider>
