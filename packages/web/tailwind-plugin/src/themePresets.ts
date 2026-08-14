@@ -8,6 +8,12 @@ export function skyrocUITheme(options: SkyrocUIPluginOptions) {
 
   const cssVars = generateCSSVars(theme || {}, true, isNative);
 
+  // 原生端只需要主题变量：`.lucide`、`body`、`html.size-*`、@keyframes 都是 DOM 概念，
+  // Uniwind 解析到 `.lucide` 这类 class 规则时还会把它的声明混进全局变量表。
+  if (isNative) {
+    return cssVars;
+  }
+
   const baseStyles = globals ? generateGlobalStyles(isNative) : '';
 
   return {

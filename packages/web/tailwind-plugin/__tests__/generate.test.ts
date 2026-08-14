@@ -162,11 +162,25 @@ describe('generateCSSVars - onlyOne 与 selector', () => {
 });
 
 describe('generateCSSVars - native 模式', () => {
-  it('native=true 时颜色变量输出 hex', () => {
+  it('native=true 时颜色变量输出 hex，并按 @variant 分组', () => {
     const result = generateCSSVars({}, true, true) as Record<string, Record<string, string>>;
 
-    expect(result[':root']['--background']).toMatch(/^#[0-9a-f]{6}$/i);
-    expect(result[':root']['--primary']).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(result['@variant light']['--background']).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(result['@variant light']['--primary']).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(result['@variant dark']['--background']).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+
+  it('native=true 时不输出 .dark class 选择器（Uniwind 原生端不解析 class）', () => {
+    const result = generateCSSVars({}, true, true) as Record<string, unknown>;
+
+    expect(result['.dark']).toBeUndefined();
+    expect(Object.keys(result[':root'] as object)).toEqual(['--radius']);
+  });
+
+  it('native=true 时 light / dark 变量集合完全一致（Uniwind 要求各主题变量对齐）', () => {
+    const result = generateCSSVars({}, true, true) as Record<string, Record<string, string>>;
+
+    expect(Object.keys(result['@variant light']).toSorted()).toEqual(Object.keys(result['@variant dark']).toSorted());
   });
 
   it('native=false（默认）时输出 HSL 三元组', () => {

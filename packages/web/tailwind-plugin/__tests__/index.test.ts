@@ -149,7 +149,7 @@ describe('skyrocUIPlugin - handler', () => {
     expect(base['[data-mode="dark"]']).toBeDefined();
   });
 
-  it('platform=native 时 addBase 中的颜色变量为 hex', () => {
+  it('platform=native 时 addBase 中的颜色变量为 hex 且挂在 @variant 上', () => {
     const addUtilities = vi.fn();
     const addBase = vi.fn();
 
@@ -157,7 +157,18 @@ describe('skyrocUIPlugin - handler', () => {
     (skyrocUIPlugin({ platform: 'native' }).handler as (api: any) => void)(ctx);
 
     const base = addBase.mock.calls[0][0] as Record<string, Record<string, string>>;
-    expect(base[':root']['--primary']).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(base['@variant light']['--primary']).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+
+  it('platform=native 时不注入 DOM 专属基础样式（body / .lucide / html.size-*）', () => {
+    const addUtilities = vi.fn();
+    const addBase = vi.fn();
+
+    const ctx = { addBase, addUtilities } as any;
+    (skyrocUIPlugin({ platform: 'native' }).handler as (api: any) => void)(ctx);
+
+    const base = addBase.mock.calls[0][0] as Record<string, unknown>;
+    expect(Object.keys(base)).toEqual([':root', '@variant light', '@variant dark']);
   });
 
   it('globals=false 时不注入全局样式（无 body / *）', () => {
