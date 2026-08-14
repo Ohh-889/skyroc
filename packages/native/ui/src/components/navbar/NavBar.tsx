@@ -1,21 +1,23 @@
 import Octicons from '@expo/vector-icons/Octicons';
 import { cn, isString } from '@skyroc/utils';
-import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '../text/Typography';
 import { navBarVariants } from './navbar-variants';
 import type { NavBarProps } from './types';
 
-/** 导航栏组件 */
+/**
+ * 导航栏组件。
+ *
+ * 刻意不依赖任何路由方案：返回行为由使用方通过 onLeftPress 注入，组件只负责布局与样式。
+ */
 const NavBar = (props: NavBarProps) => {
   const {
-    backColor = '#09090b',
+    backColor,
     border = true,
     className,
     classNames,
     left,
-    leftArrow = true,
+    leftArrow = false,
     leftDisabled = false,
     leftText,
     onLeftPress,
@@ -28,22 +30,7 @@ const NavBar = (props: NavBarProps) => {
     title
   } = props;
 
-  const slots = navBarVariants({ border, leftDisabled, rightDisabled });
-
-  const insets = useSafeAreaInsets();
-
-  const isCanGoBack = router.canGoBack();
-
-  const hasLeft = left || leftArrow || leftText;
-  const hasRight = right || rightText;
-
-  function hanldeLeftPress() {
-    if (onLeftPress) {
-      onLeftPress?.();
-    } else {
-      router.back();
-    }
-  }
+  const slots = navBarVariants({ border, leftDisabled, rightDisabled, safeAreaTop });
 
   function renderLeft() {
     if (left) return left;
@@ -52,13 +39,16 @@ const NavBar = (props: NavBarProps) => {
 
     return (
       <>
-        {leftArrow && isCanGoBack && (
-          <Octicons
-            color={backColor}
-            name="chevron-left"
-            size={24}
-          />
-        )}
+        {/* 包一层 Text 让图标在未显式指定 backColor 时继承主题前景色 */}
+        {leftArrow ? (
+          <Text>
+            <Octicons
+              color={backColor}
+              name="chevron-left"
+              size={24}
+            />
+          </Text>
+        ) : null}
         {leftText ? <Text className="text-sm">{leftText}</Text> : null}
       </>
     );
@@ -72,30 +62,59 @@ const NavBar = (props: NavBarProps) => {
     return <Text className="text-sm text-primary">{rightText}</Text>;
   }
 
+  function renderTitle() {
+    if (!title) return null;
+
+    const titleClass = cn(slots.title(), classNames?.title);
+
+    const content = isString(title) ? (
+      <Text
+        className="font-semibold"
+        numberOfLines={1}
+      >
+        {title}
+      </Text>
+    ) : (
+      title
+    );
+
+    // 标题铺满整行，不可点时必须让出触摸，否则会盖掉两侧按钮
+    if (!onTitlePress) {
+      return (
+        <View
+          className={titleClass}
+          pointerEvents="none"
+        >
+          {content}
+        </View>
+      );
+    }
+
+    return (
+      <Pressable
+        className={titleClass}
+        onPress={onTitlePress}
+      >
+        {content}
+      </Pressable>
+    );
+  }
+
   const leftContent = renderLeft();
   const rightContent = renderRight();
 
   return (
-    <View style={safeAreaTop ? { paddingTop: insets.top } : undefined}>
+    <View className={cn(slots.container(), classNames?.container)}>
       <View className={cn(slots.root(), className)}>
-        {/* Title - 绝对定位居中，不受两侧内容宽度影响 */}
-        {title && (
-          <Pressable
-            className={cn(slots.title(), classNames?.title)}
-            disabled={!onTitlePress}
-            onPress={onTitlePress}
-          >
-            {isString(title) ? <Text className="text-base font-semibold text-foreground">{title}</Text> : title}
-          </Pressable>
-        )}
+        {renderTitle()}
 
-        {/* Left */}
-        {hasLeft ? (
+        {/* 左右两侧即使无内容也保留占位，维持 justify-between 的两端对齐 */}
+        {leftContent ? (
           <Pressable
             className={cn(slots.left(), classNames?.left)}
+            disabled={leftDisabled || !onLeftPress}
             hitSlop={5}
-            disabled={leftDisabled}
-            onPress={hanldeLeftPress}
+            onPress={onLeftPress}
           >
             {leftContent}
           </Pressable>
@@ -103,12 +122,11 @@ const NavBar = (props: NavBarProps) => {
           <View />
         )}
 
-        {/* Right */}
-        {hasRight ? (
+        {rightContent ? (
           <Pressable
-            hitSlop={5}
             className={cn(slots.right(), classNames?.right)}
             disabled={rightDisabled || !onRightPress}
+            hitSlop={5}
             onPress={onRightPress}
           >
             {rightContent}
