@@ -153,6 +153,28 @@ export type DefineAdminViteConfig<E extends AdminViteEnv = AdminViteEnv> =
   | DefineAdminViteConfigFactory<E>;
 
 const DEFAULT_REACT_DEDUPE = ['react', 'react-dom', 'react/jsx-dev-runtime', 'react/jsx-runtime'];
+
+// 这几个库都把状态挂在模块作用域上（i18n 实例、React context、cssinjs 样式注册表、jotai store），
+// 装出第二份就等于多一套互相看不见的全局状态。pnpm 只要 peer 解析分叉——比如 workspace 包
+// 声明了 react 却漏了 react-dom，peer 就会落到另一个版本上——就会给 app 和包各装一份。
+//
+// 实测踩到的两个后果：
+//   - react-i18next 双份：包里 initReactI18next 注册的实例，app 的 useTranslation() 读不到，
+//     控制台报 NO_I18NEXT_INSTANCE，页面把 key 原样渲染出来；
+//   - antd 双份：第二个实例拿不到 AntdProvider 的 DesignTokenContext，回退成 antd 默认主题，
+//     自己往页面注入一整块 `.css-var-root{--ant-*}`，用它渲染的组件全是默认配色。
+//
+// 去重只是护栏，真正的根因要在各包的 package.json 里把 react/react-dom 声明齐。
+const DEFAULT_SINGLETON_DEDUPE = [
+  'i18next',
+  'react-i18next',
+  'antd',
+  '@ant-design/cssinjs',
+  '@ant-design/icons',
+  'jotai',
+  '@tanstack/react-query',
+  '@tanstack/react-router'
+];
 const DEFAULT_WARMUP_CLIENT_FILES = ['./index.html', './src/{pages,components}/*'];
 
 export function defineConfig<_E extends AdminViteEnv = AdminViteEnv>(): UserConfigExport;
@@ -282,7 +304,7 @@ function createResolveOptions(resolveOptions: AdminViteResolveOptions | undefine
 
   return {
     alias,
-    dedupe: dedupeReact ? DEFAULT_REACT_DEDUPE : undefined
+    dedupe: [...(dedupeReact ? DEFAULT_REACT_DEDUPE : []), ...DEFAULT_SINGLETON_DEDUPE]
   };
 }
 
