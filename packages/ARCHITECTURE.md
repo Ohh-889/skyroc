@@ -22,8 +22,8 @@ packages/
 │   ├── tailwind-plugin/
 │   └── materials/
 ├── native/                      # ← Native 端一整棵
-│   ├── ui/                      # @skyroc/native-ui
-│   └── theme/                   # @skyroc/native-theme
+│   ├── ui/                      # @skyroc/native-ui        ✅ 已落地(Uniwind / Tailwind v4)
+│   └── theme/   (预留,将来)      # @skyroc/native-theme
 └── miniapp/   (预留,将来)        # ← 小程序端一整棵
     ├── ui/                      # @skyroc/miniapp-ui
     └── theme/
@@ -40,6 +40,20 @@ packages/
 | 小程序端(将来) | `@skyroc/miniapp-*` | `@skyroc/miniapp-ui`, `@skyroc/miniapp-theme` |
 
 > **不要再起 `@skyroc/ui` 这种"裸名包"**——多端并存时无法判断它属于哪一端。
+
+### 各端样式方案
+
+| 端      | 样式方案                                    | 变体写法           | 构建期配置位置              |
+| ------- | ------------------------------------------- | ------------------ | --------------------------- |
+| web     | Tailwind v4 + `@skyroc/tailwind-plugin`     | `tailwind-variants`| 各 app 的 vite 配置         |
+| native  | [Uniwind](https://docs.uniwind.dev) (TW v4) | `tailwind-variants`| 各 app 的 `metro.config.js` |
+| miniapp | (待定)                                      | —                  | —                           |
+
+Native 侧的关键约定:
+
+- 组件库自身**不含任何构建期配置**,`withUniwindConfig` / `global.css` 全部落在宿主 App
+- Tailwind v4 以宿主 `global.css` 所在目录为扫描根,消费组件库时必须写 `@source` 指向库源码,否则库里的 className 编译不出样式
+- 设计令牌来自 `packages/shared/ui-tokens`,由 `@skyroc/native-ui` 的 `src/styles/theme.css` 翻译成 Tailwind v4 的 `@theme` / `@variant` CSS 变量
 
 ### 为什么不把 UI 提到 `packages/ui/<platform>/`
 
