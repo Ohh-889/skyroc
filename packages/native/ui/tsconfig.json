@@ -1,0 +1,18 @@
+{
+  "extends": "@skyroc/tsconfig/react-native.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "outDir": "dist",
+    "types": [
+      "react-native"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
