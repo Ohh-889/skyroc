@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": [ "./react.json" ],
+  "globals": {
+    "__DEV__": "readonly",
+    "__turboModuleProxy": "readonly",
+    "ErrorUtils": "readonly",
+    "HermesInternal": "readonly",
+    "nativeFabricUIManager": "readonly",
+    "_WORKLET": "readonly"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/no-unescaped-entities": "off",
+    "no-use-before-define": [
+      "error",
+      {
+        "variables": false
+      }
+    ]
+  }
+}

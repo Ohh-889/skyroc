@@ -54,18 +54,8 @@
     "./components": "./src/components/index.ts",
     "./theme.css": "./src/styles/theme.css"
   },
-  "peerDependencies": {
-    "react": ">=19.0.0",
-    "react-native": ">=0.81.0",
-    "tailwindcss": ">=4",
-    "uniwind": ">=1.7.0"
-  },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -80,7 +70,11 @@
         }
       },
       "./theme.css": "./dist/styles/theme.css"
-    }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "tsdown",
@@ -98,6 +92,7 @@
     "@skyroc/tsconfig": "workspace:*",
     "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
+    "eslint-plugin-sort": "catalog:dev",
     "oxlint": "catalog:dev",
     "react": "catalog:native",
     "react-native": "catalog:native",
@@ -106,6 +101,11 @@
     "tsdown": "catalog:dev",
     "typescript": "catalog:core",
     "uniwind": "catalog:native"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.81.0",
+    "tailwindcss": ">=4",
+    "uniwind": ">=1.7.0"
   }
-
 }

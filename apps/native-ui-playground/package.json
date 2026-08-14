@@ -1,20 +1,19 @@
 {
   "name": "native-ui-playground",
-  "main": "expo-router/entry",
   "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "prebuild": "expo prebuild --clean",
+    "prebuild:ios": "expo prebuild --platform ios --clean",
     "test": "jest --watchAll",
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "lint": "expo lint",
+    "lint": "oxlint --fix",
     "deploy": "npx expo export -p web && npx eas-cli@latest deploy"
-  },
-  "jest": {
-    "preset": "jest-expo"
   },
   "dependencies": {
     "@react-navigation/native": "^7.0.0",
@@ -39,10 +38,14 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/react": "~19.2.14",
+    "eslint-plugin-sort": "catalog:dev",
     "jest": "^29.2.1",
     "jest-expo": "~57.0.0",
+    "oxlint": "catalog:dev",
     "react-test-renderer": "19.1.0",
     "typescript": "~6.0.3"
   },
-  "private": true
+  "jest": {
+    "preset": "jest-expo"
+  }
 }

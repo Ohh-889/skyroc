@@ -29,6 +29,7 @@
     ".claude",
     ".agents",
     "pnpm-lock.yaml",
-    "routeTree.gen.ts"
+    "routeTree.gen.ts",
+    "uniwind-types.d.ts"
   ]
 }
