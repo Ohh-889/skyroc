@@ -81,11 +81,13 @@
   },
   "dependencies": {
     "@skyroc/axios": "workspace:*",
-    "@tanstack/react-query": "catalog:core"
+    "@tanstack/react-query": "catalog:core",
+    "node-forge": "catalog:utils"
   },
   "devDependencies": {
     "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
+    "@types/node-forge": "catalog:dev",
     "oxlint": "catalog:dev",
     "rimraf": "catalog:dev",
     "tsdown": "catalog:dev",

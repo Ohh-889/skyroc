@@ -1,7 +1,7 @@
 import type { InternalAxiosRequestConfig } from 'axios';
 import { AxiosHeaders } from 'axios';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { seal } from '../src/crypto/envelope';
+import { importPublicKey, seal } from '../src/crypto/envelope';
 import { createRequestSealer } from '../src/crypto/seal-request';
 
 const HEADER = 'X-Encrypt-Key';
@@ -33,7 +33,12 @@ function fromBase64(base64: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(atob(base64), char => char.charCodeAt(0));
 }
 
-/** 后端 unseal 的等价实现，用来验证前端发出去的密文确实解得开 */
+/**
+ * 后端 unseal 的等价实现，用来验证前端发出去的密文确实解得开。
+ *
+ * 刻意用 WebCrypto 而不是 node-forge 解：加解密两头是两套独立实现，
+ * forge 这边算错了参数（OAEP 的 hash、GCM 的 tag 位置）这里就会失败。
+ */
 async function unseal(sealedKey: string, body: string): Promise<string> {
   const rawKey = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, privateKey, fromBase64(sealedKey));
   const aesKey = await crypto.subtle.importKey('raw', rawKey, 'AES-GCM', false, ['decrypt']);
@@ -54,17 +59,15 @@ function createConfig(overrides: Partial<InternalAxiosRequestConfig> = {}): Inte
 
 describe('seal', () => {
   it('produces a payload the holder of the private key can decrypt', async () => {
-    const key = await crypto.subtle.importKey(
-      'spki',
-      fromBase64(publicKeyPem.replace(/-----[^-]+-----/g, '').replace(/\\n/g, '')),
-      { hash: 'SHA-256', name: 'RSA-OAEP' },
-      false,
-      ['encrypt']
-    );
-
-    const { body, sealedKey } = await seal('{"userName":"admin"}', key);
+    const { body, sealedKey } = seal('{"userName":"admin"}', importPublicKey(publicKeyPem));
 
     expect(await unseal(sealedKey, body)).toBe('{"userName":"admin"}');
+  });
+
+  it('round-trips non-ascii bodies', async () => {
+    const { body, sealedKey } = seal('{"nickName":"超级管理员"}', importPublicKey(publicKeyPem));
+
+    expect(await unseal(sealedKey, body)).toBe('{"nickName":"超级管理员"}');
   });
 });
 

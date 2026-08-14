@@ -7,6 +7,7 @@
 
 import type { InternalAxiosRequestConfig } from 'axios';
 
+import type { ApiPublicKey } from './envelope';
 import { importPublicKey, seal } from './envelope';
 import type { ApiCryptoOptions } from './types';
 
@@ -28,8 +29,8 @@ declare module 'axios' {
  * 真正标了 `encrypt: true` 的请求会在发出前抛错，不会退化成明文发出去。
  */
 export function createRequestSealer(options?: ApiCryptoOptions) {
-  // 公钥导入一次就够，之后每个请求复用同一个 CryptoKey
-  let publicKey: Promise<CryptoKey> | null = null;
+  // 公钥解析一次就够，之后每个请求复用同一个 key
+  let publicKey: ApiPublicKey | null = null;
 
   return async function sealRequest(config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
     if (!config.encrypt) {
@@ -42,7 +43,7 @@ export function createRequestSealer(options?: ApiCryptoOptions) {
 
     publicKey ??= importPublicKey(options.publicKey);
 
-    const { body, sealedKey } = await seal(toPlaintext(config.data), await publicKey);
+    const { body, sealedKey } = seal(toPlaintext(config.data), publicKey);
 
     config.data = body;
     config.headers.set(options.header, sealedKey);

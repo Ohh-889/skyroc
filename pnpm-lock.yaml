@@ -74,6 +74,9 @@ catalogs:
     '@types/node':
       specifier: ^24.10.2
       version: 24.10.13
+    '@types/node-forge':
+      specifier: ^1.3.14
+      version: 1.3.14
     '@types/nprogress':
       specifier: ^0.2.3
       version: 0.2.3
@@ -278,6 +281,9 @@ catalogs:
     nanoid:
       specifier: ^5.0.9
       version: 5.1.6
+    node-forge:
+      specifier: ^1.4.0
+      version: 1.4.0
     qs:
       specifier: ^6.14.0
       version: 6.15.0
@@ -1815,6 +1821,9 @@ importers:
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.2.6)
+      node-forge:
+        specifier: catalog:utils
+        version: 1.4.0
     devDependencies:
       '@skyroc/config':
         specifier: workspace:*
@@ -1822,6 +1831,9 @@ importers:
       '@skyroc/tsconfig':
         specifier: workspace:*
         version: link:../../../internal/tsconfig
+      '@types/node-forge':
+        specifier: catalog:dev
+        version: 1.3.14
       oxlint:
         specifier: catalog:dev
         version: 1.60.0
@@ -8274,6 +8286,9 @@ packages:
   '@types/node-fetch@2.6.13':
     resolution: {integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==}
 
+  '@types/node-forge@1.3.14':
+    resolution: {integrity: sha512-mhVF2BnD4BO+jtOp7z1CdzaK4mbuK0LLQYAvdOLqHTavxFNq4zA1EmYkpnFjP8HOUzedfQkRnp0E2ulSAYSzAw==}
+
   '@types/node@18.19.130':
     resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
 
@@ -12690,6 +12705,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-forge@1.4.0:
+    resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
+    engines: {node: '>= 6.13.0'}
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -22049,6 +22068,10 @@ snapshots:
       '@types/node': 25.9.1
       form-data: 4.0.5
 
+  '@types/node-forge@1.3.14':
+    dependencies:
+      '@types/node': 25.9.1
+
   '@types/node@18.19.130':
     dependencies:
       undici-types: 5.26.5
@@ -27816,6 +27839,8 @@ snapshots:
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
+
+  node-forge@1.4.0: {}
 
   node-int64@0.4.0: {}
 
