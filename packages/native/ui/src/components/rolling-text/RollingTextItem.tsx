@@ -12,8 +12,13 @@ const RollingTextItem = (props: RollingTextItemProps) => {
   /** 整列除首项外的可滚动距离 */
   const totalHeight = (figureArr.length - 1) * height;
 
-  /** down 时序列倒序渲染，配合 -totalHeight → 0 的位移，字符自上而下推入 */
-  const displayArr = direction === 'down' ? figureArr.toReversed() : figureArr;
+  /**
+   * down 时序列倒序渲染，配合 -totalHeight → 0 的位移，字符自上而下推入。
+   *
+   * 不用 toReversed 是因为 Hermes 和旧版 JSC 都还没实现 ES2023 的 change-array-by-copy；
+   * 展开已经产出副本，就地 reverse 不会动到入参。
+   */
+  const displayArr = direction === 'down' ? [...figureArr].reverse() : figureArr;
 
   const fromValue = direction === 'down' ? -totalHeight : 0;
   const toValue = direction === 'down' ? 0 : -totalHeight;
