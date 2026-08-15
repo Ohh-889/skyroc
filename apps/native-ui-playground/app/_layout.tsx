@@ -1,3 +1,4 @@
+import { PortalHost } from '@skyroc/native-ui';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 // Uniwind's CSS entry. Must be imported from the root component, not from index.js — importing it there downgrades
@@ -47,6 +48,9 @@ export default function RootLayout() {
           // oxlint-disable-next-line react/style-prop-object
           style="auto"
         />
+
+        {/* 所有 portal 节点（Toast 等）的宿主，必须放在 Stack 之后才能盖在页面之上 */}
+        <PortalHost />
       </View>
     </GestureHandlerRootView>
   );

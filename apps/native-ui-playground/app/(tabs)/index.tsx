@@ -67,6 +67,14 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
+        onPress={() => router.push('/components/toast')}
+      >
+        Press Me
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
         onPress={() => router.push('/components/tabs')}
       >
         Press Me
