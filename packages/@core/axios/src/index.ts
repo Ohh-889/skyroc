@@ -146,7 +146,7 @@ export function createRequest<ResponseData, ApiData, State extends Record<string
   } as RequestInstance<ApiData, State>;
 
   request.cancelAllRequest = cancelAllRequest;
-  request.state = {} as State;
+  request.state = { ...opts.defaultState } as State;
 
   return request;
 }

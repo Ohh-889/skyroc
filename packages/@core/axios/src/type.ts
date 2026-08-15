@@ -28,13 +28,19 @@ export interface RequestOption<
    *
    * For example: You can handle the expired token in this hook
    *
+   * 返回一个响应表示这次失败已被就地补救（典型是续签后重试），调用方拿到的是它而不是错误；
+   * 返回空则继续走 onError 并 reject。
+   *
+   * 写成单个联合返回值而不是 `Promise<AxiosResponse | null> | Promise<void>`：后者让「忘记
+   * return」变成合法实现，重试结果会被静默丢掉。
+   *
    * @param response Axios response
    * @param instance Axios instance
    */
   onBackendFail: (
     response: AxiosResponse<ResponseData>,
     instance: AxiosInstance
-  ) => Promise<AxiosResponse | null> | Promise<void>;
+  ) => Promise<AxiosResponse | null | void>;
   /**
    * The hook to handle error
    *

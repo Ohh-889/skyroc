@@ -25,6 +25,9 @@ export async function handleRefreshToken(adapter: RequestAdapter): Promise<boole
 
     return true;
   } catch {
+    // 换不回来说明 refresh token 也废了，留着只会让下一次请求再走一遍失败的续签
+    adapter.resetAuth();
+
     const fullPath = adapter.getCurrentPath();
     adapter.redirectToLogin(fullPath);
 

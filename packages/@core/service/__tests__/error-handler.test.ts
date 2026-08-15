@@ -1,5 +1,6 @@
 import { BACKEND_ERROR_CODE } from '@skyroc/axios';
 import type { RequestInstance } from '@skyroc/axios';
+import { AxiosHeaders } from 'axios';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { backEndFail, handleError } from '../src/request/error-handler';
@@ -47,7 +48,8 @@ function createMockRequest(stateOverrides: Partial<RequestInstanceState> = {}) {
 function createMockResponse(code: string, msg = 'error', config: Record<string, unknown> = {}) {
   return {
     data: { code, data: null, msg },
-    config: { headers: {}, ...config }
+    // 用真的 AxiosHeaders：重试分支走的是 headers.set()，普通对象会静默少掉认证头
+    config: { headers: new AxiosHeaders(), ...config }
   } as unknown as AxiosResponse<{ code: string | number; data: any; msg: string }>;
 }
 
@@ -62,6 +64,7 @@ describe('backEndFail', () => {
 
     expect(result).toBeNull();
     expect(adapter.showErrorMessage).toHaveBeenCalledWith('request.logoutMsg');
+    expect(adapter.resetAuth).toHaveBeenCalled();
     expect(adapter.redirectToLogin).toHaveBeenCalledWith('/dashboard');
   });
 
@@ -95,6 +98,7 @@ describe('backEndFail', () => {
     const modalCall = vi.mocked(adapter.showErrorModal).mock.calls[0]![0];
     modalCall.onConfirm();
 
+    expect(adapter.resetAuth).toHaveBeenCalled();
     expect(adapter.redirectToLogin).toHaveBeenCalledWith('/dashboard');
     expect(removeListenerSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function));
     expect(request.state.errMsgStack).not.toContain('Session expired');
@@ -137,6 +141,8 @@ describe('backEndFail', () => {
     expect(adapter.fetchRefreshToken).toHaveBeenCalled();
     expect(adapter.setAuth).toHaveBeenCalled();
     expect(instance.request).toHaveBeenCalledWith(response.config);
+    // 重试必须带上刷新后的认证头，否则重试的结果还是过期码
+    expect((response.config.headers as AxiosHeaders).get('Authorization')).toBe('Bearer access-tok');
     expect(result).toBe(retryResponse);
   });
 

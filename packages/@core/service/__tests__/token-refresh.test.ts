@@ -66,6 +66,8 @@ describe('handleRefreshToken', () => {
 
     const result = await handleRefreshToken(adapter);
 
+    // refresh token 也废了，凭据必须一起清掉，否则下次请求还会再走一遍必败的续签
+    expect(adapter.resetAuth).toHaveBeenCalled();
     expect(adapter.redirectToLogin).toHaveBeenCalledWith('/current');
     expect(result).toBe(false);
   });

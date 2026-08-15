@@ -231,11 +231,14 @@ request.state.errMsgStack;
 ```
 后端返回非成功码
     │
-    ├─ logout codes     → showErrorMessage + 跳转登录页
-    ├─ modalLogout codes → showErrorModal + 确认后登出
-    ├─ expiredToken codes → 自动刷新 token + 重试原请求
+    ├─ logout codes     → showErrorMessage + resetAuth + 跳转登录页
+    ├─ modalLogout codes → showErrorModal + 确认后 resetAuth + 登出
+    ├─ expiredToken codes → 自动刷新 token + 重试原请求（重试的响应交回调用方）
     └─ 其他              → 抛出 AxiosError（由 onError 兜底展示 toast）
 ```
+
+登出和续签失败都由本包调 `adapter.resetAuth()` 清凭据，`redirectToLogin` 只负责「跳到哪」——
+平台不必在路由里再清一遍（清了也无妨，`resetAuth` 是幂等的）。
 
 ### 接口传输加密
 
@@ -382,11 +385,14 @@ import {
 ```
 showErrorMsg("网络异常")  → 展示 ✅
 showErrorMsg("网络异常")  → 跳过（栈中已存在）
-       ↓ 用户关闭消息
+       ↓ 用户关闭消息（onClose）
 showErrorMsg("网络异常")  → 展示 ✅（已从栈移除）
-       ↓ 5 秒后
-消息栈自动清空
 ```
+
+每条消息只管自己那一个去重位，关掉一条不影响其他还在展示的消息。
+
+`onClose` 是可选的，平台可以不回调（RN 的 `Alert.alert` 就没有）。这种情况下 5 秒后自动释放去重位——
+否则那条消息会永远占着栈，此后再也弹不出来。
 
 ## 适用场景
 

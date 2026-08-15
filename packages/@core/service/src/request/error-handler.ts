@@ -16,6 +16,10 @@ export async function backEndFail(
   const responseCode = String(response.data.code);
 
   function handleLogout() {
+    // 先清凭据再跳：平台的 redirectToLogin 只负责「跳到哪」，清不清由这一层说了算，
+    // 否则没在路由里顺手清的平台会带着一份废凭据停在登录页。
+    adapter.resetAuth();
+
     const fullPath = adapter.getCurrentPath();
     adapter.redirectToLogin(fullPath);
   }
@@ -60,8 +64,7 @@ export async function backEndFail(
   if (codes.expiredToken.includes(responseCode) && !response.config?.isRefreshToken) {
     const success = await refreshToken(adapter);
     if (success) {
-      const Authorization = getAuthorization(adapter);
-      Object.assign(response.config.headers, { Authorization });
+      response.config.headers.set('Authorization', getAuthorization(adapter));
       return instance.request(response.config) as Promise<AxiosResponse>;
     }
   }

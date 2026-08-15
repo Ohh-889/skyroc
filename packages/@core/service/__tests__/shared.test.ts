@@ -101,6 +101,15 @@ describe('showErrorMsg', () => {
     expect(state.errMsgStack).toContain('Something went wrong');
   });
 
+  it('initializes the stack when the request instance has none', () => {
+    const adapter = createMockAdapter();
+    const state = createState({ errMsgStack: undefined as any });
+
+    showErrorMsg(adapter, state, 'Something went wrong');
+
+    expect(state.errMsgStack).toEqual(['Something went wrong']);
+  });
+
   it('does not show duplicate messages', () => {
     const adapter = createMockAdapter();
     const state = createState({ errMsgStack: ['Something went wrong'] });
@@ -124,10 +133,51 @@ describe('showErrorMsg', () => {
     expect(state.errMsgStack).toContain('Error msg');
 
     onCloseCallback!();
-    expect(state.errMsgStack).not.toContain('Error msg');
+    expect(state.errMsgStack).toEqual([]);
+
+    vi.useRealTimers();
+  });
+
+  it('关掉一条不动其他消息 —— 早先的 5 秒全量清空会让它们绕过去重再弹一次', () => {
+    vi.useFakeTimers();
+    const closers = new Map<string, () => void>();
+    const adapter = createMockAdapter({
+      showErrorMessage: vi.fn((msg: string, onClose?: () => void) => {
+        closers.set(msg, onClose!);
+      })
+    });
+    const state = createState();
+
+    showErrorMsg(adapter, state, '第一条');
+    showErrorMsg(adapter, state, '第二条');
+
+    closers.get('第一条')!();
+    // 停在第二条自己的看门狗到期之前：这段时间里它该一直占着去重位
+    vi.advanceTimersByTime(4000);
+
+    expect(state.errMsgStack).toEqual(['第二条']);
+
+    // 还在展示的那条不能因为别人被关掉就重新弹出来
+    showErrorMsg(adapter, state, '第二条');
+    expect(adapter.showErrorMessage).toHaveBeenCalledTimes(2);
+
+    vi.useRealTimers();
+  });
+
+  it('平台不回调 onClose 时也会到点释放去重位', () => {
+    vi.useFakeTimers();
+    // RN 的 Alert.alert 就是这样，没有关闭回调
+    const adapter = createMockAdapter({ showErrorMessage: vi.fn() });
+    const state = createState();
+
+    showErrorMsg(adapter, state, '网络异常');
+    expect(state.errMsgStack).toEqual(['网络异常']);
 
     vi.advanceTimersByTime(5000);
     expect(state.errMsgStack).toEqual([]);
+
+    showErrorMsg(adapter, state, '网络异常');
+    expect(adapter.showErrorMessage).toHaveBeenCalledTimes(2);
 
     vi.useRealTimers();
   });
