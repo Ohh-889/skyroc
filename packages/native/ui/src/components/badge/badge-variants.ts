@@ -23,10 +23,13 @@ export const badgeVariants = tv({
       warning: { badge: 'bg-warning', content: 'text-warning-foreground', dot: 'bg-warning' },
       info: { badge: 'bg-info', content: 'text-info-foreground', dot: 'bg-info' }
     },
+    // 尺寸的两条硬约束：
+    // 1. 单字符要成正圆 —— min-w 必须 ≥ 字宽 + 左右 padding + 2px 描边，否则内容会把宽度撑得比 h 大；
+    // 2. 文字要能上下居中 —— leading 必须 < 高度 - 2px 描边，Text 才装得进内容盒，由 justify-center 定位。
     size: {
-      sm: { badge: 'h-3.5 min-w-3.5 px-1', content: 'text-2xs', dot: 'h-1.5 w-1.5' },
-      md: { badge: 'h-4 min-w-4 px-1', content: 'text-xs', dot: 'h-2 w-2' },
-      lg: { badge: 'h-5 min-w-5 px-1.5', content: 'text-sm', dot: 'h-2.5 w-2.5' }
+      sm: { badge: 'h-4 min-w-4 px-0.5', content: 'text-2xs leading-3', dot: 'h-1.5 w-1.5' },
+      md: { badge: 'h-5 min-w-5 px-1', content: 'text-xs leading-3.5', dot: 'h-2 w-2' },
+      lg: { badge: 'h-6 min-w-6 px-1.5', content: 'text-sm leading-4', dot: 'h-2.5 w-2.5' }
     }
   },
   defaultVariants: {

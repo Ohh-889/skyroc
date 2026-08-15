@@ -1,6 +1,6 @@
 import { cn, isNil, isNumber, isString } from '@skyroc/utils';
 import { isValidElement } from 'react';
-import type { ViewStyle } from 'react-native';
+import type { TextStyle, ViewStyle } from 'react-native';
 import { View } from 'react-native';
 import { Text } from '../text/Typography';
 import { badgeVariants } from './badge-variants';
@@ -8,6 +8,9 @@ import type { BadgePosition, BadgeProps } from './types';
 
 /** ViewStyle.transform 的数组形态，排除 web 端的字符串写法，便于拼接 */
 type BadgeTransform = Exclude<NonNullable<ViewStyle['transform']>, string>;
+
+/** Android 的 includeFontPadding 会在字形上下补空白，把角标文字顶偏，这里关掉交给 leading + flex 居中（iOS 忽略该属性） */
+const contentTextStyle: TextStyle = { includeFontPadding: false };
 
 /** 四角锚点，把角标定位到 children 对应的角落 */
 const anchorStyles: Record<BadgePosition, ViewStyle> = {
@@ -82,7 +85,15 @@ const Badge = (props: BadgeProps) => {
       return displayContent;
     }
 
-    return <Text className={cn(contentCls(), classNames?.content)}>{displayContent}</Text>;
+    return (
+      <Text
+        className={cn(contentCls(), classNames?.content)}
+        numberOfLines={1}
+        style={contentTextStyle}
+      >
+        {displayContent}
+      </Text>
+    );
   }
 
   function renderBadge() {
