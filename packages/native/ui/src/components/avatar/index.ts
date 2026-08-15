@@ -1,4 +1,12 @@
 export { Avatar } from './Avatar';
-export { avatarVariants } from './avatar-variants';
-export type { AvatarVariantProps } from './avatar-variants';
-export type { AvatarProps, AvatarSlots } from './types';
+export { avatarGroupVariants, avatarVariants } from './avatar-variants';
+export type { AvatarGroupVariantProps, AvatarVariantProps } from './avatar-variants';
+export { AvatarGroup } from './AvatarGroup';
+export type {
+  AvatarGroupContextValue,
+  AvatarGroupProps,
+  AvatarGroupSlots,
+  AvatarProps,
+  AvatarSize,
+  AvatarSlots
+} from './types';

@@ -119,6 +119,14 @@ export default function HomeScreen() {
       >
         Input
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/avatar')}
+      >
+        Avatar
+      </Button>
     </View>
   );
 }
