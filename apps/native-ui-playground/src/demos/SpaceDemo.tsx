@@ -86,7 +86,7 @@ const SpaceDemo = () => {
       {/* Custom Size */}
       <Text className="mb-4 text-lg font-semibold">Custom Size (20px)</Text>
       <View className="mb-8">
-        <Space>
+        <Space size={20}>
           <View className="size-12 rounded-md bg-primary" />
           <View className="size-12 rounded-md bg-primary" />
           <View className="size-12 rounded-md bg-primary" />
