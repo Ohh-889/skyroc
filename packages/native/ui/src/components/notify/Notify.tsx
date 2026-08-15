@@ -1,16 +1,23 @@
-import { useEffect, useRef } from 'react';
-import { Pressable, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Text } from '../text/Typography';
-import { notifyVariants } from './notify-variants';
+import { useAutoClose } from '../../hooks/use-auto-close';
+import { resolveDuration } from './notify-defaults';
+import { NotifyView } from './NotifyView';
 import type { NotifyProps } from './types';
 
-const ENTER_DURATION = 200;
-
+/**
+ * Notify 声明式组件
+ *
+ * 受控展示：show 决定是否挂载，到点后只通知 onUpdateShow / onClose，真正的隐藏仍由调用方改 show 完成。 需要命令式调用请用 showNotify，两者的 duration 默认值共用
+ * resolveDuration，不会出现行为分叉。
+ *
+ * 不做贴边定位、也不补安全区：内联在页面里就是一条普通色块，贴边显示交给 NotifyRenderer。
+ */
 const Notify = (props: NotifyProps) => {
   const {
-    duration = 3000,
+    background,
+    className,
+    classNames,
+    color,
+    duration,
     message,
     onClick,
     onClose,
@@ -20,75 +27,26 @@ const Notify = (props: NotifyProps) => {
     type = 'danger'
   } = props;
 
-  const insets = useSafeAreaInsets();
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(position === 'top' ? -20 : 20);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
-
-  const variantSlots = notifyVariants({ type });
-
-  /** 变体槽合并成最终类名，集中一处，避免 JSX 里散落类名计算 */
-  function resolveSlotClassNames() {
-    return {
-      content: variantSlots.content(),
-      message: variantSlots.message(),
-      root: variantSlots.root()
-    };
-  }
-
-  const slotClassNames = resolveSlotClassNames();
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }]
-  }));
-
-  useEffect(() => {
-    if (show) {
-      opacity.value = withTiming(1, { duration: ENTER_DURATION });
-      translateY.value = withTiming(0, { duration: ENTER_DURATION });
-
-      if (duration > 0) {
-        timerRef.current = setTimeout(() => {
-          handleClose();
-        }, duration);
-      }
-    } else {
-      opacity.value = withTiming(0, { duration: 150 });
-      translateY.value = withTiming(position === 'top' ? -20 : 20, { duration: 150 });
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [show, duration, message, type]);
-
   function handleClose() {
     onUpdateShow?.(false);
     onClose?.();
   }
 
-  function handlePress() {
-    onClick?.();
-  }
+  useAutoClose(show, resolveDuration({ duration }), handleClose);
 
   if (!show) return null;
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Pressable
-        className={slotClassNames.root}
-        onPress={handlePress}
-      >
-        {position === 'top' && <View style={{ height: insets.top }} />}
-        <View className={slotClassNames.content}>
-          <Text className={slotClassNames.message}>{message}</Text>
-        </View>
-        {position === 'bottom' && <View style={{ height: insets.bottom }} />}
-      </Pressable>
-    </Animated.View>
+    <NotifyView
+      background={background}
+      className={className}
+      classNames={classNames}
+      color={color}
+      message={message}
+      position={position}
+      type={type}
+      onPress={onClick}
+    />
   );
 };
 

@@ -1,7 +1,7 @@
+import { useAutoClose } from '../../hooks/use-auto-close';
 import { resolveDuration } from './toast-defaults';
 import { ToastView } from './ToastView';
 import type { ToastProps } from './types';
-import { useAutoClose } from './use-auto-close';
 
 /**
  * Toast 声明式组件

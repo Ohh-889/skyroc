@@ -135,6 +135,14 @@ export default function HomeScreen() {
       >
         Collapse
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/notify')}
+      >
+        Notify
+      </Button>
     </View>
   );
 }

@@ -18,6 +18,8 @@ export * from './input';
 
 export * from './navbar';
 
+export * from './notify';
+
 export * from './popup';
 
 export * from './portal';

@@ -1,5 +1,5 @@
 export { closeNotify, resetNotifyDefaultOptions, setNotifyDefaultOptions, showNotify } from './function-call';
 export { Notify } from './Notify';
+export { notifyPositionVariants, notifyVariants } from './notify-variants';
 export { NotifyRenderer } from './NotifyRenderer';
-export { notifyVariants } from './notify-variants';
-export type { NotifyOptions, NotifyPosition, NotifyProps, NotifyType } from './types';
+export type { NotifyInstance, NotifyOptions, NotifyPosition, NotifyProps, NotifySlots, NotifyType } from './types';
