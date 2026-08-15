@@ -1,110 +1,76 @@
-import { Button, Text } from '@skyroc/native-ui';
-import { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { Text } from '@skyroc/native-ui';
+import type { ReactNode } from 'react';
+import { ScrollView, View } from 'react-native';
+import {
+  ButtonBlock,
+  ButtonColor,
+  ButtonDisabled,
+  ButtonLoading,
+  ButtonShape,
+  ButtonSize,
+  ButtonSlot,
+  ButtonVariant
+} from './button';
 
+/**
+ * Button 的总览页，逐节复用 ./button 下的单点 demo。
+ * 文档站按节引用同一批文件（<Demo src="@playground/button/ButtonColor" />），
+ * 所以这里只负责串场，不要把示例代码写回本文件。
+ */
 const ButtonDemo = () => {
-  const [loading, setLoading] = useState(false);
+  return (
+    <ScrollView className="flex-1 bg-background">
+      <Section title="Variants">
+        <ButtonVariant />
+      </Section>
 
-  function handleLoadingPress() {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
-  }
+      <Section title="Colors">
+        <ButtonColor />
+      </Section>
+
+      <Section title="Sizes">
+        <ButtonSize />
+      </Section>
+
+      <Section title="Shapes">
+        <ButtonShape />
+      </Section>
+
+      <Section title="Block">
+        <ButtonBlock />
+      </Section>
+
+      <Section title="Slots">
+        <ButtonSlot />
+      </Section>
+
+      <Section title="Loading">
+        <ButtonLoading />
+      </Section>
+
+      <Section title="Disabled">
+        <ButtonDisabled />
+      </Section>
+    </ScrollView>
+  );
+};
+
+interface SectionProps {
+  /** 该节的 demo */
+  children: ReactNode;
+
+  /** 节标题 */
+  title: string;
+}
+
+const Section = (props: SectionProps) => {
+  const { children, title } = props;
 
   return (
-    <ScrollView className="flex-1 bg-background p-6">
-      {/* Variants */}
-      <Text className="mb-4 text-lg font-semibold">Variants</Text>
-      <View className="mb-8 gap-3">
-        <Button
-          variant="solid"
-          onPress={() => Alert.alert('Solid')}
-        >
-          Solid
-        </Button>
-        <Button variant="tonal">Tonal</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="ghost">Ghost</Button>
-      </View>
-
-      {/* Colors */}
-      <Text className="mb-4 text-lg font-semibold">Colors</Text>
-      <View className="mb-8 gap-3">
-        <Button color="primary">Primary</Button>
-        <Button color="secondary">Secondary</Button>
-        <Button color="destructive">Destructive</Button>
-        <Button color="success">Success</Button>
-        <Button color="warning">Warning</Button>
-        <Button color="info">Info</Button>
-      </View>
-
-      {/* Tonal Colors */}
-      <Text className="mb-4 text-lg font-semibold">Tonal Colors</Text>
-      <View className="mb-8 gap-3">
-        <Button
-          variant="tonal"
-          color="primary"
-        >
-          Primary
-        </Button>
-        <Button
-          variant="tonal"
-          color="destructive"
-        >
-          Destructive
-        </Button>
-        <Button
-          variant="tonal"
-          color="success"
-        >
-          Success
-        </Button>
-        <Button
-          variant="tonal"
-          color="warning"
-        >
-          Warning
-        </Button>
-        <Button
-          variant="tonal"
-          color="info"
-        >
-          Info
-        </Button>
-      </View>
-
-      {/* Sizes */}
-      <Text className="mb-4 text-lg font-semibold">Sizes</Text>
-      <View className="mb-8 gap-3">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
-      </View>
-
-      {/* Shapes */}
-      <Text className="mb-4 text-lg font-semibold">Shapes</Text>
-      <View className="mb-8 flex-row gap-3">
-        <Button shape="rounded">Rounded</Button>
-        <Button shape="pill">Pill</Button>
-        <Button
-          shape="circle"
-          size="icon"
-        >
-          <Text>A</Text>
-        </Button>
-      </View>
-
-      {/* States */}
-      <Text className="mb-4 text-lg font-semibold">States</Text>
-      <View className="mb-8 gap-3">
-        <Button disabled>Disabled</Button>
-        <Button
-          loading={loading}
-          onPress={handleLoadingPress}
-        >
-          {loading ? 'Loading...' : 'Click to Load'}
-        </Button>
-      </View>
-    </ScrollView>
+    <View className="mb-2">
+      <Text className="px-6 pt-6 text-lg font-semibold">{title}</Text>
+      {children}
+    </View>
   );
 };
 

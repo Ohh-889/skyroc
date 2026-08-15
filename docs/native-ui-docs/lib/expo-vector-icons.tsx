@@ -1,6 +1,19 @@
 'use client';
 
-import { Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
+import {
+  ArrowRight,
+  Bluetooth,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Download,
+  Heart,
+  Plus,
+  Smartphone,
+  Wifi
+} from 'lucide-react';
 import type { CSSProperties } from 'react';
 
 /**
@@ -18,13 +31,20 @@ import type { CSSProperties } from 'react';
  */
 
 const ICON_MAP = {
+  'arrow-right': ArrowRight,
+  bluetooth: Bluetooth,
   check: Check,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
   down: ChevronDown,
+  download: Download,
+  heart: Heart,
   left: ChevronLeft,
+  plus: Plus,
   right: ChevronRight,
-  up: ChevronUp
+  smartphone: Smartphone,
+  up: ChevronUp,
+  wifi: Wifi
 } as const;
 
 interface ExpoVectorIconProps {

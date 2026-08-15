@@ -11,6 +11,8 @@
 }
 
 @source '../../../packages/native/ui/src';
+/* 文档里的 <Demo /> 直接渲染 playground 的 demo 源码，类名要一起进扫描范围 */
+@source '../../../apps/native-ui-playground/src/demos';
 
 html {
   scrollbar-gutter: stable;
