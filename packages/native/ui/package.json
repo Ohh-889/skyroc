@@ -85,6 +85,7 @@
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@rn-primitives/slot": "^1.2.0",
     "@skyroc/utils": "workspace:*",
+    "@skyroc/hooks": "workspace:*",
     "tailwind-variants": "catalog:utils"
   },
   "devDependencies": {
@@ -96,6 +97,7 @@
     "oxlint": "catalog:dev",
     "react": "catalog:native",
     "react-native": "catalog:native",
+    "react-native-pager-view": "catalog:native",
     "react-native-reanimated": "catalog:native",
     "rimraf": "catalog:dev",
     "tailwindcss": "catalog:css",
@@ -107,6 +109,7 @@
     "@expo/vector-icons": ">=15.0.0",
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
+    "react-native-pager-view": ">=8.0.0",
     "react-native-reanimated": ">=4.0.0",
     "tailwindcss": ">=4",
     "uniwind": ">=1.7.0"

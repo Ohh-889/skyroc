@@ -168,8 +168,9 @@ catalogs:
     # 图标（版本跟随 Expo SDK 57 的锁定值）
     '@expo/vector-icons': 15.1.1
 
-    # 动画（版本跟随 Expo SDK 57 的锁定值）
+    # 动画与手势翻页（版本跟随 Expo SDK 57 的锁定值）
     'react-native-reanimated': 4.5.1
+    'react-native-pager-view': 8.0.2
 
   # ==================== 共享工具库 ====================
   utils:

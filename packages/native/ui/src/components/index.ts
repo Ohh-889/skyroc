@@ -16,6 +16,8 @@ export * from './rolling-text';
 
 export * from './space';
 
+export * from './tabs';
+
 export * from './tag';
 
 export * from './text';

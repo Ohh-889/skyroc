@@ -1,118 +1,96 @@
-import { useEffect, useRef, useState } from 'react';
+import { cn } from '@skyroc/utils';
+import { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { cn } from '@skyroc/utils';
+import type { PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
+import { PanelStack } from './PanelStack';
 import { tabsVariants } from './tabs-variants';
 import type { PagerProps } from './types';
+import { useLazyPanels } from './use-lazy-panels';
 
-/** 计算预加载范围内的索引集合 */
-function getPreloadRange(activeIndex: number, distance: number, total: number): Set<number> {
-  const set = new Set<number>();
-  const lo = Math.max(0, activeIndex - distance);
-  const hi = Math.min(total - 1, activeIndex + distance);
-  for (let i = lo; i <= hi; i += 1) {
-    set.add(i);
-  }
-  return set;
-}
-
+/**
+ * 原生实现 —— 开启 `swipeable` 时使用 PagerView 提供手势翻页。
+ *
+ * 注意：`swipeable` 会在 PagerView 与 PanelStack 两棵树之间切换，导致面板整体重挂载。该 prop 应视为初始化配置，不要在运行时来回切。
+ */
 const Pager = (props: PagerProps) => {
   const { activeIndex, classNames, items, lazy, lazyPreloadDistance, onPageChange, renderLazyPlaceholder, swipeable } =
     props;
 
   const pagerRef = useRef<PagerView>(null);
-  const [loadedIndices, setLoadedIndices] = useState<Set<number>>(() =>
-    lazy ? getPreloadRange(activeIndex, lazyPreloadDistance, items.length) : new Set<number>()
-  );
+
+  const renderPanel = useLazyPanels({
+    activeIndex,
+    lazy,
+    lazyPreloadDistance,
+    renderLazyPlaceholder,
+    total: items.length
+  });
 
   const slots = tabsVariants();
 
   useEffect(() => {
-    if (!lazy) return;
+    if (!swipeable) return;
 
-    setLoadedIndices(prev => {
-      const range = getPreloadRange(activeIndex, lazyPreloadDistance, items.length);
-      let hasNew = false;
-
-      range.forEach(i => {
-        if (!prev.has(i)) hasNew = true;
-      });
-
-      if (!hasNew) return prev;
-
-      const next = new Set(prev);
-      range.forEach(i => next.add(i));
-      return next;
-    });
-  }, [activeIndex, lazy, lazyPreloadDistance, items.length]);
-
-  useEffect(() => {
-    if (swipeable) {
-      pagerRef.current?.setPage(activeIndex);
-    }
+    pagerRef.current?.setPage(activeIndex);
   }, [activeIndex, swipeable]);
 
+  /** 从 target 起沿 direction 找到第一个可用 tab，找不到则退回当前索引 */
   function findNearestEnabled(target: number, direction: number): number {
-    let i = target;
-    while (i >= 0 && i < items.length) {
-      if (!items[i]?.disabled) return i;
-      i += direction;
+    let index = target;
+
+    while (index >= 0 && index < items.length) {
+      if (!items[index]?.disabled) return index;
+
+      index += direction;
     }
+
     return activeIndex;
   }
 
-  function handlePageSelected(position: number) {
-    if (items[position]?.disabled) {
-      const direction = position > activeIndex ? 1 : -1;
-      const next = findNearestEnabled(position + direction, direction);
-      pagerRef.current?.setPage(next);
-      if (next !== activeIndex) onPageChange(next);
+  function handlePageSelected(event: PagerViewOnPageSelectedEvent) {
+    const { position } = event.nativeEvent;
+
+    if (!items[position]?.disabled) {
+      onPageChange(position);
       return;
     }
-    onPageChange(position);
+
+    // 落到 disabled 页：沿滑动方向回弹到最近的可用页。
+    // 此处只调 setPage，回弹本身会再触发一次 onPageSelected 并走上面的正常分支，
+    // 避免同一次回弹重复通知外部。
+    const direction = position > activeIndex ? 1 : -1;
+
+    pagerRef.current?.setPage(findNearestEnabled(position + direction, direction));
   }
 
-  function renderScene(index: number, children: React.ReactNode) {
-    if (!lazy) return children;
-    if (loadedIndices.has(index)) return children;
-    return renderLazyPlaceholder();
-  }
-
-  if (swipeable) {
+  if (!swipeable) {
     return (
-      <PagerView
-        ref={pagerRef}
-        initialPage={activeIndex}
-        onPageSelected={e => handlePageSelected(e.nativeEvent.position)}
-        style={{ width: '100%', height: '100%' }}
-      >
-        {items.map((item, index) => (
-          <View
-            key={item.key}
-            className={cn(slots.content(), classNames?.content)}
-          >
-            {renderScene(index, item.children)}
-          </View>
-        ))}
-      </PagerView>
+      <PanelStack
+        activeIndex={activeIndex}
+        classNames={classNames}
+        items={items}
+        renderPanel={renderPanel}
+      />
     );
   }
 
   return (
-    <View
-      className={cn(slots.pager(), classNames?.pager)}
+    <PagerView
+      ref={pagerRef}
+      initialPage={activeIndex}
+      onPageSelected={handlePageSelected}
       style={{ flex: 1 }}
     >
       {items.map((item, index) => (
         <View
           key={item.key}
           className={cn(slots.content(), classNames?.content)}
-          style={{ display: index === activeIndex ? 'flex' : 'none', flex: 1 }}
         >
-          {renderScene(index, item.children)}
+          {renderPanel(index, item.children)}
         </View>
       ))}
-    </View>
+    </PagerView>
   );
 };
 

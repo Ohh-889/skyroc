@@ -1,18 +1,16 @@
-import { ActivityIndicator, View } from 'react-native';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { TabBar } from './TabBar';
+import { ActivityIndicator, View } from 'react-native';
 import { Pager } from './Pager';
+import { TabBar } from './TabBar';
 import { tabsVariants } from './tabs-variants';
 import type { TabsProps } from './types';
 
-function DefaultLazyPlaceholder() {
-  return (
-    <View className="flex-1 items-center justify-center">
-      <ActivityIndicator className="text-muted-foreground" />
-    </View>
-  );
-}
+const DefaultLazyPlaceholder = () => (
+  <View className="flex-1 items-center justify-center">
+    <ActivityIndicator className="text-muted-foreground" />
+  </View>
+);
 
 const Tabs = (props: TabsProps) => {
   const {
