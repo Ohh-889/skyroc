@@ -175,6 +175,12 @@ catalogs:
     'react-native-reanimated': 4.5.1
     'react-native-pager-view': 8.0.2
 
+    # 安全区（版本跟随 Expo SDK 57 的锁定值）
+    'react-native-safe-area-context': ~5.7.0
+
+    # 弹出层底座：Popup 基于其封装。npm latest 即为该 rc 版本
+    'react-native-modal': 14.0.0-rc.1
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具

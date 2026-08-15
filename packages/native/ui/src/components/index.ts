@@ -8,6 +8,8 @@ export * from './image';
 
 export * from './navbar';
 
+export * from './popup';
+
 export * from './portal';
 
 export * from './radio';
