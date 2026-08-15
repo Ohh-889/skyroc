@@ -127,6 +127,14 @@ export default function HomeScreen() {
       >
         Avatar
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/collapse')}
+      >
+        Collapse
+      </Button>
     </View>
   );
 }

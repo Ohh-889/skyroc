@@ -1,17 +1,24 @@
 import type { ReactNode, Ref } from 'react';
 import type { SlotClassNames } from '../../types';
-import type { CellSlots } from '../cell';
+import type { CellSize, CellSlots } from '../cell';
 
 /** 面板名称类型 */
 export type CollapseItemName = number | string;
 
 /**
+ * 展开值：手风琴模式下是单个面板名（`null` 表示全部收起），否则是名称数组。
+ *
+ * 用 `null` 而不是 `undefined` 表示空值，否则受控模式下会被判定成非受控。
+ */
+export type CollapseValue = CollapseItemName | CollapseItemName[] | null;
+
+/**
  * CollapseItem 可覆盖的 slot 名称。
  *
- * `arrow` 作用于箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类；
- * 标题行由内部的 Cell 渲染，细粒度覆盖走 `headerClassNames`。
+ * `arrow` 作用于箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类； `contentText` 只在 children 为纯字符串、由组件包一层 Text 时生效； 标题行由内部的 Cell
+ * 渲染，细粒度覆盖走 `headerClassNames`。
  */
-export type CollapseItemSlots = 'arrow' | 'content' | 'root' | 'wrapper';
+export type CollapseItemSlots = 'arrow' | 'content' | 'contentText' | 'root' | 'wrapper';
 
 /** Collapse 组件属性 */
 export interface CollapseProps {
@@ -28,16 +35,16 @@ export interface CollapseProps {
   className?: string;
 
   /** 默认展开的面板名称（非受控） */
-  defaultValue?: CollapseItemName | CollapseItemName[];
+  defaultValue?: CollapseValue;
 
   /** 值变化回调 */
-  onChange?: (value: CollapseItemName | CollapseItemName[]) => void;
+  onChange?: (value: CollapseValue) => void;
 
-  /** ref */
+  /** Ref */
   ref?: Ref<CollapseRef>;
 
-  /** 当前展开的面板名称（受控） */
-  value?: CollapseItemName | CollapseItemName[];
+  /** 当前展开的面板名称（受控），手风琴模式下用 `null` 表示全部收起 */
+  value?: CollapseValue;
 }
 
 /** Collapse 暴露方法 */
@@ -46,7 +53,7 @@ export interface CollapseRef {
   toggleAll: (options?: CollapseToggleAllOptions | boolean) => void;
 }
 
-/** toggleAll 选项 */
+/** ToggleAll 选项 */
 export interface CollapseToggleAllOptions {
   /** 是否展开 */
   expanded?: boolean;
@@ -57,7 +64,7 @@ export interface CollapseToggleAllOptions {
 
 /** CollapseItem 组件属性 */
 export interface CollapseItemProps {
-  /** 子元素（面板内容） */
+  /** 子元素（面板内容），传字符串时组件会自动包一层 Text */
   children?: ReactNode;
 
   /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
@@ -84,17 +91,21 @@ export interface CollapseItemProps {
   /** 是否懒渲染（首次展开时才渲染内容） */
   lazyRender?: boolean;
 
-  /** 唯一标识，默认为索引 */
+  /**
+   * 唯一标识，默认取该面板在 Collapse 子元素中的序号。
+   *
+   * 序号只对直接子元素成立，面板外面套了容器、或需要动态增删面板时必须显式传值。
+   */
   name?: CollapseItemName;
 
   /** 是否只读 */
   readonly?: boolean;
 
-  /** ref */
+  /** Ref */
   ref?: Ref<CollapseItemRef>;
 
   /** 标题尺寸 */
-  size?: 'lg' | 'md';
+  size?: CellSize;
 
   /** 标题文本 */
   title?: ReactNode;
@@ -121,13 +132,14 @@ export interface CollapseContextValue {
   toggle: (name: CollapseItemName, expanded: boolean) => void;
 }
 
-/** 面板注册信息 */
+/**
+ * 面板注册信息，只服务于 toggleAll。
+ *
+ * 刻意不带展开态：展开态由 Collapse 自己的 `isExpanded` 现算， 否则每次展开都要重新注册，itemsRef 的顺序会随之漂移。
+ */
 export interface CollapseItemRegistration {
   /** 是否禁用 */
   disabled: boolean;
-
-  /** 是否展开 */
-  expanded: boolean;
 
   /** 面板名称 */
   name: CollapseItemName;

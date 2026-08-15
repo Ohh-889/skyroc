@@ -1,10 +1,19 @@
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { useImperativeHandle, useRef } from 'react';
+import { Children, isValidElement, useImperativeHandle, useRef } from 'react';
 import { View } from 'react-native';
 import { collapseVariants } from './collapse-variants';
-import { CollapseContext } from './CollapseContext';
-import type { CollapseItemName, CollapseItemRegistration, CollapseProps, CollapseToggleAllOptions } from './types';
+import { CollapseContext, CollapseIndexContext } from './CollapseContext';
+import type {
+  CollapseItemName,
+  CollapseItemRegistration,
+  CollapseProps,
+  CollapseToggleAllOptions,
+  CollapseValue
+} from './types';
+
+/** 非手风琴模式的空值，提到组件外，避免每次渲染都新建数组 */
+const EMPTY_NAMES: CollapseItemName[] = [];
 
 const Collapse = (props: CollapseProps) => {
   const {
@@ -18,16 +27,17 @@ const Collapse = (props: CollapseProps) => {
     value: valueProp
   } = props;
 
-  const defaultVal = defaultValue ?? (accordion ? '' : []);
-
-  const [value, setValue] = useControllableState<CollapseItemName | CollapseItemName[]>({
+  const [value, setValue] = useControllableState<CollapseValue>({
     caller: 'Collapse',
-    defaultProp: defaultVal,
+    defaultProp: defaultValue ?? (accordion ? null : EMPTY_NAMES),
     onChange,
     prop: valueProp
   });
 
+  /** 已挂载的面板，按子元素顺序排列，只服务于 toggleAll */
   const itemsRef = useRef<CollapseItemRegistration[]>([]);
+
+  const variantSlots = collapseVariants({ border });
 
   function isExpanded(name: CollapseItemName): boolean {
     if (accordion) {
@@ -38,22 +48,43 @@ const Collapse = (props: CollapseProps) => {
 
   function toggle(name: CollapseItemName, expanded: boolean) {
     if (accordion) {
-      setValue(expanded ? name : '');
-    } else {
-      const current = Array.isArray(value) ? value : [];
-      if (expanded) {
-        setValue([...current, name]);
-      } else {
-        setValue(current.filter(n => n !== name));
-      }
+      setValue(expanded ? name : null);
+      return;
     }
+
+    const current = Array.isArray(value) ? value : EMPTY_NAMES;
+
+    // 去重：通过 ref 调用 toggle(true) 时面板可能已经是展开态
+    if (current.includes(name) === expanded) return;
+
+    setValue(expanded ? [...current, name] : current.filter(itemName => itemName !== name));
   }
 
   function register(item: CollapseItemRegistration) {
     itemsRef.current.push(item);
     return () => {
-      itemsRef.current = itemsRef.current.filter(i => i.name !== item.name);
+      itemsRef.current = itemsRef.current.filter(registered => registered !== item);
     };
+  }
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(variantSlots.root(), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
+  /** 逐个下发面板序号，作为未显式传 name 时的默认标识，同时让首项之外画出顶部分隔线 */
+  function renderChildren() {
+    return Children.map(children, (child, index) =>
+      isValidElement(child) ? (
+        <CollapseIndexContext.Provider value={index}>{child}</CollapseIndexContext.Provider>
+      ) : (
+        child
+      )
+    );
   }
 
   useImperativeHandle(ref, () => ({
@@ -65,10 +96,13 @@ const Collapse = (props: CollapseProps) => {
 
       const names = itemsRef.current
         .filter(item => {
+          const itemExpanded = isExpanded(item.name);
+
+          // 跳过禁用面板时保留其当前状态，不参与批量切换
           if (item.disabled && skipDisabled) {
-            return item.expanded;
+            return itemExpanded;
           }
-          return expanded ?? !item.expanded;
+          return expanded ?? !itemExpanded;
         })
         .map(item => item.name);
 
@@ -76,21 +110,10 @@ const Collapse = (props: CollapseProps) => {
     }
   }));
 
-  const variantSlots = collapseVariants({ border });
-
-  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
-  function resolveSlotClassNames() {
-    return {
-      root: cn(variantSlots.root(), className)
-    };
-  }
-
-  const slotClassNames = resolveSlotClassNames();
-
   return (
-    <CollapseContext.Provider value={{ isExpanded, register, toggle }}>
-      <View className={slotClassNames.root}>{children}</View>
-    </CollapseContext.Provider>
+    <CollapseContext value={{ isExpanded, register, toggle }}>
+      <View className={slotClassNames.root}>{renderChildren()}</View>
+    </CollapseContext>
   );
 };
 

@@ -8,6 +8,8 @@ export * from './cell';
 
 export * from './checkbox';
 
+export * from './collapse';
+
 export * from './divider';
 
 export * from './image';

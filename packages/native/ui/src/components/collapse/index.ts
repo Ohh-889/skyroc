@@ -2,7 +2,6 @@ export { Collapse } from './Collapse';
 export { collapseItemVariants, collapseVariants } from './collapse-variants';
 export { CollapseItem } from './CollapseItem';
 export type {
-  CollapseContextValue,
   CollapseItemName,
   CollapseItemProps,
   CollapseItemRef,
@@ -10,4 +9,5 @@ export type {
   CollapseProps,
   CollapseRef,
   CollapseToggleAllOptions,
+  CollapseValue
 } from './types';
