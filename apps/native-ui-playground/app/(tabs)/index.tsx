@@ -95,6 +95,14 @@ export default function HomeScreen() {
       >
         Badge
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/image')}
+      >
+        Image
+      </Button>
     </View>
   );
 }

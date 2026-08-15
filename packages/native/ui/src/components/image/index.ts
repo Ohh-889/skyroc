@@ -1,3 +1,4 @@
 export { Image } from './Image';
-export { ImageFallback } from './ImageFallback';
-export type { ImageFallbackProps, ImageProps } from './types';
+export { imageVariants } from './image-variants';
+export type { ImageVariantProps } from './image-variants';
+export type { ImageProps, ImageRadius, ImageSlots, ImageSource } from './types';
