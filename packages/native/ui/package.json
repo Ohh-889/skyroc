@@ -94,6 +94,7 @@
     "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
     "eslint-plugin-sort": "catalog:dev",
+    "expo-image": "catalog:native",
     "oxlint": "catalog:dev",
     "react": "catalog:native",
     "react-native": "catalog:native",
@@ -107,6 +108,7 @@
   },
   "peerDependencies": {
     "@expo/vector-icons": ">=15.0.0",
+    "expo-image": ">=57.0.0",
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
     "react-native-pager-view": ">=8.0.0",

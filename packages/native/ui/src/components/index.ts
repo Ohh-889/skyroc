@@ -4,6 +4,8 @@ export * from './cell';
 
 export * from './divider';
 
+export * from './image';
+
 export * from './navbar';
 
 export * from './portal';
