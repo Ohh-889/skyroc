@@ -1,51 +1,45 @@
+import { cn, isNumber, isString } from '@skyroc/utils';
+import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { cn, isString } from '@skyroc/utils';
 import { Text } from '../text/Typography';
-import { SIZE_CONTROL_MAP, SIZE_INNER_ICON_MAP, checkboxCardVariants, checkboxVariants } from './checkbox-variants';
+import { isEmptyContent } from './checkbox-content';
+import { checkboxCardVariants } from './checkbox-variants';
+import { CheckboxIndicator } from './CheckboxIndicator';
 import type { CheckboxCardProps } from './types';
-
-const INDICATOR_COLOR = '#fff';
+import { useCheckboxItem } from './useCheckboxItem';
 
 const CheckboxCard = (props: CheckboxCardProps) => {
   const {
-    checked: checkedProp,
-    checkedIcon,
     checkboxPosition = 'left',
+    checked,
+    checkedIcon,
     className,
-    color = 'primary',
-    defaultChecked = false,
+    color,
+    defaultChecked,
     description,
-    disabled = false,
+    disabled,
     icon,
-    iconSize: iconSizeProp,
+    iconSize,
     indeterminateIcon,
     label,
-    name: _name,
+    name,
     onCheckedChange,
-    shape = 'round',
-    size = 'md'
+    shape,
+    size,
+    testID
   } = props;
 
-  const isIndeterminate = checkedProp === 'indeterminate';
-
-  const [internalChecked, setInternalChecked] = useControllableState({
-    caller: 'checkbox-card',
-    defaultProp: defaultChecked,
-    onChange: onCheckedChange,
-    prop: isIndeterminate ? false : (checkedProp as boolean | undefined)
-  });
-
-  const isChecked = internalChecked;
-  const isActive = isChecked || isIndeterminate;
-
-  const controlSize = iconSizeProp ?? SIZE_CONTROL_MAP[size];
-  const innerIconSize = SIZE_INNER_ICON_MAP[size];
-
-  const { control: controlCls } = checkboxVariants({
-    active: isActive,
+  const item = useCheckboxItem({
+    caller: 'CheckboxCard',
+    checked,
+    checkedIcon,
     color,
+    defaultChecked,
+    disabled,
+    iconSize,
+    indeterminateIcon,
+    name,
+    onCheckedChange,
     shape,
     size
   });
@@ -55,71 +49,49 @@ const CheckboxCard = (props: CheckboxCardProps) => {
     cardContent: cardContentCls,
     cardDescription: cardDescriptionCls,
     cardLabel: cardLabelCls
-  } = checkboxCardVariants({ disabled });
+  } = checkboxCardVariants({ disabled: item.disabled });
 
-  function handleToggle() {
-    if (disabled) return;
-    setInternalChecked(!isChecked);
+  function renderText(content: ReactNode, textCls: string) {
+    if (isEmptyContent(content)) return null;
+
+    if (isString(content) || isNumber(content)) return <Text className={textCls}>{content}</Text>;
+
+    return content;
   }
 
-  function renderCheckbox() {
-    if (isIndeterminate && indeterminateIcon) {
-      return indeterminateIcon;
-    }
-
-    if (isChecked && checkedIcon) {
-      return checkedIcon;
-    }
-
+  function renderIndicator() {
     return (
-      <View
-        className={controlCls()}
-        style={{ height: controlSize, width: controlSize }}
-      >
-        {isActive ? (
-          <Feather
-            color={INDICATOR_COLOR}
-            name={isIndeterminate ? 'minus' : 'check'}
-            size={innerIconSize}
-          />
-        ) : null}
-      </View>
-    );
-  }
-
-  function renderLabel() {
-    if (!label) return null;
-    if (isString(label)) return <Text className={cardLabelCls()}>{label}</Text>;
-    return label;
-  }
-
-  function renderDescription() {
-    if (!description) return null;
-    if (isString(description)) return <Text className={cardDescriptionCls()}>{description}</Text>;
-    return description;
-  }
-
-  function renderContent() {
-    return (
-      <View className={cardContentCls()}>
-        {icon ? <View className="shrink-0">{icon}</View> : null}
-        <View className="flex-1 gap-0.5">
-          {renderLabel()}
-          {renderDescription()}
-        </View>
-      </View>
+      <CheckboxIndicator
+        checked={item.checked}
+        checkedIcon={item.checkedIcon}
+        color={item.color}
+        indeterminate={item.indeterminate}
+        indeterminateIcon={item.indeterminateIcon}
+        shape={item.shape}
+        sizes={item.sizes}
+      />
     );
   }
 
   return (
     <Pressable
       className={cn(cardCls(), className)}
-      disabled={disabled}
-      onPress={handleToggle}
+      disabled={item.disabled}
+      testID={testID}
+      onPress={item.toggle}
     >
-      {checkboxPosition === 'left' && renderCheckbox()}
-      {renderContent()}
-      {checkboxPosition === 'right' && renderCheckbox()}
+      {checkboxPosition === 'left' && renderIndicator()}
+
+      <View className={cardContentCls()}>
+        {icon ? <View className="shrink-0">{icon}</View> : null}
+
+        <View className="flex-1 gap-0.5">
+          {renderText(label, cardLabelCls())}
+          {renderText(description, cardDescriptionCls())}
+        </View>
+      </View>
+
+      {checkboxPosition === 'right' && renderIndicator()}
     </Pressable>
   );
 };

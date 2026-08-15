@@ -4,6 +4,8 @@ export * from './button';
 
 export * from './cell';
 
+export * from './checkbox';
+
 export * from './divider';
 
 export * from './image';

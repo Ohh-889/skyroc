@@ -1,63 +1,57 @@
-import { View } from 'react-native';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { cn } from '@skyroc/utils';
 import { CheckboxCard } from './CheckboxCard';
-import { checkboxGroupVariants } from './checkbox-variants';
-import type { CheckboxGroupCardProps } from './types';
+import { CheckboxGroup } from './CheckboxGroup';
+import type { CheckboxGroupCardProps, CheckboxValue } from './types';
 
-const CheckboxGroupCard = (props: CheckboxGroupCardProps) => {
+/** CheckboxGroup 的数据驱动封装，选中态、上限与去重逻辑完全复用 CheckboxGroupContext */
+const CheckboxGroupCard = <T extends CheckboxValue = CheckboxValue>(props: CheckboxGroupCardProps<T>) => {
   const {
     checkboxPosition = 'left',
+    checkedIcon,
     className,
     color,
-    defaultValue = [],
+    defaultValue,
     direction = 'vertical',
     disabled = false,
     iconSize,
+    indeterminateIcon,
     items,
+    max,
     onChange,
-    shape = 'round',
+    shape,
     size,
-    value: valueProp
+    testID,
+    value
   } = props;
 
-  const [value, setValue] = useControllableState({
-    caller: 'checkbox-group-card',
-    defaultProp: defaultValue,
-    onChange,
-    prop: valueProp
-  });
-
-  function handleItemChange(itemValue: string, checked: boolean) {
-    const next = checked ? [...value, itemValue] : value.filter(v => v !== itemValue);
-    setValue(next);
-  }
-
   return (
-    <View className={cn(checkboxGroupVariants({ direction, size }), className)}>
-      {items.map(item => {
-        const isChecked = value.includes(item.value);
-        const isDisabled = disabled || (item.disabled ?? false);
-
-        return (
-          <CheckboxCard
-            key={item.value}
-            checkboxPosition={checkboxPosition}
-            checked={isChecked}
-            color={color}
-            description={item.description}
-            disabled={isDisabled}
-            icon={item.icon}
-            iconSize={iconSize}
-            label={item.label}
-            name={item.value}
-            shape={shape}
-            size={size}
-            onCheckedChange={checked => handleItemChange(item.value, checked)}
-          />
-        );
-      })}
-    </View>
+    <CheckboxGroup<T>
+      checkedIcon={checkedIcon}
+      className={className}
+      color={color}
+      defaultValue={defaultValue}
+      direction={direction}
+      disabled={disabled}
+      iconSize={iconSize}
+      indeterminateIcon={indeterminateIcon}
+      max={max}
+      shape={shape}
+      size={size}
+      testID={testID}
+      value={value}
+      onChange={onChange}
+    >
+      {items.map(item => (
+        <CheckboxCard
+          key={String(item.value)}
+          checkboxPosition={checkboxPosition}
+          description={item.description}
+          disabled={item.disabled}
+          icon={item.icon}
+          label={item.label}
+          name={item.value}
+        />
+      ))}
+    </CheckboxGroup>
   );
 };
 

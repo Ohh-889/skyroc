@@ -1,26 +1,36 @@
-import type { ReactNode } from 'react';
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
+import type { ReactNode } from 'react';
 
 /** Checkbox icon shape */
 export type CheckboxShape = 'round' | 'square';
 
+/** Horizontal placement shared by label position and card checkbox position */
+export type CheckboxSide = 'left' | 'right';
+
 /** Label position relative to the icon */
-export type CheckboxLabelPosition = 'left' | 'right';
+export type CheckboxLabelPosition = CheckboxSide;
+
+/** Position of the checkbox control in a card */
+export type CheckboxPosition = CheckboxSide;
+
+/**
+ * 复选值的取值范围约束。
+ *
+ * Group 组件对它做泛型化而非直接用作值类型，`useState<string[]>([])` 配 `onChange={setValue}` 才不会因为形参逆变而报错。
+ */
+export type CheckboxValue = number | string;
 
 /** Layout direction for CheckboxGroup */
 export type CheckboxGroupDirection = 'horizontal' | 'vertical';
-
-/** Position of the checkbox control in a card */
-export type CheckboxPosition = 'left' | 'right';
 
 /** Checked state: boolean or 'indeterminate' */
 export type CheckedState = boolean | 'indeterminate';
 
 export interface CheckboxProps {
-  /** Controlled checked state (boolean or 'indeterminate') */
+  /** Controlled checked state, ignored when the checkbox belongs to a CheckboxGroup */
   checked?: CheckedState;
 
-  /** Custom icon when checked, replaces default indicator */
+  /** Custom icon when checked, replaces the default check inside the control */
   checkedIcon?: ReactNode;
 
   /** Label content */
@@ -29,44 +39,44 @@ export interface CheckboxProps {
   /** NativeWind className for the root container */
   className?: string;
 
-  /** Theme color preset (primary, destructive, success, etc.) */
+  /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
 
   /** Initial checked state for uncontrolled usage */
   defaultChecked?: boolean;
 
-  /** Whether the checkbox is disabled */
+  /** Disables this checkbox, a disabled group disables it as well */
   disabled?: boolean;
 
-  /** Size of the checkbox icon in pixels, overrides size prop */
+  /** Control size in pixels, the inner check scales with it */
   iconSize?: number;
 
-  /** Custom icon for indeterminate state */
+  /** Custom icon for indeterminate state, ignored inside a CheckboxGroup */
   indeterminateIcon?: ReactNode;
 
   /** When true, only the icon toggles the checkbox, label tap is ignored */
   labelDisabled?: boolean;
 
-  /** Position of the label relative to the icon */
+  /** Position of the label relative to the icon, falls back to the group value then `right` */
   labelPosition?: CheckboxLabelPosition;
 
   /** Unique identifier, required when used inside CheckboxGroup */
-  name?: string;
+  name?: CheckboxValue;
 
-  /** Callback fired when checked state changes */
+  /** Callback fired when checked state changes, fires in grouped mode as well */
   onCheckedChange?: (checked: boolean) => void;
 
-  /** Icon shape: round (circle) or square */
+  /** Icon shape, falls back to the group value then `round` */
   shape?: CheckboxShape;
 
-  /** Component size preset */
+  /** Component size preset, falls back to the group value then `md` */
   size?: ThemeSize;
 
-  /** Test identifier for E2E testing */
+  /** Test identifier for E2E testing, applied to the root container */
   testID?: string;
 }
 
-export interface CheckboxGroupProps {
+export interface CheckboxGroupProps<T extends CheckboxValue = CheckboxValue> {
   /** Custom icon when checked, applied to all children */
   checkedIcon?: ReactNode;
 
@@ -80,7 +90,7 @@ export interface CheckboxGroupProps {
   color?: ThemeColor;
 
   /** Initial checked values for uncontrolled usage */
-  defaultValue?: string[];
+  defaultValue?: T[];
 
   /** Layout direction of the checkboxes */
   direction?: CheckboxGroupDirection;
@@ -88,17 +98,20 @@ export interface CheckboxGroupProps {
   /** Whether to disable all child checkboxes */
   disabled?: boolean;
 
-  /** Icon size for all child checkboxes in pixels */
+  /** Control size in pixels for all child checkboxes */
   iconSize?: number;
 
   /** Custom icon for indeterminate state, applied to all children */
   indeterminateIcon?: ReactNode;
 
-  /** Maximum number of checkboxes that can be checked */
+  /** Label position for all child checkboxes */
+  labelPosition?: CheckboxLabelPosition;
+
+  /** Maximum number of checkboxes that can be checked, enforced inside the group */
   max?: number;
 
   /** Callback fired when the checked values change */
-  onChange?: (value: string[]) => void;
+  onChange?: (value: T[]) => void;
 
   /** Icon shape for all child checkboxes */
   shape?: CheckboxShape;
@@ -106,8 +119,11 @@ export interface CheckboxGroupProps {
   /** Component size preset for all children */
   size?: ThemeSize;
 
+  /** Test identifier for E2E testing, applied to the group container */
+  testID?: string;
+
   /** Controlled array of checked checkbox names */
-  value?: string[];
+  value?: T[];
 }
 
 export interface CheckboxGroupContextValue {
@@ -120,17 +136,20 @@ export interface CheckboxGroupContextValue {
   /** Whether the group is disabled */
   disabled?: boolean;
 
-  /** Icon size from group */
+  /** Control size from group */
   iconSize?: number;
 
   /** Custom icon for indeterminate state */
   indeterminateIcon?: ReactNode;
 
   /** Check if a name is in the checked list */
-  isChecked: (name: string) => boolean;
+  isChecked: (name: CheckboxValue) => boolean;
 
-  /** Whether max checked limit is reached */
+  /** Whether the max checked limit is reached, `toggle` already enforces it */
   isMaxReached: () => boolean;
+
+  /** Label position from group */
+  labelPosition?: CheckboxLabelPosition;
 
   /** Shape from group */
   shape?: CheckboxShape;
@@ -138,24 +157,24 @@ export interface CheckboxGroupContextValue {
   /** Size from group */
   size?: ThemeSize;
 
-  /** Toggle a checkbox by name */
-  toggle: (name: string, checked: boolean) => void;
+  /** Toggle a checkbox by name, returns whether the change was applied */
+  toggle: (name: CheckboxValue, checked: boolean) => boolean;
 }
 
 export interface CheckboxCardProps {
-  /** Controlled checked state (boolean or 'indeterminate') */
-  checked?: CheckedState;
-
-  /** Custom icon when checked */
-  checkedIcon?: ReactNode;
-
   /** Position of the checkbox relative to card content */
   checkboxPosition?: CheckboxPosition;
+
+  /** Controlled checked state, ignored when the card belongs to a CheckboxGroup */
+  checked?: CheckedState;
+
+  /** Custom icon when checked, replaces the default check inside the control */
+  checkedIcon?: ReactNode;
 
   /** NativeWind className for the card container */
   className?: string;
 
-  /** Theme color preset */
+  /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
 
   /** Initial checked state for uncontrolled usage */
@@ -164,35 +183,38 @@ export interface CheckboxCardProps {
   /** Description text below the label */
   description?: ReactNode;
 
-  /** Whether disabled */
+  /** Disables this card, a disabled group disables it as well */
   disabled?: boolean;
 
   /** Icon element to display on the card */
   icon?: ReactNode;
 
-  /** Size of the checkbox icon in pixels */
+  /** Control size in pixels, the inner check scales with it */
   iconSize?: number;
 
-  /** Custom icon for indeterminate state */
+  /** Custom icon for indeterminate state, ignored inside a CheckboxGroup */
   indeterminateIcon?: ReactNode;
 
   /** Label text or element */
   label?: ReactNode;
 
-  /** Unique identifier, required when used inside CheckboxGroupCard */
-  name?: string;
+  /** Unique identifier, required when used inside CheckboxGroup */
+  name?: CheckboxValue;
 
-  /** Callback fired when checked state changes */
+  /** Callback fired when checked state changes, fires in grouped mode as well */
   onCheckedChange?: (checked: boolean) => void;
 
-  /** Icon shape */
+  /** Icon shape, falls back to the group value then `round` */
   shape?: CheckboxShape;
 
-  /** Component size preset */
+  /** Component size preset, falls back to the group value then `md` */
   size?: ThemeSize;
+
+  /** Test identifier for E2E testing, applied to the card container */
+  testID?: string;
 }
 
-export interface CheckboxGroupCardItem {
+export interface CheckboxGroupCardItem<T extends CheckboxValue = CheckboxValue> {
   /** Description text */
   description?: ReactNode;
 
@@ -206,12 +228,15 @@ export interface CheckboxGroupCardItem {
   label: ReactNode;
 
   /** Unique value identifier */
-  value: string;
+  value: T;
 }
 
-export interface CheckboxGroupCardProps {
+export interface CheckboxGroupCardProps<T extends CheckboxValue = CheckboxValue> {
   /** Position of checkbox relative to card content */
   checkboxPosition?: CheckboxPosition;
+
+  /** Custom icon when checked, applied to all cards */
+  checkedIcon?: ReactNode;
 
   /** NativeWind className for the group container */
   className?: string;
@@ -220,7 +245,7 @@ export interface CheckboxGroupCardProps {
   color?: ThemeColor;
 
   /** Initial checked values for uncontrolled usage */
-  defaultValue?: string[];
+  defaultValue?: T[];
 
   /** Layout direction */
   direction?: CheckboxGroupDirection;
@@ -228,14 +253,20 @@ export interface CheckboxGroupCardProps {
   /** Disable all items */
   disabled?: boolean;
 
-  /** Icon size */
+  /** Control size in pixels */
   iconSize?: number;
 
+  /** Custom icon for indeterminate state, applied to all cards */
+  indeterminateIcon?: ReactNode;
+
   /** Items to render */
-  items: CheckboxGroupCardItem[];
+  items: CheckboxGroupCardItem<T>[];
+
+  /** Maximum number of cards that can be checked */
+  max?: number;
 
   /** Callback when values change */
-  onChange?: (value: string[]) => void;
+  onChange?: (value: T[]) => void;
 
   /** Icon shape */
   shape?: CheckboxShape;
@@ -243,6 +274,9 @@ export interface CheckboxGroupCardProps {
   /** Component size preset */
   size?: ThemeSize;
 
+  /** Test identifier for E2E testing, applied to the group container */
+  testID?: string;
+
   /** Controlled selected values */
-  value?: string[];
+  value?: T[];
 }

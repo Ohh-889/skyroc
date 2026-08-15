@@ -1,5 +1,5 @@
-import { tv } from 'tailwind-variants';
 import type { ThemeSize } from '@skyroc/ui-types';
+import { tv } from 'tailwind-variants';
 
 /** Maps size preset to control (box/circle) pixel size */
 export const SIZE_CONTROL_MAP: Record<ThemeSize, number> = {
@@ -14,8 +14,8 @@ export const SIZE_CONTROL_MAP: Record<ThemeSize, number> = {
 /**
  * Maps size preset to label line-height (px)
  *
- * Used to set the control container height so that the checkbox icon
- * vertically centers with the first line of a multi-line label.
+ * 控件所在行的高度取「控件尺寸」与「label 首行行高」的较大值：label 比控件高时把控件撑到首行中线，
+ * 控件比 label 高时以控件自身为准，避免被裁切。多行 label 下控件始终贴着首行而不是整块垂直居中。
  *
  * Values follow Tailwind CSS v4 line-height defaults:
  *   text-xs → 16px, text-sm → 20px, text-base → 24px, text-lg → 28px
@@ -39,15 +39,52 @@ export const SIZE_INNER_ICON_MAP: Record<ThemeSize, number> = {
   xs: 9
 };
 
+/** 自定义 iconSize 时勾选图标相对控件的比例 */
+const INNER_ICON_RATIO = 0.7;
+
+export interface CheckboxSizes {
+  /** 控件边长（px） */
+  control: number;
+
+  /** 控件所在行的高度（px），用于与 label 首行对齐 */
+  controlRow: number;
+
+  /** 勾选 / 半选图标边长（px） */
+  innerIcon: number;
+}
+
+/**
+ * 解析复选控件的像素尺寸。
+ *
+ * 未传 iconSize 时完全走设计预设；传了则按固定比例整体缩放，避免只放大控件、内部图标仍是预设尺寸导致的比例失衡。
+ */
+export function resolveCheckboxSizes(size: ThemeSize, iconSize?: number): CheckboxSizes {
+  const control = iconSize ?? SIZE_CONTROL_MAP[size];
+  const innerIcon = iconSize === undefined ? SIZE_INNER_ICON_MAP[size] : Math.round(iconSize * INNER_ICON_RATIO);
+
+  return {
+    control,
+    controlRow: Math.max(control, SIZE_LABEL_LINE_HEIGHT_MAP[size]),
+    innerIcon
+  };
+}
+
+/**
+ * 复选控件样式。
+ *
+ * `indicator` 槽输出的是 Uniwind 的 `accent-*` 工具类，供 `colorClassName` 取色，
+ * 因此勾选颜色跟随主题 token，而非硬编码白色。
+ */
 export const checkboxVariants = tv({
   slots: {
     control: 'items-center justify-center',
+    indicator: '',
     label: 'text-base text-foreground',
     root: 'flex-row items-start'
   },
   variants: {
     active: {
-      false: { control: 'border-1 border-muted-foreground/50' },
+      false: { control: 'border border-muted-foreground/50' },
       true: { control: '' }
     },
     color: {
@@ -84,14 +121,19 @@ export const checkboxVariants = tv({
     }
   },
   compoundVariants: [
-    { active: true, class: { control: 'bg-primary' }, color: 'primary' },
-    { active: true, class: { control: 'bg-destructive' }, color: 'destructive' },
-    { active: true, class: { control: 'bg-success' }, color: 'success' },
-    { active: true, class: { control: 'bg-warning' }, color: 'warning' },
-    { active: true, class: { control: 'bg-info' }, color: 'info' },
-    { active: true, class: { control: 'bg-accent' }, color: 'accent' },
-    { active: true, class: { control: 'bg-carbon' }, color: 'carbon' },
-    { active: true, class: { control: 'bg-secondary' }, color: 'secondary' }
+    // Active: filled background + foreground colored check/minus
+    { active: true, class: { control: 'bg-primary', indicator: 'accent-primary-foreground' }, color: 'primary' },
+    {
+      active: true,
+      class: { control: 'bg-destructive', indicator: 'accent-destructive-foreground' },
+      color: 'destructive'
+    },
+    { active: true, class: { control: 'bg-success', indicator: 'accent-success-foreground' }, color: 'success' },
+    { active: true, class: { control: 'bg-warning', indicator: 'accent-warning-foreground' }, color: 'warning' },
+    { active: true, class: { control: 'bg-info', indicator: 'accent-info-foreground' }, color: 'info' },
+    { active: true, class: { control: 'bg-accent', indicator: 'accent-accent-foreground' }, color: 'accent' },
+    { active: true, class: { control: 'bg-carbon', indicator: 'accent-carbon-foreground' }, color: 'carbon' },
+    { active: true, class: { control: 'bg-secondary', indicator: 'accent-secondary-foreground' }, color: 'secondary' }
   ],
   defaultVariants: {
     active: false,
@@ -104,7 +146,6 @@ export const checkboxVariants = tv({
 });
 
 export const checkboxGroupVariants = tv({
-  base: 'gap-3',
   variants: {
     direction: {
       horizontal: 'flex-row flex-wrap',
@@ -127,7 +168,7 @@ export const checkboxGroupVariants = tv({
 
 export const checkboxCardVariants = tv({
   slots: {
-    card: 'flex-row items-center gap-3 rounded-xl border border-border bg-card p-3',
+    card: 'flex-row items-center gap-3 rounded-xl border border-border bg-card p-3 active:opacity-90',
     cardContent: 'flex-1 flex-row items-center gap-2.5',
     cardDescription: 'text-xs text-muted-foreground',
     cardLabel: 'text-sm font-medium text-foreground'

@@ -1,147 +1,95 @@
-/* eslint-disable complexity */
-import { useContext } from 'react';
+import { cn, isNumber, isString } from '@skyroc/utils';
 import { Pressable, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { cn, isString } from '@skyroc/utils';
 import { Text } from '../text/Typography';
-import { CheckboxGroupContext } from './CheckboxGroupContext';
-import {
-  SIZE_CONTROL_MAP,
-  SIZE_INNER_ICON_MAP,
-  SIZE_LABEL_LINE_HEIGHT_MAP,
-  checkboxVariants
-} from './checkbox-variants';
+import { isEmptyContent } from './checkbox-content';
+import { checkboxVariants } from './checkbox-variants';
+import { CheckboxIndicator } from './CheckboxIndicator';
 import type { CheckboxProps } from './types';
-
-const INDICATOR_COLOR = '#fff';
+import { useCheckboxItem } from './useCheckboxItem';
 
 const Checkbox = (props: CheckboxProps) => {
   const {
-    checked: checkedProp,
+    checked,
     checkedIcon,
     children,
     className,
-    color: colorProp,
-    defaultChecked = false,
-    disabled: disabledProp = false,
-    iconSize: iconSizeProp,
+    color,
+    defaultChecked,
+    disabled,
+    iconSize,
     indeterminateIcon,
     labelDisabled = false,
-    labelPosition = 'right',
+    labelPosition,
     name,
     onCheckedChange,
-    shape = 'round',
-    size: sizeProp,
+    shape,
+    size,
     testID
   } = props;
 
-  const group = useContext(CheckboxGroupContext);
-
-  const isGrouped = group !== undefined && name !== undefined;
-  const isIndeterminate = isGrouped ? false : checkedProp === 'indeterminate';
-
-  function resolveControlledProp() {
-    if (isGrouped) return undefined;
-    if (isIndeterminate) return false;
-    return checkedProp as boolean | undefined;
-  }
-
-  const [internalChecked, setInternalChecked] = useControllableState({
-    caller: 'checkbox',
-    defaultProp: defaultChecked,
-    onChange: onCheckedChange,
-    prop: resolveControlledProp()
-  });
-
-  const isChecked = isGrouped ? group.isChecked(name) : internalChecked;
-  const isActive = isChecked || isIndeterminate;
-
-  const disabled = disabledProp || (group?.disabled ?? false);
-  const color = colorProp ?? group?.color ?? 'primary';
-  const size = sizeProp ?? group?.size ?? 'md';
-  const controlSize = iconSizeProp ?? group?.iconSize ?? SIZE_CONTROL_MAP[size];
-  const controlContainerHeight = Math.max(controlSize, SIZE_LABEL_LINE_HEIGHT_MAP[size]);
-  const innerIconSize = SIZE_INNER_ICON_MAP[size];
-  const resolvedShape = group?.shape ?? shape;
-  const resolvedCheckedIcon = checkedIcon ?? group?.checkedIcon;
-  const resolvedIndeterminateIcon = indeterminateIcon ?? group?.indeterminateIcon;
-  const {
-    control: controlCls,
-    label: labelCls,
-    root: rootCls
-  } = checkboxVariants({
-    active: isActive,
+  const item = useCheckboxItem({
+    caller: 'Checkbox',
+    checked,
+    checkedIcon,
     color,
+    defaultChecked,
     disabled,
+    iconSize,
+    indeterminateIcon,
     labelPosition,
-    shape: resolvedShape,
+    name,
+    onCheckedChange,
+    shape,
     size
   });
 
-  function handleToggle() {
-    if (disabled) return;
+  const { label: labelCls, root: rootCls } = checkboxVariants({
+    disabled: item.disabled,
+    labelPosition: item.labelPosition,
+    size: item.size
+  });
 
-    if (isGrouped) {
-      if (!isChecked && group.isMaxReached()) return;
-      group.toggle(name, !isChecked);
-      return;
-    }
+  function renderLabel() {
+    if (isEmptyContent(children)) return null;
 
-    setInternalChecked(!isChecked);
-  }
-
-  function handleLabelPress() {
-    if (labelDisabled) return;
-    handleToggle();
-  }
-
-  function renderIndicator() {
-    if (!isActive) return null;
-
-    if (isIndeterminate && resolvedIndeterminateIcon) {
-      return resolvedIndeterminateIcon;
-    }
-
-    if (isChecked && resolvedCheckedIcon) {
-      return resolvedCheckedIcon;
-    }
+    const isTextChild = isString(children) || isNumber(children);
 
     return (
-      <Feather
-        color={INDICATOR_COLOR}
-        name={isIndeterminate ? 'minus' : 'check'}
-        size={innerIconSize}
-      />
+      <Pressable
+        className="shrink active:opacity-70"
+        disabled={item.disabled || labelDisabled}
+        onPress={item.toggle}
+      >
+        {isTextChild ? <Text className={labelCls()}>{children}</Text> : children}
+      </Pressable>
     );
   }
 
   return (
-    <View className={cn(rootCls(), className)}>
+    <View
+      className={cn(rootCls(), className)}
+      testID={testID}
+    >
+      {/* 控件按 controlRow 撑高，多行 label 下指示器才会贴着首行而不是整块垂直居中 */}
       <Pressable
-        disabled={disabled}
+        className="items-center justify-center active:opacity-70"
+        disabled={item.disabled}
         hitSlop={4}
-        onPress={handleToggle}
-        style={{ alignItems: 'center', height: controlContainerHeight, justifyContent: 'center', width: controlSize }}
-        testID={testID}
+        onPress={item.toggle}
+        style={{ height: item.sizes.controlRow, width: item.sizes.control }}
       >
-        <View
-          className={controlCls()}
-          style={{ height: controlSize, width: controlSize }}
-        >
-          {renderIndicator()}
-        </View>
+        <CheckboxIndicator
+          checked={item.checked}
+          checkedIcon={item.checkedIcon}
+          color={item.color}
+          indeterminate={item.indeterminate}
+          indeterminateIcon={item.indeterminateIcon}
+          shape={item.shape}
+          sizes={item.sizes}
+        />
       </Pressable>
 
-      {children ? (
-        <Pressable
-          className="shrink"
-          disabled={disabled || labelDisabled}
-          onPress={handleLabelPress}
-        >
-          {isString(children) ? <Text className={labelCls()}>{children}</Text> : children}
-        </Pressable>
-      ) : null}
+      {renderLabel()}
     </View>
   );
 };

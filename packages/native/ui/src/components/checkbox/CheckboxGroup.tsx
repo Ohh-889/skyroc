@@ -1,49 +1,70 @@
-import { useMemo } from 'react';
-import { View } from 'react-native';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { CheckboxGroupContext } from './CheckboxGroupContext';
+import { useMemo } from 'react';
+import { View } from 'react-native';
 import { checkboxGroupVariants } from './checkbox-variants';
-import type { CheckboxGroupContextValue, CheckboxGroupProps } from './types';
+import { CheckboxGroupContext } from './CheckboxGroupContext';
+import type { CheckboxGroupContextValue, CheckboxGroupProps, CheckboxValue } from './types';
 
-const CheckboxGroup = (props: CheckboxGroupProps) => {
+/** 非受控默认值的稳定引用，避免每次渲染都产生新数组 */
+const EMPTY_VALUE: CheckboxValue[] = [];
+
+const CheckboxGroup = <T extends CheckboxValue = CheckboxValue>(props: CheckboxGroupProps<T>) => {
   const {
     checkedIcon,
     children,
     className,
     color,
-    defaultValue = [],
+    defaultValue,
     direction = 'vertical',
     disabled = false,
     iconSize,
     indeterminateIcon,
+    labelPosition,
     max,
     onChange,
     shape,
     size,
+    testID,
     value: valueProp
   } = props;
 
-  const [value, setValue] = useControllableState({
-    caller: 'checkbox-group',
-    defaultProp: defaultValue,
-    onChange,
+  // Context 内部统一按 CheckboxValue 流转，只在回传给使用方时收窄回 T
+  function handleChange(next: CheckboxValue[]) {
+    onChange?.(next as T[]);
+  }
+
+  const [value, setValue] = useControllableState<CheckboxValue[]>({
+    caller: 'CheckboxGroup',
+    defaultProp: defaultValue ?? EMPTY_VALUE,
+    onChange: handleChange,
     prop: valueProp
   });
 
   const contextValue = useMemo<CheckboxGroupContextValue>(() => {
-    function isChecked(name: string): boolean {
+    function isChecked(name: CheckboxValue) {
       return value.includes(name);
     }
 
-    function isMaxReached(): boolean {
+    function isMaxReached() {
       if (max === undefined || max <= 0) return false;
+
       return value.length >= max;
     }
 
-    function toggle(name: string, checked: boolean) {
-      const next = checked ? [...value, name] : value.filter(v => v !== name);
-      setValue(next);
+    /** 选中上限与去重都收在这里兜底，消费方（含外部自定义子项）无需也无法绕过 */
+    function toggle(name: CheckboxValue, checked: boolean) {
+      if (!checked) {
+        setValue(value.filter(item => item !== name));
+        return true;
+      }
+
+      if (value.includes(name)) return true;
+
+      if (isMaxReached()) return false;
+
+      setValue([...value, name]);
+      return true;
     }
 
     return {
@@ -54,16 +75,22 @@ const CheckboxGroup = (props: CheckboxGroupProps) => {
       indeterminateIcon,
       isChecked,
       isMaxReached,
+      labelPosition,
       shape,
       size,
       toggle
     };
-  }, [value, setValue, checkedIcon, color, disabled, iconSize, indeterminateIcon, max, shape, size]);
+  }, [value, setValue, checkedIcon, color, disabled, iconSize, indeterminateIcon, labelPosition, max, shape, size]);
 
   return (
-    <CheckboxGroupContext.Provider value={contextValue}>
-      <View className={cn(checkboxGroupVariants({ direction, size }), className)}>{children}</View>
-    </CheckboxGroupContext.Provider>
+    <CheckboxGroupContext value={contextValue}>
+      <View
+        className={cn(checkboxGroupVariants({ direction, size }), className)}
+        testID={testID}
+      >
+        {children}
+      </View>
+    </CheckboxGroupContext>
   );
 };
 

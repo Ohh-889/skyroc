@@ -103,6 +103,14 @@ export default function HomeScreen() {
       >
         Image
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/checkbox')}
+      >
+        Checkbox
+      </Button>
     </View>
   );
 }
