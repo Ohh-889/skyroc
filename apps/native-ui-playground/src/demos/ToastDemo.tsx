@@ -139,7 +139,7 @@ const ToastDemo = () => {
       </Text>
 
       {/* 自定义 */}
-      <Text className="mb-4 text-lg font-semibold">自定义图标</Text>
+      <Text className="mb-4 text-lg font-semibold">自定义图标与样式</Text>
       <View className="mb-8 flex-row flex-wrap items-center gap-3">
         <Button
           variant="tonal"
@@ -151,6 +151,18 @@ const ToastDemo = () => {
           }
         >
           Emoji 图标
+        </Button>
+        <Button
+          variant="tonal"
+          onPress={() =>
+            showToast({
+              className: 'rounded-none bg-primary',
+              classNames: { message: 'text-base text-primary-foreground' },
+              message: 'className 覆盖'
+            })
+          }
+        >
+          className 覆盖
         </Button>
       </View>
 

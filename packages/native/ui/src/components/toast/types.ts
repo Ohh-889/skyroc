@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { SlotClassNames } from '../../types';
 
 /** Toast 类型 */
 export type ToastType = 'fail' | 'loading' | 'success' | 'text';
@@ -6,8 +7,17 @@ export type ToastType = 'fail' | 'loading' | 'success' | 'text';
 /** Toast 位置 */
 export type ToastPosition = 'bottom' | 'middle' | 'top';
 
+/** Toast 组件可覆盖的 slot 名称 */
+export type ToastSlots = 'icon' | 'message' | 'root';
+
 /** Toast 配置选项 */
 export interface ToastOptions {
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
+  className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<ToastSlots>;
+
   /** 是否允许点击 Toast 关闭 */
   closeOnClick?: boolean;
 

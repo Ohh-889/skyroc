@@ -11,4 +11,4 @@ export {
 export { Toast } from './Toast';
 export { toastPositionVariants, toastVariants } from './toast-variants';
 export { ToastRenderer } from './ToastRenderer';
-export type { ToastInstance, ToastOptions, ToastPosition, ToastProps, ToastType } from './types';
+export type { ToastInstance, ToastOptions, ToastPosition, ToastProps, ToastSlots, ToastType } from './types';

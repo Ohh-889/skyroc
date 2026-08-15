@@ -2,9 +2,10 @@ import { cn } from '@skyroc/utils';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import Animated, { withTiming } from 'react-native-reanimated';
+import type { SlotClassNames } from '../../types';
 import { Text } from '../text/Typography';
 import { toastVariants } from './toast-variants';
-import type { ToastType } from './types';
+import type { ToastSlots, ToastType } from './types';
 
 /** 进场动画时长（毫秒） */
 const ENTER_DURATION = 200;
@@ -64,6 +65,12 @@ const FailIcon = () => {
 
 /** Toast 展示层属性 */
 interface ToastViewProps {
+  /** 覆盖根容器的 className */
+  className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<ToastSlots>;
+
   /** 是否允许点击 Toast 关闭 */
   closeOnClick?: boolean;
 
@@ -86,21 +93,22 @@ interface ToastViewProps {
  * 只负责长什么样、进出场怎么动、点一下通知谁，不持有显示状态也不计时；何时出现与何时消失由上层（声明式 Toast 或 toastManager）决定。
  */
 const ToastView = (props: ToastViewProps) => {
-  const { closeOnClick = false, icon, message, onPressClose, type = 'text' } = props;
+  const { className, classNames, closeOnClick = false, icon, message, onPressClose, type = 'text' } = props;
 
   const hasIcon = type !== 'text' || Boolean(icon);
 
   const variantSlots = toastVariants({ hasIcon });
 
-  /** 变体槽合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
+    // 优先级：变体样式 < slot 级覆盖（classNames）< 根级覆盖（className）
     return {
-      icon: variantSlots.icon(),
-      // loading 图标本身没有留白，额外补一圈内边距让转圈不贴边
-      loadingIcon: cn(variantSlots.icon(), 'p-1'),
+      icon: cn(variantSlots.icon(), classNames?.icon),
+      // loading 图标本身没有留白，额外补一圈内边距让转圈不贴边；classNames.icon 仍排在补丁之后，覆盖得掉
+      loadingIcon: cn(variantSlots.icon(), 'p-1', classNames?.icon),
       loadingIndicator: 'accent-carbon-foreground',
-      message: variantSlots.message(),
-      root: variantSlots.root()
+      message: cn(variantSlots.message(), classNames?.message),
+      root: cn(variantSlots.root(), classNames?.root, className)
     };
   }
 

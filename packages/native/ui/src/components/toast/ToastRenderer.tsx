@@ -41,6 +41,8 @@ const ToastRenderer = () => {
       >
         {group.map(entry => (
           <ToastView
+            className={entry.className}
+            classNames={entry.classNames}
             closeOnClick={entry.closeOnClick}
             icon={entry.icon}
             key={entry.id}

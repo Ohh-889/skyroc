@@ -10,7 +10,18 @@ import type { ToastProps } from './types';
  * resolveDuration，不会出现行为分叉。
  */
 const Toast = (props: ToastProps) => {
-  const { closeOnClick = false, duration, icon, message, onClose, onUpdateShow, show = false, type = 'text' } = props;
+  const {
+    className,
+    classNames,
+    closeOnClick = false,
+    duration,
+    icon,
+    message,
+    onClose,
+    onUpdateShow,
+    show = false,
+    type = 'text'
+  } = props;
 
   function handleClose() {
     onUpdateShow?.(false);
@@ -23,6 +34,8 @@ const Toast = (props: ToastProps) => {
 
   return (
     <ToastView
+      className={className}
+      classNames={classNames}
       closeOnClick={closeOnClick}
       icon={icon}
       message={message}
