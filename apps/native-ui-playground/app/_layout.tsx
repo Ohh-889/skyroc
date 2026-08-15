@@ -14,8 +14,8 @@ import { Uniwind } from 'uniwind';
 /**
  * 把安全区尺寸同步给 uniwind 运行时。
  *
- * uniwind 把 env(safe-area-inset-*) 编译成 rt.insets.*，但它自己不采集安全区，初始值恒为 0；
- * 不接这一步，pt-safe / pb-safe / inset-safe 等所有 *-safe 工具类都会静默失效。
+ * Uniwind 把 env(safe-area-inset-_) 编译成 rt.insets._，但它自己不采集安全区，初始值恒为 0； 不接这一步，pt-safe / pb-safe / inset-safe 等所有 *-safe
+ * 工具类都会静默失效。
  */
 const UniwindInsetsBridge = () => {
   const insets = useSafeAreaInsets();

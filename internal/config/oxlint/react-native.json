@@ -10,6 +10,8 @@
     "_WORKLET": "readonly"
   },
   "rules": {
+    "unicorn/no-array-reverse": "off",
+    "unicorn/no-array-sort": "off",
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "warn",
     "react/no-unescaped-entities": "off",
