@@ -1,23 +1,27 @@
-import { forwardRef, useEffect, useImperativeHandle } from 'react';
+import { cn } from '@skyroc/utils';
+import { useImperativeHandle } from 'react';
 import { View } from 'react-native';
 import { Text } from '../text/Typography';
-import type { CountDownProps, CountDownRef } from './types';
+import type { CountDownProps } from './types';
 import { useCountDown } from './useCountDown';
 import { parseFormat } from './utils';
 
-const CountDown = forwardRef<CountDownRef, CountDownProps>((props, ref) => {
+const CountDown = (props: CountDownProps) => {
   const {
     autoStart = true,
     children,
     className,
+    classNames,
     format = 'HH:mm:ss',
     millisecond = false,
     onChange,
     onFinish,
+    ref,
     time = 0
   } = props;
 
   const { current, pause, reset, start } = useCountDown({
+    autoStart,
     millisecond,
     onChange,
     onFinish,
@@ -26,33 +30,31 @@ const CountDown = forwardRef<CountDownRef, CountDownProps>((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     pause,
-    reset: (totalTime?: number) => {
-      reset(totalTime);
-      if (autoStart) {
-        start();
-      }
-    },
+    reset,
     start
   }));
 
-  useEffect(() => {
-    if (autoStart) {
-      start();
-    }
-    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-  }, [autoStart]);
-
-  if (children) {
-    return children(current);
+  /** slot 级与根级覆盖合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    // 优先级：slot 级覆盖（classNames）< 根级覆盖（className）
+    return {
+      root: cn(classNames?.root, className),
+      text: cn(classNames?.text)
+    };
   }
 
-  return (
-    <View className={className}>
-      <Text>{parseFormat(format, current)}</Text>
-    </View>
-  );
-});
+  const slotClassNames = resolveSlotClassNames();
 
-CountDown.displayName = 'CountDown';
+  /** children 只替换文本内容，根容器始终渲染，className 才不会因为传了 children 就静默失效 */
+  function renderContent() {
+    if (children) {
+      return children(current);
+    }
+
+    return <Text className={slotClassNames.text}>{parseFormat(format, current)}</Text>;
+  }
+
+  return <View className={slotClassNames.root}>{renderContent()}</View>;
+};
 
 export { CountDown };

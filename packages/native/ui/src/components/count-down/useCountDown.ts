@@ -5,7 +5,9 @@ import type { CurrentTime } from './types';
 import { parseTime } from './utils';
 
 interface UseCountDownOptions {
-  /** 是否启用毫秒级渲染 */
+  /** 是否在挂载后自动开始，以及 reset 之后是否自动重新开始 */
+  autoStart?: boolean;
+  /** 是否启用毫秒级渲染，代价是每帧 setState 重渲染 */
   millisecond?: boolean;
   /** 倒计时变化回调 */
   onChange?: (current: CurrentTime) => void;
@@ -21,7 +23,7 @@ function isSameSecond(time1: number, time2: number): boolean {
 
 /** 倒计时 hook */
 function useCountDown(options: UseCountDownOptions) {
-  const { millisecond = false, onChange, onFinish, time } = options;
+  const { autoStart = true, millisecond = false, onChange, onFinish, time } = options;
 
   const [remain, setRemain] = useState(time);
   const remainRef = useRef(time);
@@ -58,6 +60,7 @@ function useCountDown(options: UseCountDownOptions) {
     }
   }
 
+  /** 毫秒级：每帧都 updateRemain，因而每帧都会 setState 重渲染（约 60 次/秒）——精度的代价 */
   function microTick() {
     rafIdRef.current = requestAnimationFrame(() => {
       if (countingRef.current) {
@@ -70,6 +73,7 @@ function useCountDown(options: UseCountDownOptions) {
     });
   }
 
+  /** 秒级：同样每帧醒来，但只在跨秒的那一帧才 updateRemain，空转的帧不触发渲染 */
   function macroTick() {
     rafIdRef.current = requestAnimationFrame(() => {
       if (countingRef.current) {
@@ -106,13 +110,19 @@ function useCountDown(options: UseCountDownOptions) {
     pause();
     remainRef.current = totalTime;
     setRemain(totalTime);
+
+    if (autoStart) {
+      start();
+    }
   }
 
   // 处理 AppState 变化（前后台切换）
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextState) => {
+    const subscription = AppState.addEventListener('change', nextState => {
       if (nextState === 'active' && countingRef.current) {
-        // 从后台恢复，重新计算剩余时间并继续
+        // 后台挂起的那帧回调会在回到前台时补发并继续递归，若直接 tick 会派生出第二条并行的
+        // raf 链，而 rafIdRef 只存得下一个 id —— pause 将永远停不掉另一条。先取消再重启。
+        cancelAnimationFrame(rafIdRef.current);
         tick();
       }
     });
@@ -122,11 +132,25 @@ function useCountDown(options: UseCountDownOptions) {
     };
   }, [millisecond]);
 
-  // time prop 变化时重置
+  // time prop 变化时按新时长重置；正在计时的话用新时长重新开始
+  // （只改 remainRef 不重置 endTimeRef 的话，下一帧就会被旧的 endTime 覆盖回去）
   useEffect(() => {
+    const wasCounting = countingRef.current;
+
+    pause();
     remainRef.current = time;
     setRemain(time);
+
+    if (wasCounting) {
+      start();
+    }
   }, [time]);
+
+  useEffect(() => {
+    if (autoStart) {
+      start();
+    }
+  }, [autoStart]);
 
   // 卸载时清理
   useEffect(() => {

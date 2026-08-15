@@ -10,6 +10,8 @@ export * from './checkbox';
 
 export * from './collapse';
 
+export * from './count-down';
+
 export * from './divider';
 
 export * from './image';

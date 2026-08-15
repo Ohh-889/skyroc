@@ -18,14 +18,14 @@ export function parseTime(time: number): CurrentTime {
 
 /** 数字补零 */
 function padZero(num: number, targetLength = 2): string {
-  let str = `${num}`;
-  while (str.length < targetLength) {
-    str = `0${str}`;
-  }
-  return str;
+  return `${num}`.padStart(targetLength, '0');
 }
 
-/** 根据 format 格式化时间对象为字符串 */
+/**
+ * 根据 format 格式化时间对象为字符串
+ *
+ * format 里缺失的高位单位会向下累加到相邻的低位单位上，例如 format 为 `mm:ss` 时天与小时都并入分钟， 这样任何单一单位的格式（`ss`、`SSS`）都能表示完整时长而不丢时间。
+ */
 export function parseFormat(format: string, currentTime: CurrentTime): string {
   const { days } = currentTime;
   let { hours, milliseconds, minutes, seconds } = currentTime;
@@ -55,15 +55,19 @@ export function parseFormat(format: string, currentTime: CurrentTime): string {
     milliseconds += seconds * 1000;
   }
 
+  // SS 是百分秒、S 是十分秒，必须先做除法降精度再补零。
+  // 截字符串只在 milliseconds ≤ 999 时才等价，而 format 不含 ss 时秒会并进来、轻易超过 999，
+  // 那时截出来的是无意义的高位数字（65000ms 截成 "65"）。
+  if (result.includes('SSS')) {
+    return result.replace('SSS', padZero(milliseconds, 3));
+  }
+
+  if (result.includes('SS')) {
+    return result.replace('SS', padZero(Math.floor(milliseconds / 10), 2));
+  }
+
   if (result.includes('S')) {
-    const ms = padZero(milliseconds, 3);
-    if (result.includes('SSS')) {
-      result = result.replace('SSS', ms);
-    } else if (result.includes('SS')) {
-      result = result.replace('SS', ms.slice(0, 2));
-    } else {
-      result = result.replace('S', ms.charAt(0));
-    }
+    return result.replace('S', padZero(Math.floor(milliseconds / 100), 1));
   }
 
   return result;

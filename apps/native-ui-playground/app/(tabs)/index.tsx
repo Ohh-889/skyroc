@@ -143,6 +143,14 @@ export default function HomeScreen() {
       >
         Notify
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/count-down')}
+      >
+        CountDown
+      </Button>
     </View>
   );
 }
