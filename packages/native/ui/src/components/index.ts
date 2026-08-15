@@ -10,4 +10,6 @@ export * from './radio';
 
 export * from './space';
 
+export * from './tag';
+
 export * from './text';
