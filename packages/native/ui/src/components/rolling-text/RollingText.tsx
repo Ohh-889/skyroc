@@ -1,8 +1,8 @@
 import { cn } from '@skyroc/utils';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useEffect, useImperativeHandle, useState } from 'react';
 import { View } from 'react-native';
 import { RollingTextItem } from './RollingTextItem';
-import type { RollingTextProps, RollingTextRef } from './types';
+import type { RollingTextProps } from './types';
 
 /** 数字模式下每列在起止数字之间额外空转的圈数 */
 const CIRCLE_NUM = 2;
@@ -51,7 +51,7 @@ function getTextArrByIdx(textList: string[], idx: number): string[] {
   return textList.map(text => text[idx] || '');
 }
 
-const RollingText = forwardRef<RollingTextRef, RollingTextProps>((props, ref) => {
+const RollingText = (props: RollingTextProps) => {
   const {
     autoStart = true,
     className,
@@ -59,6 +59,7 @@ const RollingText = forwardRef<RollingTextRef, RollingTextProps>((props, ref) =>
     direction = 'down',
     duration = 2000,
     height = 40,
+    ref,
     startNum = 0,
     stopOrder = 'ltr',
     targetNum = 0,
@@ -140,8 +141,6 @@ const RollingText = forwardRef<RollingTextRef, RollingTextProps>((props, ref) =>
       ))}
     </View>
   );
-});
-
-RollingText.displayName = 'RollingText';
+};
 
 export { RollingText };

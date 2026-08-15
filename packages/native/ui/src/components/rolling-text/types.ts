@@ -1,3 +1,5 @@
+import type { Ref } from 'react';
+
 /** 滚动方向 */
 export type RollingTextDirection = 'down' | 'up';
 
@@ -23,6 +25,9 @@ export interface RollingTextProps {
 
   /** 每个字符所占的行高 */
   height?: number;
+
+  /** 命令式控制的 ref，用于 start / reset */
+  ref?: Ref<RollingTextRef>;
 
   /** 起始数字，仅数字模式生效；负数取绝对值、小数向零取整 */
   startNum?: number;
