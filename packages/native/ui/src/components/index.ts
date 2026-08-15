@@ -10,6 +10,8 @@ export * from './divider';
 
 export * from './image';
 
+export * from './input';
+
 export * from './navbar';
 
 export * from './popup';
