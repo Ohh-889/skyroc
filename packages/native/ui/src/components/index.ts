@@ -10,6 +10,8 @@ export * from './radio';
 
 export * from './rate';
 
+export * from './rolling-text';
+
 export * from './space';
 
 export * from './tag';
