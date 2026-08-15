@@ -12,6 +12,8 @@ export * from './collapse';
 
 export * from './count-down';
 
+export * from './dialog';
+
 export * from './divider';
 
 export * from './image';

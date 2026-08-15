@@ -1,11 +1,25 @@
 import { createElement } from 'react';
-import type { PortalHandle } from '../portal/types';
 import { mountPortal } from '../portal/mount-portal';
-import { Dialog } from './Dialog';
+import { portalStore } from '../portal/portal-store';
+import type { PortalHandle } from '../portal/types';
+import { dialogManager } from './dialog-manager';
+import { DialogRenderer } from './DialogRenderer';
 import type { DialogAction, DialogOptions } from './types';
 
-/** 当前活跃的 Dialog portal 句柄 */
-let activeHandle: PortalHandle | null = null;
+/** DialogRenderer 的 Portal 句柄，未挂载时为 null */
+let portalHandle: PortalHandle | null = null;
+
+/**
+ * 确保 DialogRenderer 已挂载到 PortalHost
+ *
+ * 不能只记一个布尔标记：portalStore.clear()、Fast Refresh 都会把已挂载的节点清掉，标记却仍停在 true， Dialog 会从此静默失效。每次都向 store 核对真实挂载状态，重挂的成本也只是一次
+ * Map 查找。
+ */
+function ensurePortal() {
+  if (portalHandle && portalStore.has(portalHandle.id)) return;
+
+  portalHandle = mountPortal(createElement(DialogRenderer));
+}
 
 function parseOptions(options: DialogOptions | string): DialogOptions {
   if (typeof options === 'string') {
@@ -16,42 +30,24 @@ function parseOptions(options: DialogOptions | string): DialogOptions {
 
 /** 命令式显示对话框，返回 Promise，resolve 值为用户操作类型 */
 function showDialog(options: DialogOptions | string): Promise<DialogAction> {
-  const parsed = parseOptions(options);
+  ensurePortal();
 
-  // 关闭已有对话框
-  if (activeHandle) {
-    activeHandle.unmount();
-    activeHandle = null;
-  }
+  const { callback, onCancel, onConfirm, ...dialogOptions } = parseOptions(options);
 
   return new Promise<DialogAction>(resolve => {
-    function handleAction(action: DialogAction, inputValue?: string) {
-      parsed.callback?.(action, inputValue);
-      resolve(action);
+    /** 结算：用户回调与 Promise 都只在这里触发，由 dialogManager 保证恰好一次 */
+    function settle(action: DialogAction, inputValue?: string) {
+      if (action === 'confirm') {
+        onConfirm?.(inputValue);
+      } else {
+        onCancel?.(inputValue);
+      }
 
-      activeHandle?.unmount();
-      activeHandle = null;
+      callback?.(action, inputValue);
+      resolve(action);
     }
 
-    const element = createElement(Dialog, {
-      ...parsed,
-      show: true,
-      onConfirm(inputValue?: string) {
-        parsed.onConfirm?.(inputValue);
-        handleAction('confirm', inputValue);
-      },
-      onCancel(inputValue?: string) {
-        parsed.onCancel?.(inputValue);
-        handleAction('cancel', inputValue);
-      },
-      onUpdateShow(show: boolean) {
-        if (!show) {
-          handleAction('cancel');
-        }
-      }
-    });
-
-    activeHandle = mountPortal(element);
+    dialogManager.open(dialogOptions, settle);
   });
 }
 
@@ -61,12 +57,9 @@ function showConfirmDialog(options: DialogOptions | string): Promise<DialogActio
   return showDialog({ showCancelButton: true, ...parsed });
 }
 
-/** 关闭当前对话框 */
+/** 关闭当前对话框，按取消结算：等待中的 Promise 会 resolve 成 'cancel' 而不是永远挂起 */
 function closeDialog() {
-  if (activeHandle) {
-    activeHandle.unmount();
-    activeHandle = null;
-  }
+  dialogManager.close(undefined, 'cancel');
 }
 
 export { closeDialog, showConfirmDialog, showDialog };

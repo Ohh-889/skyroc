@@ -1,4 +1,15 @@
-export { closeDialog, showConfirmDialog, showDialog } from './function-call';
 export { Dialog } from './Dialog';
-export { dialogVariants } from './dialog-variants';
-export type { DialogAction, DialogBeforeClose, DialogOptions, DialogProps, DialogTheme } from './types';
+export { dialogFooterVariants, dialogVariants } from './dialog-variants';
+export { DialogRenderer } from './DialogRenderer';
+export { closeDialog, showConfirmDialog, showDialog } from './function-call';
+export type {
+  DialogAction,
+  DialogBeforeClose,
+  DialogConfirmColor,
+  DialogLoading,
+  DialogOptions,
+  DialogProps,
+  DialogSlots,
+  DialogTheme,
+  DialogThemeDirection
+} from './types';

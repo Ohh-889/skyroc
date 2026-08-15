@@ -151,6 +151,14 @@ export default function HomeScreen() {
       >
         CountDown
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/dialog')}
+      >
+        Dialog
+      </Button>
     </View>
   );
 }
