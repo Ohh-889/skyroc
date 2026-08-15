@@ -1,5 +1,6 @@
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
 import type { ReactNode } from 'react';
+import type { SlotClassNames } from '../../types';
 
 /** Checkbox icon shape */
 export type CheckboxShape = 'round' | 'square';
@@ -26,6 +27,27 @@ export type CheckboxGroupDirection = 'horizontal' | 'vertical';
 /** Checked state: boolean or 'indeterminate' */
 export type CheckedState = boolean | 'indeterminate';
 
+/**
+ * 指示器可覆盖的 slot 名称，Checkbox 与 CheckboxCard 共用。
+ *
+ * `indicator` 是勾选框本体，`indicatorIcon` 作用于内置勾 / 横线图标的 `colorClassName`，只接受 `accent-*` 颜色类。
+ */
+export type CheckboxIndicatorSlots = 'indicator' | 'indicatorIcon';
+
+/** Checkbox 组件可覆盖的 slot 名称 */
+export type CheckboxSlots = 'control' | 'indicator' | 'indicatorIcon' | 'label' | 'labelWrapper' | 'root';
+
+/** CheckboxCard 组件可覆盖的 slot 名称 */
+export type CheckboxCardSlots =
+  | 'content'
+  | 'description'
+  | 'icon'
+  | 'indicator'
+  | 'indicatorIcon'
+  | 'label'
+  | 'root'
+  | 'texts';
+
 export interface CheckboxProps {
   /** Controlled checked state, ignored when the checkbox belongs to a CheckboxGroup */
   checked?: CheckedState;
@@ -36,8 +58,11 @@ export interface CheckboxProps {
   /** Label content */
   children?: ReactNode;
 
-  /** NativeWind className for the root container */
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<CheckboxSlots>;
 
   /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
@@ -171,8 +196,11 @@ export interface CheckboxCardProps {
   /** Custom icon when checked, replaces the default check inside the control */
   checkedIcon?: ReactNode;
 
-  /** NativeWind className for the card container */
+  /** 覆盖卡片容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<CheckboxCardSlots>;
 
   /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
@@ -258,6 +286,9 @@ export interface CheckboxGroupCardProps<T extends CheckboxValue = CheckboxValue>
 
   /** Custom icon for indeterminate state, applied to all cards */
   indeterminateIcon?: ReactNode;
+
+  /** 覆盖每张卡片各 slot 的类名，卡片由本组件内部渲染，只能从这里透传 */
+  itemClassNames?: SlotClassNames<CheckboxCardSlots>;
 
   /** Items to render */
   items: CheckboxGroupCardItem<T>[];

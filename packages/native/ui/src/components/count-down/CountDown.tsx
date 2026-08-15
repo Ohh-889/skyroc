@@ -14,14 +14,14 @@ const CountDown = forwardRef<CountDownRef, CountDownProps>((props, ref) => {
     millisecond = false,
     onChange,
     onFinish,
-    time = 0,
+    time = 0
   } = props;
 
   const { current, pause, reset, start } = useCountDown({
     millisecond,
     onChange,
     onFinish,
-    time,
+    time
   });
 
   useImperativeHandle(ref, () => ({
@@ -32,13 +32,14 @@ const CountDown = forwardRef<CountDownRef, CountDownProps>((props, ref) => {
         start();
       }
     },
-    start,
+    start
   }));
 
   useEffect(() => {
     if (autoStart) {
       start();
     }
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [autoStart]);
 
   if (children) {

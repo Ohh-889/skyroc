@@ -34,10 +34,19 @@ const Tabs = (props: TabsProps) => {
     prop: activeIndexProp
   });
 
-  const slots = tabsVariants({ type });
+  const variantSlots = tabsVariants({ type });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(variantSlots.root(), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   return (
-    <View className={cn(slots.root(), className)}>
+    <View className={slotClassNames.root}>
       <TabBar
         activeIndex={activeIndex}
         classNames={classNames}

@@ -1,6 +1,6 @@
+import { cn, isNumber } from '@skyroc/utils';
 import { Children, Fragment, isValidElement } from 'react';
 import { View } from 'react-native';
-import { cn, isNumber } from '@skyroc/utils';
 import { spaceVariants } from './space-variants';
 import type { SpaceProps } from './types';
 
@@ -22,13 +22,22 @@ const Space = (props: SpaceProps) => {
   // 数值间距无法映射成 gap-* 类名，改由内联 style 承担
   const customGap = isNumber(size) ? size : undefined;
 
-  const variantClass = spaceVariants({
-    align,
-    direction,
-    fill,
-    size: isNumber(size) ? undefined : size,
-    wrap
-  });
+  /** 变体类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    const variantClass = spaceVariants({
+      align,
+      direction,
+      fill,
+      size: isNumber(size) ? undefined : size,
+      wrap
+    });
+
+    return {
+      root: cn(variantClass, className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   // 在子元素之间插入分隔符；Children.toArray 会剔除 null/undefined 并补全 key
   function renderChildren() {
@@ -46,7 +55,7 @@ const Space = (props: SpaceProps) => {
 
   return (
     <View
-      className={cn(variantClass, className)}
+      className={slotClassNames.root}
       style={customGap === undefined ? style : [{ gap: customGap }, style]}
       {...rest}
     >

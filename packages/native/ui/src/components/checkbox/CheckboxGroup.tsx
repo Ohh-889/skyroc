@@ -41,6 +41,15 @@ const CheckboxGroup = <T extends CheckboxValue = CheckboxValue>(props: CheckboxG
     prop: valueProp
   });
 
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(checkboxGroupVariants({ direction, size }), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
   const contextValue = useMemo<CheckboxGroupContextValue>(() => {
     function isChecked(name: CheckboxValue) {
       return value.includes(name);
@@ -85,7 +94,7 @@ const CheckboxGroup = <T extends CheckboxValue = CheckboxValue>(props: CheckboxG
   return (
     <CheckboxGroupContext value={contextValue}>
       <View
-        className={cn(checkboxGroupVariants({ direction, size }), className)}
+        className={slotClassNames.root}
         testID={testID}
       >
         {children}

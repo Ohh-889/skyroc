@@ -1,8 +1,8 @@
-import { useRef } from 'react';
-import { Pressable, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { useRef } from 'react';
+import { Pressable, View } from 'react-native';
 import type { RateProps } from './types';
 
 /** 默认配色 */
@@ -22,12 +22,7 @@ interface RateItem {
   status: RateStatus;
 }
 
-function getRateStatus(
-  value: number,
-  index: number,
-  allowHalf: boolean,
-  readonly: boolean
-): RateItem {
+function getRateStatus(value: number, index: number, allowHalf: boolean, readonly: boolean): RateItem {
   if (value >= index) {
     return { fractional: 1, status: 'full' };
   }
@@ -76,6 +71,15 @@ const Rate = (props: RateProps) => {
   });
 
   const lastTapRef = useRef<number>(0);
+
+  /** 内置类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn('flex-row items-center', className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function isUnselectable(): boolean {
     return readonly || disabled;
@@ -243,13 +247,7 @@ const Rate = (props: RateProps) => {
     );
   }
 
-  return (
-    <View
-      className={cn('flex-row items-center', className)}
-    >
-      {Array.from({ length: count }, (_, i) => renderStar(i))}
-    </View>
-  );
+  return <View className={slotClassNames.root}>{Array.from({ length: count }, (_, i) => renderStar(i))}</View>;
 };
 
 export { Rate };

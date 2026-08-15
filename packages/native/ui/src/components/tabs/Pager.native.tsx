@@ -27,7 +27,16 @@ const Pager = (props: PagerProps) => {
     total: items.length
   });
 
-  const slots = tabsVariants();
+  const variantSlots = tabsVariants();
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: cn(variantSlots.content(), classNames?.content)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   useEffect(() => {
     if (!swipeable) return;
@@ -85,7 +94,7 @@ const Pager = (props: PagerProps) => {
       {items.map((item, index) => (
         <View
           key={item.key}
-          className={cn(slots.content(), classNames?.content)}
+          className={slotClassNames.content}
         >
           {renderPanel(index, item.children)}
         </View>

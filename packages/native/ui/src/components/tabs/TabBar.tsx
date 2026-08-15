@@ -72,7 +72,7 @@ const TabBar = (props: TabBarProps) => {
     viewportWidth: 0
   });
 
-  const slots = tabsVariants({ type });
+  const variantSlots = tabsVariants({ type });
 
   const indicatorAnimStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: indicatorX.value }],
@@ -82,6 +82,28 @@ const TabBar = (props: TabBarProps) => {
   /** 指示器定位：line 型贴底作描边，pill 型撑满高度作选中背景 */
   const indicatorLayoutStyle: ViewStyle =
     type === 'pill' ? { bottom: 0, position: 'absolute', top: 0 } : { bottom: 0, position: 'absolute' };
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      indicator: cn(variantSlots.indicator(), classNames?.indicator),
+      scrollContent: 'grow',
+      tabBar: cn(variantSlots.tabBar(), classNames?.tabBar),
+      tabBarContent: cn(variantSlots.tabBarContent(), classNames?.tabBarContent)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
+  /** 单个 tab 的类名随激活态与禁用态变化，只能逐项解析 */
+  function resolveTabClassNames(active: boolean, disabled: boolean) {
+    const tabSlots = tabsVariants({ active, disabled, type });
+
+    return {
+      tab: cn(tabSlots.tab(), classNames?.tab),
+      tabText: cn(tabSlots.tabText(), classNames?.tabText)
+    };
+  }
 
   function handleTabLayout(index: number, layout: LayoutRectangle) {
     contextRef.current.tabLayouts.set(index, layout);
@@ -102,37 +124,33 @@ const TabBar = (props: TabBarProps) => {
   }, [activeIndex]);
 
   return (
-    <View className={cn(slots.tabBar(), classNames?.tabBar)}>
+    <View className={slotClassNames.tabBar}>
       <ScrollView
         ref={scrollViewRef}
         horizontal
-        contentContainerClassName="grow"
+        contentContainerClassName={slotClassNames.scrollContent}
         showsHorizontalScrollIndicator={false}
         onLayout={e => handleViewportLayout(e.nativeEvent.layout.width)}
       >
         {/* 指示器先于 tab 渲染，靠绘制顺序压在文字下层；负 zIndex 在 Android 上不可靠 */}
         <Animated.View style={[indicatorLayoutStyle, indicatorAnimStyle]}>
-          <View className={cn(slots.indicator(), classNames?.indicator)} />
+          <View className={slotClassNames.indicator} />
         </Animated.View>
 
-        <View className={cn(slots.tabBarContent(), classNames?.tabBarContent)}>
+        <View className={slotClassNames.tabBarContent}>
           {items.map((item, index) => {
             const isActive = index === activeIndex;
-            const tabSlots = tabsVariants({ active: isActive, disabled: Boolean(item.disabled), type });
+            const tabClassNames = resolveTabClassNames(isActive, Boolean(item.disabled));
 
             return (
               <Pressable
                 key={item.key}
-                className={cn(tabSlots.tab(), classNames?.tab)}
+                className={tabClassNames.tab}
                 disabled={item.disabled}
                 onLayout={e => handleTabLayout(index, e.nativeEvent.layout)}
                 onPress={() => onTabPress(index)}
               >
-                {isString(item.title) ? (
-                  <Text className={cn(tabSlots.tabText(), classNames?.tabText)}>{item.title}</Text>
-                ) : (
-                  item.title
-                )}
+                {isString(item.title) ? <Text className={tabClassNames.tabText}>{item.title}</Text> : item.title}
               </Pressable>
             );
           })}

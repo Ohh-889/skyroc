@@ -31,27 +31,30 @@ const Cell = (props: CellProps) => {
   const pressable = Boolean(onPress || onLongPress);
   const shouldShowArrow = showArrow ?? (Boolean(arrow) || pressable);
 
-  const {
-    arrow: arrowCls,
-    arrowIcon: arrowIconCls,
-    content: contentCls,
-    leading: leadingCls,
-    root: rootCls,
-    subtitle: subtitleCls,
-    title: titleCls,
-    trailing: trailingCls,
-    trailingText: trailingTextCls
-  } = cellVariants({ center, disabled, size });
+  const variantSlots = cellVariants({ center, disabled, size });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      arrow: cn(variantSlots.arrow(), classNames?.arrow),
+      arrowIcon: variantSlots.arrowIcon(),
+      content: cn(variantSlots.content(), classNames?.content),
+      leading: cn(variantSlots.leading(), classNames?.leading),
+      root: cn(variantSlots.root(), classNames?.root),
+      subtitle: cn(variantSlots.subtitle(), classNames?.subtitle),
+      title: cn(variantSlots.title(), classNames?.title),
+      trailing: cn(variantSlots.trailing(), classNames?.trailing),
+      trailingText: cn(variantSlots.trailingText(), classNames?.trailingText)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderTrailing() {
     if (!trailing) return null;
     return (
-      <View className={cn(trailingCls(), classNames?.trailing)}>
-        {isString(trailing) ? (
-          <Text className={cn(trailingTextCls(), classNames?.trailingText)}>{trailing}</Text>
-        ) : (
-          trailing
-        )}
+      <View className={slotClassNames.trailing}>
+        {isString(trailing) ? <Text className={slotClassNames.trailingText}>{trailing}</Text> : trailing}
       </View>
     );
   }
@@ -59,10 +62,10 @@ const Cell = (props: CellProps) => {
   function renderArrow() {
     if (!shouldShowArrow) return null;
     return (
-      <View className={cn(arrowCls(), classNames?.arrow)}>
+      <View className={slotClassNames.arrow}>
         {arrow ?? (
           <ArrowIcon
-            colorClassName={arrowIconCls()}
+            colorClassName={slotClassNames.arrowIcon}
             name={arrowDirection}
             size={ARROW_SIZE_MAP[size]}
           />
@@ -73,10 +76,10 @@ const Cell = (props: CellProps) => {
 
   const content = (
     <>
-      {leading ? <View className={cn(leadingCls(), classNames?.leading)}>{leading}</View> : null}
-      <View className={cn(contentCls(), classNames?.content)}>
-        {isString(title) ? <Text className={cn(titleCls(), classNames?.title)}>{title}</Text> : title}
-        {isString(subtitle) ? <Text className={cn(subtitleCls(), classNames?.subtitle)}>{subtitle}</Text> : subtitle}
+      {leading ? <View className={slotClassNames.leading}>{leading}</View> : null}
+      <View className={slotClassNames.content}>
+        {isString(title) ? <Text className={slotClassNames.title}>{title}</Text> : title}
+        {isString(subtitle) ? <Text className={slotClassNames.subtitle}>{subtitle}</Text> : subtitle}
       </View>
       {renderTrailing()}
       {renderArrow()}
@@ -89,7 +92,7 @@ const Cell = (props: CellProps) => {
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
         accessibilityState={{ disabled }}
-        className={cn(rootCls(), classNames?.root)}
+        className={slotClassNames.root}
         disabled={disabled}
         onLongPress={onLongPress}
         onPress={onPress}
@@ -103,7 +106,7 @@ const Cell = (props: CellProps) => {
   return (
     <View
       accessibilityLabel={accessibilityLabel}
-      className={cn(rootCls(), classNames?.root)}
+      className={slotClassNames.root}
       testID={testID}
     >
       {content}

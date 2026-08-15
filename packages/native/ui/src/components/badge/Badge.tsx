@@ -44,10 +44,25 @@ const Badge = (props: BadgeProps) => {
     ...rest
   } = props;
 
-  const { badge: badgeCls, content: contentCls, dot: dotCls, root: rootCls } = badgeVariants({ color, size });
+  const variantSlots = badgeVariants({ color, size });
 
   /** 无 children 时角标独立成块，此处不再有外层容器，View props 直接落到角标自身 */
   const isStandalone = isNil(children);
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    // 独立模式下角标就是根节点，由它承接调用方的 className
+    const ownClassName = isStandalone ? className : undefined;
+
+    return {
+      badge: cn(variantSlots.badge(), classNames?.badge, ownClassName),
+      content: cn(variantSlots.content(), classNames?.content),
+      dot: cn(variantSlots.dot(), classNames?.dot, ownClassName),
+      root: cn(variantSlots.root(), classNames?.root, className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function resolveVisible() {
     if (dot) return true;
@@ -87,7 +102,7 @@ const Badge = (props: BadgeProps) => {
 
     return (
       <Text
-        className={cn(contentCls(), classNames?.content)}
+        className={slotClassNames.content}
         numberOfLines={1}
         style={contentTextStyle}
       >
@@ -99,14 +114,13 @@ const Badge = (props: BadgeProps) => {
   function renderBadge() {
     if (!visible) return null;
 
-    // 独立模式下角标就是根节点，承接 className 与其余 View props
+    // 独立模式下角标就是根节点，承接其余 View props
     const ownProps = isStandalone ? rest : {};
-    const ownClassName = isStandalone ? className : undefined;
 
     if (dot) {
       return (
         <View
-          className={cn(dotCls(), classNames?.dot, ownClassName)}
+          className={slotClassNames.dot}
           style={getPositionStyle()}
           {...ownProps}
         />
@@ -115,7 +129,7 @@ const Badge = (props: BadgeProps) => {
 
     return (
       <View
-        className={cn(badgeCls(), classNames?.badge, ownClassName)}
+        className={slotClassNames.badge}
         style={getPositionStyle()}
         {...ownProps}
       >
@@ -130,7 +144,7 @@ const Badge = (props: BadgeProps) => {
 
   return (
     <View
-      className={cn(rootCls(), classNames?.root, className)}
+      className={slotClassNames.root}
       {...rest}
     >
       {isString(children) || isNumber(children) ? <Text>{children}</Text> : children}

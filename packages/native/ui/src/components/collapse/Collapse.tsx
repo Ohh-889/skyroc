@@ -1,9 +1,9 @@
-import { useImperativeHandle, useRef } from 'react';
-import { View } from 'react-native';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { CollapseContext } from './CollapseContext';
+import { useImperativeHandle, useRef } from 'react';
+import { View } from 'react-native';
 import { collapseVariants } from './collapse-variants';
+import { CollapseContext } from './CollapseContext';
 import type { CollapseItemName, CollapseItemRegistration, CollapseProps, CollapseToggleAllOptions } from './types';
 
 const Collapse = (props: CollapseProps) => {
@@ -15,7 +15,7 @@ const Collapse = (props: CollapseProps) => {
     defaultValue,
     onChange,
     ref,
-    value: valueProp,
+    value: valueProp
   } = props;
 
   const defaultVal = defaultValue ?? (accordion ? '' : []);
@@ -24,7 +24,7 @@ const Collapse = (props: CollapseProps) => {
     caller: 'Collapse',
     defaultProp: defaultVal,
     onChange,
-    prop: valueProp,
+    prop: valueProp
   });
 
   const itemsRef = useRef<CollapseItemRegistration[]>([]);
@@ -73,14 +73,23 @@ const Collapse = (props: CollapseProps) => {
         .map(item => item.name);
 
       setValue(names);
-    },
+    }
   }));
 
-  const slots = collapseVariants({ border });
+  const variantSlots = collapseVariants({ border });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(variantSlots.root(), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   return (
     <CollapseContext.Provider value={{ isExpanded, register, toggle }}>
-      <View className={cn(slots.root(), className)}>{children}</View>
+      <View className={slotClassNames.root}>{children}</View>
     </CollapseContext.Provider>
   );
 };

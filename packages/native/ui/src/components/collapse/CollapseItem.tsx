@@ -1,12 +1,13 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { cn } from '@skyroc/utils';
 import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { cn } from '@skyroc/utils';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Cell } from '../cell';
-import { CollapseContext } from './CollapseContext';
+import { withUniwind } from 'uniwind';
+import { ARROW_SIZE_MAP, Cell } from '../cell';
 import { collapseItemVariants } from './collapse-variants';
+import { CollapseContext } from './CollapseContext';
 import type { CollapseItemProps } from './types';
 
 /** 动画时长 */
@@ -15,20 +16,16 @@ const DURATION = 300;
 /** 全局索引计数器 */
 let globalIndex = 0;
 
-/**
- * 内容绝对定位，脱离文档流独立测量，因此外层高度始终由 animatedHeight 驱动。
- * useAnimatedStyle 必须每次返回相同的属性集合，否则被移除的属性会在原生侧残留。
- */
-const styles = StyleSheet.create({
-  measure: { left: 0, position: 'absolute', right: 0, top: 0 },
-  wrapper: { overflow: 'hidden' }
-});
+/** AntDesign 不认 className，用 withUniwind 把 `accent-*` 工具类映射到 color 上，让箭头颜色跟随主题 token */
+const ArrowIcon = withUniwind(AntDesign);
 
 const CollapseItem = (props: CollapseItemProps) => {
   const {
     children,
     className,
+    classNames,
     disabled = false,
+    headerClassNames,
     icon,
     isLink = true,
     label,
@@ -96,8 +93,10 @@ const CollapseItem = (props: CollapseItemProps) => {
     if (expanded && !measuredRef.current) return;
 
     animatedHeight.value = withTiming(expanded ? contentHeight.value : 0, { duration: DURATION });
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [expanded]);
 
+  // useAnimatedStyle 必须每次返回相同的属性集合，否则被移除的属性会在原生侧残留
   const wrapperStyle = useAnimatedStyle(() => ({
     height: animatedHeight.value
   }));
@@ -138,26 +137,41 @@ const CollapseItem = (props: CollapseItemProps) => {
 
   const shouldRender = lazyRender ? hasExpanded : true;
   const showArrow = isLink && !readonly;
-  const slots = collapseItemVariants({ disabled, size });
+
+  const variantSlots = collapseItemVariants({ disabled, size });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      arrowIcon: cn(variantSlots.arrowIcon(), classNames?.arrow),
+      content: cn(variantSlots.content(), classNames?.content),
+      measure: variantSlots.measure(),
+      root: cn(variantSlots.root(), classNames?.root, className),
+      wrapper: cn(variantSlots.wrapper(), classNames?.wrapper)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderArrow() {
     if (!showArrow) return undefined;
     return (
       <Animated.View style={arrowStyle}>
-        <AntDesign
-          color="#6b7280"
+        <ArrowIcon
+          colorClassName={slotClassNames.arrowIcon}
           name="down"
-          size={12}
+          size={ARROW_SIZE_MAP[size]}
         />
       </Animated.View>
     );
   }
 
   return (
-    <View className={cn(slots.root(), className)}>
+    <View className={slotClassNames.root}>
       <Cell
         arrow={renderArrow()}
         center
+        classNames={headerClassNames}
         disabled={disabled}
         leading={icon}
         showArrow={showArrow}
@@ -169,15 +183,15 @@ const CollapseItem = (props: CollapseItemProps) => {
       />
 
       <Animated.View
-        className={slots.wrapper()}
-        style={[styles.wrapper, wrapperStyle]}
+        className={slotClassNames.wrapper}
+        style={wrapperStyle}
       >
         {shouldRender ? (
           <View
-            style={styles.measure}
+            className={slotClassNames.measure}
             onLayout={handleContentLayout}
           >
-            <View className={slots.content()}>{children}</View>
+            <View className={slotClassNames.content}>{children}</View>
           </View>
         ) : null}
       </Animated.View>

@@ -15,12 +15,19 @@ const Text = (props: TextProps) => {
 
   const Component = asChild ? Slot.Text : RNText;
 
-  // 优先级：兜底样式 < 父级继承（Context） < 显式 variant props < className
-  const textCls = cn(textBaseClass, textClass, textVariants({ color, size, weight }), className);
+  /** 变体类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    // 优先级：兜底样式 < 父级继承（Context） < 显式 variant props < className
+    return {
+      root: cn(textBaseClass, textClass, textVariants({ color, size, weight }), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   return (
     <Component
-      className={textCls}
+      className={slotClassNames.root}
       allowFontScaling={false}
       maxFontSizeMultiplier={1}
       {...rest}

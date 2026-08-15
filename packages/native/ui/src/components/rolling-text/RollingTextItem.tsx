@@ -1,7 +1,13 @@
+import { cn } from '@skyroc/utils';
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
-import { cn } from '@skyroc/utils';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming
+} from 'react-native-reanimated';
 import { Text } from '../text/Typography';
 import type { RollingTextItemProps } from './types';
 
@@ -13,10 +19,9 @@ const RollingTextItem = (props: RollingTextItemProps) => {
   const totalHeight = (figureArr.length - 1) * height;
 
   /**
-   * down 时序列倒序渲染，配合 -totalHeight → 0 的位移，字符自上而下推入。
+   * Down 时序列倒序渲染，配合 -totalHeight → 0 的位移，字符自上而下推入。
    *
-   * 不用 toReversed 是因为 Hermes 和旧版 JSC 都还没实现 ES2023 的 change-array-by-copy；
-   * 展开已经产出副本，就地 reverse 不会动到入参。
+   * 不用 toReversed 是因为 Hermes 和旧版 JSC 都还没实现 ES2023 的 change-array-by-copy； 展开已经产出副本，就地 reverse 不会动到入参。
    */
   const displayArr = direction === 'down' ? [...figureArr].reverse() : figureArr;
 
@@ -28,13 +33,20 @@ const RollingTextItem = (props: RollingTextItemProps) => {
   /**
    * 序列内容的稳定标识。
    *
-   * 父组件每次渲染都会新建 figureArr，数组本身进依赖会让动画在无关重渲染时误重播；
-   * 而只依赖 totalHeight 又会漏掉「位数不变但目标值变了」的情况（12 → 34），
-   * 因此用内容摘要作为依赖。
+   * 父组件每次渲染都会新建 figureArr，数组本身进依赖会让动画在无关重渲染时误重播； 而只依赖 totalHeight 又会漏掉「位数不变但目标值变了」的情况（12 → 34）， 因此用内容摘要作为依赖。
    */
   const sequenceKey = figureArr.join('');
 
   const animStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
+
+  /** 内置类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      text: cn('text-lg font-medium text-foreground', textClassName)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   useEffect(() => {
     // 先掐断上一轮动画，避免与新一轮抢同一个 shared value
@@ -56,7 +68,7 @@ const RollingTextItem = (props: RollingTextItemProps) => {
             key={`${figure}-${index}`}
             style={{ alignItems: 'center', height, justifyContent: 'center' }}
           >
-            <Text className={cn('text-lg font-medium text-foreground', textClassName)}>{figure}</Text>
+            <Text className={slotClassNames.text}>{figure}</Text>
           </View>
         ))}
       </Animated.View>

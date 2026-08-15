@@ -30,7 +30,23 @@ const NavBar = (props: NavBarProps) => {
     title
   } = props;
 
-  const slots = navBarVariants({ border, leftDisabled, rightDisabled, safeAreaTop });
+  const variantSlots = navBarVariants({ border, leftDisabled, rightDisabled, safeAreaTop });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      container: cn(variantSlots.container(), classNames?.container),
+      left: cn(variantSlots.left(), classNames?.left),
+      leftText: 'text-sm',
+      right: cn(variantSlots.right(), classNames?.right),
+      rightText: 'text-sm text-primary',
+      root: cn(variantSlots.root(), className),
+      title: cn(variantSlots.title(), classNames?.title),
+      titleText: 'font-semibold'
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderLeft() {
     if (left) return left;
@@ -49,7 +65,7 @@ const NavBar = (props: NavBarProps) => {
             />
           </Text>
         ) : null}
-        {leftText ? <Text className="text-sm">{leftText}</Text> : null}
+        {leftText ? <Text className={slotClassNames.leftText}>{leftText}</Text> : null}
       </>
     );
   }
@@ -59,17 +75,15 @@ const NavBar = (props: NavBarProps) => {
 
     if (!rightText) return null;
 
-    return <Text className="text-sm text-primary">{rightText}</Text>;
+    return <Text className={slotClassNames.rightText}>{rightText}</Text>;
   }
 
   function renderTitle() {
     if (!title) return null;
 
-    const titleClass = cn(slots.title(), classNames?.title);
-
     const content = isString(title) ? (
       <Text
-        className="font-semibold"
+        className={slotClassNames.titleText}
         numberOfLines={1}
       >
         {title}
@@ -82,7 +96,7 @@ const NavBar = (props: NavBarProps) => {
     if (!onTitlePress) {
       return (
         <View
-          className={titleClass}
+          className={slotClassNames.title}
           pointerEvents="none"
         >
           {content}
@@ -92,7 +106,7 @@ const NavBar = (props: NavBarProps) => {
 
     return (
       <Pressable
-        className={titleClass}
+        className={slotClassNames.title}
         onPress={onTitlePress}
       >
         {content}
@@ -104,14 +118,14 @@ const NavBar = (props: NavBarProps) => {
   const rightContent = renderRight();
 
   return (
-    <View className={cn(slots.container(), classNames?.container)}>
-      <View className={cn(slots.root(), className)}>
+    <View className={slotClassNames.container}>
+      <View className={slotClassNames.root}>
         {renderTitle()}
 
         {/* 左右两侧即使无内容也保留占位，维持 justify-between 的两端对齐 */}
         {leftContent ? (
           <Pressable
-            className={cn(slots.left(), classNames?.left)}
+            className={slotClassNames.left}
             disabled={leftDisabled || !onLeftPress}
             hitSlop={5}
             onPress={onLeftPress}
@@ -124,7 +138,7 @@ const NavBar = (props: NavBarProps) => {
 
         {rightContent ? (
           <Pressable
-            className={cn(slots.right(), classNames?.right)}
+            className={slotClassNames.right}
             disabled={rightDisabled || !onRightPress}
             hitSlop={5}
             onPress={onRightPress}

@@ -25,12 +25,19 @@ const Tag = (props: TagProps) => {
     ...rest
   } = props;
 
-  const {
-    close: closeCls,
-    closeIcon: closeIconCls,
-    root: rootCls,
-    text: textCls
-  } = tagVariants({ color, shape, size, variant });
+  const variantSlots = tagVariants({ color, shape, size, variant });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      close: cn(variantSlots.close(), classNames?.close),
+      closeIcon: cn(variantSlots.closeIcon(), classNames?.closeIcon),
+      root: cn(variantSlots.root(), classNames?.root, className),
+      text: cn(variantSlots.text(), classNames?.text)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   const sizeKey = size ?? DEFAULT_TAG_SIZE;
 
@@ -38,9 +45,9 @@ const Tag = (props: TagProps) => {
 
   return (
     // 文字色通过 Context 下发，非 string children（图标 + 自定义 Text 等）同样能继承标签的前景色
-    <TextClassContext.Provider value={cn(textCls(), classNames?.text)}>
+    <TextClassContext.Provider value={slotClassNames.text}>
       <View
-        className={cn(rootCls(), classNames?.root, className)}
+        className={slotClassNames.root}
         {...rest}
       >
         {leading}
@@ -48,13 +55,13 @@ const Tag = (props: TagProps) => {
         {closeable ? (
           <Pressable
             accessibilityLabel={closeAccessibilityLabel}
-            className={cn(closeCls(), classNames?.close)}
+            className={slotClassNames.close}
             hitSlop={CLOSE_HIT_SLOP_MAP[sizeKey]}
             onPress={onClose}
             role="button"
           >
             <CloseIcon
-              colorClassName={cn(closeIconCls(), classNames?.closeIcon)}
+              colorClassName={slotClassNames.closeIcon}
               name="close"
               size={CLOSE_ICON_SIZE_MAP[sizeKey]}
             />

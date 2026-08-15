@@ -1,7 +1,17 @@
 import type { ReactNode, Ref } from 'react';
+import type { SlotClassNames } from '../../types';
+import type { CellSlots } from '../cell';
 
 /** 面板名称类型 */
 export type CollapseItemName = number | string;
+
+/**
+ * CollapseItem 可覆盖的 slot 名称。
+ *
+ * `arrow` 作用于箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类；
+ * 标题行由内部的 Cell 渲染，细粒度覆盖走 `headerClassNames`。
+ */
+export type CollapseItemSlots = 'arrow' | 'content' | 'root' | 'wrapper';
 
 /** Collapse 组件属性 */
 export interface CollapseProps {
@@ -50,11 +60,17 @@ export interface CollapseItemProps {
   /** 子元素（面板内容） */
   children?: ReactNode;
 
-  /** 自定义容器 className */
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<CollapseItemSlots>;
 
   /** 是否禁用 */
   disabled?: boolean;
+
+  /** 覆盖标题行各 slot 的类名，标题行由内部的 Cell 渲染，只能从这里透传 */
+  headerClassNames?: SlotClassNames<CellSlots>;
 
   /** 左侧图标 */
   icon?: ReactNode;

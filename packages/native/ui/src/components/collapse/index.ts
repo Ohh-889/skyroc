@@ -1,11 +1,12 @@
 export { Collapse } from './Collapse';
-export { CollapseItem } from './CollapseItem';
 export { collapseItemVariants, collapseVariants } from './collapse-variants';
+export { CollapseItem } from './CollapseItem';
 export type {
   CollapseContextValue,
   CollapseItemName,
   CollapseItemProps,
   CollapseItemRef,
+  CollapseItemSlots,
   CollapseProps,
   CollapseRef,
   CollapseToggleAllOptions,

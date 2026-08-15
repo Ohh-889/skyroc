@@ -39,11 +39,23 @@ const Radio = (props: RadioProps) => {
     size
   });
 
-  const { label: labelCls, root: rootCls } = radioVariants({
+  const variantSlots = radioVariants({
     disabled: item.disabled,
     labelPosition: item.labelPosition,
     size: item.size
   });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      control: 'active:opacity-70',
+      label: variantSlots.label(),
+      labelWrapper: 'active:opacity-70',
+      root: cn(variantSlots.root(), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderLabel() {
     if (children === null || children === undefined) return null;
@@ -52,19 +64,19 @@ const Radio = (props: RadioProps) => {
 
     return (
       <Pressable
-        className="active:opacity-70"
+        className={slotClassNames.labelWrapper}
         disabled={item.disabled || labelDisabled}
         onPress={item.select}
       >
-        {isTextChild ? <Text className={labelCls()}>{children}</Text> : children}
+        {isTextChild ? <Text className={slotClassNames.label}>{children}</Text> : children}
       </Pressable>
     );
   }
 
   return (
-    <View className={cn(rootCls(), className)}>
+    <View className={slotClassNames.root}>
       <Pressable
-        className="active:opacity-70"
+        className={slotClassNames.control}
         disabled={item.disabled}
         hitSlop={4}
         onPress={item.select}

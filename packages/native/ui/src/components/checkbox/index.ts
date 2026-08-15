@@ -14,16 +14,19 @@ export { CheckboxGroup } from './CheckboxGroup';
 export { CheckboxGroupCard } from './CheckboxGroupCard';
 export type {
   CheckboxCardProps,
+  CheckboxCardSlots,
   CheckboxGroupCardItem,
   CheckboxGroupCardProps,
   CheckboxGroupContextValue,
   CheckboxGroupDirection,
   CheckboxGroupProps,
+  CheckboxIndicatorSlots,
   CheckboxLabelPosition,
   CheckboxPosition,
   CheckboxProps,
   CheckboxShape,
   CheckboxSide,
+  CheckboxSlots,
   CheckboxValue,
   CheckedState
 } from './types';

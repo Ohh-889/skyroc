@@ -11,14 +11,24 @@ import type { PanelStackProps } from './types';
 const PanelStack = (props: PanelStackProps) => {
   const { activeIndex, classNames, items, renderPanel } = props;
 
-  const slots = tabsVariants();
+  const variantSlots = tabsVariants();
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: cn(variantSlots.content(), classNames?.content),
+      pager: cn(variantSlots.pager(), classNames?.pager)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   return (
-    <View className={cn(slots.pager(), classNames?.pager)}>
+    <View className={slotClassNames.pager}>
       {items.map((item, index) => (
         <View
           key={item.key}
-          className={cn(slots.content(), classNames?.content)}
+          className={slotClassNames.content}
           style={{ display: index === activeIndex ? 'flex' : 'none' }}
         >
           {renderPanel(index, item.children)}

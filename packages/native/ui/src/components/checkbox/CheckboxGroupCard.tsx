@@ -14,6 +14,7 @@ const CheckboxGroupCard = <T extends CheckboxValue = CheckboxValue>(props: Check
     disabled = false,
     iconSize,
     indeterminateIcon,
+    itemClassNames,
     items,
     max,
     onChange,
@@ -44,6 +45,7 @@ const CheckboxGroupCard = <T extends CheckboxValue = CheckboxValue>(props: Check
         <CheckboxCard
           key={String(item.value)}
           checkboxPosition={checkboxPosition}
+          classNames={itemClassNames}
           description={item.description}
           disabled={item.disabled}
           icon={item.icon}

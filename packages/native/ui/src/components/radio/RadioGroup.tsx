@@ -38,6 +38,15 @@ const RadioGroup = <T extends RadioValue = RadioValue>(props: RadioGroupProps<T>
     prop: valueProp
   });
 
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(radioGroupVariants({ direction, size }), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
   const contextValue = useMemo<RadioGroupContextValue>(() => {
     function isChecked(name: RadioValue) {
       return value === name;
@@ -62,7 +71,7 @@ const RadioGroup = <T extends RadioValue = RadioValue>(props: RadioGroupProps<T>
 
   return (
     <RadioGroupContext value={contextValue}>
-      <View className={cn(radioGroupVariants({ direction, size }), className)}>{children}</View>
+      <View className={slotClassNames.root}>{children}</View>
     </RadioGroupContext>
   );
 };

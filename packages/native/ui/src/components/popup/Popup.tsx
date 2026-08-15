@@ -65,6 +65,15 @@ const Popup = (props: PopupProps) => {
     paddingTop: safeAreaInsetTop ? insets?.top : undefined
   };
 
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn(popupVariants({ position, round }), className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
   function handleBackdropPress() {
     if (closeOnBackdropPress) {
       onUpdateShow?.(false);
@@ -96,7 +105,7 @@ const Popup = (props: PopupProps) => {
       style={[getContainerStyle(position), style]}
     >
       <View
-        className={cn(popupVariants({ position, round }), className)}
+        className={slotClassNames.root}
         style={contentStyle}
       >
         {children}

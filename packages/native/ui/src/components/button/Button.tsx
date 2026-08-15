@@ -33,15 +33,22 @@ const Button = (props: ButtonProps) => {
 
   const isTextChild = typeof children === 'string' || typeof children === 'number';
 
-  const textClass = cn(buttonTextVariants({ variant, color, size }), textClassName);
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      indicator: buttonIndicatorVariants({ variant, color }),
+      root: cn(buttonVariants({ variant, color, size, shape, block }), isDisabled && 'opacity-50', className),
+      text: cn(buttonTextVariants({ variant, color, size }), textClassName)
+    };
+  }
 
-  const rootClass = cn(buttonVariants({ variant, color, size, shape, block }), isDisabled && 'opacity-50', className);
+  const slotClassNames = resolveSlotClassNames();
 
   return (
-    <TextClassContext.Provider value={textClass}>
+    <TextClassContext.Provider value={slotClassNames.text}>
       <Pressable
         accessibilityState={{ busy: loading, disabled: isDisabled }}
-        className={rootClass}
+        className={slotClassNames.root}
         disabled={isDisabled}
         hitSlop={HIT_SLOP[size ?? DEFAULT_BUTTON_SIZE]}
         role="button"
@@ -50,7 +57,7 @@ const Button = (props: ButtonProps) => {
         {/* loading 时占用 leading 位，避免额外插入节点导致按钮宽度跳动 */}
         {loading ? (
           <ActivityIndicator
-            colorClassName={buttonIndicatorVariants({ variant, color })}
+            colorClassName={slotClassNames.indicator}
             size="small"
           />
         ) : (

@@ -89,33 +89,48 @@ const ToastView = (props: ToastViewProps) => {
   const { closeOnClick = false, icon, message, onPressClose, type = 'text' } = props;
 
   const hasIcon = type !== 'text' || Boolean(icon);
-  const { icon: iconCls, message: messageCls, root: rootCls } = toastVariants({ hasIcon });
+
+  const variantSlots = toastVariants({ hasIcon });
+
+  /** 变体槽合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      icon: variantSlots.icon(),
+      // loading 图标本身没有留白，额外补一圈内边距让转圈不贴边
+      loadingIcon: cn(variantSlots.icon(), 'p-1'),
+      loadingIndicator: 'accent-carbon-foreground',
+      message: variantSlots.message(),
+      root: variantSlots.root()
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderIcon() {
     if (icon) {
-      return <View className={iconCls()}>{icon}</View>;
+      return <View className={slotClassNames.icon}>{icon}</View>;
     }
 
     switch (type) {
       case 'success': {
         return (
-          <View className={iconCls()}>
+          <View className={slotClassNames.icon}>
             <SuccessIcon />
           </View>
         );
       }
       case 'fail': {
         return (
-          <View className={iconCls()}>
+          <View className={slotClassNames.icon}>
             <FailIcon />
           </View>
         );
       }
       case 'loading': {
         return (
-          <View className={cn(iconCls(), 'p-1')}>
+          <View className={slotClassNames.loadingIcon}>
             <ActivityIndicator
-              colorClassName="accent-carbon-foreground"
+              colorClassName={slotClassNames.loadingIndicator}
               size="large"
             />
           </View>
@@ -131,7 +146,7 @@ const ToastView = (props: ToastViewProps) => {
     if (message === null || message === undefined || message === '') return null;
 
     if (typeof message === 'string' || typeof message === 'number') {
-      return <Text className={messageCls()}>{message}</Text>;
+      return <Text className={slotClassNames.message}>{message}</Text>;
     }
 
     return message;
@@ -153,13 +168,13 @@ const ToastView = (props: ToastViewProps) => {
     >
       {closeOnClick ? (
         <Pressable
-          className={rootCls()}
+          className={slotClassNames.root}
           onPress={onPressClose}
         >
           {renderBody()}
         </Pressable>
       ) : (
-        <View className={rootCls()}>{renderBody()}</View>
+        <View className={slotClassNames.root}>{renderBody()}</View>
       )}
     </Animated.View>
   );

@@ -31,15 +31,22 @@ interface RadioIndicatorProps {
 const RadioIndicator = (props: RadioIndicatorProps) => {
   const { checked, checkedIcon, color, shape, sizes } = props;
 
-  const {
-    control: controlCls,
-    dot: dotCls,
-    indicator: indicatorCls
-  } = radioVariants({
+  const variantSlots = radioVariants({
     active: checked,
     color,
     shape
   });
+
+  /** 变体槽合并成最终类名，集中一处，避免 JSX 里散落类名计算 */
+  function resolveSlotClassNames() {
+    return {
+      control: variantSlots.control(),
+      dot: variantSlots.dot(),
+      indicator: variantSlots.indicator()
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderInner() {
     if (!checked) return null;
@@ -49,7 +56,7 @@ const RadioIndicator = (props: RadioIndicatorProps) => {
     if (shape === 'square') {
       return (
         <CheckIcon
-          colorClassName={indicatorCls()}
+          colorClassName={slotClassNames.indicator}
           name="check"
           size={sizes.innerIcon}
         />
@@ -58,7 +65,7 @@ const RadioIndicator = (props: RadioIndicatorProps) => {
 
     return (
       <View
-        className={dotCls()}
+        className={slotClassNames.dot}
         style={{ height: sizes.dot, width: sizes.dot }}
       />
     );
@@ -66,7 +73,7 @@ const RadioIndicator = (props: RadioIndicatorProps) => {
 
   return (
     <View
-      className={controlCls()}
+      className={slotClassNames.control}
       style={{ height: sizes.control, width: sizes.control }}
     >
       {renderInner()}

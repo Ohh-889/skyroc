@@ -1,3 +1,4 @@
+// oxlint-disable eslint-plugin-react-hooks/exhaustive-deps
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import type { CurrentTime } from './types';
@@ -36,6 +37,12 @@ function useCountDown(options: UseCountDownOptions) {
 
   function getCurrentRemain() {
     return Math.max(endTimeRef.current - Date.now(), 0);
+  }
+
+  function pause() {
+    countingRef.current = false;
+
+    cancelAnimationFrame(rafIdRef.current);
   }
 
   function updateRemain(value: number) {
@@ -93,11 +100,6 @@ function useCountDown(options: UseCountDownOptions) {
       countingRef.current = true;
       tick();
     }
-  }
-
-  function pause() {
-    countingRef.current = false;
-    cancelAnimationFrame(rafIdRef.current);
   }
 
   function reset(totalTime: number = time) {

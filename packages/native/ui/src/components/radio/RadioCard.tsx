@@ -40,12 +40,21 @@ const RadioCard = (props: RadioCardProps) => {
     size
   });
 
-  const {
-    card: cardCls,
-    cardContent: cardContentCls,
-    cardDescription: cardDescriptionCls,
-    cardLabel: cardLabelCls
-  } = radioCardVariants({ disabled: item.disabled });
+  const variantSlots = radioCardVariants({ disabled: item.disabled });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: variantSlots.cardContent(),
+      description: variantSlots.cardDescription(),
+      icon: 'shrink-0',
+      label: variantSlots.cardLabel(),
+      root: cn(variantSlots.card(), className),
+      texts: 'flex-1 gap-0.5'
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderText(content: ReactNode, textCls: string) {
     if (content === null || content === undefined) return null;
@@ -69,18 +78,18 @@ const RadioCard = (props: RadioCardProps) => {
 
   return (
     <Pressable
-      className={cn(cardCls(), className)}
+      className={slotClassNames.root}
       disabled={item.disabled}
       onPress={item.select}
     >
       {radioPosition === 'left' && renderIndicator()}
 
-      <View className={cardContentCls()}>
-        {icon ? <View className="shrink-0">{icon}</View> : null}
+      <View className={slotClassNames.content}>
+        {icon ? <View className={slotClassNames.icon}>{icon}</View> : null}
 
-        <View className="flex-1 gap-0.5">
-          {renderText(label, cardLabelCls())}
-          {renderText(description, cardDescriptionCls())}
+        <View className={slotClassNames.texts}>
+          {renderText(label, slotClassNames.label)}
+          {renderText(description, slotClassNames.description)}
         </View>
       </View>
 

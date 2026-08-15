@@ -1,6 +1,6 @@
+import { cn } from '@skyroc/utils';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { View } from 'react-native';
-import { cn } from '@skyroc/utils';
 import { RollingTextItem } from './RollingTextItem';
 import type { RollingTextProps, RollingTextRef } from './types';
 
@@ -84,6 +84,15 @@ const RollingText = forwardRef<RollingTextRef, RollingTextProps>((props, ref) =>
     setRunId(id => id + 1);
   }, [autoStart]);
 
+  /** 内置类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      root: cn('flex-row items-center', className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
   /** 各列同速不同步，ltr 时左列先起跑也先停 */
   function getDelay(index: number, len: number): number {
     return stopOrder === 'ltr' ? delayStep * index : delayStep * (len - 1 - index);
@@ -115,7 +124,7 @@ const RollingText = forwardRef<RollingTextRef, RollingTextProps>((props, ref) =>
   const columns = getColumns();
 
   return (
-    <View className={cn('flex-row items-center', className)}>
+    <View className={slotClassNames.root}>
       {columns.map((column, index) => (
         // key 带上列数：位数变化时整排重建，不会复用到按旧行高定位的动画值
         <RollingTextItem
