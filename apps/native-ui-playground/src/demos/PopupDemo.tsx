@@ -48,6 +48,8 @@ const PopupDemo = () => {
   const [round, setRound] = useState(true);
   const [roundShow, setRoundShow] = useState(false);
 
+  const [surfaceShow, setSurfaceShow] = useState(false);
+
   const [drawerShow, setDrawerShow] = useState(false);
   const [safeAreaShow, setSafeAreaShow] = useState(false);
   const [lockedShow, setLockedShow] = useState(false);
@@ -110,6 +112,23 @@ const PopupDemo = () => {
             onPress={() => openRound(false)}
           >
             居中 + 直角
+          </Button>
+        </View>
+
+        {/* 容器背景 */}
+        <Text className="mb-2 text-lg font-semibold">容器背景</Text>
+        <Text
+          className="mb-4"
+          color="muted"
+        >
+          内容自带卡片时要传 surface={'{false}'}，否则容器的不透明底会把卡片的圆角填成直角
+        </Text>
+        <View className="mb-8 flex-row flex-wrap items-center gap-3">
+          <Button
+            variant="tonal"
+            onPress={() => setSurfaceShow(true)}
+          >
+            透明容器 + 自绘卡片
           </Button>
         </View>
 
@@ -249,6 +268,24 @@ const PopupDemo = () => {
         >
           <Text color="muted">居中弹层的圆角同样由 round 控制</Text>
         </PopupPanel>
+      </Popup>
+
+      <Popup
+        className="w-[85%] max-w-[320px]"
+        position="center"
+        show={surfaceShow}
+        surface={false}
+        onUpdateShow={setSurfaceShow}
+      >
+        {/* 卡片自己画背景和圆角，容器只负责定位 */}
+        <View className="overflow-hidden rounded-3xl bg-background">
+          <PopupPanel
+            title="自绘卡片"
+            onClose={() => setSurfaceShow(false)}
+          >
+            <Text color="muted">圆角来自卡片本身，容器是透明的</Text>
+          </PopupPanel>
+        </View>
       </Popup>
 
       <Popup

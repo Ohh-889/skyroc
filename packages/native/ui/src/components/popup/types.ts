@@ -56,4 +56,10 @@ export interface PopupProps extends Omit<Partial<ModalProps>, ModalPropsWithout>
   safeAreaInsetTop?: boolean;
   /** 是否显示弹出层 */
   show: boolean;
+  /**
+   * 容器自身是否绘制背景，默认 true
+   *
+   * 内容自带卡片（如 Dialog）时传 false：容器的不透明底会盖在子节点圆角外侧，把圆角填成直角。
+   */
+  surface?: boolean;
 }
