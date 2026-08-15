@@ -14,6 +14,18 @@
     "react"
   ],
   "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react",
+            "importNames": ["useCallback"],
+            "message": "useCallback is forbidden — see AGENTS.md §2. Hoist the function, use a ref, or re-draw the component boundary instead."
+          }
+        ]
+      }
+    ],
     "import/no-absolute-path": "warn",
     "import/no-empty-named-blocks": [
       "error"
@@ -80,7 +92,7 @@
         "react/no-unknown-property": "error",
         "react/no-unsafe": "off",
         "react/react-in-jsx-scope": "off",
-        "react/exhaustive-deps": "warn",
+        "react/exhaustive-deps": "error",
         "react/rules-of-hooks": "error",
         "react/only-export-components": [
           "warn",

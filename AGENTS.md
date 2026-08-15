@@ -1,63 +1,18 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to coding agents (Claude Code, Codex, ...) when working with
+code in this repository.
+
+> `CLAUDE.md` is a symlink to this file — there is exactly one source of truth.
+> Edit this file; never edit `CLAUDE.md` directly.
 
 ## Skills Usage Rules (CRITICAL)
 
 ### Project Skills Overview
 
-This project has 15 skills located in `.agents/skills/`:
-
-1. code-simplifier
-2. component-doc
-3. component-refactoring
-4. doc-coauthoring
-5. feature-dev
-6. frontend-code-review
-7. frontend-design
-8. frontend-testing
-9. migrate-oxfmt
-10. migrate-oxlint
-11. senior-frontend
-12. skill-creator
-13. skyroc-admin-prd-prototype
-14. ui-ux-pro-max
-15. vercel-react-best-practices
-
-### ❗ Absolute Skill Invocation Rules
-
-1. No implicit skill loading
-
-Codex MUST NOT load, invoke, or apply any skill by default.
-
-Do NOT auto-select skills
-
-Do NOT suggest which skill to use
-
-Do NOT preload skill behavior
-
-Do NOT combine skills
-
-Skills are only used when the user explicitly instructs which one to use.
-
-### Skill Usage Scenarios
-
-When directed by the user, use skills according to these scenarios:
-
-| User Intent / Scenario                   | Skill                                        |
-| ---------------------------------------- | -------------------------------------------- |
-| 写完代码后（统一收尾）                   | `.agents/skills/code-simplifier`             |
-| 写文档 / 技术文档 / 方案文档             | `.agents/skills/doc-coauthoring`             |
-| 重构已有组件                             | `.agents/skills/component-refactoring`       |
-| 遵循 / 对齐最佳实践                      | `.agents/skills/vercel-react-best-practices` |
-| 完成较大的需求 / 系统级改动              | `.agents/skills/vercel-react-best-practices` |
-| 让我像设计师一样思考 UI / UX             | `.agents/skills/ui-ux-pro-max`               |
-| 开发一个明确的功能需求                   | `.agents/skills/feature-dev`                 |
-| 我让你**主动**做代码审查                 | `.agents/skills/frontend-code-review`        |
-| 前端视觉 / 界面设计                      | `.agents/skills/frontend-design`             |
-| 前端测试 / 测试策略 / 测试用例           | `.agents/skills/frontend-testing`            |
-| 设计组件 / 项目 / 需求的架构             | `.agents/skills/senior-frontend`             |
-| 编写 Skyroc Admin PRD 和独立 HTML 设计图 | `.agents/skills/skyroc-admin-prd-prototype`  |
+Skills live in `.agents/skills/` (mirrored at `.claude/skills/`).
+**Read that directory for the authoritative list** — it is never enumerated here, because a
+hand-maintained list always drifts out of date.
 
 ## Important Notes
 
@@ -106,6 +61,16 @@ Code that violates these rules is considered **incorrect**, even if it works.
 
 - `useCallback` must **never** appear in React component code.
 - Do **not** use it for:
+  - Stabilizing a function reference passed down to a child component
+  - Preventing child re-renders in combination with `React.memo`
+  - Silencing `react-hooks/exhaustive-deps` warnings
+  - Preemptive or defensive optimization of any kind
+
+If `useCallback` feels **necessary**, the design is wrong. Fix the design instead:
+
+- Hoist the function out of the component if it closes over nothing
+- Use a `ref` when the callback is imperative and must not affect render
+- Re-draw the component boundary so the function no longer crosses it
 
 ---
 
@@ -276,18 +241,18 @@ If an effect exists:
 
 ---
 
-### 7. Example compliance (Portal component)
+### 7. What is machine-enforced
 
-The following component is considered **correct** under this workflow:
+Most of the rules above are review-time conventions. Only these are enforced by oxlint
+(`internal/config/oxlint/react.json`):
 
-- Arrow function component
-- Explicit props interface with comments
-- No `useCallback`
-- No unnecessary `useMemo`
-- Intentional effect
-- Clear ref vs state separation
+| Rule                                    | Lint rule                                       |
+| --------------------------------------- | ----------------------------------------------- |
+| §2 `useCallback` forbidden              | `no-restricted-imports` (react → `useCallback`) |
+| §2 `exhaustive-deps` may not be relaxed | `react/exhaustive-deps: error`                  |
 
-(Your provided `Portal` implementation complies with these rules.)
+§3.1 (arrow-function components), §3.3 (no parameter destructuring) and the `Boolean(value)`
+rule have no equivalent oxlint rule today and are enforced by review only.
 
 ---
 
