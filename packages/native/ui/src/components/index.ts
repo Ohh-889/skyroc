@@ -6,6 +6,8 @@ export * from './divider';
 
 export * from './navbar';
 
+export * from './portal';
+
 export * from './radio';
 
 export * from './rate';
