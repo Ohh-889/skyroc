@@ -1,59 +1,72 @@
-import { Pressable, View } from 'react-native';
-import { cn, isString } from '@skyroc/utils';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { cn, isString } from '@skyroc/utils';
+import { Pressable, View } from 'react-native';
+import { withUniwind } from 'uniwind';
 import { Text } from '../text/Typography';
-import { cellVariants } from './cell-variants';
+import { ARROW_SIZE_MAP, cellVariants } from './cell-variants';
 import type { CellProps } from './types';
+
+/** AntDesign 不认 className，用 withUniwind 把 `accent-*` 工具类映射到 color 上，让箭头色跟随主题 token */
+const ArrowIcon = withUniwind(AntDesign);
 
 const Cell = (props: CellProps) => {
   const {
+    accessibilityLabel,
     arrow,
     arrowDirection = 'right',
     center,
     classNames,
     disabled = false,
     leading,
+    onLongPress,
+    onPress,
     showArrow,
     size = 'md',
     subtitle,
+    testID,
     title,
-    trailing,
-    ...rest
+    trailing
   } = props;
 
-  const hasPress = Boolean(rest.onPress);
-  const shouldShowArrow = showArrow ?? hasPress;
+  const pressable = Boolean(onPress || onLongPress);
+  const shouldShowArrow = showArrow ?? (Boolean(arrow) || pressable);
 
   const {
+    arrow: arrowCls,
+    arrowIcon: arrowIconCls,
     content: contentCls,
     leading: leadingCls,
     root: rootCls,
     subtitle: subtitleCls,
     title: titleCls,
-    trailing: trailingCls
-  } = cellVariants({ center: center ?? Boolean(subtitle), disabled, size });
+    trailing: trailingCls,
+    trailingText: trailingTextCls
+  } = cellVariants({ center, disabled, size });
 
   function renderTrailing() {
     if (!trailing) return null;
     return (
       <View className={cn(trailingCls(), classNames?.trailing)}>
-        {isString(trailing) ? <Text className="text-muted-foreground">{trailing}</Text> : trailing}
+        {isString(trailing) ? (
+          <Text className={cn(trailingTextCls(), classNames?.trailingText)}>{trailing}</Text>
+        ) : (
+          trailing
+        )}
       </View>
     );
   }
 
   function renderArrow() {
     if (!shouldShowArrow) return null;
-    if (arrow) {
-      return <View className={classNames?.arrow}>{arrow}</View>;
-    }
     return (
-      <View className="ml-1 self-center">
-        <AntDesign
-          name={arrowDirection}
-          size={12}
-          color="#6b7280"
-        />
+      <View className={cn(arrowCls(), classNames?.arrow)}>
+        {arrow ?? (
+          <ArrowIcon
+            colorClassName={arrowIconCls()}
+            name={arrowDirection}
+            size={ARROW_SIZE_MAP[size]}
+          />
+        )}
       </View>
     );
   }
@@ -70,19 +83,32 @@ const Cell = (props: CellProps) => {
     </>
   );
 
-  if (hasPress) {
+  if (pressable) {
     return (
       <Pressable
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
         className={cn(rootCls(), classNames?.root)}
         disabled={disabled}
-        {...rest}
+        onLongPress={onLongPress}
+        onPress={onPress}
+        testID={testID}
       >
         {content}
       </Pressable>
     );
   }
 
-  return <View className={cn(rootCls(), classNames?.root)}>{content}</View>;
+  return (
+    <View
+      accessibilityLabel={accessibilityLabel}
+      className={cn(rootCls(), classNames?.root)}
+      testID={testID}
+    >
+      {content}
+    </View>
+  );
 };
 
 export { Cell };
