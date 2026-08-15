@@ -1,13 +1,20 @@
 import type { ReactNode } from 'react';
 import type { ViewProps } from 'react-native';
+import type { SpaceVariantProps } from './space-variants';
 
-/** 间距大小预设 */
-export type SpaceSize = 'lg' | 'md' | 'sm' | 'xl' | 'xs';
+/** Space 对齐方式 */
+export type SpaceAlign = NonNullable<SpaceVariantProps['align']>;
+
+/** Space 间距方向 */
+export type SpaceDirection = NonNullable<SpaceVariantProps['direction']>;
+
+/** Space 间距大小预设 */
+export type SpaceSize = NonNullable<SpaceVariantProps['size']>;
 
 /** Space 组件属性 */
 export interface SpaceProps extends Omit<ViewProps, 'children'> {
-  /** 设置子元素的对齐方式 */
-  align?: 'baseline' | 'center' | 'end' | 'start';
+  /** 子元素在交叉轴上的对齐方式 */
+  align?: SpaceAlign;
 
   /** Space 内容 */
   children: ReactNode;
@@ -16,14 +23,17 @@ export interface SpaceProps extends Omit<ViewProps, 'children'> {
   className?: string;
 
   /** 间距方向 */
-  direction?: 'horizontal' | 'vertical';
+  direction?: SpaceDirection;
 
-  /** 是否填充整个父元素宽度 */
+  /** 是否撑满父元素宽度 */
   fill?: boolean;
 
-  /** 间距大小，支持预设或自定义数值（单位 px） */
-  size?: SpaceSize;
+  /** 间距大小，预设档位或自定义数值（数值单位 dp，通过内联 style 应用） */
+  size?: SpaceSize | number;
 
-  /** 是否自动换行，仅适用于水平方向 */
+  /** 子元素之间的分隔符，例如 <Divider orientation="vertical" /> */
+  split?: ReactNode;
+
+  /** 是否自动换行，仅在 direction 为 horizontal 时生效 */
   wrap?: boolean;
 }

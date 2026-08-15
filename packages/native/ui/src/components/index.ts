@@ -6,4 +6,6 @@ export * from './navbar';
 
 export * from './radio';
 
+export * from './space';
+
 export * from './text';
