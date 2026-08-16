@@ -147,6 +147,30 @@ describe('backEndFail', () => {
     expect(result).toBe(retryResponse);
   });
 
+  it('已经续签重发过一次的请求不再刷新', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn() } as any;
+    const response = createMockResponse('9999', 'expired', { isTokenRefreshRetry: true });
+
+    const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(result).toBeNull();
+    expect(adapter.fetchRefreshToken).not.toHaveBeenCalled();
+    expect(instance.request).not.toHaveBeenCalled();
+  });
+
+  it('重试前会在 config 上打标记，让下一轮认得出来', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn().mockResolvedValue({ data: { code: '0000' } }) } as any;
+    const response = createMockResponse('9999');
+
+    await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(response.config.isTokenRefreshRetry).toBe(true);
+  });
+
   it('returns null when expired token refresh fails', async () => {
     const adapter = createMockAdapter({
       fetchRefreshToken: vi.fn(async () => {

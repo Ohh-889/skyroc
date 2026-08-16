@@ -11,6 +11,13 @@ declare module 'axios' {
      * （网关重写、多租户前缀、续签换了个域名）才需要在这里补一刀。
      */
     isRefreshToken?: boolean;
+    /**
+     * 内部字段，业务代码不要设置：标记这个请求已经因为续签重发过一次
+     *
+     * 必须是字符串键。axios 的 `mergeConfig` 用 `Object.keys` 遍历配置，Symbol 键在
+     * `instance.request()` 重新 merge 时会被丢掉，标记等于没打。
+     */
+    isTokenRefreshRetry?: boolean;
   }
 }
 
