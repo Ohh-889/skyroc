@@ -1,4 +1,4 @@
-import { adjustLightness, generateOklchPaletteEx, mixColor } from '@skyroc/color';
+import { adjustLightness, generateOklchPaletteAnchored, mixColor } from '@skyroc/color';
 import type { ColorMap, GenerateColorMap, GenerateNeutralColorMap } from '../../types';
 
 /** Light mode default base colors */
@@ -8,11 +8,11 @@ export const LIGHT_TEXT_BASE = '#1F1F1F';
 /**
  * Generate color palettes (light mode)
  *
- * Uses generateOklchPaletteEx algorithm instead of antd's @ant-design/colors Outputs 11 colors (50-950), mapped to
+ * Uses generateOklchPaletteAnchored algorithm instead of antd's @ant-design/colors Outputs 11 colors (50-950), mapped to
  * antd's 1-10 indexes
  */
 export const generateColorPalettes: GenerateColorMap = (baseColor: string): ColorMap => {
-  const { palettes } = generateOklchPaletteEx(baseColor);
+  const { palettes } = generateOklchPaletteAnchored(baseColor);
   const [p50, p100, p200, p300, p400, p500, p600, p700, p800, p900, p950] = palettes;
 
   return {

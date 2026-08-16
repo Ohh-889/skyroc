@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/color",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "type": "module",
   "description": "Color utilities and palette generation built on colord and culori, with Ant Design / OKLCH palettes",
   "keywords": [
@@ -28,7 +28,10 @@
     "email": "1509326266@qq.com",
     "url": "https://github.com/Ohh-889"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/shared/colord.ts",
+    "./dist/index.js"
+  ],
   "files": [
     "dist",
     "README.md"
@@ -72,7 +75,6 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
-    "@skyroc/utils": "workspace:*",
     "colord": "2.9.3",
     "culori": "^4.0.2"
   },

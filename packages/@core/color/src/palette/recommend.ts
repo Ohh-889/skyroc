@@ -1,5 +1,5 @@
 import { colorPalettes } from '../constant';
-import { getColorName, getDeltaE, getHsl, isValidColor, transformHslToHex } from '../shared';
+import { getColorName, getDeltaE, getHex, getHsl, isValidColor, transformHslToHex } from '../shared';
 import type {
   ColorPalette,
   ColorPaletteFamily,
@@ -8,28 +8,32 @@ import type {
   ColorPaletteNumber
 } from '../types';
 
+/** 推荐算法的内部生成结果，额外携带输入色落在哪一档 */
+type RecommendedFamilyResult = {
+  family: ColorPaletteFamily;
+  /** 输入色被放置的档位号 */
+  matchedNumber: ColorPaletteNumber;
+};
+
 /**
  * Get recommended color palette by provided color
  *
  * @param color The provided color
  */
 export function getRecommendedColorPalette(color: string) {
-  const colorPaletteFamily = getRecommendedColorPaletteFamily(color);
+  const { family, matchedNumber } = buildRecommendedColorPaletteFamily(color);
 
   const colorMap = new Map<ColorPaletteNumber, ColorPalette>();
 
-  colorPaletteFamily.palettes.forEach(palette => {
+  family.palettes.forEach(palette => {
     colorMap.set(palette.number, palette);
   });
 
-  const mainColor = colorMap.get(500)!;
-  const matchColor = colorPaletteFamily.palettes.find(palette => palette.hex === color)!;
-
   const colorPalette: ColorPaletteMatch = {
-    ...colorPaletteFamily,
+    ...family,
     colorMap,
-    main: mainColor,
-    match: matchColor
+    main: colorMap.get(500)!,
+    match: colorMap.get(matchedNumber)!
   };
 
   return colorPalette;
@@ -42,11 +46,9 @@ export function getRecommendedColorPalette(color: string) {
  * @param number The color palette number
  */
 export function getRecommendedPaletteColorByNumber(color: string, number: ColorPaletteNumber) {
-  const colorPalette = getRecommendedColorPalette(color);
+  const { family } = buildRecommendedColorPaletteFamily(color);
 
-  const { hex } = colorPalette.colorMap.get(number)!;
-
-  return hex;
+  return family.palettes.find(palette => palette.number === number)!.hex;
 }
 
 /**
@@ -54,55 +56,58 @@ export function getRecommendedPaletteColorByNumber(color: string, number: ColorP
  *
  * @param color The provided color
  */
-export function getRecommendedColorPaletteFamily(color: string) {
+export function getRecommendedColorPaletteFamily(color: string): ColorPaletteFamily {
+  return buildRecommendedColorPaletteFamily(color).family;
+}
+
+/**
+ * 生成推荐色板，并回传输入色所在的档位
+ *
+ * 输入色统一归一化为小写 hex 后再写入色板，避免把 `rgb(...)`、`red`、大写 hex 之类的原始字符串泄漏进 `hex` 字段。
+ *
+ * @param color The provided color
+ */
+function buildRecommendedColorPaletteFamily(color: string): RecommendedFamilyResult {
   if (!isValidColor(color)) {
     throw new Error('Invalid color, please check color value!');
   }
 
-  let colorName = getColorName(color);
+  const inputHex = getHex(color);
 
-  colorName = colorName.toLowerCase().replace(/\s/g, '-');
+  const colorName = getColorName(inputHex).toLowerCase().replace(/\s/g, '-');
 
-  const { h: h1, s: s1 } = getHsl(color);
+  const { h: inputH, s: inputS } = getHsl(inputHex);
 
-  const { nearestLightnessPalette, palettes } = getNearestColorPaletteFamily(color, colorPalettes);
+  const { nearestLightnessPalette, palettes } = getNearestColorPaletteFamily(inputHex, colorPalettes);
 
-  const { hex, number } = nearestLightnessPalette;
+  const { hex: nearestHex, number: matchedNumber } = nearestLightnessPalette;
 
-  const { h: h2, s: s2 } = getHsl(hex);
+  const { h: nearestH, s: nearestS } = getHsl(nearestHex);
 
-  const deltaH = h1 - h2;
+  const deltaH = inputH - nearestH;
 
-  const sRatio = s1 / s2;
+  const sRatio = inputS / nearestS;
 
-  const colorPaletteFamily: ColorPaletteFamily = {
+  const family: ColorPaletteFamily = {
     name: colorName,
     palettes: palettes.map(palette => {
-      let hexValue = color;
-
-      const isSame = number === palette.number;
-
-      if (!isSame) {
-        const { h: h3, l, s: s3 } = getHsl(palette.hex);
-
-        const newH = deltaH < 0 ? h3 + deltaH : h3 - deltaH;
-        const newS = s3 * sRatio;
-
-        hexValue = transformHslToHex({
-          h: newH,
-          l,
-          s: newS
-        });
+      if (palette.number === matchedNumber) {
+        return { hex: inputHex, number: palette.number };
       }
 
+      const { h, l, s } = getHsl(palette.hex);
+
+      const newH = deltaH < 0 ? h + deltaH : h - deltaH;
+      const newS = s * sRatio;
+
       return {
-        hex: hexValue,
+        hex: transformHslToHex({ h: newH, l, s: newS }),
         number: palette.number
       };
     })
   };
 
-  return colorPaletteFamily;
+  return { family, matchedNumber };
 }
 
 /**

@@ -55,6 +55,11 @@ export function mixColor(firstColor: AnyColor, secondColor: AnyColor, ratio: num
   return colord(firstColor).mix(secondColor, ratio).toHex();
 }
 
+/** 按 alpha 在原色与背景色之间做线性插值 */
+function calRgb(or: number, bg: number, al: number) {
+  return bg + (or - bg) * al;
+}
+
 /**
  * Transform color with opacity to similar color without opacity
  *
@@ -62,13 +67,8 @@ export function mixColor(firstColor: AnyColor, secondColor: AnyColor, ratio: num
  * @param alpha - Alpha (0 - 1)
  * @param bgColor Background color (usually white or black)
  */
-function calRgb(or: number, bg: number, al: number) {
-  return bg + (or - bg) * al;
-}
-
 export function transformColorWithOpacity(color: string, alpha: number, bgColor = '#ffffff') {
-  const originColor = addColorAlpha(color, alpha);
-  const { b: oB, g: oG, r: oR } = colord(originColor).toRgb();
+  const { b: oB, g: oG, r: oR } = colord(color).toRgb();
 
   const { b: bgB, g: bgG, r: bgR } = colord(bgColor).toRgb();
 

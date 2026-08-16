@@ -16,11 +16,19 @@ import type { Oklch } from 'culori';
 import { getColorName } from '../shared';
 import type { ColorPalette, ColorPaletteFamily, ColorPaletteMatch, ColorPaletteNumber } from '../types';
 
+/** 单个档位的生成配置 */
+type PaletteStep = {
+  /** 档位号 */
+  number: ColorPaletteNumber;
+  /** 该档位的目标明度 */
+  targetL: number;
+};
+
 /**
  * Tailwind color palette numbers with their target lightness values Based on actual analysis of Tailwind's official
  * palettes in OKLCH space These values are averaged from Blue, Red, and Green palettes
  */
-const PALETTE_CONFIG: { number: ColorPaletteNumber; targetL: number }[] = [
+const PALETTE_CONFIG: PaletteStep[] = [
   { number: 50, targetL: 0.974 },
   { number: 100, targetL: 0.943 },
   { number: 200, targetL: 0.897 },
@@ -34,21 +42,30 @@ const PALETTE_CONFIG: { number: ColorPaletteNumber; targetL: number }[] = [
   { number: 950, targetL: 0.269 }
 ];
 
+/** 档位总数，用于校验自定义明度曲线 */
+const PALETTE_STEP_COUNT = PALETTE_CONFIG.length;
+
 /** Hue ranges for different color families Used for hue-specific chroma and lightness adjustments */
 const HUE_FAMILIES = {
-  red: { start: 0, end: 40, peakL: 0.6, maxC: 0.25 },
-  orange: { start: 40, end: 70, peakL: 0.7, maxC: 0.2 },
-  yellow: { start: 70, end: 110, peakL: 0.85, maxC: 0.18 }, // Yellow needs higher L for vibrancy
-  green: { start: 110, end: 170, peakL: 0.65, maxC: 0.22 },
-  cyan: { start: 170, end: 210, peakL: 0.75, maxC: 0.15 }, // Cyan has limited chroma in sRGB
-  blue: { start: 210, end: 270, peakL: 0.55, maxC: 0.25 },
-  purple: { start: 270, end: 320, peakL: 0.55, maxC: 0.28 },
-  pink: { start: 320, end: 360, peakL: 0.6, maxC: 0.24 }
+  red: { end: 40, peakL: 0.6, start: 0 },
+  orange: { end: 70, peakL: 0.7, start: 40 },
+  yellow: { end: 110, peakL: 0.85, start: 70 }, // Yellow needs higher L for vibrancy
+  green: { end: 170, peakL: 0.65, start: 110 },
+  cyan: { end: 210, peakL: 0.75, start: 170 }, // Cyan has limited chroma in sRGB
+  blue: { end: 270, peakL: 0.55, start: 210 },
+  purple: { end: 320, peakL: 0.55, start: 270 },
+  pink: { end: 360, peakL: 0.6, start: 320 }
 } as const;
+
+/** 饱和色的最小色度，防止极亮/极暗档位褪成灰色 */
+const MIN_CHROMA = 0.015;
+
+/** 触发最小色度保护的输入色度阈值 */
+const CHROMATIC_THRESHOLD = 0.05;
 
 /** Get the hue family for a given hue value */
 function getHueFamily(hue: number): (typeof HUE_FAMILIES)[keyof typeof HUE_FAMILIES] {
-  const normalizedHue = ((hue % 360) + 360) % 360;
+  const normalizedHue = normalizeHue(hue);
 
   for (const family of Object.values(HUE_FAMILIES)) {
     if (normalizedHue >= family.start && normalizedHue < family.end) {
@@ -99,6 +116,26 @@ function toOklch(color: string): Oklch | undefined {
 }
 
 /**
+ * 计算两个 OKLCH 颜色的感知距离（ΔEOK）
+ *
+ * 必须先把极坐标的 (c, h) 投影回 OKLab 的直角坐标 (a, b) 再算欧氏距离：直接对 l / c / h 三个分量做欧氏距离是错的——三者量纲不同（0-1 /
+ * 0-0.4 / 0-360），且色相差是环形量，-4° 与 356° 等价。
+ */
+function getOklchDistance(color1: Oklch, color2: Oklch): number {
+  const c1 = color1.c ?? 0;
+  const c2 = color2.c ?? 0;
+
+  const h1 = ((color1.h ?? 0) * Math.PI) / 180;
+  const h2 = ((color2.h ?? 0) * Math.PI) / 180;
+
+  const deltaL = color1.l - color2.l;
+  const deltaA = c1 * Math.cos(h1) - c2 * Math.cos(h2);
+  const deltaB = c1 * Math.sin(h1) - c2 * Math.sin(h2);
+
+  return Math.hypot(deltaL, deltaA, deltaB);
+}
+
+/**
  * Convert OKLCH to hex with advanced gamut mapping Uses binary search to find the maximum displayable chroma This
  * preserves more color vibrancy than simple clamping
  */
@@ -137,10 +174,10 @@ function oklchToHex(color: Oklch): string {
  * This mimics how colors appear under natural lighting conditions
  */
 function getAppleHueShift(hue: number, lightness: number): number {
-  const normalizedHue = ((hue % 360) + 360) % 360;
+  const normalizedHue = normalizeHue(hue);
 
   // Determine if warm or cool
-  const isWarm = (normalizedHue >= 0 && normalizedHue < 90) || normalizedHue >= 300;
+  const isWarm = normalizedHue < 90 || normalizedHue >= 300;
   const isCool = normalizedHue >= 180 && normalizedHue < 300;
 
   // Calculate shift based on distance from middle lightness
@@ -159,6 +196,113 @@ function getAppleHueShift(hue: number, lightness: number): number {
 
   // Neutral zone (greens, teals) - minimal shift
   return -lightnessDelta * 3;
+}
+
+/** Format OKLCH values to CSS string e.g. oklch(58.5% 0.204 277.1) */
+function formatOklchCss(l: number, c: number, h: number): string {
+  const lPercent = (l * 100).toFixed(2).replace(/\.?0+$/, '');
+  const cValue = c.toFixed(3).replace(/\.?0+$/, '');
+  const hValue = h.toFixed(2).replace(/\.?0+$/, '');
+  return `oklch(${lPercent}% ${cValue} ${hValue})`;
+}
+
+/** 生成色板时的内部参数 */
+type PaletteBuildParams = {
+  /** Whether to apply Apple-style hue rotation */
+  appleHueShift: boolean;
+  /** 输入色的色度 */
+  chroma: number;
+  /** Whether to apply chroma compensation */
+  chromaCompensation: boolean;
+  /** 各档位的目标明度 */
+  config: PaletteStep[];
+  /** 输入色的色相 */
+  hue: number;
+  /** 反推基准色度时参照的明度 */
+  referenceL: number;
+};
+
+/**
+ * 色板生成的唯一核心实现
+ *
+ * 先由「输入色度 + 参考明度」反推出未经补偿的基准色度，再按各档位的目标明度重新施加色度补偿与色相旋转，最后做 sRGB 色域映射。
+ */
+function buildPaletteStops(params: PaletteBuildParams): ColorPaletteWithOklch[] {
+  const { appleHueShift, chroma, chromaCompensation, config, hue, referenceL } = params;
+
+  const referenceCompensation = chromaCompensation ? getHueAwareChromaCompensation(referenceL, hue) : 1;
+  const baseChroma = chroma / Math.max(referenceCompensation, 0.1);
+
+  return config.map(({ number, targetL }) => {
+    const compensation = chromaCompensation ? getHueAwareChromaCompensation(targetL, hue) : 1;
+
+    let adjustedChroma = baseChroma * compensation;
+
+    // Ensure minimum chroma for saturated colors, prevent graying out
+    if (chroma > CHROMATIC_THRESHOLD) {
+      adjustedChroma = Math.max(adjustedChroma, MIN_CHROMA);
+    }
+
+    const adjustedHue = appleHueShift ? normalizeHue(hue + getAppleHueShift(hue, targetL)) : normalizeHue(hue);
+
+    const hex = oklchToHex({ c: adjustedChroma, h: adjustedHue, l: targetL, mode: 'oklch' });
+
+    // 色域映射后实际落点可能与目标值有偏差，回读一次保证 oklch 字段与 hex 自洽
+    const mapped = toOklch(hex);
+    const finalL = mapped?.l ?? targetL;
+    const finalC = mapped?.c ?? adjustedChroma;
+    const finalH = mapped?.h ?? adjustedHue;
+
+    return {
+      hex,
+      number,
+      oklch: { c: finalC, h: finalH, l: finalL },
+      oklchCss: formatOklchCss(finalL, finalC, finalH)
+    };
+  });
+}
+
+/** 解析输入色并取出安全的 OKLCH 分量，非法颜色直接抛错 */
+function parseInputColor(color: string) {
+  const parsed = toOklch(color);
+
+  if (!parsed) {
+    throw new Error(`Invalid color: ${color}`);
+  }
+
+  return {
+    chroma: parsed.c ?? 0,
+    hex: formatHex(parse(color)!),
+    hue: parsed.h ?? 0,
+    lightness: parsed.l
+  };
+}
+
+/** 生成色族名称（小写、空格转连字符） */
+function getPaletteName(color: string): string {
+  return getColorName(color).toLowerCase().replace(/\s/g, '-');
+}
+
+/** 在给定配置中找到目标明度最接近输入明度的档位 */
+function findClosestStep(config: PaletteStep[], lightness: number): PaletteStep {
+  let closestStep = config[5];
+  let minDiff = Infinity;
+
+  for (const step of config) {
+    const diff = Math.abs(step.targetL - lightness);
+
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestStep = step;
+    }
+  }
+
+  return closestStep;
+}
+
+/** 丢弃 OKLCH 附加字段，还原为基础色板结构 */
+function toBasicPalettes(stops: ColorPaletteWithOklch[]): ColorPalette[] {
+  return stops.map(({ hex, number }) => ({ hex, number }));
 }
 
 /**
@@ -180,68 +324,68 @@ function getAppleHueShift(hue: number, lightness: number): number {
  * @returns ColorPaletteFamily with all 11 color stops
  */
 export function generateOklchPalette(color: string): ColorPaletteFamily {
-  const inputOklch = toOklch(color);
-  if (!inputOklch) {
-    throw new Error(`Invalid color: ${color}`);
+  return generateOklchPaletteAdvanced(color);
+}
+
+/** Advanced: Generate palette with custom configuration */
+export interface OklchPaletteOptions {
+  /**
+   * Whether to apply Apple-style hue rotation
+   *
+   * @default true
+   */
+  appleHueShift?: boolean;
+  /**
+   * Whether to apply chroma compensation
+   *
+   * @default true
+   */
+  chromaCompensation?: boolean;
+  /**
+   * 反推基准色度时参照的档位
+   *
+   * 只影响整体色度强度，不会把输入色原样放进该档位——需要精确保留输入色请用 {@link generateOklchPaletteAnchored}。默认取目标明度最接近输入色的档位。
+   */
+  forceStep?: ColorPaletteNumber;
+  /** Custom lightness curve (11 values, ordered from step 50 to step 950) */
+  lightnessCurve?: number[];
+}
+
+/**
+ * Generate palette with custom options
+ *
+ * @param color - Any valid CSS color string
+ * @param options - 生成选项
+ */
+export function generateOklchPaletteAdvanced(color: string, options: OklchPaletteOptions = {}): ColorPaletteFamily {
+  const { appleHueShift = true, chromaCompensation = true, forceStep, lightnessCurve } = options;
+
+  if (lightnessCurve && lightnessCurve.length !== PALETTE_STEP_COUNT) {
+    throw new Error(
+      `Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`
+    );
   }
 
-  const { c: inputChroma, h: inputHue, l: inputL } = inputOklch;
-  const safeHue = inputHue ?? 0;
-  const safeChroma = inputChroma ?? 0;
+  const { chroma, hue, lightness } = parseInputColor(color);
 
-  // Find the reference step - closest to input lightness
-  let closestStep = PALETTE_CONFIG[5]; // default to 500
-  let minDiff = Infinity;
+  const config = lightnessCurve
+    ? PALETTE_CONFIG.map((step, index) => ({ ...step, targetL: lightnessCurve[index] }))
+    : PALETTE_CONFIG;
 
-  for (const step of PALETTE_CONFIG) {
-    const diff = Math.abs(step.targetL - inputL);
-    if (diff < minDiff) {
-      minDiff = diff;
-      closestStep = step;
-    }
-  }
+  const referenceStep = forceStep
+    ? (config.find(step => step.number === forceStep) ?? config[5])
+    : findClosestStep(config, lightness);
 
-  // Calculate the chroma at the reference lightness using hue-aware compensation
-  const referenceCompensation = getHueAwareChromaCompensation(closestStep.targetL, safeHue);
-  const baseChroma = safeChroma / Math.max(referenceCompensation, 0.1);
-
-  // Generate color name
-  let colorName = getColorName(color);
-  colorName = colorName.toLowerCase().replace(/\s/g, '-');
-
-  // Generate all palette colors
-  const palettes: ColorPalette[] = PALETTE_CONFIG.map(({ number, targetL }) => {
-    // Apply hue-aware chroma compensation for this lightness level
-    const compensation = getHueAwareChromaCompensation(targetL, safeHue);
-    let adjustedChroma = baseChroma * compensation;
-
-    // Apply Apple-style hue rotation
-    const hueShift = getAppleHueShift(safeHue, targetL);
-    const adjustedHue = normalizeHue(safeHue + hueShift);
-
-    // Ensure minimum chroma for saturated colors, prevent graying out
-    if (safeChroma > 0.05) {
-      adjustedChroma = Math.max(adjustedChroma, 0.015);
-    }
-
-    // Create the OKLCH color
-    const generatedOklch: Oklch = {
-      c: adjustedChroma,
-      h: adjustedHue,
-      l: targetL,
-      mode: 'oklch'
-    };
-
-    // Convert to hex with precise gamut mapping
-    const hex = oklchToHex(generatedOklch);
-
-    return { hex, number };
+  const stops = buildPaletteStops({
+    appleHueShift,
+    chroma,
+    chromaCompensation,
+    config,
+    hue,
+    referenceL: referenceStep.targetL
   });
 
-  return {
-    name: colorName,
-    palettes
-  };
+  return { name: getPaletteName(color), palettes: toBasicPalettes(stops) };
 }
 
 /**
@@ -264,14 +408,12 @@ export function getOklchColorPalette(color: string): ColorPaletteMatch {
 
   if (inputOklch) {
     let minDelta = Infinity;
+
     for (const palette of family.palettes) {
       const paletteOklch = toOklch(palette.hex);
+
       if (paletteOklch) {
-        // Calculate Delta E in OKLCH space (simple Euclidean for now)
-        const dL = (inputOklch.l - paletteOklch.l) * 100;
-        const dC = ((inputOklch.c ?? 0) - (paletteOklch.c ?? 0)) * 100;
-        const dH = normalizeHue((inputOklch.h ?? 0) - (paletteOklch.h ?? 0));
-        const delta = Math.sqrt(dL * dL + dC * dC + dH * dH);
+        const delta = getOklchDistance(inputOklch, paletteOklch);
 
         if (delta < minDelta) {
           minDelta = delta;
@@ -297,34 +439,9 @@ export function getOklchColorPalette(color: string): ColorPaletteMatch {
  * @returns Hex color string
  */
 export function getOklchPaletteColorByNumber(color: string, number: ColorPaletteNumber): string {
-  const palette = getOklchColorPalette(color);
-  return palette.colorMap.get(number)!.hex;
-}
+  const family = generateOklchPalette(color);
 
-/** Advanced: Generate palette with custom configuration */
-export interface OklchPaletteOptions {
-  /**
-   * Whether to apply Apple-style hue rotation
-   *
-   * @default true
-   */
-  appleHueShift?: boolean;
-  /**
-   * Whether to apply chroma compensation
-   *
-   * @default true
-   */
-  chromaCompensation?: boolean;
-  /** Force the input color to be placed at this step If not specified, the closest step by lightness is used */
-  forceStep?: ColorPaletteNumber;
-  /**
-   * Include OKLCH values in output
-   *
-   * @default false
-   */
-  includeOklch?: boolean;
-  /** Custom lightness curve (11 values from light to dark) */
-  lightnessCurve?: number[];
+  return family.palettes.find(palette => palette.number === number)!.hex;
 }
 
 /** Extended color palette with OKLCH values */
@@ -346,93 +463,20 @@ export interface ColorPaletteFamilyWithOklch extends Omit<ColorPaletteFamily, 'p
   palettes: ColorPaletteWithOklch[];
 }
 
-/** Format OKLCH values to CSS string e.g. oklch(58.5% 0.204 277.1) */
-function formatOklchCss(l: number, c: number, h: number): string {
-  const lPercent = (l * 100).toFixed(2).replace(/\.?0+$/, '');
-  const cValue = c.toFixed(3).replace(/\.?0+$/, '');
-  const hValue = h.toFixed(2).replace(/\.?0+$/, '');
-  return `oklch(${lPercent}% ${cValue} ${hValue})`;
-}
-
-/** Generate palette with custom options */
-export function generateOklchPaletteAdvanced(color: string, options: OklchPaletteOptions = {}): ColorPaletteFamily {
-  const { appleHueShift = true, chromaCompensation = true, forceStep, lightnessCurve } = options;
-
-  const inputOklch = toOklch(color);
-  if (!inputOklch) {
-    throw new Error(`Invalid color: ${color}`);
-  }
-
-  const { c: inputChroma, h: inputHue, l: inputL } = inputOklch;
-  const safeHue = inputHue ?? 0;
-  const safeChroma = inputChroma ?? 0;
-
-  // Use custom lightness curve or default
-  const config =
-    lightnessCurve && lightnessCurve.length === 11
-      ? PALETTE_CONFIG.map((step, i) => ({ ...step, targetL: lightnessCurve[i] }))
-      : PALETTE_CONFIG;
-
-  // Find reference step - use forceStep if provided, otherwise find closest
-  let closestStep = config[5];
-  if (forceStep) {
-    closestStep = config.find(s => s.number === forceStep) ?? config[5];
-  } else {
-    let minDiff = Infinity;
-    for (const step of config) {
-      const diff = Math.abs(step.targetL - inputL);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestStep = step;
-      }
-    }
-  }
-
-  const referenceCompensation = chromaCompensation ? getHueAwareChromaCompensation(closestStep.targetL, safeHue) : 1;
-  const baseChroma = safeChroma / Math.max(referenceCompensation, 0.1);
-
-  let colorName = getColorName(color);
-  colorName = colorName.toLowerCase().replace(/\s/g, '-');
-
-  const palettes: ColorPalette[] = config.map(({ number, targetL }) => {
-    const compensation = chromaCompensation ? getHueAwareChromaCompensation(targetL, safeHue) : 1;
-    let adjustedChroma = baseChroma * compensation;
-
-    let adjustedHue = safeHue;
-    if (appleHueShift) {
-      adjustedHue = normalizeHue(safeHue + getAppleHueShift(safeHue, targetL));
-    }
-
-    if (safeChroma > 0.05) {
-      adjustedChroma = Math.max(adjustedChroma, 0.015);
-    }
-
-    const generatedOklch: Oklch = {
-      c: adjustedChroma,
-      h: adjustedHue,
-      l: targetL,
-      mode: 'oklch'
-    };
-
-    return { hex: oklchToHex(generatedOklch), number };
-  });
-
-  return { name: colorName, palettes };
-}
-
 /**
- * Generate palette with OKLCH values included The input color is preserved exactly at the matched step (not
- * approximated)
+ * 生成锚定输入色的色板
+ *
+ * 与 {@link generateOklchPalette} 的区别：输入色会被原样保留在匹配档位上（而不是被近似），其余档位的明度曲线整体平移以穿过该点。
  *
  * @example
  *   ```ts
  *   // Auto-detect step
- *   const palette = generateOklchPaletteEx('#6366F1');
+ *   const palette = generateOklchPaletteAnchored('#6366F1');
  *   // palette.matchedStep === 500
  *   // palette.palettes[5].hex === '#6366f1' (exact input preserved!)
  *
  *   // Force to 600
- *   const palette600 = generateOklchPaletteEx('#6366F1', 600);
+ *   const palette600 = generateOklchPaletteAnchored('#6366F1', 600);
  *   // palette600.palettes[6].hex === '#6366f1'
  *   ```;
  *
@@ -440,124 +484,80 @@ export function generateOklchPaletteAdvanced(color: string, options: OklchPalett
  * @param forceStep - Force input to this step (default: auto-detect, prefer 500 for mid-tones)
  * @returns Palette with OKLCH values for each color
  */
-export function generateOklchPaletteEx(color: string, forceStep?: ColorPaletteNumber): ColorPaletteFamilyWithOklch {
-  const inputOklchRaw = toOklch(color);
-  if (!inputOklchRaw) {
-    throw new Error(`Invalid color: ${color}`);
-  }
-
-  // Normalize input hex
-  const inputHex = formatHex(parse(color));
-
-  const safeHue = inputOklchRaw.h ?? 0;
-  const safeChroma = inputOklchRaw.c ?? 0;
-  const inputL = inputOklchRaw.l;
+export function generateOklchPaletteAnchored(
+  color: string,
+  forceStep?: ColorPaletteNumber
+): ColorPaletteFamilyWithOklch {
+  const { chroma, hex: inputHex, hue, lightness } = parseInputColor(color);
 
   // Determine matched step
   let matchedStep: ColorPaletteNumber;
+
   if (forceStep) {
     matchedStep = forceStep;
   } else {
-    // Find closest step, but prefer 500 for mid-range colors
-    let minDiff = Infinity;
-    let closestStep: ColorPaletteNumber = 500;
+    const closestStep = findClosestStep(PALETTE_CONFIG, lightness);
 
-    for (const step of PALETTE_CONFIG) {
-      const diff = Math.abs(step.targetL - inputL);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestStep = step.number;
-      }
-    }
+    // If input lightness is close to 500's target (within 0.12), prefer 500
+    const step500 = PALETTE_CONFIG.find(step => step.number === 500)!;
+    const diffTo500 = Math.abs(step500.targetL - lightness);
 
-    // If input lightness is close to 500's target (within 0.1), prefer 500
-    const step500 = PALETTE_CONFIG.find(s => s.number === 500)!;
-    const diffTo500 = Math.abs(step500.targetL - inputL);
-    matchedStep = diffTo500 < 0.12 ? 500 : closestStep;
+    matchedStep = diffTo500 < 0.12 ? 500 : closestStep.number;
   }
 
   // Build adjusted lightness curve that passes through input at matchedStep
-  const matchedStepConfig = PALETTE_CONFIG.find(s => s.number === matchedStep)!;
-  const lightnessDelta = inputL - matchedStepConfig.targetL;
+  const matchedStepConfig = PALETTE_CONFIG.find(step => step.number === matchedStep)!;
+  const lightnessDelta = lightness - matchedStepConfig.targetL;
 
   const config = PALETTE_CONFIG.map(step => {
     if (step.number === matchedStep) {
-      // Exact match - use input lightness
-      return { ...step, targetL: inputL };
+      return { ...step, targetL: lightness };
     }
-    // Scale delta: full effect at matched step, reduced at extremes
+
+    // 平移量在远离锚点的档位上逐步衰减，避免整条曲线被输入色带偏。
+    // 这里用档位号差（而非索引差）作为距离，与 Tailwind 档位号的疏密分布保持一致。
     const distance = Math.abs(step.number - matchedStep) / 500;
     const adjustedDelta = lightnessDelta * (1 - distance * 0.6);
     const newL = Math.max(0.15, Math.min(0.98, step.targetL + adjustedDelta));
+
     return { ...step, targetL: newL };
   });
 
-  const referenceCompensation = getHueAwareChromaCompensation(inputL, safeHue);
-  const baseChroma = safeChroma / Math.max(referenceCompensation, 0.1);
-
-  let colorName = getColorName(color);
-  colorName = colorName.toLowerCase().replace(/\s/g, '-');
-
-  const palettes: ColorPaletteWithOklch[] = config.map(({ number, targetL }) => {
-    // For the matched step, use the exact input color
-    if (number === matchedStep) {
-      return {
-        hex: inputHex ?? '',
-        number,
-        oklch: {
-          c: safeChroma,
-          h: safeHue,
-          l: inputL
-        },
-        oklchCss: formatOklchCss(inputL, safeChroma, safeHue)
-      };
-    }
-
-    const compensation = getHueAwareChromaCompensation(targetL, safeHue);
-    let adjustedChroma = baseChroma * compensation;
-    const adjustedHue = normalizeHue(safeHue + getAppleHueShift(safeHue, targetL));
-
-    if (safeChroma > 0.05) {
-      adjustedChroma = Math.max(adjustedChroma, 0.015);
-    }
-
-    const generatedOklch: Oklch = {
-      c: adjustedChroma,
-      h: adjustedHue,
-      l: targetL,
-      mode: 'oklch'
-    };
-
-    const hex = oklchToHex(generatedOklch);
-    const finalOklch = toOklch(hex);
-    const finalL = finalOklch?.l ?? targetL;
-    const finalC = finalOklch?.c ?? adjustedChroma;
-    const finalH = finalOklch?.h ?? adjustedHue;
-
-    return {
-      hex,
-      number,
-      oklch: {
-        c: finalC,
-        h: finalH,
-        l: finalL
-      },
-      oklchCss: formatOklchCss(finalL, finalC, finalH)
-    };
+  const stops = buildPaletteStops({
+    appleHueShift: true,
+    chroma,
+    chromaCompensation: true,
+    config,
+    hue,
+    referenceL: lightness
   });
 
+  const palettes = stops.map(stop =>
+    stop.number === matchedStep
+      ? {
+          hex: inputHex,
+          number: stop.number,
+          oklch: { c: chroma, h: hue, l: lightness },
+          oklchCss: formatOklchCss(lightness, chroma, hue)
+        }
+      : stop
+  );
+
   return {
-    inputOklch: {
-      c: safeChroma,
-      h: safeHue,
-      l: inputL
-    },
-    inputOklchCss: formatOklchCss(inputL, safeChroma, safeHue),
+    inputOklch: { c: chroma, h: hue, l: lightness },
+    inputOklchCss: formatOklchCss(lightness, chroma, hue),
     matchedStep,
-    name: colorName,
+    name: getPaletteName(color),
     palettes
   };
 }
+
+/**
+ * Generate palette with OKLCH values included
+ *
+ * @deprecated 改用语义更清晰的 {@link generateOklchPaletteAnchored}，行为完全一致。
+ */
+export const generateOklchPaletteEx = generateOklchPaletteAnchored;
 
 // ============================================================================
 // WCAG Accessibility & Dark Mode Support
@@ -609,8 +609,8 @@ export function getContrastRatio(color1: string, color2: string): number {
  */
 export function meetsWcagContrast(ratio: number, level: WcagLevel = 'AA', textSize: TextSize = 'normal'): boolean {
   const requirements = {
-    AA: { normal: 4.5, large: 3 },
-    AAA: { normal: 7, large: 4.5 }
+    AA: { large: 3, normal: 4.5 },
+    AAA: { large: 4.5, normal: 7 }
   };
   return ratio >= requirements[level][textSize];
 }
@@ -658,23 +658,28 @@ export function generateOklchPaletteWithContrast(color: string): PaletteContrast
   };
 }
 
-/** Dark mode optimized lightness curve Designed for better visibility on dark backgrounds */
+/**
+ * Dark mode optimized lightness curve
+ *
+ * 明度整体压暗以适配深色背景，但档位语义与 {@link PALETTE_CONFIG} 保持一致——50 依然最亮、950 依然最暗。深色主题中需要深色背景时应取 900/950，
+ * 而不是依赖档位号被翻转。
+ */
 const DARK_MODE_LIGHTNESS: number[] = [
-  0.18, // 50 - darkest
-  0.25,
-  0.32,
-  0.4,
-  0.5,
-  0.6, // 500 - main
-  0.7,
-  0.78,
-  0.85,
+  0.96, // 50 - lightest
   0.91,
-  0.96 // 950 - lightest
+  0.85,
+  0.78,
+  0.7,
+  0.6, // 500 - main
+  0.5,
+  0.4,
+  0.32,
+  0.25,
+  0.18 // 950 - darkest
 ];
 
 /**
- * Generate a dark mode optimized palette Inverts the lightness curve for better dark theme compatibility
+ * Generate a dark mode optimized palette
  *
  * @param color - Input color
  * @returns Dark mode optimized palette
@@ -703,11 +708,9 @@ export function findAccessibleTextColor(
   const palette = generateOklchPalette(paletteColor);
 
   // Sort by lightness (darker first if preferDark, lighter first otherwise)
-  const sortedPalettes = [...palette.palettes].sort((a, b) => {
-    const aL = toOklch(a.hex)?.l ?? 0.5;
-    const bL = toOklch(b.hex)?.l ?? 0.5;
-    return preferDark ? aL - bL : bL - aL;
-  });
+  const sortedPalettes = palette.palettes
+    .map(item => ({ ...item, lightness: toOklch(item.hex)?.l ?? 0.5 }))
+    .sort((a, b) => (preferDark ? a.lightness - b.lightness : b.lightness - a.lightness));
 
   for (const { hex, number } of sortedPalettes) {
     const ratio = getContrastRatio(hex, backgroundColor);

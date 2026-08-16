@@ -26,7 +26,7 @@ src/
 ├── types/          类型定义（ColorPalette、ColorPaletteNumber 等）
 ├── shared/         基础工具
 │   ├── colord.ts     colord 封装（格式转换、混合、明暗调节等）
-│   └── name.ts       色名匹配（1500+ 色名表最近距离查找）
+│   └── name.ts       色名匹配（1500+ 色名表惰性预解析 + 结果缓存）
 ├── constant/       内置数据
 │   ├── name.ts       色名表 [hex, name][] + hex → name 映射
 │   └── palette.ts    Tailwind 风格预设色板（22 个色族 × 11 档）
@@ -60,12 +60,18 @@ src/
 
 #### `getColorPalette`
 
-根据输入颜色生成 11 档色板，通过 `algorithm` 参数选择算法：
+根据输入颜色生成 11 档色板。第二个参数可以直接传算法名，也可以传完整配置对象：
 
 ```ts
+type ColorPaletteConfig = PaletteAlgorithm | {
+  algorithm?: PaletteAlgorithm;   // default: 'antd'
+  darkTheme?: boolean;            // default: false，仅 antd 算法生效
+  darkThemeMixColor?: string;     // default: '#141414'，仅 antd 算法生效
+};
+
 function getColorPalette(
   color: AnyColor,
-  algorithm?: PaletteAlgorithm  // default: 'antd'
+  config?: ColorPaletteConfig     // default: 'antd'
 ): Map<ColorPaletteNumber, string>
 ```
 
@@ -77,7 +83,12 @@ console.log(antdMap.get(500)); // 主色
 
 const recommendMap = getColorPalette('#1677ff', 'recommended');
 const oklchMap = getColorPalette('#1677ff', 'oklch');
+
+// antd 暗色主题变体
+const darkMap = getColorPalette('#1677ff', { algorithm: 'antd', darkTheme: true });
 ```
+
+输入颜色会被统一归一化为小写 6 位 hex，因此 `'#1677FF'`、`'rgb(22, 119, 255)'`、`'red'` 等写法产出的色板中不会混入原始字符串。
 
 #### `getPaletteColorByNumber`
 
@@ -87,7 +98,7 @@ const oklchMap = getColorPalette('#1677ff', 'oklch');
 function getPaletteColorByNumber(
   color: AnyColor,
   number: ColorPaletteNumber,
-  algorithm?: PaletteAlgorithm  // default: 'antd'
+  config?: ColorPaletteConfig     // default: 'antd'
 ): string
 ```
 
@@ -96,6 +107,7 @@ import { getPaletteColorByNumber } from '@skyroc/color';
 
 const hex = getPaletteColorByNumber('#1677ff', 200);
 const oklchHex = getPaletteColorByNumber('#1677ff', 200, 'oklch');
+const darkHex = getPaletteColorByNumber('#1677ff', 200, { darkTheme: true });
 ```
 
 ---
@@ -245,34 +257,40 @@ const palette = generateOklchPaletteAdvanced('#6366f1', {
   lightnessCurve: [0.97, 0.94, 0.89, 0.82, 0.74, 0.66, 0.58, 0.50, 0.43, 0.38, 0.26],
 });
 
-// 强制输入色为 600 档
+// 以 600 档为基准反推色度强度
 const palette600 = generateOklchPaletteAdvanced('#6366f1', { forceStep: 600 });
 ```
 
-#### `generateOklchPaletteEx`
+> `lightnessCurve` 必须恰好 11 个值（顺序为 50 → 950），长度不符会直接抛错而不是静默回退。
+>
+> `forceStep` 只改变反推基准色度时参照的档位，**不会**把输入色原样放进该档——需要精确保留输入色请用 `generateOklchPaletteAnchored`。
 
-精确保留输入色的增强版本。在匹配档位上使用原始输入色（不做任何近似），并附带每档的 OKLCH 数值与 CSS 字符串：
+#### `generateOklchPaletteAnchored`
+
+精确保留输入色的增强版本。在匹配档位上使用原始输入色（不做任何近似），其余档位的明度曲线整体平移以穿过该点，并附带每档的 OKLCH 数值与 CSS 字符串：
 
 ```ts
-function generateOklchPaletteEx(
+function generateOklchPaletteAnchored(
   color: string,
   forceStep?: ColorPaletteNumber
 ): ColorPaletteFamilyWithOklch
 ```
 
 ```ts
-import { generateOklchPaletteEx } from '@skyroc/color';
+import { generateOklchPaletteAnchored } from '@skyroc/color';
 
-const result = generateOklchPaletteEx('#6366f1');
+const result = generateOklchPaletteAnchored('#6366f1');
 console.log(result.matchedStep);          // 500
 console.log(result.palettes[5].hex);      // '#6366f1'（精确保留）
 console.log(result.palettes[5].oklchCss); // 'oklch(55.69% 0.215 277.01)'
 console.log(result.inputOklchCss);        // 输入色的 OKLCH CSS
 
 // 强制放在 600 档
-const result600 = generateOklchPaletteEx('#6366f1', 600);
+const result600 = generateOklchPaletteAnchored('#6366f1', 600);
 console.log(result600.palettes[6].hex);   // '#6366f1'
 ```
+
+> `generateOklchPaletteEx` 是本函数的旧别名，已标记 `@deprecated`，行为完全一致。
 
 ---
 
@@ -365,7 +383,7 @@ const lightStep = findAccessibleTextColor('#1677ff', '#1a1a2e', false);
 
 #### `generateDarkModePalette`
 
-使用反转的明度曲线生成暗色主题色板。50 档最暗（L=0.18），950 档最亮（L=0.96）：
+使用整体压暗的明度曲线生成暗色主题色板。**档位号语义与亮色色板一致**——50 最亮（L=0.96）、950 最暗（L=0.18），只是整条曲线比亮色色板更暗：
 
 ```ts
 function generateDarkModePalette(color: string): ColorPaletteFamily
@@ -375,9 +393,11 @@ function generateDarkModePalette(color: string): ColorPaletteFamily
 import { generateDarkModePalette } from '@skyroc/color';
 
 const darkPalette = generateDarkModePalette('#1677ff');
-// darkPalette.palettes[0].hex  → 50 档（最暗）
-// darkPalette.palettes[10].hex → 950 档（最亮）
+// darkPalette.palettes[0].hex  → 50 档（最亮）
+// darkPalette.palettes[10].hex → 950 档（最暗）
 ```
+
+> 暗色主题中需要深色背景时应取 900 / 950 档，而不是依赖档位号被翻转。这样 `--primary-50` 之类的 CSS 变量在明暗两套主题下含义保持一致。
 
 ---
 
@@ -540,8 +560,8 @@ import { generateOklchPalette, generateDarkModePalette } from '@skyroc/color';
 const brandColor = '#1677ff';
 const lightPalette = generateOklchPalette(brandColor);
 const darkPalette = generateDarkModePalette(brandColor);
-// 亮色：50 最浅 → 950 最深
-// 暗色：50 最暗 → 950 最亮（明度反转）
+// 两套色板档位语义一致：50 最浅 → 950 最深
+// 区别在于暗色整条明度曲线被压暗，深色背景取 900 / 950 档
 ```
 
 ### 透明色转不透明
@@ -568,6 +588,13 @@ type ColorIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 // 算法选择
 type PaletteAlgorithm = 'antd' | 'oklch' | 'recommended';
+
+// 统一入口配置：直接给算法名，或给完整配置对象
+type ColorPaletteConfig = PaletteAlgorithm | {
+  algorithm?: PaletteAlgorithm;
+  darkTheme?: boolean;
+  darkThemeMixColor?: string;
+};
 
 // WCAG
 type WcagLevel = 'AA' | 'AAA';

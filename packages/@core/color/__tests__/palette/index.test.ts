@@ -78,3 +78,50 @@ describe('getPaletteColorByNumber', () => {
     expect(c50).not.toBe(c950);
   });
 });
+
+// ==================== antd 暗色色板 & 入口导出（回归） ====================
+
+describe('antd 暗色色板', () => {
+  it('darkTheme 选项应产出不同色板', () => {
+    const light = getColorPalette('#1890ff', 'antd');
+    const dark = getColorPalette('#1890ff', { algorithm: 'antd', darkTheme: true });
+
+    expect(dark.size).toBe(11);
+    expect(hasDifference(light, dark)).toBe(true);
+  });
+
+  it('darkThemeMixColor 应影响结果', () => {
+    const a = getColorPalette('#1890ff', { algorithm: 'antd', darkTheme: true });
+    const b = getColorPalette('#1890ff', { algorithm: 'antd', darkTheme: true, darkThemeMixColor: '#000000' });
+
+    expect(hasDifference(a, b)).toBe(true);
+  });
+
+  it('getPaletteColorByNumber 应透传配置对象', () => {
+    const light = getPaletteColorByNumber('#1890ff', 100, 'antd');
+    const dark = getPaletteColorByNumber('#1890ff', 100, { algorithm: 'antd', darkTheme: true });
+
+    expect(dark).toMatch(HEX_REGEX);
+    expect(dark).not.toBe(light);
+  });
+});
+
+describe('包入口导出', () => {
+  it('README 中记载的 antd API 应可从入口导入', async () => {
+    const api = await import('../../src/index');
+
+    expect(typeof api.getAntDColorPalette).toBe('function');
+    expect(typeof api.getAntDPaletteColorByIndex).toBe('function');
+    expect(typeof api.getRecommendedColorPaletteFamily).toBe('function');
+    expect(typeof api.generateOklchPaletteAnchored).toBe('function');
+    expect(typeof api.colorNameMap).toBe('object');
+  });
+
+  it('三种算法都应接受非 hex 输入并产出小写 hex', () => {
+    for (const algorithm of ['antd', 'recommended', 'oklch'] as const) {
+      getColorPalette('rgb(24, 144, 255)', algorithm).forEach(hex => {
+        expect(hex).toMatch(HEX_REGEX);
+      });
+    }
+  });
+});
