@@ -1,2 +1,10 @@
 export { RollingText } from './RollingText';
-export type { RollingTextDirection, RollingTextProps, RollingTextRef, RollingTextStopOrder } from './types';
+export type {
+  RollingTextDirection,
+  RollingTextNumberProps,
+  RollingTextProps,
+  RollingTextRef,
+  RollingTextSlots,
+  RollingTextStopOrder,
+  RollingTextTextProps
+} from './types';
