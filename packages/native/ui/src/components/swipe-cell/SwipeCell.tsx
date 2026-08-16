@@ -67,6 +67,7 @@ const SwipeCell = (props: SwipeCellProps) => {
   const {
     beforeClose,
     children,
+    className,
     classNames,
     disabled = false,
     exclusive = true,
@@ -114,7 +115,7 @@ const SwipeCell = (props: SwipeCellProps) => {
       content: cn(variantSlots.content(), classNames?.content),
       leading: cn(variantSlots.leading(), classNames?.leading),
       overlay: cn(variantSlots.overlay(), classNames?.overlay),
-      root: cn(variantSlots.root(), classNames?.root),
+      root: cn(variantSlots.root(), classNames?.root, className),
       trailing: cn(variantSlots.trailing(), classNames?.trailing)
     };
   }

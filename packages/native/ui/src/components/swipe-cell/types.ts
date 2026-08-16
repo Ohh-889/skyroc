@@ -57,6 +57,9 @@ interface SwipeCellProps {
   /** 主内容区域 */
   children?: ReactNode;
 
+  /** NativeWind className，合并到 root 插槽，优先级高于 `classNames.root` */
+  className?: string;
+
   /** 自定义各插槽样式类名 */
   classNames?: SlotClassNames<SwipeCellSlots>;
 
