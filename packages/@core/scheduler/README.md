@@ -10,14 +10,17 @@
 ❌ 认证、配置、权限、路由 … 各自 init，执行顺序靠运气
 ❌ 心跳、上报、轮询、token 刷新 … 每个一个 setInterval，谁也管不着谁
 ❌ resize、online/offline、visibilitychange … 监听器散落各处，清理全靠记忆
+❌ 某个初始化悄悄失败，应用永远停在 loading，没人知道卡在哪
 ```
 
-TaskHub 的答案：**一个心跳 + 一个任务注册表 + 依赖关系声明**。
+TaskHub 的答案：**一个任务注册表 + 依赖关系声明 + 明确的终态信号**。
 
 ```
 ✅ 声明式注册，依赖自动解析
-✅ 永远只有一个 setInterval
-✅ hub.stop() 一次性清理所有任务
+✅ 依赖链事件驱动推进，不靠轮询等待
+✅ 周期任务共享唯一心跳
+✅ stop() 一次性清理所有任务，且可重新 start
+✅ 成功走 onReady，失败走 onSettled，绝不静默挂起
 ```
 
 ## 核心概念
@@ -32,23 +35,45 @@ TaskHub 的答案：**一个心跳 + 一个任务注册表 + 依赖关系声明*
 
 ### 调度模型
 
+`init` / `listener` 与 `periodic` 走**两条互不干扰的通路**——前者是依赖编排，后者是时间调度。
+把它们绑在同一个心跳上，只会让启动流程被轮询拖慢。
+
 ```
-TaskHub.start()
-    │
-    ▼
-┌─ Tick Loop（单一 setInterval）──────────────────┐
-│                                                  │
-│  遍历任务表（按 priority 排序）                     │
-│    ├─ init:     deps 满足 + pending → 执行一次     │
-│    ├─ periodic: deps 满足 + 间隔到了 → 再次执行     │
-│    └─ listener: deps 满足 + pending → 注册一次     │
-│                                                  │
-│  检查：所有 init 完成？ → 触发 onReady              │
-│                                                  │
-└──────────────────────────────────────────────────┘
-    │
-    ▼
-TaskHub.stop()  →  逆序调用所有 cleanup  →  清空任务表
+                      ┌──────────────────────────────────────┐
+  start()  ─────────► │  pump()  事件驱动                     │
+                      │                                      │
+                      │  扫描 init / listener：               │
+                      │    pending + deps 全部 done → 执行     │
+                      │                                      │
+                      │  任一任务完成 ──► 立即再 pump 一次      │
+                      └──────────────────────────────────────┘
+                                     │
+                                     ▼
+                      全部 init 到达终态 → onSettled
+                      全部 init 成功     → onReady
+
+                      ┌──────────────────────────────────────┐
+  仅当存在周期任务  ──► │  tick()  单一 setInterval             │
+                      │    deps 满足 + 间隔到了 → 再次执行      │
+                      └──────────────────────────────────────┘
+```
+
+**关键含义**：一条 `auth → permissions → routes` 的依赖链，无论 `tickInterval` 设成多少，
+都在同一批微任务里跑完。`tickInterval` 只影响周期任务的时间精度。
+
+### 状态机
+
+```
+        deps 满足                   成功
+pending ─────────► running ──────────────────► done
+   ▲                  │
+   │                  │ 失败 & 还有重试机会
+   │  退避到期          ▼
+   └────────────── failed
+                      │ 重试耗尽
+                      ▼
+              下游任务 ──► blocked ◄──► pending
+                          （上游被替换后自动恢复）
 ```
 
 ## 安装
@@ -63,9 +88,14 @@ import { TaskHub } from '@skyroc/scheduler';
 
 ```ts
 const hub = new TaskHub({
-  tickInterval: 1000,
   onReady: () => {
     console.log('所有初始化完成，应用就绪');
+  },
+  onSettled: result => {
+    if (!result.ok) {
+      // 初始化没能全部成功 —— 在这里做降级 UI，而不是让用户对着 loading 发呆
+      console.error('启动失败:', result.failed, '被阻塞:', result.blocked);
+    }
   },
   onTaskError: (name, err) => {
     console.error(`任务 ${name} 失败:`, err);
@@ -115,15 +145,6 @@ hub.register({
   }
 });
 
-hub.register({
-  name: 'analytics',
-  type: 'periodic',
-  interval: 60_000,
-  run: () => {
-    analytics.flush();
-  }
-});
-
 // ---- 3. 监听器任务 ----
 
 hub.register({
@@ -150,177 +171,226 @@ hub.stop();
 
 ### `new TaskHub(options?)`
 
-创建调度实例。
-
 ```ts
 interface TaskHubOptions {
-  tickInterval?: number; // 心跳间隔（ms），默认 1000
-  maxRetries?: number; // 失败重试次数，默认 3，设为 0 禁用
-  baseRetryDelay?: number; // 重试基础延迟（ms），实际延迟 = base * 2^retryCount，默认 1000
+  /** 周期任务的心跳间隔（ms），默认 1000。不影响 init / listener 的调度速度 */
+  tickInterval?: number;
+  /** 失败任务最大重试次数，默认 3，设为 0 禁用 */
+  maxRetries?: number;
+  /** 重试基础延迟（ms），第 n 次重试延迟 = base * 2^(n-1)，默认 1000 */
+  baseRetryDelay?: number;
+  /** 全部 init 成功完成时触发；无 init 任务时 start 后立即触发 */
+  onReady?: () => void;
+  /** 全部 init 到达终态时触发，无论成功与否 */
+  onSettled?: (result: InitSettleResult) => void;
+  /** 任务每次失败都会触发（含重试过程中的失败） */
   onTaskError?: (taskName: string, error: unknown) => void;
-  onReady?: () => void; // 所有 init 任务完成时触发
+  /** 任务因上游永久失败而无法执行时触发 */
+  onTaskBlocked?: (taskName: string, blockedBy: string) => void;
 }
 ```
 
-### `.register(def)` / `.registerAll(defs)`
+### `.register(def)` / `.registerAll(defs)` / `.add(def)`
 
-注册任务。支持链式调用。
+注册任务，支持链式调用。`TaskDef` 是按 `type` 判别的联合类型——`interval` 只在
+`type: 'periodic'` 上存在，写在别的类型上会被 TypeScript 直接拦下。
 
 ```ts
-interface TaskDef {
-  name: string; // 唯一标识
-  type: 'init' | 'periodic' | 'listener';
-  priority?: number; // 数字越小越先执行，默认 10
+type TaskDef = {
+  name: string; // 唯一标识，重复注册会抛错
+  priority?: number; // 数字越小越先启动，默认 10
   deps?: string[]; // 依赖的任务名
-  interval?: number; // 周期间隔（ms），仅 periodic
-  run: () => void | Promise<void>; // 执行体
-  cleanup?: () => void; // 清理函数
-}
+  run: (ctx: TaskContext) => void | Promise<void>;
+  cleanup?: () => void; // 仅当任务真正执行过才会被调用
+} & ({ type: 'init' } | { type: 'listener' } | { type: 'periodic'; interval?: number });
 ```
+
+`ctx.signal` 是一个 `AbortSignal`，在 `stop()` / `dispose()` / `remove()` 时触发，
+用来中断长耗时的 run：
 
 ```ts
-// 链式
-hub.register({ name: 'a', type: 'init', run: initA }).register({ name: 'b', type: 'init', deps: ['a'], run: initB });
-
-// 批量
-hub.registerAll([taskA, taskB, taskC]);
+hub.register({
+  name: 'sync',
+  type: 'init',
+  run: async ctx => {
+    const res = await fetch('/api/bootstrap', { signal: ctx.signal });
+    await applyBootstrap(await res.json());
+  }
+});
 ```
 
-### `.start()` / `.stop()`
+注册顺序任意，依赖可以后注册。但**依赖名必须最终存在**：`start()` 时会统一校验，
+拼错的依赖名直接抛错，而不是让任务永久挂起。
 
-- `start()` — 启动心跳循环，立即执行首次 tick
-- `stop()` — 停止心跳，逆优先级顺序调用所有 cleanup，清空任务表
+```ts
+hub.register({ name: 'perm', type: 'init', deps: ['authh'], run: loadPerm });
+hub.register({ name: 'auth', type: 'init', run: initAuth });
+hub.start();
+// Error: [TaskHub] Unregistered dependencies: "perm" -> authh.
+```
+
+### `.start()` / `.stop()` / `.dispose()`
+
+| 方法        | 停调度 | 调用 cleanup | 重置任务状态 | 清空注册表 |
+| ----------- | ------ | ------------ | ------------ | ---------- |
+| `stop()`    | ✅     | ✅           | ✅           | ❌         |
+| `dispose()` | ✅     | ✅           | ✅           | ✅         |
+
+`stop()` **保留注册表**，因此 `stop()` → `start()` 可以完整重跑一遍——这正是 React
+StrictMode 双挂载需要的行为。代价是 `init` / `listener` 的 `run` 应当**幂等**。
+
+彻底销毁（整个 hub 不再使用）用 `dispose()`。
 
 ### `.pause()` / `.resume()`
 
-- `pause()` — 暂停心跳（不清理任务状态）
-- `resume()` — 恢复心跳
+暂停心跳与重试退避计时；`resume()` 按**剩余时间**继续，不会因为暂停而丢掉一次重试。
+适用于页面切到后台时暂停、切回前台时恢复。
 
-适用于页面切到后台时暂停、切回前台时恢复的场景。
+### `.remove(name)`
 
-### `.add(def)` / `.remove(name)`
-
-运行时动态增删任务。
-
-```ts
-// 进入某页面时追加
-hub.add({ name: 'page-poll', type: 'periodic', interval: 5000, run: pollData });
-
-// 离开时移除（自动调用 cleanup），返回 boolean，任务不存在时返回 false
-hub.remove('page-poll');
-```
+移除任务，并对执行过的任务调用 `cleanup`，返回是否命中。
+若被移除的任务仍被下游依赖，下游会转入 `blocked` 并触发 `onTaskBlocked`——而不是静默挂起。
 
 ### `.snapshot()` / `.getTask(name)`
 
-查看任务状态，用于调试或构建可视化面板。
-
 ```ts
 hub.snapshot();
-// 返回值按 priority 升序排列：
+// 按 priority 升序：
 // [
-//   { name: 'auth',        type: 'init',     status: 'done',    lastRun: 1707820800000, deps: [],         retryCount: 0 },
-//   { name: 'permissions', type: 'init',     status: 'done',    lastRun: 1707820800100, deps: ['auth'],   retryCount: 0 },
-//   { name: 'heartbeat',   type: 'periodic', status: 'done',    lastRun: 1707820830000, deps: ['auth'],   retryCount: 0 },
-//   { name: 'routes',      type: 'init',     status: 'failed',  lastRun: 1707820800200, deps: ['perm..'], retryCount: 3, error: 'Error: timeout' },
+//   { name: 'auth', type: 'init', status: 'failed',  retryCount: 3, error: 'Error: timeout', deps: [] },
+//   { name: 'perm', type: 'init', status: 'blocked', blockedBy: 'auth', retryCount: 0, deps: ['auth'] },
 // ]
-
-hub.getTask('auth');
-// { name: 'auth', type: 'init', status: 'done', lastRun: 1707820800000, deps: [], retryCount: 0 }
-// 任务不存在时返回 undefined
 ```
 
 ### `.running`
 
-只读属性，当前是否在运行。
+只读属性：已 `start()` 且未 `pause()`。
 
 ## 重试机制
 
-失败的 `init` 和 `listener` 任务会自动重试（`periodic` 天然会在下个周期重试）。
-
-- 重试次数：`maxRetries`（默认 3）
-- 退避策略：指数退避，延迟 = `baseRetryDelay * 2^retryCount`
-- 设为 `maxRetries: 0` 禁用重试
+失败的 `init` / `listener` 会按指数退避自动重试（`periodic` 天然在下个周期重试，不参与退避）。
 
 ```
-第 1 次重试：1s 后
-第 2 次重试：2s 后
-第 3 次重试：4s 后
-超过次数 → 保持 failed 状态，触发 onTaskError
+maxRetries: 3, baseRetryDelay: 1000
+  ├─ 初始执行失败
+  ├─ 第 1 次重试：1s 后   （base * 2^0）
+  ├─ 第 2 次重试：2s 后   （base * 2^1）
+  ├─ 第 3 次重试：4s 后   （base * 2^2）
+  └─ 仍失败 → 保持 failed，下游转入 blocked，onSettled 汇报失败
 ```
 
-## 依赖关系
+即 `maxRetries: 3` = **1 次初始执行 + 3 次重试**，共 4 次调用。
+退避由独立的 `setTimeout` 精确触发，不受 `tickInterval` 影响。
 
-通过 `deps` 声明任务间的依赖，TaskHub 自动解析执行顺序。
+## 依赖与阻塞
 
 ```ts
-// auth → permissions → routes（链式依赖）
 hub.register({ name: 'auth',        type: 'init', run: ... });
 hub.register({ name: 'permissions', type: 'init', deps: ['auth'], run: ... });
-hub.register({ name: 'routes',      type: 'init', deps: ['permissions'], run: ... });
-
-// heartbeat 等 auth 完成后才开始周期执行
-hub.register({ name: 'heartbeat', type: 'periodic', interval: 30000, deps: ['auth'], run: ... });
+hub.register({ name: 'heartbeat',   type: 'periodic', interval: 30000, deps: ['auth'], run: ... });
 ```
 
-依赖任务 `failed` 且无法重试时，下游任务将一直保持 `pending`。
+上游**永久失败**（重试耗尽）后，下游沿依赖链级联标记为 `blocked` 并触发 `onTaskBlocked`。
+`blocked` 是**派生状态**而非终点——替换掉出问题的上游，下游会自动回到 `pending` 并继续：
+
+```ts
+hub.remove('auth');
+hub.add({ name: 'auth', type: 'init', run: initAuthViaFallback });
+// permissions 自动解除 blocked，并在 auth 完成后执行
+```
+
+周期任务的失败**不会**阻塞下游——它会在下个周期自愈。
+
+## 就绪与失败
+
+```ts
+interface InitSettleResult {
+  ok: boolean; // failed 与 blocked 均为空
+  done: string[]; // 成功完成
+  failed: string[]; // 重试耗尽仍失败
+  blocked: string[]; // 因上游失败而从未执行
+}
+```
+
+- `onReady` — 只在**全部 init 成功**时触发
+- `onSettled` — 全部 init 到达终态就触发，**成功与失败都会走到**
+
+启动流程必须处理失败路径，否则一次网络抖动就能让应用永远停在 loading：
+
+```ts
+const hub = new TaskHub({
+  onReady: () => store.dispatch(setAppReady(true)),
+  onSettled: result => {
+    if (!result.ok) store.dispatch(setBootstrapError(result));
+  }
+});
+```
 
 ## 与传统方式对比
 
-| 维度             | N 个 `setInterval`       | `TaskHub`               |
-| ---------------- | ------------------------ | ----------------------- |
-| 依赖关系         | 无法表达                 | `deps` 天然支持 DAG     |
-| 执行顺序         | 靠代码位置，容易出错     | `priority` + 依赖自动保证 |
-| 清理             | 逐一保存 timer id，容易遗漏 | `stop()` 一次清理全部 |
-| 暂停/恢复        | 需自行维护状态           | `pause()` / `resume()`  |
-| 状态观测         | 无                       | `snapshot()` 随时看全貌 |
-| Timer 数量       | 随业务线性膨胀           | 永远只有 1 个           |
-| 错误处理         | 各自为政                 | 统一 `onTaskError`      |
-| 重试             | 需手动实现               | 指数退避，开箱即用      |
+| 维度           | N 个 `setInterval`          | `TaskHub`                    |
+| -------------- | --------------------------- | ---------------------------- |
+| 依赖关系       | 无法表达                    | `deps` 天然支持 DAG          |
+| 依赖链耗时     | —                           | 事件驱动，不随链长增加等待   |
+| 执行顺序       | 靠代码位置，容易出错        | `priority` + 依赖自动保证    |
+| 清理           | 逐一保存 timer id，容易遗漏 | `stop()` 一次清理全部        |
+| 暂停 / 恢复    | 需自行维护状态              | `pause()` / `resume()`       |
+| 状态观测       | 无                          | `snapshot()` 随时看全貌      |
+| Timer 数量     | 随业务线性膨胀              | 周期任务共用 1 个            |
+| 错误处理       | 各自为政                    | 统一 `onTaskError`           |
+| 重试           | 需手动实现                  | 指数退避，开箱即用           |
+| 启动失败可观测 | 无                          | `onSettled` / `blocked` 链路 |
 
 ## 在 React 中使用
 
-将 `TaskHub` 的生命周期绑定到应用根组件。在**模块作用域**创建单例，避免 React StrictMode 双调用的干扰：
+在**模块作用域**创建单例，`useEffect` 里绑定生命周期。`stop()` 保留注册表，
+所以 StrictMode 的 mount → unmount → mount 会完整重跑一遍：
 
 ```ts
 import { useEffect } from 'react';
 import { TaskHub } from '@skyroc/scheduler';
 
 const hub = new TaskHub({
-  tickInterval: 1000,
   onReady: () => store.dispatch(setAppReady(true)),
+  onSettled: result => {
+    if (!result.ok) store.dispatch(setBootstrapError(result));
+  },
   onTaskError: (name, err) => logger.error(name, err)
 });
 
 hub.registerAll([authTask, permissionTask, heartbeatTask, networkTask]);
 
-export function AppScheduler() {
+export const AppScheduler = () => {
   useEffect(() => {
     hub.start();
     return () => hub.stop();
   }, []);
 
   return null;
-}
+};
 ```
+
+> 前提：`init` / `listener` 的 `run` 必须幂等——重跑一次不能产生副作用叠加。
+> 需要跳过重跑时，在任务内部自行短路。
 
 ## 设计原则
 
 - **零框架依赖** — 纯 class，Web / React Native / Node 均可使用
 - **声明式 > 命令式** — 注册任务定义，调度交给引擎
 - **单一职责** — 只做调度，不做业务逻辑
+- **不静默失败** — 拼错的依赖、失败的启动、被阻塞的任务，都有明确信号
 - **可观测** — snapshot 提供完整的运行时状态
 
 ## 测试
 
 ```bash
 # 从 monorepo 根目录
-npx vitest run packages/@core/scheduler/__tests__/task-hub.test.ts
+npx vitest run packages/@core/scheduler
 
 # 或在包目录内
-cd packages/@core/scheduler && pnpm test
-
-# 含覆盖率报告
-pnpm test --coverage
+pnpm test
+pnpm test:coverage
 ```
 
-46 个测试用例，覆盖率 100%（Statements / Branches / Functions / Lines），覆盖：注册校验、三种任务类型调度、依赖解析、失败重试与指数退避、生命周期边界（`start` / `stop` / `pause` / `resume`）、`onReady` 触发条件、动态增删、快照查询及错误字段。
+测试按**契约**组织（调度时序、退避时刻、状态机迁移、生命周期边界、并发竞态），
+而不是按代码行覆盖组织——覆盖率是结果，不是目标。
