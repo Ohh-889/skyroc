@@ -186,6 +186,9 @@ catalogs:
     # 弹出层底座：Popup 基于其封装。npm latest 即为该 rc 版本
     'react-native-modal': 14.0.0-rc.1
 
+    # 验证码格子输入底座：PasswordInput 基于其封装
+    'react-native-confirmation-code-field': ^8.0.1
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具

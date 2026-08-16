@@ -238,9 +238,14 @@ pnpm --filter skyroc-admin build
 ### 创建新 Admin 项目
 
 ```bash
-# 通过 CLI 脚手架基于当前模板创建新项目
-pnpm create:admin
+# 在本仓库 apps/ 下新增一个 app，保留 workspace: / catalog: 协议
+pnpm create:admin my-admin
+
+# 生成一个脱离本仓库也能 pnpm install 的独立工程
+pnpm sa create-admin my-admin --target ~/projects/my-admin
 ```
+
+两者的区别见 [`@skyroc/scripts` 文档](packages/@core/scripts/README.md#sa-create-admin)。
 
 ---
 
@@ -258,7 +263,7 @@ pnpm create:admin
 | `pnpm test:e2e` | 运行端到端测试（Playwright） |
 | `pnpm test:ui` | 启动 Vitest UI |
 | `pnpm clean` | 清理所有构建产物 |
-| `pnpm create:admin` | CLI 脚手架创建新 admin 项目 |
+| `pnpm create:admin <name>` | CLI 脚手架在 `apps/` 下创建新 admin 项目（仓库内模式） |
 | `pnpm sync:admin-template` | 同步 admin 模板变更 |
 
 ---

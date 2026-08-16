@@ -128,6 +128,9 @@ catalogs:
     cac:
       specifier: ^6.7.14
       version: 6.7.14
+    confbox:
+      specifier: ^0.1.8
+      version: 0.1.8
     enquirer:
       specifier: ^2.4.1
       version: 2.4.1
@@ -173,9 +176,6 @@ catalogs:
     oxlint:
       specifier: ^1.60.0
       version: 1.60.0
-    picomatch:
-      specifier: ^4.0.3
-      version: 4.0.4
     rimraf:
       specifier: ^6.0.1
       version: 6.1.3
@@ -229,6 +229,9 @@ catalogs:
     react-native:
       specifier: 0.86.0
       version: 0.86.0
+    react-native-confirmation-code-field:
+      specifier: ^8.0.1
+      version: 8.0.1
     react-native-gesture-handler:
       specifier: ~2.32.0
       version: 2.32.0
@@ -944,6 +947,9 @@ importers:
       react-native:
         specifier: 0.86.0
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
+      react-native-confirmation-code-field:
+        specifier: catalog:native
+        version: 8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
       react-native-gesture-handler:
         specifier: catalog:native
         version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
@@ -2015,9 +2021,6 @@ importers:
       '@soybeanjs/changelog':
         specifier: catalog:dev
         version: 0.3.25(@unocss/eslint-config@66.6.0(eslint@10.2.0(jiti@2.7.0))(typescript@6.0.3))(eslint-plugin-react-hooks@7.0.1(eslint@10.2.0(jiti@2.7.0)))(eslint-plugin-react-refresh@0.4.26(eslint@10.2.0(jiti@2.7.0)))(eslint-plugin-react@7.37.5(eslint@10.2.0(jiti@2.7.0)))(eslint@10.2.0(jiti@2.7.0))(svelte-eslint-parser@1.5.0)(typescript@6.0.3)
-      '@tanstack/router-generator':
-        specifier: catalog:web
-        version: 1.162.6
       bumpp:
         specifier: catalog:dev
         version: 10.4.1
@@ -2027,6 +2030,9 @@ importers:
       cac:
         specifier: catalog:dev
         version: 6.7.14
+      confbox:
+        specifier: catalog:dev
+        version: 0.1.8
       enquirer:
         specifier: catalog:dev
         version: 2.4.1
@@ -2039,19 +2045,22 @@ importers:
       npm-check-updates:
         specifier: catalog:dev
         version: 17.1.18
-      picomatch:
-        specifier: catalog:dev
-        version: 4.0.4
-    devDependencies:
-      '@skyroc/tsconfig':
-        specifier: workspace:*
-        version: link:../../../internal/tsconfig
-      oxlint:
-        specifier: catalog:dev
-        version: 1.60.0
       rimraf:
         specifier: catalog:dev
         version: 6.1.3
+    devDependencies:
+      '@skyroc/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+      '@skyroc/tsconfig':
+        specifier: workspace:*
+        version: link:../../../internal/tsconfig
+      '@tanstack/router-generator':
+        specifier: catalog:web
+        version: 1.162.6
+      oxlint:
+        specifier: catalog:dev
+        version: 1.60.0
       tsdown:
         specifier: catalog:dev
         version: 0.18.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)(typescript@6.0.3)
@@ -2061,6 +2070,9 @@ importers:
       typescript:
         specifier: catalog:core
         version: 6.0.3
+      vitest:
+        specifier: catalog:dev
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@26.2.0)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@2.7.0)(jsdom@28.1.0(@noble/hashes@1.8.0))(lightningcss@1.30.1)(msw@2.12.10(@types/node@26.2.0)(typescript@6.0.3))(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
 
   packages/@core/service:
     dependencies:
@@ -2134,6 +2146,15 @@ importers:
 
   packages/@core/type-utils:
     devDependencies:
+      '@skyroc/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+      '@skyroc/tsconfig':
+        specifier: workspace:*
+        version: link:../../../internal/tsconfig
+      oxlint:
+        specifier: catalog:dev
+        version: 1.60.0
       rimraf:
         specifier: catalog:dev
         version: 6.1.3
@@ -2283,6 +2304,9 @@ importers:
       react-native:
         specifier: catalog:native
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
+      react-native-confirmation-code-field:
+        specifier: catalog:native
+        version: 8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react-native-gesture-handler:
         specifier: catalog:native
         version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
@@ -2671,6 +2695,10 @@ importers:
         version: 6.0.3
 
   packages/web/admin-runtime:
+    dependencies:
+      '@skyroc/scheduler':
+        specifier: workspace:*
+        version: link:../../@core/scheduler
     devDependencies:
       '@iconify/react':
         specifier: catalog:ui-shared
@@ -2693,6 +2721,9 @@ importers:
       dayjs:
         specifier: catalog:utils
         version: 1.11.19
+      happy-dom:
+        specifier: catalog:dev
+        version: 20.6.1
       nprogress:
         specifier: catalog:ui-shared
         version: 0.2.0
@@ -16423,6 +16454,17 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
 
+  react-native-confirmation-code-field@8.0.1:
+    resolution: {integrity: sha512-pwrhQtspFEp0y/gxZRp8hrra+UjAYfwAsW5Sn3yYtdUZVyRjAZPBnUb3rOc+z5L5o2ml03z5P3uvTK0yQwXsmA==}
+    peerDependencies:
+      react: '>=16.4.0'
+      react-native: '>=0.64.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-native:
+        optional: true
+
   react-native-drawer-layout@4.2.10:
     resolution: {integrity: sha512-O6TQdZ5LSm3dqnuR4rX9KPtE+9dVg7jsezEYz1l01rkQTe4fQvYZIoPu2sZFl5X2N70uhRdjnPULySVR3sBUwA==}
     peerDependencies:
@@ -20960,7 +21002,7 @@ snapshots:
       node-forge: 1.4.0
       npm-package-arg: 11.0.3
       ora: 3.4.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       pretty-format: 29.7.0
       progress: 2.0.3
       prompts: 2.4.2
@@ -21038,7 +21080,7 @@ snapshots:
       node-forge: 1.4.0
       npm-package-arg: 11.0.3
       ora: 3.4.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       pretty-format: 29.7.0
       progress: 2.0.3
       prompts: 2.4.2
@@ -21116,7 +21158,7 @@ snapshots:
       node-forge: 1.4.0
       npm-package-arg: 11.0.3
       ora: 3.4.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       pretty-format: 29.7.0
       progress: 2.0.3
       prompts: 2.4.2
@@ -21321,7 +21363,7 @@ snapshots:
       hermes-parser: 0.36.1
       jsc-safe-url: 0.2.4
       lightningcss: 1.30.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       postcss: 8.5.26
       resolve-from: 5.0.0
     optionalDependencies:
@@ -23036,7 +23078,7 @@ snapshots:
       detect-libc: 2.1.2
       is-glob: 4.0.3
       node-addon-api: 7.1.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
     optionalDependencies:
       '@parcel/watcher-android-arm64': 2.5.6
       '@parcel/watcher-darwin-arm64': 2.5.6
@@ -35666,7 +35708,7 @@ snapshots:
     dependencies:
       citty: 0.2.1
       pathe: 2.0.3
-      tinyexec: 1.2.2
+      tinyexec: 1.3.0
 
   ob1@0.84.4:
     dependencies:
@@ -36548,6 +36590,16 @@ snapshots:
   react-native-animatable@1.4.0:
     dependencies:
       prop-types: 15.8.1
+
+  react-native-confirmation-code-field@8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3):
+    optionalDependencies:
+      react: 19.2.3
+      react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
+
+  react-native-confirmation-code-field@8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3):
+    optionalDependencies:
+      react: 19.2.3
+      react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
 
   react-native-drawer-layout@4.2.10(react-native-gesture-handler@2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-reanimated@4.5.1(react-native-worklets@0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -38272,7 +38324,7 @@ snapshots:
       lines-and-columns: 1.2.4
       mz: 2.7.0
       pirates: 4.0.7
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
       ts-interface-checker: 0.1.13
 
   supports-color@10.2.2: {}
@@ -38574,7 +38626,7 @@ snapshots:
 
   ts-declaration-location@1.0.7(typescript@6.0.3):
     dependencies:
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       typescript: 6.0.3
 
   ts-interface-checker@0.1.13: {}
@@ -39059,7 +39111,7 @@ snapshots:
   unplugin@3.0.0:
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       webpack-virtual-modules: 0.6.2
 
   unrs-resolver@1.11.1:
@@ -39374,11 +39426,11 @@ snapshots:
   vite@7.3.1(@types/node@26.2.0)(jiti@2.7.0)(lightningcss@1.30.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0):
     dependencies:
       esbuild: 0.27.3
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
+      fdir: 6.5.0(picomatch@4.0.5)
+      picomatch: 4.0.5
       postcss: 8.5.26
       rollup: 4.59.0
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
     optionalDependencies:
       '@types/node': 26.2.0
       fsevents: 2.3.3
@@ -39473,11 +39525,11 @@ snapshots:
       magic-string: 0.30.21
       obug: 2.1.1
       pathe: 2.0.3
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       std-env: 3.10.0
       tinybench: 2.9.0
-      tinyexec: 1.2.2
-      tinyglobby: 0.2.16
+      tinyexec: 1.3.0
+      tinyglobby: 0.2.17
       tinyrainbow: 3.0.3
       vite: 7.3.1(@types/node@26.2.0)(jiti@2.7.0)(lightningcss@1.30.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
       why-is-node-running: 2.3.0

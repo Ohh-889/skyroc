@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "clean": "turbo run clean",
     "check:admin-template": "sa sync-admin-template --check",
-    "create:admin": "sa create-admin",
+    "create:admin": "sa create-admin --workspace",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
