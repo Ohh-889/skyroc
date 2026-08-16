@@ -1,28 +1,18 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  allOn,
-  anyOn,
-  collectChangedLeafPaths,
   collectDeepKeys,
   emptyContainer,
-  flagOff,
-  flagOn,
   isObjectLike,
   isObjectRecord,
-  isOn,
   isPlainObject,
   isUnderPrefix,
   isUnsafeKey,
   keyOfName,
   keyOfTuple,
+  toArrayIndex,
   toPathArray,
-  toSegments,
-  unionPaths
+  toSegments
 } from '../src/path-utils';
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 describe('path parsing', () => {
   it('parses dot paths, numeric brackets, and quoted brackets', () => {
@@ -39,7 +29,12 @@ describe('path parsing', () => {
     expect(toSegments(tuple)).not.toBe(tuple);
     expect(toSegments('user[0]')).toEqual(['user', 0]);
     expect(toSegments(0)).toEqual([0]);
-    expect(toSegments(undefined)).toEqual([undefined]);
+  });
+
+  it('归一 undefined 路径为空数组，而不是 [undefined] 段', () => {
+    // 回归：返回 [undefined] 会让 deepSet 写出字面量 "undefined" 键
+    expect(toSegments(undefined)).toEqual([]);
+    expect(keyOfName(undefined)).toBe('');
   });
 
   it('creates string keys from tuple and name paths', () => {
@@ -70,64 +65,23 @@ describe('path guards and containers', () => {
     expect(emptyContainer(0)).toEqual([]);
     expect(emptyContainer('profile')).toEqual({});
   });
-});
 
-describe('path flags', () => {
-  it('sets, reads, and clears flags by normalized name path', () => {
-    const flags = new Set<string>();
+  it('只把合法的非负整数（含数字字符串）解析成数组下标', () => {
+    expect(toArrayIndex(0)).toBe(0);
+    expect(toArrayIndex(12)).toBe(12);
+    expect(toArrayIndex('0')).toBe(0);
+    expect(toArrayIndex('12')).toBe(12);
 
-    flagOn(flags, ['profile', 'name']);
-
-    expect(isOn(flags, 'profile.name')).toBe(true);
-    expect(anyOn(flags, [['profile', 'name']])).toBe(true);
-    expect(allOn(flags, [['profile', 'name']])).toBe(true);
-
-    flagOff(flags, 'profile.name');
-
-    expect(isOn(flags, ['profile', 'name'])).toBe(false);
-  });
-
-  it('handles empty name lists by checking set size', () => {
-    const flags = new Set<string>();
-
-    expect(anyOn(flags)).toBe(false);
-    expect(allOn(flags)).toBe(false);
-
-    flags.add('profile.name');
-
-    expect(anyOn(flags)).toBe(true);
-    expect(allOn(flags)).toBe(true);
+    expect(toArrayIndex('01')).toBeNull();
+    expect(toArrayIndex('foo')).toBeNull();
+    expect(toArrayIndex('')).toBeNull();
+    expect(toArrayIndex(-1)).toBeNull();
+    expect(toArrayIndex(1.5)).toBeNull();
+    expect(toArrayIndex(Number.NaN)).toBeNull();
   });
 });
 
 describe('path collection', () => {
-  it('collects changed leaf paths including array nodes', () => {
-    expect(collectChangedLeafPaths({ items: [{ title: 'First' }], profile: { name: 'Alex' } })).toEqual([
-      ['items'],
-      ['items', '0', 'title'],
-      ['profile', 'name']
-    ]);
-  });
-
-  it('unions path lists while preserving first occurrence order', () => {
-    expect(
-      unionPaths(
-        [
-          ['profile', 'name'],
-          ['items', 0]
-        ],
-        [
-          ['items', 0],
-          ['profile', 'age']
-        ]
-      )
-    ).toEqual([
-      ['profile', 'name'],
-      ['items', 0],
-      ['profile', 'age']
-    ]);
-  });
-
   it('checks prefix containment for exact, wildcard, and nested paths', () => {
     expect(isUnderPrefix('profile.name', 'profile')).toBe(true);
     expect(isUnderPrefix('profile', 'profile')).toBe(true);
@@ -146,27 +100,5 @@ describe('path collection', () => {
       'profile.birthday',
       'profile.name'
     ]);
-  });
-});
-
-describe('microtask', () => {
-  it('falls back to a resolved promise when queueMicrotask is unavailable', async () => {
-    vi.stubGlobal('queueMicrotask', undefined);
-    vi.resetModules();
-
-    const { microtask } = await import('../src/path-utils');
-    const calls: string[] = [];
-
-    microtask(() => {
-      calls.push('flushed');
-    });
-
-    expect(calls).toEqual([]);
-
-    await Promise.resolve();
-
-    expect(calls).toEqual(['flushed']);
-
-    vi.resetModules();
   });
 });

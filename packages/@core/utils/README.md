@@ -1,13 +1,28 @@
 # @skyroc/utils
 
-平台无关的通用工具函数集，提供日期处理、加密、存储封装、ID 生成、数组/对象操作等基础能力，并通过独立子路径暴露浏览器专用工具。
+平台无关的通用工具函数集，提供日期处理、路径读写、事件总线、优先级队列、并发合并等基础能力，并通过独立子路径暴露浏览器专用工具。
 
-## 两个入口
+## 入口一览
 
-| 入口 | 导入路径 | 适用环境 |
-| --- | --- | --- |
-| 主入口 | `@skyroc/utils` | 平台无关（Node.js / 浏览器 / SSR 均可） |
-| Web 子路径 | `@skyroc/utils/web` | 仅浏览器环境 |
+| 入口 | 导入路径 | 适用环境 | 说明 |
+| --- | --- | --- | --- |
+| 主入口 | `@skyroc/utils` | Node / 浏览器 / React Native | 平台无关核心 |
+| 样式合并 | `@skyroc/utils/cn` | 同上 | 只要 `cn` 时用它，避免拉进整个 barrel |
+| 加密 | `@skyroc/utils/crypto` | 同上 | 单独出口，crypto-js 体积较大 |
+| 路径读写 | `@skyroc/utils/path` | 同上 | `deepGet` / `deepSet` / 路径归一 |
+| 浏览器 | `@skyroc/utils/web` | **仅浏览器** | 下载、BOM、Storage、UA 探测 |
+
+### 平台边界是编译器强制的，不是靠自觉
+
+主入口所在的 TS 项目（`tsconfig.json`）只加载 `lib: ["ESNext"]`，**没有 DOM、没有 @types/node**。
+任何在主入口下写 `window` / `document` / `navigator` / `localStorage` 的代码都会直接编译失败：
+
+```
+src/foo.ts(9,28): error TS2584: Cannot find name 'document'.
+```
+
+浏览器代码放在 `src/web/`，由 `tsconfig.web.json` 单独检查（`pnpm typecheck` 两个项目都跑）。
+需要用到「三端都有」的宿主全局（如 `console`）时，在 `types/neutral.d.ts` 里显式补声明。
 
 ## 安装
 
@@ -15,31 +30,34 @@
 
 ```ts
 import { cn, nanoid, isNil, formatDate } from '@skyroc/utils';
-import { downloadFileFromUrl, openWindow } from '@skyroc/utils/web';
+import { downloadFileFromUrl, openWindow, createStorage } from '@skyroc/utils/web';
 ```
 
 ## 模块一览
 
-| 模块 | 主要导出 | 说明 |
-| --- | --- | --- |
-| `cn` | `cn` | Tailwind class 合并（clsx + tailwind-merge） |
-| `crypto` | `Crypto` | AES 对称加密/解密类 |
-| `nanoid` | `nanoid` | URL 安全唯一 ID 生成 |
-| `klona` | `jsonClone` | JSON 安全深拷贝 |
-| `storage` | `createStorage`, `createLocalforage` | 类型安全存储封装 |
-| `date` | `formatDate`, `addDate` 等 20+ 函数 | 分层日期工具（格式化/运算/边界/比较） |
-| `array` | `toArray`, `arraysEqual` | 数组规范化与无序等价比较 |
-| `reg` | `REG_USER_NAME` 等 7 个正则 | 常用表单校验正则常量 |
-| `object` | `shallowEqual`, `diffObject` 等 | 对象浅比较与递归 diff |
-| `utils` | `isNil`, `isMacOs` 等 | 基础类型守卫与环境检测 |
-| `emitter` | `Emitter` | 轻量级类型安全事件总线 |
-| `createSubject` | `createSubject` | 轻量 RxJS Subject 实现 |
-| `priority-queue` | `PriorityQueue` | 泛型优先级队列（ID 去重 + 变更订阅） |
-| `singleflight` | `Singleflight`, `createSingleflight` | 合并同 key 的并发请求 |
-| `radash` | 全部 radash 导出 | 函数式工具集（re-export） |
-| `web/download` | `downloadFileFromUrl` 等 | 多策略文件下载（仅浏览器） |
-| `web/window` | `openWindow` | 安全新窗口打开（仅浏览器） |
-| `web/class` | `toggleHtmlClass` | HTML class 切换（仅浏览器） |
+| 模块 | 入口 | 主要导出 | 说明 |
+| --- | --- | --- | --- |
+| `cn` | `.` / `./cn` | `cn` | Tailwind class 合并（clsx + tailwind-merge） |
+| `crypto` | `./crypto` | `AesCrypto` | AES 对称加密/解密类 |
+| `nanoid` | `.` | `nanoid` | URL 安全唯一 ID 生成 |
+| `klona` | `.` | `jsonClone` | JSON 安全深拷贝 |
+| `date` | `.` | `formatDate`、`addDate` 等 30+ 函数 | 分层日期工具（格式化/运算/边界/比较） |
+| `path` | `.` / `./path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` | 不可变深路径读写 |
+| `array` | `.` | `toArray`、`arraysEqual` | 数组规范化与无序等价比较 |
+| `reg` | `.` | `REG_USER_NAME` 等 8 个正则 | 常用表单校验正则常量 |
+| `object` | `.` | `shallowEqual`、`diffObject` 等 | 对象浅比较与递归 diff |
+| `utils` | `.` | `isNil`、`microtask` 等 | 基础类型守卫与微任务调度 |
+| `emitter` | `.` | `Emitter` | 轻量级类型安全事件总线 |
+| `createSubject` | `.` | `createSubject` | 轻量 RxJS Subject 实现 |
+| `priority-queue` | `.` | `PriorityQueue` | 有序集合（ID 去重 + 变更订阅） |
+| `singleflight` | `.` | `Singleflight`、`createSingleflight` | 合并同 key 的并发请求 |
+| `query` | `.` | `parseQuery`、`stringifyQuery` | Query string 解析/序列化 |
+| `radash` | `.` | 类型守卫族 + `assign` | radash 白名单转出，**非全量** |
+| `web/download` | `./web` | `downloadFileFromUrl` 等 | 多策略文件下载 |
+| `web/storage` | `./web` | `createStorage`、`createLocalforage` | 类型安全存储封装 |
+| `web/env` | `./web` | `isMacOs`、`isPC` 等 | UA 环境探测 |
+| `web/window` | `./web` | `openWindow` | 安全新窗口打开 |
+| `web/class` | `./web` | `toggleHtmlClass` | HTML class 切换 |
 
 ---
 
@@ -49,6 +67,8 @@ import { downloadFileFromUrl, openWindow } from '@skyroc/utils/web';
 
 ```ts
 import { cn } from '@skyroc/utils';
+// 或者只要 cn 时（推荐给 React Native，Metro 不做 tree-shaking）：
+import { cn } from '@skyroc/utils/cn';
 
 cn('px-4 py-2', 'px-6');
 // 'py-2 px-6'（px-4 被 px-6 覆盖）
@@ -59,24 +79,38 @@ cn('text-red-500', { 'font-bold': true, 'text-blue-500': false });
 
 ---
 
-## Crypto — AES 加密
+## AesCrypto — AES 加密
 
-泛型加密类，基于 [crypto-js](https://github.com/brix/crypto-js) AES 实现，常用于本地存储敏感数据的加密保护。
+泛型加密类，基于 [crypto-js](https://github.com/brix/crypto-js) AES 实现。
 
 ```ts
-import { Crypto } from '@skyroc/utils';
+import { AesCrypto } from '@skyroc/utils/crypto';
 
 type TokenPayload = { accessToken: string; expiresAt: number };
 
-const crypto = new Crypto<TokenPayload>(import.meta.env.VITE_CRYPTO_SECRET);
+const box = new AesCrypto<TokenPayload>(import.meta.env.VITE_CRYPTO_SECRET);
 
-const cipher = crypto.encrypt({ accessToken: 'eyJ...', expiresAt: Date.now() + 3600_000 });
-const payload = crypto.decrypt(cipher); // TokenPayload | null
+const cipher = box.encrypt({ accessToken: 'eyJ...', expiresAt: Date.now() + 3600_000 });
+const payload = box.decrypt(cipher); // TokenPayload | null
 ```
 
-**工作原理：** `T → JSON.stringify → AES.encrypt(key) → 密文字符串`，解密反向执行，失败时返回 `null`（不抛出异常）。
+**工作原理：** `T → JSON.stringify → AES.encrypt(key) → 密文字符串`，解密反向执行，失败返回 `null`（不抛异常）。
 
-**安全注意：** 适合本地存储混淆，不适合替代 HTTPS 传输层加密。密钥应从环境变量读取，不要硬编码在源码中。
+需要区分失败原因时用 `tryDecrypt`：
+
+```ts
+const result = box.tryDecrypt(cipher);
+
+if (result.ok) {
+  console.log(result.data);
+} else {
+  console.log(result.reason); // 'decrypt'（密钥错/密文损坏） | 'parse'（明文不是合法 JSON）
+}
+```
+
+> ⚠️ **安全边界：** passphrase 模式走 OpenSSL `EVP_BytesToKey`（MD5 单轮派生），密钥强度取决于口令本身，
+> **不适合**作为真正的安全边界。它的合理用途是本地存储混淆。需要真实加密强度请用 Web Crypto (`crypto.subtle`) 或服务端加密。
+> 密钥应从环境变量读取，不要硬编码在源码里。
 
 ---
 
@@ -111,14 +145,90 @@ console.log(original.b.c); // [2, 3]（不受影响）
 
 ---
 
+## path — 不可变深路径读写
+
+```ts
+import { deepGet, deepSet, deepUnset, unflatten } from '@skyroc/utils';
+// 或独立子路径：import { ... } from '@skyroc/utils/path';
+```
+
+路径支持三种写法，统一由 `toSegments` 归一：
+
+```ts
+'user.addresses[0].city'   // 点号 + 方括号，数字段自动转 number
+['user', 'addresses', 0]   // 元组
+'name'                     // 单段
+undefined                  // → []（表示"没有路径"，所有操作原样返回）
+```
+
+### deepGet(obj, path, def?)
+
+```ts
+deepGet({ user: { name: 'Alex' } }, 'user.name');        // 'Alex'
+deepGet({ user: {} }, 'user.name', 'fallback');          // 'fallback'
+deepGet({ list: [{ id: 1 }] }, 'list[0].id');            // 1
+```
+
+返回 `unknown`，调用方自行断言 —— 路径是运行期字符串，类型系统无从推导实际值的类型。
+
+### deepSet / deepUnset — 永不改原对象
+
+```ts
+deepSet({ a: { b: 1 } }, 'a.c', 2);        // { a: { b: 1, c: 2 } }，原对象不变
+deepSet({}, 'list[0].name', 'x');          // { list: [{ name: 'x' }] }，容器按段类型自动创建
+deepUnset({ list: [1, 2, 3] }, 'list.1');  // { list: [1, 3] }，数组用 splice 收缩
+```
+
+**穿过非 plain object 时保留原型：**
+
+```ts
+class User { name = 'alex'; }
+
+const next = deepSet({ user: new User() }, 'user.age', 30);
+next.user.name;                  // 'alex'（不会被丢掉）
+next.user instanceof User;       // true
+```
+
+**原型污染防护默认开启：**
+
+```ts
+deepSet({}, '__proto__.polluted', 1);                      // 原样返回，不写入
+deepSet({}, '__proto__.x', 1, { safeKeys: false });        // 显式关闭才会写
+```
+
+拦截的键：`__proto__`、`constructor`、`prototype`。
+
+### unflatten — 扁平记录还原成嵌套结构
+
+```ts
+unflatten({ 'a.b': 1, 'a.c': 2, 'list[0]': 'x' });
+// { a: { b: 1, c: 2 }, list: ['x'] }
+```
+
+### 路径工具
+
+| 函数 | 说明 |
+| --- | --- |
+| `toSegments(path)` | 归一成段数组，`undefined` → `[]` |
+| `toPathArray(str)` | 解析点号/方括号字符串，数字段转 `number` |
+| `keyOfName(path)` | 归一成点号形式的字符串 key |
+| `toArrayIndex(key)` | 解析合法数组下标，非法返回 `null` |
+| `isUnderPrefix(key, prefix)` | 判断 key 是否在 prefix 之下（`''` / `'*'` 匹配一切） |
+| `collectDeepKeys(obj)` | 递归收集全部叶子路径 |
+| `isPlainObject` / `isObjectLike` / `isUnsafeKey` | 形状与安全键判定 |
+
+---
+
 ## Storage — 类型安全存储
+
+> 位于 `@skyroc/utils/web`：依赖 `window.localStorage` / `IndexedDB`，不能在 RN / SSR 环境使用。
 
 ### createStorage
 
 类型安全的 `localStorage` / `sessionStorage` 封装，支持泛型约束与 key 前缀。
 
 ```ts
-import { createStorage } from '@skyroc/utils';
+import { createStorage } from '@skyroc/utils/web';
 
 type AppStorage = {
   token: string;
@@ -141,7 +251,7 @@ storage.clear();
 基于 [localforage](https://localforage.github.io/localForage/) 的异步存储封装，支持 IndexedDB / WebSQL / localStorage。
 
 ```ts
-import { createLocalforage } from '@skyroc/utils';
+import { createLocalforage } from '@skyroc/utils/web';
 
 type CacheStorage = {
   dashboardData: { charts: unknown[]; updatedAt: number };
@@ -179,6 +289,9 @@ calc.ts     → 返回 Dayjs / number，结果用于后续计算
 boundary.ts → 返回 Dayjs / [Dayjs, Dayjs]，表示时间区间
 compare.ts  → 返回 boolean，用于条件判断
 ```
+
+> `date/dayjs.ts` 在模块顶层调用 `dayjs.extend()`，是对共享 dayjs 单例的全局副作用。
+> 因此 `package.json` 的 `sideEffects` 是白名单而不是 `false`，避免打包器把插件注册摇掉。
 
 ### DATE_FORMAT 常量
 
@@ -280,27 +393,39 @@ arraysEqual([], []);                // true
 
 ## Regex — 校验正则
 
-7 个预定义正则常量，均为非全局模式（无 `g` 标志），可安全复用于 `test()`。
+8 个预定义正则常量，均为非全局模式（无 `g` 标志），可安全复用于 `test()`。
 
 ```ts
-import { REG_USER_NAME, REG_PHONE, REG_PWD, REG_EMAIL, REG_CODE_SIX, REG_CODE_FOUR, REG_URL } from '@skyroc/utils';
+import {
+  REG_USER_NAME, REG_PHONE, REG_PWD, REG_PWD_STRONG,
+  REG_EMAIL, REG_CODE_SIX, REG_CODE_FOUR, REG_URL,
+} from '@skyroc/utils';
 ```
 
 | 常量 | 规则 | 合法示例 |
 | --- | --- | --- |
 | `REG_USER_NAME` | 4-16 位：中文/英文/数字/`_`/`-` | `alice_01`、`张三` |
-| `REG_PHONE` | 中国大陆 11 位手机号 | `13812345678` |
-| `REG_PWD` | 6-18 位：字母/数字/`_` | `pass_123` |
+| `REG_PHONE` | 中国大陆手机号 `1[3-9]` + 9 位 | `13812345678` |
+| `REG_PWD` | 6-18 位：字母/数字/`_`（宽松，**禁符号**） | `pass_123` |
+| `REG_PWD_STRONG` | 8-32 位，需含大小写字母+数字，允许符号 | `Abcdef12!` |
 | `REG_EMAIL` | 标准邮箱格式 | `user@example.com` |
 | `REG_CODE_SIX` | 恰好 6 位纯数字 | `123456` |
 | `REG_CODE_FOUR` | 恰好 4 位纯数字 | `1234` |
-| `REG_URL` | HTTP / HTTPS URL | `https://example.com/path?q=1` |
+| `REG_URL` | HTTP(S) / 协议相对 URL | `https://example.com/path?q=1` |
+
+**几点说明：**
+
+- `REG_PHONE` 不再枚举运营商号段白名单 —— 枚举式正则在放新号段时会立刻失效，
+  而放宽到 `1[3-9]` 的漏判成本远低于误杀真实用户。号码是否真实交给短信验证码。
+- `REG_PWD` 是**偏弱的口令策略**（不允许符号），保留它只为兼容存量账号体系。
+  新项目请用 `REG_PWD_STRONG`。
+- `REG_URL` 各段字符集互不重叠、量词不嵌套，失配时不会灾难性回溯。
 
 ```ts
 // 与 Zod 配合使用
 const loginSchema = z.object({
   phone: z.string().regex(REG_PHONE, '手机号格式不正确'),
-  password: z.string().regex(REG_PWD, '密码为 6-18 位字母、数字或下划线'),
+  password: z.string().regex(REG_PWD_STRONG, '密码需 8-32 位且包含大小写字母与数字'),
 });
 ```
 
@@ -330,12 +455,24 @@ diffObject({ name: 'Alice', age: 30 }, { name: 'Alice', age: 31 });
 // { age: 31 }
 ```
 
+### isObjectType / isEventObject
+
+```ts
+isObjectType({});      // true
+isObjectType([]);      // true
+isObjectType(null);    // false —— 类型谓词必须排除 null，否则下游属性访问会炸
+
+isEventObject({ target: input });  // true（表单取值：区分「事件」与「裸值」）
+isEventObject(new Date());         // false
+isEventObject([1, 2]);             // false
+```
+
 ---
 
 ## utils — 基础工具
 
 ```ts
-import { noop, isNil, isHttpUrl, isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils';
+import { noop, isNil, isHttpUrl, omitUndefined, microtask } from '@skyroc/utils';
 ```
 
 | 函数 | 说明 |
@@ -343,22 +480,10 @@ import { noop, isNil, isHttpUrl, isWindow, isMacOs, isWindowsOs, isPC } from '@s
 | `noop()` | 空函数，用作可选回调的默认值 |
 | `isNil(val)` | 类型守卫：`null \| undefined` |
 | `isHttpUrl(url)` | 判断是否以 `http://` 或 `https://` 开头 |
-| `isWindow(value)` | 类型守卫：是否为 `window` 对象 |
-| `isMacOs()` | 检测 macOS 环境（依赖 `navigator`） |
-| `isWindowsOs()` | 检测 Windows 环境（依赖 `navigator`） |
-| `isPC()` | 检测 PC 端（非移动设备） |
+| `omitUndefined(obj)` | 浅层过滤值为 `undefined` 的字段 |
+| `microtask(cb)` | 排入微任务队列，宿主无 `queueMicrotask` 时回退 Promise |
 
-```ts
-// 快捷键按系统区分
-const modKey = isMacOs() ? e.metaKey : e.ctrlKey;
-
-// 菜单项外部链接判断
-if (isHttpUrl(path)) {
-  openWindow(path);
-} else {
-  router.push(path);
-}
-```
+> UA / 环境探测（`isWindow`、`isMacOs`、`isWindowsOs`、`isPC`）在 `@skyroc/utils/web`。
 
 ---
 
@@ -387,8 +512,20 @@ off(); // 取消订阅
 ### 核心特性
 
 **通配符监听：** `bus.on('*', (eventName, ...args) => {})` 接收所有事件，适合日志调试。
+通配符是**旁路观察者**，不影响粘性事件 —— 有人 `on('*')` 不代表这个事件被消费了。
 
-**粘性事件：** 触发时若无监听器，参数会被暂存；晚注册的监听器调用 `on()` 时会立即收到积压的调用。
+**粘性事件：** 触发时若该事件没有具体监听器，参数会被暂存；晚注册的监听器调用 `on()` 时会立即收到积压的调用。
+每个事件名默认最多缓存 32 条，超出丢弃最早的：
+
+```ts
+const bus = new Emitter<AppEvents>({ stickyLimit: 100 }); // 调整上限
+const bus = new Emitter<AppEvents>({ stickyLimit: 0 });   // 完全关闭粘性
+
+bus.clearSticky('login'); // 只清某个事件的粘性缓存
+bus.clearSticky();        // 清空全部粘性缓存，保留监听器
+```
+
+> 上限存在的意义：粘性缓存只增不减会变成内存泄漏 —— 一个从没人订阅的事件持续 `emit`，缓存就会无限增长。
 
 **键控事件（Map 模式）：** `onMap / emitMap` 在事件名之外再加一层 `key` 隔离，适合同一事件按实例区分的场景。
 
@@ -405,9 +542,12 @@ bus.emitMap('update', 'panel-A', { value: 1 }); // 只触发 panel-A
 | `emitMap(event, key, ...args)` | 触发键控事件 |
 | `on(event, fn)` | 注册监听器，返回取消订阅函数 |
 | `onMap(event, key, fn)` | 注册键控监听器 |
-| `off(event, fn?)` | 移除监听器，不传 `fn` 则移除该事件所有监听器 |
+| `off(event, fn?)` | 移除指定监听器；不传 `fn` 则移除该事件全部监听器 |
 | `offMap(event, key, fn)` | 移除键控监听器 |
 | `offAll()` | 清除所有监听器和粘性事件缓存 |
+| `clearSticky(event?)` | 只清粘性缓存，保留监听器 |
+
+`off` / `offMap` 传入 `fn` 时严格按引用匹配 —— 传一个没注册过的函数不会误删任何东西。
 
 ---
 
@@ -441,9 +581,9 @@ subject.complete(); // 关闭，之后 next() 无效
 
 ---
 
-## PriorityQueue — 优先级队列
+## PriorityQueue — 有序集合
 
-泛型优先级队列，核心能力：**ID 去重**、**外部排序策略**、**变更订阅**、**惰性缓存**。
+泛型有序集合，核心能力：**ID 去重**、**外部排序策略**、**变更订阅**、**容量上限**。
 
 ```ts
 import { PriorityQueue } from '@skyroc/utils';
@@ -463,6 +603,17 @@ queue.peek()?.taskId; // '2'（priority 1 优先）
 queue.dequeue();      // 取出 taskId='2'
 ```
 
+> ⚠️ **复杂度：它不是二叉堆。** 内部是 `Map` + 有序数组缓存，每次写操作都会**全量重排**：
+>
+> | 操作 | 复杂度 |
+> | --- | --- |
+> | `enqueue` / `remove` / `update` | `O(n log n)` |
+> | `enqueueMany` / `removeBy` / `updateBy` | 整批只排一次，`O(n log n)` |
+> | `peek` / `get` / `has` / `toArray` / `size` | `O(1)` |
+>
+> 逐条插入 n 个元素是 `O(n² log n)`。适用场景是**读多写少、n 较小**（通知中心、Banner 队列这类几十条量级）。
+> 高频入队请用 `enqueueMany` 批量提交，或换成真正的堆实现。
+
 ### 写操作
 
 | 方法 | 说明 | 返回 |
@@ -472,6 +623,9 @@ queue.dequeue();      // 取出 taskId='2'
 | `dequeue()` | 移除并返回队首 | `T \| undefined` |
 | `remove(id)` | 按 id 移除 | `boolean` |
 | `removeBy(predicate)` | 按条件批量移除 | `number`（实际移除数） |
+| `update(id, updater)` | 原地更新，`updater` 原样返回入参则不通知 | `boolean` |
+| `updateBy(predicate, updater)` | 按条件批量更新 | `number` |
+| `setCapacity(n)` | 改容量上限，调小时立即裁剪并通知 | `void` |
 | `clear()` | 清空队列 | `void` |
 
 ### 读操作与订阅
@@ -544,24 +698,60 @@ async function fetchConfig() {
 
 ---
 
-## radash — 函数式工具集
+## query — Query string 解析
 
-完整 re-export [radash](https://radash-docs.vercel.app/) 的所有导出，可直接从 `@skyroc/utils` 导入。
+移植自 vue-router 的 `query.ts`（MIT License, Copyright © 2019 Eduardo San Martin Morote）。
 
 ```ts
-import { group, unique, omit, pick, diff, sleep, retry } from '@skyroc/utils';
+import { parseQuery, stringifyQuery } from '@skyroc/utils';
+
+parseQuery('?a=1&b=2&b=3');   // { a: '1', b: ['2', '3'] }
+parseQuery('?flag');          // { flag: null }（无 = 的键值为 null）
+
+stringifyQuery({ a: 1, b: ['2', '3'] });  // '?a=1&b=2&b=3'
+stringifyQuery({ a: undefined });         // ''（undefined 被跳过）
 ```
 
-> **注意：** radash 的 `diff` 是**数组差集**工具（返回第一个数组中不在第二个数组里的元素），本包的对象递归比较函数已重命名为 `diffObject` 以避免歧义。
+编码策略与 vue-router 一致：空格编码为 `+`、字面 `+` 转 `%2B`、`[]{}|^\`` 保持不编码。
+解析结果基于 `Object.create(null)` 且用 `Object.hasOwn` 判重，不存在原型污染风险。
+
+---
+
+## radash — 白名单转出
+
+**本包不再 `export * from 'radash'`。** 只转出 radash 的**类型守卫族 + `assign`**：
+
+```ts
+import {
+  assign,
+  isArray, isDate, isEmpty, isEqual, isFloat, isFunction,
+  isInt, isNumber, isObject, isPrimitive, isPromise, isString, isSymbol,
+} from '@skyroc/utils';
+```
+
+其余 radash 函数请直接引入：
+
+```ts
+import { group, unique, omit, pick, sleep, retry } from 'radash';
+```
+
+**为什么收窄：**
+
+1. 星号转出等于把第三方的全部 API 变成本包的公开契约，radash 发个 minor 就可能改动本包的 API 面；
+2. 上游一旦新增与本包同名的导出（如 `isNil` / `toArray`），ESM 会把歧义名从导出中剔除，直接变成构建期错误；
+3. radash 自带 `get` / `set` / `crush` / `construct`，与本包的 `deepGet` / `deepSet` / `unflatten` 语义重叠，
+   全量转出会让调用方不知道该用哪个。
+
+> radash 的 `diff` 是**数组差集**工具，本包的对象递归比较函数名为 `diffObject`。
 
 ---
 
 ## @skyroc/utils/web — 浏览器专用工具
 
-通过独立子路径导入，避免在 Node.js / SSR 环境中意外引入 BOM API。
+通过独立子路径导入，避免在 Node.js / SSR / React Native 环境中意外引入 BOM API。
 
 ```ts
-import { downloadFileFromUrl, openWindow, toggleHtmlClass } from '@skyroc/utils/web';
+import { downloadFileFromUrl, openWindow, toggleHtmlClass, createStorage, isMacOs } from '@skyroc/utils/web';
 ```
 
 ### 文件下载
@@ -636,17 +826,105 @@ dark.add();    // <html class="dark">
 dark.remove(); // <html class="">
 ```
 
+### env — 环境探测
+
+```ts
+import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils/web';
+
+const modKey = isMacOs() ? e.metaKey : e.ctrlKey; // 快捷键按系统区分
+```
+
+> 都是 UA 嗅探，本质不可靠。能用特性检测就不要用它们。
+
+### mergeProps / withClassName — 组件 props 合并
+
+```ts
+import { mergeProps, withClassName } from '@skyroc/utils/web';
+
+// 合并 slot 与 child 的 props：事件处理器串联、style 浅合并、className 拼接
+const props = mergeProps(slotProps, childProps);
+
+// 给已有元素追加 className（用 cn 解决 Tailwind 冲突）
+withClassName(<Icon className="size-4" />, 'text-red-500');
+```
+
+### getEventValue — 表单取值
+
+```ts
+import { getEventValue } from '@skyroc/utils/web';
+
+getEventValue('value', event);       // checkbox 取 checked，其余取 target[valuePropName]
+getEventValue('value', 'raw-value'); // 非事件对象原样返回
+```
+
 ---
 
-## 测试
+## 从 2.x 迁移到 3.0
+
+3.0 是一次破坏性整改，核心是**让平台边界由编译器强制**，并收窄失控的 API 面。
+
+### 导入路径变更
+
+| 2.x | 3.0 | 原因 |
+| --- | --- | --- |
+| `import { createStorage } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 `window.localStorage` |
+| `import { createLocalforage } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 IndexedDB |
+| `import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 `navigator` |
+| `import { Crypto } from '@skyroc/utils'` | `import { AesCrypto } from '@skyroc/utils/crypto'` | 见下 |
+| `import { group, unique, ... } from '@skyroc/utils'` | `from 'radash'` | 不再全量转出 |
+
+### 重命名与移除
+
+| 变更 | 说明 |
+| --- | --- |
+| `Crypto` → `AesCrypto` | 原名遮蔽全局 DOM `Crypto` 类型；`secret` 字段改为 `private readonly` |
+| `deepGet<T, D>(...)` → `deepGet(obj, path, def?)` | 原签名返回 `unknown \| D` 会塌缩成 `unknown`，泛型 `D` 从未生效 |
+| 移除 `flagOn` / `flagOff` / `isOn` / `anyOn` / `allOn` | 表单状态簿记，已下沉到 `@skyroc/form` 的 `form-core/flag-set` |
+| 移除 `collectChangedLeafPaths` / `unionPaths` | 全仓库无调用方，且前者会把数组下标转成字符串，与 `deepSet` 的容器推断不一致 |
+| `microtask` 从 `path-utils` 移到 `utils` | 它是通用调度工具，与路径无关 |
+| 新增 `REG_PWD_STRONG` | `REG_PWD` 保留但标注为宽松策略 |
+
+### 行为变更（无需改代码，但语义变了）
+
+| 位置 | 2.x | 3.0 |
+| --- | --- | --- |
+| `Emitter.off(event, fn)` | 只有一个监听器时**无视 `fn` 直接整条删** | 严格按引用匹配，不会误删 |
+| `Emitter.offMap(event, key, fn)` | 同上 | 同上 |
+| `Emitter` 粘性事件 | 存在任意 `on('*')` 就不再产生粘性事件 | 通配符不影响粘性；每事件默认上限 32 条 |
+| `deepSet(obj, undefined, v)` | 写出字面量 `"undefined"` 键 | 原样返回 |
+| `deepSet` 穿过类实例 | 节点被替换成 `{}`，原有字段静默丢失 | 保留原型浅拷贝 |
+| `deepUnset(arr, '非法下标')` | `splice(NaN, 1)` 删掉第一个元素 | 原样返回 |
+| `isObjectType(null)` | `true`（把 `null` 收窄成 `object`） | `false` |
+| `REG_PHONE` | 枚举运营商号段白名单 | `/^1[3-9]\d{9}$/` |
+| `REG_URL` | 相邻字符类重叠，失配时可能灾难性回溯 | 重写为非回溯形状 |
+| `sideEffects` | `false`（对 `date/dayjs.ts` 是错的） | 白名单，保护 dayjs 插件注册 |
+
+---
+
+## 开发
 
 ```bash
-# 从 monorepo 根目录
-npx vitest run packages/@core/utils
-
-# 或在包目录内
-pnpm test
-
-# 含覆盖率报告
-pnpm test:coverage
+pnpm test           # 跑测试
+pnpm test:coverage  # 含覆盖率报告
+pnpm typecheck      # 中立项目 + web 项目各跑一遍
+pnpm build          # tsdown 构建
+pnpm lint           # oxlint --fix
 ```
+
+### 目录约定
+
+```
+src/
+├── index.ts        # 平台无关主入口（无 DOM）
+├── cn.ts           # 也通过 ./cn 单独导出
+├── crypto.ts       # 只通过 ./crypto 导出
+├── path.ts         # 只通过 . 与 ./path 导出
+├── radash.ts       # radash 白名单
+├── date/
+└── web/            # 浏览器专用，由 tsconfig.web.json 检查
+types/
+└── neutral.d.ts    # 中立项目的宿主全局声明（console 等）
+```
+
+新增平台无关工具时直接放 `src/` 下并在 `index.ts` 转出；
+新增浏览器工具放 `src/web/`。**如果一个文件在 `src/` 下用到了 `window`，`pnpm typecheck` 会直接失败** —— 那说明它该搬去 `src/web/`。

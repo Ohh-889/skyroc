@@ -9,7 +9,6 @@
 import {
   type NamePath,
   type PathTuple,
-  anyOn,
   assign,
   collectDeepKeys,
   deepGet,
@@ -18,13 +17,13 @@ import {
   isArray,
   isEqual,
   isNil,
-  isOn,
   isUnderPrefix,
   keyOfName,
   microtask,
   toArray
 } from '@skyroc/utils';
 import { type ChangeMask, ChangeTag } from './event';
+import { anyOn, isOn } from './flag-set';
 import type { Action, ArrayOpArgs, Middleware, ValidateFieldsOptions } from './middleware';
 import { compose } from './middleware';
 import type { StandardSchemaV1NormalizedIssue } from './resolver/standard';

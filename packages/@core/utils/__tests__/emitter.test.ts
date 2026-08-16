@@ -114,6 +114,19 @@ describe('Emitter: off 取消订阅', () => {
     expect(fn3).toHaveBeenCalledWith('alice');
   });
 
+  it('off 只有一个监听器时传入别的函数，不应误删它', () => {
+    // 回归：旧实现走 `fns.length === 1` 就整条删，没校验身份
+    const bus = new Emitter<TestEvents>();
+    const keep = vi.fn();
+    const other = vi.fn();
+
+    bus.on('login', keep);
+    bus.off('login', other);
+    bus.emit('login', 'alice');
+
+    expect(keep).toHaveBeenCalledWith('alice');
+  });
+
   it('off 对不存在的事件不报错', () => {
     const bus = new Emitter<TestEvents>();
     expect(() => bus.off('login')).not.toThrow();
@@ -160,7 +173,7 @@ describe('Emitter: 通配符 *', () => {
     expect(loginFn).toHaveBeenCalledWith('alice');
   });
 
-  it('有通配符监听器时，emit 不产生粘性事件', () => {
+  it('通配符监听器不影响粘性事件（* 是旁路观察者，不算消费）', () => {
     const bus = new Emitter<TestEvents>();
     const wildcardFn = vi.fn();
     const lateFn = vi.fn();
@@ -170,7 +183,8 @@ describe('Emitter: 通配符 *', () => {
 
     bus.on('login', lateFn);
 
-    expect(lateFn).not.toHaveBeenCalled();
+    expect(wildcardFn).toHaveBeenCalledWith('login', 'alice');
+    expect(lateFn).toHaveBeenCalledWith('alice');
   });
 });
 
@@ -283,6 +297,18 @@ describe('Emitter: 键控事件 (Map)', () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
+  it('offMap 只有一个监听器时传入别的函数，不应误删它', () => {
+    const bus = new Emitter<TestEvents>();
+    const keep = vi.fn();
+    const other = vi.fn();
+
+    bus.onMap('login', 'room-1', keep);
+    bus.offMap('login', 'room-1', other);
+    bus.emitMap('login', 'room-1', 'alice');
+
+    expect(keep).toHaveBeenCalledWith('alice');
+  });
+
   it('offMap 对不存在的事件/key 不报错', () => {
     const bus = new Emitter<TestEvents>();
     const fn = vi.fn();
@@ -343,5 +369,54 @@ describe('Emitter: offAll', () => {
     expect(fn).not.toHaveBeenCalled();
     expect(mapFn).not.toHaveBeenCalled();
     expect(lateFn).not.toHaveBeenCalled();
+  });
+});
+
+// ==================== 粘性事件上限 ====================
+
+describe('Emitter: 粘性事件上限', () => {
+  it('超过 stickyLimit 后丢弃最早的粘性事件', () => {
+    const bus = new Emitter<TestEvents>({ stickyLimit: 2 });
+
+    bus.emit('login', 'a');
+    bus.emit('login', 'b');
+    bus.emit('login', 'c');
+
+    const fn = vi.fn();
+    bus.on('login', fn);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(fn).not.toHaveBeenCalledWith('a');
+    expect(fn).toHaveBeenCalledWith('b');
+    expect(fn).toHaveBeenCalledWith('c');
+  });
+
+  it('stickyLimit 为 0 时完全关闭粘性事件', () => {
+    const bus = new Emitter<TestEvents>({ stickyLimit: 0 });
+
+    bus.emit('login', 'alice');
+
+    const fn = vi.fn();
+    bus.on('login', fn);
+
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('clearSticky 可按事件名或整体清空粘性缓存', () => {
+    const bus = new Emitter<TestEvents>();
+
+    bus.emit('login', 'alice');
+    bus.clearSticky('login');
+
+    const fn = vi.fn();
+    bus.on('login', fn);
+    expect(fn).not.toHaveBeenCalled();
+
+    bus.emit('login', 'bob');
+    bus.clearSticky();
+
+    const fn2 = vi.fn();
+    bus.on('login', fn2);
+    expect(fn2).not.toHaveBeenCalled();
   });
 });

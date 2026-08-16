@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createLocalforage, createStorage } from '../src/storage';
+import { createLocalforage, createStorage } from '../../src/web/storage';
 
 interface TestStorage {
   count: number;

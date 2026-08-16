@@ -1,6 +1,5 @@
-import { isArray, isDate, isObject } from 'radash';
+import { isDate, isObject } from 'radash';
 import { arraysEqual } from './array';
-import { isNil } from './utils';
 
 export const shallowEqual = (a: any, b: any) => {
   if (Object.is(a, b)) return true;
@@ -18,10 +17,21 @@ export const shallowEqual = (a: any, b: any) => {
   return true;
 };
 
-export const isObjectType = (value: unknown): value is object => typeof value === 'object';
+/**
+ * 是否为对象类型。
+ *
+ * 注意必须排除 `null`：`typeof null === 'object'`，不排的话这个类型谓词会把 `null` 收窄成 `object`，下游任何属性访问都可能在运行期炸掉。
+ */
+export const isObjectType = (value: unknown): value is object => typeof value === 'object' && value !== null;
 
+/**
+ * 是否为「事件形状」的对象。
+ *
+ * 用于表单取值：受控组件的 onChange 第一个参数既可能是原生/合成事件，也可能是裸值。 这里只做形状判断 —— 非 null 的非数组、非 Date
+ * 对象都算，plain object（`{ target: ... }`）同样算。
+ */
 export const isEventObject = (event: unknown): event is Event => {
-  return isObject(event) || (!isArray(event) && !isNil(event) && isObjectType(event) && !isDate(event));
+  return isObjectType(event) && !Array.isArray(event) && !isDate(event);
 };
 
 // function diff<T extends object>(

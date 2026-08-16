@@ -12,7 +12,7 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     coverage: {
       ...baseCoverageConfig,
-      exclude: [...COVERAGE_EXCLUDE, '**/klona.ts', '**/nanoid.ts', '**/path.ts']
+      exclude: [...COVERAGE_EXCLUDE, '**/klona.ts', '**/nanoid.ts', '**/path.ts', '**/radash.ts']
     }
   }
 });

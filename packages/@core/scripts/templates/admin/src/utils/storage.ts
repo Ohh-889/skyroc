@@ -1,4 +1,4 @@
-import { createStorage } from '@skyroc/utils';
+import { createStorage } from '@skyroc/utils/web';
 
 const DEFAULT_STORAGE_PREFIX = 'SR_';
 
