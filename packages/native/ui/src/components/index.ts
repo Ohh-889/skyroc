@@ -44,6 +44,8 @@ export * from './notify';
 
 export * from './number-keyboard';
 
+export * from './pagination';
+
 export * from './password-input';
 
 export * from './picker';
