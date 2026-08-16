@@ -53,10 +53,11 @@ export function getColorPalette(color: AnyColor, config: ColorPaletteConfig = 'a
 
   const colorMap = new Map<ColorPaletteNumber, string>();
 
-  const hex = getHex(color);
-
+  // recommended / oklch 只接受字符串，需要先归一化；
+  // antd 算法直接吃 AnyColor，且返回值本身就是 getHex 的产物，
+  // 这里若多转一次 hex 会把 `hsl(...)` 之类高精度输入截断到 8bit，导致派生档位偏移 1-2。
   if (algorithm === 'recommended') {
-    getRecommendedColorPaletteFamily(hex).palettes.forEach(palette => {
+    getRecommendedColorPaletteFamily(getHex(color)).palettes.forEach(palette => {
       colorMap.set(palette.number, palette.hex);
     });
 
@@ -64,14 +65,14 @@ export function getColorPalette(color: AnyColor, config: ColorPaletteConfig = 'a
   }
 
   if (algorithm === 'oklch') {
-    generateOklchPalette(hex).palettes.forEach(palette => {
+    generateOklchPalette(getHex(color)).palettes.forEach(palette => {
       colorMap.set(palette.number, palette.hex);
     });
 
     return colorMap;
   }
 
-  const colors = getAntDColorPalette(hex, darkTheme, darkThemeMixColor);
+  const colors = getAntDColorPalette(color, darkTheme, darkThemeMixColor);
 
   PALETTE_NUMBERS.forEach((number, index) => {
     colorMap.set(number, colors[index]);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getColorPalette, getPaletteColorByNumber } from '../../src/palette';
+import { getAntDColorPalette, getColorPalette, getHex, getPaletteColorByNumber } from '../../src/index';
 
 const HEX_REGEX = /^#[0-9a-f]{6}$/;
 
@@ -123,5 +123,37 @@ describe('包入口导出', () => {
         expect(hex).toMatch(HEX_REGEX);
       });
     }
+  });
+});
+
+// ==================== 输入精度（回归） ====================
+
+describe('antd 算法的输入精度', () => {
+  // tailwind-plugin 传进来的正是这种 hsl 字符串，精度高于 8bit hex。
+  // 若在 antd 分支多做一次 getHex 归一化，会先截断到 8bit 再转 HSV，派生档位偏移 1-2。
+  const HSL_INPUTS = [
+    'hsl(237, 100%, 70%)',
+    'hsl(228.6, 84.2%, 4.9%)',
+    'hsl(215.4, 16.3%, 46.9%)',
+    'hsl(217.2, 32.6%, 17.5%)',
+    'hsl(210, 40%, 96.1%)',
+    'hsl(222.2, 47.4%, 11.2%)'
+  ];
+
+  it('不得对输入做有损归一化', () => {
+    for (const input of HSL_INPUTS) {
+      const viaEntry = [...getColorPalette(input).values()];
+      const direct = getAntDColorPalette(input);
+
+      expect(viaEntry).toEqual(direct);
+    }
+  });
+
+  it('至少有一个样本能证明多转一次 hex 会丢精度', () => {
+    const lossy = HSL_INPUTS.filter(
+      input => getAntDColorPalette(input).join() !== getAntDColorPalette(getHex(input)).join()
+    );
+
+    expect(lossy.length).toBeGreaterThan(0);
   });
 });
