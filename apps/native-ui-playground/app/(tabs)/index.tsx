@@ -160,6 +160,14 @@ export default function HomeScreen() {
       >
         Calendar
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/dropdown-menu')}
+      >
+        DropdownMenu
+      </Button>
     </View>
   );
 }

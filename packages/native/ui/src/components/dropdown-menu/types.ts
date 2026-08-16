@@ -48,7 +48,8 @@ interface DropdownMenuRef {
 /**
  * 插槽名称。
  *
- * `arrow` / `selectedIcon` 作用于矢量图标的 `colorClassName`，只接受 `accent-*` 颜色类。 动画容器（高度包裹层、内容测量层）不开放覆盖——它们承载的是定位与裁剪，改了会直接破坏展开动画。
+ * `arrow` / `selectedIcon` 作用于矢量图标的 `colorClassName`，只接受 `accent-*` 颜色类。
+ * 动画容器（高度包裹层、内容测量层）不开放覆盖——它们承载的是定位与裁剪，改了会直接破坏展开动画。
  */
 type DropdownMenuSlots =
   | 'arrow'

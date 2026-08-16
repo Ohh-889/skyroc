@@ -25,8 +25,8 @@ function resolveTitleText(item: DropdownMenuItem, value: DropdownMenuValue | und
 /**
  * 下拉菜单。
  *
- * 状态机只有三态：关闭（两个索引都是 -1）、展开（两个索引相同）、收起中（`activeIndex` 已置 -1、 `visibleIndex` 仍指向正在退场的那一组）。收起动画播完才把 `visibleIndex` 归位，因此面板卸载与动画
- * 严格同步，不靠定时器估算。
+ * 状态机只有三态：关闭（两个索引都是 -1）、展开（两个索引相同）、收起中（`activeIndex` 已置 -1、 `visibleIndex` 仍指向正在退场的那一组）。收起动画播完才把 `visibleIndex`
+ * 归位，因此面板卸载与动画 严格同步，不靠定时器估算。
  */
 const DropdownMenu = (props: DropdownMenuProps) => {
   const {
@@ -65,6 +65,8 @@ const DropdownMenu = (props: DropdownMenuProps) => {
   const isOpeningRef = useRef(false);
   /** 收起动画的序号：开 / 关都自增，回调里对不上号说明这次收起已被新的交互作废 */
   const closeSeqRef = useRef(0);
+  /** 当前选项组最近一次的实测高度，收起动画被同一项打断时靠它原地回弹 */
+  const measuredHeightRef = useRef(0);
 
   const contentHeight = useSharedValue(0);
   const overlayOpacity = useSharedValue(0);
@@ -98,11 +100,22 @@ const DropdownMenu = (props: DropdownMenuProps) => {
   }
 
   function openPanel(index: number) {
-    if (items[index]?.disabled) return;
+    const item = items[index];
+
+    if (!item || item.disabled) return;
 
     // 作废还在路上的收起回调：切换菜单项时旧面板的动画可能尚未播完
     closeSeqRef.current += 1;
-    isOpeningRef.current = true;
+
+    if (index === visibleIndex && measuredHeightRef.current > 0) {
+      // 收起动画被同一项打断：内容没有重新挂载，onLayout 不会再来一次，直接用上次的实测高度回弹
+      isOpeningRef.current = false;
+      contentHeight.value = withTiming(measuredHeightRef.current, { duration });
+    } else {
+      // 换了一组选项，旧的实测高度作废，等新内容测完再展开
+      measuredHeightRef.current = 0;
+      isOpeningRef.current = true;
+    }
 
     setActiveIndex(index);
     setVisibleIndex(index);
@@ -138,6 +151,8 @@ const DropdownMenu = (props: DropdownMenuProps) => {
   /** 内容测量完成：展开中用它启动动画，已展开时用它跟随选项增删带来的高度变化 */
   function handleContentMeasured(height: number) {
     if (height <= 0) return;
+
+    measuredHeightRef.current = height;
 
     if (isOpeningRef.current) {
       isOpeningRef.current = false;

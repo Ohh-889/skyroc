@@ -1,61 +1,35 @@
-import { Pressable, View } from 'react-native';
-import type { LayoutChangeEvent } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { cn } from '@skyroc/utils';
-import type { SharedValue } from 'react-native-reanimated';
+import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { withUniwind } from 'uniwind';
 import { Divider } from '../divider/Divider';
 import { Text } from '../text/Typography';
-import type { SlotClassNames } from '../../types/shared';
 import { dropdownMenuVariants } from './dropdown-menu-variants';
-import type { DropdownMenuDirection, DropdownMenuOption, DropdownMenuSlots } from './types';
+import type { DropdownMenuPanelProps } from './types';
 
-/** 下拉面板属性 */
-interface DropdownMenuPanelProps {
-  /** 标题栏高度，用于绝对定位 */
-  barHeight: number;
+/** Feather 不认 className，用 withUniwind 把 `accent-*` 工具类映射到 color 上，让勾选色跟随主题 token */
+const CheckIcon = withUniwind(Feather);
 
-  /** 各插槽自定义 className */
-  classNames?: SlotClassNames<DropdownMenuSlots>;
+/** 勾选图标边长（px） */
+const CHECK_SIZE = 16;
 
-  /** 内容高度动画值 */
-  contentHeight: SharedValue<number>;
+/** 面板默认最大高度占屏幕的比例，超出后面板内部滚动 */
+const MAX_HEIGHT_RATIO = 0.8;
 
-  /** 展开方向 */
-  direction: DropdownMenuDirection;
-
-  /** 内容布局测量回调 */
-  onContentMeasured: (height: number) => void;
-
-  /** 选项点击回调 */
-  onOptionPress: (option: DropdownMenuOption) => void;
-
-  /** 遮罩点击回调 */
-  onOverlayPress: () => void;
-
-  /** 当前显示的选项列表 */
-  options: DropdownMenuOption[];
-
-  /** 是否显示遮罩 */
-  overlay: boolean;
-
-  /** 遮罩透明度动画值 */
-  overlayOpacity: SharedValue<number>;
-
-  /** 当前选中值 */
-  selectedValue: number | string | undefined;
-
-  /** 是否显示选项间的分隔线 */
-  showDivider: boolean;
-}
-
-/** 下拉菜单面板（遮罩 + 选项列表） */
+/**
+ * 下拉面板：遮罩 + 选项列表。
+ *
+ * 内容挂在绝对定位的测量层里，才能在高度动画容器之外测出自然高度；容器再拿这个高度做展开动画。
+ */
 const DropdownMenuPanel = (props: DropdownMenuPanelProps) => {
   const {
     barHeight,
     classNames,
     contentHeight,
     direction,
+    maxHeight,
     onContentMeasured,
     onOptionPress,
     onOverlayPress,
@@ -66,18 +40,51 @@ const DropdownMenuPanel = (props: DropdownMenuPanelProps) => {
     showDivider
   } = props;
 
-  const slots = dropdownMenuVariants();
+  const { height: windowHeight } = useWindowDimensions();
 
-  const contentAnimStyle = useAnimatedStyle(() => ({
-    height: contentHeight.value,
-    overflow: 'hidden' as const
+  const variantSlots = dropdownMenuVariants({ direction });
+
+  const wrapperStyle = useAnimatedStyle(() => ({
+    height: contentHeight.value
   }));
 
-  const overlayAnimStyle = useAnimatedStyle(() => ({
-    flex: 1,
-    opacity: overlayOpacity.value,
-    backgroundColor: 'rgba(0,0,0,0.4)'
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: overlayOpacity.value
   }));
+
+  /**
+   * 面板锚在标题栏的哪一侧，并铺满剩下的一屏。
+   *
+   * 容器撑到一屏是为了兜住遮罩：Android 不会把点击派发给超出父容器范围的子节点，遮罩比容器大就点不动。 容器自身挂 `box-none`，没遮罩时整屏范围内的点击照常落到底下的页面上。
+   */
+  const panelStyle = { height: windowHeight, ...(direction === 'down' ? { top: barHeight } : { bottom: barHeight }) };
+
+  const contentSizeStyle = { maxHeight: maxHeight ?? windowHeight * MAX_HEIGHT_RATIO };
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: cn(variantSlots.content(), classNames?.content),
+      divider: cn(variantSlots.divider(), classNames?.divider),
+      measure: variantSlots.measure(),
+      overlay: cn(variantSlots.overlay(), classNames?.overlay),
+      panel: variantSlots.panel(),
+      wrapper: variantSlots.wrapper()
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
+  /** 单个选项的类名随选中态与禁用态变化，只能逐项解析 */
+  function resolveOptionClassNames(selected: boolean, disabled: boolean) {
+    const optionSlots = dropdownMenuVariants({ active: selected, direction, disabled });
+
+    return {
+      option: cn(optionSlots.option(), classNames?.option),
+      optionText: cn(optionSlots.optionText(), classNames?.optionText),
+      selectedIcon: cn(optionSlots.selectedIcon(), classNames?.selectedIcon)
+    };
+  }
 
   function handleContentLayout(e: LayoutChangeEvent) {
     onContentMeasured(e.nativeEvent.layout.height);
@@ -85,67 +92,61 @@ const DropdownMenuPanel = (props: DropdownMenuPanelProps) => {
 
   return (
     <View
-      style={{
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        ...(direction === 'down' ? { top: barHeight } : { bottom: barHeight })
-      }}
+      className={slotClassNames.panel}
+      pointerEvents="box-none"
+      style={panelStyle}
     >
-      {/* Overlay */}
       {overlay && (
-        <Pressable
-          onPress={onOverlayPress}
-          style={{
-            left: 0,
-            position: 'absolute',
-            right: 0,
-            ...(direction === 'down' ? { height: 9999, top: 0 } : { bottom: 0, height: 9999 })
-          }}
+        <Animated.View
+          className={slotClassNames.overlay}
+          style={overlayStyle}
         >
-          <Animated.View style={overlayAnimStyle} />
-        </Pressable>
+          <Pressable
+            className="flex-1"
+            onPress={onOverlayPress}
+          />
+        </Animated.View>
       )}
 
-      {/* Content */}
-      <Animated.View style={contentAnimStyle}>
-        <View style={{ left: 0, position: 'absolute', right: 0, top: 0, zIndex: 100 }}>
-          <View
-            className={cn(
-              slots.content(),
-              direction === 'down' ? 'rounded-b-2xl' : 'rounded-t-2xl',
-              classNames?.content
-            )}
+      <Animated.View
+        className={slotClassNames.wrapper}
+        style={wrapperStyle}
+      >
+        <View className={slotClassNames.measure}>
+          <ScrollView
+            bounces={false}
+            className={slotClassNames.content}
+            nestedScrollEnabled
+            style={contentSizeStyle}
             onLayout={handleContentLayout}
           >
             {options.map((option, index) => {
               const selected = selectedValue === option.value;
-              const optionSlots = dropdownMenuVariants({
-                active: selected,
-                disabled: Boolean(option.disabled)
-              });
+              const optionClassNames = resolveOptionClassNames(selected, Boolean(option.disabled));
 
               return (
                 <View key={option.value}>
-                  {showDivider && index > 0 && <Divider className="mx-4 my-0" />}
+                  {showDivider && index > 0 && <Divider className={slotClassNames.divider} />}
+
                   <Pressable
-                    className={cn(optionSlots.option(), classNames?.option)}
+                    className={optionClassNames.option}
                     disabled={option.disabled}
                     onPress={() => onOptionPress(option)}
                   >
-                    <Text className={cn(optionSlots.optionText(), classNames?.optionText)}>{option.text}</Text>
+                    <Text className={optionClassNames.optionText}>{option.text}</Text>
+
                     {selected && (
-                      <Feather
-                        color={'#000'}
+                      <CheckIcon
+                        colorClassName={optionClassNames.selectedIcon}
                         name="check"
-                        size={16}
+                        size={CHECK_SIZE}
                       />
                     )}
                   </Pressable>
                 </View>
               );
             })}
-          </View>
+          </ScrollView>
         </View>
       </Animated.View>
     </View>
@@ -153,4 +154,3 @@ const DropdownMenuPanel = (props: DropdownMenuPanelProps) => {
 };
 
 export { DropdownMenuPanel };
-export type { DropdownMenuPanelProps };

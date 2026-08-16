@@ -26,6 +26,8 @@ export * from './dialog';
 
 export * from './divider';
 
+export * from './dropdown-menu';
+
 export * from './floating-button';
 
 export * from './image';

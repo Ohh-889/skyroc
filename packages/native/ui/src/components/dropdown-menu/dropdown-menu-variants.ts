@@ -17,8 +17,9 @@ const dropdownMenuVariants = tv({
     measure: 'absolute inset-x-0 z-[100]',
     option: 'h-12 flex-row items-center justify-between px-4 active:opacity-80',
     optionText: 'text-sm text-foreground',
-    overlay: 'absolute inset-x-0 bg-black/40',
-    /** 面板整体的定位容器，贴在标题栏边上 */
+    /** 遮罩铺满整个定位容器；容器本身就是一屏，遮罩不能比它大——超出父容器的部分在 Android 上收不到点击 */
+    overlay: 'absolute inset-0 bg-black/40',
+    /** 面板的定位容器：贴着标题栏、铺满一屏，向上展开时内容改从底边堆叠 */
     panel: 'absolute inset-x-0',
     root: 'relative',
     selectedIcon: 'accent-primary',
@@ -36,8 +37,8 @@ const dropdownMenuVariants = tv({
       }
     },
     direction: {
-      down: { content: 'rounded-b-2xl', measure: 'top-0', overlay: 'top-0' },
-      up: { content: 'rounded-t-2xl', measure: 'bottom-0', overlay: 'bottom-0' }
+      down: { content: 'rounded-b-2xl', measure: 'top-0' },
+      up: { content: 'rounded-t-2xl', measure: 'bottom-0', panel: 'justify-end' }
     },
     disabled: {
       true: {
