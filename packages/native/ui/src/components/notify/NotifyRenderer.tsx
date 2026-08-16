@@ -1,6 +1,5 @@
 import { useStore } from '@skyroc/hooks';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { notifyManager } from './notify-manager';
 import { notifyPositionVariants } from './notify-variants';
 import { NotifyView } from './NotifyView';
@@ -19,7 +18,6 @@ function resolveSlotClassNames() {
 /** Notify 渲染器，通过 Portal 自动挂载 */
 const NotifyRenderer = () => {
   const entry = useStore(notifyManager);
-  const insets = useSafeAreaInsets();
 
   const slotClassNames = resolveSlotClassNames();
 
@@ -42,7 +40,7 @@ const NotifyRenderer = () => {
             key={current.id}
             message={current.message}
             position={position}
-            safeAreaInset={position === 'top' ? insets.top : insets.bottom}
+            safeAreaInset
             type={current.type}
             onPress={current.onClick}
           />

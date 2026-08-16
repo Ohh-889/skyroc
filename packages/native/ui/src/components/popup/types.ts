@@ -50,9 +50,9 @@ export interface PopupProps extends Omit<Partial<ModalProps>, ModalPropsWithout>
   position?: PopupPosition;
   /** 是否显示圆角，圆角方向由 position 决定 */
   round?: boolean;
-  /** 底部是否避让安全区（home indicator）。需外层存在 SafeAreaProvider，否则按 0 处理 */
+  /** 底部是否避让安全区（home indicator） */
   safeAreaInsetBottom?: boolean;
-  /** 顶部是否避让安全区（状态栏 / 刘海）。需外层存在 SafeAreaProvider，否则按 0 处理 */
+  /** 顶部是否避让安全区（状态栏 / 刘海） */
   safeAreaInsetTop?: boolean;
   /** 是否显示弹出层 */
   show: boolean;

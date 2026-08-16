@@ -127,18 +127,30 @@ placeholderTextColor="hsl(var(--primary) / 0.3)"   // 这是 Web 的写法
 
 ## 安全区域
 
-用 `useSafeAreaInsets()` + `style`，**不用** `SafeAreaView`：
+用 Uniwind 的 `*-safe` 工具类，**不用** `SafeAreaView`，也不要在组件里调
+`useSafeAreaInsets()` 写 `style`：
 
 ```tsx
-const insets = useSafeAreaInsets();
-
 // 顶部 — 仅 Tab 页面需要手动处理
-// 有 NavBar 的子页面不需要，NavBar 内部自带 paddingTop: insets.top
-<View style={{ paddingTop: insets.top }}>
+// 有 NavBar 的子页面不需要，NavBar 内部自带 pt-safe
+<View className="pt-safe">
 
-// 底部通常加额外间距
-<View style={{ paddingBottom: insets.bottom + 16 }}>
+// 底部通常加额外间距：offset 是「安全区 + N」，or 是「取安全区与 N 的较大值」
+<View className="pb-safe-offset-4">
+<View className="pb-safe-or-1">
 ```
+
+同名工具类覆盖 padding / margin / inset 三族：
+`p|m|inset` × `t|b|l|r|x|y|s|e` × `-safe` / `-safe-or-*` / `-safe-offset-*`，
+外加 `top-safe` / `bottom-safe` / `left-safe` / `right-safe` 与 `h-screen-safe`。
+
+> Uniwind 把 `env(safe-area-inset-*)` 编译成运行时 `rt.insets.*`，但它自己不采集安全区。
+> **宿主应用的根组件**必须调一次 `useSafeAreaInsets()` 把值喂给 `Uniwind.updateInsets(insets)`
+> （见 `apps/native-ui-playground/app/_layout.tsx`），否则所有 `*-safe` 恒为 0。
+> 这是 `react-native-safe-area-context` 在本仓库唯一该出现的地方——组件库里不要再依赖它。
+
+因为尺寸走的是全局运行时而不是 React context，原生 `Modal` 里的弹层也能拿到正确的安全区，
+不需要外层有 `SafeAreaProvider`。
 
 ## 组件库
 

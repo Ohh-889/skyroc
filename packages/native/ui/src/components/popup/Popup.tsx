@@ -1,9 +1,7 @@
 import { cn } from '@skyroc/utils';
-import { useContext } from 'react';
 import type { ViewStyle } from 'react-native';
 import { View } from 'react-native';
 import Modal from 'react-native-modal';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { popupAnimationMap, popupVariants } from './popup-variants';
 import type { PopupPosition, PopupProps } from './types';
 
@@ -62,21 +60,12 @@ const Popup = (props: PopupProps) => {
     ...rest
   } = props;
 
-  // 直接读 context 而不是 useSafeAreaInsets：后者在缺少 SafeAreaProvider 时会抛错，
-  // 而安全区避让只是可选能力，不该让整个弹层挂掉
-  const insets = useContext(SafeAreaInsetsContext);
-
   const animation = { ...popupAnimationMap[position], ...exAnimation };
-
-  const contentStyle: ViewStyle = {
-    paddingBottom: safeAreaInsetBottom ? insets?.bottom : undefined,
-    paddingTop: safeAreaInsetTop ? insets?.top : undefined
-  };
 
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     return {
-      root: cn(popupVariants({ position, round, surface }), className)
+      root: cn(popupVariants({ position, round, safeAreaInsetBottom, safeAreaInsetTop, surface }), className)
     };
   }
 
@@ -112,12 +101,7 @@ const Popup = (props: PopupProps) => {
       {...rest}
       style={[getContainerStyle(position), style]}
     >
-      <View
-        className={slotClassNames.root}
-        style={contentStyle}
-      >
-        {children}
-      </View>
+      <View className={slotClassNames.root}>{children}</View>
     </Modal>
   );
 };

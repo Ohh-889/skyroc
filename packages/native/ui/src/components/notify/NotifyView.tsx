@@ -99,11 +99,11 @@ interface NotifyViewProps {
   position?: NotifyPosition;
 
   /**
-   * 安全区补偿高度（像素）
+   * 是否补偿贴边侧的安全区
    *
-   * 由挂载方传入而不是自己调 useSafeAreaInsets：补偿必须画在有背景色的根节点里，色块才能一直铺到状态栏； 而是否需要补偿只有知道自己贴在屏幕边缘的挂载方才清楚，声明式内联使用时不该凭空多出一截。
+   * 由挂载方决定而不是自己开着：是否需要补偿只有知道自己贴在屏幕边缘的挂载方才清楚，声明式内联使用时不该凭空多出一截。
    */
-  safeAreaInset?: number;
+  safeAreaInset?: boolean;
 
   /** Notify 类型 */
   type?: NotifyType;
@@ -123,11 +123,11 @@ const NotifyView = (props: NotifyViewProps) => {
     message,
     onPress,
     position = 'top',
-    safeAreaInset = 0,
+    safeAreaInset = false,
     type = 'danger'
   } = props;
 
-  const variantSlots = notifyVariants({ type });
+  const variantSlots = notifyVariants({ position, safeAreaInset, type });
 
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
@@ -141,11 +141,7 @@ const NotifyView = (props: NotifyViewProps) => {
 
   const slotClassNames = resolveSlotClassNames();
 
-  /** 安全区补偿画在带背景色的根节点上，色块才能一直铺到屏幕边缘 */
-  const rootStyle = [
-    position === 'top' ? { paddingTop: safeAreaInset } : { paddingBottom: safeAreaInset },
-    background ? { backgroundColor: background } : null
-  ];
+  const rootStyle = background ? { backgroundColor: background } : undefined;
 
   function renderMessage() {
     if (message === null || message === undefined || message === '') return null;

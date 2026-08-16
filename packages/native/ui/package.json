@@ -106,7 +106,6 @@
     "react-native-modal": "catalog:native",
     "react-native-pager-view": "catalog:native",
     "react-native-reanimated": "catalog:native",
-    "react-native-safe-area-context": "catalog:native",
     "react-native-worklets": "catalog:native",
     "rimraf": "catalog:dev",
     "tailwindcss": "catalog:css",
@@ -117,13 +116,13 @@
   "peerDependencies": {
     "@expo/vector-icons": ">=15.0.0",
     "expo-image": ">=57.0.0",
+    "expo-haptics": "catalog:native",
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
     "react-native-gesture-handler": ">=2.28.0",
     "react-native-modal": ">=13.0.2",
     "react-native-pager-view": ">=8.0.0",
     "react-native-reanimated": ">=4.0.0",
-    "react-native-safe-area-context": ">=5.0.0",
     "react-native-worklets": ">=0.5.0",
     "tailwindcss": ">=4",
     "uniwind": ">=1.7.0"
