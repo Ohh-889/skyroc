@@ -167,6 +167,14 @@ export default function HomeScreen() {
       >
         Rate
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/number-keyboard')}
+      >
+        NumberKeyboard
+      </Button>
     </View>
   );
 }

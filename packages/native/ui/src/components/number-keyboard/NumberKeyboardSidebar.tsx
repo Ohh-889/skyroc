@@ -1,21 +1,21 @@
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
-import { cn } from '@skyroc/utils';
-import type { SlotClassNames } from '../../types/shared';
 import { Button } from '../button';
-import { numberKeyboardVariants } from './number-keyboard-variants';
-import type { NumberKeyboardSlots } from './number-keyboard-variants';
+import type { ResolvedSlotClassNames } from './types';
+
+/** 关闭按钮文字兜底，custom 主题的侧边栏永远有这颗键，不能留空 */
+const DEFAULT_CONFIRM_TEXT = '完成';
 
 /** 键盘侧边栏属性 */
 interface NumberKeyboardSidebarProps {
-  /** 覆盖各插槽的 className */
-  classNames?: SlotClassNames<NumberKeyboardSlots>;
+  /** 父组件解析好的插槽类名 */
+  classNames: ResolvedSlotClassNames;
 
   /** 关闭按钮文字 */
   closeButtonText?: string;
 
-  /** 删除按钮文字 */
-  deleteButtonText?: string;
+  /** 删除键要显示的内容，由父组件依据 renderDelete / deleteButtonText 解析后下发 */
+  deleteContent: ReactNode;
 
   /** 关闭回调 */
   onClose: () => void;
@@ -23,39 +23,35 @@ interface NumberKeyboardSidebarProps {
   /** 删除回调 */
   onDelete: () => void;
 
-  /** 自定义删除按键内容 */
-  renderDelete?: () => ReactNode;
-
   /** 是否显示删除按钮 */
   showDeleteKey: boolean;
 }
 
 const NumberKeyboardSidebar = (props: NumberKeyboardSidebarProps) => {
-  const { classNames, closeButtonText, deleteButtonText, onClose, onDelete, renderDelete, showDeleteKey } = props;
-
-  const slots = numberKeyboardVariants();
+  const { classNames, closeButtonText, deleteContent, onClose, onDelete, showDeleteKey } = props;
 
   return (
-    <View className={cn(slots.sidebar(), classNames?.sidebar)}>
+    <View className={classNames.sidebar}>
       {showDeleteKey ? (
         <Button
+          className={classNames.deleteKey}
           color="secondary"
+          textClassName={classNames.functionKeyText}
           variant="ghost"
-          className={cn(slots.key(), 'flex-1 active:bg-muted', classNames?.key)}
-          textClassName="text-lg"
           onPress={onDelete}
         >
-          {renderDelete ? renderDelete() : (deleteButtonText || '⌫')}
+          {deleteContent}
         </Button>
       ) : null}
+
       <Button
+        className={classNames.confirmKey}
         color="primary"
+        textClassName={classNames.functionKeyText}
         variant="solid"
-        className={cn('h-12 flex-1 items-center justify-center rounded-lg px-0', classNames?.key)}
-        textClassName="text-lg"
         onPress={onClose}
       >
-        {closeButtonText || '完成'}
+        {closeButtonText || DEFAULT_CONFIRM_TEXT}
       </Button>
     </View>
   );
