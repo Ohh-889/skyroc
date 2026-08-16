@@ -79,10 +79,7 @@ const SheetDemo = () => {
           title="基础面板"
           onUpdateShow={setBasicShow}
         >
-          <BottomSheetView
-            className="gap-3 px-6"
-            style={{ paddingBottom: insets.bottom + 24 }}
-          >
+          <BottomSheetView className="gap-3 px-6 pb-safe-offset-6">
             <Text color="muted">下拉、点遮罩、点右上角关闭按钮都能收起面板</Text>
             <Button
               variant="outline"

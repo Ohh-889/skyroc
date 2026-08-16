@@ -20,30 +20,6 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
-        onPress={() => router.push('/components/popup')}
-      >
-        Press Me
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/badge')}
-      >
-        Badge
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/image')}
-      >
-        Image
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
         onPress={() => router.push('/components/checkbox')}
       >
         Checkbox
@@ -108,30 +84,6 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
-        onPress={() => router.push('/components/number-keyboard')}
-      >
-        NumberKeyboard
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/swipe-cell')}
-      >
-        SwipeCell
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/sidebar')}
-      >
-        Sidebar
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
         onPress={() => router.push('/components/stepper')}
       >
         Stepper
@@ -175,6 +127,38 @@ export default function HomeScreen() {
         onPress={() => router.push('/components/anchor-nav')}
       >
         AnchorNav
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/floating-button')}
+      >
+        FloatingButton
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/back-top')}
+      >
+        BackTop
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/date-picker')}
+      >
+        DatePicker
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/calendar')}
+      >
+        Calendar
       </Button>
     </View>
   );
