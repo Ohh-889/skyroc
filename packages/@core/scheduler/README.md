@@ -202,7 +202,28 @@ type TaskDef = {
   deps?: string[]; // 依赖的任务名
   run: (ctx: TaskContext) => void | Promise<void>;
   cleanup?: () => void; // 仅当任务真正执行过才会被调用
-} & ({ type: 'init' } | { type: 'listener' } | { type: 'periodic'; interval?: number });
+} & (
+  | { type: 'init' }
+  | { type: 'listener' }
+  | {
+      type: 'periodic';
+      interval?: number;
+      immediate?: boolean; // 默认 true；false 表示首次执行推迟一个完整 interval
+    }
+);
+```
+
+`immediate: false` 用于「启动那一刻跑没有意义」的轮询。典型例子是版本更新检查——
+应用刚加载完就去比对构建时间，比的正是自己：
+
+```ts
+hub.register({
+  name: 'check-update',
+  type: 'periodic',
+  interval: 180_000,
+  immediate: false, // 第一次检查发生在 3 分钟后，而不是启动瞬间
+  run: checkForUpdates
+});
 ```
 
 `ctx.signal` 是一个 `AbortSignal`，在 `stop()` / `dispose()` / `remove()` 时触发，
@@ -245,6 +266,24 @@ StrictMode 双挂载需要的行为。代价是 `init` / `listener` 的 `run` �
 
 暂停心跳与重试退避计时；`resume()` 按**剩余时间**继续，不会因为暂停而丢掉一次重试。
 适用于页面切到后台时暂停、切回前台时恢复。
+
+### `.trigger(name)`
+
+立刻执行一次指定任务，并**重置它的周期计时**。用于「外部事件要求马上跑一遍」的场景。
+
+```ts
+function handleVisibilityChange() {
+  if (document.visibilityState !== 'visible') {
+    hub.pause();
+    return;
+  }
+
+  hub.resume();
+  hub.trigger('check-update'); // 回到前台立刻查一次，下一轮从此刻重新计时
+}
+```
+
+任务不存在、hub 未运行、任务正在执行、被阻塞或依赖未满足时返回 `false`。
 
 ### `.remove(name)`
 

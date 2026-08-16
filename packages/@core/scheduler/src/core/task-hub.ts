@@ -63,6 +63,19 @@ function teardownTask(task: TaskState): void {
   if (task.hasRun) task.def.cleanup?.();
 }
 
+/**
+ * 为 `immediate: false` 的周期任务把计时起点挪到当下
+ *
+ * LastRun 初值 0 意味着「从未执行」，会在第一个心跳就触发。这里在 start 的时刻盖一个 时间戳，把首次执行推迟一个完整的 interval
+ */
+function primePeriodic(task: TaskState): void {
+  if (task.def.type !== 'periodic') return;
+  if (task.def.immediate !== false) return;
+  if (task.lastRun !== 0) return;
+
+  task.lastRun = Date.now();
+}
+
 /** 任务状态归零，使 hub 可以重新 start */
 function resetTask(task: TaskState): void {
   task.status = 'pending';
@@ -131,6 +144,7 @@ class TaskHub {
     this.insertSorted(state);
 
     if (this.started) {
+      primePeriodic(state);
       this.syncTicker();
       this.recomputeBlocked();
       this.pump();
@@ -183,6 +197,10 @@ class TaskHub {
 
     this.started = true;
     this.paused = false;
+
+    for (const task of this.sortedTasks) {
+      primePeriodic(task);
+    }
 
     this.recomputeBlocked();
     this.pump();
@@ -249,6 +267,26 @@ class TaskHub {
 
     this.pump();
     this.syncTicker();
+  }
+
+  /**
+   * 立刻执行一次指定任务，并重置它的周期计时
+   *
+   * 用于「外部事件要求马上跑一遍」的场景，比如页面重新可见时立即轮询一次。 对周期任务而言，这次执行同样会刷新 lastRun，因此下一次心跳会从现在起重新计算间隔。
+   *
+   * 任务不存在、hub 未运行、任务正在执行、被阻塞或依赖未满足时返回 false。
+   */
+  trigger(name: string): boolean {
+    const task = this.tasks.get(name);
+
+    if (!task || !this.running) return false;
+    if (task.status === 'running' || task.status === 'blocked') return false;
+    if (!this.depsResolved(task)) return false;
+
+    clearRetry(task);
+    this.execute(task);
+
+    return true;
   }
 
   /** 是否正在运行（已 start 且未 pause） */

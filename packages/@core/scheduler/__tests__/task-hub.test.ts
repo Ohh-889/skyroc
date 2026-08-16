@@ -353,6 +353,72 @@ describe('TaskHub - periodic 任务', () => {
     hub.stop();
   });
 
+  it('immediate: false 时首次执行推迟一个完整 interval', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ immediate: false, interval: 1000, name: 'check', run, type: 'periodic' });
+    hub.start();
+
+    await vi.advanceTimersByTimeAsync(900);
+    expect(run).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(run).toHaveBeenCalledTimes(1);
+
+    hub.stop();
+  });
+
+  it('immediate: false 的任务在 stop → start 后重新推迟，而不是立刻补跑', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ immediate: false, interval: 1000, name: 'check', run, type: 'periodic' });
+
+    hub.start();
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(run).toHaveBeenCalledTimes(1);
+
+    hub.stop();
+    hub.start();
+
+    await vi.advanceTimersByTimeAsync(900);
+    expect(run).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(run).toHaveBeenCalledTimes(2);
+
+    hub.stop();
+  });
+
+  it('运行时 add 的 immediate: false 任务同样推迟首次执行', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.start();
+    hub.add({ immediate: false, interval: 1000, name: 'check', run, type: 'periodic' });
+
+    await vi.advanceTimersByTimeAsync(900);
+    expect(run).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(run).toHaveBeenCalledTimes(1);
+
+    hub.stop();
+  });
+
+  it('默认 immediate 为 true，保持启动即执行', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ interval: 1000, name: 'poll', run, type: 'periodic' });
+    hub.start();
+
+    expect(run).toHaveBeenCalledTimes(1);
+
+    hub.stop();
+  });
+
   it('没有周期任务时不创建任何 interval 定时器', async () => {
     const setIntervalSpy = vi.spyOn(globalThis, 'setInterval');
     const hub = new TaskHub();
@@ -1016,6 +1082,85 @@ describe('TaskHub - 动态增删', () => {
       failed: [],
       ok: true
     });
+
+    hub.stop();
+  });
+});
+
+describe('TaskHub - trigger', () => {
+  it('立即执行并重置周期计时', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ immediate: false, interval: 1000, name: 'check', run, type: 'periodic' });
+    hub.start();
+
+    await vi.advanceTimersByTimeAsync(600);
+    expect(run).not.toHaveBeenCalled();
+
+    expect(hub.trigger('check')).toBe(true);
+    await flush();
+    expect(run).toHaveBeenCalledTimes(1);
+
+    // 计时已重置：距 trigger 不足 1000ms 不会再跑
+    await vi.advanceTimersByTimeAsync(900);
+    expect(run).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(run).toHaveBeenCalledTimes(2);
+
+    hub.stop();
+  });
+
+  it('任务不存在、hub 未运行或已暂停时返回 false', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ immediate: false, interval: 1000, name: 'check', run, type: 'periodic' });
+
+    expect(hub.trigger('check')).toBe(false); // 未 start
+    expect(hub.trigger('nope')).toBe(false);
+
+    hub.start();
+    hub.pause();
+    expect(hub.trigger('check')).toBe(false); // 已暂停
+
+    hub.resume();
+    expect(hub.trigger('check')).toBe(true);
+
+    await flush();
+    expect(run).toHaveBeenCalledTimes(1);
+
+    hub.stop();
+  });
+
+  it('任务正在执行时不重复触发', async () => {
+    const hub = new TaskHub({ tickInterval: 100 });
+
+    hub.register({ immediate: false, interval: 1000, name: 'slow', run: delayed(500), type: 'periodic' });
+    hub.start();
+
+    expect(hub.trigger('slow')).toBe(true);
+    await flush();
+    expect(hub.getTask('slow')?.status).toBe('running');
+
+    expect(hub.trigger('slow')).toBe(false);
+
+    hub.stop();
+  });
+
+  it('依赖未满足或被阻塞时返回 false', async () => {
+    const run = vi.fn();
+    const hub = new TaskHub({ maxRetries: 0, tickInterval: 100 });
+
+    hub.register({ name: 'auth', run: delayed(5000), type: 'init' });
+    hub.register({ deps: ['auth'], immediate: false, interval: 1000, name: 'poll', run, type: 'periodic' });
+
+    hub.start();
+    await flush();
+
+    expect(hub.trigger('poll')).toBe(false);
+    expect(run).not.toHaveBeenCalled();
 
     hub.stop();
   });

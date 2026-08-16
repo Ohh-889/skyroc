@@ -36,7 +36,13 @@ interface ListenerTaskDef extends BaseTaskDef {
 
 /** 周期任务：依赖满足后按 interval 反复执行 */
 interface PeriodicTaskDef extends BaseTaskDef {
-  /** 执行间隔（ms），默认 5000。实际精度受 tickInterval 限制 */
+  /**
+   * 依赖满足后是否立刻执行第一次，默认 true
+   *
+   * 设为 false 时，首次执行推迟到一个完整的 interval 之后 —— 适用于「启动那一刻跑没有意义」 的轮询，比如版本更新检查
+   */
+  immediate?: boolean;
+  /** 执行间隔（ms），默认 5000。实际触发时刻落在 [interval, interval + tickInterval) 内 */
   interval?: number;
   type: 'periodic';
 }
