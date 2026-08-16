@@ -10,7 +10,7 @@ description: Jotai 状态封装，提供全局 store、持久化 atom 与存储�
 | 包名 | `@skyroc/core-state` |
 | 版本 | 1.0.0 |
 | peer 依赖 | `jotai >= 2.0.0`、`react >= 18.0.0` |
-| 测试 | ✅ 6 个测试文件 |
+| 测试 | ✅ 5 个测试文件 |
 
 封装 Jotai，提供一个**包级单一 store**，并解决两个常见问题：在 React 之外读写 atom、以及 atom 持久化与存储后端解耦。
 
@@ -19,7 +19,7 @@ description: Jotai 状态封装，提供全局 store、持久化 atom 与存储�
 | 类别 | 导出 |
 | --- | --- |
 | Provider | `JotaiProvider` |
-| 全局 store | `globalStore`、`getAtomValue`、`setAtomValue`、`updateAtomValue` |
+| 全局 store | `globalStore`、`getAtomValue`、`setAtomValue` |
 | 持久化 | `createAtomWithStorage`、`atomWithPartial` |
 | 存储注册表 | `registerStorage`、`getStorage`、`hasStorage`、`unregisterStorage` |
 
@@ -38,15 +38,17 @@ JotaiProvider（<Provider store={globalStore}>）
 ## 全局 store：在 React 外读写
 
 ```ts
-import { globalStore, getAtomValue, setAtomValue, updateAtomValue } from '@skyroc/core-state';
+import { globalStore, getAtomValue, setAtomValue } from '@skyroc/core-state';
 
 // 在拦截器、工具函数等非组件代码里读写 atom
 const token = getAtomValue(tokenAtom);
 setAtomValue(tokenAtom, 'new-token');
-updateAtomValue(countAtom, c => c + 1);
+setAtomValue(countAtom, c => c + 1); // 函数式更新同一个入口
 ```
 
-应用在最外层挂载 `JotaiProvider`，保证组件树与 `globalStore` 用的是同一个 store。
+应用在最外层挂载 `JotaiProvider`，保证组件树与 `globalStore` 用的是同一个 store。组件内直接 `useAtom(atom)`，不要逐个传 `{ store: globalStore }`。
+
+`globalStore` 是模块级单例，**不适用于 SSR**（跨请求共享会让用户状态互相泄漏），服务端渲染需要每请求 `createStore()`。
 
 ## 存储注册表：解耦持久化后端
 
@@ -62,9 +64,11 @@ registerStorage('local', {
   removeItem: k => localStorage.removeItem(k)
 });
 
-// 创建持久化 atom，引用注册表里的 'local'
-const themeAtom = createAtomWithStorage('theme', 'light', { storage: 'local' });
+// 创建持久化 atom，引用注册表里的 'local'（storageName 缺省即为 'local'）
+const themeAtom = createAtomWithStorage('theme', 'light', { storageName: 'local' });
 ```
+
+存储在 atom **首次读写**时才解析，因此 atom 可以照常写成模块级常量，只要 `registerStorage` 早于第一次访问即可。
 
 `AtomStorage` 接口：`getItem` / `setItem` / `removeItem` / 可选 `subscribe`。
 
@@ -82,4 +86,6 @@ set(settingsAtom, { theme: 'dark' });
 
 ## 在应用中的应用
 
-Admin 应用通过本包的 `JotaiProvider` + `globalStore` 统一状态：主题、语言、菜单、标签页等 atom 都挂在同一个 store 上，并用 `useAtom(..., { store: globalStore })` 对齐。详见 [Admin 状态管理](/docs/admin-app/state)。
+Admin 应用通过本包的 `JotaiProvider` + `globalStore` 统一状态：主题、语言、菜单、标签页等 atom 都挂在同一个 store 上，组件内直接 `useAtom(atom)` 由 Provider 注入。
+
+这依赖打包产物里 jotai **只有一份实例**——pnpm 的 peer 解析分叉会装出第二份，两份 jotai 就是两个 React context，Provider 会失效。构建侧由 `admin-vite` 的 `resolve.dedupe` 兜底，测试侧需在各自 vitest config 里镜像同一份列表。详见 [Admin 状态管理](/docs/admin-app/state)。
