@@ -28,6 +28,8 @@ export * from './divider';
 
 export * from './dropdown-menu';
 
+export * from './field';
+
 export * from './floating-button';
 
 export * from './grid';

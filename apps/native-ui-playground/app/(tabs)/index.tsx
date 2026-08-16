@@ -176,6 +176,14 @@ export default function HomeScreen() {
       >
         Grid
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/field')}
+      >
+        Field
+      </Button>
     </View>
   );
 }

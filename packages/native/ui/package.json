@@ -88,6 +88,7 @@
     "@rn-primitives/slot": "^1.2.0",
     "@skyroc/utils": "workspace:*",
     "@skyroc/hooks": "workspace:*",
+    "@skyroc/form": "workspace:*",
     "react-native-confirmation-code-field": "catalog:native",
     "react-native-ui-datepicker": "catalog:native",
     "tailwind-variants": "catalog:utils"

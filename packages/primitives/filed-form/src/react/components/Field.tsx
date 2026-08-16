@@ -10,7 +10,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import type { AllPathsKeys } from '@skyroc/type-utils';
 import { isEqual, omitUndefined, toArray } from '@skyroc/utils';
-import { getEventValue } from '@skyroc/utils/web';
+import { getEventValue } from '../../form-core/event-value';
 import type { EventArgs, StoreValue } from '../../form-core/types';
 import type { Rule } from '../../form-core/validation';
 import type { InternalFormInstance } from '../hooks/FieldContext';
