@@ -30,6 +30,8 @@ export * from './dropdown-menu';
 
 export * from './floating-button';
 
+export * from './grid';
+
 export * from './image';
 
 export * from './input';

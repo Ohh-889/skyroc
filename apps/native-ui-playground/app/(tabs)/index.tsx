@@ -168,6 +168,14 @@ export default function HomeScreen() {
       >
         DropdownMenu
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/grid')}
+      >
+        Grid
+      </Button>
     </View>
   );
 }

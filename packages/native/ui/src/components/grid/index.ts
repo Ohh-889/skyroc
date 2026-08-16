@@ -1,3 +1,4 @@
 export { Grid } from './Grid';
-export { gridItemVariants } from './grid-variants';
-export type { GridDirection, GridItemData, GridItemSlots, GridProps } from './types';
+export { gridVariants } from './grid-variants';
+export type { GridVariantProps } from './grid-variants';
+export type { GridDirection, GridItemData, GridItemSlots, GridProps, GridSlots } from './types';
