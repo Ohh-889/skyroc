@@ -229,6 +229,9 @@ catalogs:
     react-native:
       specifier: 0.86.0
       version: 0.86.0
+    react-native-gesture-handler:
+      specifier: ~2.32.0
+      version: 2.32.0
     react-native-modal:
       specifier: 14.0.0-rc.1
       version: 14.0.0-rc.1
@@ -241,6 +244,9 @@ catalogs:
     react-native-safe-area-context:
       specifier: ~5.7.0
       version: 5.7.0
+    react-native-worklets:
+      specifier: 0.10.1
+      version: 0.10.1
     uniwind:
       specifier: ^1.10.1
       version: 1.10.1
@@ -939,7 +945,7 @@ importers:
         specifier: 0.86.0
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
       react-native-gesture-handler:
-        specifier: ~2.32.0
+        specifier: catalog:native
         version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
       react-native-modal:
         specifier: catalog:native
@@ -957,7 +963,7 @@ importers:
         specifier: 4.25.2
         version: 4.25.2(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
       react-native-worklets:
-        specifier: 0.10.1
+        specifier: catalog:native
         version: 0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
       tailwindcss:
         specifier: catalog:css
@@ -1932,9 +1938,6 @@ importers:
 
   packages/@core/color:
     dependencies:
-      '@skyroc/utils':
-        specifier: workspace:*
-        version: link:../utils
       colord:
         specifier: 2.9.3
         version: 2.9.3
@@ -2280,6 +2283,9 @@ importers:
       react-native:
         specifier: catalog:native
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
+      react-native-gesture-handler:
+        specifier: catalog:native
+        version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react-native-modal:
         specifier: catalog:native
         version: 14.0.0-rc.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
@@ -2292,6 +2298,9 @@ importers:
       react-native-safe-area-context:
         specifier: catalog:native
         version: 5.7.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      react-native-worklets:
+        specifier: catalog:native
+        version: 0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       rimraf:
         specifier: catalog:dev
         version: 6.1.3
@@ -36567,7 +36576,6 @@ snapshots:
       invariant: 2.2.4
       react: 19.2.3
       react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
-    optional: true
 
   react-native-gesture-handler@2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -36699,7 +36707,7 @@ snapshots:
       convert-source-map: 2.0.0
       react: 19.2.3
       react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -36720,7 +36728,7 @@ snapshots:
       convert-source-map: 2.0.0
       react: 19.2.3
       react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 

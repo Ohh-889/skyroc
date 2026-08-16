@@ -1,10 +1,13 @@
-export { SwipeCell } from './SwipeCell';
 export { swipeCellVariants } from './swipe-cell-variants';
+export { SwipeCell } from './SwipeCell';
 export type {
   SwipeCellBeforeCloseParams,
+  SwipeCellCloseParams,
   SwipeCellInstance,
+  SwipeCellOpenParams,
   SwipeCellPosition,
   SwipeCellProps,
   SwipeCellSide,
-  SwipeCellSlots
+  SwipeCellSlots,
+  SwipeCellWidths
 } from './types';

@@ -40,6 +40,8 @@ export * from './space';
 
 export * from './stepper';
 
+export * from './swipe-cell';
+
 export * from './tabs';
 
 export * from './tag';
