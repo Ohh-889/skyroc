@@ -1,3 +1,9 @@
-export { FloatingButton } from './FloatingButton';
 export { floatingButtonVariants } from './floating-button-variants';
-export type { FloatingButtonAxis, FloatingButtonMagnetic, FloatingButtonProps } from './types';
+export { FloatingButton } from './FloatingButton';
+export type {
+  FloatingButtonAxis,
+  FloatingButtonGap,
+  FloatingButtonMagnetic,
+  FloatingButtonOffset,
+  FloatingButtonProps
+} from './types';
