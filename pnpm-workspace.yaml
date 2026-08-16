@@ -186,6 +186,13 @@ catalogs:
     # 弹出层底座：Popup 基于其封装。npm latest 即为该 rc 版本
     'react-native-modal': 14.0.0-rc.1
 
+    # 底部面板底座：Sheet 基于其封装。纯 JS 无原生模块（建在 reanimated + gesture-handler 之上），
+    # 直接进 native-ui 的 dependencies
+    '@gorhom/bottom-sheet': ^5.2.14
+
+    # 触感反馈：Picker 滚动吸附时调用（版本跟随 Expo SDK 57 的锁定值）
+    'expo-haptics': ~57.0.1
+
     # 验证码格子输入底座：PasswordInput 基于其封装。纯 JS 无原生模块，直接进 native-ui 的 dependencies
     'react-native-confirmation-code-field': 9.0.0
 

@@ -82,6 +82,8 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "catalog:native",
+    "@radix-ui/react-compose-refs": "^1.1.2",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@rn-primitives/slot": "^1.2.0",
     "@skyroc/utils": "workspace:*",
@@ -95,6 +97,7 @@
     "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
     "eslint-plugin-sort": "catalog:dev",
+    "expo-haptics": "catalog:native",
     "expo-image": "catalog:native",
     "oxlint": "catalog:dev",
     "react": "catalog:native",

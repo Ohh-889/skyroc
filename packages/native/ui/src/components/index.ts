@@ -38,6 +38,8 @@ export * from './rate';
 
 export * from './rolling-text';
 
+export * from './sheet';
+
 export * from './sidebar';
 
 export * from './space';
