@@ -188,7 +188,7 @@ const Form = <Values=any, As extends ElementType = 'form'>(props: FormProps<Valu
   // Initialize form configuration on first mount
   if (!mountRef.current) {
     // Set initial form values
-    setInitialValues(initialValues || {});
+    setInitialValues(initialValues);
 
     // Configure field preservation behavior
     setPreserve(preserve);

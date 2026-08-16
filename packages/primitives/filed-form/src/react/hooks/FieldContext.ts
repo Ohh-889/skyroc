@@ -251,7 +251,7 @@ export interface InternalCallbacks<Values = any> {
   /** Set form lifecycle callbacks */
   setCallbacks: (callbacks: RegisterCallbackOptions<Values>) => void;
   /** Set initial form values */
-  setInitialValues: (values: DeepPartial<Values>) => void;
+  setInitialValues: (values?: DeepPartial<Values>) => void;
   /** Set field preservation behavior */
   setPreserve: (preserve: boolean) => void;
   /** Set schema-level validator for submit validation */

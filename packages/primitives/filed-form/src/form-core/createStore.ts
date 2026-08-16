@@ -299,7 +299,7 @@ class FormStore {
   };
 
   /** Sets initial form values and updates current store */
-  private setInitialValues = (values: Store) => {
+  private setInitialValues = (values: Store = {}) => {
     this._initial = values;
 
     const nextStore = assign(this._initial, this._store);
