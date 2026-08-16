@@ -8,16 +8,19 @@ type StepperTheme = NonNullable<StepperVariantProps['theme']>;
 /** 步进器尺寸 */
 type StepperSize = NonNullable<StepperVariantProps['size']>;
 
+/** 步进方向 */
+type StepperStepType = 'minus' | 'plus';
+
 /** 步进器组件属性 */
 interface StepperProps
   extends Omit<TextInputProps, 'defaultValue' | 'editable' | 'onChange' | 'style' | 'value'>, StepperVariantProps {
   /** 允许输入框为空 */
   allowEmpty?: boolean;
 
-  /** 失焦时自动修正超出范围的值 */
+  /** 失焦时自动修正超出范围的值；关闭后保留用户输入的原始文本，既不修正也不提交 */
   autoFixed?: boolean;
 
-  /** 值变化前的拦截器，返回 false 阻止变化 */
+  /** 值变化前的拦截器，返回 false 阻止变化；长按期间上一次未结束时会跳过本次触发 */
   beforeChange?: (value: number) => Promise<boolean> | boolean;
 
   /** NativeWind 类名 */
@@ -26,7 +29,7 @@ interface StepperProps
   /** 覆盖各 slot 的 className */
   classNames?: SlotClassNames<StepperSlots>;
 
-  /** 固定小数位数 */
+  /** 固定小数位数，`0` 表示强制取整到个位 */
   decimalLength?: number;
 
   /** 默认值（非受控模式） */
@@ -62,8 +65,8 @@ interface StepperProps
   /** 点击减少按钮回调 */
   onMinus?: () => void;
 
-  /** 超出限制时回调 */
-  onOverlimit?: (type: 'minus' | 'plus') => void;
+  /** 已在边界仍点击（或长按越界）时回调，此时不会触发 onMinus / onPlus */
+  onOverlimit?: (type: StepperStepType) => void;
 
   /** 点击增加按钮回调 */
   onPlus?: () => void;
@@ -84,4 +87,4 @@ interface StepperProps
   value?: number;
 }
 
-export type { StepperProps, StepperSize, StepperTheme };
+export type { StepperProps, StepperSize, StepperStepType, StepperTheme };

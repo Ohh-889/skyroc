@@ -1,38 +1,63 @@
-/* eslint-disable max-params */
-/* eslint-disable complexity */
 import { useEffect, useRef, useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
 import { Button } from '../button/Button';
 import { stepperVariants } from './stepper-variants';
-import type { StepperProps } from './types';
+import type { StepperProps, StepperStepType } from './types';
+import { useLongPress } from './use-long-press';
 
-/** 格式化数值为显示文本 */
+/** 小数位上限，用于截断浮点累加产生的尾数（0.1 + 0.2 = 0.30000000000000004） */
+const MAX_DECIMAL_DIGITS = 10;
+
+/** 归一化选项 */
+interface NormalizeOptions {
+  /** 固定小数位数 */
+  decimalLength?: number;
+  /** 是否只允许整数 */
+  integer: boolean;
+  /** 最大值 */
+  max: number;
+  /** 最小值 */
+  min: number;
+}
+
+/** 格式化数值为显示文本；decimalLength 为 0 时也要走 toFixed，不能当假值跳过 */
 function formatNumber(val: number, decimals?: number): string {
-  if (decimals) {
-    return val.toFixed(decimals);
-  }
-  return String(val);
+  return typeof decimals === 'number' ? val.toFixed(decimals) : String(val);
 }
 
-/** 将数值限制在 min~max 范围内 */
-function clampValue(val: number, min: number, max: number, isInteger: boolean): number {
-  let result = Math.max(min, Math.min(max, val));
-  if (isInteger) {
-    result = Math.trunc(result);
+/** 取小数位数，指数记数法一律按上限处理 */
+function decimalDigits(val: number): number {
+  const text = String(val);
+
+  if (text.includes('e') || text.includes('E')) {
+    return MAX_DECIMAL_DIGITS;
   }
-  return result;
+
+  const dotIndex = text.indexOf('.');
+
+  return dotIndex === -1 ? 0 : Math.min(text.length - dotIndex - 1, MAX_DECIMAL_DIGITS);
 }
 
-const Stepper = (props: StepperProps) => {
+/**
+ * 归一化数值：先定精度再夹边界，保证 min / max 始终成立。
+ *
+ * 未指定 decimalLength 时按数值自身的小数位收敛，既能抹掉浮点尾数，又不会截掉用户输入的精度。
+ */
+function normalizeValue(val: number, options: NormalizeOptions): number {
+  const { decimalLength, integer, max, min } = options;
+
+  const rounded = integer ? Math.round(val) : Number(val.toFixed(decimalLength ?? decimalDigits(val)));
+
+  return Math.max(min, Math.min(max, rounded));
+}
+
+/** 默认值集中在这里展开，组件本体只关心行为 */
+function resolveProps(props: StepperProps) {
   const {
     allowEmpty = false,
     autoFixed = true,
-    beforeChange,
-    className,
-    classNames,
-    decimalLength,
     defaultValue = 1,
     disabled = false,
     disableInput = false,
@@ -42,153 +67,216 @@ const Stepper = (props: StepperProps) => {
     longPress = true,
     max = Number.MAX_SAFE_INTEGER,
     min = 1,
-    onChange,
+    showInput = true,
+    showMinus = true,
+    showPlus = true,
+    step = 1,
+    ...restProps
+  } = props;
+
+  return {
+    allowEmpty,
+    autoFixed,
+    defaultValue,
+    disabled,
+    disableInput,
+    disableMinus,
+    disablePlus,
+    integer,
+    longPress,
+    max,
+    min,
+    showInput,
+    showMinus,
+    showPlus,
+    step,
+    ...restProps
+  };
+}
+
+const Stepper = (props: StepperProps) => {
+  const {
+    allowEmpty,
+    autoFixed,
+    beforeChange,
+    className,
+    classNames,
+    decimalLength,
+    defaultValue,
+    disabled,
+    disableInput,
+    disableMinus,
+    disablePlus,
+    integer,
+    longPress,
+    max,
+    min,
     onBlur,
+    onChange,
     onChangeText,
     onMinus,
     onOverlimit,
     onPlus,
-    showInput = true,
-    showMinus = true,
-    showPlus = true,
+    showInput,
+    showMinus,
+    showPlus,
     size,
-    step = 1,
+    step,
     theme,
     value: valueProp,
     ...rest
-  } = props;
+  } = resolveProps(props);
 
   const [value, setValue] = useControllableState({
-    caller: 'stepper',
+    caller: 'Stepper',
     defaultProp: defaultValue,
     onChange,
     prop: valueProp
   });
 
-  const [inputText, setInputText] = useState(() => formatNumber(value, decimalLength));
+  /** 非 null 表示输入框正在被编辑，此时显示以用户输入为准；否则显示始终由 value 派生 */
+  const [editingText, setEditingText] = useState<string | null>(null);
 
-  const currentValueRef = useRef(value);
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const isLongPressRef = useRef(false);
+  const valueRef = useRef(value);
+  const isSteppingRef = useRef(false);
 
-  const isMinusDisabled = disabled || disableMinus || value <= min;
-  const isPlusDisabled = disabled || disablePlus || value >= max;
+  const displayText = editingText ?? formatNumber(value, decimalLength);
+  const isMinusAtLimit = value <= min;
+  const isPlusAtLimit = value >= max;
 
-  const slots = stepperVariants({ size, theme });
+  const variantSlots = stepperVariants({ size, theme });
 
-  async function trySetValue(newVal: number) {
-    const clamped = clampValue(newVal, min, max, integer);
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      input: cn(variantSlots.input(), disabled && 'opacity-50', classNames?.input),
+      minus: cn(variantSlots.minus(), isMinusAtLimit && 'opacity-50', classNames?.minus),
+      minusIcon: cn(variantSlots.minusIcon(), classNames?.minusIcon),
+      plus: cn(variantSlots.plus(), isPlusAtLimit && 'opacity-50', classNames?.plus),
+      plusIcon: cn(variantSlots.plusIcon(), classNames?.plusIcon),
+      root: cn(variantSlots.root(), classNames?.root, className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
+  /** 提交新值：只写 value，显示态等 value 回流后自行派生，受控方拒绝更新时不会出现界面与值脱节 */
+  async function commitValue(next: number) {
+    const normalized = normalizeValue(next, { decimalLength, integer, max, min });
+
+    setEditingText(null);
+
+    if (normalized === valueRef.current) return;
+
     if (beforeChange) {
-      const allowed = await beforeChange(clamped);
+      const allowed = await beforeChange(normalized);
       if (!allowed) return;
     }
-    currentValueRef.current = clamped;
-    setValue(clamped);
-    setInputText(formatNumber(clamped, decimalLength));
+
+    setValue(normalized);
   }
 
-  function doMinus() {
-    const current = currentValueRef.current;
-    if (disabled || disableMinus || current <= min) {
-      onOverlimit?.('minus');
-      stopLongPress();
-      return;
-    }
-    trySetValue(current - step);
+  function isAtLimit(type: StepperStepType) {
+    return type === 'minus' ? valueRef.current <= min : valueRef.current >= max;
   }
 
-  function doPlus() {
-    const current = currentValueRef.current;
-    if (disabled || disablePlus || current >= max) {
-      onOverlimit?.('plus');
-      stopLongPress();
+  async function applyStep(type: StepperStepType) {
+    if (isAtLimit(type)) {
+      onOverlimit?.(type);
+      longPressControl.stop();
       return;
     }
-    trySetValue(current + step);
+
+    // beforeChange 是异步的，长按期间上一次未落定就跳过本次，避免读到同一个基准值连跳
+    if (isSteppingRef.current) return;
+
+    isSteppingRef.current = true;
+    const current = valueRef.current;
+
+    try {
+      await commitValue(type === 'minus' ? current - step : current + step);
+    } finally {
+      isSteppingRef.current = false;
+    }
+  }
+
+  /** 单击：长按结束时系统仍会补发一次 press，这一次要吞掉，避免多走一步 */
+  function handlePress(type: StepperStepType) {
+    if (longPressControl.consumeLongPress()) return;
+
+    if (isAtLimit(type)) {
+      onOverlimit?.(type);
+      return;
+    }
+
+    applyStep(type);
+
+    const onStepPress = type === 'minus' ? onMinus : onPlus;
+    onStepPress?.();
   }
 
   function handleMinusPress() {
-    if (isLongPressRef.current) {
-      isLongPressRef.current = false;
-      return;
-    }
-    doMinus();
-    onMinus?.();
+    handlePress('minus');
   }
 
   function handlePlusPress() {
-    if (isLongPressRef.current) {
-      isLongPressRef.current = false;
-      return;
-    }
-    doPlus();
-    onPlus?.();
+    handlePress('plus');
+  }
+
+  function handleMinusPressIn() {
+    longPressControl.start('minus');
+  }
+
+  function handlePlusPressIn() {
+    longPressControl.start('plus');
   }
 
   function handleInputChange(text: string) {
-    setInputText(text);
+    setEditingText(text);
     onChangeText?.(text);
   }
 
-  function handleInputBlur(e: Parameters<NonNullable<TextInput['props']['onBlur']>>[0]) {
-    if (inputText === '' && allowEmpty) {
-      onBlur?.(e);
+  /** 失焦落值：空串按 allowEmpty 决定保留还是回滚，非法值一律回滚 */
+  function resolveInputText() {
+    if (displayText === '') {
+      if (!allowEmpty) setEditingText(null);
       return;
     }
-    const num = Number(inputText);
-    if (Number.isNaN(num) || inputText === '') {
-      setInputText(formatNumber(value, decimalLength));
-    } else if (autoFixed) {
-      trySetValue(num);
+
+    const num = Number(displayText);
+
+    if (Number.isNaN(num)) {
+      setEditingText(null);
+      return;
     }
+
+    // autoFixed 关闭时保留用户原文，既不修正也不提交
+    if (autoFixed) commitValue(num);
+  }
+
+  function handleInputBlur(e: Parameters<NonNullable<TextInput['props']['onBlur']>>[0]) {
+    resolveInputText();
     onBlur?.(e);
   }
 
-  function startLongPress(action: () => void) {
-    if (!longPress) return;
-    stopLongPress();
-    isLongPressRef.current = false;
-    longPressTimerRef.current = setTimeout(() => {
-      isLongPressRef.current = true;
-      intervalRef.current = setInterval(action, 150);
-    }, 600);
-  }
-
-  function stopLongPress() {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }
+  // 长按控制器消费的是上面的 applyStep，applyStep 又要用它中止连按，因此排在函数之后声明
+  const longPressControl = useLongPress<StepperStepType>({ enabled: longPress, onRepeat: applyStep });
 
   useEffect(() => {
-    currentValueRef.current = value;
-    setInputText(formatNumber(value, decimalLength));
-  }, [value, decimalLength]);
-
-  useEffect(() => {
-    return () => {
-      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
+    valueRef.current = value;
+  }, [value]);
 
   return (
-    <View className={cn(slots.root(), className, classNames?.root)}>
+    <View className={slotClassNames.root}>
       {showMinus && (
         <Button
-          className={cn(slots.minus(), classNames?.minus)}
-          disabled={isMinusDisabled}
+          className={slotClassNames.minus}
+          disabled={disabled || disableMinus}
           onPress={handleMinusPress}
-          onPressIn={() => startLongPress(doMinus)}
-          onPressOut={stopLongPress}
+          onPressIn={handleMinusPressIn}
+          onPressOut={longPressControl.stop}
           size="icon"
-          textClassName={cn(slots.minusIcon(), classNames?.minusIcon)}
+          textClassName={slotClassNames.minusIcon}
           variant="ghost"
         >
           −
@@ -198,28 +286,28 @@ const Stepper = (props: StepperProps) => {
       {showInput && (
         <TextInput
           allowFontScaling={false}
-          maxFontSizeMultiplier={1}
           keyboardType={integer ? 'number-pad' : 'decimal-pad'}
           selectTextOnFocus
           textAlign="center"
-          className={cn(slots.input(), disabled && 'opacity-50', classNames?.input)}
+          textAlignVertical="center"
+          className={slotClassNames.input}
           editable={!disabled && !disableInput}
           onBlur={handleInputBlur}
           onChangeText={handleInputChange}
-          value={inputText}
+          value={displayText}
           {...rest}
         />
       )}
 
       {showPlus && (
         <Button
-          className={cn(slots.plus(), classNames?.plus)}
-          disabled={isPlusDisabled}
+          className={slotClassNames.plus}
+          disabled={disabled || disablePlus}
           onPress={handlePlusPress}
-          onPressIn={() => startLongPress(doPlus)}
-          onPressOut={stopLongPress}
+          onPressIn={handlePlusPressIn}
+          onPressOut={longPressControl.stop}
           size="icon"
-          textClassName={cn(slots.plusIcon(), classNames?.plusIcon)}
+          textClassName={slotClassNames.plusIcon}
           variant="ghost"
         >
           +
