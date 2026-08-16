@@ -1,5 +1,6 @@
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 
 /** Radio icon shape */
@@ -86,6 +87,9 @@ export interface RadioProps {
   /** Callback fired when this radio becomes checked */
   onCheckedChange?: (checked: boolean) => void;
 
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
+
   /** Icon shape, falls back to the group value then `round` */
   shape?: RadioShape;
 
@@ -123,6 +127,9 @@ export interface RadioGroupProps<T extends RadioValue = RadioValue> {
 
   /** Callback fired when the selected value changes */
   onChange?: (value: T) => void;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** Icon shape for all child radios */
   shape?: RadioShape;
@@ -206,6 +213,9 @@ export interface RadioCardProps {
   /** Position of the radio relative to card content */
   radioPosition?: RadioPosition;
 
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作；根节点是 Pressable，实例类型同为 View */
+  ref?: Ref<View>;
+
   /** Icon shape, falls back to the group value then `round` */
   shape?: RadioShape;
 
@@ -263,6 +273,9 @@ export interface RadioGroupCardProps<T extends RadioValue = RadioValue> {
 
   /** Position of radio relative to card content */
   radioPosition?: RadioPosition;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** Icon shape */
   shape?: RadioShape;

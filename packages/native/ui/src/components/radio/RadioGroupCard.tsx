@@ -16,6 +16,7 @@ const RadioGroupCard = <T extends RadioValue = RadioValue>(props: RadioGroupCard
     items,
     onChange,
     radioPosition = 'left',
+    ref,
     shape,
     size,
     value
@@ -23,6 +24,7 @@ const RadioGroupCard = <T extends RadioValue = RadioValue>(props: RadioGroupCard
 
   return (
     <RadioGroup<T>
+      ref={ref}
       checkedIcon={checkedIcon}
       className={className}
       color={color}

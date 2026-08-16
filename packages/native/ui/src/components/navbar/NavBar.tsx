@@ -23,6 +23,7 @@ const NavBar = (props: NavBarProps) => {
     onLeftPress,
     onRightPress,
     onTitlePress,
+    ref,
     right,
     rightDisabled = false,
     rightText,
@@ -118,7 +119,10 @@ const NavBar = (props: NavBarProps) => {
   const rightContent = renderRight();
 
   return (
-    <View className={slotClassNames.container}>
+    <View
+      ref={ref}
+      className={slotClassNames.container}
+    >
       <View className={slotClassNames.root}>
         {renderTitle()}
 

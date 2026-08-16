@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 
 /** NavBar 组件可覆盖的 slot 名称 */
@@ -42,6 +43,9 @@ export interface NavBarProps {
 
   /** 标题点击回调，未提供时标题不拦截触摸，两侧按钮照常可点 */
   onTitlePress?: () => void;
+
+  /** 最外层容器的 ref，用于 measure 导航栏实际高度（含安全区）等命令式操作 */
+  ref?: Ref<View>;
 
   /** 自定义右侧内容，会覆盖 rightText */
   right?: ReactNode;

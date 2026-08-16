@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 import type { CellGroupVariantProps, CellVariantProps } from './cell-variants';
 
@@ -45,6 +46,9 @@ export interface CellProps extends CellVariantProps {
   /** 点击回调，未提供且无 onLongPress 时渲染为不可点击的 View */
   onPress?: () => void;
 
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作；可点击时根节点是 Pressable，实例类型同为 View */
+  ref?: Ref<View>;
+
   /** 是否显示右侧箭头，缺省时由 arrow 与点击回调推导 */
   showArrow?: boolean;
 
@@ -74,6 +78,9 @@ export interface CellGroupProps extends CellGroupVariantProps {
 
   /** 是否为卡片式内嵌样式（左右留边） */
   inset?: boolean;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** 分组标题，string 自动包裹 Text */
   title?: ReactNode;

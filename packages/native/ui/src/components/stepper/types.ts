@@ -1,4 +1,5 @@
-import type { TextInputProps } from 'react-native';
+import type { Ref } from 'react';
+import type { TextInput, TextInputProps } from 'react-native';
 import type { SlotClassNames } from '../../types';
 import type { StepperSlots, StepperVariantProps } from './stepper-variants';
 
@@ -70,6 +71,9 @@ interface StepperProps
 
   /** 点击增加按钮回调 */
   onPlus?: () => void;
+
+  /** 底层输入框的 ref，用于 focus / blur / measure 等命令式操作；showInput 为 false 时始终为 null */
+  ref?: Ref<TextInput>;
 
   /** 是否显示输入框 */
   showInput?: boolean;

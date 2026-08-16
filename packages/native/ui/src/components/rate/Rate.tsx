@@ -49,6 +49,7 @@ const Rate = (props: RateProps) => {
     icon,
     onChange,
     readonly = false,
+    ref,
     size = DEFAULT_RATE_SIZE,
     value: valueProp,
     voidIcon
@@ -95,6 +96,7 @@ const Rate = (props: RateProps) => {
 
   return (
     <View
+      ref={ref}
       className={slotClassNames.root}
       style={{ gap: gutter }}
     >

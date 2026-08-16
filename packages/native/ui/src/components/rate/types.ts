@@ -1,5 +1,6 @@
 import type { ThemeColor } from '@skyroc/ui-types';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 
 /** Rate 组件可覆盖的 slot 名称 */
@@ -49,6 +50,9 @@ export interface RateProps {
 
   /** 是否只读，只读时不响应点击；配合 allowHalf 可渲染 3.7 星这类任意小数 */
   readonly?: boolean;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** 图标边长（px），同时是半星遮罩的裁剪基准 */
   size?: number;

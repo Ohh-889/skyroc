@@ -1,6 +1,7 @@
+import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { INPUT_ICON_SIZE_MAP, inputVariants } from './input-variants';
 import { InputActions } from './InputActions';
@@ -23,6 +24,7 @@ const Input = (props: InputProps) => {
     onFocus,
     onPasswordVisibleChange,
     passwordVisible: passwordVisibleProp,
+    ref,
     size = 'md',
     trailing,
     type = 'text',
@@ -32,6 +34,11 @@ const Input = (props: InputProps) => {
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
+
+  const inputRef = useRef<TextInput>(null);
+
+  // Input 内部要用 inputRef 在清除后把焦点还给输入框，同时把实例抛给调用方，两个 ref 合成一个
+  const composedRefs = useComposedRefs(inputRef, ref);
 
   // 值交给组件托管，受控与非受控共用一条路径，清除按钮才能在两种用法下都真正清空
   const [value, setValue] = useControllableState({
@@ -78,6 +85,8 @@ const Input = (props: InputProps) => {
 
   function handleClear() {
     setValue('');
+    // 清除按钮会抢走焦点，键盘随之收起；把焦点还回输入框，用户可以接着输入
+    inputRef.current?.focus();
     onClear?.();
   }
 
@@ -92,6 +101,7 @@ const Input = (props: InputProps) => {
       {/* rest 展开在最前，避免调用方的透传属性覆盖下面这些由组件托管的受控属性 */}
       <InputComponent
         {...rest}
+        ref={composedRefs}
         allowFontScaling={false}
         className={slotClassNames.control}
         editable={!disabled}

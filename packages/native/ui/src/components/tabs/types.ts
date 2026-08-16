@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types/shared';
 
 /** 单个 tab 项配置 */
@@ -50,6 +51,9 @@ interface TabsProps {
 
   /** 激活索引变化回调 */
   onIndexChange?: (index: number) => void;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** 开启 lazy 时，未加载面板的占位内容 */
   renderLazyPlaceholder?: () => ReactNode;

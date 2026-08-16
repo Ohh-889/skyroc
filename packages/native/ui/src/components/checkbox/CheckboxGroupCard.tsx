@@ -18,6 +18,7 @@ const CheckboxGroupCard = <T extends CheckboxValue = CheckboxValue>(props: Check
     items,
     max,
     onChange,
+    ref,
     shape,
     size,
     testID,
@@ -26,6 +27,7 @@ const CheckboxGroupCard = <T extends CheckboxValue = CheckboxValue>(props: Check
 
   return (
     <CheckboxGroup<T>
+      ref={ref}
       checkedIcon={checkedIcon}
       className={className}
       color={color}

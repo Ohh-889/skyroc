@@ -21,6 +21,7 @@ const Radio = (props: RadioProps) => {
     labelPosition,
     name,
     onCheckedChange,
+    ref,
     shape,
     size
   } = props;
@@ -75,7 +76,10 @@ const Radio = (props: RadioProps) => {
   }
 
   return (
-    <View className={slotClassNames.root}>
+    <View
+      ref={ref}
+      className={slotClassNames.root}
+    >
       <Pressable
         className={slotClassNames.control}
         disabled={item.disabled}

@@ -23,6 +23,7 @@ const CheckboxGroup = <T extends CheckboxValue = CheckboxValue>(props: CheckboxG
     labelPosition,
     max,
     onChange,
+    ref,
     shape,
     size,
     testID,
@@ -94,6 +95,7 @@ const CheckboxGroup = <T extends CheckboxValue = CheckboxValue>(props: CheckboxG
   return (
     <CheckboxGroupContext value={contextValue}>
       <View
+        ref={ref}
         className={slotClassNames.root}
         testID={testID}
       >

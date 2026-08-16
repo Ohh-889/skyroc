@@ -20,6 +20,7 @@ const Cell = (props: CellProps) => {
     leading,
     onLongPress,
     onPress,
+    ref,
     showArrow,
     size = 'md',
     subtitle,
@@ -89,6 +90,7 @@ const Cell = (props: CellProps) => {
   if (pressable) {
     return (
       <Pressable
+        ref={ref}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
         accessibilityState={{ disabled }}
@@ -105,6 +107,7 @@ const Cell = (props: CellProps) => {
 
   return (
     <View
+      ref={ref}
       accessibilityLabel={accessibilityLabel}
       className={slotClassNames.root}
       testID={testID}

@@ -1,6 +1,6 @@
 import type { ThemeAlign, ThemeOrientation } from '@skyroc/ui-types';
-import type { ReactNode } from 'react';
-import type { ViewProps } from 'react-native';
+import type { ReactNode, Ref } from 'react';
+import type { View, ViewProps } from 'react-native';
 import type { SlotClassNames } from '../../types';
 import type { DividerVariantProps } from './divider-variants';
 
@@ -42,4 +42,7 @@ export interface DividerProps extends ViewProps, DividerVariantProps {
 
   /** 分割线方向，vertical 依赖父级为横向布局且有确定高度，否则线条高度为 0 */
   orientation?: DividerOrientation;
+
+  /** 底层 View 的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 }

@@ -11,7 +11,7 @@ import type { CellGroupProps } from './types';
  * 分隔线由容器自己插入独立元素，而不是往子元素上注入类名： 子元素可以是 Cell 之外的任何组件（业务包装、Link asChild 等）， 注入类名的做法一旦碰上不认 classNames 的子元素就会静默失效。
  */
 const CellGroup = (props: CellGroupProps) => {
-  const { border = true, children, classNames, inset = false, title } = props;
+  const { border = true, children, classNames, inset = false, ref, title } = props;
 
   const variantSlots = cellGroupVariants({ inset });
 
@@ -45,7 +45,7 @@ const CellGroup = (props: CellGroupProps) => {
   }
 
   return (
-    <View>
+    <View ref={ref}>
       {isString(title) ? <Text className={slotClassNames.title}>{title}</Text> : title}
       <View className={slotClassNames.root}>{renderChildren()}</View>
     </View>

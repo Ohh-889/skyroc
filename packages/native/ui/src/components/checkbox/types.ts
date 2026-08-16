@@ -1,5 +1,6 @@
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
+import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 
 /** Checkbox icon shape */
@@ -91,6 +92,9 @@ export interface CheckboxProps {
   /** Callback fired when checked state changes, fires in grouped mode as well */
   onCheckedChange?: (checked: boolean) => void;
 
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
+
   /** Icon shape, falls back to the group value then `round` */
   shape?: CheckboxShape;
 
@@ -137,6 +141,9 @@ export interface CheckboxGroupProps<T extends CheckboxValue = CheckboxValue> {
 
   /** Callback fired when the checked values change */
   onChange?: (value: T[]) => void;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** Icon shape for all child checkboxes */
   shape?: CheckboxShape;
@@ -232,6 +239,9 @@ export interface CheckboxCardProps {
   /** Callback fired when checked state changes, fires in grouped mode as well */
   onCheckedChange?: (checked: boolean) => void;
 
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作；根节点是 Pressable，实例类型同为 View */
+  ref?: Ref<View>;
+
   /** Icon shape, falls back to the group value then `round` */
   shape?: CheckboxShape;
 
@@ -298,6 +308,9 @@ export interface CheckboxGroupCardProps<T extends CheckboxValue = CheckboxValue>
 
   /** Callback when values change */
   onChange?: (value: T[]) => void;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /** Icon shape */
   shape?: CheckboxShape;

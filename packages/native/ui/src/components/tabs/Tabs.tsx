@@ -22,6 +22,7 @@ const Tabs = (props: TabsProps) => {
     lazy = false,
     lazyPreloadDistance = 0,
     onIndexChange,
+    ref,
     renderLazyPlaceholder = () => <DefaultLazyPlaceholder />,
     swipeable = true,
     type = 'line'
@@ -46,7 +47,10 @@ const Tabs = (props: TabsProps) => {
   const slotClassNames = resolveSlotClassNames();
 
   return (
-    <View className={slotClassNames.root}>
+    <View
+      ref={ref}
+      className={slotClassNames.root}
+    >
       <TabBar
         activeIndex={activeIndex}
         classNames={classNames}

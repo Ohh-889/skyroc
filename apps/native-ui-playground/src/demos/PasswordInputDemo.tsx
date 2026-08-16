@@ -1,7 +1,6 @@
 import { Button, PasswordInput, Text } from '@skyroc/native-ui';
-import type { PasswordInputRef } from '@skyroc/native-ui';
 import { useRef, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 
 const SIZES = ['sm', 'md', 'lg'] as const;
 
@@ -14,7 +13,7 @@ const PasswordInputDemo = () => {
   const [verify, setVerify] = useState('');
   const [plain, setPlain] = useState('');
 
-  const inputRef = useRef<PasswordInputRef>(null);
+  const inputRef = useRef<TextInput>(null);
 
   const verifyError = verify.length === CORRECT_PASSWORD.length && verify !== CORRECT_PASSWORD ? '密码错误' : '';
 

@@ -25,6 +25,7 @@ const CheckboxCard = (props: CheckboxCardProps) => {
     label,
     name,
     onCheckedChange,
+    ref,
     shape,
     size,
     testID
@@ -86,6 +87,7 @@ const CheckboxCard = (props: CheckboxCardProps) => {
 
   return (
     <Pressable
+      ref={ref}
       className={slotClassNames.root}
       disabled={item.disabled}
       testID={testID}

@@ -18,6 +18,7 @@ const RadioGroup = <T extends RadioValue = RadioValue>(props: RadioGroupProps<T>
     iconSize,
     labelPosition,
     onChange,
+    ref,
     shape,
     size,
     value: valueProp
@@ -71,7 +72,12 @@ const RadioGroup = <T extends RadioValue = RadioValue>(props: RadioGroupProps<T>
 
   return (
     <RadioGroupContext value={contextValue}>
-      <View className={slotClassNames.root}>{children}</View>
+      <View
+        ref={ref}
+        className={slotClassNames.root}
+      >
+        {children}
+      </View>
     </RadioGroupContext>
   );
 };

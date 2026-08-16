@@ -38,7 +38,11 @@ export interface InputProps extends Omit<TextInputProps, 'editable' | 'secureTex
   /** 密码是否可见（受控） */
   passwordVisible?: boolean;
 
-  /** 转发到底层输入组件的 ref */
+  /**
+   * 底层输入组件的 ref。
+   *
+   * Input 自己也要用它在清除后回焦，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 focus / blur / clear / measure 等 TextInput 原生方法。
+   */
   ref?: Ref<TextInput>;
 
   /** 右侧内容（图标、按钮等），与 password 的眼睛图标可共存，排在其后 */

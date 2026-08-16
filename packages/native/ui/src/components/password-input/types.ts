@@ -1,17 +1,8 @@
 import type { ComponentType, Ref } from 'react';
 import type { CodeFieldProps } from 'react-native-confirmation-code-field';
-import type { TextInputProps } from 'react-native';
+import type { TextInput, TextInputProps } from 'react-native';
 import type { SlotClassNames } from '../../types/shared';
 import type { PasswordInputSlots, PasswordInputVariantProps } from './password-input-variants';
-
-/** 密码输入框实例暴露的方法 */
-interface PasswordInputRef {
-  /** 失焦并隐藏键盘 */
-  blur: () => void;
-
-  /** 聚焦并弹出键盘 */
-  focus: () => void;
-}
 
 /**
  * 密码输入框组件属性
@@ -55,11 +46,15 @@ interface PasswordInputProps
   /** 输入完成（长度达到 length）时触发 */
   onComplete?: (value: string) => void;
 
-  /** 组件实例引用，用于调用 focus / blur 方法 */
-  ref?: Ref<PasswordInputRef>;
+  /**
+   * 承接触摸的那个底层 TextInput 的 ref。
+   *
+   * PasswordInput 自己也要用它做输满自动失焦，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 focus / blur / clear 等 TextInput 原生方法，不必再包一层窄接口。
+   */
+  ref?: Ref<TextInput>;
 
   /** 当前输入值（受控模式） */
   value?: string;
 }
 
-export type { PasswordInputProps, PasswordInputRef };
+export type { PasswordInputProps };

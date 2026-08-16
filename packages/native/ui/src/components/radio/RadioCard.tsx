@@ -23,6 +23,7 @@ const RadioCard = (props: RadioCardProps) => {
     name,
     onCheckedChange,
     radioPosition = 'left',
+    ref,
     shape,
     size
   } = props;
@@ -80,6 +81,7 @@ const RadioCard = (props: RadioCardProps) => {
 
   return (
     <Pressable
+      ref={ref}
       className={slotClassNames.root}
       disabled={item.disabled}
       onPress={item.select}

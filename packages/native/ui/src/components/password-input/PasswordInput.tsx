@@ -1,6 +1,6 @@
+import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { useImperativeHandle } from 'react';
 import { TextInput, View } from 'react-native';
 import type { TextStyle } from 'react-native';
 import { CodeField, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
@@ -63,10 +63,32 @@ const PasswordInput = (props: PasswordInputProps) => {
   });
 
   const inputRef = useBlurOnFulfill({ cellCount: length, value });
+
+  // PasswordInput 内部要用 inputRef 做输满自动失焦，同时把实例抛给调用方，两个 ref 合成一个
+  const composedRefs = useComposedRefs(inputRef, ref);
+
   const [clearByFocusCellProps, getCellOnLayoutHandler] = useClearByFocusCell({ setValue, value });
 
   const isSeparated = variant === 'separated';
-  const slots = passwordInputVariants({ size, status: errorInfo ? 'error' : 'default', variant });
+  const variantSlots = passwordInputVariants({ size, status: errorInfo ? 'error' : 'default', variant });
+
+  /**
+   * 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用。
+   *
+   * cell 槽依赖格子下标与聚焦态，只能在 renderCell 里逐格算，不参与这里。
+   */
+  function resolveSlotClassNames() {
+    return {
+      dot: cn(variantSlots.dot(), classNames?.dot),
+      errorInfo: cn(variantSlots.errorInfo(), classNames?.errorInfo),
+      info: cn(variantSlots.info(), classNames?.info),
+      root: cn(variantSlots.root(), classNames?.root, className),
+      security: cn(variantSlots.security(), classNames?.security),
+      symbol: cn(variantSlots.symbol(), classNames?.symbol)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   // CodeField 替换输入组件的那条重载不接受 ref，只能绕开重载用展开透传
   const inputComponentProps = { InputComponent };
@@ -95,38 +117,29 @@ const PasswordInput = (props: PasswordInputProps) => {
       <PasswordInputCell
         key={index}
         className={cn(
-          slots.cell({ divider: !isSeparated && index > 0, status: resolveCellStatus(isFocused) }),
+          variantSlots.cell({ divider: !isSeparated && index > 0, status: resolveCellStatus(isFocused) }),
           classNames?.cell
         )}
-        dotClassName={cn(slots.dot(), classNames?.dot)}
+        dotClassName={slotClassNames.dot}
         isFocused={isFocused}
         mask={mask}
         symbol={symbol}
-        symbolClassName={cn(slots.symbol(), classNames?.symbol)}
+        symbolClassName={slotClassNames.symbol}
         onLayout={getCellOnLayoutHandler(index)}
       />
     );
   }
 
-  useImperativeHandle(ref, () => ({
-    blur() {
-      inputRef.current?.blur();
-    },
-    focus() {
-      inputRef.current?.focus();
-    }
-  }));
-
   return (
-    <View className={cn(slots.root(), className, classNames?.root)}>
-      <View className={cn(slots.security(), classNames?.security)}>
+    <View className={slotClassNames.root}>
+      <View className={slotClassNames.security}>
         {/* 展开顺序固定为三层：默认值 → 调用方的 rest → 组件托管的值与 useClearByFocusCell 的行为（不可被覆盖） */}
         <CodeField
           {...CODE_FIELD_DEFAULTS}
           {...rest}
           {...clearByFocusCellProps}
           {...inputComponentProps}
-          ref={inputRef}
+          ref={composedRefs}
           cellCount={length}
           rootStyle={isSeparated && gutter > 0 ? { gap: gutter } : undefined}
           textInputStyle={CODE_FIELD_INPUT_STYLE}
@@ -136,8 +149,8 @@ const PasswordInput = (props: PasswordInputProps) => {
         />
       </View>
 
-      {info && !errorInfo ? <Text className={cn(slots.info(), classNames?.info)}>{info}</Text> : null}
-      {errorInfo ? <Text className={cn(slots.errorInfo(), classNames?.errorInfo)}>{errorInfo}</Text> : null}
+      {Boolean(info) && !errorInfo ? <Text className={slotClassNames.info}>{info}</Text> : null}
+      {errorInfo ? <Text className={slotClassNames.errorInfo}>{errorInfo}</Text> : null}
     </View>
   );
 };

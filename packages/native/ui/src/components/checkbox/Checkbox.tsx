@@ -23,6 +23,7 @@ const Checkbox = (props: CheckboxProps) => {
     labelPosition,
     name,
     onCheckedChange,
+    ref,
     shape,
     size,
     testID
@@ -80,6 +81,7 @@ const Checkbox = (props: CheckboxProps) => {
 
   return (
     <View
+      ref={ref}
       className={slotClassNames.root}
       testID={testID}
     >
