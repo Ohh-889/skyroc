@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getAuthorization, normalizeCodes, showErrorMsg } from '../src/request/shared';
+import { getAuthorization, isRefreshTokenRequest, normalizeCodes, showErrorMsg } from '../src/request/shared';
 import type { RequestAdapter, RequestInstanceState } from '../src/request/types';
 
 function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdapter {
@@ -8,6 +8,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
     getRefreshToken: vi.fn(() => 'mock-refresh-token'),
     getToken: vi.fn(() => 'mock-token'),
     redirectToLogin: vi.fn(),
+    refreshTokenUrl: '/auth/refreshToken',
     resetAuth: vi.fn(),
     setAuth: vi.fn(),
     showErrorMessage: vi.fn(),
@@ -87,6 +88,34 @@ describe('getAuthorization', () => {
   it('returns null when token is null', () => {
     const adapter = createMockAdapter({ getToken: vi.fn(() => null) });
     expect(getAuthorization(adapter)).toBeNull();
+  });
+});
+
+describe('isRefreshTokenRequest', () => {
+  it('认出续签请求本身 —— 不认出来它会 await 自己那次刷新，永久挂起', () => {
+    const adapter = createMockAdapter();
+    expect(isRefreshTokenRequest({ url: '/auth/refreshToken' }, adapter)).toBe(true);
+  });
+
+  it('带 baseURL 前缀也算同一个接口', () => {
+    const adapter = createMockAdapter();
+    expect(isRefreshTokenRequest({ url: '/api/v2/auth/refreshToken' }, adapter)).toBe(true);
+  });
+
+  it('忽略 query 和尾部斜杠', () => {
+    const adapter = createMockAdapter();
+    expect(isRefreshTokenRequest({ url: '/auth/refreshToken/?from=sse' }, adapter)).toBe(true);
+  });
+
+  it('普通接口不算 —— 它们过期时该等刷新完再重试', () => {
+    const adapter = createMockAdapter();
+    expect(isRefreshTokenRequest({ url: '/auth/getUserInfo' }, adapter)).toBe(false);
+    expect(isRefreshTokenRequest(undefined, adapter)).toBe(false);
+  });
+
+  it('显式标记可以在 url 对不上时兜底（网关重写、换域名）', () => {
+    const adapter = createMockAdapter({ refreshTokenUrl: '/auth/refreshToken' });
+    expect(isRefreshTokenRequest({ isRefreshToken: true, url: 'https://sso.example.com/renew' }, adapter)).toBe(true);
   });
 });
 

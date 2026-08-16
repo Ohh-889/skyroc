@@ -1,7 +1,7 @@
 import type { RequestInstance } from '@skyroc/axios';
 /* eslint-disable max-params */
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import { getAuthorization, showErrorMsg } from './shared';
+import { getAuthorization, isRefreshTokenRequest, showErrorMsg } from './shared';
 import { refreshToken } from './token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
 
@@ -61,7 +61,7 @@ export async function backEndFail(
 
   // 续签接口自己拿到过期码时不能再去续签：它会 await 自己那次还没完成的刷新，把它和所有
   // 等着刷新的请求一起永久挂起。这里放行让它 reject，由 handleRefreshToken 跳登录页。
-  if (codes.expiredToken.includes(responseCode) && !response.config?.isRefreshToken) {
+  if (codes.expiredToken.includes(responseCode) && !isRefreshTokenRequest(response.config, adapter)) {
     const success = await refreshToken(adapter);
     if (success) {
       response.config.headers.set('Authorization', getAuthorization(adapter));

@@ -7,6 +7,7 @@ import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
 
 import { fetchRefreshToken } from './api/auth/api';
+import { AUTH_URLS } from './api/auth/urls';
 
 function showRequestErrorMessage(msg: string, onClose?: () => void) {
   if (onClose) {
@@ -47,6 +48,7 @@ export const antdAdapter: RequestAdapter = {
   redirectToLogin(redirectPath?: string) {
     getRouter().navigate({ search: { redirect: redirectPath }, to: '/login-out' });
   },
+  refreshTokenUrl: AUTH_URLS.REFRESH_TOKEN,
   resetAuth() {
     localStg.remove('token');
     localStg.remove('refreshToken');

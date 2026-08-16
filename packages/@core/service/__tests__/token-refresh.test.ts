@@ -8,6 +8,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
     getRefreshToken: vi.fn(() => 'mock-refresh-token'),
     getToken: vi.fn(() => 'mock-token'),
     redirectToLogin: vi.fn(),
+    refreshTokenUrl: '/auth/refreshToken',
     resetAuth: vi.fn(),
     setAuth: vi.fn(),
     showErrorMessage: vi.fn(),

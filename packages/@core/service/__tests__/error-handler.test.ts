@@ -25,6 +25,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
     getRefreshToken: vi.fn(() => 'refresh-tok'),
     getToken: vi.fn(() => 'access-tok'),
     redirectToLogin: vi.fn(),
+    refreshTokenUrl: '/auth/refreshToken',
     resetAuth: vi.fn(),
     setAuth: vi.fn(),
     showErrorMessage: vi.fn(),
@@ -178,6 +179,20 @@ describe('backEndFail', () => {
     const request = createMockRequest();
     const instance = { request: vi.fn() } as any;
     const response = createMockResponse('9999', 'expired', { isRefreshToken: true });
+
+    const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(result).toBeNull();
+    expect(adapter.fetchRefreshToken).not.toHaveBeenCalled();
+    expect(instance.request).not.toHaveBeenCalled();
+  });
+
+  it('靠 adapter.refreshTokenUrl 认出续签请求，不必等 api 层记得打标记', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn() } as any;
+    // 没有 isRefreshToken —— 四个 app 里三个都是这么写的
+    const response = createMockResponse('9999', 'expired', { url: '/auth/refreshToken' });
 
     const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
 

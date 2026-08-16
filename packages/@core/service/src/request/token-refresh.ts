@@ -21,6 +21,7 @@ export async function handleRefreshToken(adapter: RequestAdapter): Promise<boole
   try {
     // 取不到就传空串，让后端去拒：这里提前返回的话，调用方分不清「没登录」和「续签失败」
     const data = await adapter.fetchRefreshToken(adapter.getRefreshToken() || '');
+
     adapter.setAuth(data);
 
     return true;
@@ -29,6 +30,7 @@ export async function handleRefreshToken(adapter: RequestAdapter): Promise<boole
     adapter.resetAuth();
 
     const fullPath = adapter.getCurrentPath();
+
     adapter.redirectToLogin(fullPath);
 
     return false;

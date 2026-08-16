@@ -53,15 +53,22 @@
 
 ### RequestAdapter 接口
 
-每个平台需要实现的 6 类能力：
+每个平台需要实现的 5 类能力：
 
-| 能力       | 方法                                                     | 说明                     |
-| ---------- | -------------------------------------------------------- | ------------------------ |
-| UI 反馈    | `showErrorMessage` / `showErrorModal`                    | 错误提示的展示方式       |
-| Auth       | `getToken` / `getRefreshToken` / `setAuth` / `resetAuth` | 认证信息的存取           |
-| Token 刷新 | `fetchRefreshToken`                                      | 调用后端接口换取新 token |
-| 导航       | `getCurrentPath` / `redirectToLogin`                     | 路由跳转                 |
-| i18n       | `t`                                                      | 国际化翻译               |
+| 能力       | 方法                                                     | 说明                             |
+| ---------- | -------------------------------------------------------- | -------------------------------- |
+| UI 反馈    | `showErrorMessage` / `showErrorModal`                    | 错误提示的展示方式               |
+| Auth       | `getToken` / `getRefreshToken` / `setAuth` / `resetAuth` | 认证信息的存取，全部同步         |
+| Token 刷新 | `fetchRefreshToken` / `refreshTokenUrl`                  | 换取新 token，以及它走的是哪个 url |
+| 导航       | `getCurrentPath` / `redirectToLogin`                     | 路由跳转                         |
+| i18n       | `t`                                                      | 国际化翻译                       |
+
+`refreshTokenUrl` 用来识别「拿到过期码的是续签请求自己」。这种请求绝不能再去续签，否则它会
+`await` 自己那次还没完成的刷新，把自己和所有等着刷新的请求一起永久挂起——不是报错，是转圈不动。
+续签走的 url 跟它对不上时（网关重写、换域名），在续签请求上补 `isRefreshToken: true`。
+
+`getToken` / `getRefreshToken` 必须是同步的。存储层是异步的平台（RN 的 `AsyncStorage`）要在
+外面先读进内存，adapter 里只做取值。
 
 ### ServiceCodes 配置
 
@@ -99,6 +106,7 @@ import { localStg } from '@/utils/storage';
 import { setAuth } from '@/features/auth/use-auth';
 import { $t } from '@/locales';
 import { fetchRefreshToken } from './api';
+import { AUTH_URLS } from './api/auth/urls';
 
 export const antdAdapter: RequestAdapter = {
   // ---- UI 反馈 ----
@@ -131,6 +139,8 @@ export const antdAdapter: RequestAdapter = {
     const data = await fetchRefreshToken(refreshToken);
     return { token: data.token, refreshToken: data.refreshToken };
   },
+  // 和上面这个函数请求的 url 必须是同一个，否则续签接口自己过期时会死等自己
+  refreshTokenUrl: AUTH_URLS.REFRESH_TOKEN,
 
   // ---- 导航 ----
   getCurrentPath: () => router.state.location.href,
@@ -170,9 +180,18 @@ export const request = createAppRequest({
 import { createQueryClient } from '@skyroc/service/query';
 
 export const queryClient = createQueryClient({
-  onError: error => {
-    if (import.meta.env.DEV) {
-      console.error('Query/Mutation error:', error);
+  queryCache: {
+    onError: error => {
+      if (import.meta.env.DEV) {
+        console.error('Query error:', error);
+      }
+    }
+  },
+  mutationCache: {
+    onError: error => {
+      if (import.meta.env.DEV) {
+        console.error('Mutation error:', error);
+      }
     }
   }
 });
@@ -276,24 +295,31 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
 两层信封，RSA 只用来传一次性 AES 密钥：
 
 ```
-请求头  X-Encrypt-Key: base64( RSA-OAEP-SHA256(服务端公钥, aesKey) )
-请求体  base64( nonce(12B) ‖ AES-256-GCM(aesKey, 明文 JSON) )
+密钥头  base64( RSA-OAEP-SHA256(服务端公钥, aesKey) )        ← 头的名字由 crypto.header 配
+请求体  base64( nonce(12B) ‖ AES-256-GCM(aesKey, 明文 JSON) ‖ tag(16B) )
 ```
 
-公钥从 PEM 载入，换行可以写成字面量 `\n`（环境变量装不下多行）。加解密走浏览器原生
-WebCrypto，不引 crypto-js。
+和后端 `app/core/crypto/envelope.py` 是同一份契约。请求体会被声明成 `text/plain`——它现在是
+一段 base64，标成 `application/json` 会让网关和 WAF 按 JSON 去解析它。
+
+公钥从 PEM 载入，换行可以写成字面量 `\n`（环境变量装不下多行）。
+
+#### 为什么是 node-forge 而不是 WebCrypto
+
+`crypto.subtle` 只在安全上下文里存在。用 `http://192.168.x.x:5173` 访问开发服务器时浏览器不提供
+它，整条加密链路直接不可用——手机和同事的电脑都进不来。forge 是纯 JS 实现，不挑上下文，代价是
+约 90KB gzip 和慢一些的 RSA（一次登录几十毫秒）。
 
 #### 边界
 
 - **先想清楚它挡的是什么。** 公钥在前端 JS 里，AES 密钥也是前端生成的，攻击者照样构造得出
   合法密文。它挡的是明文落到日志和抓包里，不是主动攻击，别把它当成认证或授权的替代。
-- **只加密请求，不解密响应。** 响应解密要在 `isBackendSuccess` 之前完成，而那个钩子是同步的，
-  WebCrypto 是异步的，接不上；真要做得先给 `@skyroc/axios` 加一个异步的 `onResponse` 钩子。
-- **`crypto.subtle` 只在安全上下文里存在。** 用 `http://192.168.x.x:5173` 这样访问开发服务器
-  时浏览器不提供它，加密请求会直接报错，改用 localhost 或 https。
+- **只加密请求，不解密响应。** 单纯是还没做：forge 是同步的，接 `isBackendSuccess` 这种同步钩子
+  没有障碍，缺的是实现和后端对应的响应信封格式。
 - **没配 `publicKey` 时不会退化成明文**：标了 `encrypt: true` 的请求直接抛错。没有加密需求的
   部署不用配，但配了一半的部署不会安静地把密码明文发出去。
 - **FormData / 二进制请求体不支持**，上传文件的接口去掉 `encrypt: true`。
+- **forge 目前是静态依赖**，没开加密的部署也会把它打进包里。
 
 ### `createQueryClient(options?)`
 
@@ -348,18 +374,26 @@ const queryClient = createQueryClient({
 | `throwOnError` | `false` | 不向上抛出错误 |
 | `networkMode` | `'online'` | 仅在线时发起请求 |
 
-### 内部工具函数（按需导出）
+### 公开导出
 
 ```ts
 import {
-  getAuthorization, // 构造 'Bearer xxx' header
-  handleRefreshToken, // 刷新 token 逻辑
-  handleExpiredRequest, // 并发安全的 token 刷新
-  showErrorMsg, // 去重错误消息展示
-  backEndFail, // 后端业务错误处理
-  handleError // 网络层错误处理
+  createAppRequest, // 创建请求实例
+  createQueryClient, // 创建 QueryClient（也可从 '@skyroc/service/query' 引）
+  importPublicKey, // 载入加密用的 RSA 公钥
+  refreshToken, // 并发安全的 token 刷新，各传输共用一次
+  resetTokenRefresh, // 清掉在途刷新状态，测试用
+  seal // 加密一段明文，返回密钥头和 body 两段密文
 } from '@skyroc/service';
 ```
+
+`refreshToken` 是给 HTTP 之外的传输用的：WebSocket、SSE 拿到「令牌过期」都该调它，不要自己去调
+`adapter.fetchRefreshToken`——那样各传输之间没有去重，第二个刷新会拿着已经轮换掉的 refresh token
+去换，必定失败。
+
+`backEndFail` / `handleError` / `showErrorMsg` / `getAuthorization` / `isRefreshTokenRequest` 只从
+`src/request` 内部导出，没有挂到包入口上。它们全部接收 `adapter` 参数、不依赖任何全局状态，包内
+的测试直接引源码路径调用。
 
 这些函数全部接收 `adapter` 参数，不依赖任何全局状态，可独立调用和测试。
 
@@ -408,9 +442,13 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const rnAdapter: RequestAdapter = {
-  showErrorMessage: msg => Alert.alert('Error', msg),
+  // 把 onClose 接到按钮上，去重位关掉消息就释放，不用等 5 秒的兜底
+  showErrorMessage: (msg, onClose) => Alert.alert('Error', msg, [{ text: 'OK', onPress: onClose }]),
   showErrorModal: opts => Alert.alert(opts.title, opts.content, [{ text: 'OK', onPress: opts.onConfirm }]),
-  getToken: () => AsyncStorage.getItem('token'),
+  // AsyncStorage 是异步的，getToken 必须同步返回 —— 启动时读进内存，这里只取值
+  getToken: () => tokenCache.token,
+  getRefreshToken: () => tokenCache.refreshToken,
+  refreshTokenUrl: '/auth/refreshToken',
   redirectToLogin: () => navigation.navigate('Login'),
   t: key => i18n.t(key)
   // ...
@@ -441,6 +479,7 @@ const mockAdapter: RequestAdapter = {
   showErrorMessage: vi.fn(),
   showErrorModal: vi.fn(),
   getToken: vi.fn(() => 'test-token'),
+  refreshTokenUrl: '/auth/refreshToken',
   redirectToLogin: vi.fn(),
   t: vi.fn(key => key)
   // ...
@@ -464,7 +503,7 @@ expect(mockAdapter.redirectToLogin).toHaveBeenCalled();
 
 ## 设计原则
 
-- **零平台依赖** — 核心逻辑只依赖 `@skyroc/axios` 和 `@tanstack/react-query`，不依赖任何 UI 库 / 路由 / 状态管理
+- **零平台依赖** — 只依赖 `@skyroc/axios`、`@tanstack/react-query` 和 `node-forge`，不依赖任何 UI 库 / 路由 / 状态管理
 - **Adapter 模式** — 平台差异通过接口注入，而非条件分支
 - **纯函数优先** — error-handler、shared 中的每个函数都接收全部依赖作为参数
 - **约定优于配置** — 默认假设 `{ code, data, msg }` 响应格式，可通过 `isBackendSuccess` / `transform` 覆盖
@@ -482,4 +521,4 @@ cd packages/@core/service && pnpm test
 pnpm test --coverage
 ```
 
-52 个测试用例，覆盖率：Statements 100% / Branches 95% / Functions 100% / Lines 100%，覆盖：请求实例创建与默认回调、业务状态码（登出 / 弹窗登出 / Token 过期）处理、Token 刷新与并发共享、错误消息去重、QueryClient 配置合并、指数退避重试延迟。
+81 个测试用例，覆盖率：Statements 98% / Branches 93% / Functions 100% / Lines 98%，覆盖：请求实例创建与默认回调、业务状态码（登出 / 弹窗登出 / Token 过期）处理、续签请求的自我识别、Token 刷新与并发共享、续签后重试结果的回传、错误消息去重、请求体加密、QueryClient 配置合并、指数退避重试延迟。

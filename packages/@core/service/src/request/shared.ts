@@ -1,3 +1,4 @@
+import type { AxiosRequestConfig } from 'axios';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
 
 /** 与后端约定的成功码，各 app 的 .env 漏配时兜底 */
@@ -20,6 +21,36 @@ export function normalizeCodes(codes: ServiceCodes): ServiceCodes {
     modalLogout: cleanCodeList(codes.modalLogout),
     success: codes.success?.trim() || DEFAULT_SUCCESS_CODE
   };
+}
+
+/** 去掉 query / hash 和尾部斜杠，只留下路径本身 */
+function normalizeEndpoint(url: string) {
+  return url.split(/[?#]/)[0]!.replace(/\/+$/, '');
+}
+
+/**
+ * 判断这个请求是不是续签请求自己。
+ *
+ * 续签请求拿到过期码时绝不能再去续签：它会 await 自己那次还没完成的刷新，把自己和所有等着
+ * 刷新的请求一起永久挂起。
+ *
+ * 认 url 而不是只认 `isRefreshToken` 标记，是因为标记要靠写 api 的人记得加；url 由 adapter
+ * 必填，漏了编译就过不去。
+ */
+export function isRefreshTokenRequest(config: AxiosRequestConfig | undefined, adapter: RequestAdapter) {
+  if (config?.isRefreshToken) {
+    return true;
+  }
+
+  if (!config?.url || !adapter.refreshTokenUrl) {
+    return false;
+  }
+
+  const target = normalizeEndpoint(adapter.refreshTokenUrl);
+  const actual = normalizeEndpoint(config.url);
+
+  // 请求实际带的 url 可能多一层 baseURL 前缀（'/api/auth/refreshToken'），adapter 给的通常是裸路径
+  return actual === target || actual.endsWith(target.startsWith('/') ? target : `/${target}`);
 }
 
 /** 构造 Authorization header 值 */
