@@ -114,6 +114,7 @@ catalogs:
     # 配置和执行工具
     c12: ^2.0.4
     cac: ^6.7.14
+    confbox: ^0.1.8
     enquirer: ^2.4.1
     execa: ^9.5.2
     # 终端美化工具

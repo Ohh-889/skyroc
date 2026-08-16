@@ -1,19 +1,21 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "jsx": "preserve",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "resolveJsonModule": true,
     "types": ["node"],
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
+    "noUncheckedIndexedAccess": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "typings/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "__tests__/**/*", "bin.ts", "tsdown.config.ts", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist", "templates"]
 }

@@ -53,7 +53,7 @@
       }
     },
     "bin": {
-      "sa": "./dist/index.mjs"
+      "sa": "./dist/cli.mjs"
     }
   },
   "scripts": {
@@ -61,26 +61,31 @@
     "clean": "rimraf dist",
     "dev": "tsdown --watch",
     "lint": "oxlint --fix --ignore-pattern 'templates/**'",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@soybeanjs/changelog": "catalog:dev",
-    "@tanstack/router-generator": "catalog:web",
     "bumpp": "catalog:dev",
     "c12": "catalog:dev",
     "cac": "catalog:dev",
+    "confbox": "catalog:dev",
     "enquirer": "catalog:dev",
     "execa": "catalog:dev",
     "kolorist": "catalog:dev",
     "npm-check-updates": "catalog:dev",
-    "picomatch": "catalog:dev"
+    "rimraf": "catalog:dev"
   },
   "devDependencies": {
+    "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
+    "@tanstack/router-generator": "catalog:web",
     "oxlint": "catalog:dev",
-    "rimraf": "catalog:dev",
     "tsdown": "catalog:dev",
     "tsx": "catalog:dev",
-    "typescript": "catalog:core"
+    "typescript": "catalog:core",
+    "vitest": "catalog:dev"
   }
 }
