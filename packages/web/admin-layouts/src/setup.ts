@@ -1,5 +1,9 @@
+import { registerStorage } from '@skyroc/core-state';
 import type { AnyRoute } from '@tanstack/react-router';
 import type { ComponentType } from 'react';
+
+/** 布局持久化 atom 解析存储时使用的注册名。 */
+export const ADMIN_LAYOUTS_STORAGE = 'admin-layouts';
 
 export interface AdminLayoutsStorage {
   /** 读取布局需要的本地缓存。 */
@@ -61,6 +65,14 @@ let options: AdminLayoutsOptions | null = null;
 
 export function setupAdminLayouts(adminLayoutsOptions: AdminLayoutsOptions) {
   options = adminLayoutsOptions;
+
+  // 把宿主传入的 storage 桥接到 core-state 注册表，供 createAtomWithStorage 按名解析。
+  registerStorage(ADMIN_LAYOUTS_STORAGE, {
+    getItem: key => adminLayoutsOptions.storage.get(key as keyof StorageType.Local),
+    removeItem: key => adminLayoutsOptions.storage.remove(key as keyof StorageType.Local),
+    setItem: (key, value) =>
+      adminLayoutsOptions.storage.set(key as keyof StorageType.Local, value as StorageType.Local[keyof StorageType.Local])
+  });
 }
 
 export function getAdminLayoutsOptions() {

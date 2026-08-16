@@ -1,5 +1,5 @@
-import { globalStore } from '@skyroc/core-state';
-import { atom, useAtom } from 'jotai';
+import { atomWithPartial, getAtomValue } from '@skyroc/core-state';
+import { useAtom } from 'jotai';
 
 import { getAdminLayoutsOptions } from '../../setup';
 import type { GeneratedMenus } from './menu-generator';
@@ -22,19 +22,14 @@ function createInitialState(): MenusAtom {
   };
 }
 
-const menusAtom = atom<MenusAtom, [Partial<MenusAtom>], void>(
-  {
-    home: '' as Router.RoutePath,
-    menus: new Map(),
-    quickReferenceMenus: new Map()
-  },
-  (get, set, update) => {
-    set(menusAtom, { ...get(menusAtom), ...update });
-  }
-);
+const menusAtom = atomWithPartial<MenusAtom>({
+  home: '' as Router.RoutePath,
+  menus: new Map(),
+  quickReferenceMenus: new Map()
+});
 
 export const useMenus = () => {
-  const [menusState, setMenusState] = useAtom(menusAtom, { store: globalStore });
+  const [menusState, setMenusState] = useAtom(menusAtom);
 
   async function initMenus(userInfo?: Api.Auth.UserInfo | null) {
     const { loadDynamicRoutes, routeMode } = getAdminLayoutsOptions();
@@ -64,7 +59,7 @@ export const useMenus = () => {
   }
 
   function getHomeRoute() {
-    return globalStore.get(menusAtom).home;
+    return getAtomValue(menusAtom).home;
   }
 
   return {
@@ -77,7 +72,7 @@ export const useMenus = () => {
 
 export function getQuickReferenceMenuByPath(path: string) {
   const normalizedPath = normalizePath(path) as Router.RoutePath;
-  const { quickReferenceMenus } = globalStore.get(menusAtom);
+  const { quickReferenceMenus } = getAtomValue(menusAtom);
 
   for (const quickReferenceMenuMap of quickReferenceMenus.values()) {
     const menu = quickReferenceMenuMap.get(normalizedPath);

@@ -555,6 +555,8 @@ describe('route authorization index', () => {
   it('checks dynamic route membership and backend route permissions', async () => {
     vi.resetModules();
 
+    // 与 resetModules 后的模块实例保持同一个 globalStore，因此 Provider 也要在这批 import 里取
+    const { JotaiProvider } = await import('@skyroc/core-state');
     const { setupAdminLayouts } = await import('../src/setup');
     const { hasAuthorizedRoutePath, useMenus } = await import('../src/features/menus/use-menus');
 
@@ -587,7 +589,7 @@ describe('route authorization index', () => {
       })
     });
 
-    const { result } = renderHook(() => useMenus());
+    const { result } = renderHook(() => useMenus(), { wrapper: JotaiProvider });
 
     await act(async () => {
       await result.current.initMenus(userInfo);
@@ -781,6 +783,8 @@ describe('menu rendering', () => {
   it('updates rendered badge value from valueKey', async () => {
     vi.resetModules();
 
+    // 与 resetModules 后的模块实例保持同一个 globalStore，因此 Provider 也要在这批 import 里取
+    const { JotaiProvider } = await import('@skyroc/core-state');
     const { setupAdminLayouts } = await import('../src/setup');
     const { renderCommonMenus } = await import('../src/features/menus/menu-renderer');
     const { useAdminMenuBadges } = await import('../src/state/menus/use-admin-menu-badges');
@@ -819,7 +823,8 @@ describe('menu rendering', () => {
       <>
         {menu.extra}
         <BadgeUpdater />
-      </>
+      </>,
+      { wrapper: JotaiProvider }
     );
 
     expect(screen.getByText('1')).toBeInTheDocument();
