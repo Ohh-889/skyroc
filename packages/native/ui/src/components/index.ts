@@ -18,6 +18,8 @@ export * from './collapse';
 
 export * from './count-down';
 
+export * from './date-picker';
+
 export * from './dialog';
 
 export * from './divider';
