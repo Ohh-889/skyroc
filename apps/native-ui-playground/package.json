@@ -30,6 +30,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.0",
+    "react-native-confirmation-code-field": "catalog:native",
     "react-native-gesture-handler": "catalog:native",
     "react-native-modal": "catalog:native",
     "react-native-pager-view": "catalog:native",

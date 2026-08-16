@@ -152,6 +152,30 @@ export default function HomeScreen() {
       >
         SwipeCell
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/sidebar')}
+      >
+        Sidebar
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/stepper')}
+      >
+        Stepper
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/password-input')}
+      >
+        PasswordInput
+      </Button>
     </View>
   );
 }

@@ -26,6 +26,8 @@ export * from './notify';
 
 export * from './number-keyboard';
 
+export * from './password-input';
+
 export * from './popup';
 
 export * from './portal';
