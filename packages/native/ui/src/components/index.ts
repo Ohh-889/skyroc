@@ -38,6 +38,8 @@ export * from './rolling-text';
 
 export * from './space';
 
+export * from './stepper';
+
 export * from './tabs';
 
 export * from './tag';
