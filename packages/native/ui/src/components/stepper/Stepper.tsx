@@ -271,12 +271,12 @@ const Stepper = (props: StepperProps) => {
       {showMinus && (
         <Button
           className={slotClassNames.minus}
+          classNames={{ text: slotClassNames.minusIcon }}
           disabled={disabled || disableMinus}
           onPress={handleMinusPress}
           onPressIn={handleMinusPressIn}
           onPressOut={longPressControl.stop}
           size="icon"
-          textClassName={slotClassNames.minusIcon}
           variant="ghost"
         >
           −
@@ -302,12 +302,12 @@ const Stepper = (props: StepperProps) => {
       {showPlus && (
         <Button
           className={slotClassNames.plus}
+          classNames={{ text: slotClassNames.plusIcon }}
           disabled={disabled || disablePlus}
           onPress={handlePlusPress}
           onPressIn={handlePlusPressIn}
           onPressOut={longPressControl.stop}
           size="icon"
-          textClassName={slotClassNames.plusIcon}
           variant="ghost"
         >
           +

@@ -35,8 +35,8 @@ const NumberKeyboardSidebar = (props: NumberKeyboardSidebarProps) => {
       {showDeleteKey ? (
         <Button
           className={classNames.deleteKey}
+          classNames={{ text: classNames.functionKeyText }}
           color="secondary"
-          textClassName={classNames.functionKeyText}
           variant="ghost"
           onPress={onDelete}
         >
@@ -46,8 +46,8 @@ const NumberKeyboardSidebar = (props: NumberKeyboardSidebarProps) => {
 
       <Button
         className={classNames.confirmKey}
+        classNames={{ text: classNames.functionKeyText }}
         color="primary"
-        textClassName={classNames.functionKeyText}
         variant="solid"
         onPress={onClose}
       >

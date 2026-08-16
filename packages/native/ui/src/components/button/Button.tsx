@@ -1,7 +1,7 @@
 import { cn } from '@skyroc/utils';
 import { ActivityIndicator, Pressable } from 'react-native';
 import { Text, TextClassContext } from '../text/Typography';
-import { DEFAULT_BUTTON_SIZE, buttonIndicatorVariants, buttonTextVariants, buttonVariants } from './button-variants';
+import { DEFAULT_BUTTON_SIZE, buttonVariants } from './button-variants';
 import type { ButtonProps, ButtonSize } from './types';
 
 /** 各尺寸补偿的触摸热区，保证实际可点区域不低于 44pt */
@@ -17,17 +17,19 @@ const Button = (props: ButtonProps) => {
     block,
     children,
     className,
+    classNames,
     color,
     disabled = false,
     leading,
     loading = false,
     shape,
     size,
-    textClassName,
     trailing,
     variant,
     ...rest
   } = props;
+
+  const variantSlots = buttonVariants({ block, color, shape, size, variant });
 
   const isDisabled = disabled || loading;
 
@@ -36,9 +38,9 @@ const Button = (props: ButtonProps) => {
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     return {
-      indicator: buttonIndicatorVariants({ variant, color }),
-      root: cn(buttonVariants({ variant, color, size, shape, block }), isDisabled && 'opacity-50', className),
-      text: cn(buttonTextVariants({ variant, color, size }), textClassName)
+      indicator: cn(variantSlots.indicator(), classNames?.indicator),
+      root: cn(variantSlots.root(), isDisabled && 'opacity-50', classNames?.root, className),
+      text: cn(variantSlots.text(), classNames?.text)
     };
   }
 

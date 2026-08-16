@@ -24,9 +24,9 @@ const PickerToolbar = (props: PickerToolbarProps) => {
     <View className={slotClassNames.toolbar}>
       <Button
         className={slotClassNames.cancel}
+        classNames={{ text: slotClassNames.cancelText }}
         color="muted"
         size="md"
-        textClassName={slotClassNames.cancelText}
         variant="ghost"
         onPress={onCancel}
       >
@@ -42,9 +42,9 @@ const PickerToolbar = (props: PickerToolbarProps) => {
 
       <Button
         className={slotClassNames.confirm}
+        classNames={{ text: slotClassNames.confirmText }}
         color="primary"
         size="md"
-        textClassName={slotClassNames.confirmText}
         variant="ghost"
         onPress={onConfirm}
       >

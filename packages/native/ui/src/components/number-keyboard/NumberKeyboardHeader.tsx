@@ -38,8 +38,8 @@ const NumberKeyboardHeader = (props: NumberKeyboardHeaderProps) => {
       {showClose ? (
         <Button
           className={classNames.headerSide}
+          classNames={{ text: classNames.closeBtn }}
           color="primary"
-          textClassName={classNames.closeBtn}
           variant="ghost"
           onPress={onClose}
         >

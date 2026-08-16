@@ -59,10 +59,10 @@ const DefaultFooter = (props: DialogFooterProps) => {
         {showConfirmButton && (
           <Button
             className={slotClassNames.confirmButton}
+            classNames={{ text: 'font-semibold' }}
             color={confirmButtonColor}
             disabled={loading.cancel || confirmButtonDisabled}
             loading={loading.confirm}
-            textClassName="font-semibold"
             variant="ghost"
             onPress={onConfirm}
           >

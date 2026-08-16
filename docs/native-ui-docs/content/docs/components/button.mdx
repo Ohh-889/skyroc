@@ -105,7 +105,7 @@ import { Button } from '@skyroc/native-ui';
 
 - `children` 为 `string` / `number` 时自动包一层 `Text`，样式来自 `TextClassContext`。
 - 传入自定义节点时不做包裹，若节点内是 `@skyroc/native-ui` 的 `Text`，同样会继承按钮的文字样式。
-- `textClassName` 追加到文字样式上，`className` 追加到容器上，两者都会与内置变体合并。
+- `className` 追加到容器上，`classNames` 按 slot（`root` / `text` / `indicator`）细粒度覆盖，两者都会与内置变体合并。
 
 ## 无障碍
 
@@ -160,9 +160,10 @@ import { Button } from '@skyroc/native-ui';
     },
     { name: 'className', description: '容器类名，合并到变体样式之后', type: 'string' },
     {
-      name: 'textClassName',
-      description: '文字类名，通过 TextClassContext 下发给子 Text',
-      type: 'string'
+      name: 'classNames',
+      description:
+        '各 slot 的类名覆盖，text 通过 TextClassContext 下发给子 Text，indicator 作用于 loading 指示器的 colorClassName，只接受 accent-* 颜色类',
+      type: "SlotClassNames<'indicator' | 'root' | 'text'>"
     },
     {
       name: 'ref',
@@ -175,7 +176,15 @@ import { Button } from '@skyroc/native-ui';
 ### 类型
 
 ```ts
-import type { ButtonColor, ButtonProps, ButtonShape, ButtonSize, ButtonVariant } from '@skyroc/native-ui';
+import type {
+  ButtonColor,
+  ButtonProps,
+  ButtonShape,
+  ButtonSize,
+  ButtonSlots,
+  ButtonVariant
+} from '@skyroc/native-ui';
 ```
 
-`ButtonColor` / `ButtonVariant` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上表一一对应。
+`ButtonColor` / `ButtonVariant` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上表一一对应；
+`ButtonSlots` 是可覆盖的 slot 名称联合，供 `classNames` 使用。

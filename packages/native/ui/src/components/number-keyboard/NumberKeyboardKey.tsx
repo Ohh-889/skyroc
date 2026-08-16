@@ -37,8 +37,8 @@ const NumberKeyboardKey = (props: NumberKeyboardKeyProps) => {
       ) : (
         <Button
           className={classNames.key}
+          classNames={{ text: isDelete ? classNames.functionKeyText : classNames.keyText }}
           color="secondary"
-          textClassName={isDelete ? classNames.functionKeyText : classNames.keyText}
           variant="ghost"
           onPress={() => onPress(keyConfig.text, keyConfig.type)}
         >
