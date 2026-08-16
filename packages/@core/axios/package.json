@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/axios",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "type": "module",
   "description": "Type-safe Axios HTTP client with retry, transform pipeline, abort control, and pluggable backend response handling",
   "keywords": [

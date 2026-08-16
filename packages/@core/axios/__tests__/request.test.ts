@@ -1,5 +1,5 @@
 /** @vitest-environment node */
-import type { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { HttpResponse, delay, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -461,9 +461,14 @@ describe('createRequest', () => {
     expect(data).toEqual({ ok: true });
   });
 
-  it('onRequest 返回 falsy 时应回退使用原始 config', async () => {
+  // 曾经是 `opts.onRequest?.(config) || config`：忘记 return 就变成一个能跑但少了认证头的请求，
+  // 排查起来只能看到后端 401
+  it('onRequest 未返回 config 时应立刻抛出而不是静默沿用旧配置', async () => {
+    let hitServer = false;
+
     server.use(
       http.get(`${BASE_URL}/api/falsy-hook`, () => {
+        hitServer = true;
         return HttpResponse.json({ code: 200, data: { ok: true }, message: 'ok' });
       })
     );
@@ -472,13 +477,134 @@ describe('createRequest', () => {
       TEST_AXIOS_CONFIG,
       {
         isBackendSuccess: response => response.data.code === 200,
-        transform: async response => response.data.data,
-        // 返回 undefined（falsy），触发 || config 回退
         onRequest: (() => undefined) as any
       }
     );
 
-    const data = await request({ url: '/api/falsy-hook' });
+    try {
+      await request({ url: '/api/falsy-hook' });
+      expect.unreachable('应该抛出异常');
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      expect(axiosError.code).toBe('ERR_BAD_OPTION');
+    }
+
+    expect(hitServer).toBe(false);
+  });
+
+  it('自定义 requestIdKey 应改用该 header 名', async () => {
+    let capturedTraceId: string | null = null;
+    let capturedDefaultId: string | null = null;
+
+    server.use(
+      http.get(`${BASE_URL}/api/custom-id-key`, ({ request }) => {
+        capturedTraceId = request.headers.get('X-Trace-Id');
+        capturedDefaultId = request.headers.get(REQUEST_ID_KEY);
+        return HttpResponse.json({ code: 200, data: null, message: 'ok' });
+      })
+    );
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      requestIdKey: 'X-Trace-Id'
+    });
+
+    await request({ url: '/api/custom-id-key' });
+
+    expect(capturedTraceId).toBeTruthy();
+    expect(capturedDefaultId).toBeNull();
+  });
+
+  it('requestIdKey 为 false 时不应发送请求 id header', async () => {
+    let capturedRequestId: string | null = null;
+
+    server.use(
+      http.get(`${BASE_URL}/api/no-id`, ({ request }) => {
+        capturedRequestId = request.headers.get(REQUEST_ID_KEY);
+        return HttpResponse.json({ code: 200, data: null, message: 'ok' });
+      })
+    );
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      requestIdKey: false
+    });
+
+    await request({ url: '/api/no-id' });
+
+    expect(capturedRequestId).toBeNull();
+  });
+
+  // retry 曾经和 axiosConfig 混在一起传给 axios-retry，而 CreateAxiosDefaults 没有 retries 字段，
+  // 只能靠 as any 才塞得进去
+  it('retry 选项应把重试次数交给 axios-retry', async () => {
+    let attempts = 0;
+
+    server.use(
+      http.get(`${BASE_URL}/api/flaky`, () => {
+        attempts += 1;
+
+        if (attempts < 3) {
+          return new HttpResponse('Service Unavailable', { status: 503 });
+        }
+
+        return HttpResponse.json({ code: 200, data: { recovered: true }, message: 'ok' });
+      })
+    );
+
+    const request = createRequest<BackendResponse, BackendResponse['data'], Record<string, unknown>>(
+      TEST_AXIOS_CONFIG,
+      {
+        isBackendSuccess: response => response.data.code === 200,
+        retry: { retries: 2, retryDelay: () => 0 },
+        transform: async response => response.data.data
+      }
+    );
+
+    const data = await request({ url: '/api/flaky' });
+
+    expect(data).toEqual({ recovered: true });
+    expect(attempts).toBe(3);
+  });
+
+  it('默认不重试', async () => {
+    let attempts = 0;
+
+    server.use(
+      http.get(`${BASE_URL}/api/no-retry`, () => {
+        attempts += 1;
+        return new HttpResponse('Service Unavailable', { status: 503 });
+      })
+    );
+
+    const request = createRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200
+    });
+
+    await expect(request({ url: '/api/no-retry' })).rejects.toThrow();
+
+    expect(attempts).toBe(1);
+  });
+
+  // cancelAllRequest 之后必须换一个新的 controller，否则后续请求挂上已 abort 的 signal，一发出就死
+  it('cancelAllRequest 之后新发起的请求仍应正常完成', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/after-cancel`, () => {
+        return HttpResponse.json({ code: 200, data: { ok: true }, message: 'ok' });
+      })
+    );
+
+    const request = createRequest<BackendResponse, BackendResponse['data'], Record<string, unknown>>(
+      TEST_AXIOS_CONFIG,
+      {
+        isBackendSuccess: response => response.data.code === 200,
+        transform: async response => response.data.data
+      }
+    );
+
+    request.cancelAllRequest();
+
+    const data = await request({ url: '/api/after-cancel' });
 
     expect(data).toEqual({ ok: true });
   });
@@ -533,7 +659,7 @@ describe('createFlatRequest', () => {
     expect(result.data).toEqual({ items: [1, 2, 3] });
     expect(result.error).toBeNull();
     expect(result.response).toBeDefined();
-    expect(result.response.status).toBe(200);
+    expect(result.response?.status).toBe(200);
   });
 
   it('非 JSON 响应类型应直接返回原始数据', async () => {
@@ -640,5 +766,70 @@ describe('createFlatRequest', () => {
     expect(result.data).toBeNull();
     expect(result.error).not.toBeNull();
     expect(result.error!.code).toBe('ERR_CANCELED');
+  });
+
+  // response 曾被声明成必选，网络错误时它其实是 undefined —— 调用方读 result.response.status
+  // 会恰好在最需要它的那条路径上炸
+  it('网络错误时 response 应为 undefined 而不是假装存在', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/flat-offline`, () => {
+        return HttpResponse.error();
+      })
+    );
+
+    const request = createFlatRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200
+    });
+
+    const result = await request({ url: '/api/flat-offline' });
+
+    expect(result.data).toBeNull();
+    expect(result.error).not.toBeNull();
+    expect(result.response).toBeUndefined();
+  });
+
+  // catch 会抓到一切，不只是 AxiosError：transform 里抛出的普通 Error 之前会被直接当成
+  // AxiosError 返回，调用方读 error.code 拿到的是 undefined
+  it('transform 抛出普通异常时应包装成 AxiosError', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/flat-bad-transform`, () => {
+        return HttpResponse.json({ code: 200, data: { items: [] }, message: 'ok' });
+      })
+    );
+
+    const request = createFlatRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      transform: () => {
+        throw new TypeError('cannot read property of undefined');
+      }
+    });
+
+    const result = await request({ url: '/api/flat-bad-transform' });
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBeInstanceOf(AxiosError);
+    expect(result.error!.isAxiosError).toBe(true);
+    expect(result.error!.code).toBe(AxiosError.ERR_BAD_RESPONSE);
+    expect(result.error!.message).toBe('cannot read property of undefined');
+  });
+
+  it('抛出的不是 Error 实例时也应包装成 AxiosError', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/flat-throw-string`, () => {
+        return HttpResponse.json({ code: 200, data: null, message: 'ok' });
+      })
+    );
+
+    const request = createFlatRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      // 第三方库抛字符串并不罕见，走到 catch 里同样得能收敛成 AxiosError
+      // oxlint-disable-next-line prefer-promise-reject-errors
+      transform: () => Promise.reject('boom')
+    });
+
+    const result = await request({ url: '/api/flat-throw-string' });
+
+    expect(result.error).toBeInstanceOf(AxiosError);
+    expect(result.error!.message).toBe('boom');
   });
 });

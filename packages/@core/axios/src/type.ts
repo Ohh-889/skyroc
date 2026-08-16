@@ -1,4 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type { IAxiosRetryConfig } from 'axios-retry';
 
 export type ContentType =
   | 'application/json'
@@ -54,9 +55,28 @@ export interface RequestOption<
    *
    * For example: You can add header token in this hook
    *
+   * 必须把 config 返回出去：拦截器不会替你兜底沿用旧配置，返回空会直接抛 ERR_BAD_OPTION。
+   *
    * @param config Axios config
    */
   onRequest: (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
+  /**
+   * 请求 id 的 header 名，传 `false` 则不发送
+   *
+   * 自定义 header 会让跨域请求多一次 OPTIONS 预检，不需要链路追踪时可以关掉。
+   *
+   * @default 'X-Request-Id'
+   */
+  requestIdKey?: string | false;
+  /**
+   * axios-retry 的配置
+   *
+   * 独立一项而不是混在 axiosConfig 里：`CreateAxiosDefaults` 没有 `retries` 字段，塞在那里只能靠
+   * 类型断言绕过检查，等于这个能力事实上不可用。
+   *
+   * @default { retries: 0 }
+   */
+  retry?: IAxiosRetryConfig;
   /**
    * Transform the response data to the api data
    *
@@ -72,10 +92,17 @@ export interface RequestOption<
   transformBackendResponse: ResponseTransform<AxiosResponse<ResponseData>, ApiData>;
 }
 
+/**
+ * 非 json 的响应类型到数据类型的映射
+ *
+ * key 必须和 axios 的 `ResponseType` 字面量逐字对齐（全小写）：这些值会被原样赋给
+ * `XMLHttpRequest.responseType`，写错大小写浏览器会按非法枚举值静默忽略，拿回来的是文本。
+ */
 interface ResponseMap {
-  arrayBuffer: ArrayBuffer;
+  arraybuffer: ArrayBuffer;
   blob: Blob;
   document: Document;
+  formdata: FormData;
   stream: ReadableStream<Uint8Array>;
   text: string;
 }
@@ -91,9 +118,9 @@ export type CustomAxiosRequestConfig<R extends ResponseType = 'json'> = Omit<Axi
 
 export interface RequestInstanceCommon<State extends Record<string, unknown>> {
   /**
-   * Cancel all request
+   * 取消所有由本实例托管的进行中请求
    *
-   * If the request provide abort controller sign from config, it will not collect in the abort controller map
+   * 调用方在 config 里自带 `signal` 的请求不受影响——传了 signal 就意味着生命周期由调用方自己管。
    */
   cancelAllRequest: () => void;
   /** You can set custom state in the request instance */
@@ -116,7 +143,8 @@ export type FlatResponseSuccessData<ResponseData, ApiData> = {
 export type FlatResponseFailData<ResponseData> = {
   data: null;
   error: AxiosError<ResponseData>;
-  response: AxiosResponse<ResponseData>;
+  /** 网络错误、超时、取消，以及请求根本没发出去的场景都没有响应 */
+  response?: AxiosResponse<ResponseData>;
 };
 
 export type FlatResponseData<ResponseData, ApiData> =

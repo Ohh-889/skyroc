@@ -1,11 +1,4 @@
-import type { AxiosHeaderValue, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import type { ResponseType } from './type';
-
-export function getContentType(config: InternalAxiosRequestConfig) {
-  const contentType: AxiosHeaderValue = config.headers?.['Content-Type'] || 'application/json';
-
-  return contentType;
-}
+import type { AxiosResponse } from 'axios';
 
 /**
  * Check if http status is success
@@ -18,19 +11,17 @@ export function isHttpSuccess(status: number) {
 }
 
 /**
- * Is response json
+ * 二进制响应里夹带 JSON 时把它解出来
+ *
+ * 典型场景：`responseType: 'blob'` 的文件下载失败了，后端回的其实是 JSON 错误信封。不解出来的话
+ * `isBackendSuccess` / `onBackendFail` 拿到的是一坨 Blob，业务码无从判断。
  *
  * @param response Axios response
  */
-export function isResponseJson(response: AxiosResponse) {
+export async function transformResponse(response: AxiosResponse) {
   const { responseType } = response.config;
 
-  return responseType === 'json' || responseType === undefined;
-}
-
-export async function transformResponse(response: AxiosResponse) {
-  const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json';
-  if (responseType === 'json') return;
+  if (!responseType || responseType === 'json') return;
 
   const isJson = response.headers['content-type']?.includes('application/json');
   if (!isJson) return;
@@ -39,7 +30,7 @@ export async function transformResponse(response: AxiosResponse) {
     await transformBlobToJson(response);
   }
 
-  if (responseType === 'arrayBuffer') {
+  if (responseType === 'arraybuffer') {
     await transformArrayBufferToJson(response);
   }
 }
@@ -58,7 +49,9 @@ export async function transformBlobToJson(response: AxiosResponse) {
     }
 
     response.data = data;
-  } catch {}
+  } catch {
+    // 解不出 JSON 说明响应体确实是二进制，保留原始 data 交给调用方
+  }
 }
 
 export async function transformArrayBufferToJson(response: AxiosResponse) {
@@ -75,5 +68,7 @@ export async function transformArrayBufferToJson(response: AxiosResponse) {
     }
 
     response.data = data;
-  } catch {}
+  } catch {
+    // 同上：转换只是尽力而为，失败时不能把原始数据弄丢
+  }
 }

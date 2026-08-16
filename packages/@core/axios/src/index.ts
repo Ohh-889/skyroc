@@ -1,6 +1,6 @@
 import { nanoid } from '@skyroc/utils';
-import axios, { AxiosError } from 'axios';
-import type { AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, isAxiosError } from 'axios';
+import type { AxiosResponse, CreateAxiosDefaults } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BACKEND_ERROR_CODE, REQUEST_ID_KEY } from './constant';
 import { createAxiosConfig, createDefaultOptions, createRetryOptions } from './options';
@@ -14,9 +14,20 @@ import type {
   ResponseType
 } from './type';
 
+/** 把非 axios 异常（transform、hook 里抛出的）包成 AxiosError，保住 flat 风格 `error` 字段的契约 */
+function toAxiosError<ResponseData>(error: unknown): AxiosError<ResponseData> {
+  if (isAxiosError<ResponseData>(error)) {
+    return error;
+  }
+
+  const cause = error instanceof Error ? error : new Error(String(error));
+
+  return AxiosError.from<ResponseData>(cause, AxiosError.ERR_BAD_RESPONSE);
+}
+
 function createCommonRequest<
   ResponseData,
-  ApiData = ResponseData,
+  ApiData = unknown,
   State extends Record<string, unknown> = Record<string, unknown>
 >(axiosConfig?: CreateAxiosDefaults, options?: Partial<RequestOption<ResponseData, ApiData, State>>) {
   const opts = createDefaultOptions<ResponseData, ApiData, State>(options);
@@ -24,35 +35,43 @@ function createCommonRequest<
   const axiosConf = createAxiosConfig(axiosConfig);
   const instance = axios.create(axiosConf);
 
-  const abortControllerMap = new Map<string, AbortController>();
+  /**
+   * 托管请求共用一个 controller，cancelAllRequest 把它 abort 掉再换一个新的
+   *
+   * 不按 requestId 存一张 Map：那样每个请求都会往 Map 里塞一条，而请求正常结束时没有任何地方
+   * 删除它——长驻页面下这张表只增不减。共用一个 controller 则完全不需要回收，adapter 在请求结束时
+   * 会自己把 abort 监听器摘掉。
+   */
+  let abortController = new AbortController();
 
   // config axios retry
-  const retryOptions = createRetryOptions(axiosConf);
+  const retryOptions = createRetryOptions(opts.retry);
   axiosRetry(instance, retryOptions);
 
-  instance.interceptors.request.use(conf => {
-    const config: InternalAxiosRequestConfig = { ...conf };
-
-    // set request id
-    const requestId = nanoid();
-    config.headers.set(REQUEST_ID_KEY, requestId);
-
-    // config abort controller
-    if (!config.signal) {
-      const abortController = new AbortController();
-      config.signal = abortController.signal;
-      abortControllerMap.set(requestId, abortController);
+  instance.interceptors.request.use(async config => {
+    if (opts.requestIdKey) {
+      config.headers.set(opts.requestIdKey, nanoid());
     }
 
-    // handle config by hook
-    const handledConfig = opts.onRequest?.(config) || config;
+    // 调用方自带 signal 就由它自己管生命周期，不纳入 cancelAllRequest
+    if (!config.signal) {
+      config.signal = abortController.signal;
+    }
+
+    const handledConfig = await opts.onRequest(config);
+
+    // 不给 `|| config` 兜底：静默沿用旧配置会把「忘记 return」变成一个能跑但少了认证头的请求，
+    // 和 onBackendFail 拒绝可选返回值是同一个理由
+    if (!handledConfig) {
+      throw new AxiosError('the onRequest hook must return the request config', AxiosError.ERR_BAD_OPTION, config);
+    }
 
     return handledConfig;
   });
 
   instance.interceptors.response.use(
     async response => {
-      const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json';
+      const responseType: ResponseType = response.config?.responseType || 'json';
 
       await transformResponse(response);
 
@@ -101,10 +120,10 @@ function createCommonRequest<
   );
 
   function cancelAllRequest() {
-    abortControllerMap.forEach(abortController => {
-      abortController.abort();
-    });
-    abortControllerMap.clear();
+    abortController.abort();
+
+    // 必须换新的：已 abort 的 signal 挂到后续请求上，会让它们一发出就立刻失败
+    abortController = new AbortController();
   }
 
   return {
@@ -116,18 +135,17 @@ function createCommonRequest<
 
 export type * from './type';
 
-export * from './type';
-
 /**
  * Create a request instance
  *
  * @param axiosConfig Axios config
  * @param options Request options
  */
-export function createRequest<ResponseData, ApiData, State extends Record<string, unknown>>(
-  axiosConfig?: CreateAxiosDefaults,
-  options?: Partial<RequestOption<ResponseData, ApiData, State>>
-) {
+export function createRequest<
+  ResponseData,
+  ApiData = unknown,
+  State extends Record<string, unknown> = Record<string, unknown>
+>(axiosConfig?: CreateAxiosDefaults, options?: Partial<RequestOption<ResponseData, ApiData, State>>) {
   const { cancelAllRequest, instance, opts } = createCommonRequest<ResponseData, ApiData, State>(axiosConfig, options);
 
   const request: RequestInstance<ApiData, State> = async function request<
@@ -158,10 +176,11 @@ export function createRequest<ResponseData, ApiData, State extends Record<string
  * @param axiosConfig Axios config
  * @param options Request options
  */
-export function createFlatRequest<ResponseData, ApiData, State extends Record<string, unknown>>(
-  axiosConfig?: CreateAxiosDefaults,
-  options?: Partial<RequestOption<ResponseData, ApiData, State>>
-) {
+export function createFlatRequest<
+  ResponseData,
+  ApiData = unknown,
+  State extends Record<string, unknown> = Record<string, unknown>
+>(axiosConfig?: CreateAxiosDefaults, options?: Partial<RequestOption<ResponseData, ApiData, State>>) {
   const { cancelAllRequest, instance, opts } = createCommonRequest<ResponseData, ApiData, State>(axiosConfig, options);
 
   const flatRequest: FlatRequestInstance<ResponseData, ApiData, State> = async function flatRequest<
@@ -181,7 +200,10 @@ export function createFlatRequest<ResponseData, ApiData, State extends Record<st
 
       return { data: response.data as MappedType<R, T>, error: null, response };
     } catch (error) {
-      return { data: null, error, response: (error as AxiosError<ResponseData>).response };
+      // response 可能是 undefined：网络错误、超时、取消，或者请求拦截器里就抛了
+      const axiosError = toAxiosError<ResponseData>(error);
+
+      return { data: null, error: axiosError, response: axiosError.response };
     }
   } as FlatRequestInstance<ResponseData, ApiData, State>;
 

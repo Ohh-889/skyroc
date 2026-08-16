@@ -1,14 +1,7 @@
 /** @vitest-environment node */
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { describe, expect, it } from 'vitest';
-import {
-  getContentType,
-  isHttpSuccess,
-  isResponseJson,
-  transformArrayBufferToJson,
-  transformBlobToJson,
-  transformResponse
-} from '../src/shared';
+import { isHttpSuccess, transformArrayBufferToJson, transformBlobToJson, transformResponse } from '../src/shared';
 
 // ==================== 辅助工具 ====================
 
@@ -32,20 +25,6 @@ function createMockResponse(overrides?: Partial<AxiosResponse>) {
   } as AxiosResponse;
 }
 
-// ==================== getContentType ====================
-
-describe('getContentType', () => {
-  it('应返回配置中的 Content-Type', () => {
-    const config = createMockConfig({ headers: { 'Content-Type': 'text/plain' } } as any);
-    expect(getContentType(config)).toBe('text/plain');
-  });
-
-  it('Content-Type 缺失时应返回 application/json', () => {
-    const config = createMockConfig({ headers: {} } as any);
-    expect(getContentType(config)).toBe('application/json');
-  });
-});
-
 // ==================== isHttpSuccess ====================
 
 describe('isHttpSuccess', () => {
@@ -62,25 +41,6 @@ describe('isHttpSuccess', () => {
   });
 });
 
-// ==================== isResponseJson ====================
-
-describe('isResponseJson', () => {
-  it('responseType 为 json 时应返回 true', () => {
-    const response = createMockResponse({ config: { responseType: 'json' } as any });
-    expect(isResponseJson(response)).toBe(true);
-  });
-
-  it('responseType 为 undefined 时应返回 true', () => {
-    const response = createMockResponse({ config: { responseType: undefined } as any });
-    expect(isResponseJson(response)).toBe(true);
-  });
-
-  it.each(['blob', 'arraybuffer', 'text', 'document', 'stream'] as const)('responseType 为 %s 时应返回 false', type => {
-    const response = createMockResponse({ config: { responseType: type } as any });
-    expect(isResponseJson(response)).toBe(false);
-  });
-});
-
 // ==================== transformResponse ====================
 
 describe('transformResponse', () => {
@@ -88,6 +48,19 @@ describe('transformResponse', () => {
     const response = createMockResponse({
       config: { responseType: 'json' } as any,
       data: { code: 200 }
+    });
+    const original = response.data;
+
+    await transformResponse(response);
+
+    expect(response.data).toBe(original);
+  });
+
+  it('responseType 缺省时不做任何转换', async () => {
+    const response = createMockResponse({
+      config: { responseType: undefined } as any,
+      data: { code: 200 },
+      headers: { 'content-type': 'application/json' }
     });
     const original = response.data;
 
@@ -122,10 +95,11 @@ describe('transformResponse', () => {
     expect(response.data).toEqual(jsonData);
   });
 
-  it('responseType 为 arrayBuffer 且 content-type 含 application/json 时应转换数据', async () => {
+  // 大小写必须和 axios 的字面量一致：曾经写成 'arrayBuffer'，导致这个分支在真实请求里永远命中不了
+  it('responseType 为 arraybuffer 且 content-type 含 application/json 时应转换数据', async () => {
     const jsonData = { code: 200, message: 'ok' };
     const response = createMockResponse({
-      config: { responseType: 'arrayBuffer' } as any,
+      config: { responseType: 'arraybuffer' } as any,
       data: JSON.stringify(jsonData),
       headers: { 'content-type': 'application/json' }
     });
