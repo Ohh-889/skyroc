@@ -1,8 +1,7 @@
 {
   "name": "@skyroc/type-utils",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
-  "type": "module",
   "description": "Advanced TypeScript utility types for form handling, path manipulation, and type transformations",
   "keywords": [
     "form-types",
@@ -12,27 +11,28 @@
     "typescript",
     "utility-types"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/@core/type-utils",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc-admin.git",
     "directory": "packages/@core/type-utils"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "sideEffects": false,
   "files": [
     "dist",
     "README.md",
     "README.zh.md"
   ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -46,14 +46,21 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./web": {
+      "import": {
+        "types": "./dist/web/index.d.ts",
+        "default": "./dist/web/index.js"
+      },
+      "require": {
+        "types": "./dist/web/index.d.cts",
+        "default": "./dist/web/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.cjs",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -64,15 +71,37 @@
           "types": "./dist/index.d.cts",
           "default": "./dist/index.cjs"
         }
-      }
-    }
+      },
+      "./web": {
+        "import": {
+          "types": "./dist/web/index.d.ts",
+          "default": "./dist/web/index.js"
+        },
+        "require": {
+          "types": "./dist/web/index.d.cts",
+          "default": "./dist/web/index.cjs"
+        }
+      },
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "tsdown",
     "clean": "rimraf dist",
-    "dev": "tsdown --watch"
+    "dev": "tsdown --watch",
+    "lint": "oxlint --fix",
+    "test": "vitest run --typecheck",
+    "test:watch": "vitest --typecheck",
+    "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "devDependencies": {
+    "@skyroc/config": "workspace:*",
+    "@skyroc/tsconfig": "workspace:*",
+    "oxlint": "catalog:dev",
     "rimraf": "catalog:dev",
     "tsdown": "catalog:dev",
     "typescript": "catalog:core"

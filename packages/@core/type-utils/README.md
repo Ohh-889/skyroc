@@ -2,565 +2,254 @@
 
 English | [简体中文](./README.zh.md)
 
-Advanced TypeScript utility types for form handling, path manipulation, and type transformations. Provides a comprehensive collection of type utilities to enhance TypeScript's type system with powerful type-level programming capabilities.
+Zero-runtime TypeScript utility types for form handling, dotted-path manipulation and deep type transformations.
 
 ## ✨ Features
 
-- 🎯 **Advanced Type Utilities** - Rich collection of utility types for complex type transformations
-- 📝 **Form Type Support** - Specialized types for form elements and custom components
-- 🛤️ **Path Manipulation** - Type-safe path types for nested object access
-- 🔧 **Function Type Helpers** - Extract and manipulate function types from objects
-- 💪 **Deep Type Operations** - Deep partial, deep optional, and nested type utilities
-- 🎨 **Type Prettification** - Make complex intersection types readable in IDE
-- ⚡ **Zero Runtime** - All utilities are type-level only, zero runtime overhead
+- 🛤️ **Dotted paths** — enumerate every path in a nested type, resolve a path back to its value type
+- 📝 **Form-shaped transforms** — deep-partial values, minimal shapes derived from a path list
+- 🔧 **Function helpers** — extract function-valued keys and types out of an object
+- 🎯 **Strict by default** — invalid paths resolve to `never`, never to `any`
+- 🧱 **Platform neutral** — the root entry has no DOM dependency; browser-only types live under `/web`
+- ⚡ **Zero runtime** — types only, nothing ships to the bundle
 
 ## 📦 Installation
 
 ```bash
-npm install @skyroc/type-utils
-# or
-pnpm add @skyroc/type-utils
-# or
-yarn add @skyroc/type-utils
+pnpm add -D @skyroc/type-utils
 ```
 
 ## 🚀 Quick Start
 
 ```typescript
-import type {
-  DeepPartial,
-  LeafPaths,
-  PathToType,
-  OnlyFunctions,
-  Prettify
-} from '@skyroc/type-utils';
+import type { AllPathsKeys, DeepPartial, PathValue, ShapeFromPaths } from '@skyroc/type-utils';
 
-// Deep partial for nested objects
-type User = {
-  name: string;
-  address: {
-    city: string;
-    street: string;
-  };
+type FormValues = {
+  age: number;
+  info: { city: string; pl: { deep: string } };
+  list: { id: number; tag: string }[];
 };
-type PartialUser = DeepPartial<User>;
-// { name?: string; address?: { city?: string; street?: string } }
 
-// Type-safe paths for nested properties
-type UserPaths = LeafPaths<User>;
-// "name" | "address.city" | "address.street"
+// Every path, including intermediate nodes
+type Paths = AllPathsKeys<FormValues>;
+// 'age' | 'info' | 'info.city' | 'info.pl' | 'info.pl.deep'
+//   | 'list' | `list.${number}` | `list.${number}.id` | `list.${number}.tag`
 
-// Get type from path
-type CityType = PathToType<User, "address.city">; // string
+// Resolve a path back to its type — typos are `never`, not `any`
+type City = PathValue<FormValues, 'info.city'>; // string
+type Typo = PathValue<FormValues, 'info.citty'>; // never
 
-// Extract only function properties
-type API = {
-  data: string;
-  fetch(): Promise<void>;
-  update(id: number): void;
-};
-type APIFunctions = OnlyFunctions<API>;
-// { fetch: () => Promise<void>; update: (id: number) => void }
+// Deep-partial, without wrecking Date / Map / arrays
+type Draft = DeepPartial<FormValues>;
+// { age?: number; info?: { city?: string; pl?: { deep?: string } }; list?: { id?: number; tag?: string }[] }
+
+// The minimal shape covering a set of paths
+type Watched = ShapeFromPaths<FormValues, ['age', 'list.0.tag']>;
+// { age: number; list: { tag: string }[] }
 ```
 
 ## 📚 API Reference
 
-### Function Type Utilities
+### Entry points
 
-#### `Fn`
+| Import                   | Contents                                | Requires DOM lib |
+| ------------------------ | --------------------------------------- | ---------------- |
+| `@skyroc/type-utils`     | everything below except the `web` table | no               |
+| `@skyroc/type-utils/web` | `CustomElement`, `FieldElement`         | yes              |
 
-Generic function type.
+The split matters: React Native consumers import the root entry, and a stray `HTMLElement`
+reference in it would fail to compile against a DOM-less `lib`.
+
+### Primitives & predicates
+
+| Type         | Description                                                                                                                                                         |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Primitive`  | The real JS primitives: `string \| number \| boolean \| bigint \| symbol \| null \| undefined`.                                                                     |
+| `Atomic`     | The recursion stop-set: `Primitive` plus `Date`, `RegExp`, `Error`, `Map`, `Set`, `WeakMap`, `WeakSet` and any function. Every deep utility here stops at `Atomic`. |
+| `IsAny<T>`   | `true` only for `any`.                                                                                                                                              |
+| `IsTuple<T>` | `true` for fixed-length tuples, `false` for variable-length arrays.                                                                                                 |
+
+`Primitive` is deliberately narrow. If you want "don't recurse into this", you want `Atomic`.
+
+### Object transforms
+
+#### `DeepPartial<T>`
+
+Recursively optional. Stops at `Atomic`, preserves tuple shape, preserves array mutability,
+and — unlike a naive homomorphic mapped type — does **not** turn array elements into `T | undefined`.
 
 ```typescript
-type Fn = (...args: any[]) => any;
+type Cfg = { when: Date; list: { id: number }[]; pair: [{ a: number }, string] };
+
+type T = DeepPartial<Cfg>;
+// { when?: Date; list?: { id?: number }[]; pair?: [{ a?: number }, string] }
 ```
 
-#### `Noop`
+#### `ShallowPartial<T>`
 
-No-operation function type.
+Same idea, one level deep only. `Atomic` types and arrays pass through untouched.
+
+#### `Prettify<T>` / `MergeUnion<U>` / `UnionToIntersection<U>` / `Wrap<K, V>`
 
 ```typescript
-type Noop = () => void;
+type A = Prettify<{ a: number } & { b: string }>; // { a: number; b: string }
+type B = UnionToIntersection<{ a: 1 } | { b: 2 }>; // { a: 1 } & { b: 2 }
+type C = MergeUnion<{ a: 1 } | { b: 2 }>; // { a: 1; b: 2 }
+type D = Wrap<'a' | 'b', number>; // { a: number; b: number }
 ```
 
-#### `OnlyFunctions<T>`
+`MergeUnion` flattens the top level only; nested collisions stay as intersections.
 
-Extracts only function properties from an object type.
+### Path types
+
+All path utilities share the same rules:
+
+- recursion stops at `Atomic`, so `Date` never contributes `when.getTime` as a path
+- arrays are addressed with `` `${number}` ``; the literal segment `number` is accepted as a wildcard
+- optional properties contribute their key, never `undefined`
+- recursion is bounded by a `Depth` parameter (default `6`) so self-referential types compile
+
+#### `LeafPaths<T, P?, Depth?>` / `AllPaths<T, P?, Depth?>`
+
+`LeafPaths` yields only terminal paths; `AllPaths` also yields the intermediate objects and arrays.
 
 ```typescript
-interface Foo {
-  a: number;
-  b?: string;
-  c(): void;
-  d: (x: number) => string;
-  e?: () => void;
-}
+type FormValues = { age: number; info: { city: string }; list: { id: number }[] };
 
-type FooFunctions = OnlyFunctions<Foo>;
-// {
-//   c: () => void;
-//   d: (x: number) => string;
-//   e?: (() => void) | undefined;
-// }
+type L = LeafPaths<FormValues>;
+// 'age' | 'info.city' | `list.${number}.id`
+
+type A = AllPaths<FormValues>;
+// 'age' | 'info' | 'info.city' | 'list' | `list.${number}` | `list.${number}.id`
 ```
 
-#### `FunctionKeys<T>`
+#### `AllPathsKeys<T>` / `AllPathsShape<T>`
 
-Extracts keys of function properties from an object type.
+`AllPathsKeys` is the semantic alias of `AllPaths` and the one you normally want in form code.
+`AllPathsShape` presents the same information as `Record<path, true>`.
+
+#### `PathValue<T, P>`
+
+Resolves a dotted path. Invalid paths are `never`. `T = any` short-circuits to `any`, so
+generic form code that defaults `Values = any` stays usable.
 
 ```typescript
-interface Foo {
-  a: number;
-  b?: string;
-  c(): void;
-  d: (x: number) => string;
-  e?: () => void;
-}
+type FormValues = { number: { x: string }; list: { id: number }[] };
 
-type FooFnKeys = FunctionKeys<Foo>; // 'c' | 'd' | 'e'
+type A = PathValue<FormValues, 'list.0.id'>; // number
+type B = PathValue<FormValues, 'list.number.id'>; // number  (wildcard index)
+type C = PathValue<FormValues, 'number.x'>; // string  (a real key named `number` wins)
+type D = PathValue<FormValues, 'nope'>; // never
 ```
 
-#### `FunctionUnion<T>`
+#### `PathToType<T, P>` / `PathToDeepType<T, P>`
 
-Creates a union of all function types in an object.
-
-```typescript
-interface Foo {
-  a: number;
-  c(): void;
-  d: (x: number) => string;
-  e?: () => void;
-}
-
-type FooFnUnion = FunctionUnion<Foo>;
-// (() => void) | ((x: number) => string) | ((() => void) | undefined)
-```
-
-### Form Type Utilities
-
-#### `CustomElement<T>`
-
-Represents a custom form element with common input properties.
+`PathValue` plus `ShallowPartial` / `DeepPartial` respectively. `PathToDeepType` is the right
+choice for form values, where nested objects are usually only half-filled.
 
 ```typescript
-type CustomElement<T = any> = Partial<HTMLElement> & T & {
-  checked?: boolean;
-  disabled?: boolean;
-  files?: FileList | null;
-  focus?: Noop;
-  options?: HTMLOptionsCollection;
-  type?: string;
-  value?: any;
-};
-```
+type FormValues = { info: { city: string; pl: { deep: string } } };
 
-#### `FieldElement<T>`
-
-Union type for all possible field elements including HTML inputs and custom elements.
-
-```typescript
-type FieldElement<T = any> =
-  | HTMLInputElement
-  | HTMLSelectElement
-  | HTMLTextAreaElement
-  | CustomElement<T>;
-
-// Usage in form handlers
-function handleFieldChange(field: FieldElement) {
-  console.log(field.value);
-}
-```
-
-### Path Type Utilities
-
-#### `LeafPaths<T>`
-
-Generates a union of all possible paths to leaf (non-object) values in a type.
-
-```typescript
-type FormValues = {
-  age: number;
-  code: string;
-  info: {
-    age: number;
-    city: string;
-    name: string;
-  };
-  items: {
-    id: number;
-    label: string;
-  }[];
-};
-
-type Paths = LeafPaths<FormValues>;
-// "age"
-// | "code"
-// | "info.age"
-// | "info.city"
-// | "info.name"
-// | `items.${number}.id`
-// | `items.${number}.label`
-```
-
-#### `AllPaths<T>`
-
-Generates a union of all possible paths including intermediate object paths.
-
-```typescript
-type FormValues = {
-  age: number;
-  info: {
-    city: string;
-    address: {
-      street: string;
-    };
-  };
-};
-
-type Paths = AllPaths<FormValues>;
-// "age"
-// | "info"
-// | "info.city"
-// | "info.address"
-// | "info.address.street"
-```
-
-#### `PathToType<T, P>`
-
-Gets the type at a specific path, making object properties optional.
-
-```typescript
-type FormValues = {
-  age: number;
-  info: {
-    age: number;
-    city: string;
-    address: {
-      street: string;
-    };
-  };
-  items: {
-    id: number;
-    name: string;
-  }[];
-};
-
-type AgeType = PathToType<FormValues, "age">; // number
-type InfoType = PathToType<FormValues, "info">;
-// { age?: number; city?: string; address?: { street: string } | undefined }
-type ItemType = PathToType<FormValues, "items.0">;
-// { id?: number; name?: string }
-```
-
-#### `PathToDeepType<T, P>`
-
-Gets the type at a specific path, making all nested properties deeply optional.
-
-```typescript
-type FormValues = {
-  info: {
-    age: number;
-    address: {
-      street: string;
-      city: string;
-    };
-  };
-};
-
-type InfoType = PathToDeepType<FormValues, "info">;
-// {
-//   age?: number;
-//   address?: {
-//     street?: string;
-//     city?: string;
-//   } | undefined;
-// }
+type A = PathToType<FormValues, 'info'>; // { city?: string; pl?: { deep: string } }
+type B = PathToDeepType<FormValues, 'info'>; // { city?: string; pl?: { deep?: string } }
 ```
 
 #### `ShapeFromPaths<T, Ps>`
 
-Creates a new type containing only the specified paths from the original type.
+Reconstructs the minimal object covering a list of paths. An empty list returns `T`.
 
 ```typescript
-type FormValues = {
-  age: number;
-  code: string;
-  info: {
-    age: number;
-    city: string;
-    name: string;
-  };
-  items: {
-    id: number;
-    label: string;
-  }[];
-};
+type FormValues = { age: number; info: { city: string }; list: { id: number; tag: string }[] };
 
-type PartialShape = ShapeFromPaths<FormValues, ['age', 'info', 'items.2.label']>;
-// {
-//   age: number;
-//   info: { age?: number; city?: string; name?: string };
-//   items: { label?: string }[];
-// }
+type A = ShapeFromPaths<FormValues, ['age', 'info']>;
+// { age: number; info: { city?: string } }
+
+type B = ShapeFromPaths<FormValues, ['list.2.tag']>;
+// { list: { tag: string }[] }
+
+type C = ShapeFromPaths<FormValues, ['list.0']>;
+// { list: { id?: number; tag?: string }[] }   ← index-terminated path yields the whole element
 ```
 
-#### `ArrayKeys<T>`
-
-Extracts keys that are array types from an object.
+#### `ArrayKeys<T>` / `ArrayElementValue<T, K>`
 
 ```typescript
-type Inputs = {
-  password: string;
-  username: string;
-  numbers: number[];
-  users: {
-    age: number;
-    name: string;
-  }[];
-};
+type Inputs = { name: string; tags: readonly string[]; users?: { id: number }[] };
 
-type Arrays = ArrayKeys<Inputs>; // "numbers" | "users"
+type K = ArrayKeys<Inputs>; // 'tags' | 'users'
+type E = ArrayElementValue<Inputs, 'tags'>; // string
+type F = ArrayElementValue<Inputs, 'name'>; // never
 ```
 
-#### `ArrayElementValue<T, K>`
+Both handle `readonly` arrays and optional fields consistently; a type with no array fields
+gives `never`, so a component keyed on `ArrayKeys` simply becomes unusable rather than
+silently degrading to `any`.
 
-Gets the element type of an array property.
+#### `Join<P, K>`
+
+The path-segment joiner, exported so you can build compatible path types of your own.
 
 ```typescript
-type Inputs = {
-  users: {
-    age: number;
-    name: string;
-  }[];
-};
-
-type UserType = ArrayElementValue<Inputs, "users">;
-// { age: number; name: string }
+type A = Join<'', 'user'>; // 'user'
+type B = Join<'user', 'name'>; // 'user.name'
+type C = Join<'list', number>; // `list.${number}`
 ```
 
-### General Utility Types
+### Function types
 
-#### `DeepPartial<T>`
-
-Makes all properties of a type optional recursively.
+| Type               | Description                                                                  |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `Fn`               | `(...args: any[]) => any` — the "is this a function" yardstick.              |
+| `Noop`             | `() => void`.                                                                |
+| `OnlyFunctions<T>` | Keeps only function-valued properties, preserving optionality.               |
+| `FunctionKeys<T>`  | Their key names. Optional members contribute the key alone, not `undefined`. |
+| `FunctionUnion<T>` | Their types, with `undefined` stripped.                                      |
 
 ```typescript
-type User = {
+interface Api {
+  data: string;
+  fetch(): Promise<void>;
+  update?: (id: number) => void;
+}
+
+type K = FunctionKeys<Api>; // 'fetch' | 'update'
+type U = FunctionUnion<Api>; // (() => Promise<void>) | ((id: number) => void)
+```
+
+### Web types (`@skyroc/type-utils/web`)
+
+```typescript
+import type { CustomElement, FieldElement } from '@skyroc/type-utils/web';
+```
+
+`FieldElement` is what a form collector accepts: `HTMLInputElement | HTMLSelectElement |
+HTMLTextAreaElement | CustomElement<T>`. `CustomElement<T = unknown>` describes the minimal
+shape a third-party control must expose (`value`, `type`, `checked`, `files`, `options`, `focus`).
+
+The generic defaults to `unknown` rather than `any` on purpose — `any` inside an intersection
+collapses the whole type and would make `FieldElement` enforce nothing.
+
+## 🎯 Depth and recursive types
+
+Every path utility takes a trailing `Depth` parameter, default `6`:
+
+```typescript
+interface TreeNode {
+  children: TreeNode[];
   name: string;
-  age: number;
-  address: {
-    city: string;
-    street: string;
-    zipCode: number;
-  };
-};
-
-type PartialUser = DeepPartial<User>;
-// {
-//   name?: string;
-//   age?: number;
-//   address?: {
-//     city?: string;
-//     street?: string;
-//     zipCode?: number;
-//   };
-// }
-```
-
-#### `Prettify<T>`
-
-Flattens intersection types to make them more readable in IDE tooltips.
-
-```typescript
-type A = { a: number };
-type B = { b: string };
-type C = { c: boolean };
-
-type Raw = A & B & C;
-// When hovering: A & B & C (not readable)
-
-type Pretty = Prettify<A & B & C>;
-// When hovering: { a: number; b: string; c: boolean } (readable!)
-```
-
-#### `Primitive`
-
-Union of all primitive types.
-
-```typescript
-type Primitive =
-  | string
-  | number
-  | boolean
-  | bigint
-  | symbol
-  | null
-  | undefined
-  | Date
-  | Function;
-```
-
-#### `Wrap<K, V>`
-
-Wraps a value in an object with a specific key.
-
-```typescript
-type Wrapped = Wrap<"data", number>; // { data: number }
-type User = Wrap<"user", { name: string; age: number }>;
-// { user: { name: string; age: number } }
-```
-
-#### `MergeUnion<U>`
-
-Merges a union of object types into a single intersection type.
-
-```typescript
-type Union = { a: number } | { b: string } | { c: boolean };
-type Merged = MergeUnion<Union>;
-// { a: number; b: string; c: boolean }
-```
-
-#### `KeyToNestedObject<K, V>`
-
-Converts a dot-notation key into a nested object type.
-
-```typescript
-type Nested = KeyToNestedObject<"a.b.c", number>;
-// { a: { b: { c: number } } }
-
-type UserPath = KeyToNestedObject<"user.profile.email", string>;
-// { user: { profile: { email: string } } }
-```
-
-## 🎯 Common Use Cases
-
-### Type-Safe Form Handling
-
-```typescript
-import type { LeafPaths, PathToType, FieldElement } from '@skyroc/type-utils';
-
-type UserForm = {
-  username: string;
-  email: string;
-  profile: {
-    firstName: string;
-    lastName: string;
-    age: number;
-  };
-  addresses: {
-    street: string;
-    city: string;
-  }[];
-};
-
-// Type-safe field paths
-type FieldPath = LeafPaths<UserForm>;
-// "username" | "email" | "profile.firstName" | ...
-
-// Get field value type from path
-function getFieldValue<P extends FieldPath>(
-  form: UserForm,
-  path: P
-): PathToType<UserForm, P> {
-  // Implementation...
 }
 
-// Usage with full type safety
-const age = getFieldValue(form, "profile.age"); // number
-const city = getFieldValue(form, "addresses.0.city"); // string
+type P = AllPathsKeys<TreeNode>; // compiles; enumerated down to 6 levels
+type Q = AllPaths<TreeNode, '', 3>; // shallower, cheaper to compute
 ```
 
-### Extract API Methods
+Without the bound, a self-referential type raises `TS2589: Type instantiation is excessively
+deep and possibly infinite`. Lower the depth if a large form type makes compilation slow.
 
-```typescript
-import type { OnlyFunctions, FunctionKeys } from '@skyroc/type-utils';
+## 📖 TypeScript support
 
-interface UserService {
-  currentUser: User | null;
-  isLoading: boolean;
-  fetchUser(id: number): Promise<User>;
-  updateUser(user: User): Promise<void>;
-  deleteUser(id: number): Promise<void>;
-  settings: {
-    timeout: number;
-  };
-}
-
-// Extract only methods
-type UserServiceMethods = OnlyFunctions<UserService>;
-// {
-//   fetchUser: (id: number) => Promise<User>;
-//   updateUser: (user: User) => Promise<void>;
-//   deleteUser: (id: number) => Promise<void>;
-// }
-
-// Get method names
-type MethodNames = FunctionKeys<UserService>;
-// "fetchUser" | "updateUser" | "deleteUser"
-```
-
-### Partial Form Updates
-
-```typescript
-import type { DeepPartial, ShapeFromPaths } from '@skyroc/type-utils';
-
-type UserProfile = {
-  personal: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-  settings: {
-    notifications: boolean;
-    theme: 'light' | 'dark';
-  };
-};
-
-// Allow partial updates
-function updateProfile(updates: DeepPartial<UserProfile>) {
-  // Can update any nested property partially
-}
-
-updateProfile({
-  personal: {
-    firstName: "John" // Only update firstName
-  }
-});
-
-// Or select specific fields
-type ProfilePaths = ['personal.firstName', 'personal.email', 'settings.theme'];
-type UpdateableFields = ShapeFromPaths<UserProfile, ProfilePaths>;
-
-function updateSpecificFields(updates: UpdateableFields) {
-  // Only allows updating specified paths
-}
-```
-
-### Readable Type Aliases
-
-```typescript
-import type { Prettify } from '@skyroc/type-utils';
-
-// Without Prettify - hard to read
-type UserWithRole = User & { role: string } & { permissions: string[] };
-
-// With Prettify - clean and readable
-type CleanUserWithRole = Prettify<User & { role: string } & { permissions: string[] }>;
-// Hover shows: { id: number; name: string; role: string; permissions: string[] }
-```
-
-## 📖 TypeScript Support
-
-This package is designed specifically for TypeScript and requires TypeScript 4.7 or higher for full functionality. All types are fully documented with JSDoc comments for excellent IDE support.
-
-```typescript
-// Excellent autocomplete and type hints
-import type {
-  LeafPaths,    // ← IDE shows full documentation
-  PathToType,   // ← With usage examples
-  DeepPartial   // ← And type definitions
-} from '@skyroc/type-utils';
-```
+Requires TypeScript 4.7+. Every exported type carries JSDoc with a worked example, and the
+package ships type-level regression tests (`__tests__/*.test-d.ts`, run via `vitest --typecheck`).
 
 ## 📄 License
 
@@ -568,5 +257,5 @@ MIT License
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/Ohh-889/skyroc-ui)
-- [Issue Tracker](https://github.com/Ohh-889/skyroc-ui/issues)
+- [GitHub Repository](https://github.com/Ohh-889/skyroc-admin)
+- [Issue Tracker](https://github.com/Ohh-889/skyroc-admin/issues)
