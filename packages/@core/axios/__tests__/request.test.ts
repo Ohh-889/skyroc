@@ -813,6 +813,30 @@ describe('createFlatRequest', () => {
     expect(result.error!.message).toBe('cannot read property of undefined');
   });
 
+  // transform 炸掉时请求本身是成功的，响应必须留在错误上：只给一句 TypeError 的话，
+  // 调用方既看不到状态码也看不到后端到底回了什么，正好在最该排查的那条路径上瞎掉
+  it('transform 抛错时应保留响应上下文', async () => {
+    server.use(
+      http.get(`${BASE_URL}/api/flat-transform-keeps-response`, () => {
+        return HttpResponse.json({ code: 200, data: { items: [] }, message: 'ok' });
+      })
+    );
+
+    const request = createFlatRequest<BackendResponse, any, Record<string, unknown>>(TEST_AXIOS_CONFIG, {
+      isBackendSuccess: response => response.data.code === 200,
+      transform: () => {
+        throw new TypeError('boom');
+      }
+    });
+
+    const result = await request({ url: '/api/flat-transform-keeps-response' });
+
+    expect(result.response?.status).toBe(200);
+    expect(result.response?.data).toEqual({ code: 200, data: { items: [] }, message: 'ok' });
+    expect(result.error!.response?.status).toBe(200);
+    expect(result.error!.config?.url).toBe('/api/flat-transform-keeps-response');
+  });
+
   it('抛出的不是 Error 实例时也应包装成 AxiosError', async () => {
     server.use(
       http.get(`${BASE_URL}/api/flat-throw-string`, () => {

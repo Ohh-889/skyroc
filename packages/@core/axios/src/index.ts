@@ -14,15 +14,29 @@ import type {
   ResponseType
 } from './type';
 
-/** 把非 axios 异常（transform、hook 里抛出的）包成 AxiosError，保住 flat 风格 `error` 字段的契约 */
-function toAxiosError<ResponseData>(error: unknown): AxiosError<ResponseData> {
+/**
+ * 把非 axios 异常（transform、hook 里抛出的）包成 AxiosError，保住 flat 风格 `error` 字段的契约
+ *
+ * `response` 拿得到就一并带上：transform 抛错时响应是实实在在收到过的，丢掉它会让调用方只剩一句
+ * TypeError，状态码和响应体全都查不到。
+ */
+function toAxiosError<ResponseData>(
+  error: unknown,
+  response?: AxiosResponse<ResponseData>
+): AxiosError<ResponseData> {
   if (isAxiosError<ResponseData>(error)) {
     return error;
   }
 
   const cause = error instanceof Error ? error : new Error(String(error));
 
-  return AxiosError.from<ResponseData>(cause, AxiosError.ERR_BAD_RESPONSE);
+  return AxiosError.from<ResponseData>(
+    cause,
+    AxiosError.ERR_BAD_RESPONSE,
+    response?.config,
+    response?.request,
+    response
+  );
 }
 
 function createCommonRequest<
@@ -187,8 +201,13 @@ export function createFlatRequest<
     T extends ApiData = ApiData,
     R extends ResponseType = 'json'
   >(config: CustomAxiosRequestConfig) {
+    // 声明在 try 外：transform 抛错时请求本身是成功的，catch 里要靠它给 AxiosError 补上响应上下文
+    let response: AxiosResponse<ResponseData> | undefined;
+
     try {
-      const response: AxiosResponse<ResponseData> = await instance(config);
+      // 显式给出类型参数：不写的话 axios 的 `R` 会从赋值目标反推成 `AxiosResponse | undefined`，
+      // 赋值收窄跟着失效，try 里每次用 response 都得判空
+      response = await instance<ResponseData>(config);
 
       const responseType = response.config?.responseType || 'json';
 
@@ -200,8 +219,8 @@ export function createFlatRequest<
 
       return { data: response.data as MappedType<R, T>, error: null, response };
     } catch (error) {
-      // response 可能是 undefined：网络错误、超时、取消，或者请求拦截器里就抛了
-      const axiosError = toAxiosError<ResponseData>(error);
+      // response 仍可能是 undefined：网络错误、超时、取消，或者请求拦截器里就抛了
+      const axiosError = toAxiosError<ResponseData>(error, response);
 
       return { data: null, error: axiosError, response: axiosError.response };
     }

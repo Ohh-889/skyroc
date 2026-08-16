@@ -7,7 +7,6 @@ import { createAxiosConfig, createDefaultOptions, createRetryOptions } from '../
 
 const customCheck = (response: AxiosResponse) => response.data.code === 0;
 const customTransform = async (response: AxiosResponse) => response.data.inner;
-const deprecatedTransform = async (response: AxiosResponse) => response.data.legacy;
 
 // ==================== createDefaultOptions ====================
 
@@ -41,41 +40,11 @@ describe('createDefaultOptions', () => {
     expect(result).toBe('extracted');
   });
 
-  it('未传 transform 但传了 transformBackendResponse 时应回退使用 transformBackendResponse', async () => {
-    const opts = createDefaultOptions({ transformBackendResponse: deprecatedTransform });
-
-    const mockResponse = { data: { legacy: 'old-style' } } as AxiosResponse;
-    const result = await opts.transform(mockResponse);
-
-    expect(result).toBe('old-style');
-  });
-
-  it('同时传 transform 和 transformBackendResponse 时应优先使用 transform', async () => {
-    const opts = createDefaultOptions<{ new: string; old: string }, string>({
-      transform: async response => response.data.new,
-      transformBackendResponse: async response => response.data.old
-    });
-
-    const mockResponse = { data: { new: 'preferred', old: 'ignored' } } as AxiosResponse;
-    const result = await opts.transform(mockResponse);
-
-    expect(result).toBe('preferred');
-  });
-
   it('自定义选项应覆盖默认值', () => {
     const opts = createDefaultOptions({ isBackendSuccess: customCheck });
 
     expect(opts.isBackendSuccess({ data: { code: 0 } } as AxiosResponse)).toBe(true);
     expect(opts.isBackendSuccess({ data: { code: 1 } } as AxiosResponse)).toBe(false);
-  });
-
-  it('默认 transformBackendResponse 应返回 response.data', async () => {
-    const opts = createDefaultOptions();
-    const mockResponse = { data: { code: 200 } } as AxiosResponse;
-
-    const result = await opts.transformBackendResponse(mockResponse);
-
-    expect(result).toEqual({ code: 200 });
   });
 
   it('defaultState 应支持自定义', () => {

@@ -17,8 +17,7 @@ export function createDefaultOptions<
     onError: async () => {},
     onRequest: async config => config,
     requestIdKey: REQUEST_ID_KEY,
-    transform: async response => response.data as unknown as ApiData,
-    transformBackendResponse: async response => response.data as unknown as ApiData
+    transform: async response => response.data as unknown as ApiData
   };
 
   // 逐项覆盖而不是 Object.assign：后者会把显式传入的 `undefined` 也写进去，
@@ -27,11 +26,6 @@ export function createDefaultOptions<
     if (value !== undefined) {
       Reflect.set(opts, key, value);
     }
-  }
-
-  // transform 优先，只有它缺席时才回退到已废弃的 transformBackendResponse
-  if (!options?.transform && options?.transformBackendResponse) {
-    opts.transform = options.transformBackendResponse;
   }
 
   return opts;

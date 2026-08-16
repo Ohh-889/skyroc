@@ -35,6 +35,10 @@ export interface RequestOption<
    * 写成单个联合返回值而不是 `Promise<AxiosResponse | null> | Promise<void>`：后者让「忘记
    * return」变成合法实现，重试结果会被静默丢掉。
    *
+   * 返回的响应**不再**经过 `isBackendSuccess` 复检，重进本钩子的次数也没有上限：用 `instance`
+   * 重发的请求会完整走一遍响应拦截器，失败了就再次落到这里。补救逻辑必须自己在 config 上打标记
+   * 来终止循环，否则「补救完还是同一个失败码」就是一个没有退避的无限重发。
+   *
    * @param response Axios response
    * @param instance Axios instance
    */
@@ -83,13 +87,6 @@ export interface RequestOption<
    * @param response Axios response
    */
   transform: ResponseTransform<AxiosResponse<ResponseData>, ApiData>;
-  /**
-   * Transform the response data to the api data
-   *
-   * @deprecated use `transform` instead, will be removed in the next major version v3
-   * @param response Axios response
-   */
-  transformBackendResponse: ResponseTransform<AxiosResponse<ResponseData>, ApiData>;
 }
 
 /**
