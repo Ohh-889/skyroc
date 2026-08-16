@@ -36,6 +36,8 @@ export * from './rate';
 
 export * from './rolling-text';
 
+export * from './sidebar';
+
 export * from './space';
 
 export * from './stepper';
