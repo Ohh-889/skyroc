@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ElementType, ReactElement } from 'react';
+import type { ComponentPropsWithoutRef, ElementType, ReactElement, Ref } from 'react';
 import type { View } from 'react-native';
 import type { AllPathsKeys, FormBaseProps, Rule } from '@skyroc/form';
 import type { SlotClassNames } from '../../types';
@@ -11,7 +11,7 @@ export type FieldGroupSlots = 'content' | 'root';
 
 /** FieldGroup 自有属性，容器组件本身的属性由 FieldGroupProps 合并进来 */
 export interface FieldGroupOwnProps<Values = any> extends FormBaseProps<Values> {
-  /** 容器根节点的额外 className */
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
 
   /** 覆盖各 slot 的 className */
@@ -31,6 +31,9 @@ export type FieldGroupProps<Values = any, As extends ElementType = typeof View> 
   Omit<ComponentPropsWithoutRef<As>, keyof FieldGroupOwnProps<Values>> & {
     /** 容器组件，默认 View，可传 ScrollView / KeyboardAwareScrollView 等 */
     component?: As;
+
+    /** 容器组件实例的 ref，用于 scrollTo / measure 等命令式操作 */
+    ref?: Ref<As>;
   };
 
 // ==================== FieldItem ====================
@@ -50,6 +53,9 @@ export type FieldItemClassNames = SlotClassNames<FieldItemSlots>;
 export interface FieldItemProps<Values = any> {
   /** 子组件 — 接收注入的 value / onChange / error */
   children: ReactElement;
+
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
+  className?: string;
 
   /** 覆盖各 slot 的 className */
   classNames?: FieldItemClassNames;
@@ -81,6 +87,9 @@ export interface FieldItemProps<Values = any> {
 
   /** 子组件卸载后是否保留字段值 */
   preserve?: boolean;
+
+  /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
+  ref?: Ref<View>;
 
   /**
    * 是否显示必填标记。

@@ -55,11 +55,13 @@ function getValueFromArgs(...args: any[]) {
 const FieldItem = <Values = any,>(props: FieldItemProps<Values>) => {
   const {
     children,
+    className,
     classNames,
     description,
     getValueFromEvent = getValueFromArgs,
     label,
     name,
+    ref,
     required,
     rules,
     size = 'lg',
@@ -75,15 +77,31 @@ const FieldItem = <Values = any,>(props: FieldItemProps<Values>) => {
   const showRequired = required ?? requiredByRules;
   const mergedRules = required && !requiredByRules ? [{ required: true } as Rule, ...(rules ?? [])] : rules;
 
-  const slots = fieldItemVariants({ hasLabel: Boolean(label), size });
+  const variantSlots = fieldItemVariants({ hasLabel: Boolean(label), size });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      control: cn(variantSlots.control(), classNames?.control),
+      description: cn(variantSlots.description(), classNames?.description),
+      extra: cn(variantSlots.extra(), classNames?.extra),
+      label: cn(variantSlots.label(), classNames?.label),
+      labelRow: variantSlots.labelRow(),
+      message: cn(variantSlots.message(), classNames?.message),
+      required: cn(variantSlots.required(), classNames?.required),
+      root: cn(variantSlots.root(), classNames?.root, className)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function renderLabel() {
     if (!label) return null;
 
     return (
-      <View className="flex-row items-center">
-        {showRequired ? <Text className={cn(slots.required(), classNames?.required)}>*</Text> : null}
-        <Text className={cn(slots.label(), classNames?.label)}>{label}</Text>
+      <View className={slotClassNames.labelRow}>
+        {showRequired ? <Text className={slotClassNames.required}>*</Text> : null}
+        <Text className={slotClassNames.label}>{label}</Text>
       </View>
     );
   }
@@ -95,18 +113,21 @@ const FieldItem = <Values = any,>(props: FieldItemProps<Values>) => {
     if (!errorText && !description) return null;
 
     return (
-      <View className={cn(slots.extra(), classNames?.extra)}>
-        {errorText ? <Text className={cn(slots.message(), classNames?.message)}>{errorText}</Text> : null}
-        {description ? <Text className={cn(slots.description(), classNames?.description)}>{description}</Text> : null}
+      <View className={slotClassNames.extra}>
+        {errorText ? <Text className={slotClassNames.message}>{errorText}</Text> : null}
+        {description ? <Text className={slotClassNames.description}>{description}</Text> : null}
       </View>
     );
   }
 
   return (
-    <View className={cn(slots.root(), classNames?.root)}>
+    <View
+      className={slotClassNames.root}
+      ref={ref}
+    >
       {renderLabel()}
 
-      <View className={cn(slots.control(), classNames?.control)}>
+      <View className={slotClassNames.control}>
         <Field<Values>
           {...fieldProps}
           error={hasError}

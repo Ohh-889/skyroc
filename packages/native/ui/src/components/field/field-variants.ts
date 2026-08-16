@@ -42,6 +42,8 @@ export const fieldItemVariants = tv({
     description: 'text-muted-foreground',
     extra: '',
     label: 'font-medium text-foreground',
+    /** 必填星号与标签的排列容器，纯结构类，不开放给调用方覆盖 */
+    labelRow: 'flex-row items-center',
     message: 'text-destructive',
     required: 'mr-0.5 text-destructive',
     root: ''
