@@ -1,3 +1,3 @@
 export { backTopVariants } from './back-top-variants';
 export { BackTop } from './BackTop';
-export type { BackTopProps } from './types';
+export type { BackTopProps, BackTopScrollable } from './types';
