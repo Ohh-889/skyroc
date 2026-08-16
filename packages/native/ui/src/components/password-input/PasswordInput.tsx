@@ -1,7 +1,8 @@
-import { useImperativeHandle } from 'react';
-import { TextInput, View } from 'react-native';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { useImperativeHandle } from 'react';
+import { TextInput, View } from 'react-native';
+import type { TextStyle } from 'react-native';
 import { CodeField, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import type { RenderCellOptions } from 'react-native-confirmation-code-field';
 import { Text } from '../text/Typography';
@@ -9,16 +10,29 @@ import { passwordInputVariants } from './password-input-variants';
 import { PasswordInputCell } from './PasswordInputCell';
 import type { PasswordInputProps } from './types';
 
-/**
- * 底层 TextInput 的默认值：数字键盘对应 6 位数字密码的主流场景，锁死字体缩放是为了让格子高度
- * 不被系统字号撑破。这些默认值展开在 rest 之前，字母密码等场景可以由调用方逐项覆盖。
- */
+/** 底层 TextInput 的默认值：数字键盘对应 6 位数字密码的主流场景，锁死字体缩放是为了让格子高度 不被系统字号撑破。这些默认值展开在 rest 之前，字母密码等场景可以由调用方逐项覆盖。 */
 const CODE_FIELD_DEFAULTS = {
   allowFontScaling: false,
   autoCapitalize: 'none',
   keyboardType: 'number-pad',
   maxFontSizeMultiplier: 1
 } as const;
+
+/**
+ * 承接触摸的透明输入框：CodeField 自己那份定位来自它模块内的 `...StyleSheet.absoluteFill`，
+ * 在本仓库实测没有生效（输入框退回文档流、宽度塌成 0，导致整个组件点不动），这里用我们自己的
+ * 对象把定位写死。CodeField 会把 textInputStyle 合并在它自身样式之后，所以这份能覆盖它。
+ * opacity 与 fontSize 沿用库的取值：不能真正透明，否则收不到触摸；1px 字号让光标始终落在末尾。
+ */
+const CODE_FIELD_INPUT_STYLE: TextStyle = {
+  bottom: 0,
+  fontSize: 1,
+  left: 0,
+  opacity: 0.015,
+  position: 'absolute',
+  right: 0,
+  top: 0
+};
 
 const PasswordInput = (props: PasswordInputProps) => {
   const {
@@ -115,6 +129,7 @@ const PasswordInput = (props: PasswordInputProps) => {
           ref={inputRef}
           cellCount={length}
           rootStyle={isSeparated && gutter > 0 ? { gap: gutter } : undefined}
+          textInputStyle={CODE_FIELD_INPUT_STYLE}
           value={value}
           onChangeText={handleChangeText}
           renderCell={renderCell}

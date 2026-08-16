@@ -230,8 +230,8 @@ catalogs:
       specifier: 0.86.0
       version: 0.86.0
     react-native-confirmation-code-field:
-      specifier: ^8.0.1
-      version: 8.0.1
+      specifier: 9.0.0
+      version: 9.0.0
     react-native-gesture-handler:
       specifier: ~2.32.0
       version: 2.32.0
@@ -324,6 +324,9 @@ catalogs:
     qs:
       specifier: ^6.14.0
       version: 6.15.0
+    radash:
+      specifier: ^12.1.1
+      version: 12.1.1
     tailwind-merge:
       specifier: ^3.4.0
       version: 3.6.0
@@ -947,9 +950,6 @@ importers:
       react-native:
         specifier: 0.86.0
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
-      react-native-confirmation-code-field:
-        specifier: catalog:native
-        version: 8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
       react-native-gesture-handler:
         specifier: catalog:native
         version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3)
@@ -2175,9 +2175,6 @@ importers:
       clsx:
         specifier: catalog:utils
         version: 2.1.1
-      colord:
-        specifier: catalog:utils
-        version: 2.9.3
       crypto-js:
         specifier: catalog:utils
         version: 4.2.0
@@ -2194,7 +2191,7 @@ importers:
         specifier: catalog:utils
         version: 5.1.6
       radash:
-        specifier: ^12.1.1
+        specifier: catalog:utils
         version: 12.1.1
       tailwind-merge:
         specifier: catalog:utils
@@ -2273,6 +2270,9 @@ importers:
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../@core/utils
+      react-native-confirmation-code-field:
+        specifier: catalog:native
+        version: 9.0.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       tailwind-variants:
         specifier: catalog:utils
         version: 3.2.2(tailwind-merge@3.6.0)(tailwindcss@4.3.0)
@@ -2304,9 +2304,6 @@ importers:
       react-native:
         specifier: catalog:native
         version: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
-      react-native-confirmation-code-field:
-        specifier: catalog:native
-        version: 8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
       react-native-gesture-handler:
         specifier: catalog:native
         version: 2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
@@ -16454,11 +16451,11 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
 
-  react-native-confirmation-code-field@8.0.1:
-    resolution: {integrity: sha512-pwrhQtspFEp0y/gxZRp8hrra+UjAYfwAsW5Sn3yYtdUZVyRjAZPBnUb3rOc+z5L5o2ml03z5P3uvTK0yQwXsmA==}
+  react-native-confirmation-code-field@9.0.0:
+    resolution: {integrity: sha512-U2/rNPpvsEbRTj/dP3bwjFR5C5tnqOXJ4RE/OCxE13Z0TBYnqkA2WpPYZDqEDPJ/u1Ana7aXLzeOkUoHGEMVZw==}
     peerDependencies:
-      react: '>=16.4.0'
-      react-native: '>=0.64.0'
+      react: '>=19.0.0'
+      react-native: '>=0.78.0'
     peerDependenciesMeta:
       react:
         optional: true
@@ -36591,15 +36588,10 @@ snapshots:
     dependencies:
       prop-types: 15.8.1
 
-  react-native-confirmation-code-field@8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3):
+  react-native-confirmation-code-field@9.0.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3):
     optionalDependencies:
       react: 19.2.3
       react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
-
-  react-native-confirmation-code-field@8.0.1(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3))(react@19.2.3):
-    optionalDependencies:
-      react: 19.2.3
-      react-native: 0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.15)(react@19.2.3)
 
   react-native-drawer-layout@4.2.10(react-native-gesture-handler@2.32.0(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native-reanimated@4.5.1(react-native-worklets@0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3):
     dependencies:
