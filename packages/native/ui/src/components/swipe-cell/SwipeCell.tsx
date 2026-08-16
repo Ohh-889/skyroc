@@ -94,7 +94,7 @@ const SwipeCell = (props: SwipeCellProps) => {
   const translateX = useSharedValue(0);
   const startX = useSharedValue(0);
 
-  const slots = swipeCellVariants();
+  const variantSlots = swipeCellVariants();
 
   const isOpen = Boolean(openSide);
 
@@ -107,6 +107,19 @@ const SwipeCell = (props: SwipeCellProps) => {
     leading: leadingWidth ?? measuredWidths.leading,
     trailing: trailingWidth ?? measuredWidths.trailing
   };
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: cn(variantSlots.content(), classNames?.content),
+      leading: cn(variantSlots.leading(), classNames?.leading),
+      overlay: cn(variantSlots.overlay(), classNames?.overlay),
+      root: cn(variantSlots.root(), classNames?.root),
+      trailing: cn(variantSlots.trailing(), classNames?.trailing)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
 
   function snapTo(side: SwipeCellSide | null) {
     translateX.value = withSpring(offsetForSide(side, widths), SPRING_CONFIG);
@@ -273,12 +286,12 @@ const SwipeCell = (props: SwipeCellProps) => {
 
   return (
     <View
-      className={cn(slots.root(), classNames?.root)}
+      className={slotClassNames.root}
       style={style}
     >
       {leading ? (
         <View
-          className={cn(slots.leading(), classNames?.leading)}
+          className={slotClassNames.leading}
           onLayout={handleLeadingLayout}
         >
           {leading}
@@ -287,7 +300,7 @@ const SwipeCell = (props: SwipeCellProps) => {
 
       {trailing ? (
         <View
-          className={cn(slots.trailing(), classNames?.trailing)}
+          className={slotClassNames.trailing}
           onLayout={handleTrailingLayout}
         >
           {trailing}
@@ -296,10 +309,10 @@ const SwipeCell = (props: SwipeCellProps) => {
 
       <GestureDetector gesture={panGesture}>
         <Animated.View style={contentAnimatedStyle}>
-          <View className={cn(slots.content(), classNames?.content)}>{children}</View>
+          <View className={slotClassNames.content}>{children}</View>
           {isOpen ? (
             <Pressable
-              className={cn(slots.overlay(), classNames?.overlay)}
+              className={slotClassNames.overlay}
               onPress={handleContentPress}
             />
           ) : null}
