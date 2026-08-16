@@ -168,6 +168,14 @@ export default function HomeScreen() {
       >
         Picker
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/anchor-nav')}
+      >
+        AnchorNav
+      </Button>
     </View>
   );
 }

@@ -1,6 +1,10 @@
 export * from './action-sheet';
 
+export * from './anchor-nav';
+
 export * from './avatar';
+
+export * from './back-top';
 
 export * from './badge';
 
@@ -17,6 +21,8 @@ export * from './count-down';
 export * from './dialog';
 
 export * from './divider';
+
+export * from './floating-button';
 
 export * from './image';
 
