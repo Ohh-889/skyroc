@@ -1,140 +1,154 @@
-import { useRef, useState } from 'react';
-import { SectionList, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { cn } from '@skyroc/utils';
-import type { ViewToken } from 'react-native';
-import { Button } from '../button/Button';
-import { Divider } from '../divider/Divider';
+import { useImperativeHandle, useRef } from 'react';
+import { Pressable, View } from 'react-native';
+import { AnchorNav } from '../anchor-nav/AnchorNav';
+import type { AnchorNavRef, AnchorNavSidebarContext } from '../anchor-nav/types';
 import { Text } from '../text/Typography';
 import { indexBarVariants } from './index-bar-variants';
-import type { IndexBarChild, IndexBarItem, IndexBarProps } from './types';
+import type { IndexBarProps } from './types';
 
+/** 索引项只有 20dp 宽，横向补到 44pt；纵向各项首尾相接，再补就会和相邻项抢同一块触区 */
+const SIDEBAR_ITEM_HIT_SLOP = { left: 12, right: 12 };
+
+/** 侧栏单个索引项属性 */
+interface IndexBarSidebarItemProps {
+  /** 是否为当前激活索引 */
+  active: boolean;
+
+  /** 各插槽自定义 className */
+  classNames: IndexBarProps['classNames'];
+
+  /** 索引字母 */
+  index: string;
+
+  /** 点击回调 */
+  onPress: () => void;
+}
+
+const IndexBarSidebarItem = (props: IndexBarSidebarItemProps) => {
+  const { active, classNames, index, onPress } = props;
+
+  const variantSlots = indexBarVariants({ active });
+
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      sidebarItem: cn(variantSlots.sidebarItem(), classNames?.sidebarItem),
+      sidebarItemText: cn(variantSlots.sidebarItemText(), classNames?.sidebarItemText)
+    };
+  }
+
+  const slotClassNames = resolveSlotClassNames();
+
+  return (
+    <Pressable
+      className={slotClassNames.sidebarItem}
+      hitSlop={SIDEBAR_ITEM_HIT_SLOP}
+      onPress={onPress}
+    >
+      <Text className={slotClassNames.sidebarItemText}>{index}</Text>
+    </Pressable>
+  );
+};
+
+/**
+ * 索引栏：分组列表 + 右缘悬浮的字母索引条。
+ *
+ * 列表本体整套交给 AnchorNav——滚动定位的高度模型、点击侧栏时的程序化滚动抑制、触感策略都只在那边有一份， 这里只负责把「字母」这层身份换掉：AnchorNav 对外是下标，IndexBar 对外是
+ * `title`，两者在边界上互转。
+ */
 const IndexBar = (props: IndexBarProps) => {
   const {
     className,
     classNames,
-    indexList,
+    haptic = true,
     itemHeight = 40,
     items,
     onIndexChange,
     onPressItem,
-    onSelect,
-    renderItem: renderItemProp,
+    ref,
+    renderItem,
     sectionHeaderHeight = 32,
-    sticky = true
+    sticky = true,
+    ...restProps
   } = props;
 
-  const listRef = useRef<SectionList<IndexBarChild, IndexBarItem>>(null);
-  const [activeIndex, setActiveIndex] = useState(items[0]?.title ?? '');
-  const lastHapticIndex = useRef('');
+  const anchorNavRef = useRef<AnchorNavRef>(null);
 
-  const slots = indexBarVariants();
-  const indices = indexList ?? items.map(item => item.title);
+  const variantSlots = indexBarVariants();
 
-  function updateActiveIndex(index: string) {
-    setActiveIndex(index);
-    onIndexChange?.(index);
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  function resolveSlotClassNames() {
+    return {
+      content: cn(variantSlots.content(), classNames?.content),
+      sidebar: cn(variantSlots.sidebar(), classNames?.sidebar)
+    };
   }
 
-  function handleViewableItemsChanged(info: { viewableItems: ViewToken<IndexBarChild>[] }) {
-    const firstSection = info.viewableItems.find(token => token.section)?.section as IndexBarItem | undefined;
+  const slotClassNames = resolveSlotClassNames();
 
-    if (!firstSection) return;
-
-    updateActiveIndex(firstSection.title);
+  /** 列表本体的插槽原样往下传，由 AnchorNav 与它自己的变体合并；只有 content 要先叠上给索引条让位的右内边距 */
+  function resolveAnchorNavClassNames() {
+    return {
+      content: slotClassNames.content,
+      item: classNames?.item,
+      itemText: classNames?.itemText,
+      root: classNames?.root,
+      sectionHeader: classNames?.sectionHeader,
+      sectionHeaderText: classNames?.sectionHeaderText,
+      separator: classNames?.separator
+    };
   }
 
+  const anchorNavClassNames = resolveAnchorNavClassNames();
+
+  function handleIndexChange(index: number) {
+    const section = items[index];
+
+    if (!section) return;
+
+    onIndexChange?.(section.title);
+  }
+
+  /** 对外的定位入口按字母查；查不到时 findIndex 给出 -1，由 AnchorNav 的越界判断静默忽略 */
   function scrollToIndex(index: string) {
-    const sectionIndex = items.findIndex(item => item.title === index);
-    if (sectionIndex < 0) return;
-
-    // 累加目标 section 之前所有 section 的 header + items + separators 高度
-    const separatorHeight = 1;
-    let offset = 0;
-    for (let i = 0; i < sectionIndex; i += 1) {
-      const dataLen = items[i].data.length;
-      offset += sectionHeaderHeight + dataLen * itemHeight + Math.max(0, dataLen - 1) * separatorHeight;
-    }
-
-    listRef.current?.getScrollResponder()?.scrollTo({ y: offset, animated: true });
-    onSelect?.(index);
-
-    if (lastHapticIndex.current !== index) {
-      lastHapticIndex.current = index;
-      Haptics.selectionAsync();
-    }
+    anchorNavRef.current?.scrollToSection(items.findIndex(item => item.title === index));
   }
 
-  function renderSectionHeader(info: { section: IndexBarItem }) {
+  function renderSidebar(context: AnchorNavSidebarContext) {
     return (
-      <View style={{ height: sectionHeaderHeight }}>
-        <View className={cn(slots.anchor(), classNames?.anchor)}>
-          <Text className={cn(slots.anchorText(), classNames?.anchorText)}>{info.section.title}</Text>
-        </View>
+      <View className={slotClassNames.sidebar}>
+        {items.map((item, index) => (
+          <IndexBarSidebarItem
+            key={item.title}
+            active={index === context.activeIndex}
+            classNames={classNames}
+            index={item.title}
+            onPress={() => context.onPressIndex(index)}
+          />
+        ))}
       </View>
     );
   }
 
-  function renderDefaultItem(info: { item: IndexBarChild }) {
-    if (renderItemProp) {
-      return <>{renderItemProp(info.item)}</>;
-    }
-
-    return (
-      <View style={{ height: itemHeight }}>
-        <Button
-          className={cn(slots.item(), classNames?.item)}
-          textClassName={cn(slots.itemText(), classNames?.itemText)}
-          variant="ghost"
-          onPress={() => onPressItem?.(info.item)}
-        >
-          {info.item.text}
-        </Button>
-      </View>
-    );
-  }
-
-  function renderSeparator() {
-    return <Divider className={cn(slots.separator(), classNames?.separator)} />;
-  }
+  useImperativeHandle(ref, () => ({ scrollToIndex }));
 
   return (
-    <View className={cn(slots.root(), className)}>
-      <SectionList
-        ref={listRef}
-        ItemSeparatorComponent={renderSeparator}
-        keyExtractor={item => item.key}
-        onViewableItemsChanged={handleViewableItemsChanged}
-        renderItem={renderDefaultItem}
-        renderSectionHeader={renderSectionHeader}
-        sections={items}
-        showsVerticalScrollIndicator={false}
-        stickySectionHeadersEnabled={sticky}
-      />
-
-      {/* Sidebar */}
-      <View className={cn(slots.sidebar(), classNames?.sidebar)}>
-        {indices.map(index => {
-          const isActive = index === activeIndex;
-          const itemSlots = indexBarVariants({ active: isActive });
-
-          return (
-            <Button
-              key={index}
-              hitSlop={3}
-              className={cn(itemSlots.sidebarItem(), classNames?.sidebarItem)}
-              color={isActive ? 'primary' : 'muted'}
-              size="sm"
-              textClassName={cn(itemSlots.sidebarItemText(), classNames?.sidebarItemText)}
-              variant="ghost"
-              onPress={() => scrollToIndex(index)}
-            >
-              {index}
-            </Button>
-          );
-        })}
-      </View>
-    </View>
+    <AnchorNav
+      ref={anchorNavRef}
+      className={className}
+      classNames={anchorNavClassNames}
+      haptic={haptic}
+      itemHeight={itemHeight}
+      items={items}
+      renderItem={renderItem}
+      renderSidebar={renderSidebar}
+      sectionHeaderHeight={sectionHeaderHeight}
+      sticky={sticky}
+      onIndexChange={handleIndexChange}
+      onPressItem={onPressItem}
+      {...restProps}
+    />
   );
 };
 

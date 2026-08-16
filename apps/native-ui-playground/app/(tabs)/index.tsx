@@ -184,6 +184,14 @@ export default function HomeScreen() {
       >
         Field
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/index-bar')}
+      >
+        IndexBar
+      </Button>
     </View>
   );
 }

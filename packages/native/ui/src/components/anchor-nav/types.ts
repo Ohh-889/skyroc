@@ -43,6 +43,18 @@ interface AnchorNavRef {
   scrollToSection: (index: number) => void;
 }
 
+/** 自定义侧栏渲染时拿到的上下文 */
+interface AnchorNavSidebarContext {
+  /** 当前激活分组索引 */
+  activeIndex: number;
+
+  /** 分组数据，与传入的 `items` 是同一份引用 */
+  items: AnchorNavSection[];
+
+  /** 定位到指定分组，与点击默认侧栏走的是同一条路径（滚动 + 高亮 + 触感），自定义侧栏不要另起一套 */
+  onPressIndex: (index: number) => void;
+}
+
 /** 插槽名称 */
 type AnchorNavSlots =
   | 'content'
@@ -62,7 +74,7 @@ interface AnchorNavProps extends Omit<ViewProps, 'children'> {
   /** Uniwind className，作用于根节点 */
   className?: string;
 
-  /** 各插槽自定义 className；`separator` 不要改线条粗细，那是滚动定位的度量之一 */
+  /** 各插槽自定义 className；`separator` 不要改线条粗细，那是滚动定位的度量之一；传了 `renderSidebar` 时 `sidebar` 不生效 */
   classNames?: SlotClassNames<AnchorNavSlots>;
 
   /** 非受控默认激活分组索引 */
@@ -93,14 +105,22 @@ interface AnchorNavProps extends Omit<ViewProps, 'children'> {
   /** 自定义子项渲染，外层仍会套上 `itemHeight` 的固定高度 */
   renderItem?: (item: AnchorNavChild, section: AnchorNavSection) => ReactNode;
 
+  /**
+   * 自定义侧栏渲染，传了就完全取代默认的 `Sidebar`——`sidebarClassNames` 与 `classNames.sidebar` 随之失效， 自定义节点自己管样式。滚动定位、高亮联动、触感这些仍由
+   * AnchorNav 统一负责，通过入参拿。
+   *
+   * 节点排在列表**之后**：常规流里就是列表右侧的一列，绝对定位则悬浮在列表之上。 靠的是绘制顺序而不是 zIndex——后者在 Android 上不总可靠。
+   */
+  renderSidebar?: (context: AnchorNavSidebarContext) => ReactNode;
+
   /** 分组标题高度，默认 32；与 `itemHeight` 一样参与滚动定位的计算 */
   sectionHeaderHeight?: number;
 
-  /** 侧栏内部各插槽自定义 className；侧栏根节点用 `classNames.sidebar` */
+  /** 侧栏内部各插槽自定义 className；侧栏根节点用 `classNames.sidebar`；传了 `renderSidebar` 时不生效 */
   sidebarClassNames?: SidebarProps['classNames'];
 
   /** 是否开启分组标题吸顶，默认 true */
   sticky?: boolean;
 }
 
-export type { AnchorNavChild, AnchorNavProps, AnchorNavRef, AnchorNavSection, AnchorNavSlots };
+export type { AnchorNavChild, AnchorNavProps, AnchorNavRef, AnchorNavSection, AnchorNavSidebarContext, AnchorNavSlots };

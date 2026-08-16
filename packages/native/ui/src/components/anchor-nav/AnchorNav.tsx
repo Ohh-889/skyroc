@@ -93,6 +93,7 @@ const AnchorNav = (props: AnchorNavProps) => {
     onPressItem,
     ref,
     renderItem,
+    renderSidebar,
     sectionHeaderHeight = 32,
     sidebarClassNames,
     sticky = true,
@@ -215,13 +216,15 @@ const AnchorNav = (props: AnchorNavProps) => {
       className={slotClassNames.root}
       {...restProps}
     >
-      <Sidebar
-        activeIndex={activeIndex}
-        className={slotClassNames.sidebar}
-        classNames={sidebarClassNames}
-        items={sidebarItems}
-        onIndexChange={handleSidebarPress}
-      />
+      {!renderSidebar && (
+        <Sidebar
+          activeIndex={activeIndex}
+          className={slotClassNames.sidebar}
+          classNames={sidebarClassNames}
+          items={sidebarItems}
+          onIndexChange={handleSidebarPress}
+        />
+      )}
 
       <SectionList
         ref={listRef}
@@ -238,6 +241,9 @@ const AnchorNav = (props: AnchorNavProps) => {
         onScroll={handleScroll}
         onScrollBeginDrag={handleScrollBeginDrag}
       />
+
+      {/* 排在列表之后：自定义侧栏多是悬浮在列表上的，靠绘制顺序压住，不指望 Android 的 zIndex */}
+      {renderSidebar?.({ activeIndex, items, onPressIndex: handleSidebarPress })}
     </View>
   );
 };

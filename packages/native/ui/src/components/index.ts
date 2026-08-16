@@ -36,6 +36,8 @@ export * from './grid';
 
 export * from './image';
 
+export * from './index-bar';
+
 export * from './input';
 
 export * from './navbar';
