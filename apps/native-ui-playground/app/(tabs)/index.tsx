@@ -159,6 +159,14 @@ export default function HomeScreen() {
       >
         Dialog
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/rate')}
+      >
+        Rate
+      </Button>
     </View>
   );
 }

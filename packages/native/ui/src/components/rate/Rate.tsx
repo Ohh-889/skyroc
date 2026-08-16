@@ -1,65 +1,56 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
-import { useRef } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
+import { DEFAULT_RATE_COUNT, DEFAULT_RATE_GUTTER, DEFAULT_RATE_SIZE, rateVariants } from './rate-variants';
+import { RateStar } from './RateStar';
 import type { RateProps } from './types';
 
-/** 默认配色 */
-const DEFAULT_COLOR = '#ffd21e';
-const DEFAULT_VOID_COLOR = '#c8c9cc';
-const DEFAULT_DISABLED_COLOR = '#c8c9cc';
-const DEFAULT_SIZE = 24;
-const DEFAULT_GUTTER = 4;
+/** 抹掉浮点误差用的量级，任意小数比例按它取整 */
+const FRACTION_PRECISION = 10 ** 10;
 
-type RateStatus = 'full' | 'half' | 'void';
+/** 单颗星的填充精度：整星 / 半星 / 任意小数 */
+type FillPrecision = 'exact' | 'half' | 'whole';
 
-interface RateItem {
-  /** 半星时的小数值 */
-  fractional: number;
+/**
+ * 解析填充精度。
+ *
+ * 只有「只读 + 允许半星」才放开任意小数，用于展示 3.7 星这类统计值； 可交互时一律量化到 0.5，保证「点出来的分值」与「看到的星」始终一致。
+ */
+function resolveFillPrecision(allowHalf: boolean, readonly: boolean): FillPrecision {
+  if (!allowHalf) return 'whole';
 
-  /** 当前状态 */
-  status: RateStatus;
+  return readonly ? 'exact' : 'half';
 }
 
-function getRateStatus(value: number, index: number, allowHalf: boolean, readonly: boolean): RateItem {
-  if (value >= index) {
-    return { fractional: 1, status: 'full' };
-  }
+/** 计算第 index 颗星（从 1 起）的填充比例，取值 0 到 1 */
+function resolveFillRatio(value: number, index: number, precision: FillPrecision) {
+  const ratio = value - index + 1;
 
-  if (value + 0.5 >= index && allowHalf && !readonly) {
-    return { fractional: 0.5, status: 'half' };
-  }
+  if (ratio >= 1) return 1;
 
-  // 只读模式下支持任意小数显示（如 3.7 星）
-  if (value + 1 >= index && allowHalf && readonly) {
-    const cardinal = 10 ** 10;
-    return {
-      fractional: Math.round((value - index + 1) * cardinal) / cardinal,
-      status: 'half'
-    };
-  }
+  if (ratio <= 0 || precision === 'whole') return 0;
 
-  return { fractional: 0, status: 'void' };
+  if (precision === 'exact') return Math.round(ratio * FRACTION_PRECISION) / FRACTION_PRECISION;
+
+  return ratio >= 0.5 ? 0.5 : 0;
 }
 
 const Rate = (props: RateProps) => {
   const {
     allowHalf = false,
     className,
+    classNames,
     clearable = false,
-    color = DEFAULT_COLOR,
-    count = 5,
+    color,
+    count = DEFAULT_RATE_COUNT,
     defaultValue = 0,
     disabled = false,
-    disabledColor = DEFAULT_DISABLED_COLOR,
-    gutter = DEFAULT_GUTTER,
+    gutter = DEFAULT_RATE_GUTTER,
     icon,
     onChange,
     readonly = false,
-    size = DEFAULT_SIZE,
+    size = DEFAULT_RATE_SIZE,
     value: valueProp,
-    voidColor = DEFAULT_VOID_COLOR,
     voidIcon
   } = props;
 
@@ -70,184 +61,61 @@ const Rate = (props: RateProps) => {
     prop: valueProp
   });
 
-  const lastTapRef = useRef<number>(0);
+  const variantSlots = rateVariants({ color, disabled });
 
-  /** 内置类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     return {
-      root: cn('flex-row items-center', className)
+      icon: cn(variantSlots.icon(), classNames?.icon),
+      item: cn(variantSlots.item(), classNames?.item),
+      root: cn(variantSlots.root(), classNames?.root, className),
+      voidIcon: cn(variantSlots.voidIcon(), classNames?.voidIcon)
     };
   }
 
   const slotClassNames = resolveSlotClassNames();
 
-  function isUnselectable(): boolean {
-    return readonly || disabled;
-  }
+  // 星数取整、分值裁进 [0, count]，越界入参不至于渲染出半截星或多余的空星
+  const starCount = Math.max(0, Math.floor(count));
+  const currentValue = Math.min(Math.max(value ?? 0, 0), starCount);
+  const interactive = !readonly && !disabled;
+  const precision = resolveFillPrecision(allowHalf, readonly);
 
   function handleSelect(score: number) {
-    if (isUnselectable()) return;
-    if (clearable && score === value) {
-      setValue(0);
+    // 再次点中当前分值：可清除时归零，否则维持原值，不重复触发 onChange
+    if (score === currentValue) {
+      if (clearable) {
+        setValue(0);
+      }
       return;
     }
-    if (score !== value) {
-      setValue(score);
-    }
+
+    setValue(score);
   }
 
-  function handleStarPress(index: number) {
-    if (isUnselectable()) return;
-
-    if (allowHalf) {
-      // 双击切换：快速连续点击同一颗星在 .5 和 1 之间切换
-      const now = Date.now();
-      const score = index + 1;
-      const halfScore = index + 0.5;
-
-      if (now - lastTapRef.current < 300 && value === halfScore) {
-        handleSelect(score);
-      } else if (value === score) {
-        handleSelect(clearable ? score : halfScore);
-      } else {
-        handleSelect(score);
-      }
-
-      lastTapRef.current = now;
-    } else {
-      handleSelect(index + 1);
-    }
-  }
-
-  function handleHalfPress(index: number) {
-    if (isUnselectable()) return;
-    handleSelect(index + 0.5);
-  }
-
-  function resolveIcon(
-    iconProp: RateProps['icon'],
-    index: number,
-    active: boolean,
-    iconColor: string,
-    iconSize: number
-  ) {
-    if (typeof iconProp === 'function') {
-      return iconProp(index, active);
-    }
-    if (iconProp) {
-      return iconProp;
-    }
-    return (
-      <AntDesign
-        color={iconColor}
-        name="star"
-        size={iconSize}
-      />
-    );
-  }
-
-  function resolveVoidIcon(
-    iconProp: RateProps['voidIcon'],
-    index: number,
-    active: boolean,
-    iconColor: string,
-    iconSize: number
-  ) {
-    if (typeof iconProp === 'function') {
-      return iconProp(index, active);
-    }
-    if (iconProp) {
-      return iconProp;
-    }
-    return (
-      <AntDesign
-        color={iconColor}
-        name="star"
-        size={iconSize}
-      />
-    );
-  }
-
-  function renderStar(index: number) {
-    const item = getRateStatus(value, index + 1, allowHalf, readonly);
-    const isFull = item.status === 'full';
-    const isHalf = item.status === 'half';
-
-    const activeColor = disabled ? disabledColor : color;
-    const inactiveColor = disabled ? disabledColor : voidColor;
-    const starColor = isFull ? activeColor : inactiveColor;
-    const isLast = index === count - 1;
-
-    return (
-      <View
-        key={index}
-        style={!isLast ? { marginRight: gutter } : undefined}
-      >
-        <Pressable
-          disabled={isUnselectable()}
-          onPress={() => handleStarPress(index)}
-          style={{ opacity: disabled ? 0.5 : 1 }}
-        >
-          {/* 底层：空心图标 */}
-          {isHalf ? (
-            <View style={{ position: 'relative' }}>
-              {resolveVoidIcon(voidIcon, index, false, inactiveColor, size)}
-
-              {/* 半星遮罩：用 overflow hidden 裁剪 */}
-              <View
-                style={{
-                  height: '100%',
-                  left: 0,
-                  overflow: 'hidden',
-                  position: 'absolute',
-                  top: 0,
-                  width: item.fractional * size
-                }}
-              >
-                {resolveIcon(icon, index, true, activeColor, size)}
-              </View>
-
-              {/* 半星左侧点击区域 */}
-              {allowHalf && !readonly ? (
-                <Pressable
-                  onPress={() => handleHalfPress(index)}
-                  style={{
-                    height: '100%',
-                    left: 0,
-                    position: 'absolute',
-                    top: 0,
-                    width: size / 2
-                  }}
-                />
-              ) : null}
-            </View>
-          ) : (
-            <View>
-              {isFull
-                ? resolveIcon(icon, index, true, starColor, size)
-                : resolveVoidIcon(voidIcon, index, false, starColor, size)}
-
-              {/* 半星左侧点击区域 */}
-              {allowHalf && !readonly ? (
-                <Pressable
-                  onPress={() => handleHalfPress(index)}
-                  style={{
-                    height: '100%',
-                    left: 0,
-                    position: 'absolute',
-                    top: 0,
-                    width: size / 2
-                  }}
-                />
-              ) : null}
-            </View>
-          )}
-        </Pressable>
-      </View>
-    );
-  }
-
-  return <View className={slotClassNames.root}>{Array.from({ length: count }, (_, i) => renderStar(i))}</View>;
+  return (
+    <View
+      className={slotClassNames.root}
+      style={{ gap: gutter }}
+    >
+      {Array.from({ length: starCount }, (_, index) => (
+        <RateStar
+          key={index}
+          fillRatio={resolveFillRatio(currentValue, index + 1, precision)}
+          halfSelectable={allowHalf}
+          icon={icon}
+          iconClassName={slotClassNames.icon}
+          index={index}
+          interactive={interactive}
+          itemClassName={slotClassNames.item}
+          size={size}
+          voidIcon={voidIcon}
+          voidIconClassName={slotClassNames.voidIcon}
+          onSelect={handleSelect}
+        />
+      ))}
+    </View>
+  );
 };
 
 export { Rate };
