@@ -196,6 +196,10 @@ catalogs:
     # 验证码格子输入底座：PasswordInput 基于其封装。纯 JS 无原生模块，直接进 native-ui 的 dependencies
     'react-native-confirmation-code-field': 9.0.0
 
+    # 月历底座：Calendar 基于其封装。纯 JS 无原生模块，直接进 native-ui 的 dependencies；
+    # 它自带的默认 classNames 用的就是 shadcn 那套语义 token，与本仓库的 tailwind-plugin 同名
+    'react-native-ui-datepicker': ^3.1.2
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具

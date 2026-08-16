@@ -89,6 +89,7 @@
     "@skyroc/utils": "workspace:*",
     "@skyroc/hooks": "workspace:*",
     "react-native-confirmation-code-field": "catalog:native",
+    "react-native-ui-datepicker": "catalog:native",
     "tailwind-variants": "catalog:utils"
   },
   "devDependencies": {
