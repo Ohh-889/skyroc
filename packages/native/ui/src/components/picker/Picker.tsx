@@ -1,6 +1,6 @@
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { Sheet } from '../sheet/Sheet';
 import { PickerView } from './PickerView';
 import type { PickerProps } from './types';
@@ -19,8 +19,8 @@ const Picker = (props: PickerProps) => {
     fieldNames,
     itemHeight,
     loading,
-    onChange,
     onCancel,
+    onChange,
     onConfirm,
     onUpdateShow,
     show,
@@ -49,7 +49,7 @@ const Picker = (props: PickerProps) => {
   }, [show]);
 
   function handleOpen() {
-    onUpdateShow?.(true);
+    onUpdateShow(true);
   }
 
   function handleDisplayChange(values: string[]) {
@@ -59,12 +59,12 @@ const Picker = (props: PickerProps) => {
   function handleConfirm(values: string[]) {
     setCommittedValue(values);
     onConfirm?.(values);
-    onUpdateShow?.(false);
+    onUpdateShow(false);
   }
 
   function handleCancel(values: string[]) {
     onCancel?.(values);
-    onUpdateShow?.(false);
+    onUpdateShow(false);
   }
 
   function renderTrigger() {

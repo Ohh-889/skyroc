@@ -3,9 +3,6 @@ import type { SlotClassNames } from '../../types';
 
 /** Single picker option */
 export interface PickerOption {
-  /** Allow dynamic field name access via fieldNames mapping */
-  [key: string]: unknown;
-
   /** Child options for cascade mode */
   children?: PickerOption[];
 
@@ -17,6 +14,9 @@ export interface PickerOption {
 
   /** Option value identifier */
   value: string;
+
+  /** Allow dynamic field name access via fieldNames mapping */
+  [key: string]: unknown;
 }
 
 /** Custom field name mapping for option objects */
@@ -42,11 +42,11 @@ export interface PickerColumnProps {
   /** Field name mapping */
   fieldNames: Required<PickerFieldNames>;
 
-  /** Height of each item in pixels */
-  itemHeight: number;
-
   /** Whether to trigger haptic feedback when scrolling between items */
   haptic?: boolean;
+
+  /** Height of each item in pixels */
+  itemHeight: number;
 
   /** Called when the selected value changes */
   onChange: (value: string, columnIndex: number) => void;
@@ -120,20 +120,20 @@ export interface PickerViewProps {
   /** Custom field name mapping */
   fieldNames?: PickerFieldNames;
 
+  /** Whether to trigger haptic feedback when scrolling between items */
+  haptic?: boolean;
+
   /** Height of each item in pixels */
   itemHeight?: number;
 
   /** Whether to show a loading overlay */
   loading?: boolean;
 
-  /** Whether to trigger haptic feedback when scrolling between items */
-  haptic?: boolean;
+  /** Called when cancel button is pressed */
+  onCancel?: (values: string[]) => void;
 
   /** Called when any column value changes */
   onChange?: (values: string[]) => void;
-
-  /** Called when cancel button is pressed */
-  onCancel?: (values: string[]) => void;
 
   /** Called when confirm button is pressed */
   onConfirm?: (values: string[]) => void;
@@ -162,8 +162,8 @@ export interface PickerProps extends PickerViewProps {
   /** Whether swiping down closes the sheet, defaults to true */
   enablePanDownToClose?: boolean;
 
-  /** Called when the sheet visibility changes */
-  onUpdateShow?: (show: boolean) => void;
+  /** Called when the sheet visibility changes; required, otherwise `show` is never reset after a swipe-down close */
+  onUpdateShow: (show: boolean) => void;
 
   /** Whether the sheet is visible */
   show: boolean;
