@@ -12,6 +12,7 @@ const RadioGroupCard = <T extends RadioValue = RadioValue>(props: RadioGroupCard
     direction = 'vertical',
     disabled = false,
     iconSize,
+    itemClassNames,
     items,
     onChange,
     radioPosition = 'left',
@@ -37,6 +38,7 @@ const RadioGroupCard = <T extends RadioValue = RadioValue>(props: RadioGroupCard
       {items.map(item => (
         <RadioCard
           key={String(item.value)}
+          classNames={itemClassNames}
           description={item.description}
           disabled={item.disabled}
           icon={item.icon}

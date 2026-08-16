@@ -1,5 +1,6 @@
 import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
 import type { ReactNode } from 'react';
+import type { SlotClassNames } from '../../types';
 
 /** Radio icon shape */
 export type RadioShape = 'round' | 'square';
@@ -23,6 +24,28 @@ export type RadioValue = number | string;
 /** Layout direction for RadioGroup */
 export type RadioGroupDirection = 'horizontal' | 'vertical';
 
+/**
+ * 指示器可覆盖的 slot 名称，Radio 与 RadioCard 共用。
+ *
+ * `indicator` 是外圈控件本体，`dot` 是圆形选中态的内圆点，`indicatorIcon` 作用于方形内置勾图标的 `colorClassName`，只接受 `accent-*` 颜色类。
+ */
+export type RadioIndicatorSlots = 'dot' | 'indicator' | 'indicatorIcon';
+
+/** Radio 组件可覆盖的 slot 名称 */
+export type RadioSlots = 'control' | 'dot' | 'indicator' | 'indicatorIcon' | 'label' | 'labelWrapper' | 'root';
+
+/** RadioCard 组件可覆盖的 slot 名称 */
+export type RadioCardSlots =
+  | 'content'
+  | 'description'
+  | 'dot'
+  | 'icon'
+  | 'indicator'
+  | 'indicatorIcon'
+  | 'label'
+  | 'root'
+  | 'texts';
+
 export interface RadioProps {
   /** Controlled checked state, ignored when the radio belongs to a RadioGroup */
   checked?: boolean;
@@ -33,8 +56,11 @@ export interface RadioProps {
   /** Label content */
   children?: ReactNode;
 
-  /** NativeWind className for the root container */
+  /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<RadioSlots>;
 
   /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
@@ -144,8 +170,11 @@ export interface RadioCardProps {
   /** Custom icon when checked */
   checkedIcon?: ReactNode;
 
-  /** NativeWind className for the card container */
+  /** 覆盖卡片容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
+
+  /** 覆盖各 slot 的类名 */
+  classNames?: SlotClassNames<RadioCardSlots>;
 
   /** Theme color preset, falls back to the group value then `primary` */
   color?: ThemeColor;
@@ -222,6 +251,9 @@ export interface RadioGroupCardProps<T extends RadioValue = RadioValue> {
 
   /** Outer control size in pixels */
   iconSize?: number;
+
+  /** 覆盖每张卡片各 slot 的类名，卡片由本组件内部渲染，只能从这里透传 */
+  itemClassNames?: SlotClassNames<RadioCardSlots>;
 
   /** Items to render */
   items: RadioGroupCardItem<T>[];

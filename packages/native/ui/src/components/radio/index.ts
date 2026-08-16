@@ -14,15 +14,18 @@ export { RadioGroup } from './RadioGroup';
 export { RadioGroupCard } from './RadioGroupCard';
 export type {
   RadioCardProps,
+  RadioCardSlots,
   RadioGroupCardItem,
   RadioGroupCardProps,
   RadioGroupContextValue,
   RadioGroupDirection,
   RadioGroupProps,
+  RadioIndicatorSlots,
   RadioLabelPosition,
   RadioPosition,
   RadioProps,
   RadioShape,
   RadioSide,
+  RadioSlots,
   RadioValue
 } from './types';

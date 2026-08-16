@@ -12,6 +12,7 @@ const Radio = (props: RadioProps) => {
     checkedIcon,
     children,
     className,
+    classNames,
     color,
     defaultChecked,
     disabled,
@@ -48,10 +49,10 @@ const Radio = (props: RadioProps) => {
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     return {
-      control: 'active:opacity-70',
-      label: variantSlots.label(),
-      labelWrapper: 'active:opacity-70',
-      root: cn(variantSlots.root(), className)
+      control: cn('active:opacity-70', classNames?.control),
+      label: cn(variantSlots.label(), classNames?.label),
+      labelWrapper: cn('active:opacity-70', classNames?.labelWrapper),
+      root: cn(variantSlots.root(), classNames?.root, className)
     };
   }
 
@@ -84,6 +85,7 @@ const Radio = (props: RadioProps) => {
         <RadioIndicator
           checked={item.checked}
           checkedIcon={item.checkedIcon}
+          classNames={classNames}
           color={item.color}
           shape={item.shape}
           sizes={item.sizes}

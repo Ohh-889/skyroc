@@ -12,6 +12,7 @@ const RadioCard = (props: RadioCardProps) => {
     checked,
     checkedIcon,
     className,
+    classNames,
     color,
     defaultChecked,
     description,
@@ -45,12 +46,12 @@ const RadioCard = (props: RadioCardProps) => {
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     return {
-      content: variantSlots.cardContent(),
-      description: variantSlots.cardDescription(),
-      icon: 'shrink-0',
-      label: variantSlots.cardLabel(),
-      root: cn(variantSlots.card(), className),
-      texts: 'flex-1 gap-0.5'
+      content: cn(variantSlots.cardContent(), classNames?.content),
+      description: cn(variantSlots.cardDescription(), classNames?.description),
+      icon: cn('shrink-0', classNames?.icon),
+      label: cn(variantSlots.cardLabel(), classNames?.label),
+      root: cn(variantSlots.card(), classNames?.root, className),
+      texts: cn('flex-1 gap-0.5', classNames?.texts)
     };
   }
 
@@ -69,6 +70,7 @@ const RadioCard = (props: RadioCardProps) => {
       <RadioIndicator
         checked={item.checked}
         checkedIcon={item.checkedIcon}
+        classNames={classNames}
         color={item.color}
         shape={item.shape}
         sizes={item.sizes}
