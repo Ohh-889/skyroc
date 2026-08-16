@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { describe, expect, it } from 'vitest';
-import { getAtomValue, setAtomValue, updateAtomValue } from '../src/store/global';
+import { atomWithPartial } from '../src/utils/atom-with-partial';
+import { getAtomValue, setAtomValue } from '../src/store/global';
 
 describe('global store', () => {
   it('getAtomValue 读取 atom 初始值', () => {
@@ -20,17 +21,21 @@ describe('global store', () => {
     expect(getAtomValue(countAtom)).toBe(2);
   });
 
-  it('updateAtomValue 基于旧值更新', () => {
-    const countAtom = atom(5);
-    updateAtomValue(countAtom, prev => prev * 2);
-    expect(getAtomValue(countAtom)).toBe(10);
+  it('setAtomValue 连续函数式调用累积', () => {
+    const countAtom = atom(1);
+    setAtomValue(countAtom, prev => prev + 1);
+    setAtomValue(countAtom, prev => prev + 1);
+    setAtomValue(countAtom, prev => prev + 1);
+    expect(getAtomValue(countAtom)).toBe(4);
   });
 
-  it('updateAtomValue 连续调用累积', () => {
-    const countAtom = atom(1);
-    updateAtomValue(countAtom, prev => prev + 1);
-    updateAtomValue(countAtom, prev => prev + 1);
-    updateAtomValue(countAtom, prev => prev + 1);
-    expect(getAtomValue(countAtom)).toBe(4);
+  it('setAtomValue 支持自定义写签名的 atom', () => {
+    const uiAtom = atomWithPartial({ mixSiderFixed: false, siderCollapse: false });
+
+    setAtomValue(uiAtom, { siderCollapse: true });
+    expect(getAtomValue(uiAtom)).toEqual({ mixSiderFixed: false, siderCollapse: true });
+
+    setAtomValue(uiAtom, prev => ({ siderCollapse: !prev.siderCollapse }));
+    expect(getAtomValue(uiAtom)).toEqual({ mixSiderFixed: false, siderCollapse: false });
   });
 });

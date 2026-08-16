@@ -50,7 +50,10 @@ export function unregisterStorage(name: string): boolean {
 }
 
 /**
- * Reset the registry. Intended for tests; prefix is `__` to discourage runtime use.
+ * Reset the registry.
+ *
+ * Deliberately absent from the package entry — tests import it from this module directly, and nothing at runtime should
+ * be able to wipe every registration.
  *
  * @internal
  */
