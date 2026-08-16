@@ -1,11 +1,12 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { BottomSheetBackdropProps, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { cn } from '@skyroc/utils';
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 import { BackHandler, Platform, Pressable, View } from 'react-native';
-import { withUniwind } from 'uniwind';
+import { useResolveClassNames, withUniwind } from 'uniwind';
 import { Text } from '../text/Typography';
 import { sheetVariants } from './sheet-variants';
 import type { SheetProps } from './types';
@@ -19,43 +20,40 @@ const CLOSE_ICON_SIZE = 12;
 /** AntDesign 不认 className，用 withUniwind 把 `accent-*` 工具类映射到 color 上，让关闭图标色跟随主题 token */
 const CloseIcon = withUniwind(AntDesign);
 
-interface SheetBackdropProps extends BottomSheetBackdropProps {
-  /** 点击遮罩的行为 */
-  pressBehavior: 'close' | 'none';
+/**
+ * 生成一个固定 pressBehavior 的遮罩组件。
+ *
+ * gorhom 把 backdropComponent 当组件类型用，引用一变整层遮罩就卸载重挂。 所以两种行为在模块级各生成一个零闭包的组件、渲染时二选一，
+ * 而不是在组件内包一层 render 函数——那样每次渲染都是新类型。
+ */
+function createBackdrop(pressBehavior: 'close' | 'none') {
+  const SheetBackdrop = (props: BottomSheetBackdropProps) => {
+    return (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        opacity={BACKDROP_OPACITY}
+        pressBehavior={pressBehavior}
+      />
+    );
+  };
+
+  return SheetBackdrop;
 }
 
-/** 遮罩层，提到组件外以免每次渲染都产生新的组件类型 */
-const SheetBackdrop = (props: SheetBackdropProps) => {
-  const { pressBehavior, ...rest } = props;
+const ClosableBackdrop = createBackdrop('close');
 
-  return (
-    <BottomSheetBackdrop
-      {...rest}
-      appearsOnIndex={0}
-      disappearsOnIndex={-1}
-      opacity={BACKDROP_OPACITY}
-      pressBehavior={pressBehavior}
-    />
-  );
-};
+const StaticBackdrop = createBackdrop('none');
 
-interface SheetBackgroundProps extends BottomSheetBackgroundProps {
-  /** 面板本体的类名，承载圆角与底色 */
-  className: string;
+/** 字符串走 Text 承接主题字号与颜色；自定义节点原样渲染——RN 里把 View 塞进 Text 会挤坏布局 */
+function renderTextNode(node: ReactNode, className: string) {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return <Text className={className}>{node}</Text>;
+  }
+
+  return node ?? null;
 }
-
-/** 面板背景：gorhom 默认那个只认 style，换成认 className 的版本，底色与圆角才能走主题 token。 定位由 gorhom 通过 style 传入（absoluteFill），必须原样透传 */
-const SheetBackground = (props: SheetBackgroundProps) => {
-  const { className, pointerEvents, style } = props;
-
-  return (
-    <View
-      className={className}
-      pointerEvents={pointerEvents}
-      style={style}
-    />
-  );
-};
 
 /** 底部面板组件，基于 @gorhom/bottom-sheet */
 const Sheet = (props: SheetProps) => {
@@ -86,21 +84,25 @@ const Sheet = (props: SheetProps) => {
   const hasChrome = showHandle || hasHeader || Boolean(description);
 
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
-  function resolveSlotClassNames() {
-    return {
-      background: cn(variantSlots.background(), classNames?.background, className),
-      chrome: cn(variantSlots.chrome(), classNames?.chrome),
-      close: cn(variantSlots.close(), classNames?.close),
-      closeIcon: cn(variantSlots.closeIcon(), classNames?.closeIcon),
-      description: cn(variantSlots.description(), classNames?.description),
-      handle: cn(variantSlots.handle(), classNames?.handle),
-      handleBar: cn(variantSlots.handleBar(), classNames?.handleBar),
-      header: cn(variantSlots.header(), classNames?.header),
-      title: cn(variantSlots.title(), classNames?.title)
-    };
-  }
+  const slotClassNames = {
+    background: cn(variantSlots.background(), classNames?.background, className),
+    chrome: cn(variantSlots.chrome(), classNames?.chrome),
+    close: cn(variantSlots.close(), classNames?.close),
+    closeIcon: cn(variantSlots.closeIcon(), classNames?.closeIcon),
+    description: cn(variantSlots.description(), classNames?.description),
+    handle: cn(variantSlots.handle(), classNames?.handle),
+    handleBar: cn(variantSlots.handleBar(), classNames?.handleBar),
+    header: cn(variantSlots.header(), classNames?.header),
+    title: cn(variantSlots.title(), classNames?.title)
+  };
 
-  const slotClassNames = resolveSlotClassNames();
+  /**
+   * 面板底色与圆角走 gorhom 自带的 backgroundStyle，不再自定义 backgroundComponent。
+   *
+   * 自定义组件每次渲染都是新的组件类型，背景层会跟着卸载重挂，还会丢掉 gorhom 默认背景 自带的无障碍属性；换成 style 就只是个普通 prop，不参与协调。 uniwind
+   * 这个 hook 把 className 解析成 RN style 并订阅主题变化，底色仍然跟着 token 走。 位置跟随它依赖的 slotClassNames，不提到最前面。
+   */
+  const backgroundStyle = useResolveClassNames(slotClassNames.background);
 
   function handleDismiss() {
     onUpdateShow(false);
@@ -110,29 +112,15 @@ const Sheet = (props: SheetProps) => {
     sheetRef.current?.dismiss();
   }
 
-  function renderBackdrop(backdropProps: BottomSheetBackdropProps) {
-    return (
-      <SheetBackdrop
-        {...backdropProps}
-        pressBehavior={closeOnBackdropPress ? 'close' : 'none'}
-      />
-    );
-  }
-
-  function renderBackground(backgroundProps: BottomSheetBackgroundProps) {
-    return (
-      <SheetBackground
-        {...backgroundProps}
-        className={slotClassNames.background}
-      />
-    );
-  }
-
   /**
    * 顶部固定区走 handleComponent 而不是塞进内容里。
    *
    * Gorhom 会用 onLayout 单独量它（BottomSheetHandleContainer），把高度计入动态档位 （useAnimatedDetents：contentHeight +
    * handleHeight），又从内容区高度里扣掉 （BottomSheetContent）。这样内容区就完全留给调用方的容器，标题也不会跟着列表滚。
+   *
+   * 这个函数没法像遮罩那样提到模块级：它要闭包 title / description / slotClassNames， 而 gorhom 不给 handleComponent 传自定义 props，portal
+   * 又切断了 context。 所以引用每次渲染都会变、chrome 跟着重挂——重挂范围只有标题栏本身，量出来的 handleHeight 不变、不会引起档位跳动，权衡后接受。
+   * 反过来若强行把组件类型钉死（比如数据塞进 ref），BottomSheetHandleContainer 是 memo 的， 标题更新就再也传不进去了。
    */
   function renderChrome() {
     return (
@@ -145,11 +133,11 @@ const Sheet = (props: SheetProps) => {
 
         {hasHeader && (
           <View className={slotClassNames.header}>
-            {title ? <Text className={slotClassNames.title}>{title}</Text> : null}
+            {renderTextNode(title, slotClassNames.title)}
             {closeable && (
               <Pressable
-                hitSlop={5}
                 className={slotClassNames.close}
+                hitSlop={5}
                 onPress={handleClose}
               >
                 <CloseIcon
@@ -162,7 +150,7 @@ const Sheet = (props: SheetProps) => {
           </View>
         )}
 
-        {description ? <Text className={slotClassNames.description}>{description}</Text> : null}
+        {renderTextNode(description, slotClassNames.description)}
       </View>
     );
   }
@@ -181,7 +169,7 @@ const Sheet = (props: SheetProps) => {
     }
 
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      sheetRef.current?.dismiss();
+      sheetRef.current?.close();
       return true;
     });
 
@@ -191,11 +179,11 @@ const Sheet = (props: SheetProps) => {
   return (
     <BottomSheetModal
       ref={composedRefs}
-      backdropComponent={renderBackdrop}
-      backgroundComponent={renderBackground}
+      backdropComponent={closeOnBackdropPress ? ClosableBackdrop : StaticBackdrop}
+      backgroundStyle={backgroundStyle}
       enableDynamicSizing={!snapPoints}
-      handleComponent={hasChrome ? renderChrome : null}
       enablePanDownToClose={enablePanDownToClose}
+      handleComponent={hasChrome ? renderChrome : null}
       snapPoints={snapPoints}
       onDismiss={handleDismiss}
       {...rest}

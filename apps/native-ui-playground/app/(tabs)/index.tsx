@@ -12,38 +12,6 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
-        onPress={() => router.push('/components/divider')}
-      >
-        Press Me
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/tag')}
-      >
-        Press Me
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/rolling-text')}
-      >
-        Press Me
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/toast')}
-      >
-        Press Me
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
         onPress={() => router.push('/components/tabs')}
       >
         Press Me
@@ -175,6 +143,14 @@ export default function HomeScreen() {
         onPress={() => router.push('/components/password-input')}
       >
         PasswordInput
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/sheet')}
+      >
+        Sheet
       </Button>
     </View>
   );

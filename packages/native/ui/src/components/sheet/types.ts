@@ -17,13 +17,15 @@ export type SheetSlots =
 /**
  * 从 BottomSheetModalProps 中排除的属性，由 Sheet 内部管理。
  *
- * 这些属性一旦从外部透传就会覆盖内部实现：onDismiss 被覆盖会让 onUpdateShow 永远不触发，
- * 父级的 show 卡在 true，面板再也无法重新打开；handleComponent 承载的是标题栏，
- * backgroundComponent 承载的是圆角与底色。
+ * 这些属性一旦从外部透传就会覆盖内部实现（内部值写在 `{...rest}` 之前，会被 rest 覆盖）：
+ * onDismiss 被覆盖会让 onUpdateShow 永远不触发，父级的 show 卡在 true，面板再也无法重新打开；
+ * handleComponent 承载的是标题栏；backgroundStyle 承载的是圆角与底色，要改用 className / classNames.background，
+ * 才能继续走主题 token；backgroundComponent 排除掉是为了守住这条路径。
  */
 type SheetOmitProps =
   | 'backdropComponent'
   | 'backgroundComponent'
+  | 'backgroundStyle'
   | 'children'
   | 'enableDynamicSizing'
   | 'handleComponent'
@@ -31,8 +33,12 @@ type SheetOmitProps =
   | 'ref'
   | 'snapPoints';
 
-/** Sheet 底部面板组件属性 */
-export interface SheetProps extends Omit<Partial<BottomSheetModalProps>, SheetOmitProps> {
+/**
+ * Sheet 底部面板组件属性。
+ *
+ * 不套 Partial：BottomSheetModalProps 里只有 children 是必填的，而它已经在上面重新声明过， 套一层 Partial 只会把 gorhom 自己的约束一并抹掉。
+ */
+export interface SheetProps extends Omit<BottomSheetModalProps, SheetOmitProps> {
   /**
    * 面板内容，必须自带 gorhom 的容器组件。
    *
