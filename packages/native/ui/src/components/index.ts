@@ -1,3 +1,5 @@
+export * from './action-sheet';
+
 export * from './avatar';
 
 export * from './badge';
@@ -27,6 +29,8 @@ export * from './notify';
 export * from './number-keyboard';
 
 export * from './password-input';
+
+export * from './picker';
 
 export * from './popup';
 

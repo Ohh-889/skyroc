@@ -1,5 +1,12 @@
 import type { PickerColumnType, PickerFieldNames, PickerOption } from './types';
 
+/**
+ * 级联展开的最大轮数。
+ *
+ * 每轮至少多展开一列，正常数据下轮数等于树的深度；这个上限只是防止 children 自引用时死循环。
+ */
+const MAX_CASCADE_DEPTH = 20;
+
 /** Merge user-provided field names with defaults */
 function assignDefaultFieldNames(fieldNames?: PickerFieldNames): Required<PickerFieldNames> {
   return {
@@ -26,6 +33,15 @@ function getColumnsType(
   });
 
   return hasChildren ? 'cascade' : 'single';
+}
+
+/** Find an option by its value in a flat option array */
+function findOptionByValue(
+  options: PickerOption[],
+  value: string,
+  fieldNames: Required<PickerFieldNames>
+): PickerOption | undefined {
+  return options.find(option => option[fieldNames.value] === value);
 }
 
 /** Expand cascade tree into a 2D column array based on current selected values */
@@ -77,15 +93,6 @@ function normalizeColumns(
   }
 }
 
-/** Find an option by its value in a flat option array */
-function findOptionByValue(
-  options: PickerOption[],
-  value: string,
-  fieldNames: Required<PickerFieldNames>
-): PickerOption | undefined {
-  return options.find(option => option[fieldNames.value] === value);
-}
-
 /** Get the first non-disabled option from a list */
 function getFirstEnabledOption(options: PickerOption[]): PickerOption | undefined {
   return options.find(option => !option.disabled) ?? options[0];
@@ -110,8 +117,36 @@ function ensureSelectedValues(
 
     // Fall back to first enabled option
     const fallback = getFirstEnabledOption(columnOptions);
-    return fallback ? (fallback[fieldNames.value] as string) : '';
+    return (fallback?.[fieldNames.value] as string | undefined) ?? '';
   });
+}
+
+/**
+ * 归一化列数据并同时修正选中值。
+ *
+ * 级联模式下这两件事互相依赖：列展开到第几级取决于选中值，而选中值合不合法又取决于列。 单向算一遍会在初始 value 为空时只展开出第一列（三级联动首屏只显示一列，滚一下才冒出第二列），
+ * 所以这里迭代到不动点——每轮拿上一轮补齐的值重新展开，直到列数不再增长。
+ *
+ * 单列 / 多列模式下 normalizeColumns 与选中值无关，第一轮就会收敛，不会有额外开销。
+ */
+function resolveColumns(
+  columns: PickerOption[] | PickerOption[][],
+  fieldNames: Required<PickerFieldNames>,
+  values: string[]
+): { columns: PickerOption[][]; values: string[] } {
+  let resolvedColumns = normalizeColumns(columns, fieldNames, values);
+  let resolvedValues = ensureSelectedValues(resolvedColumns, values, fieldNames);
+
+  for (let depth = 0; depth < MAX_CASCADE_DEPTH; depth += 1) {
+    const nextColumns = normalizeColumns(columns, fieldNames, resolvedValues);
+
+    if (nextColumns.length === resolvedColumns.length) break;
+
+    resolvedColumns = nextColumns;
+    resolvedValues = ensureSelectedValues(nextColumns, resolvedValues, fieldNames);
+  }
+
+  return { columns: resolvedColumns, values: resolvedValues };
 }
 
 export {
@@ -121,5 +156,6 @@ export {
   formatCascadeColumns,
   getColumnsType,
   getFirstEnabledOption,
-  normalizeColumns
+  normalizeColumns,
+  resolveColumns
 };

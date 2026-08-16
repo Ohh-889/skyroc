@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps -- 每次打开面板都要拿当时的已确认值做一次快照，
+   把 committedValue 列进依赖会让面板开着的时候被外部改值覆盖掉用户正在滚的选择。 */
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
@@ -5,32 +8,38 @@ import { Sheet } from '../sheet/Sheet';
 import { PickerView } from './PickerView';
 import type { PickerProps } from './types';
 
+/** 弹层选择器，把 PickerView 装进底部面板 */
 const Picker = (props: PickerProps) => {
   const {
-    cancelText = '取消',
+    cancelText,
     children,
     className,
     classNames,
     closeOnBackdropPress = true,
     columns,
-    confirmText = '确定',
+    confirmText,
     defaultValue = [],
-    enablePanDownToClose,
+    enablePanDownToClose = false,
     fieldNames,
+    haptic,
     itemHeight,
     loading,
     onCancel,
     onChange,
     onConfirm,
     onUpdateShow,
+    ref,
+    sheetClassName,
+    sheetClassNames,
     show,
+    showHandle = false,
     showToolbar = true,
     title,
     value: valueProp,
     visibleCount
   } = props;
 
-  // Committed value — the confirmed selection
+  // 已确认的值：只有点「确定」才会写进来
   const [committedValue, setCommittedValue] = useControllableState({
     caller: 'Picker',
     defaultProp: defaultValue,
@@ -38,18 +47,15 @@ const Picker = (props: PickerProps) => {
     prop: valueProp
   });
 
-  // Display value — temporary while the sheet is open
+  // 面板打开期间的临时值，取消就丢弃
   const [displayValue, setDisplayValue] = useState<string[]>(committedValue);
 
-  // Sync display value when sheet opens
-  useEffect(() => {
-    if (show) {
-      setDisplayValue(committedValue);
-    }
-  }, [show]);
+  function handleUpdateShow(nextShow: boolean) {
+    onUpdateShow?.(nextShow);
+  }
 
   function handleOpen() {
-    onUpdateShow(true);
+    handleUpdateShow(true);
   }
 
   function handleDisplayChange(values: string[]) {
@@ -59,12 +65,12 @@ const Picker = (props: PickerProps) => {
   function handleConfirm(values: string[]) {
     setCommittedValue(values);
     onConfirm?.(values);
-    onUpdateShow(false);
+    handleUpdateShow(false);
   }
 
   function handleCancel(values: string[]) {
     onCancel?.(values);
-    onUpdateShow(false);
+    handleUpdateShow(false);
   }
 
   function renderTrigger() {
@@ -77,35 +83,51 @@ const Picker = (props: PickerProps) => {
     return <Pressable onPress={handleOpen}>{children}</Pressable>;
   }
 
+  // 每次打开时把临时值重置回已确认值，上一次取消掉的滚动不会残留
+  useEffect(() => {
+    if (show) {
+      setDisplayValue(committedValue);
+    }
+  }, [show]);
+
   return (
     <>
       {renderTrigger()}
 
       <Sheet
+        ref={ref}
+        className={sheetClassName}
+        classNames={sheetClassNames}
         closeable={false}
         closeOnBackdropPress={closeOnBackdropPress}
+        // 滚轮要独占垂直手势：面板的内容拖拽开着时，在列上下拉会拖动整个面板而不是滚动滚轮
+        enableContentPanningGesture={false}
         enablePanDownToClose={enablePanDownToClose}
         show={show}
-        showHandle={false}
-        onUpdateShow={onUpdateShow}
+        showHandle={showHandle}
+        onUpdateShow={handleUpdateShow}
       >
-        <PickerView
-          cancelText={cancelText}
-          className={className}
-          classNames={classNames}
-          columns={columns}
-          confirmText={confirmText}
-          fieldNames={fieldNames}
-          itemHeight={itemHeight}
-          loading={loading}
-          onCancel={handleCancel}
-          onChange={handleDisplayChange}
-          onConfirm={handleConfirm}
-          showToolbar={showToolbar}
-          title={title}
-          value={displayValue}
-          visibleCount={visibleCount}
-        />
+        {/* Sheet 不代为包裹容器：动态高度要靠 BottomSheetView 上报内容高度才量得出来 */}
+        <BottomSheetView>
+          <PickerView
+            cancelText={cancelText}
+            className={className}
+            classNames={classNames}
+            columns={columns}
+            confirmText={confirmText}
+            fieldNames={fieldNames}
+            haptic={haptic}
+            itemHeight={itemHeight}
+            loading={loading}
+            showToolbar={showToolbar}
+            title={title}
+            value={displayValue}
+            visibleCount={visibleCount}
+            onCancel={handleCancel}
+            onChange={handleDisplayChange}
+            onConfirm={handleConfirm}
+          />
+        </BottomSheetView>
       </Sheet>
     </>
   );

@@ -23,8 +23,7 @@ const CloseIcon = withUniwind(AntDesign);
 /**
  * 生成一个固定 pressBehavior 的遮罩组件。
  *
- * gorhom 把 backdropComponent 当组件类型用，引用一变整层遮罩就卸载重挂。 所以两种行为在模块级各生成一个零闭包的组件、渲染时二选一，
- * 而不是在组件内包一层 render 函数——那样每次渲染都是新类型。
+ * Gorhom 把 backdropComponent 当组件类型用，引用一变整层遮罩就卸载重挂。 所以两种行为在模块级各生成一个零闭包的组件、渲染时二选一， 而不是在组件内包一层 render 函数——那样每次渲染都是新类型。
  */
 function createBackdrop(pressBehavior: 'close' | 'none') {
   const SheetBackdrop = (props: BottomSheetBackdropProps) => {
@@ -99,8 +98,8 @@ const Sheet = (props: SheetProps) => {
   /**
    * 面板底色与圆角走 gorhom 自带的 backgroundStyle，不再自定义 backgroundComponent。
    *
-   * 自定义组件每次渲染都是新的组件类型，背景层会跟着卸载重挂，还会丢掉 gorhom 默认背景 自带的无障碍属性；换成 style 就只是个普通 prop，不参与协调。 uniwind
-   * 这个 hook 把 className 解析成 RN style 并订阅主题变化，底色仍然跟着 token 走。 位置跟随它依赖的 slotClassNames，不提到最前面。
+   * 自定义组件每次渲染都是新的组件类型，背景层会跟着卸载重挂，还会丢掉 gorhom 默认背景 自带的无障碍属性；换成 style 就只是个普通 prop，不参与协调。 uniwind 这个 hook 把 className 解析成
+   * RN style 并订阅主题变化，底色仍然跟着 token 走。 位置跟随它依赖的 slotClassNames，不提到最前面。
    */
   const backgroundStyle = useResolveClassNames(slotClassNames.background);
 
@@ -109,7 +108,7 @@ const Sheet = (props: SheetProps) => {
   }
 
   function handleClose() {
-    sheetRef.current?.dismiss();
+    sheetRef.current?.close();
   }
 
   /**
@@ -118,9 +117,9 @@ const Sheet = (props: SheetProps) => {
    * Gorhom 会用 onLayout 单独量它（BottomSheetHandleContainer），把高度计入动态档位 （useAnimatedDetents：contentHeight +
    * handleHeight），又从内容区高度里扣掉 （BottomSheetContent）。这样内容区就完全留给调用方的容器，标题也不会跟着列表滚。
    *
-   * 这个函数没法像遮罩那样提到模块级：它要闭包 title / description / slotClassNames， 而 gorhom 不给 handleComponent 传自定义 props，portal
-   * 又切断了 context。 所以引用每次渲染都会变、chrome 跟着重挂——重挂范围只有标题栏本身，量出来的 handleHeight 不变、不会引起档位跳动，权衡后接受。
-   * 反过来若强行把组件类型钉死（比如数据塞进 ref），BottomSheetHandleContainer 是 memo 的， 标题更新就再也传不进去了。
+   * 这个函数没法像遮罩那样提到模块级：它要闭包 title / description / slotClassNames， 而 gorhom 不给 handleComponent 传自定义 props，portal 又切断了
+   * context。 所以引用每次渲染都会变、chrome 跟着重挂——重挂范围只有标题栏本身，量出来的 handleHeight 不变、不会引起档位跳动，权衡后接受。 反过来若强行把组件类型钉死（比如数据塞进
+   * ref），BottomSheetHandleContainer 是 memo 的， 标题更新就再也传不进去了。
    */
   function renderChrome() {
     return (
@@ -155,10 +154,18 @@ const Sheet = (props: SheetProps) => {
     );
   }
 
-  // 根据 show 控制 present / dismiss；未 present 过时不调 dismiss，理由见 hasPresentedRef
+  /**
+   * 根据 show 控制 present / close。
+   *
+   * 关闭走 close() 而不是 dismiss()：dismiss() 会把状态直接推进 DISMISSING 再 forceClose， 面板尚未 present 过时（状态还是 INITIAL、内层 ref
+   * 为空）这一步只会把状态弄脏，之后的 present 跟着失灵。 close() 自带状态守卫，没展开时是彻底的空操作，展开时则走完整关闭动画，结束后由 enableDismissOnClose 卸载并触发 onDismiss ——
+   * onUpdateShow(false) 也因此始终意味着「已经关干净了」。
+   */
   useEffect(() => {
     if (show) {
       sheetRef.current?.present();
+    } else {
+      sheetRef.current?.close();
     }
   }, [show]);
 

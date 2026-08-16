@@ -22,6 +22,7 @@
     "expo": "^57.0.1",
     "expo-constants": "~57.0.2",
     "expo-font": "~57.0.0",
+    "expo-haptics": "catalog:native",
     "expo-image": "catalog:native",
     "expo-linking": "~57.0.1",
     "expo-router": "~57.0.2",

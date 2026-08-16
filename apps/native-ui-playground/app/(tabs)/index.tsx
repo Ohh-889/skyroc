@@ -152,6 +152,22 @@ export default function HomeScreen() {
       >
         Sheet
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/action-sheet')}
+      >
+        ActionSheet
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/picker')}
+      >
+        Picker
+      </Button>
     </View>
   );
 }

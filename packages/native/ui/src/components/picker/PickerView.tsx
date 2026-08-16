@@ -1,20 +1,21 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { cn } from '@skyroc/utils';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { PickerColumn } from './PickerColumn';
 import { PickerToolbar } from './PickerToolbar';
 import { DEFAULT_ITEM_HEIGHT, DEFAULT_VISIBLE_COUNT, pickerVariants } from './picker-variants';
 import type { PickerViewProps } from './types';
-import { assignDefaultFieldNames, ensureSelectedValues, normalizeColumns } from './utils';
+import { assignDefaultFieldNames, resolveColumns } from './utils';
 
+/** 内联选择器，不带弹层 */
 const PickerView = (props: PickerViewProps) => {
   const {
-    cancelText = 'Cancel',
+    cancelText = '取消',
     className,
     classNames,
     columns,
-    confirmText = 'Confirm',
+    confirmText = '确定',
     defaultValue = [],
     fieldNames: fieldNamesProp,
     haptic = false,
@@ -29,8 +30,6 @@ const PickerView = (props: PickerViewProps) => {
     visibleCount = DEFAULT_VISIBLE_COUNT
   } = props;
 
-  const mergedFieldNames = useMemo(() => assignDefaultFieldNames(fieldNamesProp), [fieldNamesProp]);
-
   const [value, setValue] = useControllableState({
     caller: 'PickerView',
     defaultProp: defaultValue,
@@ -38,30 +37,30 @@ const PickerView = (props: PickerViewProps) => {
     prop: valueProp
   });
 
-  // Normalize columns into a 2D array
-  const normalizedColumns = useMemo(
-    () => normalizeColumns(columns, mergedFieldNames, value),
-    [columns, mergedFieldNames, value]
-  );
+  const mergedFieldNames = useMemo(() => assignDefaultFieldNames(fieldNamesProp), [fieldNamesProp]);
 
-  // Ensure all selected values are valid
-  const validValues = useMemo(
-    () => ensureSelectedValues(normalizedColumns, value, mergedFieldNames),
-    [normalizedColumns, value, mergedFieldNames]
+  // 列的展开与选中值的修正互相依赖，交给 resolveColumns 一次算到不动点
+  const { columns: normalizedColumns, values: validValues } = useMemo(
+    () => resolveColumns(columns, mergedFieldNames, value),
+    [columns, mergedFieldNames, value]
   );
 
   const slots = pickerVariants();
   const indicatorTop = Math.floor(visibleCount / 2) * itemHeight;
 
+  const slotClassNames = {
+    columns: cn(slots.columns(), classNames?.columns),
+    loading: cn(slots.loading(), classNames?.loading),
+    root: cn(slots.root(), classNames?.root, className),
+    selectedIndicator: cn(slots.selectedIndicator(), classNames?.selectedIndicator)
+  };
+
   function handleColumnChange(columnValue: string, columnIndex: number) {
-    const newValues = [...validValues];
-    newValues[columnIndex] = columnValue;
+    const nextValues = [...validValues];
+    nextValues[columnIndex] = columnValue;
 
-    // For cascade: re-normalize and ensure child values
-    const newNormalized = normalizeColumns(columns, mergedFieldNames, newValues);
-    const ensured = ensureSelectedValues(newNormalized, newValues, mergedFieldNames);
-
-    setValue(ensured);
+    // 级联下改上一级会换掉下一级的整份数据，必须重新解一次，不能只把新值塞回去
+    setValue(resolveColumns(columns, mergedFieldNames, nextValues).values);
   }
 
   function handleConfirm() {
@@ -73,52 +72,48 @@ const PickerView = (props: PickerViewProps) => {
   }
 
   return (
-    <View className={cn(slots.root(), className)}>
+    <View className={slotClassNames.root}>
       {showToolbar ? (
         <PickerToolbar
           cancelText={cancelText}
           classNames={classNames}
           confirmText={confirmText}
+          title={title}
           onCancel={handleCancel}
           onConfirm={handleConfirm}
-          title={title}
         />
       ) : null}
 
       <View
-        style={{ height: visibleCount * itemHeight, position: 'relative', overflow: 'hidden', flexDirection: 'row' }}
+        className={slotClassNames.columns}
+        style={{ height: visibleCount * itemHeight }}
       >
-        {/* Selected indicator line */}
+        {/* 选中指示线画在滚轮下方，pointerEvents 关掉，免得绝对定位层截走滚动手势 */}
         <View
-          style={{
-            height: itemHeight,
-            top: indicatorTop,
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            width: '100%',
-            borderTopWidth: StyleSheet.hairlineWidth,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderColor: '#e5e7eb'
-          }}
+          className={slotClassNames.selectedIndicator}
+          pointerEvents="none"
+          style={{ height: itemHeight, top: indicatorTop }}
         />
 
         {normalizedColumns.map((columnOptions, index) => (
+          // 列的身份就是它的位置：级联换级时同一位置的列换掉整份数据，由 PickerColumn 内的
+          // value / options 同步 effect 负责重新定位，不需要靠 key 重建
           <PickerColumn
             key={index}
+            classNames={classNames}
             columnIndex={index}
             fieldNames={mergedFieldNames}
             haptic={haptic}
             itemHeight={itemHeight}
-            onChange={handleColumnChange}
             options={columnOptions}
             value={validValues[index] ?? ''}
             visibleCount={visibleCount}
+            onChange={handleColumnChange}
           />
         ))}
 
         {loading ? (
-          <View className={cn(slots.loading(), classNames?.loading)}>
+          <View className={slotClassNames.loading}>
             <ActivityIndicator
               className="text-muted-foreground"
               size="large"

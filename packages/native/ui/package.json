@@ -115,8 +115,9 @@
   },
   "peerDependencies": {
     "@expo/vector-icons": ">=15.0.0",
+    "@gorhom/bottom-sheet": ">=5.2.0",
+    "expo-haptics": ">=57.0.0",
     "expo-image": ">=57.0.0",
-    "expo-haptics": "catalog:native",
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
     "react-native-gesture-handler": ">=2.28.0",

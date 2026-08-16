@@ -1,58 +1,56 @@
 import { createElement } from 'react';
-import type { PortalHandle } from '../portal/types';
 import { mountPortal } from '../portal/mount-portal';
-import { ActionSheet } from './ActionSheet';
-import type { ActionSheetAction, ActionSheetOptions, ActionSheetResult } from './types';
+import { portalStore } from '../portal/portal-store';
+import type { PortalHandle } from '../portal/types';
+import { actionSheetManager } from './action-sheet-manager';
+import { ActionSheetRenderer } from './ActionSheetRenderer';
+import type { ActionSheetOptions, ActionSheetResult } from './types';
 
-/** 当前活跃的 ActionSheet portal 句柄 */
-let activeHandle: PortalHandle | null = null;
+/** ActionSheetRenderer 的 Portal 句柄，未挂载时为 null */
+let portalHandle: PortalHandle | null = null;
 
-/** 命令式显示操作面板，返回 Promise，选中 resolve 结果对象，取消 resolve null */
+/**
+ * 确保 ActionSheetRenderer 已挂载到 PortalHost
+ *
+ * 不能只记一个布尔标记：portalStore.clear()、Fast Refresh 都会把已挂载的节点清掉，标记却仍停在 true， ActionSheet 会从此静默失效。每次都向 store
+ * 核对真实挂载状态，重挂的成本也只是一次 Map 查找。
+ */
+function ensurePortal() {
+  if (portalHandle && portalStore.has(portalHandle.id)) return;
+
+  portalHandle = mountPortal(createElement(ActionSheetRenderer));
+}
+
+/**
+ * 命令式显示操作面板，返回 Promise：选中 resolve 结果对象，取消 / 遮罩关闭 resolve null
+ *
+ * 命令式调用没有外部状态承接选中值，所以 closeOnClickAction 默认打开——否则点完一项面板会一直挂在那里。
+ */
 function showActionSheet(options: ActionSheetOptions): Promise<ActionSheetResult | null> {
-  // 关闭已有面板
-  if (activeHandle) {
-    activeHandle.unmount();
-    activeHandle = null;
-  }
+  ensurePortal();
+
+  const { callback, onCancel, onSelect, ...sheetOptions } = options;
 
   return new Promise<ActionSheetResult | null>(resolve => {
-    function handleResult(result: ActionSheetResult | null) {
-      options.callback?.(result);
-      resolve(result);
+    /** 结算：用户回调与 Promise 都只在这里触发，由 actionSheetManager 保证恰好一次 */
+    function settle(result: ActionSheetResult | null) {
+      if (result) {
+        onSelect?.(result.action, result.index);
+      } else {
+        onCancel?.();
+      }
 
-      activeHandle?.unmount();
-      activeHandle = null;
+      callback?.(result);
+      resolve(result);
     }
 
-    const element = createElement(ActionSheet, {
-      ...options,
-      show: true,
-      closeOnClickAction: options.closeOnClickAction ?? true,
-      onSelect(action: ActionSheetAction, index: number) {
-        options.onSelect?.(action, index);
-        handleResult({ action, index });
-      },
-      onCancel() {
-        options.onCancel?.();
-        handleResult(null);
-      },
-      onUpdateShow(show: boolean) {
-        if (!show) {
-          handleResult(null);
-        }
-      }
-    });
-
-    activeHandle = mountPortal(element);
+    actionSheetManager.open({ closeOnClickAction: true, ...sheetOptions }, settle);
   });
 }
 
-/** 关闭当前操作面板 */
+/** 关闭当前操作面板，按取消结算：等待中的 Promise 会 resolve 成 null 而不是永远挂起 */
 function closeActionSheet() {
-  if (activeHandle) {
-    activeHandle.unmount();
-    activeHandle = null;
-  }
+  actionSheetManager.close(undefined, null);
 }
 
 export { closeActionSheet, showActionSheet };
