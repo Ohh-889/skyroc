@@ -1,7 +1,11 @@
 import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
-/** Space 样式变体 */
+/**
+ * Space 样式变体。
+ *
+ * ⚠️ `size` 没有默认值，直接调用本函数不会得到任何 `gap-*`。默认档位 `md` 由 `Space` 组件传入—— 因为自定义数值间距要走内联 style，此处若有默认类名会与之竞争。
+ */
 export const spaceVariants = tv({
   compoundVariants: [
     // 换行只在水平方向有意义，纵向不做任何事

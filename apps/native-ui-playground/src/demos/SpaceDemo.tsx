@@ -1,9 +1,9 @@
+import { Divider, Space, Text } from '@skyroc/native-ui';
 import { ScrollView, View } from 'react-native';
-import { Space, Text } from '@skyroc/native-ui';
 
 const SpaceDemo = () => {
   return (
-    <ScrollView className="flex-1 bg-#000 p-6">
+    <ScrollView className="flex-1 bg-background p-6">
       {/* Horizontal */}
       <Text className="mb-4 text-lg font-semibold">Horizontal</Text>
       <View className="mb-8">
@@ -135,6 +135,53 @@ const SpaceDemo = () => {
               <Text className="text-sm text-primary-foreground">{i + 1}</Text>
             </View>
           ))}
+        </Space>
+      </View>
+
+      {/* Split */}
+      <Text className="mb-4 text-lg font-semibold">Split</Text>
+      <View className="mb-8">
+        <Space
+          direction="vertical"
+          fill
+        >
+          <Text className="text-sm text-muted-foreground">horizontal + 竖向分隔线</Text>
+          <Space
+            size="sm"
+            split={<Divider orientation="vertical" />}
+          >
+            <Text className="text-sm">编辑</Text>
+            <Text className="text-sm">复制</Text>
+            <Text className="text-sm">删除</Text>
+          </Space>
+
+          <Text className="text-sm text-muted-foreground">vertical + 横向分隔线</Text>
+          <Space
+            direction="vertical"
+            fill
+            size="sm"
+            split={<Divider />}
+          >
+            <Text className="text-sm">第一行</Text>
+            <Text className="text-sm">第二行</Text>
+            <Text className="text-sm">第三行</Text>
+          </Space>
+
+          {/* size 为 0 时分隔符两侧不再叠加 gap，间距完全由分隔符自身决定 */}
+          <Text className="text-sm text-muted-foreground">size=0，间距只由分隔线承担</Text>
+          <Space
+            size={0}
+            split={
+              <Divider
+                className="mx-3"
+                orientation="vertical"
+              />
+            }
+          >
+            <Text className="text-sm">编辑</Text>
+            <Text className="text-sm">复制</Text>
+            <Text className="text-sm">删除</Text>
+          </Space>
         </Space>
       </View>
 

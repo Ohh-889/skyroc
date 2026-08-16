@@ -19,25 +19,11 @@ const Space = (props: SpaceProps) => {
     ...rest
   } = props;
 
-  // 数值间距无法映射成 gap-* 类名，改由内联 style 承担
+  // 数值间距无法映射成 gap-* 类名，改由内联 style 承担；此时不能传 size 给变体，否则会有 gap-* 类名与之竞争
   const customGap = isNumber(size) ? size : undefined;
+  const presetSize = isNumber(size) ? undefined : size;
 
-  /** 变体类与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
-  function resolveSlotClassNames() {
-    const variantClass = spaceVariants({
-      align,
-      direction,
-      fill,
-      size: isNumber(size) ? undefined : size,
-      wrap
-    });
-
-    return {
-      root: cn(variantClass, className)
-    };
-  }
-
-  const slotClassNames = resolveSlotClassNames();
+  const rootClassName = cn(spaceVariants({ align, direction, fill, size: presetSize, wrap }), className);
 
   // 在子元素之间插入分隔符；Children.toArray 会剔除 null/undefined 并补全 key
   function renderChildren() {
@@ -46,7 +32,7 @@ const Space = (props: SpaceProps) => {
     }
 
     return Children.toArray(children).map((child, index) => (
-      <Fragment key={isValidElement(child) ? (child.key ?? index) : index}>
+      <Fragment key={isValidElement(child) ? child.key : index}>
         {index > 0 ? split : null}
         {child}
       </Fragment>
@@ -55,7 +41,7 @@ const Space = (props: SpaceProps) => {
 
   return (
     <View
-      className={slotClassNames.root}
+      className={rootClassName}
       style={customGap === undefined ? style : [{ gap: customGap }, style]}
       {...rest}
     >
