@@ -46,8 +46,8 @@ interface PaginationProps extends Omit<ViewProps, 'children'> {
   /** 分页模式，`simple` 只显示「当前页/总页数」 */
   mode?: PaginationMode;
 
-  /** 下一页按钮内容，string / number 自动包裹 Text */
-  nextText?: ReactNode;
+  /** 下一页按钮内容，string / number 自动包裹 Text，也可传图标节点 */
+  next?: ReactNode;
 
   /** 页码变化回调 */
   onPageChange?: (page: number) => void;
@@ -55,8 +55,8 @@ interface PaginationProps extends Omit<ViewProps, 'children'> {
   /** 受控当前页码 */
   page?: number;
 
-  /** 上一页按钮内容，string / number 自动包裹 Text */
-  prevText?: ReactNode;
+  /** 上一页按钮内容，string / number 自动包裹 Text，也可传图标节点 */
+  prev?: ReactNode;
 
   /** 根节点的 ref，用于 measure / 滚动定位等命令式操作 */
   ref?: Ref<View>;

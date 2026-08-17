@@ -29,10 +29,10 @@ const Pagination = (props: PaginationProps) => {
     disabled = false,
     itemsPerPage = 10,
     mode = 'multi',
-    nextText = 'Next',
+    next = 'Next',
     onPageChange,
     page: pageProp,
-    prevText = 'Prev',
+    prev = 'Prev',
     ref,
     showEdges = false,
     siblingCount = 1,
@@ -141,7 +141,7 @@ const Pagination = (props: PaginationProps) => {
           variant="ghost"
           onPress={handlePrev}
         >
-          {prevText}
+          {prev}
         </Button>
 
         {mode === 'simple' ? (
@@ -162,7 +162,7 @@ const Pagination = (props: PaginationProps) => {
           variant="ghost"
           onPress={handleNext}
         >
-          {nextText}
+          {next}
         </Button>
       </View>
     </View>

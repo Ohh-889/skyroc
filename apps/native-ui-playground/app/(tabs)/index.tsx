@@ -192,6 +192,14 @@ export default function HomeScreen() {
       >
         IndexBar
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/pagination')}
+      >
+        Pagination
+      </Button>
     </View>
   );
 }
