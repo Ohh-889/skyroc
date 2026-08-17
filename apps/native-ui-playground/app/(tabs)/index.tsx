@@ -240,6 +240,14 @@ export default function HomeScreen() {
       >
         TextEllipsis
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/time-picker')}
+      >
+        TimePicker
+      </Button>
     </View>
   );
 }

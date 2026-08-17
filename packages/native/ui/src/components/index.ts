@@ -94,4 +94,6 @@ export * from './text';
 
 export * from './text-ellipsis';
 
+export * from './time-picker';
+
 export * from './toast';
