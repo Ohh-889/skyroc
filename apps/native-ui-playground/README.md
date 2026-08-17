@@ -1,56 +1,69 @@
-# EAS build and test with Maestro example
+# Native UI Playground
 
-<p>
-  <!-- iOS -->
-  <img alt="Supports Expo iOS" longdesc="Supports Expo iOS" src="https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff" />
-  <!-- Android -->
-  <img alt="Supports Expo Android" longdesc="Supports Expo Android" src="https://img.shields.io/badge/Android-4630EB.svg?style=flat-square&logo=ANDROID&labelColor=A4C639&logoColor=fff" />
-</p>
+`@skyroc/native-ui` 的 Expo 调试台，用于浏览组件目录、验证真实交互，并为组件文档提供可复用示例。
 
-> _Prerequisite:_ Install the Maestro app following [these instructions](https://maestro.mobile.dev/getting-started/installing-maestro).
+当前首页按基础、表单、选择、反馈、展示和导航分类展示组件，支持按名称或用途搜索。每个组件都有独立路由，示例实现集中在 [`src/demos`](./src/demos)。
 
-## 🚀 Quick start
+## 启动
 
-- Install with `yarn` or `npm install`.
+在仓库根目录安装依赖后运行：
 
-## 🚀 Build and test locally with Expo Go
+```bash
+pnpm --filter native-ui-playground start
+```
 
-- Start the app in Expo Go:
-  - Android: `yarn start` to start the packager, then press `a` to install and start Expo Go on Android
-  - iOS: `yarn start` to start the packager, then press `i` to install and start Expo Go on iOS
-- In a separate terminal, execute a Maestro test flow:
-  - Home screen test: `maestro test maestro/expo_go/home.yml`
-  - Expanding component test: `maestro test maestro/expo_go/expand_test.yml`
-- Once the test flow starts and Expo Go starts, select "Reload" or the app name from the Expo Go UI in the simulator/emulator. Once the dev menu is hidden and this app is visible, the test flow will continue.
+在 Expo 终端中选择 iOS、Android 或 Web，也可以直接运行：
 
-## 🚀 Build and test locally with a development build
+```bash
+pnpm --filter native-ui-playground ios
+pnpm --filter native-ui-playground android
+pnpm --filter native-ui-playground web
+```
 
-- Build the development build and start it on your simulator/emulator:
-  - Android: `yarn android`.
-  - iOS: `yarn ios`.
-- In a separate terminal, execute a Maestro test flow:
-  - Home screen test: `maestro test maestro/dev_build/home.yml`
-  - Expanding component test: `maestro test maestro/dev_build/expand_test.yml`
+涉及原生模块或配置变更时，需要使用 development build；普通组件样式与交互调整可复用已有构建。
 
-## 🚀 Build and test on EAS
+## 目录职责
 
-- Initialize the app as an EAS project with `eas init`.
-- iOS:
-  - Start an EAS run to build and test the app with `eas build -e build-and-maestro-test -p ios`.
-- Android:
-  - Follow the [instructions to disable the new Android builds infrastructure for the EAS project](https://docs.expo.dev/build-reference/e2e-tests/#disable-new-android-builds-infrastructure).
-  - Start an EAS run to build and test the app with `eas build -e build-and-maestro-test -p android`.
+```text
+app/
+├── _layout.tsx              # 全局 Provider、Portal 与安全区初始化
+├── (tabs)/index.tsx         # 可搜索的组件目录首页
+└── components/*.tsx         # 每个组件的 Expo Router 页面
+src/
+├── component-catalog.ts     # 首页分类、名称、描述与路由
+└── demos/*Demo.tsx          # 可交互组件示例
+global.css                   # Uniwind、设计令牌与源码扫描入口
+metro.config.js              # Uniwind Metro 配置
+```
 
-> _Note:_ The Maestro flows in the [maestro/dev_build](./maestro/dev_build) folder must have the app's package name (Android) or bundle identifier (iOS) defined. To make this example work out of the box without changes, the [app.json](./app.json) and the Maestro flows for dev builds are preconfigured with these values set to `dev.expo.eastestsexample`. In your actual development, these should be changed to the correct values for your app.
+## 新增组件示例
 
-## Deploy
+1. 在 `src/demos/<Component>Demo.tsx` 创建可独立渲染的示例。
+2. 在 `app/components/<component>.tsx` 创建路由页面，使用 `NavBar` 并渲染 Demo。
+3. 在 `src/component-catalog.ts` 中登记名称、用途、分类和路由。
+4. 同时更新组件文档对 Demo 的引用，避免文档和运行效果分叉。
 
-Deploy on all platforms with Expo Application Services (EAS).
+路由层只负责页面壳和导航，组件状态、变体组合与交互场景放在 Demo 中。这样 playground 与文档可以复用同一份示例。
 
-- Deploy the website: `npx eas-cli deploy` — [Learn more](https://docs.expo.dev/eas/hosting/get-started/)
-- Deploy on iOS and Android using: `npx eas-cli build` — [Learn more](https://expo.dev/eas)
+## 应用级初始化
 
-## 📝 Further information
+[`app/_layout.tsx`](./app/_layout.tsx) 集中提供组件库依赖的运行时环境：
 
-- [Expo guide on E2E tests with EAS](https://docs.expo.dev/build-reference/e2e-tests/)
-- [Maestro guide on creating React Native tests](https://maestro.mobile.dev/platform-support/react-native)
+- `GestureHandlerRootView`：手势根容器。
+- `BottomSheetModalProvider`：底部面板挂载环境。
+- `PortalHost`：全局浮层宿主。
+- `Uniwind.updateInsets(insets)`：把安全区数据同步给 `*-safe` 工具类。
+
+不要把这些初始化重复放进单个 Demo 或组件实现。
+
+## 验证
+
+```bash
+pnpm --filter native-ui-playground typecheck
+pnpm --filter @skyroc/native-ui typecheck
+pnpm --filter @skyroc/native-ui build
+```
+
+组件交互与布局仍需在目标平台打开对应示例页确认，尤其是手势、键盘、弹层、安全区和原生模块相关组件。
+
+组件库安装、主题和宿主接入说明见 [`packages/native/ui/README.md`](../../packages/native/ui/README.md)。

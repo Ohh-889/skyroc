@@ -1,71 +1,132 @@
 # @skyroc/hooks
 
-与业务无关的通用 React Hooks 集合。通过 subpath exports 区分平台无关 hooks 和浏览器特定 hooks。
+与业务无关的通用 React Hooks 和轻量 Store 基础设施。通过 subpath exports 区分跨端能力与浏览器专用能力。
 
-## 架构
+## 子入口
 
-```js
+| 入口                | 包含内容                          | 适用平台                     |
+| ------------------- | --------------------------------- | ---------------------------- |
+| `@skyroc/hooks`     | Store + 不依赖浏览器 API 的 hooks | Web / React Native / MiniApp |
+| `@skyroc/hooks/web` | 主入口全部内容 + 浏览器专用 hooks | Web                          |
+
+```text
 @skyroc/hooks
-├── "."      → 平台无关 hooks（React Native 安全）
-└── "./web"  → 浏览器 hooks + re-export 全部平台无关 hooks
+├── "."      → 跨端 Store 和 hooks
+└── "./web"  → 浏览器 hooks + re-export 主入口
 ```
 
-### 分层设计
+主入口不得依赖 `window`、`document`、`navigator` 等浏览器 API；`./web` 用于隔离这些平台能力。
 
-包内部按平台特性分为两层：
+本包独立放在 `packages/hooks/`，作为 Web、Native 和 MiniApp 可共同使用的 React 能力包。它不属于 `packages/web/`，因为主入口不绑定浏览器平台。
 
-- **主出口（`.`）**：只包含不依赖 DOM / 浏览器 API 的 hooks。可以安全用于 React Native 等非浏览器环境。允许依赖 ahooks 中平台无关的部分（如 `useBoolean`、`useCountDown`）。
-- **Web 出口（`./web`）**：包含依赖 `window`、`document`、`navigator` 等浏览器 API 的 hooks。自动 re-export 主出口全部内容，Web 端消费者只需关注这一个入口。
+## 公开 API
 
-### 位置语义
+### 主入口
 
-本包位于 `packages/hooks/`（`packages/*` 中间层），而非 `packages/@core/` 或 `packages/web/`：
+| API                 | 用途                                                              |
+| ------------------- | ----------------------------------------------------------------- |
+| `Store`             | 可继承的轻量状态基类                                              |
+| `useStore`          | 通过 `useSyncExternalStore` 订阅 Store 或其他 `Subscribable` 对象 |
+| `Subscribable`      | `useStore` 接受的可订阅对象类型                                   |
+| `useArray`          | 提供增删、排序、移动和重置等操作的数组状态                        |
+| `useCaptcha`        | 验证码请求、校验、loading 和倒计时状态                            |
+| `useCountDownTimer` | 可启动、停止的通用倒计时                                          |
+| `useLoading`        | 提供 `loading`、`startLoading` 和 `endLoading`                    |
+| `useNow`            | 按指定间隔更新时间，并支持暂停和恢复                              |
 
-- 不放 `@core`：因为依赖了 ahooks 等第三方库，`@core` 要求零外部依赖
-- 不放 `web`：因为主出口的 hooks 与浏览器无关，放在 `web` 语义不准确
+`useCaptcha` 还导出 `CaptchaCountingLabelGetter`、`CaptchaRequest`、`CaptchaTargetValidator` 和 `UseCaptchaOptions` 类型。
 
-### 与 ahooks 的关系
+### Web 入口额外提供
 
-- ahooks 是本包的 **dependency**，作为内部实现细节使用
-- **不 re-export** ahooks 的任何内容。消费者如需直接使用 ahooks（如 `useSize`、`useKeyPress`），应在自己的包中安装 ahooks 并直接 import
+| API              | 用途                                 |
+| ---------------- | ------------------------------------ |
+| `useCopy`        | 复制文本到剪贴板，并提供复制结果状态 |
+| `useSystemTheme` | 监听系统深浅色偏好                   |
+| `ThemeName`      | 系统主题名称类型                     |
 
 ## 使用
 
-```ts
-// Web 应用 — 从 ./web 导入，拿到全部 hooks
-import { useArray, useCopy, useLoading } from '@skyroc/hooks/web';
+跨端能力从主入口导入，浏览器专用能力从 `./web` 导入：
 
-// React Native — 从主出口导入，只有平台安全的 hooks
-import { useArray, useLoading } from '@skyroc/hooks';
+```ts
+import { Store, useArray, useCaptcha, useLoading } from '@skyroc/hooks';
+import { useCopy, useSystemTheme } from '@skyroc/hooks/web';
 ```
+
+`./web` 会 re-export 主入口，因此 Web 代码也可以只从 `@skyroc/hooks/web` 导入；分开导入可以更直观地表达平台边界。
+
+### useCaptcha
+
+```tsx
+import { useCaptcha } from '@skyroc/hooks';
+import type { CaptchaRequest } from '@skyroc/hooks';
+
+interface CaptchaButtonProps {
+  /** 发送验证码的请求逻辑 */
+  request: CaptchaRequest;
+  /** 验证码接收目标 */
+  target: string;
+}
+
+const CaptchaButton = (props: CaptchaButtonProps) => {
+  const { request, target } = props;
+
+  const { getCaptcha, isCounting, label, loading } = useCaptcha('获取验证码', count => `${count}秒后重新获取`, {
+    request,
+    seconds: 60,
+    validateTarget: value => Boolean(value.trim())
+  });
+
+  function handleClick() {
+    getCaptcha(target);
+  }
+
+  return (
+    <button
+      disabled={isCounting || loading}
+      type="button"
+      onClick={handleClick}
+    >
+      {label}
+    </button>
+  );
+};
+```
+
+`getCaptcha` 会先执行目标校验。校验失败或正在请求时不会重复发送；请求成功后开始倒计时，请求结束后自动关闭 loading。
+
+Store 与 `useStore` 的继承、订阅和 selector 用法见 [`src/store/README.md`](./src/store/README.md)。
+
+## 与 ahooks 的关系
+
+- `ahooks` 是本包的 dependency，仅用于内部实现。
+- 本包不 re-export `ahooks`。消费者需要其他 `ahooks` 能力时，应自行声明依赖并直接导入。
+- 判断一个 hook 是否能进入主入口，应看它运行时是否依赖浏览器 API，而不是仅看依赖库的适用平台。
 
 ## 新增 Hook 规则
 
-### 判断放在哪里
+### 放置位置
 
-| 条件                                                    | 放入                         |
-| ------------------------------------------------------- | ---------------------------- |
-| 不依赖 DOM / 浏览器 API                                 | `src/` → 从 `.` 导出         |
-| 依赖 `window`、`document`、`navigator`、`matchMedia` 等 | `src/web/` → 从 `./web` 导出 |
-| 依赖业务逻辑、i18n、特定 feature、特定 UI 库组件        | **不放本包**，留在 app 层    |
-
-### 判断依据
-
-关注的是 hook 运行时是否需要浏览器环境，而非它依赖的库是否"web 向"。例如 ahooks 的 `useBoolean` 虽然来自一个 Web 向的库，但它本身不调用任何浏览器 API，所以封装它的 hook 放在主出口。
+| 条件                                                    | 放入                              |
+| ------------------------------------------------------- | --------------------------------- |
+| 不依赖 DOM / 浏览器 API                                 | `src/`，从主入口导出              |
+| 依赖 `window`、`document`、`navigator`、`matchMedia` 等 | `src/web/`，从 `./web` 导出       |
+| 依赖业务逻辑、i18n、特定 feature 或特定 UI 库           | 不放本包，留在对应 feature 或 app |
 
 ### 编码规范
 
-遵循项目 `CLAUDE.md` 中定义的 React 编码规则，关键点：
+遵循项目根目录 [`AGENTS.md`](../../AGENTS.md) 中的 React 编码规则：
 
-- **禁止 `useCallback`**：内部函数使用 function 声明
-- **`useMemo` 仅限两种场景**：派生值、确实昂贵的计算
-- 所有 hook 使用 **function 声明**导出（非箭头函数，hooks 不是组件）
-- 内部辅助函数使用 **function 声明**，不用箭头函数
-- 文件必须包含**显式 import**，不依赖 auto-import（子包没有 auto-import 配置）
+- 禁止使用 `useCallback`。
+- `useMemo` 仅用于非平凡派生值或可证明的高开销计算。
+- Hook 和内部辅助函数使用 function 声明。
+- 显式导入依赖，不依赖应用层的 auto-import。
 
-### 导出清单维护
+### 同步清单
 
-新增 hook 后需要更新对应的 barrel export：
+新增或修改公开 Hook 后，需要同步：
 
-- 平台无关 hook → 更新 `src/index.ts`
-- 浏览器 hook → 更新 `src/web/index.ts`（主出口会被 web 出口自动 re-export，不需要两边都加）
+1. 平台无关 Hook 更新 `src/index.ts`；浏览器 Hook 更新 `src/web/index.ts`。
+2. 添加或更新对应的针对性测试。
+3. 更新本 README 的公开 API 和示例。
+4. 更新 `docs/project-docs/content/docs/shared/hooks.mdx`。
