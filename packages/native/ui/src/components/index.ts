@@ -74,6 +74,8 @@ export * from './sheet';
 
 export * from './sidebar';
 
+export * from './slider';
+
 export * from './space';
 
 export * from './stepper';

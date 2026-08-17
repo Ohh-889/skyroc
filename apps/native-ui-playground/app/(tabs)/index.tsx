@@ -212,6 +212,14 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
+        onPress={() => router.push('/components/slider')}
+      >
+        Slider
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
         onPress={() => router.push('/components/switch')}
       >
         Switch
