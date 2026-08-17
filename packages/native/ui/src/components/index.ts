@@ -66,6 +66,8 @@ export * from './rolling-text';
 
 export * from './search';
 
+export * from './share-sheet';
+
 export * from './sheet';
 
 export * from './sidebar';

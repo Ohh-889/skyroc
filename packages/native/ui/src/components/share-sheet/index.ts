@@ -1,6 +1,9 @@
 export { closeShareSheet, showShareSheet } from './function-call';
-export { ShareSheet } from './ShareSheet';
+export { shareSheetManager } from './share-sheet-manager';
+export type { ShareSheetEntry, ShareSheetEntryOptions, ShareSheetSettle } from './share-sheet-manager';
 export { shareSheetVariants } from './share-sheet-variants';
+export { ShareSheet } from './ShareSheet';
+export { ShareSheetRenderer } from './ShareSheetRenderer';
 export type {
   ShareSheetCallOptions,
   ShareSheetOption,

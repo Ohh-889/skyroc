@@ -192,6 +192,14 @@ export default function HomeScreen() {
       >
         Search
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/share-sheet')}
+      >
+        ShareSheet
+      </Button>
     </View>
   );
 }
