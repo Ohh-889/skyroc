@@ -232,6 +232,14 @@ export default function HomeScreen() {
       >
         Switch
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/text-ellipsis')}
+      >
+        TextEllipsis
+      </Button>
     </View>
   );
 }

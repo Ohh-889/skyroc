@@ -92,4 +92,6 @@ export * from './tag';
 
 export * from './text';
 
+export * from './text-ellipsis';
+
 export * from './toast';
