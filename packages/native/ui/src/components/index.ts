@@ -62,6 +62,8 @@ export * from './rate';
 
 export * from './rolling-text';
 
+export * from './search';
+
 export * from './sheet';
 
 export * from './sidebar';

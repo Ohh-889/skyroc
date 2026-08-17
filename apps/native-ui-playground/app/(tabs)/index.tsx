@@ -176,6 +176,14 @@ export default function HomeScreen() {
       >
         Pagination
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/search')}
+      >
+        Search
+      </Button>
     </View>
   );
 }
