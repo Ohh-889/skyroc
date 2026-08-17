@@ -248,6 +248,14 @@ export default function HomeScreen() {
       >
         TimePicker
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/tree-select')}
+      >
+        TreeSelect
+      </Button>
     </View>
   );
 }
