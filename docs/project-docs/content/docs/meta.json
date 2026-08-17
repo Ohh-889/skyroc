@@ -5,16 +5,12 @@
     "index",
     "---快速上手---",
     "getting-started",
-    "---架构设计---",
-    "architecture",
     "---包参考 / Packages---",
     "core",
     "web",
     "shared",
     "internal",
     "---应用 / Apps---",
-    "admin-app",
-    "---工程化 / Engineering---",
-    "engineering"
+    "admin-app"
   ]
 }
