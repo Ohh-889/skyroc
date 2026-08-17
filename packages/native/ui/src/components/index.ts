@@ -52,6 +52,8 @@ export * from './password-input';
 
 export * from './picker';
 
+export * from './picker-group';
+
 export * from './popup';
 
 export * from './portal';

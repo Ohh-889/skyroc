@@ -1,56 +1,63 @@
-import { useEffect, useRef, useState } from 'react';
-import { Pressable } from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps -- 每次打开面板都要拿当时的已确认值做一次快照，
+   把 committedValues 列进依赖会让面板开着的时候被外部改值覆盖掉用户正在滚的选择。 */
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useEffect, useState } from 'react';
+import { Pressable } from 'react-native';
 import { Sheet } from '../sheet/Sheet';
 import { PickerGroupView } from './PickerGroupView';
 import type { PickerGroupProps } from './types';
 
+/** 弹层分组选择器，把 PickerGroupView 装进底部面板 */
 const PickerGroup = (props: PickerGroupProps) => {
   const {
-    cancelText = 'Cancel',
+    cancelText,
     children,
     className,
     classNames,
-    confirmText = 'Confirm',
+    closeOnBackdropPress = true,
+    confirmText,
     defaultValues,
-    nextStepText = 'Next',
-    onChange,
+    enablePanDownToClose = false,
+    nextStepText,
     onCancel,
+    onChange,
     onConfirm,
     onTabChange,
     onUpdateShow,
     pickers,
+    ref,
+    sheetClassName,
+    sheetClassNames,
     show,
+    showHandle = false,
     showTabBar = true,
     showToolbar = true,
     values: valuesProp
   } = props;
 
-  const initialValuesRef = useRef(defaultValues ?? pickers.map(p => p.defaultValue ?? []));
-
-  // Committed values — the confirmed selection
+  // 已确认的值：只有在最后一个 tab 点「确定」才会写进来。
+  // defaultProp 只在挂载时被读一次，这里每次渲染重算不会影响已有选中值。
+  // 这里不接 onChange：onChange 是滚动即触发的实时回调，签名还多一个 pickerIndex，
+  // 受控调用方要拿提交后的值请用 onConfirm
   const [committedValues, setCommittedValues] = useControllableState<string[][]>({
     caller: 'PickerGroup',
-    defaultProp: initialValuesRef.current,
+    defaultProp: defaultValues ?? pickers.map(picker => picker.defaultValue ?? []),
     prop: valuesProp
   });
 
-  // Display values — temporary while the sheet is open
+  // 面板打开期间的临时值，取消就丢弃
   const [displayValues, setDisplayValues] = useState<string[][]>(committedValues);
 
-  // Active tab resets when sheet opens
+  // 面板每次打开都从第一个 tab 开始，所以 tab 也是临时态
   const [displayTab, setDisplayTab] = useState(0);
 
-  // Sync display values and reset tab when sheet opens
-  useEffect(() => {
-    if (show) {
-      setDisplayValues(committedValues);
-      setDisplayTab(0);
-    }
-  }, [show]);
+  function handleUpdateShow(nextShow: boolean) {
+    onUpdateShow?.(nextShow);
+  }
 
   function handleOpen() {
-    onUpdateShow?.(true);
+    handleUpdateShow(true);
   }
 
   function handleDisplayChange(values: string[][], pickerIndex: number) {
@@ -61,12 +68,12 @@ const PickerGroup = (props: PickerGroupProps) => {
   function handleConfirm(values: string[][]) {
     setCommittedValues(values);
     onConfirm?.(values);
-    onUpdateShow?.(false);
+    handleUpdateShow(false);
   }
 
   function handleCancel(values: string[][]) {
     onCancel?.(values);
-    onUpdateShow?.(false);
+    handleUpdateShow(false);
   }
 
   function handleTabChange(index: number) {
@@ -84,32 +91,50 @@ const PickerGroup = (props: PickerGroupProps) => {
     return <Pressable onPress={handleOpen}>{children}</Pressable>;
   }
 
+  // 每次打开时把临时值重置回已确认值、tab 拨回第一个，上一次取消掉的滚动与切换不会残留
+  useEffect(() => {
+    if (show) {
+      setDisplayValues(committedValues);
+      setDisplayTab(0);
+    }
+  }, [show]);
+
   return (
     <>
       {renderTrigger()}
 
       <Sheet
+        ref={ref}
+        className={sheetClassName}
+        classNames={sheetClassNames}
         closeable={false}
+        closeOnBackdropPress={closeOnBackdropPress}
+        // 滚轮要独占垂直手势：面板的内容拖拽开着时，在列上下拉会拖动整个面板而不是滚动滚轮
+        enableContentPanningGesture={false}
+        enablePanDownToClose={enablePanDownToClose}
         show={show}
-        showHandle={false}
-        onUpdateShow={onUpdateShow}
+        showHandle={showHandle}
+        onUpdateShow={handleUpdateShow}
       >
-        <PickerGroupView
-          activeTab={displayTab}
-          cancelText={cancelText}
-          className={className}
-          classNames={classNames}
-          confirmText={confirmText}
-          nextStepText={nextStepText}
-          onCancel={handleCancel}
-          onChange={handleDisplayChange}
-          onConfirm={handleConfirm}
-          onTabChange={handleTabChange}
-          pickers={pickers}
-          showTabBar={showTabBar}
-          showToolbar={showToolbar}
-          values={displayValues}
-        />
+        {/* Sheet 不代为包裹容器：动态高度要靠 BottomSheetView 上报内容高度才量得出来 */}
+        <BottomSheetView>
+          <PickerGroupView
+            activeTab={displayTab}
+            cancelText={cancelText}
+            className={className}
+            classNames={classNames}
+            confirmText={confirmText}
+            nextStepText={nextStepText}
+            pickers={pickers}
+            showTabBar={showTabBar}
+            showToolbar={showToolbar}
+            values={displayValues}
+            onCancel={handleCancel}
+            onChange={handleDisplayChange}
+            onConfirm={handleConfirm}
+            onTabChange={handleTabChange}
+          />
+        </BottomSheetView>
       </Sheet>
     </>
   );
