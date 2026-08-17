@@ -32,6 +32,8 @@ export * from './field';
 
 export * from './floating-button';
 
+export * from './form';
+
 export * from './grid';
 
 export * from './image';

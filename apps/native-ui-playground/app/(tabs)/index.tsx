@@ -172,6 +172,14 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
+        onPress={() => router.push('/components/form')}
+      >
+        Form
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
         onPress={() => router.push('/components/index-bar')}
       >
         IndexBar

@@ -1,3 +1,4 @@
+// 表单实例、校验类型与订阅 hooks 由本模块统一出口，调用方不必再直接依赖 @skyroc/form
 export {
   List as FormList,
   useArrayField,
@@ -23,8 +24,9 @@ export type {
 } from '@skyroc/form';
 
 export { Form } from './Form';
+export { FORM_ITEM_EXTRA_INDENT, formItemVariants } from './form-variants';
+export type { FormItemVariantProps } from './form-variants';
 export { FormComputedField } from './FormComputedField';
 export { FormItem } from './FormItem';
-export { formItemVariants } from './form-variants';
 
-export type { FormComputedFieldProps, FormItemProps, FormProps } from './types';
+export type { FormComputedFieldProps, FormItemClassNames, FormItemProps, FormItemSlots, FormProps } from './types';
