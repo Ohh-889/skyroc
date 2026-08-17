@@ -95,6 +95,7 @@
   },
   "devDependencies": {
     "@expo/vector-icons": "catalog:native",
+    "@shopify/react-native-skia": "catalog:native",
     "@skyroc/tsconfig": "workspace:*",
     "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
@@ -118,6 +119,7 @@
   "peerDependencies": {
     "@expo/vector-icons": ">=15.0.0",
     "@gorhom/bottom-sheet": ">=5.2.0",
+    "@shopify/react-native-skia": ">=2.4.0",
     "expo-haptics": ">=57.0.0",
     "expo-image": ">=57.0.0",
     "react": ">=19.0.0",

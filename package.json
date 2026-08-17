@@ -8,6 +8,8 @@
     "create:admin": "sa create-admin --workspace",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "postinstall": "bash scripts/skia-prebuilt.sh --soft --only ios",
+    "skia": "bash scripts/skia-prebuilt.sh",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
     "format": "oxfmt",
@@ -44,12 +46,14 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
-      "@shopify/react-native-skia",
       "esbuild",
       "msw",
       "sharp",
       "simple-git-hooks",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "@shopify/react-native-skia"
     ],
     "overrides": {
       "lightningcss": "1.30.1"

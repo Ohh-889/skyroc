@@ -200,6 +200,11 @@ catalogs:
     # 它自带的默认 classNames 用的就是 shadcn 那套语义 token，与本仓库的 tailwind-plugin 同名
     'react-native-ui-datepicker': ^3.1.2
 
+    # 2D 图形引擎：Signature 的画布基于其封装。含原生模块，走 devDep + peerDep。
+    # 它的预编译二进制（~700M）由 scripts/skia-prebuilt.sh 装，不走官方 postinstall——
+    # 因此根 package.json 把它列进了 pnpm.ignoredBuiltDependencies
+    '@shopify/react-native-skia': 2.4.18
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具

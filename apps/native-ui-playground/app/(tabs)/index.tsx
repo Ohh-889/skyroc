@@ -212,6 +212,14 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
+        onPress={() => router.push('/components/signature')}
+      >
+        Signature
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
         onPress={() => router.push('/components/slider')}
       >
         Slider
