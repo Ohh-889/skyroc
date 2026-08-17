@@ -81,5 +81,10 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# ---------- Python ----------
+# skill 脚本运行后产生的字节码缓存
+__pycache__/
+*.py[cod]
+
 # ---------- OS ----------
 .DS_Store
