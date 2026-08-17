@@ -5,7 +5,7 @@ description: 为 Skyroc Admin / RuoYi Plus Fast 模块编写来源可追溯的 P
 
 # Skyroc Admin PRD 与 HTML 原型
 
-本 Skill 用于把 Java RuoYi 参考、当前 FastAPI 契约、React 实现和仓库设计规范整理成一套可实施的 PRD，并为每个真实页面生成独立 HTML 原型。
+本 Skill 用于把当前 FastAPI 契约、React 实现、仓库设计规范以及可用的历史或外部参考整理成一套可实施的 PRD，并为每个真实页面生成独立 HTML 原型。
 
 不要把历史接口、字段或权限字符当作永久事实。每次任务都必须重新读取当前源码。
 
@@ -23,7 +23,7 @@ description: 为 Skyroc Admin / RuoYi Plus Fast 模块编写来源可追溯的 P
 - 判断模块需要拆成几个页面。
 - 生成一个或多个独立 HTML 设计图。
 - 在已有 PRD 或原型基础上继续设计。
-- 对照 Java、FastAPI 和 React 实现修订设计。
+- 对照当前 FastAPI、React 实现和可用参考资料修订设计。
 
 本 Skill 不负责把 HTML 原型直接改造成生产 React 页面，除非用户同时明确要求实施前端功能。
 
@@ -51,10 +51,10 @@ design/ruoyi-plus-fast/prototypes/<page-slug>/qa/*.png
 开始设计前，完整执行 [证据读取顺序](references/evidence-order.md)。至少确认：
 
 - 当前设计系统和信息架构。
-- 两个以上相邻 PRD、两个以上相邻原型。
-- Java 参考页面及其请求层。
-- FastAPI 当前 routes、schemas、service/use case、权限和测试。
+- 至少一个业务形态相近的 PRD 和一个视觉或交互形态相近的原型；需要比较设计模式时再读取两个以上样例。
+- FastAPI 当前 routes、schemas、service/use case、权限，以及与当前模块直接相关的测试或接口文档。
 - 当前 React 路由、页面、API 类型与请求封装（如果已经存在）。
+- 用户提供或仓库中确实存在的历史、外部参考实现（如果有）。
 
 用户给出的路径优先于默认路径。路径不存在时，先在相邻仓库中搜索实际位置，不要直接向用户索要可自行发现的信息。
 
@@ -74,12 +74,12 @@ design/ruoyi-plus-fast/prototypes/<page-slug>/qa/*.png
 
 | 证据             | 已确认能力 | 缺口或冲突 | 对设计的影响 |
 | ---------------- | ---------- | ---------- | ------------ |
-| Java 页面和接口  |            |            |              |
-| FastAPI          |            |            |              |
-| React            |            |            |              |
+| 当前 FastAPI     |            |            |              |
+| 当前 React       |            |            |              |
 | 设计系统和旧原型 |            |            |              |
+| 可选参考资料     |            |            |              |
 
-遇到冲突时，以当前目标系统的真实后端契约为实现事实；Java 只用于理解业务边界。不要为了视觉一致而虚构接口。
+遇到冲突时，以当前目标系统的真实后端契约为实现事实；历史或外部参考只用于理解业务边界和比较设计方案。不要为了视觉一致而虚构接口。
 
 ### 2. 决定页面数量
 
@@ -143,7 +143,7 @@ node .agents/skills/skyroc-admin-prd-prototype/scripts/verify-prototypes.mjs \
 ## 不可妥协的规则
 
 - 不复制旧 PRD 中可能已经过期的接口事实。
-- 不把 Java 参考行为描述成 FastAPI 已实现行为。
+- 不把历史或外部参考行为描述成 FastAPI 已实现行为。
 - 不把静态 HTML 描述成已经完成后端联调。
 - 不用 Tab 冒充用户要求的多个页面。
 - 不把所有业务塞进一个超长弹窗。
@@ -151,7 +151,6 @@ node .agents/skills/skyroc-admin-prd-prototype/scripts/verify-prototypes.mjs \
 - 不使用外部图标 CDN 作为关键依赖；优先内联 SVG。
 - 不在原型中写入真实密钥、Token、个人信息或生产地址。
 - 不因制作原型而修改当前 React 生产代码，除非用户明确要求。
-- 不覆盖用户已有的未提交修改。
 
 ## 完成报告
 

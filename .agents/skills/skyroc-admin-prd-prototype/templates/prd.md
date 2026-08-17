@@ -18,10 +18,9 @@
 
 - [设计系统]({{DESIGN_SYSTEM_PATH}})
 - [HTML 原型]({{PROTOTYPE_PATH}})
-- Java 前端参考：`{{JAVA_VIEW_PATH}}`
-- Java 后端参考：`{{JAVA_CONTROLLER_PATH}}`
 - 当前 FastAPI：`{{FASTAPI_MODULE_PATH}}`
 - 当前 React：`{{REACT_PAGE_PATH}}`
+- 可选参考资料：{{OPTIONAL_REFERENCES_OR_REMOVE_THIS_LINE}}
 
 ## 2. 架构结论
 
@@ -45,15 +44,7 @@
 
 ## 3. 已知事实与设计假设
 
-### 3.1 Java 前端事实
-
-{{JAVA_FRONTEND_FACTS}}
-
-### 3.2 Java 后端事实
-
-{{JAVA_BACKEND_FACTS}}
-
-### 3.3 当前 FastAPI 事实
+### 3.1 当前 FastAPI 事实
 
 已实现：
 
@@ -63,9 +54,17 @@
 
 - {{FASTAPI_GAPS}}
 
-### 3.4 当前 React 事实
+### 3.2 当前 React 事实
 
 {{REACT_FACTS}}
+
+### 3.3 当前设计系统与既有页面事实
+
+{{DESIGN_SYSTEM_FACTS}}
+
+### 3.4 可选参考资料事实
+
+{{OPTIONAL_REFERENCE_FACTS_OR_REMOVE_THIS_SECTION}}
 
 ### 3.5 设计假设
 
