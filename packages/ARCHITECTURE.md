@@ -1,363 +1,112 @@
-# Packages 架构设计
+# Packages 架构
 
-## 🧭 顶层布局原则:平台优先 + shared 层
+本文规定 `packages/` 下包的放置位置、命名方式和依赖边界。
 
-`packages/` 采用 **"平台优先"** 的目录布局,跨端共享的纯数据/类型集中在 `packages/shared/`:
+本文只记录跨包且相对稳定的架构规则：
 
-```
+- 包的实际名称、入口和依赖以各包的 `package.json` 为准。
+- 单个包的 API、开发命令和使用方式放在该包的 README 中。
+- React 组件通用规范见仓库根目录的 [`AGENTS.md`](../AGENTS.md)。
+- Web 和 Native 的样式规范分别见 [`web/AGENTS.md`](./web/AGENTS.md) 和
+  [`native/AGENTS.md`](./native/AGENTS.md)。
+
+## 目录分层
+
+`packages/` 按“跨平台基础能力 + 平台子树”组织：
+
+```text
 packages/
-├── @core/                       # 跨端的运行时基础(axios / utils / state / scheduler ...)
-├── shared/                      # 跨端的纯类型 / utils(零或极轻依赖)
-│   ├── ui-types/                # 跨端 UI 类型(ThemeColor / WithClassName ...)
-│   └── type-utils/              # 语言级类型工具(Primitive / Path / DeepPartial ...)
-├── hooks/                       # 跨端 React hooks
-├── i18n/
-├── web/                         # ← Web 端一整棵
-│   ├── ui/
-│   │   ├── primitives/          # @skyroc/web-ui
-│   │   ├── compose/             # @skyroc/web-ui-compose
-│   │   └── antd/                # @skyroc/web-ui-antd
-│   ├── admin-theme/             # @skyroc/web-admin-theme
-│   ├── antd-theme/
-│   ├── tailwind-plugin/
-│   └── materials/
-├── native/                      # ← Native 端一整棵
-│   ├── ui/                      # @skyroc/native-ui        ✅ 已落地(Uniwind / Tailwind v4)
-│   └── theme/   (预留,将来)      # @skyroc/native-theme
-└── miniapp/   (预留,将来)        # ← 小程序端一整棵
-    ├── ui/                      # @skyroc/miniapp-ui
-    └── theme/
+├── @core/                  # 跨平台运行时基础设施和独立 CLI
+├── shared/                 # 纯类型、纯数据和极轻量工具
+├── hooks/                  # React Hooks；平台能力通过子入口隔离
+├── primitives/             # 可复用的交互或领域原语
+├── web/                    # Web UI、管理端运行时、主题和构建能力
+│   └── ui/
+│       ├── shadcn/         # @skyroc/web-ui
+│       ├── compose/        # @skyroc/web-ui-compose
+│       └── antd/           # @skyroc/web-ui-antd
+└── native/                 # React Native / Expo 专属能力
+    └── ui/                 # @skyroc/native-ui
 ```
 
-### 命名规范
+`@core` 只是物理目录分组，不是 TypeScript namespace，也不代表存在
+`@skyroc/core` 这个包。其当前包列表和内部边界见
+[`@core/README.md`](./@core/README.md)。
 
-| 包类别 | 规则 | 示例 |
-|---|---|---|
-| 跨端共享(纯数据/类型) | 不带平台前缀 | `@skyroc/ui-types`, `@skyroc/type-utils` |
-| Web 端 UI | `@skyroc/web-*` | `@skyroc/web-ui`, `@skyroc/web-ui-compose`, `@skyroc/web-ui-antd` |
-| Web 端 theme / 工具 | `@skyroc/web-*` 或保留专名 | `@skyroc/web-admin-theme`, `@skyroc/tailwind-plugin` |
-| Native 端 | `@skyroc/native-*` | `@skyroc/native-ui`, `@skyroc/native-theme` |
-| 小程序端(将来) | `@skyroc/miniapp-*` | `@skyroc/miniapp-ui`, `@skyroc/miniapp-theme` |
+不要在尚未创建实现前，把预留平台或设想中的包写进当前目录结构。
 
-> **不要再起 `@skyroc/ui` 这种"裸名包"**——多端并存时无法判断它属于哪一端。
+## 放置规则
 
-### 各端样式方案
+| 位置 | 放入条件 | 不应包含 |
+| --- | --- | --- |
+| `shared/` | 纯类型、纯常量或极轻量通用工具 | React、DOM、React Native API、平台原生模块、大型运行时依赖 |
+| `@core/` | 与业务无关、可独立复用的运行时基础设施或 CLI | 页面逻辑、业务组件、具体平台 UI |
+| `hooks/` | 可跨应用复用的 React Hooks；浏览器能力使用独立子入口 | UI 组件、应用业务流程、未隔离的平台副作用 |
+| `primitives/` | 可跨应用复用、有独立状态或交互模型的底层原语 | 完整页面、管理端业务物料 |
+| `web/` | 依赖 DOM、浏览器、Ant Design、Web 构建工具或管理端运行时 | React Native 或 Expo API |
+| `native/` | 依赖 React Native、Expo、Uniwind 或原生模块 | DOM、Ant Design、Web 构建工具 |
 
-| 端      | 样式方案                                    | 变体写法           | 构建期配置位置              |
-| ------- | ------------------------------------------- | ------------------ | --------------------------- |
-| web     | Tailwind v4 + `@skyroc/tailwind-plugin`     | `tailwind-variants`| 各 app 的 vite 配置         |
-| native  | [Uniwind](https://docs.uniwind.dev) (TW v4) | `tailwind-variants`| 各 app 的 `metro.config.js` |
-| miniapp | (待定)                                      | —                  | —                           |
+判断新包位置时按以下顺序：
 
-Native 侧的关键约定:
+1. 是否依赖某个平台的 API？依赖则进入对应平台子树。
+2. 是否只是纯类型、纯数据或极轻量工具？是则进入 `shared/`。
+3. 是否是通用 React Hook？是则进入 `hooks/`，并隔离平台子入口。
+4. 是否是业务无关的运行时基础设施或 CLI？是则进入 `@core/`。
+5. 是否是可复用的底层交互模型？是则进入 `primitives/`。
+6. 其余业务能力优先留在应用或明确的业务模块中，不因“可能复用”提前建包。
 
-- 组件库自身**不含任何构建期配置**,`withUniwindConfig` / `global.css` 全部落在宿主 App
-- Tailwind v4 以宿主 `global.css` 所在目录为扫描根,消费组件库时必须写 `@source` 指向库源码,否则库里的 className 编译不出样式
-- 设计令牌住在 `packages/web/tailwind-plugin/src/tokens.ts`,由该插件统一翻译成 Tailwind v4 的 `@theme` / `@variant` CSS 变量;Native 侧在宿主 App 的 `global.css` 里以 `@plugin "@skyroc/tailwind-plugin" { platform: 'native'; }` 消费同一份令牌,组件库自身不含任何 CSS
+## 包命名
 
-### 为什么不把 UI 提到 `packages/ui/<platform>/`
+| 包类别 | 命名方式 | 示例 |
+| --- | --- | --- |
+| 跨平台能力 | 不带平台前缀 | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/type-utils` |
+| Web 专属能力 | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-admin-runtime` |
+| Native 专属能力 | `@skyroc/native-*` | `@skyroc/native-ui` |
+| 平台适配器 | `@skyroc/adapter-*` | `@skyroc/adapter-antd-theme` |
 
-1. 每个平台 `peerDependencies` 完全不同(antd / nativewind / Taro),即使提到顶层也得按平台拆,只是多套了一层壳
-2. 平台目录里除了 `ui` 还有 `theme` / `tailwind-plugin` / `materials` 等强平台耦合的包,把 UI 单独抽走会让平台目录"残缺"
-3. 真正跨端共享的内容(tokens / types)用 `packages/shared/` 下的薄包就够了
+新增平台 UI 包时不要使用 `@skyroc/ui` 这种无法识别所属平台的裸名。
+目录名和发布包名不要求完全相同，最终名称以 `package.json#name` 为准。
 
-### `packages/shared/` 准入规则
+仓库中已有少量历史专名，例如位于 `web/` 下的 `@skyroc/materials` 和
+`@skyroc/tailwind-plugin`。新包不要仅为保持这些历史名称而继续扩大例外。
 
-`shared/*` 必须严格保持"零或极轻依赖":
+## 依赖边界
 
-- ✅ 纯 TS 常量(spacing、colors、radius、fontSize ...)
-- ✅ 类型定义(ThemeColor、WithClassName ...)
-- ✅ 极轻量工具(`clsx` 这种)
-- ❌ React 运行时 / DOM API / React Native API / 任何平台原生模块
-- ❌ 大型依赖(antd、tailwindcss 等)
+依赖总体从应用和平台实现流向跨平台基础能力：
 
----
+```text
+apps
+├── web packages
+├── native packages
+└── cross-platform packages
 
-## 📦 包分层架构
+web / native / primitives
+└── hooks / @core / shared
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Applications                            │
-│                  apps/admin, apps/mobile                     │
-└─────────────────────────────────────────────────────────────┘
-                              ▲
-                              │ depends on
-┌─────────────────────────────────────────────────────────────┐
-│                    Feature Packages                          │
-│         (业务特性包,包含运行时逻辑和组件)                         │
-├─────────────────────────────────────────────────────────────┤
-│  @skyroc/core          │  核心功能包(React hooks, context)     │
-│  @skyroc/materials     │  UI 物料库(业务组件)                  │
-└─────────────────────────────────────────────────────────────┘
-                              ▲
-                              │ depends on
-┌─────────────────────────────────────────────────────────────┐
-│                  Foundation Packages                         │
-│         (基础设施包,提供底层能力)                               │
-├─────────────────────────────────────────────────────────────┤
-│  @skyroc/axios         │  HTTP 客户端封装                      │
-│  @skyroc/utils         │  通用工具函数                         │
-│  @skyroc/color         │  颜色处理工具                         │
-└─────────────────────────────────────────────────────────────┘
-                              ▲
-                              │ depends on
-┌─────────────────────────────────────────────────────────────┐
-│                    Type Definitions                          │
-│              (零依赖,纯类型定义)                               │
-├─────────────────────────────────────────────────────────────┤
-│  @skyroc/core-types    │  全局类型定义(零运行时依赖)             │
-└─────────────────────────────────────────────────────────────┘
+hooks / @core
+└── shared
 ```
 
-## 🎯 包职责划分
+必须遵守以下规则：
 
-### 1️⃣ Type Layer - 类型层(零依赖)
+- 禁止循环依赖。
+- 跨平台包不得依赖 Web 或 Native 平台包。
+- Web 和 Native 包不得互相依赖。
+- 包之间只能通过公开 `exports` 访问，不得导入其他包的 `src` 内部路径。
+- 同一层内允许存在职责明确的单向依赖；不要用“同层”作为禁止依赖的理由。
+- `shared/` 保持在依赖链底部，不反向依赖 `@core/`、`hooks/` 或平台包。
+- 应用可以组合多个包，但不应把应用业务反向下沉进通用包。
 
-#### `@skyroc/core-types`
+当前 `@skyroc/tailwind-plugin` 位于 `web/`，同时为 Web 和 Native 生成设计令牌。
+这是已存在的共享构建工具例外，不代表 Native 包可以依赖其他 Web 运行时包；如果它继续
+承载更多跨端职责，应单独评估是否迁出 `web/`。
 
-- **职责**: 全局类型定义
-- **包含**: `.d.ts` 文件
-- **依赖**: 无
-- **特点**: 零运行时依赖,纯类型声明
-- **使用场景**:
-  - API 响应类型
-  - 全局 namespace(Common, StorageType, I18n 等)
-  - 配置类型(Theme, UnionKey 等)
+## 平台样式边界
 
-```typescript
-// 示例:全局类型声明
-declare global {
-  namespace Common {
-    type Option<K = string, M = string> = { label: M; value: K };
-  }
-}
-```
+| 平台 | 当前方案 | 配置归属 |
+| --- | --- | --- |
+| Web | UnoCSS + `@skyroc/tailwind-plugin` | Web 应用和 Web 构建包 |
+| Native | Uniwind（Tailwind CSS v4）+ `@skyroc/tailwind-plugin` | Expo 宿主应用 |
 
----
-
-### 2️⃣ Foundation Layer - 基础设施层
-
-#### `@skyroc/axios`
-
-- **职责**: HTTP 客户端封装
-- **依赖**: `axios`, `axios-retry`, `@skyroc/core-types`
-- **导出**:
-  - 请求拦截器
-  - 响应拦截器
-  - 实例创建工具
-
-#### `@skyroc/utils`
-
-- **职责**: 通用工具函数(纯函数)
-- **依赖**: `dayjs`, `nanoid`, `clsx` 等
-- **导出**:
-  - 日期处理(`formatDate`, `parseDate`)
-  - 字符串处理(`camelCase`, `kebabCase`)
-  - 数组/对象处理(`pick`, `omit`, `deepMerge`)
-
-#### `@skyroc/color`
-
-- **职责**: 颜色处理工具
-- **依赖**: `colord`
-- **导出**:
-  - 颜色转换
-  - 颜色混合
-  - 主题色生成
-
----
-
-### 3️⃣ Feature Layer - 特性层(建议新增)
-
-#### `@skyroc/core` ⭐ **建议新增**
-
-- **职责**: React 核心功能包(运行时逻辑)
-- **依赖**: `react`, `jotai`, `@tanstack/react-query`, `@skyroc/core-types`
-- **导出**:
-  - React Hooks(业务 hooks)
-  - Context Providers
-  - 状态管理(Jotai atoms)
-  - React Query 配置
-
-```typescript
-// 示例:核心 hooks
-export function useAuth() {
-  const token = useAtomValue(tokenAtom);
-  const login = useSetAtom(loginAtom);
-  return { token, login };
-}
-
-export function useTheme() {
-  const theme = useAtomValue(themeAtom);
-  return theme;
-}
-```
-
-#### `@skyroc/materials`
-
-- **职责**: UI 物料库(业务组件)
-- **依赖**: `react`, `antd`, `@skyroc/core`, `@skyroc/utils`
-- **导出**:
-  - 业务组件(PageContainer, ProTable, ProForm)
-  - 布局组件(Layout, Header, Sidebar)
-
----
-
-## 📐 为什么 @core 应该独立?
-
-### ❌ 不要放在 core-types 中
-
-| 原因             | 说明                                                 |
-| ---------------- | ---------------------------------------------------- |
-| **依赖污染**     | `core-types` 是零依赖的,加入运行时代码会破坏这一特性 |
-| **职责混乱**     | 类型定义 vs 运行时逻辑是两个不同层次                 |
-| **构建复杂**     | 类型包不需要构建,运行时包需要                        |
-| **Tree-shaking** | 类型包全局引入,运行时包按需引入                      |
-
-### ✅ 独立 @core 包的优势
-
-| 优势          | 说明                              |
-| ------------- | --------------------------------- |
-| **清晰分层**  | 类型层 → 基础层 → 特性层 → 应用层 |
-| **按需加载**  | 仅需要类型时不引入运行时代码      |
-| **独立演进**  | 类型定义稳定,运行时逻辑可快速迭代 |
-| **更好的 DX** | 开发者清楚知道哪个包提供什么能力  |
-
----
-
-## 🚀 推荐的包创建顺序
-
-如果要新增 `@skyroc/core` 包:
-
-### 1. 创建包结构
-
-```bash
-packages/core/
-├── src/
-│   ├── hooks/              # React Hooks
-│   │   ├── use-auth.ts
-│   │   ├── use-theme.ts
-│   │   └── index.ts
-│   ├── store/              # Jotai atoms
-│   │   ├── auth.ts
-│   │   ├── theme.ts
-│   │   └── index.ts
-│   ├── providers/          # Context Providers
-│   │   ├── AuthProvider.tsx
-│   │   ├── ThemeProvider.tsx
-│   │   └── index.ts
-│   ├── query/              # React Query 配置
-│   │   ├── client.ts
-│   │   └── index.ts
-│   └── index.ts            # 统一导出
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-### 2. package.json 配置
-
-```json
-{
-  "name": "@skyroc/core",
-  "version": "1.0.0",
-  "description": "React 核心功能包 - hooks, store, providers",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./store": "./src/store/index.ts",
-    "./providers": "./src/providers/index.ts",
-    "./query": "./src/query/index.ts"
-  },
-  "peerDependencies": {
-    "react": "catalog:peer",
-    "react-dom": "catalog:peer"
-  },
-  "dependencies": {
-    "@skyroc/core-types": "workspace:*",
-    "@skyroc/utils": "workspace:*",
-    "jotai": "catalog:core",
-    "@tanstack/react-query": "catalog:core"
-  }
-}
-```
-
-### 3. 依赖关系
-
-```
-apps/admin
-  → @skyroc/core
-      → @skyroc/core-types (类型)
-      → @skyroc/utils (工具)
-      → react, jotai, react-query (外部依赖)
-```
-
----
-
-## 📊 包依赖图
-
-```mermaid
-graph TD
-    A[apps/admin] --> B[@skyroc/core]
-    A --> C[@skyroc/materials]
-
-    B --> D[@skyroc/axios]
-    B --> E[@skyroc/utils]
-    B --> F[@skyroc/core-types]
-
-    C --> B
-    C --> D
-    C --> E
-    C --> F
-
-    D --> F
-    E --> F
-
-    style F fill:#e1f5ff
-    style B fill:#fff4e6
-    style A fill:#f0f0f0
-```
-
----
-
-## 🎨 使用示例
-
-### 在 apps/admin 中使用
-
-```typescript
-// 1. 使用类型(来自 core-types)
-import type { Common, StorageType } from '@skyroc/core-types';
-
-// 2. 使用工具函数(来自 utils)
-import { formatDate, deepMerge } from '@skyroc/utils';
-
-// 3. 使用核心功能(来自 core)
-import { useAuth, useTheme } from '@skyroc/core/hooks';
-import { AuthProvider } from '@skyroc/core/providers';
-
-// 4. 使用 HTTP 客户端(来自 axios)
-import { createAxiosInstance } from '@skyroc/axios';
-
-// 5. 使用业务组件(来自 materials)
-import { PageContainer, ProTable } from '@skyroc/materials';
-```
-
----
-
-## 💡 总结
-
-**推荐做法**:
-
-- ✅ 保持 `@skyroc/core-types` 专注于类型定义(零依赖)
-- ✅ 创建独立的 `@skyroc/core` 包存放 React 核心功能
-- ✅ 遵循分层架构:类型层 → 基础层 → 特性层 → 应用层
-
-**不推荐做法**:
-
-- ❌ 在 `core-types` 中混入运行时代码
-- ❌ 跨层依赖(应用直接依赖类型包的运行时功能)
-- ❌ 循环依赖(包之间相互引用)
-
----
-
-**最后更新**: 2026-01-25
+组件包不接管宿主应用的构建配置。具体的 className、语义色、安全区和构建入口约定，
+以对应平台的 `AGENTS.md` 为准。

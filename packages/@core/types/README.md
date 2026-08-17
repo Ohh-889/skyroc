@@ -5,9 +5,8 @@
 ## 📦 包信息
 
 - **包名**: `@skyroc/types`
-- **命名空间**: `@core/*`
-- **版本**: `1.0.0`
-- **平台**: Universal (Web)
+- **目录**: `packages/@core/types`
+- **平台**: 跨平台 TypeScript 类型声明
 - **依赖**: 无
 
 ## 🎯 职责定位
@@ -131,13 +130,5 @@ const storage: StorageType.Local = {
 
 ## 🔗 相关包
 
-作为 `@core` 命名空间的一部分,相关包:
-
-- `@skyroc/types` - 类型定义(当前包)
-- `@core/hooks` - React Hooks(规划中)
-- `@core/store` - 状态管理(规划中)
-- `@core/providers` - Context Providers(规划中)
-
----
-
-**最后更新**: 2026-01-25
+`@core` 是仓库内的基础设施目录分组，不是 TypeScript namespace 或 npm scope。
+目录准入条件和当前包索引见 [`../README.md`](../README.md)。
