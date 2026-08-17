@@ -258,6 +258,7 @@ skyroc-admin/
 
 ## 🤝 参与项目
 
+- 贡献流程：[`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - 仓库级开发约定：[`AGENTS.md`](./AGENTS.md)
 - Web 专属约定：[`packages/web/AGENTS.md`](./packages/web/AGENTS.md)
 - Native / Uniwind 约定：[`packages/native/AGENTS.md`](./packages/native/AGENTS.md)
@@ -276,6 +277,10 @@ skyroc-admin/
 | UI 与设计     | [Ant Design](https://ant.design/) · [Radix UI](https://www.radix-ui.com/) · [shadcn/ui](https://ui.shadcn.com/) |
 | Native 跨端   | [Expo](https://expo.dev/) · [Uniwind](https://docs.uniwind.dev/)                                                |
 | Monorepo 工程 | [Turborepo](https://turbo.build/)                                                                               |
+
+## 📄 License
+
+基于 [MIT License](./LICENSE) 开源，可自由用于个人和商业项目。
 
 <div align="center">
 
