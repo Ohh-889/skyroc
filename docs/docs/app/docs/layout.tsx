@@ -1,11 +1,19 @@
+import { GlassLayout } from 'fumadocs-ui/layouts/glass';
 import { source } from '@/lib/source';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { baseOptions } from '@/lib/layout.shared';
+import { DocsGlassHeader } from './DocsGlassHeader';
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (
-    <DocsLayout tree={source.getPageTree()} {...baseOptions()}>
+    <GlassLayout
+      slots={{ header: DocsGlassHeader }}
+      tree={source.getPageTree()}
+      githubUrl="https://github.com/Ohh-889/skyroc"
+      nav={{
+        title: <span className="text-fd-muted-foreground text-xs font-semibold tracking-[0.08em]">文档目录</span>,
+        transparentMode: 'always'
+      }}
+    >
       {children}
-    </DocsLayout>
+    </GlassLayout>
   );
 }
