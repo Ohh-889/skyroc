@@ -226,7 +226,6 @@ const FormDemo = () => {
         {/* 多选值是数组，控件本身就按数组收发，FormItem 不需要额外转换 */}
         <FormItem<ProfileForm>
           label="兴趣爱好"
-          labelAlign="top"
           name="hobbies"
         >
           <CheckboxGroup direction="horizontal">
