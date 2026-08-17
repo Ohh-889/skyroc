@@ -13,7 +13,6 @@ description: packages/shared、hooks、primitives —— 跨端可复用的纯�
 
 | 目录 | 包名 | 形态 | 跨端 |
 | --- | --- | --- | --- |
-| `shared/ui-tokens` | [`@skyroc/ui-tokens`](/docs/shared/ui-tokens) | 纯 TS 常量 | Web / RN / MiniApp |
 | `shared/ui-types` | [`@skyroc/ui-types`](/docs/shared/ui-types) | 纯类型 | Web / RN / MiniApp |
 | `shared/type-utils` | [`@skyroc/type-utils`](/docs/shared/type-utils) | 纯类型（含 `./web` 子入口） | Web / RN / MiniApp |
 | `hooks` | [`@skyroc/hooks`](/docs/shared/hooks) | React hooks（含 `./web` 子入口） | RN 安全 + Web 增强 |
@@ -27,8 +26,9 @@ description: packages/shared、hooks、primitives —— 跨端可复用的纯�
 
 例如：
 
-- ✅ `defaultBrandColors`（hex 常量）放 `@skyroc/ui-tokens`
+- ✅ `ThemeColor`、`WithClassName`（纯类型）放 `@skyroc/ui-types`
 - ❌ OKLCH 调色板生成算法（依赖 colord / culori）→ 不能放 shared，要放 `@skyroc/color`
+- ❌ 设计令牌常量 → 三端统一走 Tailwind，令牌直接住在唯一的翻译层 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 里，不再单独成包
 
 ### 2. hooks 用平台子入口隔离
 
@@ -54,15 +54,11 @@ Native 端引用 `.` 不会误打包 `navigator.clipboard` 等浏览器 API。
 | --- | --- | --- |
 | 形态 | 运行时基础设施（请求 / 状态 / 日志…） | 纯数据 + 类型 + 跨端 hooks / primitive |
 | React 依赖 | 部分（state / service） | 视包而定（form / hooks 需要） |
-| 典型例子 | `@skyroc/service`、`@skyroc/axios` | `@skyroc/ui-tokens`、`@skyroc/form` |
+| 典型例子 | `@skyroc/service`、`@skyroc/axios` | `@skyroc/ui-types`、`@skyroc/form` |
 
 ## 依赖关系
 
 ```text
-@skyroc/ui-tokens（无依赖）
-       ↑
-@skyroc/tailwind-plugin（Web）
-
 @skyroc/ui-types（仅 clsx）
        ↑
 @skyroc/web-ui（Web）
@@ -79,8 +75,8 @@ Native 端引用 `.` 不会误打包 `navigator.clipboard` 等浏览器 API。
 ## 推荐阅读
 
 <Cards>
-  <Card title="@skyroc/ui-tokens" href="/docs/shared/ui-tokens" description="设计令牌（colors / spacing / radius / typography）" />
   <Card title="@skyroc/ui-types" href="/docs/shared/ui-types" description="跨端 UI 类型（ThemeColor / WithClassName）" />
+  <Card title="@skyroc/type-utils" href="/docs/shared/type-utils" description="高级 TS 工具类型（路径 / 字段 / 变换）" />
   <Card title="@skyroc/hooks" href="/docs/shared/hooks" description="跨端 React hooks + Store 基类" />
   <Card title="@skyroc/form" href="/docs/shared/form" description="类型安全的 React 表单 primitive" />
 </Cards>

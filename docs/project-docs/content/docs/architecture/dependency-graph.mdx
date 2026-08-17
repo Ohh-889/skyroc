@@ -30,12 +30,12 @@ description: 仓库各分层 / 各包之间的依赖方向总览
                                     ▼
                   ┌─────────────────────────────────────┐
                   │      packages/shared/*              │
-                  │  ui-tokens · ui-types · hooks       │
+                  │  ui-types · type-utils · hooks      │
                   └─────────────────┬───────────────────┘
                                     ▼
                   ┌─────────────────────────────────────┐
                   │      packages/@core/*               │
-                  │  utils · types · type-utils · color │
+                  │  utils · types · color · axios      │
                   │  axios · state · service · logger   │
                   │  scheduler · scripts                │
                   └─────────────────────────────────────┘
@@ -64,7 +64,6 @@ description: 仓库各分层 / 各包之间的依赖方向总览
    └─ @skyroc/adapter-antd-theme
          └─ @skyroc/web-admin-theme
                ├─ @skyroc/core-state
-               ├─ @skyroc/ui-tokens
                └─ @skyroc/tailwind-plugin
                      │  (peer)
                      ▼
@@ -99,7 +98,7 @@ description: 仓库各分层 / 各包之间的依赖方向总览
 ### 4. UI 设计系统链路
 
 ```text
-@skyroc/ui-types  ←  @skyroc/ui-tokens  ←  @skyroc/tailwind-plugin
+@skyroc/ui-types  ←  @skyroc/tailwind-plugin（内含设计令牌 src/tokens.ts）
                                                   │
                                                   ▼
                                           @skyroc/web-ui  （shadcn 风格）

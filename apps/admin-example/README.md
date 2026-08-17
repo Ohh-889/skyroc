@@ -94,7 +94,7 @@
 
 - 🪝 **@skyroc/hooks** - 跨平台 React Hooks 集合（含 ./web 子路径）
 - 📝 **@skyroc/form** - 类型安全的高级表单处理库（`@skyroc/filed-form`）
-- 🎨 **@skyroc/ui-tokens** - 设计令牌（颜色/间距/圆角/字体，零运行时依赖）
+- 🎨 **@skyroc/tailwind-plugin** - Tailwind 主题插件，内含三端共用的设计令牌
 
 **架构分层示意**
 
@@ -286,7 +286,7 @@ soybean-admin-react/                     # Monorepo 根目录
 ├── packages/
 │   ├── @core/                           # 基础设施层（平台无关）
 │   ├── web/                             # Web Kit 层（后台界面工程能力）
-│   ├── shared/                          # 跨端共享（ui-tokens、ui-types）
+│   ├── shared/                          # 跨端共享（ui-types、type-utils）
 │   ├── primitives/                      # 基础组件库（filed-form）
 │   └── hooks/                           # 跨平台 React hooks
 │

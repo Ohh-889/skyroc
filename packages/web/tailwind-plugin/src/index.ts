@@ -14,6 +14,32 @@ function toRem(value: number) {
   return `${Number.parseFloat(Math.max(0, value).toFixed(3))}rem`;
 }
 
+/**
+ * 设计令牌（原 `@skyroc/ui-tokens`）。
+ *
+ * 色值由本插件自己消费；spacing / borderRadius / fontSize / fontWeight 是尺度基准表，
+ * 供需要以 JS 形式读取尺度的场景使用（miniapp 主题、设计稿对表等）。
+ */
+export {
+  borderRadius,
+  defaultBrandColors,
+  defaultFeedbackColorsHsl,
+  defaultSidebarColorsHsl,
+  fontSize,
+  fontWeight,
+  spacing
+} from './tokens';
+
+export type {
+  ColorTokenName,
+  FontSizeToken,
+  FontWeightToken,
+  RadiusToken,
+  SemanticColorName,
+  SpacingToken,
+  SurfaceColorName
+} from './tokens';
+
 export const builtinColors = themes.map(theme => theme.name) as ThemeConfigColor[];
 
 export const builtinColorMap = themes.reduce(

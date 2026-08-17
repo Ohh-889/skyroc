@@ -9,7 +9,7 @@ description: Skyroc UI 的 Tailwind CSS 插件，注入 OKLCH design tokens 与�
 | --- | --- |
 | 包名 | `@skyroc/tailwind-plugin` |
 | 版本 | 0.0.1 |
-| 依赖 | [`@skyroc/color`](/docs/core/color)、[`@skyroc/ui-tokens`](/docs/shared/ui-tokens)、`@unocss/core`、`tailwindcss` |
+| 依赖 | [`@skyroc/color`](/docs/core/color)、`@unocss/core`、`tailwindcss` |
 | peer | `@skyroc/web-ui` |
 | 测试 | ✅ `generate.test.ts`、`index.test.ts` |
 
@@ -99,9 +99,25 @@ export default defineConfig({ presets: [presetSkyrocUI()] });
 
 > 注意：apps/admin 当前用 `@sa/uno-config` 的 `presetSoybeanAdmin`（更接近 admin 业务），`presetSkyrocUI` 主要面向 web-ui playground。
 
-## 与 ui-tokens 的关系
+## 设计令牌住在哪
 
-- `@skyroc/ui-tokens`：纯 TS 常量（hex、HSL、scale），跨端、零依赖；
-- `@skyroc/tailwind-plugin`：把上面的 token **应用到 Tailwind / UnoCSS** 的实现层。
+令牌常量在本包的 `src/tokens.ts`，是三端（web / native / miniapp）共用的单一数据源。
 
-这种分离让 Native 端可以直接复用 tokens 而不引入 Tailwind 运行时。
+早期它是独立包 `@skyroc/ui-tokens`，设想是「令牌中立、各端各自翻译」。实际落地后三端统一走
+Tailwind，本插件成了唯一的翻译层——Native 通过宿主 App 的 `global.css` 以 `platform: 'native'`
+消费同一个插件，而不是绕开插件直接读裸令牌。既然再没有第二个消费者，独立成包只剩下发布边界的
+形式意义，于是并入本包。
+
+`tokens.ts` 分两类内容，都从包出口导出：
+
+| 内容 | 谁在消费 |
+| --- | --- |
+| `defaultFeedbackColorsHsl`、`defaultSidebarColorsHsl` | 本插件的 `generate.ts`，生成 CSS 变量 |
+| `defaultBrandColors` | 品牌语义色基准（hex），供外部读取 |
+| `spacing`、`borderRadius`、`fontSize`、`fontWeight` | 尺度基准表，当前无代码消费 |
+
+尺度基准表保留是有意为之：它是一份显式的尺度定义，既作为写 className 时的参考，也给将来需要以
+JS 形式读取尺度的场景（miniapp 主题、设计稿对表、Figma 同步等）留好接口。
+
+注意 `borderRadius` 是**基准表**，与插件实际注入 Tailwind 的圆角不是同一套值——后者在 `index.ts`
+里按 `radius` 选项动态计算。

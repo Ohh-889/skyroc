@@ -1,10 +1,10 @@
 import { colord, getColorPalette } from '@skyroc/color';
-import { defaultFeedbackColorsHsl, defaultSidebarColorsHsl } from '@skyroc/ui-tokens';
 import { mergeDeep } from '@unocss/core';
 // Hand-picked shadcn-style design presets (13 themes). Surface colors (background/card/foreground/...) are
 // chosen per theme by designers and CANNOT be derived from `primary` — keep this file manually maintained.
 // See README "关于 theme.json" for details.
 import themes from './theme.json';
+import { defaultFeedbackColorsHsl, defaultSidebarColorsHsl } from './tokens';
 import type {
   ColorOptions,
   CssInJsLike,

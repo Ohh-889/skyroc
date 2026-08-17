@@ -9,7 +9,7 @@ Skyroc UI 的设计系统不是一组孤立样式，而是由 **设计令牌**�
 
 | 层级 | 包 | 职责 |
 | --- | --- | --- |
-| 设计令牌 | `@skyroc/ui-tokens` | 定义颜色、间距、圆角、字体等基础值 |
+| 设计令牌 | `@skyroc/tailwind-plugin` | 语义色令牌（`src/tokens.ts`）+ 主题变量生成 |
 | 样式注入 | `@skyroc/tailwind-plugin` | 将主题变量注册到 Tailwind CSS 环境 |
 | 组件实现 | `@skyroc/web-ui` | 基于 Radix UI 与 Tailwind CSS 提供面向 Next.js 应用的组件 |
 

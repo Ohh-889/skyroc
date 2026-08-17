@@ -13,7 +13,7 @@ soybean-admin-react/
 │   └── web-ui-playground/ # UI 组件演练场
 ├── packages/              # 所有 workspace 包（按平台优先组织）
 │   ├── @core/             # 跨端运行时基础设施
-│   ├── shared/            # 跨端纯类型 / 设计 token
+│   ├── shared/            # 跨端纯类型（ui-types / type-utils）
 │   ├── hooks/             # 跨端 React hooks
 │   ├── primitives/        # 底层 primitive 库（如 @skyroc/form）
 │   ├── web/               # Web 端能力包（UI / 主题 / 布局 / vite…）
@@ -93,13 +93,12 @@ packages:
 
 | 目录 | 包名 | 职责 |
 | --- | --- | --- |
-| `shared/ui-tokens` | `@skyroc/ui-tokens` | 设计 token（零依赖） |
 | `shared/ui-types` | `@skyroc/ui-types` | 跨端 UI 类型 |
 | `shared/type-utils` | `@skyroc/type-utils` | 高级 TypeScript 工具类型（含 `./web` 子入口） |
 | `hooks` | `@skyroc/hooks` | 跨端 React hooks（含 `./web`） |
 | `primitives/filed-form` | `@skyroc/form` | 类型安全表单 primitive |
 
-详见 [跨端共享包](/docs/shared/ui-tokens)。
+详见 [跨端共享包](/docs/shared/overview)。
 
 ## internal —— 内部配置包
 

@@ -2,7 +2,7 @@
 
 React Native 组件库，基于 [Uniwind](https://docs.uniwind.dev)（Tailwind CSS v4 for React Native）。
 
-设计令牌与 `@skyroc/web-ui` 共用 `@skyroc/ui-tokens` 这一份来源，因此三端（web / native / miniapp）颜色与圆角保持一致。
+设计令牌与 `@skyroc/web-ui` 共用 `@skyroc/tailwind-plugin` 这一份来源（令牌常量在该包的 `src/tokens.ts`），因此三端（web / native / miniapp）颜色与圆角保持一致。本组件库自身不含任何 CSS——Native 侧在宿主 App 的 `global.css` 里以 `@plugin "@skyroc/tailwind-plugin" { platform: 'native'; }` 接入。
 
 ## 安装
 
