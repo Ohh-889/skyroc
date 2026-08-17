@@ -208,6 +208,14 @@ export default function HomeScreen() {
       >
         ShareSheet
       </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/switch')}
+      >
+        Switch
+      </Button>
     </View>
   );
 }

@@ -80,6 +80,8 @@ export * from './stepper';
 
 export * from './swipe-cell';
 
+export * from './switch';
+
 export * from './tabs';
 
 export * from './tag';
