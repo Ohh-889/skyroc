@@ -1,0 +1,216 @@
+---
+title: 快速开始
+description: 安装依赖、启动 apps/admin、构建预览，并理解当前 Mock 与脚本约定
+---
+
+这一页解决一个问题：如何把 `apps/admin` 跑起来，并知道启动、构建、预览和 Mock 请求分别由哪些配置控制。
+
+命令建议在仓库根目录执行。`apps/admin` 是 pnpm workspace 里的一个应用包，包名是 `skyroc-admin`。
+
+## 环境要求
+
+| 工具 | 要求 | 来源 |
+| --- | --- | --- |
+| Node.js | 仓库根要求 `>=20` | 根 `package.json` |
+| pnpm | `10.4.1` | 根 `package.json`、`apps/admin/package.json` |
+| workspace | 使用 pnpm workspace | `pnpm-workspace.yaml` |
+
+`apps/admin/package.json` 自身声明了 `node >=18.12.0`、`pnpm >=8.7.0`，但在当前 monorepo 中应按仓库根配置使用 Node 20+ 和 pnpm 10.4.1。
+
+```bash
+node -v
+pnpm -v
+```
+
+如果本机没有固定 pnpm 版本，可以通过 Corepack 启用：
+
+```bash
+corepack enable
+corepack prepare pnpm@10.4.1 --activate
+```
+
+## 获取代码
+
+如果还没有本地仓库，先克隆当前 React 版仓库：
+
+```bash
+git clone git@github.com:Ohh-889/soybean-admin-react.git
+cd soybean-admin-react
+```
+
+无法使用 SSH key 时，可以换成 HTTPS 地址：
+
+```bash
+git clone https://github.com/Ohh-889/soybean-admin-react.git
+cd soybean-admin-react
+```
+
+旧文档里出现过的 Gitee 地址不再作为当前文档事实源。当前文档站点和仓库配置都指向 `Ohh-889/soybean-admin-react`。
+
+## 安装依赖
+
+在仓库根目录安装全部 workspace 依赖：
+
+```bash
+pnpm install
+```
+
+不要只在 `apps/admin` 目录里单独安装依赖。`apps/admin` 依赖了多个 workspace 包，例如 `@skyroc/web-admin-vite`、`@skyroc/web-admin-layouts`、`@skyroc/web-admin-theme`、`@skyroc/web-admin-i18n`、`@skyroc/axios` 和 `@skyroc/utils`，这些包由 workspace 统一解析。
+
+## 启动开发服务
+
+启动 `apps/admin`：
+
+```bash
+pnpm --filter skyroc-admin dev
+```
+
+这个命令实际执行的是：
+
+```bash
+vite --mode test
+```
+
+也就是说，默认开发服务使用 `test` mode。Vite 会读取公共 `.env`，再叠加 `.env.test` 中的测试环境后端地址。
+
+开发服务默认监听 **`http://localhost:9527`**，`host` 为 `0.0.0.0`，启动后自动打开浏览器；`vite preview` 的预览端口是 **9725**。这两个默认值来自 `@skyroc/web-admin-vite`（`packages/web/admin-vite/src/config.ts`），可以在 `apps/admin/vite.config.ts` 的 `server.port` / `preview.port` 覆盖。
+
+如果要用生产 mode 启动开发服务：
+
+```bash
+pnpm --filter skyroc-admin dev:prod
+```
+
+对应脚本是：
+
+```bash
+vite --mode prod
+```
+
+### 启动前为什么会先构建 admin-vite
+
+`apps/admin` 的 `predev`、`predev:prod`、`prebuild`、`prebuild:test` 和 `prepreview` 都会先执行：
+
+```bash
+pnpm run build:admin-vite
+```
+
+`build:admin-vite` 会构建 `@skyroc/web-admin-vite`：
+
+```bash
+pnpm --filter @skyroc/web-admin-vite build
+```
+
+原因是 `apps/admin/vite.config.ts` 直接从 `@skyroc/web-admin-vite` 导入 `defineConfig`。启动前先构建这个共享 Vite 预设，可以保证本地运行时加载的是最新的包产物。
+
+## 构建
+
+构建生产包：
+
+```bash
+pnpm --filter skyroc-admin build
+```
+
+对应脚本：
+
+```bash
+vite build --mode prod
+```
+
+构建测试环境包：
+
+```bash
+pnpm --filter skyroc-admin build:test
+```
+
+对应脚本：
+
+```bash
+vite build --mode test
+```
+
+这两个命令都会先触发 `prebuild` 或 `prebuild:test`，也就是先构建 `@skyroc/web-admin-vite`。
+
+## 预览构建产物
+
+构建完成后预览产物：
+
+```bash
+pnpm --filter skyroc-admin preview
+```
+
+对应脚本：
+
+```bash
+vite preview
+```
+
+`preview` 同样会先执行 `prepreview`，确保共享 Vite 预设包已构建。
+
+## Mock 与后端地址
+
+当前 `apps/admin` 没有本地 MSW mock 目录。默认测试环境请求走 Apifox mock 地址：
+
+```text
+VITE_SERVICE_BASE_URL=https://mock.apifox.cn/m1/3109515-0-default
+```
+
+这个地址在 `.env`、`.env.test` 和 `.env.prod` 中都有配置。开发环境是否启用代理由 `.env` 控制：
+
+```text
+VITE_HTTP_PROXY=Y
+VITE_PROXY_LOG=Y
+```
+
+当开发环境启用代理时，应用内主服务请求不会直接使用远端 URL，而是使用本地代理前缀：
+
+```text
+/proxy-default
+```
+
+其他服务通过 `VITE_OTHER_SERVICE_BASE_URL` 配置。当前示例里只有 `demo` 服务：
+
+```text
+VITE_OTHER_SERVICE_BASE_URL= `{
+  "demo": "http://localhost:9528"
+}`
+```
+
+它在开发代理中对应：
+
+```text
+/proxy-demo
+```
+
+`apps/admin/src/service/request/index.ts` 中的 `request` 使用主服务地址，`demoRequest` 使用 `demo` 服务地址。切换真实后端时，优先改 `.env.test` 或 `.env.prod` 中的 `VITE_SERVICE_BASE_URL` 和 `VITE_OTHER_SERVICE_BASE_URL`，不要在请求模块里硬编码环境差异。
+
+## 脚本速查
+
+| 命令 | 作用 |
+| --- | --- |
+| `pnpm --filter skyroc-admin dev` | 以 test mode 启动开发服务。 |
+| `pnpm --filter skyroc-admin dev:prod` | 以 prod mode 启动开发服务。 |
+| `pnpm --filter skyroc-admin build` | 以 prod mode 构建生产包。 |
+| `pnpm --filter skyroc-admin build:test` | 以 test mode 构建测试包。 |
+| `pnpm --filter skyroc-admin preview` | 预览 Vite 构建产物。 |
+| `pnpm --filter skyroc-admin typecheck` | 对 `apps/admin` 执行 TypeScript 检查。 |
+| `pnpm --filter skyroc-admin lint` | 对 `apps/admin` 执行 oxlint 修复。 |
+| `pnpm --filter skyroc-admin build:admin-vite` | 构建共享包 `@skyroc/web-admin-vite`。 |
+
+## 常见卡点
+
+| 现象 | 先检查 |
+| --- | --- |
+| 启动时找不到 `@skyroc/web-admin-vite` 的构建产物 | 是否执行了 `pnpm --filter skyroc-admin dev`，或手动执行 `pnpm --filter skyroc-admin build:admin-vite`。 |
+| 请求地址不是预期后端 | 当前 mode 是否正确，以及 `.env.test` / `.env.prod` 中的 `VITE_SERVICE_BASE_URL` 是否覆盖了公共 `.env`。 |
+| 代理没有生效 | `.env` 中 `VITE_HTTP_PROXY` 是否为 `Y`，请求是否走 `/proxy-default` 或 `/proxy-{key}`。 |
+| 代理日志太多 | `.env` 中 `VITE_PROXY_LOG` 控制是否打印代理目标。 |
+| 修改 env 后没有变化 | 重新启动 Vite 开发服务。Vite env 在启动时读取，不是运行时热更新配置。 |
+
+## 下一步
+
+| 目标 | 继续阅读 |
+| --- | --- |
+| 配好编辑器、格式化、i18n Ally 和 UnoCSS 提示 | [开发工具配置](./editor-setup) |
+| 看懂 `apps/admin/src` 目录职责和 app/package 边界 | [项目结构](./project-structure) |
+| 修改 env、代理、Vite preset 或部署 base | [环境变量与 Vite](../configuration/env-and-vite) |

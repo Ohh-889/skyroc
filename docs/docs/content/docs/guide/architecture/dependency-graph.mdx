@@ -1,0 +1,130 @@
+---
+title: 关键依赖链路
+description: 主题、请求、日志、UI、状态、表单等实际功能链路的包依赖走向
+---
+
+[包分层与依赖方向](/docs/guide/architecture/package-layering) 讲的是**层与层之间的规则**；这一页讲的是**具体功能落到包上的实际链路**——你要改主题、改请求、改表单时，会依次经过哪几个包。
+
+所有链路都遵守同一条铁律：箭头只能自下而上，下层不能反向 import 上层。
+
+## 关键链路
+
+### 1. 主题链路
+
+```text
+@skyroc/color
+   └─ @skyroc/adapter-antd-theme
+         └─ @skyroc/web-admin-theme
+               ├─ @skyroc/core-state
+               └─ @skyroc/tailwind-plugin
+                     │  (peer)
+                     ▼
+                  apps/admin
+```
+
+详见 [@skyroc/web-admin-theme](/docs/packages/web/theme/admin-theme)。
+
+### 2. 请求链路
+
+```text
+@skyroc/axios
+   └─ @skyroc/service
+         └─ apps/admin (createAppRequest + createQueryClient)
+               ├─ @tanstack/react-query
+               └─ @skyroc/web-admin-i18n (错误消息 i18n)
+```
+
+详见 [@skyroc/service](/docs/packages/core/service)。
+
+### 3. 日志链路
+
+```text
+@skyroc/logger（核心）
+   ├─ @skyroc/logger/web   ← WebStorageAdapter（IndexedDB）
+   └─ @skyroc/logger/native ← RNStorageAdapter（AsyncStorage）
+         │
+         ▼
+      apps/* 在 bootstrap 注入
+```
+
+### 4. UI 设计系统链路
+
+```text
+@skyroc/ui-types  ←  @skyroc/tailwind-plugin（内含设计令牌 src/tokens.ts）
+                                                  │
+                                                  ▼
+                                          @skyroc/web-ui  （shadcn 风格）
+                                                  │
+                                                  ▼
+                                       @skyroc/web-ui-antd
+                                       @skyroc/web-ui-compose
+                                                  │
+                                                  ▼
+                                       @skyroc/materials
+                                                  │
+                                                  ▼
+                                       @skyroc/web-admin-layouts
+                                                  │
+                                                  ▼
+                                            apps/admin
+```
+
+### 5. 状态链路
+
+```text
+jotai (npm)
+   └─ @skyroc/core-state
+         └─ @skyroc/web-admin-theme / web-admin-i18n / web-admin-layouts ...
+               └─ apps/admin
+```
+
+详见 [@skyroc/core-state](/docs/packages/core/state)。
+
+### 6. 表单链路
+
+```text
+@skyroc/type-utils (深层 path 类型)
+   └─ @skyroc/form (form-core + react)
+         └─ apps/admin / @skyroc/web-ui
+```
+
+详见 [@skyroc/form](/docs/packages/form)。
+
+### 7. 路由 + Devtools
+
+```text
+@tanstack/react-router  ─┐
+@tanstack/react-query   ─┼─→  @skyroc/web-admin-devtools  →  apps/admin
+jotai                   ─┘
+```
+
+详见 [@skyroc/web-admin-devtools](/docs/packages/web/admin-devtools)。
+
+## 工具：可视化依赖
+
+仓库可以用以下命令导出依赖：
+
+```bash
+# 单包的依赖链
+pnpm why @skyroc/utils
+
+# 某个包的所有 dependents
+pnpm list -r --filter ...@skyroc/utils
+
+# Turborepo 任务图（含依赖关系）
+pnpm build --dry-run --graph
+```
+
+`--graph` 会输出 Mermaid 文本，可在 docs 中直接 render。
+
+## 与其它架构文档的关系
+
+| 主题 | 文档 |
+| --- | --- |
+| Monorepo 工具与目录 | [Monorepo](/docs/guide/architecture/monorepo) |
+| 抽象 / 实现层级 | [包分层](/docs/guide/architecture/package-layering) |
+| 平台横向切分 | [平台优先](/docs/guide/architecture/platform-first) |
+| 平台差异如何隔离 | [适配器模式](/docs/guide/architecture/adapter-pattern) |
+| 包命名规则 | [命名规范](/docs/guide/architecture/naming) |
+| 集中版本管理 | [Catalog](/docs/guide/architecture/catalog) |
+| 任务编排 | [构建体系](/docs/guide/engineering/build-system) |

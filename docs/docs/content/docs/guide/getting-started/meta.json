@@ -1,0 +1,5 @@
+{
+  "title": "快速上手",
+  "description": "项目简介、技术栈、启动与目录",
+  "pages": ["introduction", "tech-stack", "quick-start", "directory", "glossary", "faq"]
+}

@@ -1,0 +1,250 @@
+---
+title: 国际化与图标
+description: 理解 apps/admin 的 @skyroc/web-admin-i18n 接入、语言缓存、Ant Design locale、本地 svg 图标和 Iconify 离线配置
+---
+
+这一页解决一个问题：新增语言文案、切换 Ant Design 语言、配置菜单图标或接入本地 SVG 图标时，应该改哪些文件。
+
+当前 `apps/admin` 的国际化和图标不是一个系统，但它们会在路由菜单、布局 header 和主题配置里一起出现：
+
+```text
+bootstrap.tsx
+  -> setupAdminPlugins()
+    -> Iconify provider
+  -> setupI18n()
+    -> @skyroc/web-admin-i18n
+
+App.tsx
+  -> AppAntdProvider
+    -> antdLocales[locale]
+  -> GlobalEffect
+    -> LangEffect(onLocaleChange: syncLocales)
+```
+
+语言状态由 `@skyroc/web-admin-i18n` 管理，应用侧只负责默认语言、缓存适配、Ant Design locale 和第三方库同步。图标资源由 Vite preset、Iconify provider、本地 SVG 注册和菜单元信息共同决定。
+
+## 适用场景
+
+| 你要做什么 | 先看哪里 |
+| --- | --- |
+| 新增路由标题或菜单文案 | `packages/web/admin-i18n/src/langs/*`、`packages/@core/types/src/locales/i18n.d.ts` 的 `I18n.Route` |
+| 新增页面或业务文案类型 | `packages/@core/types/src/locales/i18n.d.ts` 和共享语言资源 |
+| 调整默认语言或语言选项 | `apps/admin/src/config.ts`、`apps/admin/src/locales/index.ts` |
+| 同步 Dayjs 或其他第三方语言 | `apps/admin/src/locales/sync.ts`、`GlobalEffect` |
+| 修改 Ant Design locale | `apps/admin/src/locales/antd.ts`、`features/antd/AntdProvider.tsx` |
+| 新增本地 SVG 图标 | `apps/admin/src/assets/svg-icon`、route `menu.localIcon`、组件 `localIcon` prop |
+| 修改 Iconify provider | `.env` 的 `VITE_ICONIFY_URL`、`apps/admin/src/plugins/index.ts` |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/locales/index.ts` | 调用 `setupCoreI18n()`，注入默认语言、fallback、语言选项和 storage。 |
+| `apps/admin/src/config.ts` | 提供 `defaultLang`、`defaultLangOptions`、`localIconPrefix`、`defaultIcon`。 |
+| `apps/admin/src/locales/antd.ts` | 把 `zh-CN`、`en-US` 映射到 Ant Design locale 对象。 |
+| `apps/admin/src/locales/sync.ts` | 把应用语言同步给 Dayjs。 |
+| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `LangEffect`，语言变化时调用 `syncLocales`。 |
+| `apps/admin/src/plugins/assets.ts` | 注册本地 SVG sprite。 |
+| `apps/admin/src/plugins/index.ts` | 配置 Iconify provider、Dayjs、NProgress 和应用更新检测。 |
+| `packages/@core/types/src/locales/i18n.d.ts` | 全局 `I18n` 命名空间，约束 `$t()`、`i18nKey` 和语言资源 key。 |
+
+## 核心概念
+
+### 应用侧只做 i18n 适配
+
+`apps/admin/src/locales/index.ts` 当前是很薄的一层：
+
+```ts
+export async function setupI18n(options: LocaleSetupOptions<I18n.LangType> = {}) {
+  await setupCoreI18n({
+    defaultLocale: globalConfig.defaultLang,
+    fallbackLocale: 'en-US',
+    localeOptions: globalConfig.defaultLangOptions,
+    missingWarn: import.meta.env.DEV,
+    storage: {
+      getLocale: () => localStg.get('lang'),
+      setLocale: lang => localStg.set('lang', lang)
+    },
+    ...options
+  });
+}
+```
+
+应用决定默认语言、语言列表和缓存读写；共享包负责 i18next 初始化、语言 atom、`$t()`、`useLang()`、`LangSwitch` 和 `LangEffect`。
+
+默认语言来自 `globalConfig.defaultLang`。当前逻辑是优先读 `localStg.get('lang')`，没有缓存时使用 `zh-CN`。fallback 是 `en-US`。
+
+### Ant Design locale 单独映射
+
+i18next 的语言 key 不会自动让 Ant Design 切换语言。当前应用通过 `AppAntdProvider` 做映射：
+
+```tsx
+const { locale } = useLang();
+
+return (
+  <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+    {children}
+  </AntdProvider>
+);
+```
+
+`antdLocales` 当前只包含：
+
+```ts
+export const antdLocales: Record<I18n.LangType, Locale> = {
+  'en-US': enUS,
+  'zh-CN': zhCN
+};
+```
+
+新增语言时，除了 i18next 资源和类型，还要补 Ant Design locale，否则表格分页、日期选择器、空状态等 antd 文案不会跟着切换。
+
+### 第三方语言通过 `LangEffect` 同步
+
+`GlobalEffect` 当前挂载：
+
+```tsx
+<LangEffect onLocaleChange={syncLocales} />
+```
+
+`syncLocales()` 把应用语言映射到 Dayjs locale：
+
+```ts
+const localeMap: Record<I18n.LangType, string> = {
+  'zh-CN': 'zh-cn',
+  'en-US': 'en'
+};
+```
+
+新增第三方库语言同步时，优先扩展 `locales/sync.ts`，不要散落在页面 effect 里。
+
+### 图标有三类来源
+
+| 来源 | 使用方式 | 典型场景 |
+| --- | --- | --- |
+| Iconify 在线 / provider | `material-symbols:sunny` 这类图标名 | 主题切换、菜单、通用 UI 图标。 |
+| 本地 SVG sprite | `localIcon="logo"`、`menu.localIcon: 'logo'` | 项目 logo、业务定制图标、内网不可依赖远端时的图标。 |
+| Ant Design / lucide / 组件图标 | 组件直接 import | 文档站、少量 React 组件内操作图标。 |
+
+`.env` 当前定义：
+
+```dotenv
+VITE_ICON_PREFIX=icon
+VITE_ICON_LOCAL_PREFIX=icon-local
+VITE_MENU_ICON=mdi:menu
+```
+
+`VITE_ICON_LOCAL_PREFIX` 必须包含 `VITE_ICON_PREFIX`。本地 SVG 默认目录是 `apps/admin/src/assets/svg-icon`，由 Vite preset 和 `virtual:svg-icons-register` 注册。业务代码通常不直接写 `icon-local-report`，而是在路由菜单里写 `localIcon: 'report'`，或在组件里写 `<SvgIcon localIcon="report" />`。
+
+## 最小可用示例
+
+### 新增一个路由翻译 key
+
+假设新增后台页面 `/report`，route `staticData` 里要使用：
+
+```ts
+staticData: {
+  title: 'Report',
+  i18nKey: 'route.report',
+  menu: {
+    icon: 'mdi:file-chart-outline',
+    order: 10
+  }
+}
+```
+
+需要同步三类文件：
+
+```text
+packages/web/admin-i18n/src/langs/zh-CN/route.json
+packages/web/admin-i18n/src/langs/en-US/route.json
+packages/@core/types/src/locales/i18n.d.ts
+```
+
+类型文件让 `i18nKey` 和 `$t()` 能在编译期发现拼写错误；语言 JSON 负责运行时文案。
+
+### 新增一种语言
+
+新增语言不是只加 JSON。至少要检查：
+
+| 位置 | 要做什么 |
+| --- | --- |
+| `I18n.LangType` | 增加语言联合类型。 |
+| `globalConfig.defaultLangOptions` | 增加语言切换选项。 |
+| 共享语言资源 | 增加对应语言资源并接入聚合。 |
+| `apps/admin/src/locales/antd.ts` | 增加 Ant Design locale 映射。 |
+| `apps/admin/src/locales/sync.ts` | 增加 Dayjs 或其他第三方 locale 映射。 |
+
+缺任何一环，都可能出现“菜单翻译了，但 antd 没翻译”或“切换语言后日期格式没变”的现象。
+
+### 新增本地 SVG 图标
+
+把文件放到：
+
+```text
+apps/admin/src/assets/svg-icon/report.svg
+```
+
+然后在菜单或组件中使用：
+
+```ts
+menu: {
+  localIcon: 'report'
+}
+```
+
+```tsx
+<SvgIcon localIcon="report" />
+```
+
+这里的 `report` 来自 `report.svg` 的文件名。`icon-local` 来自 `.env` 的 `VITE_ICON_LOCAL_PREFIX`，用于生成 SVG symbol id，例如 `#icon-local-report`。如果改了前缀，既要改 env，也要确认 `globalConfig.localIconPrefix`、`SvgIcon` 的 `localIconPrefix` 和 Vite 图标插件配置仍然一致。
+
+### 配置内网 Iconify provider
+
+如果生产环境不能访问默认 Iconify API，可以在 env 中设置：
+
+```dotenv
+VITE_ICONIFY_URL=https://iconify.example.com
+```
+
+应用启动时 `setupAdminPlugins()` 会把它传给 `setupAdminRuntimePlugins()`：
+
+```ts
+const adminIconifyOfflinePluginOptions = {
+  apiUrl: import.meta.env.VITE_ICONIFY_URL
+};
+```
+
+这只影响 Iconify provider，不会替代本地 SVG sprite。业务定制图标仍建议放到 `assets/svg-icon`。
+
+## 排查顺序
+
+1. 文案不显示时，先确认 `i18nKey` 是否在 `packages/@core/types/src/locales/i18n.d.ts` 中存在。
+2. 类型没报错但页面显示 key，检查共享语言 JSON 是否包含对应语言资源。
+3. 切换语言后 antd 文案没变，检查 `antdLocales` 是否有该语言。
+4. 日期、时间、图表语言没变，检查 `locales/sync.ts` 是否同步第三方库。
+5. 菜单图标不显示，先区分是 Iconify 名称还是本地 SVG 前缀。
+6. 本地 SVG 不显示，确认文件在 `assets/svg-icon`，并且 `plugins/assets.ts` 已加载 `virtual:svg-icons-register`。
+7. 内网环境 Iconify 不显示，检查 `VITE_ICONIFY_URL` 和 provider 服务是否可访问。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 只加翻译 JSON，不改类型 | 同步 `packages/@core/types/src/locales/i18n.d.ts`，让 key 有类型约束。 |
+| 认为 i18next 会自动切换 antd 语言 | antd locale 由 `AppAntdProvider` 显式传入。 |
+| 在页面 effect 里同步 Dayjs locale | 第三方语言同步放在 `locales/sync.ts`，由 `LangEffect` 统一触发。 |
+| 把本地 SVG 写成 Iconify 名称 | 路由菜单使用 `menu.localIcon: 'logo'`，组件使用 `<SvgIcon localIcon="logo" />`；`icon-local-*` 是生成后的 symbol / class 前缀，不是普通 Iconify 名称。 |
+| 修改 `.env` 图标前缀后不重启 dev server | Vite env 是启动时读取，修改后需要重启。 |
+| 在共享 i18n 包里写应用专属运行逻辑 | 应用默认语言、缓存、第三方同步属于 `apps/admin` 适配层。 |
+
+## 相关链接
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 主题 Provider 和 Ant Design token | [主题系统](./overview) |
+| 组件、菜单和后端动态菜单图标用法 | [图标使用](./icons) |
+| 路由 `i18nKey`、菜单图标和隐藏菜单 | [路由元信息](../routing/route-meta) |
+| Iconify、本地 SVG 和 Vite preset | [环境变量与 Vite](../configuration/env-and-vite) |
+| 共享 i18n 包完整 API | `docs/web-kit-docs/content/docs/admin-i18n.mdx` |
+| 共享 Vite 图标配置 | `docs/web-kit-docs/content/docs/admin-vite.mdx` |

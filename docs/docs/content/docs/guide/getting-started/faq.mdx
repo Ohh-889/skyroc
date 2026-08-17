@@ -1,0 +1,108 @@
+---
+title: 常见问题
+description: 第一次接触本项目时的高频疑问解答
+---
+
+> 这里只回答**正文各页没有覆盖的**仓库级问题——多为「为什么这么设计」和一次性的排查经验。
+>
+> 操作类问题请直接去对应正文：启动见 [快速开始](/docs/guide/getting-started/quick-start)，代码风格见 [开发约定](/docs/guide/engineering/conventions)，类型报错见 [TypeScript 配置](/docs/guide/engineering/typescript)，构建命令见 [构建体系](/docs/guide/engineering/build-system)，提交发版见 [Git 提交与发版](/docs/guide/engineering/git-commit)。Admin 应用本身的使用问题（路由、权限、表格、主题接入…）见 [Admin FAQ](/docs/admin/faq)。
+
+## 项目 / 仓库
+
+### Q：仓库与 soybean-admin 是什么关系？
+
+> 同源不同代。
+>
+> [Soybean Admin](https://github.com/soybeanjs/soybean-admin) 系列是 Soybean 团队的中后台模版，原始仓库基于 Vue。本仓库是 **React 版本**的演进，但底层架构（monorepo + 多包分层 + 跨端规划）做了完整重做，已经不是简单的语言翻译。
+
+### Q：为什么不直接用 Refine / Plasmic / 其它现成方案？
+
+> [Refine](https://refine.dev/)、[Plasmic](https://www.plasmic.app/) 这类方案的定位是应用模板，而本项目把「中后台」当作**设计系统 + 业务沉淀**。
+>
+> 设计 token、主题算法、可复用业务模块、跨端能力都需要被显式拆包、长期维护，这是一般模板做不到的。
+
+### Q：仓库一共有多少个包？
+
+> **31 个**。分布见 [目录结构总览](/docs/guide/getting-started/directory)。
+
+## 安装与运行
+
+### Q：必须用 pnpm 吗？
+
+> **必须**。仓库依赖 pnpm 的 catalog / workspace 协议，npm / yarn 无法识别 `catalog:core` 与 `workspace:*`。
+
+### Q：第一次 `pnpm install` 卡在 sharp / esbuild？
+
+> 仓库通过 `pnpm.onlyBuiltDependencies` 显式允许这些包执行构建脚本，卡住通常是网络问题。可以换镜像源：
+>
+> ```bash
+> pnpm config set registry https://registry.npmmirror.com
+> ```
+
+### Q：admin 改了某个 `@skyroc/*` 库为什么不生效？
+
+> 该库需要走 dev watch（改完自动重 build）：
+>
+> ```bash
+> pnpm --filter @skyroc/<lib> dev
+> ```
+>
+> 只改应用不改库时不需要——`predev` 已经构建过一次了。
+
+## 跨平台与设计
+
+### Q：将来要做 RN 版本，需要做什么？
+
+> 1. 新建 `apps/app`，在 `packages/native/*` 下补包；
+> 2. 复用 `packages/@core/*`、`packages/shared/*`、`packages/hooks`、`packages/primitives/*`；
+> 3. 为业务核心包（service / logger / storage 等）注入 RN 端适配器；
+> 4. UI 在 `packages/native/ui`（`@skyroc/native-ui`）实现，与 web 不共用组件。
+>
+> 详见 [平台优先](/docs/guide/architecture/platform-first)、[适配器模式](/docs/guide/architecture/adapter-pattern)。
+
+### Q：为什么不用 React Native Web 共用 UI？
+
+> Web 与 RN 的**布局模型、事件模型、动画模型**完全不同。强行共用 UI 会牺牲两端的体验。
+> 共用「业务 / 数据 / 状态」即可，UI 各自原生。
+
+### Q：为什么用 OKLCH 而不是 HSL？
+
+> 因为 HSV / HSL 的「亮度」并不感知均匀。OKLCH 是感知均匀色彩空间，避免 antd 默认算法在同 saturation 不同 hue 下看起来明暗不一的问题。
+> 详见 [`@skyroc/adapter-antd-theme`](/docs/packages/web/theme/antd-theme)。
+
+## 测试
+
+### Q：能用 Jest 吗？
+
+> 不推荐。仓库统一 Vitest（与 Vite 同生态，TS 零配置，速度快）。Expo 应用是例外，跟随 Expo 官方方案。
+
+## 文档
+
+### Q：文档怎么本地预览？
+
+> ```bash
+> pnpm --filter @skyroc/docs dev
+> # 默认 http://localhost:8848
+> ```
+
+### Q：为什么组件文档不在这个站里？
+
+> `@skyroc/web-ui` 与 `@skyroc/native-ui` 有实时 Demo、代码预览、Expo 依赖，运行时要求和主站差别很大，所以保持独立部署（[Web UI](/docs/packages/web/ui)、Native UI）。
+> 主站只保留包总览和指路页，避免同一个组件出现两份文档。
+
+### Q：写新文档要做哪些事？
+
+> 1. 在 `docs/docs/content/docs/<root>/<分类>/` 下新增 `*.mdx`；
+> 2. 在同目录的 `meta.json` 把文件名加入 `pages` 数组；
+> 3. 顶部加 frontmatter：`title` + `description`；
+> 4. 检查这件事是不是别的页面已经写过了——同一个事实只应该有一处正文，其余用链接指过去。
+
+## 其它
+
+### Q：仓库的 license？
+
+> 看根 `LICENSE` 与各包 `package.json.license`。模板包标了 MIT；整体仓库以 README 为准。
+
+### Q：在哪里提 Issue / PR？
+
+> 仓库的 GitHub 主页。Issue 请尽量带最小复现，PR 请关联相关 Issue + 说明动机。

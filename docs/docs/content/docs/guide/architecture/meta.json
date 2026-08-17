@@ -1,0 +1,13 @@
+{
+  "title": "架构设计",
+  "description": "仓库分层、目录策略、命名、依赖关系与工程化决策",
+  "pages": [
+    "monorepo",
+    "package-layering",
+    "platform-first",
+    "adapter-pattern",
+    "dependency-graph",
+    "naming",
+    "catalog"
+  ]
+}

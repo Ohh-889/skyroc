@@ -1,0 +1,156 @@
+---
+title: 开发工具配置
+description: 对齐当前 .vscode、OXC/Oxlint、i18n Ally、UnoCSS 和生成文件约定
+---
+
+这一页说明当前仓库推荐的编辑器配置。旧 quick-start 里有一长段 VS Code 插件清单，但那份清单里的 Prettier、ESLint 工作流已经不能直接照搬；当前仓库的事实源是根目录 `.vscode/extensions.json`、`.vscode/settings.json` 和 `apps/admin/package.json`。
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 第一次打开仓库，想装必要插件 | `.vscode/extensions.json` |
+| 保存时格式化、修复和排序行为不符合预期 | `.vscode/settings.json` 的 lint 与 format 配置 |
+| i18n Ally 找不到语言资源 | `packages/web/admin-i18n/src/langs` 和 `{locale}/{namespace}.json` |
+| UnoCSS/Tailwind 类名提示不工作 | `unocss.root`、`tailwindCSS.classAttributes`、`tailwindCSS.experimental.classRegex` |
+| 路由生成文件被误改 | `files.readonlyInclude`、`files.watcherExclude` 中的 `routeTree.gen.ts` |
+
+## 推荐插件
+
+当前推荐列表由 `.vscode/extensions.json` 管理。打开仓库后，如果 VS Code 没有自动提示安装，可以按下面分类手动确认：
+
+| 类型 | 插件 |
+| --- | --- |
+| 代码质量 | `oxc.oxc-vscode` |
+| 样式与类名提示 | `antfu.unocss`、`naumovs.color-highlight` |
+| 图标和 Iconify | `antfu.iconify`、`afzalsayed96.icones` |
+| 国际化 | `lokalise.i18n-ally` |
+| env 与基础编辑体验 | `mikestead.dotenv`、`editorconfig.editorconfig` |
+| JSX/HTML 辅助 | `formulahendry.auto-close-tag`、`formulahendry.auto-complete-tag`、`formulahendry.auto-rename-tag`、`dsznajder.es7-react-js-snippets` |
+| Git 与文件展示 | `mhutchie.git-graph`、`pkief.material-icon-theme` |
+| 个人效率 | `whtouche.vscode-js-console-utils`、`zhuangtongfa.material-theme`、`alibaba-cloud.tongyi-lingma` |
+
+`extensions.json` 是当前仓库的插件清单，不代表每个插件都影响构建。真正会改变代码产物或校验结果的配置，要以脚本和 `.vscode/settings.json` 为准。
+
+## 格式化与 lint
+
+当前工作区默认使用 OXC VS Code 插件作为格式化和保存修复入口：
+
+```json
+{
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always",
+    "source.organizeImports": "never",
+    "source.sortMembers": "always"
+  },
+  "oxc.enable": true,
+  "oxc.enable.oxlint": true,
+  "prettier.enable": false
+}
+```
+
+这表示旧文档里推荐的 Prettier 不再是当前仓库默认格式化工具。`apps/admin` 的 lint 脚本也已经是：
+
+```bash
+pnpm --filter skyroc-admin lint
+```
+
+实际执行：
+
+```bash
+oxlint --fix
+```
+
+根目录还有统一格式化脚本：
+
+```bash
+pnpm format:check
+pnpm format
+```
+
+它们分别执行 `oxfmt --check` 和 `oxfmt`。日常改 `apps/admin` 时，优先用页面或模块对应的 `typecheck`、`lint` 和 `git diff --check` 校验；不要因为旧文档提到 ESLint/Prettier，就把当前保存行为改回旧链路。
+
+## i18n Ally
+
+当前语言资源已经收敛到共享包：
+
+```text
+packages/web/admin-i18n/src/langs
+  zh-cn/{namespace}.json
+  en-us/{namespace}.json
+```
+
+VS Code 配置对应：
+
+```json
+{
+  "i18n-ally.localesPaths": ["packages/web/admin-i18n/src/langs"],
+  "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+  "i18n-ally.namespace": true,
+  "i18n-ally.enabledFrameworks": ["react-i18next"],
+  "i18n-ally.enabledParsers": ["ts", "json"]
+}
+```
+
+`localesPaths` 必须是仓库相对路径，不要写成 `/packages/web/admin-i18n/src/langs`。前导斜杠会指向文件系统根目录，i18n Ally 就找不到当前 workspace 的语言文件。
+
+## UnoCSS 和类名提示
+
+当前工作区把 UnoCSS 根目录限定到 `apps/admin`：
+
+```json
+{
+  "unocss.root": ["./apps/admin"]
+}
+```
+
+Tailwind CSS 插件也被配置成识别常见 class 字段和 `cva()`、`tv()` 中的类名：
+
+```json
+{
+  "tailwindCSS.classAttributes": ["class", "className", "headerClassName", "classNames"],
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ]
+}
+```
+
+如果在其他 app 或 docs 里看不到类名提示，先确认这个范围是不是仍然应该只服务 `apps/admin`。不要为了一个页面提示问题直接把 UnoCSS 根目录扩大到整个 monorepo，否则可能把其他包的配置混进 admin 开发体验。
+
+## 生成文件和只读约定
+
+`apps/admin/src/features/router/routeTree.gen.ts` 是 TanStack Router 生成文件。当前 `.vscode/settings.json` 把它标记为只读，并排除在文件监听和搜索噪音之外：
+
+```json
+{
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  }
+}
+```
+
+新增、删除或调整路由时，改 `apps/admin/src/pages` 和路由元信息；不要手改 `routeTree.gen.ts`。生成结果由 Vite/TanStack Router 插件维护。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 按旧 quick-start 安装 Prettier 并设成默认 formatter | 当前仓库默认 formatter 是 `oxc.oxc-vscode`，Prettier 已禁用。 |
+| i18n Ally 仍然指向 `apps/admin/src/locales/langs` | 当前语言 JSON 在 `packages/web/admin-i18n/src/langs`。 |
+| 把 `routeTree.gen.ts` 当作普通源码修改 | 改 `apps/admin/src/pages`，让路由插件重新生成。 |
+| 只看插件列表判断代码质量链路 | 以 `apps/admin/package.json` 的脚本、根脚本和 `.vscode/settings.json` 为准。 |
+| 为了提示扩大 `unocss.root` 到整个仓库 | 先确认目标页面是否属于 `apps/admin`，避免污染其他 workspace 包。 |
+
+## 相关链接
+
+- [快速开始](./quick-start)
+- [项目结构](./project-structure)
+- [国际化与图标](../theme/i18n-and-icons)
+- [路由概览](../routing/overview)
+- [环境变量与 Vite](../configuration/env-and-vite)

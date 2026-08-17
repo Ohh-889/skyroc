@@ -1,0 +1,252 @@
+---
+title: useTable API
+description: useTable / useTableOperate / useTableScroll / TableHeaderOperation 的 props、返回值与类型速查
+---
+
+这一页是 `@skyroc/web-ui-compose` 表格能力的 **API 速查**。需要从零理解接入流程，请先看[表格与表单](./table-and-form)；这里只列签名、props、返回值和类型，方便随时查。
+
+所有 API 统一从 `@skyroc/web-ui-compose` 导出：
+
+```ts
+import {
+  TableHeaderOperation,
+  defaultTableTransformer,
+  useTable,
+  useTableOperate,
+  useTableScroll
+} from '@skyroc/web-ui-compose';
+import type {
+  GeneralPopupOperationProps,
+  PaginationData,
+  TableColumn,
+  TableColumnCheck,
+  TableConfig,
+  TableDataWithIndex,
+  TableQueryHook,
+  TableSearchProps
+} from '@skyroc/web-ui-compose';
+```
+
+事实源：`packages/web/ui/compose/src/table/{use-table,hooks,use-table-operate,use-table-scroll,types}.ts`。
+
+## useTable
+
+```ts
+function useTable<Params, Response, T = GetTableDataFromResponse<Response>>(
+  config: TableConfig<Params, Response, T>
+): UseTableResult;
+```
+
+- `Params`：查询参数类型（搜索表单字段 + `current` / `size`）。
+- `Response`：`queryHook` 返回的原始响应类型。
+- `T`：单行数据类型，默认从 `Response` 推断。
+
+### 配置项（TableConfig）
+
+`TableConfig` 继承了 Ant Design `TableProps`（去掉 `columns` / `dataSource` / `loading` / `onChange` / `pagination` / `rowKey`），下表之外的属性都会原样透传到 `tableProps`（如 `defaultExpandAllRows`、`bordered`、`size` 等）。
+
+| 字段 | 类型 | 默认值 | 必填 | 说明 |
+| --- | --- | --- | --- | --- |
+| `queryHook` | `TableQueryHook<Params, Response>` | — | ✅ | 页面提供的 React Query 查询 hook，`enabled` 和 `select` 由 `useTable` 注入。 |
+| `columns` | `() => TableColumn<TableDataWithIndex<T>>[]` | — | ✅ | 列工厂，重建列时调用，方便按权限 / i18n 重新生成。 |
+| `apiParams` | `Partial<Params>` | — | ⬜ | 默认查询参数，同时作为 `reset()` 的恢复目标。 |
+| `transformer` | `(response: Response) => PaginationData<T>` | `defaultTableTransformer` | ⬜ | 把响应转换成标准分页数据。 |
+| `transformParams` | `(params: Params) => Params` | — | ⬜ | 请求前规范化参数（常配合 zod schema）。 |
+| `routeSearch` | `string` | `''` | ⬜ | 路由 search 字符串，首次进入从 URL 还原查询条件。 |
+| `isChangeURL` | `boolean` | `true` | ⬜ | 为 `true` 时，参数提交后触发 `onSearchParamsChange`。 |
+| `onSearchParamsChange` | `(params: Partial<Params>) => void` | — | ⬜ | 参数提交后的回调，用来把条件写回路由。 |
+| `isMobile` | `boolean` | `false` | ⬜ | 移动端使用 `simple` 简洁分页。 |
+| `pagination` | `false \| TablePaginationConfig` | 见下方默认分页 | ⬜ | 传 `false` 关闭分页（树形数据常用）。 |
+| `immediate` | `boolean` | `true` | ⬜ | 挂载后是否立即请求。 |
+| `enabled` | `boolean` | `true` | ⬜ | 外部业务是否允许发起查询。 |
+| `showTotal` | `boolean` | `true` | ⬜ | 分页是否展示总数文案。 |
+| `getColumnVisible` | `(column) => boolean` | — | ⬜ | 控制列是否出现在列设置面板。 |
+| `onChange` | `(pagination, filters, sorter) => Partial<Params> \| void` | — | ⬜ | 自定义分页 / 排序 / 筛选的参数转换。 |
+| `onFetched` | `(data: PaginationData<TableDataWithIndex<T>>) => void \| Promise<void>` | — | ⬜ | 请求完成后的业务回调。 |
+| `queryOptions` | `TableQueryOptions<Response, T>` | — | ⬜ | 透传给 React Query 的附加配置（不含 `enabled` / `select` / `queryKey` / `queryFn`）。 |
+| `rowKey` | `TableProps['rowKey']` | `'id'` | ⬜ | 表格行 key。 |
+
+默认分页配置（`pagination` 不传 `false` 时）：
+
+```ts
+{
+  current: pageNum,
+  pageSize,
+  pageSizeOptions: ['10', '15', '20', '25', '30'],
+  showSizeChanger: true,
+  showTotal: showTotal ? totalText : undefined,
+  simple: isMobile,
+  total
+  // 与传入的 pagination 浅合并，传入项优先
+}
+```
+
+### 返回值
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `tableProps` | `CustomTableProps<T>` | 直接展开给 `<Table {...tableProps} />`，含 `columns` / `dataSource` / `loading` / `onChange` / `pagination` / `rowKey`。 |
+| `searchProps` | `TableSearchProps<Params>` | 直接展开给搜索表单组件，含 `form` / `search` / `reset` / `searchParams`。 |
+| `form` | `FormInstance<Params>` | 搜索表单实例（`searchProps.form` 同一个）。 |
+| `run` | `(isResetCurrent?: boolean) => Promise<void>` | 提交搜索；默认回第一页，传 `false` 保持当前页。 |
+| `reset` | `() => void` | 重置表单到 `apiParams` 并回第一页。 |
+| `pagination` | `false \| TablePaginationConfig` | 计算后的分页配置。 |
+| `data` | `TableDataWithIndex<T>[]` | 当前页数据（每行带 `index` 序号）。 |
+| `loading` | `boolean` | 当前查询是否在请求中。 |
+| `empty` | `boolean` | 非加载状态且无数据。 |
+| `total` / `pageNum` / `pageSize` | `number` | 分页状态。 |
+| `getData` | `() => Promise<void>` | 重新请求当前查询（刷新）。 |
+| `updateSearchParams` | `(params: Partial<Params>) => void` | 合并更新查询参数并触发请求。 |
+| `resetSearchParams` | `() => void` | 用默认参数重置查询。 |
+| `searchParams` | `Partial<Params>` | 当前已提交的查询参数。 |
+| `columns` | `TableColumn[]` | 经列设置过滤 / 排序后的最终列。 |
+| `columnChecks` | `TableColumnCheck[]` | 列设置项，传给 `TableHeaderOperation`。 |
+| `setColumnChecks` | `(checks: TableColumnCheck[]) => void` | 更新列设置。 |
+| `reloadColumns` | `() => void` | 重建列设置并保留用户的显隐 / 固定 / 排序偏好。 |
+| `query` | `UseQueryResult<PaginationData<...>, Error>` | 底层 React Query 结果，需要 `isError` / `refetch` 等时使用。 |
+
+## useTableOperate
+
+```ts
+function useTableOperate<T extends TableData = TableData>(
+  data: T[],
+  getData: (isResetCurrent?: boolean) => Promise<void>,
+  executeResActions?: (res: T, operateType: TableOperateType) => void | Promise<void>
+): UseTableOperateResult;
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `data` | 当前页数据，`handleEdit(id)` 用它按 `id` 查行回填。 |
+| `getData` | 通常传 `useTable()` 的 `getData`，删除 / 提交成功后刷新。 |
+| `executeResActions` | 可选。`handleSubmit` 校验通过后调用，放真实的新增 / 更新接口。 |
+
+### 返回值
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `generalPopupOperation` | `GeneralPopupOperationProps<T>` | 展开给新增 / 编辑抽屉，含 `form` / `handleSubmit` / `onClose` / `open` / `operateType`。 |
+| `rowSelection` | `TableProps<T>['rowSelection']` | 直接传给 `<Table rowSelection={rowSelection} />`（checkbox，宽 48，固定）。 |
+| `checkedRowKeys` | `Key[]` | 当前选中行 key。 |
+| `onSelectChange` | `(keys: Key[]) => void` | 行选择变化回调（已接进 `rowSelection`）。 |
+| `handleAdd` | `() => void` | 重置表单并以 `add` 模式打开抽屉。 |
+| `handleEdit` | `(idOrData: T['id'] \| T) => void` | 以 `edit` 模式打开抽屉；入参为 `id` 时从 `data` 查行回填，为对象时直接回填。 |
+| `onDeleted` | `() => Promise<void>` | 单条删除成功后提示 + 刷新。 |
+| `onBatchDeleted` | `() => Promise<void>` | 批量删除成功后清空选中 + 刷新。 |
+| `editingData` | `T \| undefined` | 当前编辑的行数据。 |
+| `operateType` | `'add' \| 'edit'` | 当前操作类型。 |
+| `drawerVisible` / `openDrawer` / `closeDrawer` | `boolean` / `() => void` | 抽屉可见性状态与控制（一般用 `generalPopupOperation.open` 即可）。 |
+
+`handleSubmit` 流程：`form.validateFields()` → `executeResActions(res, operateType)` → `message.success` → `onClose()` → `getData()`。
+
+## useTableScroll
+
+```ts
+function useTableScroll(scrollX?: number): {
+  scrollConfig: { x: number; y: number | undefined };
+  tableWrapperRef: RefObject<HTMLDivElement>;
+};
+```
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `scrollX` | `702` | 表格横向最小宽度，列总宽超容器时出现横向滚动。 |
+
+- `scrollConfig.y` = 容器高度 − 160（预留表头与分页），容器无高度时为 `undefined`。
+- `tableWrapperRef` 需绑定到包裹表格的容器元素上。
+
+另导出辅助函数 `getTableScrollX(columns, minWidth = 120)`，按列的 `width` / `minWidth` 累加估算横向总宽度。
+
+## TableHeaderOperation
+
+表头操作栏组件，props：
+
+| prop | 类型 | 默认值 | 必填 | 说明 |
+| --- | --- | --- | --- | --- |
+| `columns` | `TableColumnCheck[]` | — | ✅ | 列设置项，即 `columnChecks`。 |
+| `setColumnChecks` | `(checks: TableColumnCheck[]) => void` | — | ✅ | 更新列设置的回调。 |
+| `refresh` | `() => void \| Promise<void>` | — | ✅ | 刷新按钮事件，通常传 `getData`。 |
+| `loading` | `boolean` | `false` | ⬜ | 刷新图标是否旋转。 |
+| `add` | `() => void \| Promise<void>` | — | ⬜ | 添加按钮事件，不传则不渲染添加按钮。 |
+| `onDelete` | `() => void \| Promise<void>` | — | ⬜ | 批量删除事件，不传则不渲染删除按钮。 |
+| `disabledDelete` | `boolean` | `false` | ⬜ | 是否禁用批量删除。 |
+| `children` | `ReactNode` | — | ⬜ | 替换默认的添加 / 批量删除按钮。 |
+| `prefix` / `suffix` | `ReactNode` | — | ⬜ | 操作栏最前 / 最后的自定义内容。 |
+| `itemAlign` | `SpaceProps['align']` | — | ⬜ | 内部 `Space` 的对齐方式。 |
+
+## 关键类型
+
+```ts
+/** 后端分页响应的最小结构，defaultTableTransformer 默认按它解析。 */
+interface PaginatingQueryRecord<T = any> {
+  current: number;
+  records: T[];
+  size: number;
+  total: number;
+}
+
+/** transformer 的目标结构。 */
+interface PaginationData<T = any> {
+  data: T[];
+  pageNum: number;
+  pageSize: number;
+  total: number;
+}
+
+/** 带连续序号的行数据。 */
+type TableDataWithIndex<T> = T & { index: number };
+
+/** Ant Design 表格列定义。 */
+type TableColumn<T = any> = ColumnsType<T>[number];
+
+/** 页面需声明的 React Query 查询 hook 类型；enabled/select 由 useTable 注入。 */
+type TableQueryHook<Params, Response> = <Data = Response>(
+  params: Params,
+  options?: TableQueryHookOptions<Response, Data>
+) => UseQueryResult<Data, Error>;
+
+/** 搜索表单组件 props（searchProps）。 */
+interface TableSearchProps<T = any> {
+  form: FormInstance<T>;
+  reset: () => void;
+  search: (isResetCurrent?: boolean) => Promise<void>;
+  searchParams: T;
+}
+
+/** 新增 / 编辑抽屉 props（generalPopupOperation）。 */
+interface GeneralPopupOperationProps<T extends TableData = TableData> {
+  form: FormInstance<T>;
+  handleSubmit: () => Promise<void>;
+  onClose: () => void;
+  open: boolean;
+  operateType: 'add' | 'edit';
+}
+
+/** 列设置项。 */
+interface TableColumnCheck {
+  checked: boolean;                       // 是否参与渲染
+  fixed: 'left' | 'right' | 'unFixed';    // 固定位置
+  key: string;                            // 列稳定标识
+  title: ReactNode | ((...args: any[]) => ReactNode);
+  visible: boolean;                       // 是否出现在列设置面板
+}
+```
+
+## defaultTableTransformer
+
+```ts
+function defaultTableTransformer<T>(response?: {
+  current?: number;
+  records?: T[];
+  size?: number;
+  total?: number;
+}): PaginationData<T>;
+```
+
+把 `{ records, current, size, total }` 映射为 `{ data, pageNum, pageSize, total }`，缺省时回退到第一页、每页 10 条、总数 0。后端字段不一致时传自定义 `transformer` 替换它。
+
+## 相关链接
+
+- 接入教程与完整示例：[表格与表单](./table-and-form)
+- 请求模块分层与 React Query hooks：[服务模块](../request/service-modules)
+- 字段校验规则：[表单规则](./form-rules)

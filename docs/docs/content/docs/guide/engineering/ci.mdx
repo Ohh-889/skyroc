@@ -1,0 +1,203 @@
+---
+title: CI
+description: GitHub Actions 上的检查、构建、发版流程参考
+---
+
+## 当前 CI 现状
+
+仓库内置 GitHub Actions workflow 文件位于 `.github/workflows/`。下文按**典型推荐流程**说明，具体步骤需结合实际 workflow 调整。
+
+> 如果当前仓库尚未配置完整 workflow，本文档同时也是「应该这样做」的施工蓝图。
+
+## 推荐的 PR 检查流程
+
+```yaml
+# .github/workflows/pr.yml（示意）
+name: PR Checks
+on:
+  pull_request:
+    branches: [master]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.4.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+```
+
+| 步骤 | 失败时阻塞合并 |
+| --- | --- |
+| `pnpm install --frozen-lockfile` | ✅（lockfile 不能漂移） |
+| `pnpm format:check` | ✅ |
+| `pnpm lint` | ✅ |
+| `pnpm typecheck` | ✅ |
+| `pnpm test` | ✅ |
+| `pnpm build` | ✅ |
+
+## Turborepo 远程缓存
+
+Turborepo 支持 **Remote Cache** 显著加速 CI：
+
+```yaml
+- name: Setup Turbo cache
+  uses: actions/cache@v4
+  with:
+    path: .turbo
+    key: ${{ runner.os }}-turbo-${{ github.sha }}
+    restore-keys: ${{ runner.os }}-turbo-
+```
+
+或接入 Vercel Remote Cache：
+
+```yaml
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+```
+
+启用后第二次 CI 仅跑增量任务，整体时间常下降 5–10 倍。
+
+## 仅跑改动包的策略
+
+```yaml
+# 仅 lint / test / build 受影响的包
+- run: pnpm turbo run lint test build --filter='...[origin/master]'
+```
+
+`...[origin/master]` 是 Turborepo 的 [topological filter](https://turborepo.com/docs/reference/run#--filter-string)：表示「与 master 分支相比，本 PR 改动的包及其下游」。
+
+## E2E 测试
+
+E2E 需要更长的运行时间，通常单独 workflow / 单独 job：
+
+```yaml
+e2e:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v3
+    - uses: actions/setup-node@v4
+    - run: pnpm install --frozen-lockfile
+    - run: pnpm exec playwright install --with-deps
+    - run: pnpm test:e2e
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-report
+        path: '**/playwright-report'
+```
+
+## 文档站部署
+
+| 文档 | 内容 | 框架 | 部署目标 |
+| --- | --- | --- | --- |
+| `docs/docs` | 主文档门户（指南 / Admin / 包参考） | Next.js + Fumadocs | Vercel |
+| `docs/web-ui-docs` | Web UI 组件站（实时 Demo） | Next.js + Fumadocs | Vercel |
+| `docs/native-ui-docs` | Native UI 组件站（Expo Demo） | Next.js + Fumadocs | Vercel |
+
+Vercel 项目通常按目录配置 root，自动跑 `pnpm build` 即可。
+
+## Admin 应用部署
+
+```yaml
+deploy-admin:
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/master'
+  needs: [check]
+  steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v3
+    - uses: actions/setup-node@v4
+    - run: pnpm install --frozen-lockfile
+    - run: pnpm --filter skyroc-admin build
+    - name: Deploy to ...
+      run: ...
+```
+
+具体部署目标（OSS / S3 / Vercel / 自有服务器）由业务方决定。`apps/admin` 产物在 `apps/admin/dist/`，单纯静态资源，可推到任意 CDN。
+
+## 发版 workflow（可选）
+
+```yaml
+# .github/workflows/release.yml（示意）
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        type: choice
+        options: [patch, minor, major]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - name: Release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm dlx sa release --type=${{ inputs.type }}
+      - run: git push --follow-tags
+```
+
+## 必填的 GitHub Secrets
+
+| Secret | 用途 |
+| --- | --- |
+| `NPM_TOKEN` | 发布 `@skyroc/*` 公共包 |
+| `TURBO_TOKEN` / `TURBO_TEAM` | Turborepo Remote Cache（可选） |
+| 部署相关 token | 业务自定义 |
+
+## 本地复现 CI
+
+```bash
+# 完整模拟 CI
+pnpm install --frozen-lockfile
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+如本地不通过、CI 通过（或反之），多数原因：
+
+| 原因 | 排查 |
+| --- | --- |
+| `lockfile` 不一致 | `pnpm install --frozen-lockfile` 是否报错 |
+| Node 版本 | 仓库要求 `>=20`，CI 必须显式 setup |
+| Turbo 缓存影响 | 本地 `pnpm clean` 或 `turbo run build --force` |
+| 平台差异 | 大小写文件名、CRLF；macOS / Linux 不一致 |

@@ -1,0 +1,369 @@
+---
+title: 图标使用
+description: 说明 Iconify、本地 SVG、SvgIcon、路由菜单图标、UnoCSS 图标类和 Vite 图标配置的真实使用方式
+---
+
+这一页只讲图标怎么用。`apps/admin` 和 `apps/admin-example` 的图标使用入口主要是 `SvgIcon`、自动导入图标组件、路由 `menu.icon / menu.localIcon`、UnoCSS 图标 class 和 Vite preset。
+
+## 图标链路
+
+图标不是单个插件完成的，而是构建期注册、运行时 provider 和组件渲染共同完成：
+
+```text
+vite.config.ts
+  -> @skyroc/web-admin-vite
+    -> application.plugins.unpluginIcon
+      -> vite-plugin-svg-icons
+      -> unplugin-icons
+    -> application.plugins.unocss
+      -> Iconify / local svg class
+    -> application.plugins.autoImport
+      -> icon component resolver
+
+src/plugins/assets.ts
+  -> import 'virtual:svg-icons-register'
+
+src/plugins/index.ts
+  -> setupAdminRuntimePlugins()
+    -> setupIconifyOffline()
+
+@skyroc/web-ui-compose
+  -> SvgIcon
+```
+
+构建期的 `@skyroc/web-admin-vite` 负责把 `src/assets/svg-icon` 注册成资源；运行时的 `setupIconifyOffline()` 负责配置 Iconify provider；页面里真正渲染时通常用 `SvgIcon`。
+
+## 使用场景速查
+
+| 场景 | 推荐写法 |
+| --- | --- |
+| 组件里渲染 Iconify 图标 | `<SvgIcon icon="mdi:emoticon" />` |
+| 组件里渲染本地 SVG | `<SvgIcon localIcon="custom-icon" />` |
+| 静态图标组件标签 | `<IconMdiInformationOutline />`、`<IconLocalLogo />` |
+| Ant Design 按钮图标 | `<Button icon={<SvgIcon icon="ic:round-search" />} />` |
+| 路由菜单 Iconify 图标 | `menu.icon: 'mdi:monitor-dashboard'` |
+| 路由菜单本地图标 | `menu.localIcon: 'logo'` |
+| 后端动态菜单图标 | `handle.icon` / `handle.localIcon` |
+| 纯样式装饰图标 | `className="i-carbon:star-filled"` |
+| 新增业务 SVG | 放到 `src/assets/svg-icon/*.svg` |
+| 修改图标目录或前缀 | 改 `vite.config.ts` 的图标插件 options |
+
+## 组件中使用 Iconify
+
+Iconify 图标名使用 `collection:name` 格式，例如 `mdi:emoticon`、`ic:round-search`、`ant-design:send-outlined`。在 React 组件里直接传给 `SvgIcon`：
+
+```tsx
+import { SvgIcon } from '@skyroc/web-ui-compose';
+
+const DemoIcon = () => {
+  return <SvgIcon className="text-24px text-primary" icon="mdi:emoticon" />;
+};
+```
+
+`SvgIcon` 对 Iconify 图标的渲染最终交给 `@iconify/react`。颜色和尺寸通过普通 CSS / UnoCSS class 控制：
+
+```tsx
+<SvgIcon className="text-32px text-success" icon="ph:shield-check" />
+<SvgIcon className="text-18px text-warning" icon="ic:baseline-warning" />
+```
+
+如果图标名来自状态或表单，也直接传变量：
+
+```tsx
+const [selectedIcon, setSelectedIcon] = useState('mdi:emoticon');
+
+return <SvgIcon className="text-52px text-primary" icon={selectedIcon} />;
+```
+
+`apps/admin-example/src/pages/(admin)/plugin/icon.tsx` 里的图标示例页就是这种写法。
+
+## 自动导入图标组件
+
+静态图标也可以直接写成大驼峰组件标签。`@skyroc/web-admin-vite` 内置的 `autoImport` 会通过 `unplugin-icons` resolver 自动解析，并在 `src/types/auto-imports.d.ts` 中生成类型。
+
+当前生成的类型里可以看到这些组件：
+
+```ts
+const IconLocalBanner: typeof import('~icons/local/banner.tsx').default;
+const IconLocalLogo: typeof import('~icons/local/logo.tsx').default;
+const IconMdiArrowDownThin: typeof import('~icons/mdi/arrow-down-thin.tsx').default;
+const IconMdiArrowUpThin: typeof import('~icons/mdi/arrow-up-thin.tsx').default;
+const IconMdiInformationOutline: typeof import('~icons/mdi/information-outline.tsx').default;
+const IconMdiKeyboardEsc: typeof import('~icons/mdi/keyboard-esc.tsx').default;
+const IconMdiKeyboardReturn: typeof import('~icons/mdi/keyboard-return.tsx').default;
+const IconUilSearch: typeof import('~icons/uil/search.tsx').default;
+```
+
+使用时不需要手动 import：
+
+```tsx
+const SystemLogo = () => {
+  return <IconLocalLogo className="text-32px text-primary" />;
+};
+```
+
+组件名规则是：
+
+| 图标来源 | 路径 | 组件名 |
+| --- | --- | --- |
+| 本地 `banner.svg` | `~icons/local/banner.tsx` | `IconLocalBanner` |
+| 本地 `logo.svg` | `~icons/local/logo.tsx` | `IconLocalLogo` |
+| `mdi:information-outline` | `~icons/mdi/information-outline.tsx` | `IconMdiInformationOutline` |
+| `uil:search` | `~icons/uil/search.tsx` | `IconUilSearch` |
+
+这种写法适合图标在代码里已经确定的场景，比如 logo、固定按钮、说明图标、快捷键提示。图标名来自后端、表单、状态或下拉选择时，继续使用 `<SvgIcon icon={name} />` 或 `<SvgIcon localIcon={name} />`，不要拼动态组件名。
+
+## Ant Design 组件中使用
+
+Ant Design 的 `icon` prop 需要 ReactNode，所以把 `SvgIcon` 作为节点传进去：
+
+```tsx
+import { Button } from 'antd';
+import { SvgIcon } from '@skyroc/web-ui-compose';
+
+const SearchButton = () => {
+  return (
+    <Button icon={<SvgIcon icon="ic:round-search" />} type="primary">
+      查询
+    </Button>
+  );
+};
+```
+
+刷新、删除、新增这类操作按钮也一样：
+
+```tsx
+<Button icon={<SvgIcon icon="ic:round-refresh" />}>重置</Button>
+<Button icon={<SvgIcon icon="ic:round-plus" />} type="primary">新增</Button>
+<Button icon={<SvgIcon icon="ic:round-remove" />}>删除</Button>
+```
+
+不要为了按钮图标单独引入一个新的图标库。当前后台应用的通用操作图标优先走 `SvgIcon`，这样菜单、按钮、表格操作和示例页使用的是同一套 Iconify 命名。
+
+## 使用本地 SVG
+
+本地 SVG 适合项目 logo、业务私有图标、内网环境不可依赖远端图标服务的场景。
+
+把 SVG 放到当前应用的目录：
+
+```text
+apps/admin/src/assets/svg-icon/report.svg
+```
+
+或示例应用：
+
+```text
+apps/admin-example/src/assets/svg-icon/report.svg
+```
+
+组件里使用文件名，不带 `.svg`：
+
+```tsx
+<SvgIcon className="text-28px text-primary" localIcon="report" />
+```
+
+`localIcon` 的值是文件名，不是 `icon-local-report`。`icon-local` 是生成 SVG symbol id 时用的前缀。默认情况下，上面的图标会渲染成：
+
+```html
+<use href="#icon-local-report" />
+```
+
+如果同时传 `icon` 和 `localIcon`，`SvgIcon` 优先渲染 `localIcon`：
+
+```tsx
+<SvgIcon icon="mdi:file-chart-outline" localIcon="report" />
+```
+
+这个规则也用于菜单渲染。只要有 `localIcon`，本地图标会覆盖 Iconify 图标。
+
+## 批量读取本地图标
+
+管理页需要下拉选择本地图标时，不要手写固定数组。当前应用用 `import.meta.glob` 从 SVG 目录读取文件名：
+
+```ts
+export function getLocalIcons() {
+  const svgIcons = import.meta.glob('/src/assets/svg-icon/*.svg');
+
+  const keys = Object.keys(svgIcons)
+    .map(item => item.split('/').at(-1)?.replace('.svg', '') || '')
+    .filter(Boolean);
+
+  return keys;
+}
+```
+
+`apps/admin-example/src/pages/(admin)/manage/menu/modules/MenuOperateDrawer.tsx` 会把这些文件名转换成 Select options，并用 `SvgIcon localIcon={icon}` 做预览。
+
+## 路由菜单图标
+
+静态路由的菜单图标写在 TanStack Router 的 `staticData.menu`：
+
+```ts
+export const Route = createFileRoute('/(admin)/report')({
+  component: ReportPage,
+  staticData: {
+    i18nKey: 'route.report',
+    menu: {
+      icon: 'mdi:file-chart-outline',
+      order: 10
+    },
+    title: 'report'
+  }
+});
+```
+
+如果要用本地 SVG：
+
+```ts
+export const Route = createFileRoute('/(admin)/report')({
+  component: ReportPage,
+  staticData: {
+    i18nKey: 'route.report',
+    menu: {
+      localIcon: 'report',
+      order: 10
+    },
+    title: 'report'
+  }
+});
+```
+
+菜单支持同时保留兜底 Iconify 图标：
+
+```ts
+menu: {
+  icon: 'mdi:file-chart-outline',
+  localIcon: 'report',
+  order: 10
+}
+```
+
+这种情况下运行时会优先显示 `report.svg`。如果本地图标配置被删掉，`icon` 还能作为兜底字段继续使用。
+
+如果 `icon` 和 `localIcon` 都没有配置，菜单渲染会使用 `.env` 里的默认图标：
+
+```dotenv
+VITE_MENU_ICON=mdi:menu
+```
+
+## 后端动态菜单图标
+
+动态路由模式下，后端菜单节点通过 `handle` 或 `meta` 携带图标字段：
+
+```json
+{
+  "path": "/report",
+  "handle": {
+    "title": "report",
+    "i18nKey": "route.report",
+    "icon": "mdi:file-chart-outline",
+    "localIcon": "report",
+    "order": 10
+  }
+}
+```
+
+字段含义和静态路由一致：
+
+| 字段 | 说明 |
+| --- | --- |
+| `icon` | Iconify 图标名。 |
+| `localIcon` | 本地 SVG 文件名，不带 `.svg`。 |
+
+动态菜单进入布局前会被应用适配成布局运行时消费的 `BackendRoute`。布局渲染菜单时统一使用：
+
+```tsx
+<SvgIcon icon={menu.icon || defaultIcon} localIcon={menu.localIcon} />
+```
+
+所以后端不要返回 `icon-local-report` 这种字符串作为 `icon`。本地图标应该放在 `localIcon` 字段。
+
+## UnoCSS 图标 class
+
+如果只是做装饰图标，或者图标本身就是一个 class 驱动的视觉元素，可以用 UnoCSS 图标 class：
+
+```tsx
+<span className="i-carbon:star-filled text-xl text-primary" />
+<span className="i-ant-design:message-outlined text-icon text-success" />
+```
+
+这种写法适合主题色展示、状态卡片、纯视觉标记。它不适合需要在运行时从后端字段动态切换的菜单图标，因为动态字符串 class 不容易被构建器稳定扫描。菜单、按钮、表格操作和动态预览优先使用 `SvgIcon`。
+
+## Iconify provider
+
+默认情况下，Iconify 图标由 `@iconify/react` 按图标名加载。如果生产环境不能访问默认 Iconify API，可以配置内网 provider：
+
+```dotenv
+VITE_ICONIFY_URL=https://iconify.example.com
+```
+
+应用启动时会读取这个 env：
+
+```ts
+const adminIconifyOfflinePluginOptions = {
+  apiUrl: import.meta.env.VITE_ICONIFY_URL
+};
+```
+
+这只影响 Iconify provider，不会替代本地 SVG sprite。本地图标仍然来自 `src/assets/svg-icon`。
+
+## Vite 配置什么时候要改
+
+新增普通图标不需要改 `vite.config.ts`：
+
+```text
+src/assets/svg-icon/report.svg
+```
+
+只有这些情况才改 Vite：
+
+| 场景 | 要改哪里 |
+| --- | --- |
+| 本地 SVG 目录不再是 `src/assets/svg-icon` | `application.plugins.unpluginIcon / unocss / autoImport` |
+| 图标前缀不再是 `icon` / `icon-local` | `.env`、`globalConfig.localIconPrefix`、Vite 图标 options |
+| 需要改变 SVG transform 或 scale | Vite 图标 options |
+
+示例：
+
+```ts
+import { fileURLToPath } from 'node:url';
+
+import { defineConfig } from '@skyroc/web-admin-vite';
+
+const iconOptions = {
+  iconPrefix: 'icon',
+  localIconPath: fileURLToPath(new URL('./src/assets/custom-svg-icon', import.meta.url)),
+  localIconPrefix: 'icon-local'
+};
+
+export default defineConfig({
+  application: {
+    plugins: {
+      autoImport: iconOptions,
+      unocss: iconOptions,
+      unpluginIcon: iconOptions
+    }
+  }
+});
+```
+
+三个插件要使用同一组图标 options。否则可能出现组件能渲染、UnoCSS class 不生效，或者自动导入 resolver 找不到同一个图标集合。
+
+## 排查顺序
+
+1. 组件 Iconify 图标不显示，先确认图标名是否是 `collection:name` 格式。
+2. 大驼峰图标组件不识别，先确认 `src/types/auto-imports.d.ts` 是否生成了对应的 `IconXxx` 类型。
+3. 本地 SVG 不显示，确认文件是否在当前应用的 `src/assets/svg-icon`。
+4. 新增本地 SVG 后仍不显示，重启 Vite dev server。
+5. 菜单图标不显示，区分 `menu.icon` 和 `menu.localIcon` 是否写反。
+6. 后端动态菜单本地图标不显示，确认后端返回的是 `localIcon: '文件名'`，不是 `icon: 'icon-local-文件名'`。
+7. 内网 Iconify 不显示，检查 `VITE_ICONIFY_URL` 是否可访问。
+8. 修改了图标目录或前缀后异常，检查 `unpluginIcon`、`unocss`、`autoImport` 是否使用同一组 options。
+
+## 相关链接
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 图标 env、provider 和资源总览 | [国际化与图标](./i18n-and-icons) |
+| Vite 图标插件配置边界 | [环境变量与 Vite](../configuration/env-and-vite) |
+| 菜单 `icon` / `localIcon` 元信息 | [路由元信息](../routing/route-meta) |

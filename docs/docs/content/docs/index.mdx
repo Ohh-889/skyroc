@@ -1,13 +1,38 @@
 ---
-title: Hello World
-description: Your first document
+title: Skyroc Admin 开发文档
+description: 从应用启动、路由权限和请求服务，到后台布局、主题系统与公共包边界，在一处理解完整的 Admin 开发链路。
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+这里是 Skyroc Admin 的主文档门户。应用指南负责解释功能如何装配，架构文档说明职责与依赖方向，包参考继续深入 Core、Shared 与 Web Kit 的公开 API。
 
-## What is Next?
+## 从当前任务开始
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card
+    title="快速开始"
+    description="完成环境准备、依赖安装并启动第一个 Admin 应用。"
+    href="/docs/guide/getting-started/quick-start"
+  />
+  <Card
+    title="Admin 应用开发"
+    description="查看启动、路由、权限、请求、布局、主题与业务功能。"
+    href="/docs/admin"
+  />
+  <Card
+    title="架构设计"
+    description="理解 Monorepo、包分层、依赖方向与适配器模式。"
+    href="/docs/guide"
+  />
+  <Card
+    title="Packages"
+    description="向下追到 Core、Shared、Web Kit 的 API 与源码边界。"
+    href="/docs/packages"
+  />
 </Cards>
+
+## 文档如何组织
+
+- **Admin 是阅读起点**：从真实后台开发任务进入，不需要顺序读完整站。
+- **架构解释协作关系**：说明能力应该放在哪一层，以及上下游如何连接。
+- **包文档负责实现细节**：提供公共 API、类型、配置和源码入口。
+- **独立组件站负责 Demo**：Web UI、Native UI 与 Playground 保持独立，通过统一导航互通。

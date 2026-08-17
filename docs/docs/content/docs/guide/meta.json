@@ -1,0 +1,12 @@
+{
+  "title": "指南",
+  "description": "跑起来、读懂仓库、按规范协作",
+  "icon": "Compass",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "architecture",
+    "engineering"
+  ]
+}

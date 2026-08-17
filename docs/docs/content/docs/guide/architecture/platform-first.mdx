@@ -1,0 +1,146 @@
+---
+title: 平台优先目录
+description: packages/web / packages/native / packages/shared / packages/primitives 的分工与共生
+---
+
+## 定位
+
+「平台优先」(Platform-first) 是本仓库的核心目录策略：
+
+> 包不按「类型」（components / hooks / utils）组织，而按「平台」（web / native / miniapp / shared / primitives）组织。
+
+这意味着：当你打开 `packages/web/` 你看到的全部都是 Web 专属代码；打开 `packages/shared/` 看到的全部都是跨平台零依赖代码。**目录就是承诺**。
+
+## 平台目录
+
+```text
+packages/
+├── @core/         # 跨平台 · 无 UI · 业务核心能力
+├── shared/        # 跨平台 · 零依赖或近零依赖
+├── hooks/         # 跨平台 · React hooks
+├── primitives/    # 跨平台 · UI-agnostic 能力原语
+├── web/           # Web 专属（DOM / antd / vite）
+│   └── ui/        # Web 设计系统组件
+├── native/        # React Native 专属
+│   └── ui/        # RN 设计系统组件
+└── miniapp/       # 小程序专属（预留）
+    └── ui/        # 小程序组件
+```
+
+前四个是跨平台的，后三个是平台专属的。各目录下具体有哪些包、分别叫什么，见 [目录结构总览](/docs/guide/getting-started/directory)。
+
+### 1. `@core/` —— 跨平台无 UI 业务核心
+
+| 性质 | 含义 |
+| --- | --- |
+| 平台无关 | 不引用 DOM、不引用 RN API |
+| 无 UI | 不包含组件、不输出 DOM/JSX |
+| 业务相关 | 是项目长期沉淀的领域能力 |
+| 适配器 | 平台差异通过 [Adapter Pattern](/docs/guide/architecture/adapter-pattern) 注入 |
+
+包（9 个）：`types`、`utils`、`color`、`axios`、`state`、`logger`、`scheduler`、`service`、`scripts`。
+
+详见 [Core 总览](/docs/packages/core/overview)。
+
+### 2. `shared/` —— 跨平台零依赖共享
+
+| 性质 | 含义 |
+| --- | --- |
+| 极轻 | 零依赖或极少（仅 React / TS） |
+| 跨端 | Web、RN、小程序都可用 |
+| 设计 token / 类型 / 数据 | 不包含运行时复杂逻辑 |
+
+包（2 个）：`ui-types`（共享 TS 类型）、`type-utils`（高级 TS 工具类型）。
+
+跨端 React hooks 不在 `shared/` 里，而是独立的 `packages/hooks`（`@skyroc/hooks`）——它依赖 React 运行时，不符合 shared 的准入门槛。
+
+详见 [Shared 总览](/docs/packages/shared/overview)、[`@skyroc/hooks`](/docs/packages/hooks)。
+
+### 3. `primitives/` —— UI-agnostic 能力原语
+
+| 性质 | 含义 |
+| --- | --- |
+| 跨端 | 不绑定渲染层 |
+| 能力 | 解决一类问题（form / router / media） |
+| 无样式 | 不提供视觉，由消费方组合 |
+
+包：`filed-form`（即 `@skyroc/form`，类型安全的表单原语）。后续会有 router / media / dnd 等。
+
+### 4. `web/` —— Web 专属
+
+| 子目录 | 性质 |
+| --- | --- |
+| `tailwind-plugin`、`antd-theme` | 设计系统基础 |
+| `materials` | 骨架结构组件 |
+| `ui/`（shadcn / antd / compose） | 设计系统层 |
+| `admin-theme`、`admin-i18n`、`admin-layouts`、`admin-notification`、`admin-runtime`、`admin-styles`、`admin-vite`、`admin-devtools` | Admin 应用层 |
+
+详见 [Web 总览](/docs/packages/web/overview)。
+
+### 5. `native/` —— React Native 专属
+
+包含 RN 专用 UI 与平台适配，依赖 `@core/*` 提供业务能力。
+
+### 6. `miniapp/` —— 小程序专属
+
+预留目录，与上面同构。
+
+## 为什么这样切
+
+| 替代方案 | 缺陷 |
+| --- | --- |
+| 按类型切分（`components/`、`hooks/`、`utils/`） | 跨平台代码与平台特定代码混居，无法按平台 tree-shake |
+| 单一 universal 包 | bundle 必然带上跨平台代码，体积膨胀 |
+| 复制粘贴到每个端 | 业务逻辑漂移，维护噩梦 |
+| `condition` 字段（browser/react-native） | 类型推断脆弱，调试困难 |
+
+**平台优先 + Adapter Pattern** 的组合让：
+
+- Web 项目只引 `@skyroc/web-*` + `@skyroc/@core-*` + `@skyroc/shared-*`；
+- RN 项目只引 `@skyroc/native-*` + `@skyroc/@core-*` + `@skyroc/shared-*`；
+- 业务核心代码只写一份在 `@core`；
+- 平台差异（存储 / fetch / push）通过适配器在端层注入。
+
+## 依赖方向
+
+平台依赖必须**单向**：
+
+```text
+@core  ←  shared  ←  primitives
+  ↑          ↑          ↑
+  └──────────┴──────────┘
+             │
+             ├── web/*    （只能往左依赖）
+             ├── native/* （只能往左依赖）
+             └── miniapp/*（只能往左依赖）
+```
+
+| 不允许的依赖 | 为何 |
+| --- | --- |
+| `@core/*` 依赖 `web/*` | core 应保持跨平台，不能绑死端 |
+| `shared/*` 依赖 `web/*` | 同上 |
+| `web/*` 依赖 `native/*`（或反之） | 平台间互不依赖 |
+
+具体可视化关系见 [依赖图](/docs/guide/architecture/dependency-graph)。
+
+## 包命名与目录的映射
+
+**目录前缀 ≈ 包名前缀**（`web/<name>` → `@skyroc/web-<name>`），完整规则表见 [命名规范](/docs/guide/architecture/naming)。
+
+## 跨平台代码的常见做法
+
+| 场景 | 做法 |
+| --- | --- |
+| 类型 / 常量 / 数据 | `shared/`，零依赖 |
+| 业务核心逻辑（无 DOM） | `@core/` |
+| 平台差异（存储 / fetch） | `@core/` 暴露抽象，端项目注入实现 |
+| 同名 Hook 跨平台行为不同 | `@skyroc/hooks` 主入口（RN 安全）+ `./web` 子入口（DOM-only） |
+| 同名组件 | 不共用，分别建 `web/ui/*` 与 `native/ui/*` |
+
+## 与包分层、适配器模式的关系
+
+- [**包分层**](/docs/guide/architecture/package-layering) 回答：抽象 → 实现 的纵向层级是什么？
+- **平台优先**（本页）回答：横向上 Web / RN / 小程序如何分目录？
+- [**适配器模式**](/docs/guide/architecture/adapter-pattern) 回答：平台差异如何不污染核心？
+
+三者组合是项目的架构脊柱。

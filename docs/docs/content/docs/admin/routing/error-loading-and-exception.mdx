@@ -1,0 +1,166 @@
+---
+title: 错误与加载页
+description: 理解 apps/admin 的全局 ErrorBoundary、TanStack Router error/notFound/pending 组件和异常页示例
+---
+
+这一页说明 `apps/admin` 的错误、404、加载页和异常页边界。旧文档里把错误边界按 React Router Data Router 解释；当前实现已经切到 TanStack Router，应以 `pages/__root.tsx` 和 `bootstrap.tsx` 为准。
+
+当前有三层机制：
+
+```text
+bootstrap.tsx
+  -> react-error-boundary 全局 ErrorBoundary
+
+pages/__root.tsx
+  -> errorComponent: pages/error.tsx
+  -> notFoundComponent: pages/not-found.tsx
+  -> pendingComponent: pages/loading.tsx
+
+pages/(errors) 与 pages/(admin)/exception
+  -> 顶层错误页和后台异常演示页
+```
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 整个 React 树渲染错误 | `bootstrap.tsx` 的 `ErrorBoundary` |
+| 路由组件、loader 或 beforeLoad 抛错 | `pages/__root.tsx` 的 `errorComponent` |
+| URL 没有匹配到路由 | `pages/__root.tsx` 的 `notFoundComponent` |
+| 路由懒加载或 pending 状态 | `pages/__root.tsx` 的 `pendingComponent` |
+| 403、404、500 顶层页面 | `pages/(errors)` |
+| 后台菜单中的异常演示 | `pages/(admin)/exception`（在 `apps/admin-example`） |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/bootstrap.tsx` | 在 React 根节点外包一层 `react-error-boundary`。 |
+| `packages/web/ui/antd/src/components/ErrorBoundary.tsx` | 全局和路由错误的统一 fallback UI。 |
+| `apps/admin/src/pages/__root.tsx` | TanStack Router 根路由，注册 error、notFound、pending 组件，并驱动 NProgress。 |
+| `apps/admin/src/pages/error.tsx` | 路由级错误页，接收 TanStack Router 的 `error` 和 `reset`。 |
+| `apps/admin/src/pages/not-found.tsx` | 根路由 404 组件。 |
+| `apps/admin/src/pages/loading.tsx` | 根路由 pending/loading 组件。 |
+| `packages/web/ui/antd/src/components/ExceptionBase.tsx` | 403 / 404 / 500 异常页基础组件。 |
+| `apps/admin/src/pages/(errors)` | 顶层 `/403`、`/404`、`/500`。 |
+| `apps/admin-example/src/pages/(admin)/exception` | 后台壳内的异常页示例。`apps/admin` 只有顶层 `(errors)` 错误页。 |
+
+## 全局 ErrorBoundary
+
+`bootstrap.tsx` 渲染 React 根节点时包住整个应用：
+
+```tsx
+root.render(
+  <ErrorBoundary FallbackComponent={FallbackRender}>
+    <App />
+  </ErrorBoundary>
+);
+```
+
+这里的 `FallbackRender` 来自 `@skyroc/web-ui-antd`。它是最后一层兜底，用来避免 React 渲染错误直接白屏。
+
+不要把普通业务错误都抛到这一层。接口错误、权限失败、404 和路由 pending 都有更靠近业务的处理位置。
+
+## 路由级 error / notFound / pending
+
+`pages/__root.tsx` 当前注册：
+
+```ts
+export const Route = createRootRouteWithContext<Router.RouterContext>()({
+  component: Root,
+  notFoundComponent: NotFound,
+  errorComponent: ErrorPage,
+  pendingMs: 10,
+  pendingComponent: GlobalLoading
+});
+```
+
+这意味着：
+
+| 配置 | 当前组件 | 触发场景 |
+| --- | --- | --- |
+| `errorComponent` | `pages/error.tsx` | route component、loader、beforeLoad 抛错。 |
+| `notFoundComponent` | `pages/not-found.tsx` | URL 没有匹配到 TanStack Route。 |
+| `pendingComponent` | `pages/loading.tsx` | 路由加载超过 `pendingMs`。 |
+
+当前 TanStack Router 插件会忽略 `loading.tsx`、`error.tsx`、`not-found.tsx` 文件本身，不会把它们生成业务 URL。它们是根路由配置消费的组件。
+
+## NProgress 与 loading
+
+根路由组件按 pathname 切换 NProgress：
+
+```ts
+useEffect(() => {
+  globalConfig.nprogress.done();
+
+  return () => {
+    globalConfig.nprogress.start();
+  };
+}, [pathname]);
+```
+
+NProgress 实例由 `setupAdminPlugins()` 初始化。`pages/loading.tsx` 则负责完整页面的 pending UI：读取默认主题色、必要时同步暗色 class，并展示 `SystemLogo` 和 loading 动画。
+
+因此进度条异常时先看启动链路；loading 页面样式异常时再看 `pages/loading.tsx`、主题默认值和 `SystemLogo`。
+
+## 顶层错误页和后台异常页
+
+当前有两类 403 / 404 / 500：
+
+| 类型 | 路径 | 用途 |
+| --- | --- | --- |
+| 顶层错误页 | `/403`、`/404`、`/500` | 守卫 redirect、直接访问错误页、全局排错入口。 |
+| 后台异常演示页 | `/exception/403`、`/exception/404`、`/exception/500` | 后台菜单中的示例页面，仍在 `WebAdminLayout` 内。 |
+
+顶层错误页在 `pages/(errors)`，两个应用都有。后台异常演示页 `pages/(admin)/exception` 只在 `apps/admin-example` 里，它会经过后台 layout 和权限守卫。
+
+## 自定义错误展示
+
+如果要改全局错误 UI，优先改共享组件：
+
+```text
+packages/web/ui/antd/src/components/ErrorBoundary.tsx
+```
+
+如果只是 admin 应用想换 route error 的文案、重试逻辑或展示方式，改：
+
+```text
+apps/admin/src/pages/error.tsx
+```
+
+如果某一个路由需要独立错误视图，不要新建 `error.tsx` 文件指望自动生效；当前 Vite router 配置会忽略 `error.tsx`。应在该 route 的 `createFileRoute()` 配置中显式声明 `errorComponent`，并保持页面组件本身仍是可生成 route 的文件。
+
+## 新增业务错误页
+
+如果产品需要一个新的顶层错误页，例如 `/502`，按普通路由新增：
+
+```text
+apps/admin/src/pages/(errors)/502.tsx
+```
+
+页面可以复用 `ExceptionBase`，也可以写独立组件。新增后需要确认：
+
+1. `routeTree.gen.ts` 已重新生成。
+2. 相关守卫或请求错误逻辑真的会 redirect 到 `/502`。
+3. 语言文案和图标资源已补齐。
+
+如果只是后台菜单里要一个异常演示页，则放在 `pages/(admin)/exception` 下，并按普通后台页面配置 `staticData`。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 把所有错误都交给全局 ErrorBoundary | 权限走守卫，404 走 notFound，接口错误走请求层，渲染兜底才走全局边界。 |
+| 新建 `error.tsx` 期望自动变成路由错误边界 | 当前插件忽略该文件；需要在 route 配置里显式传 `errorComponent`。 |
+| 修改 NProgress 只看 root route | NProgress 实例由 `setupAdminPlugins()` 注入，root route 只是消费。 |
+| 把 `/exception/404` 当成真实 404 | 它是后台壳内示例；真实未匹配路由走根 `notFoundComponent`。 |
+| 顶层错误页放到 `(admin)` 下 | 顶层 `/403`、`/404`、`/500` 应放 `pages/(errors)`，避免受后台壳和守卫影响。 |
+
+## 相关链接
+
+- [路由概览](./overview)
+- [路由守卫](./guards)
+- [权限](./permission)
+- [启动流程](../architecture/bootstrap)
+- [运行时 Provider](../architecture/runtime-providers)
+- [示例页面边界](../features/demo-pages)

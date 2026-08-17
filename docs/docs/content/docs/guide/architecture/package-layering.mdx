@@ -1,0 +1,86 @@
+---
+title: 包分层与依赖方向
+description: 类型层 → 基础层 → 平台能力层 → 应用层，以及禁止的依赖关系
+---
+
+## 分层模型
+
+包之间存在严格的依赖层级，上层依赖下层，**禁止同层互相依赖与反向依赖**：
+
+```text
+┌───────────────────────────────────────────────┐
+│  应用层  apps/admin · apps/admin-example         │
+└───────────────────────────────────────────────┘
+                      ▲
+┌───────────────────────────────────────────────┐
+│  平台能力层  packages/web/*（含 ui / 主题 / 布局）│
+└───────────────────────────────────────────────┘
+                      ▲
+┌───────────────────────────────────────────────┐
+│  基础设施层  packages/@core/*                    │
+│  跨端共享层  packages/shared/* · hooks · form     │
+└───────────────────────────────────────────────┘
+                      ▲
+┌───────────────────────────────────────────────┐
+│  类型层  @skyroc/types（零运行时依赖）            │
+└───────────────────────────────────────────────┘
+```
+
+## @core 内部的依赖方向
+
+即便在基础设施层内部，包之间也有方向约束：
+
+```text
+types（零依赖，类型声明）
+  ↑
+utils（零 @core 依赖）     logger / scheduler / state / scripts（彼此独立）
+  ↑
+color / axios（依赖 utils）
+  ↑
+service（依赖 axios）
+```
+
+- 箭头表示「被依赖」方向；
+- `color`、`axios` 依赖 `utils`；`service` 依赖 `axios`；
+- `state` 通过 `peerDependencies` 依赖 `jotai` / `react`，不进入内部依赖图；
+- `logger` / `scheduler` / `scripts` 自包含，彼此独立。
+
+## Web 端包的依赖关系
+
+平台能力层内部同样分层（节选）：
+
+```text
+@skyroc/tailwind-plugin ← @skyroc/web-ui (shadcn)
+@skyroc/web-ui-compose  ← @skyroc/web-ui-antd
+@skyroc/adapter-antd-theme ← @skyroc/web-admin-theme
+@skyroc/materials ← @skyroc/web-admin-layouts
+
+@skyroc/web-admin-layouts 依赖：
+  materials · admin-theme · web-ui · web-ui-antd · web-ui-compose · admin-i18n …
+```
+
+`@skyroc/web-admin-layouts` 是组合度最高的包，把主题、UI、i18n、materials 拼装成完整布局壳。
+
+## 为什么类型层要零依赖
+
+`@skyroc/types` 只包含 `.d.ts` 全局声明，零运行时依赖。这带来：
+
+| 优势 | 说明 |
+| --- | --- |
+| 无污染 | 任何包都能引用类型而不引入运行时代码 |
+| 全局可用 | 通过 `declare global` 注入 `Api`、`App`、`Router` 等 namespace |
+| 独立演进 | 类型稳定，不随运行时实现频繁变动 |
+
+如果把运行时逻辑塞进类型包，会破坏 tree-shaking 与构建模型——这正是项目刻意拆出独立 `@core` 运行时包的原因。
+
+## 适配器解耦：跨层依赖的正确姿势
+
+底层包**不允许**反向依赖上层（比如 `@skyroc/service` 不能 import antd）。当底层确实需要上层能力时，由底层定义**适配器接口**，让应用层注入实现——这是本仓库唯一允许的「向上取用」方式。
+
+接口长什么样、注入在哪一步、有哪些真实例子，见 [适配器模式](/docs/guide/architecture/adapter-pattern)。
+
+## 三条铁律
+
+1. **不要反向依赖**：底层包不能 import 上层包。
+2. **不要同层互相依赖**：同一层的包应彼此独立，公共部分下沉到更低层。
+3. **不要循环依赖**：A → B → A 必须通过下沉公共依赖或适配器打破。

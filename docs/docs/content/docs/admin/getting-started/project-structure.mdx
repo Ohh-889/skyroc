@@ -1,0 +1,166 @@
+---
+title: 项目结构
+description: 理解 apps/admin/src 目录职责，以及 apps/admin 与 packages/web 的边界
+---
+
+Skyroc Admin React 采用 monorepo 组织方式。`apps/admin` 是实际运行的后台应用，`packages/web/*` 提供后台应用复用的工程、布局、主题、国际化、通知和 UI 能力。
+
+理解目录时先抓住一个原则：`apps/admin` 负责组合应用和承载业务，`packages/web/*` 负责沉淀可复用能力。
+
+## 整体分层
+
+| 位置 | 职责 |
+| --- | --- |
+| `apps/admin` | 后台应用入口，包含页面、路由、请求、权限、菜单、环境变量和应用级配置。 |
+| `apps/admin/src` | 后台应用源码，负责把共享包能力接入到具体业务页面。 |
+| `packages/web/*` | Web 后台相关共享包，提供布局壳、主题、Vite 预设、国际化、通知、运行时和 UI 组件。 |
+| `packages/web/ui/*` | Web UI 组件包，提供基础组件、Ant Design 组合组件和无状态组合能力。 |
+| [包参考 / Web](/docs/packages/web/overview) | `packages/web/*` 的共享包文档，不承载 `apps/admin` 的业务用法细节。 |
+
+## `apps/admin/src`
+
+`apps/admin/src` 是后台应用的主工作区。目录可以按“启动入口、应用能力、业务页面、请求服务、资源配置”来理解。
+
+| 目录或文件 | 职责 |
+| --- | --- |
+| `main.tsx` | 浏览器入口。开发环境加载 devtools，再进入 `bootstrap.tsx`。 |
+| `bootstrap.tsx` | 启动编排层。初始化主题、布局、插件、i18n，并挂载 React 根节点。 |
+| `App.tsx` | Provider 组合层。组合 React Query、Jotai、Ant Design、通知、动画、路由和全局副作用。 |
+| `config.ts` | 应用级配置入口。收口默认首页、菜单图标、路由模式、主题、语言和 devtools 配置。 |
+| `pages` | 约定式路由页面目录。后台页面、登录页、错误页和 layout route 都在这里。 |
+| `features` | 应用内能力封装。路由、权限、菜单、表格、表单、Ant Design 适配和全局 effect 都放在这里。 |
+| `service` | 请求和接口模块。包含请求实例、React Query client、接口分层和平台适配。 |
+| `locales` | 应用语言资源和 i18n 初始化入口。 |
+| `plugins` | 应用启动插件和资源注册，例如全局样式、图标、运行时能力。 |
+| `components` | 只属于 admin 应用的轻量组件，例如 logo、头像等应用壳插槽组件。 |
+| `assets` | 应用静态资源，包括图片、本地图标和通知音频。 |
+| `styles` | 应用级样式入口和 Sass/CSS 资源。 |
+| `types` | 应用类型声明：`global.d.ts`、`router.d.ts`、`storage.d.ts`、`vite-env.d.ts`、`auto-imports.d.ts`。 |
+| `utils` | 应用内工具函数。适合放和当前应用强绑定的工具，不适合沉淀通用工具。 |
+
+> 后端 API 类型不在 `apps/admin` 里。`Api.Auth`、`Api.Route`、`Api.SystemManage`、`Api.Common`、`Api.Service` 这些全局命名空间统一声明在 [`@skyroc/types`](/docs/packages/core/types)（`packages/@core/types/src/api/*.d.ts`），业务代码直接用、不需要 `import`。
+>
+> `apps/admin` 目前**没有** `hooks/`、`constants/`、`enums/` 目录。需要应用内复用 hook 时可以新建 `src/hooks`（`apps/admin-example` 就是这么做的），常量与枚举目前直接放在使用它的模块里。
+
+### 启动相关文件
+
+启动链路集中在三个文件：
+
+```text
+main.tsx
+  -> bootstrap.tsx
+  -> App.tsx
+```
+
+`main.tsx` 只负责入口加载；`bootstrap.tsx` 负责一次性初始化；`App.tsx` 负责 React Provider 组合。新的启动逻辑要先判断属于哪一类，避免所有初始化都堆到同一个文件里。
+
+## `pages`
+
+`pages` 使用 TanStack Router 的约定式路由目录。当前主要分为：
+
+| 目录 | 职责 |
+| --- | --- |
+| `pages/(admin)` | 登录后进入的后台页面和后台 layout。精简模板里只有 `home/index.tsx` 与 `layout.tsx`。 |
+| `pages/(auth)` | 认证页面。当前是 `login/index.tsx`、`login/layout.tsx` 和 `login-out.tsx`；注册、验证码登录、重置密码这些页面在 `apps/admin-example`。 |
+| `pages/(errors)` | 顶层错误页 `403.tsx`、`404.tsx`、`500.tsx`。 |
+| `pages/__root.tsx` | 路由根节点。 |
+| `pages/index.tsx` | 入口重定向或默认路由页面。 |
+| `pages/error.tsx`、`pages/not-found.tsx`、`pages/loading.tsx` | 路由错误、404 和加载态页面。 |
+
+新增业务页面优先放在 `pages/(admin)` 下。页面本身只写页面组合和业务交互，列表、表单、请求 hooks、菜单配置等通用能力不要直接塞进页面文件。
+
+## `features`
+
+`features` 是 `apps/admin` 内部的能力层。它不同于页面，也不同于共享包：它服务当前 admin 应用，但不直接等同于某一个页面。
+
+当前 `apps/admin/src/features` 下有 **5 个**目录：
+
+| 目录 | 文件 | 职责 |
+| --- | --- | --- |
+| `features/router` | `index.ts`、`RouterProvider.tsx`、`guard.ts`、`router-ref.ts`、`routeTree.gen.ts` | TanStack Router 实例、Provider、守卫、路由引用和自动生成的 route tree。 |
+| `features/auth` | `use-auth.ts`、`use-login.ts`、`use-auth-form-rules.ts`、`components/` | 登录态、登录流程、认证表单规则和用户头像等认证组件。 |
+| `features/menus` | `menu-category.ts`、`menu-config.ts`、`extras.ts`、`dynamic-routes.ts` | 菜单分类、菜单节点转换、布局扩展内容和动态路由加载。 |
+| `features/antd` | `AntdProvider.tsx` | Ant Design ConfigProvider 和应用级主题适配。 |
+| `features/effects` | `GlobalEffect.tsx` | 全局副作用入口，例如运行时和 UI 状态同步。 |
+
+> 表格与表单能力**不在** `features` 里。`useTable()`、`useTableOperate()`、`useTableScroll()`、`TableHeaderOperation` 由共享包 [`@skyroc/web-ui-compose`](/docs/packages/web/ui) 提供（`packages/web/ui/compose/src/table/`），应用直接 import 使用，不需要在 app 内再包一层。表单规则则是 `features/auth/use-auth-form-rules.ts` 这样按场景就近放置。
+
+当某段逻辑会被多个 admin 页面复用，但还没有跨应用复用价值时，优先放在 `features`。当它已经不依赖 `apps/admin` 的业务约定，再考虑下沉到 `packages/web/*`。
+
+## `service`
+
+`service` 是接口接入层。当前结构按请求基础设施和业务接口模块拆分：
+
+| 位置 | 职责 |
+| --- | --- |
+| `service/request/index.ts` | 创建 `request` 和 `demoRequest` 请求实例，接入后端 code、token 和 UI 错误提示。 |
+| `service/queryClient.ts` | React Query client 配置。 |
+| `service/adapter.ts` | 请求层和 Ant Design 消息、弹窗等 UI 能力之间的适配。 |
+| `service/api/index.ts` | 接口模块统一出口。 |
+| `service/api/{module}` | 业务接口模块。每个模块固定 5 个文件：`urls.ts`、`api.ts`、`hooks.ts`、`keys.ts`、`index.ts`。 |
+
+`apps/admin` 当前只有 `auth` 和 `route` 两个接口模块——精简模板只保留登录和动态路由所必需的接口。`apps/admin-example` 额外有 `system-manage`，可以作为写业务模块的参照。
+
+新增接口时优先新建或扩展 `service/api/{module}`，不要在页面里直接拼 URL 或直接创建新的请求实例。
+
+## `packages/web/*`
+
+`packages/web/*` 是 Web 后台应用的共享能力层。它们不应该依赖 `apps/admin` 的具体页面、菜单项、接口模块或业务枚举。
+
+| 包 | 职责 |
+| --- | --- |
+| `@skyroc/web-admin-vite` | Vite 预设和构建配置，包含 React、TanStack Router、UnoCSS、图标、自动导入、代理和构建产物规则。 |
+| `@skyroc/web-admin-layouts` | 后台应用壳，组合菜单、权限、tabs、布局状态、主题抽屉和业务插槽。 |
+| `@skyroc/web-admin-theme` | 应用级主题状态、暗色模式、主题预设、CSS 变量和 Ant Design Provider 相关能力。 |
+| `@skyroc/web-admin-i18n` | 后台国际化运行时、语言状态和语言切换能力。 |
+| `@skyroc/web-admin-runtime` | Dayjs、Iconify、NProgress、应用更新检测等运行时启动 helper。 |
+| `@skyroc/web-admin-notification` | 后台通知 Provider、hooks、通知面板和 header action。 |
+| `@skyroc/web-admin-devtools` | 开发环境后台调试面板。 |
+| `@skyroc/adapter-antd-theme` | Ant Design 主题算法适配。 |
+| `@skyroc/materials` | 后台布局材料和 PageTab 组件。 |
+| `@skyroc/tailwind-plugin` | Skyroc 设计 token 和 Tailwind 主题插件。 |
+| `@skyroc/web-ui` | 基础 Web UI 组件。 |
+| `@skyroc/web-ui-antd` | Ant Design 组合组件。 |
+| `@skyroc/web-ui-compose` | 组合型无状态 UI 能力。 |
+
+## app 与 package 边界
+
+| 场景 | 放在 `apps/admin` | 放在 `packages/web/*` |
+| --- | --- | --- |
+| 页面、路由、菜单项、业务权限 | 是 | 否 |
+| 后端接口、接口 hooks、业务数据类型 | 是 | 否 |
+| 读取 `import.meta.env` 并决定应用行为 | 是 | 只接收普通配置，不直接绑定具体应用 env |
+| 应用启动顺序和 Provider 组合 | 是 | 提供可复用 helper 或 Provider |
+| 布局壳、tabs、主题抽屉、菜单生成基础能力 | 接入和配置 | 实现和复用 |
+| 通用 UI 组件、主题算法、Vite 预设 | 使用 | 实现和维护 |
+| 某个页面专用组件 | 是 | 否 |
+| 多个应用都能使用的组件或 hook | 先在 app 验证，再沉淀 | 是 |
+
+判断边界时可以问两个问题：
+
+- 这段代码是否知道 `apps/admin` 的具体路由、接口、权限或页面结构。
+- 这段代码是否可以在另一个后台应用中只通过配置复用。
+
+第一个问题如果是“是”，通常留在 `apps/admin`。第二个问题如果是“是”，才适合移动到 `packages/web/*`。
+
+## 常见放置位置
+
+| 要做的事 | 推荐位置 |
+| --- | --- |
+| 新增后台业务页面 | `apps/admin/src/pages/(admin)` |
+| 新增登录相关页面 | `apps/admin/src/pages/(auth)` |
+| 新增业务接口 | `apps/admin/src/service/api/{module}` |
+| 新增页面级组件 | 当前页面目录或 `apps/admin/src/components` |
+| 新增跨页面表格能力 | 先用 `@skyroc/web-ui-compose` 的 `useTable()` 系列；确有 app 专属逻辑再建 `apps/admin/src/features/table` |
+| 新增菜单转换或布局扩展 | `apps/admin/src/features/menus` |
+| 调整主题默认值或应用主题接入 | `apps/admin/src/config.ts`、`apps/admin/src/features/antd` |
+| 调整 Vite 代理、插件、构建规则 | 先看 `apps/admin/vite.config.ts`，共享规则在 `@skyroc/web-admin-vite` |
+| 新增可复用后台壳能力 | `packages/web/admin-layouts` |
+| 新增可复用 UI 能力 | `packages/web/ui/*` 或对应 Web package |
+
+## 相关链接
+
+- [组件边界](./component-boundaries)
+- [启动流程](../architecture/bootstrap)
+- [路由概览](../routing/overview)
+- [服务模块](../request/service-modules)

@@ -1,0 +1,258 @@
+---
+title: 新建包流程
+description: 从命名、目录、tsconfig、构建、导出到接入仓库的全流程清单
+---
+
+## 决策树：先想清楚放哪
+
+```text
+要建一个新包
+        │
+        ├── 它跨多个平台、几乎无依赖（types / 数据 / 常量）？
+        │     └── packages/shared/
+        │
+        ├── 它跨多个平台、是 React Hook？
+        │     └── packages/hooks（包已存在，直接加 module）
+        │
+        ├── 它跨多个平台、是「能力原语」（form、router、media）？
+        │     └── packages/primitives/
+        │
+        ├── 它是 Web 专属（DOM / antd / radix / vite plugin / tailwind）？
+        │     └── packages/web/   或 packages/web/ui/
+        │
+        ├── 它是 RN 专属？
+        │     └── packages/native/
+        │
+        ├── 它是无 UI 的核心能力（utils / state / service / scheduler）？
+        │     └── packages/@core/
+        │
+        └── 它是不发布的内部配置（tsconfig / oxlint）？
+              └── internal/
+```
+
+目录定了，包名也就定了——**新包一律用 `@skyroc/` scope**，目录到包名的映射规则见 [命名规范](/docs/guide/architecture/naming)。
+
+## 标准目录结构
+
+```text
+packages/<group>/<name>/
+├── src/
+│   ├── index.ts           # 主入口
+│   ├── <子模块>/
+│   └── types/
+├── __tests__/             # vitest 测试
+├── package.json
+├── tsconfig.json
+├── tsdown.config.ts       # 库构建
+├── vitest.config.ts       # 可选
+├── README.md
+└── .oxlintrc.json         # 可选（特殊规则）
+```
+
+## 第 1 步：创建目录与 `package.json`
+
+```jsonc
+{
+  "name": "@skyroc/<name>",
+  "version": "0.0.1",
+  "private": false,
+  "description": "...",
+  "type": "module",
+  "main":  "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": ["dist", "README.md"],
+  "sideEffects": false,
+  "exports": {
+    ".":              { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build":    "tsdown",
+    "dev":      "tsdown --watch",
+    "clean":    "rimraf dist .turbo",
+    "lint":     "oxlint",
+    "test":     "vitest run",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "dependencies": {
+    "@skyroc/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@skyroc/config":   "workspace:*",
+    "@skyroc/tsconfig": "workspace:*",
+    "tsdown":           "catalog:dev",
+    "rimraf":           "catalog:dev",
+    "typescript":       "catalog:core",
+    "vitest":           "catalog:dev",
+    "oxlint":           "catalog:dev"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
+```
+
+要点：
+
+- 版本固定 `workspace:*` 引用内部依赖；
+- 外部依赖一律用 `catalog:<group>`（[Catalog 体系](/docs/guide/architecture/catalog)）；
+- `sideEffects: false`（有 CSS 改为数组）；
+- 公开包 `publishConfig.access: "public"`；
+- 私有包改 `private: true` 并去掉 publishConfig。
+
+## 第 2 步：`tsconfig.json`
+
+| 包类型 | extends |
+| --- | --- |
+| 跨平台库 | `@skyroc/tsconfig/library.json` |
+| Web 库 | `@skyroc/tsconfig/web.json` |
+| Node 工具 | `@skyroc/tsconfig/node.json` |
+| RN 库 | `@skyroc/tsconfig/react-native.json` |
+| Web 应用 | `@skyroc/tsconfig/web-app.json` |
+| RN 应用 | `@skyroc/tsconfig/react-native-app.json` |
+
+```jsonc
+{
+  "extends": "@skyroc/tsconfig/library.json",
+  "include": ["src", "__tests__"]
+}
+```
+
+## 第 3 步：`tsdown.config.ts`
+
+```ts
+import { defineConfig } from 'tsdown';
+
+export default defineConfig({
+  entry: {
+    index: 'src/index.ts'
+  },
+  format: ['esm'],
+  dts: true,
+  clean: true,
+  external: [
+    /^node:/,
+    /^@skyroc\//,
+    'react',
+    'react-dom'
+  ]
+});
+```
+
+多子入口时：
+
+```ts
+entry: {
+  index:    'src/index.ts',
+  utils:    'src/utils/index.ts',
+  web:      'src/web/index.ts'      // 平台分支
+}
+```
+
+记得**同步更新 `package.json` 的 `exports`**（[Exports 策略](/docs/guide/engineering/exports-strategy)）。
+
+## 第 4 步：`.oxlintrc.json`（可选）
+
+如无特殊规则可省略，全仓继承根 `.oxlintrc.json`。
+
+React 库通常需要：
+
+```jsonc
+{
+  "extends": ["../../../internal/config/oxlint/react.json"]
+}
+```
+
+## 第 5 步：`vitest.config.ts`（如有测试）
+
+```ts
+import { defineConfig } from 'vitest/config';
+import { baseCoverageConfig, baseTestConfig } from '@skyroc/config/vitest';
+
+export default defineConfig({
+  test: {
+    ...baseTestConfig,
+    coverage: { ...baseCoverageConfig }
+  }
+});
+```
+
+并在 `__tests__/` 下加 `*.test.ts`。
+
+## 第 6 步：`README.md`
+
+至少包含：
+
+- 包名 + 一句话定位；
+- 安装：`pnpm add @skyroc/<name>`；
+- 主要 API + 一段最小示例；
+- 子入口（如有）；
+- peer / dependencies 注意事项。
+
+## 第 7 步：写代码
+
+按 [开发约定](/docs/guide/engineering/conventions) 编写：
+
+- 组件 = 箭头函数；
+- props = 函数体内解构；
+- 严禁 `useCallback`；
+- 跨平台代码注意只 import 平台无关 API。
+
+## 第 8 步：注册到 workspace
+
+`pnpm-workspace.yaml` 中已经覆盖了所有目录，不需要新增 glob。只需：
+
+```bash
+pnpm install
+```
+
+pnpm 会自动检测新包。
+
+## 第 9 步：本地联调
+
+```bash
+# 单包构建
+pnpm --filter @skyroc/<name> build
+
+# watch（开发）
+pnpm --filter @skyroc/<name> dev
+```
+
+在 `apps/admin` 或 `apps/web-ui-playground` 中：
+
+```jsonc
+// 该应用的 package.json
+"dependencies": {
+  "@skyroc/<name>": "workspace:*"
+}
+```
+
+再 `pnpm install`，然后业务里 `import { foo } from '@skyroc/<name>'`。
+
+## 第 10 步：验证清单
+
+- [ ] `pnpm typecheck` 通过；
+- [ ] `pnpm --filter @skyroc/<name> build` 通过；
+- [ ] `pnpm --filter @skyroc/<name> test` 通过；
+- [ ] `pnpm lint` 通过；
+- [ ] `dist/` 文件齐全（每个 entry 都有 `.mjs` + `.d.mts`）；
+- [ ] 在某个 app 实际 `import` 验证；
+- [ ] `pnpm format` 跑过；
+- [ ] 提交：`feat(<name>): scaffold @skyroc/<name>`。
+
+## 第 11 步（可选）：发布
+
+如果包是公开发布的（`@skyroc` 公开包）：
+
+```bash
+# 1. 更新版本（手工或 sa release）
+pnpm --filter @skyroc/<name> exec npm version patch
+
+# 2. 构建
+pnpm --filter @skyroc/<name> build
+
+# 3. 发布
+pnpm --filter @skyroc/<name> publish --access public
+```
+
+或集成到 `sa release` 流程，由 [Git 提交与发版](/docs/guide/engineering/git-commit) 描述。

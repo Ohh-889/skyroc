@@ -1,0 +1,267 @@
+---
+title: 布局系统
+description: 理解 apps/admin 的后台主布局如何通过 WebAdminLayout、Logo、页脚、通知和用户头像插槽组装
+---
+
+这一页解释 `apps/admin` 的后台主布局如何组装。重点不是复述每个视觉组件，而是判断布局能力应该放在应用侧、共享布局包，还是主题包中。
+
+当前后台布局入口是 `apps/admin/src/pages/(admin)/layout.tsx`。它作为 TanStack Router 的后台 layout route，负责进入后台前的守卫，并把应用自己的 Logo、页脚、通知按钮和用户头像插入 `@skyroc/web-admin-layouts` 提供的后台壳。
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 修改后台 Header、Sider、Tab、Content、Footer 的组合方式 | `apps/admin/src/pages/(admin)/layout.tsx`、`packages/web/admin-layouts/src/AdminLayout.tsx` |
+| 替换系统 Logo 或标题 | `SystemLogo`、`logo`、`logoTitle`、`logoTo` |
+| 接入通知、用户头像或业务操作区 | `headerLeftActions`、`headerMiddleActions`、`headerRightActions` |
+| 修改页脚内容 | `footer` slot、`AdminFooter` |
+| 判断某个布局逻辑应不应该写进 `apps/admin` | `@skyroc/web-admin-layouts` 的 slot 和运行时状态边界 |
+| 排查后台页面进入前的登录、权限或外链行为 | `beforeLoad`、`guardAdminRoute` |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/pages/(admin)/layout.tsx` | 后台 layout route。渲染 `WebAdminLayout`，接入 Logo、footer、通知、头像，并执行后台守卫。 |
+| `apps/admin/src/components/SystemLogo.tsx` | 应用自己的品牌图标。 |
+| `apps/admin/src/features/auth/components/UserAvatar.tsx` | Header 右侧用户头像和用户操作入口。 |
+| `packages/web/admin-layouts/src/AdminLayout.tsx` | 共享后台壳。组合 Header、Sider、Tab、Content、Footer、菜单、主题抽屉和布局副作用。 |
+| `packages/web/admin-layouts/src/context.tsx` | 定义 `AdminLayout` slot API，例如 Logo、Header actions、footer 和 content。 |
+| `packages/web/admin-layouts/src/modules/AdminContent.tsx` | 内容区。默认渲染 TanStack Router 的 `<Outlet />`。 |
+| `packages/web/admin-layouts/src/modules/admin-header/AdminHeader.tsx` | Header 组合。渲染搜索、全屏、语言、主题按钮和应用注入的 actions。 |
+| `apps/admin/src/features/router/guard.ts` | 后台 layout route 的登录、权限、动态授权和外链守卫。 |
+
+## 核心概念
+
+### `(admin)/layout.tsx` 是后台壳边界
+
+后台页面都挂在 `apps/admin/src/pages/(admin)` 下。这个目录里的 `layout.tsx` 不是普通页面，而是后台应用壳的入口：
+
+```tsx
+import { AdminLayout as WebAdminLayout } from '@skyroc/web-admin-layouts';
+import { NotificationButton } from '@skyroc/web-admin-notification';
+import { DarkModeContainer } from '@skyroc/web-ui-compose';
+import { createFileRoute } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+
+import SystemLogo from '@/components/SystemLogo';
+import UserAvatar from '@/features/auth/components/UserAvatar';
+import { guardAdminRoute } from '@/features/router/guard';
+
+const AdminFooter = () => {
+  return (
+    <DarkModeContainer className="h-full flex-center">
+      <a href="https://github.com/Ohh-889/skyroc-admin/blob/main/LICENSE" rel="noopener noreferrer" target="_blank">
+        Copyright MIT © 2021 Skyroc
+      </a>
+    </DarkModeContainer>
+  );
+};
+
+const AdminLayout = () => {
+  const { t } = useTranslation();
+
+  return (
+    <WebAdminLayout
+      footer={<AdminFooter />}
+      headerMiddleActions={<NotificationButton className="px-12px" />}
+      headerRightActions={<UserAvatar />}
+      logo={<SystemLogo className="text-32px text-primary" />}
+      logoTitle={t('system.title')}
+    />
+  );
+};
+
+export const Route = createFileRoute('/(admin)')({
+  component: AdminLayout,
+  beforeLoad: async ({ context, location, matches, preload }) => {
+    await guardAdminRoute({ context, location, matches, preload });
+  }
+});
+```
+
+这里有两个职责：
+
+| 职责 | 说明 |
+| --- | --- |
+| 后台守卫 | `beforeLoad` 统一调用 `guardAdminRoute`，所以后台页面不需要重复写登录和权限判断。 |
+| 应用插槽 | `apps/admin` 只注入业务相关 slot：Logo、标题、页脚、通知按钮和用户头像。 |
+
+不要把菜单生成、tabs 状态、主题抽屉、响应式布局和侧边栏计算写进这个文件。它们属于共享后台壳或主题系统。
+
+### `WebAdminLayout` 负责完整后台框架
+
+`WebAdminLayout` 是 `@skyroc/web-admin-layouts` 导出的 `AdminLayout`。它内部再组合底层材料布局和后台运行时模块：
+
+```text
+WebAdminLayout
+  -> AdminLayoutProvider
+    -> @skyroc/materials/AdminLayout
+      -> AdminHeader
+      -> AdminSider
+      -> AdminTab
+      -> AdminContent
+      -> AdminMenu
+      -> ThemeDrawer
+      -> AdminEffect
+```
+
+这些模块的职责是：
+
+| 模块 | 责任 |
+| --- | --- |
+| `AdminHeader` | 根据主题布局模式决定是否显示 Logo、菜单、折叠按钮、面包屑，并插入 header actions。 |
+| `AdminSider` | 渲染侧边栏、一级菜单和混合布局下的子级菜单区域。 |
+| `AdminTab` | 根据当前路由和菜单索引创建、激活、关闭、固定和缓存 tabs。 |
+| `AdminContent` | 渲染内容区，默认使用 TanStack Router 的 `<Outlet />`。 |
+| `AdminMenu` | 在不同布局模式下把菜单挂到 Header 或 Sider 的目标区域。 |
+| `ThemeDrawer` | 渲染主题抽屉，读取 `@skyroc/web-admin-theme` 的主题设置。 |
+| `AdminEffect` | 处理移动端布局切换、mix 菜单固定缓存和 tabs 缓存副作用。 |
+
+`apps/admin` 不直接关心这些模块的内部布局分支。修改“应用展示什么业务入口”时改 slot；修改“后台壳如何根据主题和路由运行”时才进入 `packages/web/admin-layouts`。
+
+### Slot API 按位置命名
+
+`AdminLayout` 提供的主要 slot 是位置型 API：
+
+| Slot | 当前使用 | 说明 |
+| --- | --- | --- |
+| `logo` | `SystemLogo` | 交给默认 Logo 组件渲染的品牌图标。 |
+| `logoTitle` | `t('system.title')` | 品牌标题，随 i18n 变化。 |
+| `logoTo` | 未显式传入 | 不传时跳转到 `setupAdminLayouts` 配置的 `defaultHome`。 |
+| `logoComponent` | 当前未使用 | 自定义完整 Logo，可以直接接管图标、标题和布局样式。 |
+| `footer` | `AdminFooter` | 页脚区域；是否显示和高度由主题设置控制。 |
+| `content` | 当前未使用 | 不传时内容区默认渲染 `<Outlet />`。 |
+| `headerLeftActions` | 当前未使用 | 位于搜索和全屏按钮之间。 |
+| `headerMiddleActions` | `NotificationButton` | 位于语言切换和主题模式按钮之间。 |
+| `headerRightActions` | `UserAvatar` | 位于所有内置操作之后。 |
+
+slot 命名不带业务含义。共享包只知道它们的位置，具体放通知、用户、帮助入口还是其他业务组件，由 `apps/admin` 决定。
+
+### 内容区默认来自路由 Outlet
+
+`AdminContent` 的默认行为是渲染 TanStack Router 的 `<Outlet />`：
+
+```tsx
+const GlobalContent = () => {
+  const { content } = useAdminLayoutContext();
+
+  return (
+    <div className="h-full grow bg-layout p-16px">
+      {content ?? <Outlet />}
+    </div>
+  );
+};
+```
+
+因此，普通后台页面只需要放在 `pages/(admin)` 下，不需要手动把页面传给布局。只有在嵌入特殊内容壳、预览模式或测试布局时，才考虑传 `content` slot。
+
+### 主题系统决定布局模式
+
+`WebAdminLayout` 读取 `@skyroc/web-admin-theme` 的主题设置来决定当前布局模式、Header 高度、Footer 显示、Sider 宽度、Tab 高度和是否固定顶部区域。
+
+当前布局模式包括 vertical、horizontal、vertical-mix、top-hybrid、vertical-hybrid 等。`apps/admin/src/pages/(admin)/layout.tsx` 不需要为每个模式写条件分支；共享布局包会根据主题设置计算 Header、Sider、Tab 和菜单挂载位置。
+
+## 最小可用示例
+
+### 在 Header 中间区域增加一个帮助入口
+
+如果要在语言切换和主题按钮之间增加应用级入口，可以在 `headerMiddleActions` 中组合多个节点：
+
+```tsx
+const AdminLayout = () => {
+  const { t } = useTranslation();
+
+  return (
+    <WebAdminLayout
+      footer={<AdminFooter />}
+      headerMiddleActions={
+        <>
+          <HelpCenterButton />
+          <NotificationButton className="px-12px" />
+        </>
+      }
+      headerRightActions={<UserAvatar />}
+      logo={<SystemLogo className="text-32px text-primary" />}
+      logoTitle={t('system.title')}
+    />
+  );
+};
+```
+
+判断标准：这是应用业务入口，应该留在 `apps/admin` 的 layout route；不是共享后台壳的通用行为。
+
+### 替换完整 Logo 渲染
+
+默认 Logo 组件适合“图标 + 标题 + 默认跳转”。如果某个应用需要完整接管样式，可以使用 `logoComponent`：
+
+```tsx
+const AdminLayout = () => {
+  const { t } = useTranslation();
+
+  return (
+    <WebAdminLayout
+      headerMiddleActions={<NotificationButton className="px-12px" />}
+      headerRightActions={<UserAvatar />}
+      logoComponent={style => (
+        <CustomBrandLogo
+          logo={<SystemLogo className="text-32px text-primary" />}
+          style={style}
+          title={t('system.title')}
+        />
+      )}
+    />
+  );
+};
+```
+
+`logoComponent` 可以拿到不同布局位置传入的 style，适合 Header、Sider、混合布局下 Logo 宽度不一致的场景。
+
+### 使用默认内容区
+
+新增后台页面时不需要改 layout：
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router';
+
+const ReportCenter = () => {
+  return <div>Report Center</div>;
+};
+
+export const Route = createFileRoute('/(admin)/report/center')({
+  component: ReportCenter,
+  staticData: {
+    title: 'report_center',
+    i18nKey: 'route.report_center',
+    menu: {
+      icon: 'mdi:file-chart-outline',
+      order: 12
+    }
+  }
+});
+```
+
+页面会自动进入 `(admin)` layout，渲染到 `AdminContent` 的 `<Outlet />` 中，并经过后台守卫、菜单、tabs 和权限链路。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 在每个后台页面里重复包一层主布局 | 后台页面放在 `(admin)` 下即可，统一由 `(admin)/layout.tsx` 提供主布局。 |
+| 把通知、头像、业务按钮写进 `@skyroc/web-admin-layouts` | 这些是应用业务 slot，应该留在 `apps/admin`。 |
+| 在 `(admin)/layout.tsx` 中直接生成菜单或控制 tabs | 菜单和 tabs 由 `setupAdminLayouts`、`useMenus`、`useAdminMenus`、`useAdminTab` 管理。 |
+| 为每种布局模式在应用侧写 Header/Sider 分支 | 布局模式来自主题设置，分支应在共享布局包中收口。 |
+| 修改 Logo 点击行为时硬编码跳转 | 优先传 `logoTo`，不传时使用 `defaultHome`。 |
+| 复制旧 Vue 文档里的 layout、Pinia 或 NaiveUI 结构 | 当前实现以 React、TanStack Router、Jotai、Ant Design 和 Skyroc workspace packages 为准。 |
+
+## 相关链接
+
+| 内容 | 位置 |
+| --- | --- |
+| 启动时如何初始化布局配置 | [启动流程](../architecture/bootstrap) |
+| 菜单、动态菜单和 tabs | [菜单与标签页](./menus-and-tabs) |
+| 路由如何进入后台 layout | [路由概览](../routing/overview) |
+| 路由元信息如何影响菜单和 tabs | [路由元信息](../routing/route-meta) |
+| 登录守卫 | [路由守卫](../routing/guards) |
+| 权限和 403 | [权限](../routing/permission) |
+| 共享布局包完整 API | `docs/web-kit-docs/content/docs/admin-layouts/*` |

@@ -1,0 +1,99 @@
+---
+title: 表单规则 API
+description: useAuthFormRules 的返回值、预设规则集合与规则工厂签名速查
+---
+
+这一页是认证表单规则的 **API 速查**。为什么放在 `features/auth`、如何新增字段规则见 [表单规则](./form-rules)；这里只列 `useAuthFormRules()` 的返回结构和签名。
+
+```ts
+import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
+```
+
+事实源：`apps/admin/src/features/auth/use-auth-form-rules.ts`。规则本身都是 Ant Design `FormRule`，最终交给 `Form.Item` 的 `rules` 消费。
+
+## useAuthFormRules
+
+```ts
+function useAuthFormRules(): {
+  patternRules: Record<AuthField, FormRule>;
+  formRules: Record<AuthField, FormRule[]>;
+  defaultRequiredRule: FormRule;
+  createRequiredRule: (message: string) => FormRule;
+  createConfirmPwdRule: (form: FormInstance) => FormRule[];
+};
+```
+
+内部依赖 `useTranslation()` 读取 `form.*` 文案，因此只能在组件中调用。返回值：
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `formRules` | `Record<AuthField, FormRule[]>` | 必填 + 格式校验组合，适合大多数登录 / 注册字段。 |
+| `patternRules` | `Record<AuthField, FormRule>` | 只做格式校验，不含必填。 |
+| `defaultRequiredRule` | `FormRule` | 当前语言下的通用必填规则（`t('form.required')`）。 |
+| `createRequiredRule` | `(message: string) => FormRule` | 用指定文案创建必填规则。 |
+| `createConfirmPwdRule` | `(form: FormInstance) => FormRule[]` | 创建确认密码规则，校验是否等于表单 `password` 字段。 |
+
+`AuthField` 当前为：`'userName' | 'pwd' | 'phone' | 'email' | 'code'`。
+
+## 预设规则集合
+
+`formRules` 与 `patternRules` 的 key 一致，区别在是否包含必填：
+
+| 字段 key | 格式正则（来自 `@skyroc/utils`） | `formRules`（必填 + 格式） | `patternRules`（仅格式） |
+| --- | --- | --- | --- |
+| `userName` | `REG_USER_NAME` | `[required, pattern]` | `pattern` |
+| `pwd` | `REG_PWD` | `[required, pattern]` | `pattern` |
+| `phone` | `REG_PHONE` | `[required, pattern]` | `pattern` |
+| `email` | `REG_EMAIL` | `[required, pattern]` | `pattern` |
+| `code` | `REG_CODE_SIX` | `[required, pattern]` | `pattern` |
+
+所有 `patternRules` 的 `validateTrigger` 都是 `'onChange'`，文案 key 形如 `form.{field}.invalid`（格式）和 `form.{field}.required`（必填）。
+
+```tsx
+const { formRules, patternRules } = useAuthFormRules();
+
+// 必填 + 格式
+<AForm.Item name="userName" rules={formRules.userName}>...</AForm.Item>
+
+// 仅格式（可选字段）
+<AForm.Item name="email" rules={[patternRules.email]}>...</AForm.Item>
+```
+
+## createConfirmPwdRule
+
+```ts
+function createConfirmPwdRule(form: FormInstance): FormRule[];
+```
+
+返回两条规则：
+
+1. 必填规则（文案 `form.confirmPwd.required`）。
+2. 自定义校验：读取 `form.getFieldValue('password')`，当确认密码非空且不等于 `password` 时拒绝（文案 `form.confirmPwd.invalid`），`validateTrigger: 'onChange'`。
+
+> 它**硬编码读取 `password` 字段**。使用时主密码字段必须命名为 `password`；若字段名不同，应扩展该函数让其显式接收源字段名，而不要在页面里偷改 Form 值。
+
+```tsx
+const { createConfirmPwdRule, formRules } = useAuthFormRules();
+
+<AForm.Item name="password" rules={formRules.pwd}>
+  <AInput.Password />
+</AForm.Item>
+<AForm.Item name="confirmPassword" rules={createConfirmPwdRule(form)}>
+  <AInput.Password />
+</AForm.Item>
+```
+
+## createRequiredRule
+
+```ts
+function createRequiredRule(message: string): FormRule;
+// => { required: true, message }
+```
+
+用指定文案生成一条必填规则。`defaultRequiredRule` 就是 `createRequiredRule(t('form.required'))` 的结果。
+
+## 相关链接
+
+- 规则归属与新增流程：[表单规则](./form-rules)
+- 登录认证链路：[登录认证](./auth-login)、[登录认证 API](./auth-login-api)
+- 校验文案与类型：[国际化与图标](../theme/i18n-and-icons)

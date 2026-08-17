@@ -1,0 +1,247 @@
+---
+title: 主题 Token 与 Ant Design
+description: 理解 defaultThemeSettings、useTheme 派生值、Ant Design ConfigProvider、CSS 变量、UnoCSS 暗色模式和 loading 主题色之间的关系
+---
+
+这一页解释主题配置如何落到真实 UI 上。当前项目不是把页面样式散落在业务组件里，而是先维护一份 `Theme.ThemeSetting`，再从它派生出 Ant Design token、布局状态、CSS 变量和暗色模式。
+
+```text
+defaultThemeSettings / cached themeSettings
+  -> themeSettingsAtom
+  -> useTheme()
+  -> themeColors / darkMode / tokens / watermark
+  -> AntdProvider(getAntdTheme)
+  -> ConfigProvider + App + Watermark
+  -> ThemeEffect
+  -> html dark class + storage snapshot
+```
+
+页面和布局组件应该消费主题状态或主题工具类，不应该重复维护另一套主题配置。
+
+## 默认主题配置
+
+默认主题集中在 `packages/web/admin-theme/src/config/default.ts`：
+
+```ts
+export const defaultThemeSettings: Theme.ThemeSetting = {
+  themeScheme: 'light',
+  themeColor: '#6366F1',
+  themeRadius: 6,
+  themeTextSize: 14,
+  layout: {
+    mode: 'vertical',
+    scrollMode: 'content'
+  }
+};
+```
+
+完整配置还包括：
+
+| 配置区域 | 作用 |
+| --- | --- |
+| `themeScheme` | 亮色、暗色或跟随系统。 |
+| `themeColor` / `otherColor` | primary、info、success、warning、error 五类功能色。 |
+| `themeRadius` / `themeTextSize` | 传给 Ant Design 的基础圆角和字号。 |
+| `layout` | 控制后台布局模式和滚动模式。 |
+| `header` / `tab` / `sider` / `footer` | 控制布局区域显示、高度、宽度、固定状态等。 |
+| `page` | 控制页面切换动画。 |
+| `watermark` | 控制水印文案、用户信息、时间和 Ant Design 水印参数。 |
+| `tokens` | 定义 layout、container、base-text、boxShadow 等应用语义 token。 |
+
+只有当默认值适用于所有后台应用时，才直接改这个文件。某个应用自己的默认主题应在应用入口通过 `setupTheme({ overrides })` 处理。
+
+## `useTheme` 的派生值
+
+`useTheme()` 读取 `themeSettingsAtom`，并派生运行时需要的值：
+
+| 返回值 | 来源和用途 |
+| --- | --- |
+| `darkMode` | 由 `themeScheme` 和系统暗色偏好计算。`themeScheme: 'auto'` 时跟随系统。 |
+| `themeColors` | 从 `themeColor` 和 `otherColor` 组合出完整功能色。 |
+| `watermarkContent` | 根据 watermark 文案、用户名和当前时间拼接。 |
+| `settingsJson` | 供主题配置导入导出或变更比较使用。 |
+| `setThemeScheme()` | 切换亮色、暗色、自动模式。 |
+| `updateThemeColors()` | 修改 primary/info/success/warning/error。 |
+| `setThemeLayout()` | 修改布局模式。 |
+| `setSettings()` | 合并更新任意主题配置片段。 |
+
+业务页面如果要读取主题，只使用 `useTheme()` 或 `useSettingsTheme()`。不要直接从 `themeSettingsAtom`、localStorage 或 DOM class 反推主题状态。
+
+## Ant Design 主题转换
+
+应用侧的 `features/antd/AntdProvider.tsx` 只负责传入语言和用户名：
+
+```tsx
+<AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+  {children}
+</AntdProvider>
+```
+
+真正的 Ant Design 配置在 `packages/web/admin-theme/src/antd/shared.ts` 中生成：
+
+```ts
+export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settings: Theme.ThemeSetting) {
+  const { themeRadius, themeTextSize, tokens } = settings;
+
+  return {
+    algorithm: [darkMode ? derivativeDark : derivative],
+    cssVar: {
+      key: 'root',
+      prefix: ''
+    },
+    hashed: false,
+    token: {
+      colorPrimary: colors.primary,
+      colorInfo: colors.info,
+      colorSuccess: colors.success,
+      colorWarning: colors.warning,
+      colorError: colors.error,
+      fontSize: themeTextSize,
+      borderRadius: themeRadius
+    }
+  };
+}
+```
+
+这里有几个边界：
+
+| 主题层 | 职责 |
+| --- | --- |
+| `@skyroc/adapter-antd-theme` | 提供 `derivative` 和 `derivativeDark` 算法，用 OKLCH 调色板生成 Ant Design token。 |
+| `@skyroc/web-admin-theme` | 把当前主题状态转换为 Ant Design `ThemeConfig`。 |
+| `apps/admin-example` | 通过 Provider 注入 locale、userName，并确保 Provider 包住页面。 |
+| 业务页面 | 消费全局主题，不再新建全局 `ConfigProvider`。 |
+
+页面局部的少量视觉定制可以用组件 props 或局部 class。全局 token、算法、暗色模式和 message/modal/notification 主题必须走统一 `AntdProvider`。
+
+## 语义 token 与 CSS 变量
+
+主题配置里的 `tokens` 定义应用语义色和阴影：
+
+```ts
+tokens: {
+  light: {
+    colors: {
+      container: 'rgb(255, 255, 255)',
+      layout: 'rgb(247, 250, 252)',
+      inverted: 'rgb(0, 20, 40)',
+      'base-text': 'rgb(31, 31, 31)'
+    },
+    boxShadow: {
+      header: '0 1px 2px rgb(0, 21, 41, 0.08)',
+      sider: '2px 0 8px 0 rgb(29, 35, 41, 0.05)',
+      tab: '0 1px 2px rgb(0, 21, 41, 0.08)'
+    }
+  },
+  dark: {
+    colors: {
+      container: 'rgb(28, 28, 28)',
+      layout: 'rgb(18, 18, 18)',
+      'base-text': 'rgb(224, 224, 224)'
+    }
+  }
+}
+```
+
+这些 token 会参与 Ant Design token 和应用样式变量。页面优先使用已有语义类，例如 `bg-layout`、`text-primary`、`text-secondary`、`shadow-header`。不要在页面里拼 `text-$ant-color-*` 这类不稳定的 token 字符串。
+
+## UnoCSS 和暗色模式
+
+UnoCSS 的暗色模式依赖 html 上的 `dark` class。当前暗色 class 由 `ThemeEffect` 统一维护：
+
+```ts
+useEffect(() => {
+  toggleCssDarkMode(darkMode);
+  getInternalStorage()?.set('darkMode', darkMode);
+}, [darkMode]);
+```
+
+所以页面可以正常使用：
+
+```tsx
+<div className="bg-layout text-base-text dark:text-white" />
+```
+
+但不要在页面组件里调用 `toggleCssDarkMode()`。这样会绕开主题状态，导致 Ant Design、布局组件、缓存快照和 DOM class 不一致。
+
+## Loading 页主题色
+
+`apps/admin-example/src/pages/loading.tsx` 是特殊场景。它显示在路由 pending 阶段，不能依赖完整页面已经完成主题 Provider 渲染，所以读取的是应用配置里的快照：
+
+```ts
+const { defaultDarkMode, defaultThemeColor } = globalConfig;
+```
+
+`defaultThemeColor` 优先读 `localStg.get('themeColor')`，没有缓存时回退到 `defaultThemeSettings.themeColor`。`defaultDarkMode` 优先读 `localStg.get('darkMode')`，没有缓存时根据默认 `themeScheme` 判断。
+
+loading 页再把主题色转成 HSL CSS 变量：
+
+```tsx
+style={{ '--primary-color': `${h} ${s}% ${l}%` } as React.CSSProperties}
+```
+
+因此，主题缓存是否使用应用级 `localStg` 会直接影响 loading 页是否能读取到用户上一次选择的主题色。
+
+## 常见修改
+
+### 修改共享主色
+
+共享默认主题适用于所有后台应用时，改：
+
+```ts
+// packages/web/admin-theme/src/config/default.ts
+export const defaultThemeSettings: Theme.ThemeSetting = {
+  themeColor: '#2563EB'
+  // ...
+};
+```
+
+改共享默认值后，要同步检查 `docs/web-kit-docs` 中主题包文档。
+
+### 修改某个应用的新版本默认主题
+
+只影响当前应用时，在应用入口传 `overrides`：
+
+```ts
+setupTheme({
+  buildTime: BUILD_TIME,
+  storage: localStg,
+  overrides: {
+    themeColor: '#2563EB',
+    themeRadius: 8
+  }
+});
+```
+
+这会在生产环境新构建版本首次启动时覆盖用户缓存中的指定字段。没有写进 `overrides` 的字段仍保留用户缓存。
+
+### 页面读取主题
+
+```tsx
+import { useSettingsTheme } from '@skyroc/web-admin-theme';
+
+const ThemeAwarePanel = () => {
+  const { darkMode, themeColor } = useSettingsTheme();
+
+  return <div data-dark={darkMode} style={{ borderColor: themeColor }} />;
+};
+```
+
+页面只读取主题状态，不负责持久化、不负责同步 DOM class，也不负责重建 Ant Design `ConfigProvider`。
+
+## 排查顺序
+
+1. Ant Design 颜色、字号、圆角不对，先看 `AppAntdProvider` 是否包住了页面。
+2. 暗色模式 class 不变，先看 `GlobalEffect` 是否挂载了 `ThemeEffect`。
+3. 页面自己的 class 不跟主题变，先确认是否使用了稳定语义类，而不是不存在的 token class。
+4. loading 页颜色不对，检查 `themeColor` / `darkMode` 快照是否写入同一个 storage 前缀。
+5. 修改 `defaultThemeSettings` 后生产用户没变化，检查是否被旧 `themeSettings` 缓存覆盖；必要时用 `overrides` 做版本覆盖。
+
+## 相关链接
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 主题初始化和缓存策略 | [主题运行时与缓存](./runtime-and-cache) |
+| 启动流程 | [启动流程](../architecture/bootstrap) |
+| 布局组件如何消费主题 | [布局系统](../layout/overview) |
+| 主题包完整 API | `docs/web-kit-docs/content/docs/theme/admin-theme.mdx` |

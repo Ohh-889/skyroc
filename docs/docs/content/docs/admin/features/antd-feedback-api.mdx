@@ -1,0 +1,112 @@
+---
+title: 全局反馈 API
+description: showMessage / showNotification / showModal 系列函数的签名、参数与返回值速查
+---
+
+这一页是 Ant Design 全局反馈函数的 **API 速查**。接入方式、初始化时机和与通知中心的区别见 [Ant Design 全局反馈](./antd-feedback)；这里只列签名、参数和返回值。
+
+所有函数定义在 `packages/web/admin-theme/src/antd/ui.ts`，由 `@skyroc/web-admin-theme` 导出，并经 `apps/admin/src/config.ts` re-export。页面推荐从 `@/config` 导入：
+
+```ts
+import {
+  showConfirmModal,
+  showErrorMessage,
+  showLoadingMessage,
+  showSuccessMessage,
+  showSuccessNotification
+} from '@/config';
+```
+
+> 这些函数读取 `AntdProvider` 内 `initAntdUI()` 保存的实例，**必须在 `AntdProvider` 挂载之后调用**。未初始化时调用会抛出 `xxx is not initialized`。
+
+## Message
+
+底层是 antd `message` 实例。`show*Message` 复用 antd 的 `TypeOpen` 签名，既能传字符串内容，也能传配置对象。
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `showMessage` | `(config: MessageArgsProps) => MessageType` | 通用消息，需传配置对象。 |
+| `showSuccessMessage` | `(content, duration?, onClose?) \| (config) => MessageType` | 成功消息。 |
+| `showErrorMessage` | `(content, duration?, onClose?) \| (config) => MessageType` | 错误消息。 |
+| `showInfoMessage` | `(content, duration?, onClose?) \| (config) => MessageType` | 信息消息。 |
+| `showWarningMessage` | `(content, duration?, onClose?) \| (config) => MessageType` | 警告消息。 |
+| `showLoadingMessage` | `(content, duration?, onClose?) \| (config) => MessageType` | 加载消息，`duration` 传 `0` 时不自动关闭。 |
+| `destroyMessage` | `(key?: React.Key) => void` | 销毁指定消息；不传 `key` 销毁全部。 |
+
+`TypeOpen` 入参：
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `content` | `ReactNode \| MessageArgsProps` | 消息内容，或完整配置对象。 |
+| `duration` | `number` | 自动关闭秒数；`0` 表示不自动关闭。 |
+| `onClose` | `() => void` | 关闭后回调。 |
+
+返回值 `MessageType` 是一个可调用的关闭函数（同时是 Promise）。`showLoadingMessage` 常用它手动关闭：
+
+```ts
+const hide = showLoadingMessage('加载中...', 0);
+// ...完成后
+hide();
+```
+
+## Notification
+
+底层是 antd `notification` 实例，统一接收配置对象 `ArgsProps`（含 `message` / `description` / `duration` / `placement` 等）。
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `showNotification` | `(config: ArgsProps) => void` | 通用通知（`notification.open`）。 |
+| `showSuccessNotification` | `(config: ArgsProps) => void` | 成功通知。 |
+| `showErrorNotification` | `(config: ArgsProps) => void` | 错误通知。 |
+| `showInfoNotification` | `(config: ArgsProps) => void` | 信息通知。 |
+| `showWarningNotification` | `(config: ArgsProps) => void` | 警告通知。 |
+| `destroyNotification` | `(key?: React.Key) => void` | 销毁指定通知；不传 `key` 销毁全部。 |
+
+`ArgsProps` 常用字段：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `message` | `ReactNode` | 通知标题。 |
+| `description` | `ReactNode` | 通知正文。 |
+| `duration` | `number \| null` | 自动关闭秒数；`null` 表示不自动关闭。 |
+| `placement` | `'top' \| 'topLeft' \| 'topRight' \| 'bottom' \| 'bottomLeft' \| 'bottomRight'` | 弹出位置。 |
+| `key` | `React.Key` | 通知唯一标识，配合 `destroyNotification` 使用。 |
+| `onClick` / `onClose` | `() => void` | 点击 / 关闭回调。 |
+
+## Modal
+
+底层是 antd `modal` 实例（`App.useApp()` 提供）。所有 `show*Modal` 复用 `ModalFunc` 签名。
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `showModal` | `(config: ModalFuncProps) => { destroy; update }` | 等价于 `modal.confirm`。 |
+| `showConfirmModal` | `(config: ModalFuncProps) => { destroy; update }` | 确认弹窗。 |
+| `showInfoModal` | `(config: ModalFuncProps) => { destroy; update }` | 信息弹窗。 |
+| `showSuccessModal` | `(config: ModalFuncProps) => { destroy; update }` | 成功弹窗。 |
+| `showErrorModal` | `(config: ModalFuncProps) => { destroy; update }` | 错误弹窗。 |
+| `showWarningModal` | `(config: ModalFuncProps) => { destroy; update }` | 警告弹窗。 |
+
+`ModalFuncProps` 常用字段：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `title` | `ReactNode` | 弹窗标题。 |
+| `content` | `ReactNode` | 弹窗内容。 |
+| `onOk` | `() => void \| Promise<any>` | 确认回调；返回 Promise 时弹窗会等待其完成再关闭。 |
+| `onCancel` | `() => void \| Promise<any>` | 取消回调。 |
+| `okText` / `cancelText` | `ReactNode` | 按钮文案。 |
+| `okButtonProps` / `cancelButtonProps` | `ButtonProps` | 按钮属性。 |
+
+返回值含 `destroy()` 和 `update(config)`，可在外部主动关闭或更新弹窗。
+
+## 内部 API（不建议业务直接使用）
+
+| 函数 | 说明 |
+| --- | --- |
+| `initAntdUI(message, modal, notification)` | 由 `AntdProvider` 内的 `ContextHolder` 调用，保存三个 antd 实例。`@internal`，业务代码不应调用。 |
+
+## 相关链接
+
+- 接入方式与初始化时机：[Ant Design 全局反馈](./antd-feedback)
+- 后台通知中心：[通知系统](./notification)、[通知系统 API](./notification-api)
+- 运行时 Provider：[运行时 Provider](../architecture/runtime-providers)

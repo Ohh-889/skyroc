@@ -1,0 +1,282 @@
+---
+title: 登录认证
+description: 理解登录页结构、useInitLogin/useAuth、token 持久化、用户初始化和退出登录链路
+---
+
+这一页解释 `apps/admin` 的登录认证链路。重点是把登录页、token 持久化、用户信息初始化、菜单初始化、守卫和退出登录放到同一条链路里看。
+
+当前认证状态由 `features/auth` 维护，接口由 `service/api/auth` 提供，路由守卫通过 TanStack Router context 消费 `useAuth()` 的结果。
+
+> 只想查 `useAuth()` / `useInitLogin()` 及 `setAuth` / `getToken` 等的签名和返回值，直接看 [登录认证 API](./auth-login-api)。
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 修改账号密码登录页 | `pages/(auth)/login/index.tsx`、`useInitLogin()` |
+| 修改登录页布局和动画 | `pages/(auth)/login/layout.tsx`（`modules/Header.tsx` 只在 `apps/admin-example` 里） |
+| 接真实登录接口 | `service/api/auth/api.ts`、`AUTH_URLS.LOGIN` |
+| 调整 token 存储和刷新 | `features/auth/use-auth.ts`、`service/adapter.ts` |
+| 理解登录后为什么要初始化菜单 | `useAuth().initAuth()`、`useMenus().initMenus(data)` |
+| 实现退出登录 | `pages/(auth)/login-out.tsx`、`useAuth().logout()` |
+| 排查未登录跳转 | `features/router/guard.ts`、`routing/guards.mdx` |
+| 排查 403 权限 | `features/menus/permissions.ts`、`routing/permission.mdx` |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/pages/(auth)/login/layout.tsx` | 登录路由 layout，校验 `redirect` search，已登录时回到 redirect 或首页，并渲染登录卡片与动画背景。 |
+| `apps/admin/src/pages/(auth)/login/index.tsx` | 账号密码登录页。提交 Ant Design Form 后调用 `useInitLogin().login()`。 |
+| `apps/admin-example/src/pages/(auth)/login/code-login.tsx` | 验证码登录页面（`apps/admin` 中无此页面）。 |
+| `apps/admin-example/src/pages/(auth)/login/register.tsx` | 注册页面入口（`apps/admin` 中无此页面）。 |
+| `apps/admin-example/src/pages/(auth)/login/reset-pwd.tsx` | 重置密码页面入口（`apps/admin` 中无此页面）。 |
+| `apps/admin/src/pages/(auth)/login-out.tsx` | 退出登录路由。组件返回 `null`，在 `beforeLoad` 里 `await context.logout()` 后 `redirect` 到 `/login`（必须等登出完成，否则 `/login` 守卫会读到还没清掉的 token）。 |
+| `apps/admin/src/features/auth/use-login.ts` | 登录提交流程。负责防重复提交、调用登录接口、写 token、初始化用户和跳转。 |
+| `apps/admin/src/features/auth/use-auth.ts` | 认证状态核心。维护 token、用户信息读取、菜单初始化、退出清理和首页计算。 |
+| `apps/admin/src/features/auth/use-auth.ts` | 登录态 hook，同时导出 `getToken()`、`clearAuthStorage()` 两个 helper。 |
+| `apps/admin/src/service/api/auth/*` | 登录、用户信息和刷新 token 接口模块。 |
+| `apps/admin/src/service/adapter.ts` | 请求层认证适配器。为 `@skyroc/service` 提供 token、refreshToken、跳转登录和错误提示能力。 |
+
+## 登录链路
+
+账号密码登录的核心链路是：
+
+```text
+pages/(auth)/login/index.tsx
+  -> Ant Design Form onFinish
+  -> useInitLogin().login(params)
+  -> useLoginMutation()
+  -> fetchLogin()
+  -> setAuth(data)  // Api.Auth.LoginToken
+  -> initAuth()
+  -> initMenus(userInfo)
+  -> navigate(redirect 或 /)
+```
+
+`useInitLogin()` 会用 `useLoading()` 防止同一轮登录重复提交：
+
+```ts
+async function login(params: Api.Auth.LoginParams, redirect = true) {
+  if (loading) return;
+
+  startLoading();
+  toLogin(params, { onSuccess, onError });
+}
+```
+
+登录接口成功后，先写入 token：
+
+```ts
+setAuth(data);
+```
+
+然后初始化当前用户：
+
+```ts
+const info = await initAuth();
+```
+
+只有用户信息和菜单初始化成功后，才会跳转页面并展示登录成功通知。
+
+## 登录页结构
+
+登录页由 layout route 和子页面组成：
+
+| 路由文件 | URL | 职责 |
+| --- | --- | --- |
+| `pages/(auth)/login/layout.tsx` | `/login` | 登录页外壳、背景、卡片、动画和已登录重定向。 |
+| `pages/(auth)/login/index.tsx` | `/login/` | 账号密码登录表单。 |
+| `pages/(auth)/login/code-login.tsx` | `/login/code-login` | 验证码登录入口（仅 example）。 |
+| `pages/(auth)/login/register.tsx` | `/login/register` | 注册入口（仅 example）。 |
+| `pages/(auth)/login/reset-pwd.tsx` | `/login/reset-pwd` | 重置密码入口（仅 example）。 |
+
+`layout.tsx` 使用 `zod` 校验 search：
+
+```ts
+const LoginSearchSchema = z.object({
+  redirect: z.string().startsWith('/').optional()
+});
+```
+
+这保证 `redirect` 只能是站内路径，避免把登录完成后的跳转交给任意外部地址。
+
+## token 持久化
+
+认证缓存使用 `localStg`，其前缀来自：
+
+```text
+VITE_STORAGE_PREFIX=SR_
+```
+
+`setAuth()` 同时更新 Jotai atom 和本地缓存：
+
+```ts
+export const setAuth = (data: Api.Auth.LoginToken) => {
+  globalStore.set(authAtom, { token: data.token });
+
+  localStg.set('token', data.token);
+  localStg.set('refreshToken', data.refreshToken);
+};
+```
+
+应用首次加载时，`use-auth.ts` 会从本地缓存读取初始 token：
+
+```ts
+const initToken = getToken();
+```
+
+因此刷新页面后，只要 token 仍在本地缓存中，`isLoggedIn` 就会先变为 `true`，随后由 root route 或后台守卫触发 `initAuth()` 获取用户信息。
+
+## 用户初始化
+
+`initAuth()` 是登录态变成“可进入后台”的关键步骤：
+
+```ts
+async function initAuth() {
+  try {
+    const data = await queryClient.ensureQueryData(queryUserInfoOptions());
+
+    await initMenus(data);
+
+    flushSync(() => {
+      setState({ initialized: true });
+    });
+
+    return data;
+  } catch {
+    return null;
+  }
+}
+```
+
+它做三件事：
+
+| 步骤 | 作用 |
+| --- | --- |
+| `ensureQueryData(queryUserInfoOptions())` | 请求或复用当前用户信息。 |
+| `initMenus(data)` | 根据用户信息、静态/动态路由模式生成菜单、首页和授权索引。 |
+| `setState({ initialized: true })` | 标记认证上下文已初始化。 |
+
+如果 `initAuth()` 返回 `null`，守卫会清理认证状态并跳回登录页。
+
+## 登录后跳转
+
+登录页支持 `redirect` search。未登录访问后台页面时，守卫会跳到：
+
+```text
+/login?redirect=/manage/user
+```
+
+登录成功后，`useInitLogin()` 默认会回到 `search.redirect`，否则回到 `/`，再由根路由和首页配置决定最终位置。
+
+还有一个用户切换逻辑：
+
+```ts
+if (!lastLoginUserId || lastLoginUserId !== info.userId) {
+  needRedirect = false;
+
+  localStg.remove('globalTabs');
+  localStg.remove('lastLoginUserId');
+}
+```
+
+如果本次登录用户和上次用户不同，会清掉缓存 tabs，并回到根路径，避免把上个用户的标签页状态带到新用户会话中。
+
+## 退出登录
+
+退出登录通过路由实现：
+
+```text
+/login-out
+```
+
+`pages/(auth)/login-out.tsx` 在 `beforeLoad` 中执行：
+
+```ts
+context.logout();
+
+throw redirect({ to: '/login', search: redirectPath ? { redirect: redirectPath } : undefined });
+```
+
+`logout()` 会清理：
+
+| 清理项 | 作用 |
+| --- | --- |
+| `queryClient.clear()` | 清掉 React Query 缓存。 |
+| `setState({ token: '' })` | 清掉当前 token 状态。 |
+| `clearAuthStorage()` | 清掉 `token` 和 `refreshToken`。 |
+| `clearMenus()` | 清掉菜单和授权索引。 |
+| `cacheTabs()` | 退出时让布局包缓存 tabs 状态。 |
+
+需要加“退出登录”按钮时，优先导航到 `/login-out`，不要在按钮里手动复制清理逻辑。
+
+## token 刷新和请求层
+
+`request` 由 `createAppRequest()` 创建，并通过 `antdAdapter` 注入认证能力：
+
+| adapter 方法 | 作用 |
+| --- | --- |
+| `getToken()` | 请求前生成 `Authorization: Bearer <token>`。 |
+| `getRefreshToken()` | token 过期时拿 refresh token。 |
+| `fetchRefreshToken()` | 调用 `/auth/refreshToken`。 |
+| `setAuth()` | 刷新成功后写入新 token。 |
+| `redirectToLogin()` | 刷新失败或登出 code 时跳到 `/login-out`。 |
+| `resetAuth()` | 清理 token 缓存。 |
+
+后端业务 code 由 `.env` 控制：
+
+```text
+VITE_SERVICE_LOGOUT_CODES=8888,8889
+VITE_SERVICE_MODAL_LOGOUT_CODES=7777,7778
+VITE_SERVICE_EXPIRED_TOKEN_CODES=9999,9998,3333
+```
+
+请求层识别到过期 code 后，会共享同一个 refresh promise，刷新成功后重试原请求；刷新失败则跳转登录。
+
+## 最小接入示例
+
+如果新增一个登录方式，仍然应复用 `useInitLogin().login()`，让 token 写入、用户初始化和跳转保持一致：
+
+```tsx
+import { Button } from 'antd';
+
+import { useInitLogin } from '@/features/auth/use-login';
+
+const DemoLoginButton = () => {
+  const { loading, login } = useInitLogin();
+
+  function handleLogin() {
+    login({
+      password: '123456',
+      userName: 'Admin'
+    });
+  }
+
+  return (
+    <Button loading={loading} type="primary" onClick={handleLogin}>
+      登录
+    </Button>
+  );
+};
+```
+
+新增登录接口时，可以扩展 `service/api/auth`，但成功后要回到同一套 `setAuth -> initAuth -> navigate` 链路。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 登录成功后只写 token，不调用 `initAuth()` | 登录后必须初始化用户信息和菜单，否则后台布局和权限索引不完整。 |
+| 在页面按钮里手动清理 token、query、菜单和 tabs | 导航到 `/login-out` 或复用 `logout()`。 |
+| 为不同登录方式写多套 token 存储 | 统一走 `setAuth()`，让 Jotai 状态和 local storage 同步。 |
+| 忽略 `redirect` search | 未登录直达后台页面时，登录后应回到原路径。 |
+| 把 refresh token 逻辑写进页面 | token 刷新属于请求层，当前入口是 `service/adapter.ts` 和 `@skyroc/service`。 |
+
+## 相关链接
+
+- API 速查（useAuth / useInitLogin / 导出函数）：[登录认证 API](./auth-login-api)
+- 路由守卫：[路由守卫](../routing/guards)
+- 权限：[权限](../routing/permission)
+- 环境变量与请求 code：[环境变量与 Vite](../configuration/env-and-vite)
+- 请求概览：[请求概览](../request/overview)

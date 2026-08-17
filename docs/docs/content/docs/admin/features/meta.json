@@ -1,0 +1,17 @@
+{
+  "title": "专题能力",
+  "pages": [
+    "table-and-form",
+    "use-table-api",
+    "form-rules",
+    "form-rules-api",
+    "antd-feedback",
+    "antd-feedback-api",
+    "demo-pages",
+    "charts-and-dashboard",
+    "auth-login",
+    "auth-login-api",
+    "notification",
+    "notification-api"
+  ]
+}

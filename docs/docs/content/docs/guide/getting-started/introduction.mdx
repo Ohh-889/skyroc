@@ -1,0 +1,52 @@
+---
+title: 项目简介与设计理念
+description: 了解 Skyroc Admin 的定位、目标与核心设计原则
+---
+
+## 定位
+
+Skyroc Admin 是一个**工程化的后台管理系统脚手架**，但它的野心不止于「一个能跑的 admin」。它的目标是：
+
+> 把后台系统里**反复出现的能力**（请求、状态、主题、布局、菜单、权限、i18n、通知…）抽象成**独立、可复用、可跨端**的包，应用层只负责装配与业务。
+
+这意味着当你打开 `apps/admin`，会发现它出奇地「薄」——大量逻辑并不在应用里，而在 `@skyroc/*` 包中。这是刻意的设计。
+
+## 三条核心原则
+
+### 1. 分层（Layering）
+
+包之间遵循清晰的依赖方向：**共享类型与轻量能力 → 基础设施 → 平台能力 → 应用**。上层可以依赖下层；同层允许职责明确的单向依赖，但禁止反向依赖和循环依赖。这保证了：
+
+- 底层包（如 `@skyroc/types`、`@skyroc/utils`）稳定、零或极轻依赖；
+- 重构上层不会波及下层；
+- 任何一个包都能被单独理解、测试、发布。
+
+完整边界以仓库中的 `packages/ARCHITECTURE.md` 为准。
+
+### 2. 平台优先（Platform-first）
+
+`packages/` 的顶层目录按**平台**切分（`@core` / `shared` / `hooks` / `primitives` 跨端，`web` / `native` / `miniapp` 各占一棵），而不是按功能（components / hooks / utils）切分。
+
+原因：Web 与 Native 的运行时、UI 依赖和样式方案不同（Ant Design / UnoCSS 与 React Native / Uniwind），与其强行抽象一个「通用 UI」，不如让平台目录各自完整。详见 [平台优先目录](/docs/guide/architecture/platform-first)。
+
+### 3. 适配器解耦（Adapter Pattern）
+
+基础设施包不直接依赖具体 UI、路由或认证实现，而是定义**适配器接口**，由应用注入。最典型的是 `@skyroc/service`：它定义了 `RequestAdapter`，把 token 读写、续签、登录重定向、错误提示和国际化交给宿主应用实现。Web 应用可以据此接入 Ant Design 的反馈组件和 TanStack Router；其他平台也能提供自己的实现，而不必改动请求基础设施。
+
+## 设计哲学（来自仓库规范）
+
+项目对 React 组件代码有一套**强制工作流**（并非建议）：
+
+- 组件必须是**箭头函数** + PascalCase；
+- props 必须定义独立 `interface`，且**在函数体第一行解构**，不在参数上解构；
+- **禁用 `useCallback`**；`useMemo` 仅用于「派生值」或「昂贵计算」；
+- `useState` 只放影响渲染的状态，`useRef` 放命令式/可变值；
+- `useEffect` 必须有明确意图（生命周期 / 外部系统同步 / DOM 集成）。
+
+逐条规则与理由见 [开发约定](/docs/guide/engineering/conventions)，最终以仓库根目录的 `AGENTS.md` 为准。
+
+## 适合谁
+
+- 想要一套**可生长**的后台基础设施，而不是一次性模板；
+- 需要在**多端**复用同一套业务逻辑与设计系统；
+- 重视**类型安全**、**工程纪律**与 **AI 协作**下的可维护性，把测试视为可执行的行为契约。

@@ -1,0 +1,193 @@
+---
+title: 主题系统
+description: 理解 apps/admin 如何通过 @skyroc/web-admin-theme 初始化主题、接入 Ant Design、持久化用户配置和同步全局副作用
+---
+
+这一页解决一个问题：修改后台主题、暗色模式、圆角、字号、布局模式或 Ant Design token 时，应该改应用配置、主题包，还是页面组件。
+
+当前主题链路由 `apps/admin` 编排，`@skyroc/web-admin-theme` 提供运行时状态、默认配置、Ant Design 适配和全局副作用。
+
+```text
+apps/admin/src/bootstrap.tsx
+  -> setupTheme()
+  -> render App
+  -> AppAntdProvider            # apps/admin/src/features/antd/AntdProvider.tsx
+  -> @skyroc/web-admin-theme/AntdProvider
+  -> GlobalEffect
+  -> ThemeEffect
+```
+
+主题不是页面局部状态。启动阶段先初始化主题 atom，Provider 再把主题转成 Ant Design 配置，全局 effect 最后把暗色模式、滤镜、水印和缓存同步到 DOM 与 localStorage。
+
+## 适用场景
+
+| 你要做什么 | 先看哪里 |
+| --- | --- |
+| 改默认主色、圆角、字号或布局模式 | `packages/web/admin-theme/src/config/default.ts` 或 `setupTheme({ overrides })` |
+| 改当前应用读取主题缓存的方式 | `apps/admin/src/bootstrap.tsx`、`@skyroc/web-admin-theme/setupTheme` |
+| 改 Ant Design token 生成 | `packages/web/admin-theme/src/antd/shared.ts`、`@skyroc/adapter-antd-theme` |
+| 在页面读取或更新主题 | `@skyroc/web-admin-theme/useTheme()` |
+| 同步暗色 class、色弱、灰阶、水印 | `@skyroc/web-admin-theme/ThemeEffect`、`apps/admin/src/features/effects/GlobalEffect.tsx` |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/bootstrap.tsx` | 在组件渲染前调用 `setupTheme({ buildTime: BUILD_TIME })`。 |
+| `apps/admin/src/config.ts` | 暴露 `defaultThemeColor`、`defaultDarkMode`，并 re-export antd message/modal helpers。 |
+| `apps/admin/src/features/antd/AntdProvider.tsx` | 把当前语言和用户信息传给主题包的 `AntdProvider`。 |
+| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `ThemeEffect`，同步 DOM class、缓存、滤镜和水印。 |
+| `packages/web/admin-theme/src/config/default.ts` | 当前默认主题配置，包括颜色、圆角、字号、布局、header、tab、sider、footer 和 watermark。 |
+| `packages/web/admin-theme/src/setup.ts` | 初始化主题 atom，处理生产缓存和版本覆盖。 |
+
+## 核心概念
+
+### `setupTheme` 是启动前置步骤
+
+`bootstrap.tsx` 当前先执行：
+
+```ts
+setupTheme({
+  buildTime: BUILD_TIME
+});
+```
+
+这个调用必须发生在 `App` 渲染之前。否则 `AntdProvider`、`ThemeEffect`、登录页主题切换按钮和后台布局读取主题 atom 时，拿到的可能不是应用预期的初始主题。
+
+`setupTheme()` 的行为分两类：
+
+| 环境 | 行为 |
+| --- | --- |
+| 开发环境 | 直接使用 `defaultThemeSettings` 初始化主题。 |
+| 生产环境 | 从 storage 读取 `themeSettings`，再用 `BUILD_TIME` 判断是否应用 overrides。 |
+
+生产环境的版本覆盖标记是 `overrideThemeFlag`。当构建时间变化且传入了 overrides，主题包可以在不清空全部用户缓存的前提下覆盖指定主题字段。
+
+### 默认配置来自主题包
+
+默认主题集中在 `packages/web/admin-theme/src/config/default.ts`：
+
+```ts
+export const defaultThemeSettings: Theme.ThemeSetting = {
+  themeScheme: 'light',
+  themeColor: '#6366F1',
+  themeRadius: 6,
+  themeTextSize: 14,
+  layout: {
+    mode: 'vertical',
+    scrollMode: 'content'
+  }
+};
+```
+
+这里是共享默认值。只有当默认值适用于所有消费 `@skyroc/web-admin-theme` 的后台应用时，才直接改这个文件。只想让 `apps/admin` 有自己的默认主题时，优先通过应用侧 `setupTheme` overrides 或 storage 初始化策略处理。
+
+### Ant Design 主题由 Provider 转换
+
+`apps/admin/src/features/antd/AntdProvider.tsx` 当前做两件事：
+
+1. 从 `useLang()` 读取当前语言，选择 `antdLocales[locale]`。
+2. 从 `useUserInfoQuery()` 读取用户信息，把 `userName` 交给主题包。
+
+```tsx
+return (
+  <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+    {children}
+  </AntdProvider>
+);
+```
+
+真正的 Ant Design token、算法、暗色模式和组件 token 转换在 `@skyroc/web-admin-theme` 里完成。页面不应该自己嵌套新的 `ConfigProvider` 来覆盖全局主题，否则会和布局、弹窗、通知、message 的主题状态割裂。
+
+### `ThemeEffect` 负责外部系统同步
+
+主题状态改变后，需要同步到 React 之外的系统：
+
+| 同步对象 | 目的 |
+| --- | --- |
+| HTML dark class | 让全局 CSS、UnoCSS 和主题 token 感知暗色模式。 |
+| localStorage | 持久化用户主题选择。 |
+| 灰阶 / 色弱滤镜 | 应用全局视觉辅助模式。 |
+| watermark | 按主题状态和用户信息更新水印。 |
+
+这些副作用集中在 `ThemeEffect`，由 `GlobalEffect` 挂载。页面里不需要再写 effect 去手动改 `document.documentElement`。
+
+## 最小可用示例
+
+### 修改共享默认主色
+
+如果你确认所有使用主题包的后台应用都应该更换默认主色，改：
+
+```ts
+// packages/web/admin-theme/src/config/default.ts
+export const defaultThemeSettings: Theme.ThemeSetting = {
+  themeScheme: 'light',
+  themeColor: '#2563EB',
+  themeRadius: 6
+  // ...
+};
+```
+
+改共享默认值后，需要检查 `docs/web-kit-docs` 里主题包文档是否也要同步。
+
+### 只给 apps/admin 覆盖默认主题
+
+如果只是当前应用需要覆盖默认值，优先把覆盖留在 `apps/admin/src/bootstrap.tsx`：
+
+```ts
+setupTheme({
+  buildTime: BUILD_TIME,
+  overrides: {
+    themeColor: '#2563EB',
+    themeScheme: 'light'
+  }
+});
+```
+
+这会保持共享包默认值稳定，同时让当前应用在新构建版本中应用自己的覆盖项。
+
+### 在页面里读取主题
+
+页面需要根据当前主题做业务 UI 适配时，读取主题状态即可：
+
+```tsx
+import { useTheme } from '@skyroc/web-admin-theme';
+
+const ThemeAwarePanel = () => {
+  const { darkMode, themeColor } = useTheme();
+
+  return <div data-dark={darkMode} style={{ borderColor: themeColor }} />;
+};
+```
+
+不要为了读取主题去访问 localStorage。缓存只是持久化手段，运行时数据源是主题 atom。
+
+## 排查顺序
+
+1. 确认 `bootstrap.tsx` 是否在渲染 `App` 前调用了 `setupTheme()`。
+2. 确认当前是开发环境还是生产环境，开发环境不会读取生产缓存覆盖逻辑。
+3. 检查 `localStorage` 中是否有旧的 `themeSettings`、`themeColor` 或 `darkMode`。
+4. 如果 Ant Design 组件样式不对，先看 `AppAntdProvider` 是否包住了页面。
+5. 如果暗色模式 class 没变，确认 `GlobalEffect` 是否挂载了 `ThemeEffect`。
+6. 如果默认值改了但用户无感，检查 `BUILD_TIME` 和 `overrideThemeFlag` 是否导致缓存未覆盖。
+
+## 常见误区
+
+| 误区 | 正确做法 |
+| --- | --- |
+| 在业务页面里新建 `ConfigProvider` 改全局主题 | 全局主题走 `AppAntdProvider` 和 `@skyroc/web-admin-theme`。 |
+| 直接改 localStorage 当作主题状态源 | 运行时以主题 atom 为准，localStorage 只负责持久化。 |
+| 把应用专属默认值写进共享主题包 | 只影响 `apps/admin` 的默认值应放在应用侧 overrides。 |
+| 改暗色模式时手动操作 DOM class | 暗色、灰阶、色弱和水印同步由 `ThemeEffect` 负责。 |
+| 认为 `.env` 控制主题默认值 | 当前主题默认值来自代码配置和 storage，不来自 `.env`。 |
+
+## 相关链接
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 主题初始化、缓存和版本覆盖 | [主题运行时与缓存](./runtime-and-cache) |
+| Ant Design token、CSS 变量和 loading 主题色 | [主题 Token 与 Ant Design](./tokens-and-antd) |
+| 启动时为什么先初始化主题 | [启动流程](../architecture/bootstrap) |
+| 布局模式如何影响菜单和 tabs | [布局系统](../layout/overview)、[菜单与标签页](../layout/menus-and-tabs) |
+| 语言切换和 Ant Design locale | [国际化与图标](./i18n-and-icons) |
+| 共享主题包完整 API | `docs/web-kit-docs/content/docs/theme/overview.mdx`、`docs/web-kit-docs/content/docs/theme/admin-theme.mdx` |

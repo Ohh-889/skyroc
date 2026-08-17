@@ -1,0 +1,282 @@
+---
+title: 路由守卫
+description: 理解 guardAdminRoute、登录拦截、用户初始化、router context、外链处理和守卫执行链路
+---
+
+这一页解释 `apps/admin` 如何决定一个后台路由能不能进入。重点是把登录态、用户初始化、router context 和外链处理放在同一条链路里看，而不是只看某一个页面的 `beforeLoad`。
+
+守卫只负责“能不能进”的流程编排：登录、初始化、外链、回退。其中**权限判定**是守卫链路里的一个步骤，但模型和判定规则单独成页，见 [权限](./permission)。
+
+## 当前事实
+
+| 事实 | 当前实现 |
+| --- | --- |
+| 后台路由统一入口 | `apps/admin/src/pages/(admin)/layout.tsx` 的 `beforeLoad`。 |
+| 守卫函数 | `apps/admin/src/features/router/guard.ts` 的 `guardAdminRoute()`。 |
+| 用户初始化 | `apps/admin/src/features/auth/use-auth.ts` 的 `initAuth()`。 |
+| 菜单和授权索引 | `@skyroc/web-admin-layouts` 的 `useMenus()`、`menuGenerator`、`quickReferenceMenus`。 |
+| 权限判定 | 委托给 `hasMatchedRoutePermission()` 和 `hasAuthorizedRoutePath()`，规则见 [权限](./permission)。 |
+| 路由模式 | `.env` 的 `VITE_AUTH_ROUTE_MODE`，当前默认为 `static`。 |
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 未登录访问后台被重定向到登录页 | `guardAdminRoute()`、`getLoginRedirectSearch()` |
+| 登录后用户信息或菜单没有初始化 | `useAuth().initAuth()`、`queryUserInfoOptions()`、`initMenus(data)` |
+| 外链菜单被打开后当前页跳回首页 | `staticData.href`、`getRouteSwitchFallbackPath()` |
+| 退出登录后 tabs 或菜单状态残留 | `logout()`、`clearMenus()`、`cacheTabs()` |
+| 进入 403（静态或动态权限失败） | 见 [权限](./permission) |
+
+## 守卫所在位置
+
+后台主 layout route 负责统一进入守卫：
+
+```ts
+function beforeLoadAdminRoute(options: AdminRouteGuardOptions): AdminRouteGuardResult {
+  return guardAdminRoute(options);
+}
+
+export const Route = createFileRoute('/(admin)')({
+  component: AdminLayout,
+  beforeLoad: beforeLoadAdminRoute as any
+});
+```
+
+只要页面在 `pages/(admin)` 下，就会经过这个 `beforeLoad`。这比每个页面各自写守卫更稳定，因为登录、用户初始化、权限、动态菜单和外链回退的行为都集中在一个地方。
+
+## 完整执行链路
+
+先看“在哪里触发”：进入后台页面时，三个 `beforeLoad` 依次执行，最终落到 `guardAdminRoute()`。
+
+```text
+RouterProvider
+  -> 注入 useAuth() 返回的 context
+pages/__root.tsx beforeLoad
+  -> 已登录但未初始化时 context.initAuth()
+pages/(admin)/layout.tsx beforeLoad
+  -> guardAdminRoute()
+```
+
+再看 `guardAdminRoute()` 内部“怎么判断”。每一步都有明确的失败走向，任何一步抛出 `redirect` 都会中断后续流程：
+
+```text
+进入 (admin) 下任意后台页面
+   │
+   ▼
+[1] context.isLoggedIn ?
+   │  否 ───────────────▶ redirect /login（非首页时带 redirect=当前 href）
+   │  是
+   ▼
+[2] resolveUserInfo()
+   │  已初始化且有 userInfo ─▶ 直接复用
+   │  否则 await context.initAuth()
+   ▼
+[3] userInfo 有效 ?
+   │  否 ───────────────▶ logout() ─▶ redirect /login
+   │  是
+   ▼
+[4] 权限判定（按 VITE_AUTH_ROUTE_MODE，见「权限」页）
+   │  static : hasMatchedRoutePermission(matches, userInfo)
+   │  dynamic: hasAuthorizedRoutePath(currentPath, userInfo)
+   │  不通过 ─────────────▶ redirect /403
+   │  通过
+   ▼
+[5] matched route 命中 staticData.href ?
+   │  是（且非 preload）──▶ window.open(href) ─▶ redirect 回退当前页（首页 / 404）
+   │  否
+   ▼
+放行 ─▶ 渲染后台页面
+```
+
+这张图的核心是：router context 来自 `useAuth()`，而 `useAuth()` 又连接 React Query 用户信息、菜单初始化和本地 token 状态。`[1][2][3][5]` 都属于守卫流程；`[4]` 只在这里被调用，判定逻辑见 [权限](./permission)。
+
+## Router context 从哪里来
+
+`features/router/index.ts` 创建 router 时会提供一份初始 context：
+
+```ts
+context: {
+  initAuth: () => Promise.resolve(null),
+  logout: () => {},
+  getHomeRoute: () => globalConfig.defaultHome,
+  homeRoute: globalConfig.defaultHome,
+  isAuthInitialized: false,
+  isLoggedIn: false,
+  queryClient,
+  userInfo: undefined
+}
+```
+
+真正运行时，`features/router/RouterProvider.tsx` 会用 `useAuth()` 的结果覆盖它：
+
+```tsx
+const RouterProvider = memo(() => {
+  const { logout, getHomeRoute, homeRoute, initAuth, isAuthInitialized, isLoggedIn, userInfo } = useAuth();
+
+  return (
+    <TanStackRouterProvider
+      context={{ initAuth, isAuthInitialized, isLoggedIn, userInfo, logout, getHomeRoute, homeRoute }}
+      router={router}
+    />
+  );
+});
+```
+
+所以守卫里拿到的 `context.isLoggedIn`、`context.userInfo`、`context.initAuth()` 都来自当前应用认证状态，不是 TanStack Router 自己维护的状态。权限判定也是直接读 `context.userInfo.roles`。
+
+## 用户初始化
+
+`useAuth().initAuth()` 做三件事：
+
+```ts
+async function initAuth() {
+  try {
+    const { data } = await refetch();
+
+    if (!data) {
+      return null;
+    }
+
+    await initMenus(data);
+
+    setState(prev => ({ ...prev, initialized: true }));
+
+    return data;
+  } catch {
+    return null;
+  }
+}
+```
+
+| 步骤 | 作用 |
+| --- | --- |
+| `refetch()` | 通过 `useUserInfoQuery()` 请求或刷新当前用户信息。 |
+| `initMenus(data)` | 根据用户信息和路由模式生成菜单、首页和 quick reference map。 |
+| `setState(prev => ({ ...prev, initialized: true }))` | 标记 auth 初始化完成，避免每次路由切换都重复初始化。 |
+
+如果用户信息请求失败，`initAuth()` 返回 `null`。守卫会调用 `logout()`，再跳回登录页。
+
+`logout()` 会清理多处状态：
+
+| 清理项 | 作用 |
+| --- | --- |
+| `queryClient.clear()` | 清掉 React Query 缓存，避免旧用户数据残留。 |
+| `setState({ token: '' })` | 清掉当前 Jotai auth token 状态。 |
+| `clearAuthStorage()` | 清掉本地 token、refreshToken 等认证缓存。 |
+| `clearMenus()` | 清掉菜单和授权索引。 |
+| `cacheTabs()` | 退出前缓存 tabs 状态，保持布局包自己的状态收口。 |
+
+## 未登录重定向
+
+`guardAdminRoute()` 第一层判断是登录态：
+
+```ts
+if (!context.isLoggedIn) {
+  throw redirect({ to: '/login', search: getLoginRedirectSearch(location, context) });
+}
+```
+
+重定向参数由 `getLoginRedirectSearch()` 决定：
+
+| 当前访问 | 登录页 search |
+| --- | --- |
+| 访问默认首页且没有 query | 不带 redirect。 |
+| 访问其他后台路径 | 带 `redirect: location.href`。 |
+
+这样用户直接访问 `/manage/user?id=1` 时，登录后能回到原路径；但访问默认首页时不会制造无意义的 `redirect=/home`。
+
+登录页 layout 只在已有登录态时消费这个 redirect；认证初始化已经由 root 的已登录预热负责：
+
+```ts
+if (context.isLoggedIn) {
+  throw redirect({ to: search.redirect || context.getHomeRoute() });
+}
+```
+
+## 权限判定步骤
+
+用户信息就绪后，守卫会按当前路由模式做权限判定：
+
+```ts
+if (import.meta.env.VITE_AUTH_ROUTE_MODE === 'static' && !hasMatchedRoutePermission(matches, userInfo)) {
+  throw redirect({ to: '/403' });
+}
+
+const currentRoutePath = getCurrentRoutePath(matches);
+
+if (currentRoutePath && !hasAuthorizedRoutePath(currentRoutePath, userInfo)) {
+  throw redirect({ to: '/403' });
+}
+```
+
+这一步只负责“判定失败就跳 `/403`”。判定本身的规则——权限模型、静态权限、动态授权、超级角色、403 来源——全部在 [权限](./permission) 里说明。
+
+## 外链处理
+
+守卫在权限通过后检查 matched routes 里是否有 `staticData.href`：
+
+```ts
+const href = getMatchedRouteHref(matches);
+
+if (href && !preload) {
+  window.open(href, '_blank', 'noopener,noreferrer');
+
+  throw redirect({ to: getRouteSwitchFallbackPath(context, currentRoutePath), replace: true });
+}
+```
+
+这里有三个细节：
+
+| 细节 | 原因 |
+| --- | --- |
+| 先做登录和权限，再打开外链 | 外链入口仍属于后台菜单的一部分，需要受控。 |
+| `!preload` 才打开 | router 配置了 `defaultPreload: 'intent'`，hover 预加载不能弹新窗口。 |
+| 打开后重定向当前页 | 外链路由自身组件通常是 `null`，当前页需要回到首页或 404。 |
+
+回退路径由当前路由决定：
+
+| 当前外链 path | 回退 |
+| --- | --- |
+| 不是首页 | 回到当前用户首页。 |
+| 已经是首页 | 回到 `/404`，避免在首页外链场景中循环跳转。 |
+
+## 排查顺序
+
+### 未登录或登录后跳转异常
+
+| 现象 | 先检查 |
+| --- | --- |
+| 访问后台直接到 `/login` | 本地 token 是否存在，`getToken()` 是否能读到。 |
+| 登录后没有回到原路径 | 登录 URL 是否带 `redirect`，redirect 是否以 `/` 开头。 |
+| 登录后首页不对 | 静态模式看 `VITE_ROUTE_HOME`，动态模式看后端返回的 `home`。 |
+| 已登录访问 `/login` 没有自动跳走 | `context.isLoggedIn` 是否正确注入到 RouterProvider，root 的已登录预热是否正常完成。 |
+
+### 用户初始化异常
+
+| 现象 | 先检查 |
+| --- | --- |
+| 有 token 但仍回登录页 | `queryUserInfoOptions()` 请求是否失败，`initAuth()` 是否返回 `null`。 |
+| 登录后菜单为空 | `initMenus(data)` 是否执行，静态模式是否有可见 `staticData.menu`，动态模式接口是否返回 routes。 |
+| 切换用户后看见旧菜单 | `logout()` 是否执行了 `queryClient.clear()` 和 `clearMenus()`。 |
+
+> 403 相关排查见 [权限](./permission)。
+
+## 常见误区
+
+| 误区 | 正确理解 |
+| --- | --- |
+| 403 一定是 token 失效 | token 或用户信息失败会回 `/login`；403 表示已经进入权限或授权路径判断，见 [权限](./permission)。 |
+| 每个后台页面都要自己写登录守卫 | 后台页面挂在 `(admin)` 下即可复用 `(admin)/layout.tsx` 的 `guardAdminRoute()`。 |
+| 外链点击由菜单组件处理 | 当前外链统一由 `guardAdminRoute()` 处理，避免绕过权限。 |
+| 在页面组件里再请求用户信息更安全 | 当前用户初始化已经由 root 的已登录预热和后台 layout 守卫收口；页面里重复初始化会制造状态竞争。 |
+
+## 相关位置
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 权限模型、静态/动态权限、超级角色、403 | [权限](./permission) |
+| 页面文件、路由组和 route tree | [路由概览](./overview) |
+| `staticData`、`permissions`、`href`、`activeMenu` | [路由元信息](./route-meta) |
+| 启动时注入 `setupAdminLayouts` | [启动流程](../architecture/bootstrap) |
+| 登录页和退出登录页面 | [登录认证](../features/auth-login) |

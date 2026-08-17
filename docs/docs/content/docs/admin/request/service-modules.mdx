@@ -1,0 +1,345 @@
+---
+title: 服务模块
+description: 按 urls、api、keys、hooks、index 分层新增业务接口，并用 React Query 接入页面
+---
+
+这一页解决一个问题：新增一个业务接口时，应该把 URL、类型、请求函数、React Query key 和页面 hooks 分别放在哪里。
+
+当前 `apps/admin` 的业务接口按模块组织在 `apps/admin/src/service/api` 下。模块只描述“如何访问后端业务能力”，不负责组件渲染、表单状态或页面交互。
+
+```text
+apps/admin/src/service/api
+  -> auth          # 登录、用户信息、刷新 token
+  -> route         # 动态路由
+  -> index.ts      # 统一出口
+```
+
+精简模板只保留登录和动态路由必需的两个模块。`apps/admin-example` 多一个 `system-manage`，是写业务模块最完整的参照。
+
+每个模块内部遵循同一套分层，固定 5 个文件：
+
+```text
+{module}
+  -> urls.ts
+  -> api.ts
+  -> keys.ts
+  -> hooks.ts
+  -> index.ts
+```
+
+模块内**没有** `types.d.ts`。请求参数和响应类型统一声明在 [`@skyroc/types`](/docs/packages/core/types) 的全局 `Api` 命名空间下（`packages/@core/types/src/api/*.d.ts`），业务代码直接用 `Api.Auth.UserInfo`、`Api.SystemManage.User` 这样的类型，不需要 `import`。
+
+## 分层职责
+
+| 文件 | 职责 | 是否直接给页面用 |
+| --- | --- | --- |
+| `urls.ts` | 集中维护接口路径常量。 | 否 |
+| `api.ts` | 调用 `request` 或其他请求实例，返回业务 data。 | 少量场景可直接用 |
+| `keys.ts` | 维护 React Query 的 queryKey / mutationKey。 | 否 |
+| `hooks.ts` | 封装 `useQuery`、`useMutation` 或 `queryOptions`。 | 是 |
+| `index.ts` | 模块出口，统一导出 api/hooks/keys。 | 是 |
+
+页面优先引用 `hooks.ts` 导出的 hooks。只有下面场景才建议直接用 `api.ts`：
+
+| 场景 | 原因 |
+| --- | --- |
+| 路由守卫、启动流程或非组件上下文 | 无法使用 React hook。 |
+| React Query 的 `queryOptions` 内部 | 需要把请求函数交给 query client。 |
+| 一次性命令式调用且不需要缓存 | 例如临时下载、导出、外部事件回调。 |
+
+## 现有模块示例
+
+| 模块 | 重点接口 | 说明 |
+| --- | --- | --- |
+| `auth` | `fetchLogin`、`fetchGetUserInfo`、`fetchRefreshToken` | 认证、用户信息、刷新 token。 |
+| `route` | `fetchGetBackendRoutes` | 动态路由和菜单加载。 |
+| `system-manage`（仅 `apps/admin-example`） | `fetchGetRoleList`、`fetchGetUserList`、`fetchGetMenuList`、`fetchGetAllRoles`、`fetchGetAllPages`、`fetchGetMenuTree` | 系统管理列表和菜单数据。 |
+
+`route` 模块还有一个特殊点：`queryMenusOptions()` 会被 `bootstrap.tsx` 里的动态路由加载器消费，所以它既服务页面，也服务后台布局初始化。
+
+## 新增模块步骤
+
+假设要新增 `report` 模块，建议按下面顺序写。
+
+### 1. 建目录和出口
+
+```text
+apps/admin/src/service/api/report
+  -> api.ts
+  -> hooks.ts
+  -> index.ts
+  -> keys.ts
+  -> urls.ts
+```
+
+`report/index.ts` 负责模块内导出：
+
+```ts
+export * from './api';
+export * from './hooks';
+export * from './keys';
+```
+
+然后在 `apps/admin/src/service/api/index.ts` 增加：
+
+```ts
+export * from './report';
+```
+
+### 2. 写 URL 常量
+
+`urls.ts` 只维护路径，不放请求参数和业务逻辑：
+
+```ts
+/** Report module URLs */
+
+export const REPORT_URLS = {
+  GET_REPORT_LIST: '/report/getReportList',
+  GET_REPORT_DETAIL: '/report/getReportDetail'
+} as const;
+```
+
+使用常量的目的不是减少字符，而是让 API 函数里不散落裸字符串。接口路径调整时，先改 `urls.ts`。
+
+### 3. 写模块类型
+
+类型不放在模块目录里，而是新建 `packages/@core/types/src/api/report.d.ts`，挂到全局 `Api` 命名空间下，和现有模块保持一致：
+
+```ts
+/**
+ * 命名空间 Api.Report
+ *
+ * 后端 API 模块：报表模块
+ */
+declare namespace Api {
+  namespace Report {
+    /** 报表查询参数 */
+    type ReportSearchParams = CommonType.RecordNullable<
+      {
+        /** 报表名称 */
+        reportName: string;
+        /** 报表状态 */
+        status: Api.Common.EnableStatus;
+      } & Api.Common.CommonSearchParams
+    >;
+
+    /** 报表记录 */
+    type Report = Api.Common.CommonRecord<{
+      /** 报表编码 */
+      reportCode: string;
+      /** 报表名称 */
+      reportName: string;
+    }>;
+
+    /** 报表列表 */
+    type ReportList = Api.Common.PaginatingQueryRecord<Report>;
+  }
+}
+```
+
+写完还要在 `packages/@core/types/src/index.ts` 里补一行导出，新命名空间才会生效：
+
+```ts
+export * from './api/report';
+```
+
+类型只描述后端接口契约。页面自己的表单值、筛选面板状态、表格列配置不要放在这里。
+
+### 4. 写请求函数
+
+`api.ts` 只做请求映射：
+
+```ts
+import { request } from '../../request';
+
+import { REPORT_URLS } from './urls';
+
+/** Get report list */
+export function fetchGetReportList(params: Api.Report.ReportSearchParams) {
+  return request<Api.Report.ReportList>({
+    method: 'get',
+    params,
+    url: REPORT_URLS.GET_REPORT_LIST
+  });
+}
+```
+
+这里不需要手动解包 `response.data.data`。主 `request` 已经统一完成响应转换，函数返回的就是 `Api.Report.ReportList`。
+
+如果接口属于其他服务，比如 `demo` 服务，才使用对应的独立请求实例：
+
+```ts
+import { demoRequest } from '../../request';
+
+export function fetchDemoReport() {
+  return demoRequest<Api.Service.DemoResponse<Api.Report.ReportList>>({
+    method: 'get',
+    url: '/report/list'
+  });
+}
+```
+
+主后台接口不要为了“临时联调”改用 `demoRequest`。服务归属应由后端域名和响应格式决定。
+
+### 5. 写 query keys
+
+`keys.ts` 负责稳定缓存身份：
+
+```ts
+/** Report module query keys */
+
+export const REPORT_QUERY_KEYS = {
+  REPORT_DETAIL: (id: number) => ['report', 'detail', id] as const,
+  REPORT_LIST: (params: Api.Report.ReportSearchParams) => ['report', 'list', params] as const
+} as const;
+```
+
+参数会影响结果时，必须进入 query key。否则不同筛选条件可能共用同一份缓存。
+
+mutation key 只在需要明确标识 mutation 时添加：
+
+```ts
+export const REPORT_MUTATION_KEYS = {
+  CREATE_REPORT: ['report', 'create'] as const
+} as const;
+```
+
+### 6. 写 hooks
+
+`hooks.ts` 把请求函数交给 React Query：
+
+```ts
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchGetReportList } from './api';
+import { REPORT_QUERY_KEYS } from './keys';
+
+/**
+ * Get report list query hook
+ *
+ * @param params - Search parameters
+ */
+export function useReportListQuery(params: Api.Report.ReportSearchParams) {
+  return useQuery({
+    queryFn: () => fetchGetReportList(params),
+    queryKey: REPORT_QUERY_KEYS.REPORT_LIST(params)
+  });
+}
+```
+
+如果这个查询还会被组件外部使用，抽出 `queryOptions`：
+
+```ts
+import { queryOptions, useQuery } from '@tanstack/react-query';
+
+import { fetchGetReportList } from './api';
+import { REPORT_QUERY_KEYS } from './keys';
+
+export const queryReportListOptions = (params: Api.Report.ReportSearchParams) => {
+  return queryOptions({
+    queryFn: () => fetchGetReportList(params),
+    queryKey: REPORT_QUERY_KEYS.REPORT_LIST(params)
+  });
+};
+
+/**
+ * Get report list query hook
+ *
+ * @param params - Search parameters
+ */
+export function useReportListQuery(params: Api.Report.ReportSearchParams) {
+  const options = queryReportListOptions(params);
+  return useQuery(options);
+}
+```
+
+`route/hooks.ts` 的 `queryMenusOptions()` 就是这种模式，因为动态菜单加载要在 `queryClient.ensureQueryData()` 中复用。
+
+## 页面如何接入
+
+页面只关心 hook 结果：
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router';
+
+import { useReportListQuery } from '@/service/api';
+
+const ReportPage = () => {
+  const params: Api.Report.ReportSearchParams = {
+    current: 1,
+    reportName: null,
+    size: 10,
+    status: null
+  };
+
+  const { data, isLoading } = useReportListQuery(params);
+
+  return <ReportTable data={data?.records ?? []} loading={isLoading} />;
+};
+
+export const Route = createFileRoute('/(admin)/report')({
+  component: ReportPage
+});
+```
+
+页面不要重复拼 URL、重复写 token、重复判断业务 code，也不要绕过模块 hooks 自己创建 query key。
+
+## 列表、详情和 mutation 的 key 设计
+
+| 接口类型 | query key 建议 | 原因 |
+| --- | --- | --- |
+| 无参数详情 | `['report', 'detail', id]` | id 决定缓存身份。 |
+| 分页列表 | `['report', 'list', params]` | 页码、分页大小、筛选条件都会影响结果。 |
+| 字典/静态选项 | `['report', 'options']` | 可设置较长 `staleTime`。 |
+| 当前用户相关数据 | `['auth', 'userInfo']` | 和登录态绑定，退出登录时要能清理。 |
+
+写 mutation 后，如果会影响列表或详情，应在 mutation 成功后失效对应 query。失效范围要尽量精确，不要为了一个新增操作清空所有模块缓存。
+
+```ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { createReport } from './api';
+import { REPORT_MUTATION_KEYS, REPORT_QUERY_KEYS } from './keys';
+
+/** Create report mutation hook */
+export function useCreateReportMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createReport,
+    mutationKey: REPORT_MUTATION_KEYS.CREATE_REPORT,
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: REPORT_QUERY_KEYS.REPORT_LIST
+      });
+    }
+  });
+}
+```
+
+如果 `REPORT_LIST` 是一个函数 key，失效时可以只传模块前缀：
+
+```ts
+await queryClient.invalidateQueries({
+  queryKey: ['report', 'list']
+});
+```
+
+## 常见边界
+
+| 问题 | 做法 |
+| --- | --- |
+| 后端路径变了 | 改 `urls.ts`，不要在页面里搜索替换裸字符串。 |
+| 后端字段变了 | 改 `packages/@core/types/src/api/{module}.d.ts`，再顺着类型错误修页面。 |
+| 成功 code 或登出 code 变了 | 改 `.env*` 的 `VITE_SERVICE_*_CODES`。 |
+| 响应结构不是 `{ code, data, msg }` | 考虑单独请求实例或为 `createAppRequest` 传自定义 `transform` / `isBackendSuccess`。 |
+| 新增其他服务 key | 同步 `.env*`、`Api.Service.OtherBaseURLKey` 和请求实例。 |
+| 页面需要接口数据 | 优先新增或复用 `hooks.ts`，不要在组件里直接创建 axios 请求。 |
+
+## 相关页面
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 请求实例、token 和错误处理 | [请求概览](./overview) |
+| 代理前缀和真实后端切换 | [代理与后端对接](./proxy-and-backend) |
+| 路由和动态菜单如何消费接口 | [路由概览](../routing/overview) |

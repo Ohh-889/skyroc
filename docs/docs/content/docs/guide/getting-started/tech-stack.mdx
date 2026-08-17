@@ -1,0 +1,112 @@
+---
+title: 技术栈全景
+description: 从平台、共享基础设施与工程治理三个层面理解项目技术选型
+---
+
+这不是一份依赖清单，而是一张技术地图：它帮助你判断不同应用运行在哪套技术之上、共享能力位于哪一层，以及开发功能时应该进入哪个 workspace（可独立管理依赖和任务的应用或包）。具体版本以 `pnpm-workspace.yaml` 和各 workspace 的 `package.json` 为准。
+
+## 平台技术地图
+
+| 层面       | Web 管理端                      | Native                     | 共享基础设施                                             |
+| ---------- | ------------------------------- | -------------------------- | -------------------------------------------------------- |
+| 核心技术   | React 19                        | React Native 0.86、Expo 57 | 平台无关的 TypeScript / React 包                         |
+| 路由       | TanStack Router                 | Expo Router                | 路由无关                                                 |
+| UI         | Ant Design 6、`@skyroc/web-ui*` | `@skyroc/native-ui`        | `@skyroc/ui-types`、`@skyroc/form`                       |
+| 样式       | UnoCSS、Tailwind CSS、Sass      | Uniwind（Tailwind CSS v4） | `@skyroc/color`、`@skyroc/tailwind-plugin`               |
+| 状态与请求 | Jotai、TanStack Query           | Jotai、TanStack Query      | `@skyroc/core-state`、`@skyroc/service`、`@skyroc/axios` |
+| 构建       | Vite                            | Expo / Metro               | tsdown（多数可发布 TypeScript 库）                       |
+| 测试       | Vitest、Testing Library         | Jest / Expo                | Vitest、Testing Library                                  |
+
+仓库中的 React 版本按运行时分别管理：Web 管理端使用 `core` catalog，Native 版本跟随 Expo SDK，文档站则维护自己的 Next.js 与 React 版本。不要用某个应用的精确版本代表整个 monorepo。
+
+## Web 管理端
+
+`apps/admin`、`apps/admin-example` 和 `apps/ruoyi-plus-fast` 共享同一套后台技术基线：
+
+- **React + Vite**：`@skyroc/web-admin-vite` 统一组合 Vite、React Compiler、UnoCSS、图标和开发工具插件。
+- **TanStack Router**：扫描应用的 `src/pages` 目录，生成类型安全的 `routeTree.gen.ts`，并启用自动代码分割。完整机制见 [路由系统](/docs/admin/routing/overview)。
+- **Ant Design + Skyroc Web UI**：Ant Design 承担成熟的后台业务交互；`@skyroc/web-ui`、`@skyroc/web-ui-antd` 与 `@skyroc/web-ui-compose` 分别提供基础设计系统、Ant Design 组合组件和跨页面复合能力。
+- **UnoCSS + Tailwind CSS + Sass**：后台应用主要使用 UnoCSS 和 Sass；`@skyroc/web-ui` 使用 Tailwind CSS。两套方案服务不同边界，不应在同一组件中随意混用。
+- **i18next + react-i18next**：`@skyroc/web-admin-i18n` 负责语言资源、运行时切换和组件接入。
+- **Motion**：动画能力按需加载，应用通过 `LazyAnimate` 延后加载动画运行时。
+
+文档站不是 Vite 应用。`docs/*` 使用 **Next.js + Fumadocs**，负责主文档、包参考以及 Web / Native UI 的独立文档站。
+
+## Native 与跨端能力
+
+Native UI playground 基于 **Expo 57、React Native 0.86 和 Expo Router**。`@skyroc/native-ui` 是独立的 React Native 组件库；Uniwind 负责在 Native 中运行 Tailwind CSS v4 的 class 与 token，并按组件能力接入 Reanimated、Gesture Handler、Skia 等原生依赖。Native 不使用 UnoCSS，Web 管理端也不使用 Uniwind。
+
+Web 和 Native 共享的是类型、设计语义和不依赖平台的逻辑，而不是具体 UI 实现：
+
+- `@skyroc/ui-types` 共享 UI 类型；
+- `@skyroc/hooks` 共享通用 React hooks，并通过子入口隔离 Web 专属能力；
+- `@skyroc/form` 提供不绑定具体视觉组件的表单基础能力；
+- `@skyroc/color` 与 `@skyroc/tailwind-plugin` 生成颜色和语义 token；
+- `@skyroc/logger` 提供 Web / React Native 的日志存储与可选上传能力。
+
+完整的平台目录与包职责见 [目录结构总览](/docs/guide/getting-started/directory) 和 [包参考](/docs/packages)。
+
+## 数据与状态如何协作
+
+项目明确区分客户端状态、服务端状态和网络传输：
+
+```text
+页面 Query Hook
+  → TanStack Query（缓存、失效、请求生命周期）
+      ├─ QueryClient：由 @skyroc/service/query 创建
+      └─ queryFn / mutationFn
+          → 应用请求实例（由 @skyroc/service 组装鉴权刷新与宿主适配）
+          → @skyroc/axios（HTTP、重试与请求配置）
+          → 后端 API
+
+组件
+  → Jotai atom（主题、语言、菜单、标签页等客户端状态）
+  → @skyroc/core-state（Provider、globalStore 与存取工具）
+```
+
+`@skyroc/axios` 提供底层 Axios 客户端和传输级配置；`@skyroc/service` 基于它组装与具体 UI 无关的鉴权刷新、错误处理和宿主适配，并通过 `./query` 子入口提供 QueryClient 工厂。网络层重试和 Query 重试属于不同层级，应分别按接口语义配置。
+
+TanStack Query 不用于代替本地 UI 状态，Jotai 也不重复实现服务端缓存；只属于单个组件的输入值、展开状态和弹窗开关优先保留在组件内部。应用业务接口和 Query Hook 留在应用侧，共享包只提供与具体后端模块无关的基础能力。
+
+相关实现说明见 [请求架构](/docs/admin/request/overview) 和 [应用启动](/docs/admin/architecture/bootstrap)。
+
+## 设计系统链路
+
+```text
+@skyroc/color（OKLCH 调色板与对比度工具）
+  → @skyroc/tailwind-plugin（共享语义 token）
+      ├─ Web UI：Tailwind CSS
+      └─ Native UI：Uniwind
+  → @skyroc/adapter-antd-theme（Ant Design 主题映射）
+```
+
+`@skyroc/web-ui` 与 `@skyroc/native-ui` 不追求组件实现复用；它们共享设计语言，但分别遵循浏览器和 React Native 的交互、布局与无障碍约束。后台主题的运行时组合见 [主题系统](/docs/admin/theme/overview)。
+
+## 构建与工程化
+
+| 工具                     | 在仓库中的职责                                                                |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| pnpm workspace           | 声明应用、包、文档站与内部工具的 workspace 边界                               |
+| pnpm catalog             | 按 `core`、`web`、`native`、`dev` 等域集中管理共享依赖版本                    |
+| pnpm overrides           | 强制对齐会影响类型或运行时兼容性的少数依赖                                    |
+| Turborepo                | 按 workspace 依赖图编排 `build`、`lint`、`test`、`typecheck` 等任务并复用缓存 |
+| Vite                     | 构建和开发 Web 管理端应用                                                     |
+| Expo / Metro             | 运行和构建 React Native playground                                            |
+| tsdown                   | 为多数需要发布产物的 TypeScript 库生成 `dist`；源码直出包不强制使用           |
+| Oxlint                   | 主要的 JavaScript / TypeScript 静态检查工具                                   |
+| Oxfmt                    | 仓库级统一格式化入口                                                          |
+| Vitest / Testing Library | 包和 Web 组件的行为测试；请求测试按需使用 MSW                                 |
+
+## 版本治理
+
+三条规则决定一个依赖的版本写在哪：
+
+| 依赖性质 | 写法 |
+| --- | --- |
+| 跨多个 workspace 使用的第三方依赖 | 先加进 `pnpm-workspace.yaml` 的对应 catalog，使用方写 `catalog:<域>` |
+| 只在单个 workspace 使用的第三方依赖 | 直接在该 workspace 的 `package.json` 写版本号 |
+| 仓库内包互相依赖 | `workspace:*` |
+
+只有兼容性或类型一致性必须强制统一时，才动根 `overrides`。catalog 的分域方式、完整配置与新增依赖的流程见 [Catalog 依赖管理](/docs/guide/architecture/catalog)。
+
+当你需要进一步确认代码应该放在哪里时，继续阅读 [目录结构总览](/docs/guide/getting-started/directory)；当你需要了解某个包的公开职责和入口时，进入 [包参考](/docs/packages)。

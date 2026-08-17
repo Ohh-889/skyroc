@@ -1,0 +1,62 @@
+---
+title: 包参考
+description: 31 个 @skyroc/* 包的用途、分层与依赖关系
+icon: Package
+---
+
+仓库把后台系统里反复出现的能力拆成了 **31 个独立包**。这一栏是它们的完整 API 参考。
+
+想知道这些能力**在应用里怎么用**，去 [Admin 应用](/docs/admin)；想理解**为什么这么分层**，去 [架构设计](/docs/guide/architecture/package-layering)。
+
+## 分层
+
+依赖只能从上往下，同层之间不能互相依赖：
+
+```text
+应用层      apps/admin、apps/admin-example
+              ↓
+平台能力层  packages/web/*        （Web 专属：UI、主题、布局、Vite）
+              ↓
+基础设施层  packages/@core/*      （跨端运行时：请求、状态、日志、调度）
+              ↓
+类型层      packages/shared/*     （纯类型，零或极轻依赖）
+```
+
+## 跨端基础
+
+| 分组 | 包 | 数量 |
+| --- | --- | --- |
+| [Core](/docs/packages/core/overview) | `types`、`utils`、`color`、`axios`、`core-state`、`logger`、`scheduler`、`service`、`scripts` | 9 |
+| [Shared](/docs/packages/shared/overview) | `ui-types`、`type-utils` | 2 |
+| [Hooks](/docs/packages/hooks) | `hooks` | 1 |
+| [Form](/docs/packages/form) | `form` | 1 |
+
+## Web 端
+
+| 分组 | 包 | 数量 |
+| --- | --- | --- |
+| 设计系统 | `web-ui`、`web-ui-compose`、`web-ui-antd` | 3 |
+| 主题 | `web-admin-theme`、`adapter-antd-theme`、`tailwind-plugin` | 3 |
+| 布局与壳 | `web-admin-layouts`、`materials`、`web-admin-styles` | 3 |
+| 运行时 | `web-admin-runtime`、`web-admin-i18n`、`web-admin-notification`、`web-admin-devtools` | 4 |
+| 构建 | `web-admin-vite` | 1 |
+
+三个 `ui/*` 包的组件文档、实时 Demo 和 Props 表在独立的 Web UI 站点，见 [Web UI](/docs/packages/web/ui)。
+
+## 其它
+
+| 分组 | 包 | 说明 |
+| --- | --- | --- |
+| Native | `native-ui` | React Native / Expo 组件库，文档在独立的 Native UI 站点 |
+| [内部配置](/docs/packages/internal/overview) | `tsconfig`、`config`、`uno-config` | 不发布，仓库内部共享的工程化配置 |
+
+> `@sa/uno-config` 是唯一还用 `@sa` scope 的包，属历史遗留，见 [命名规范](/docs/guide/architecture/naming)。
+
+## 怎么查
+
+| 你在找什么 | 去哪 |
+| --- | --- |
+| 某个函数的签名和参数 | 对应包的详情页 |
+| 这个包在 admin 里怎么接 | 详情页底部的「在 Admin 中如何使用」 |
+| 该用哪个包 | [包分层与依赖方向](/docs/guide/architecture/package-layering) |
+| 新建一个包 | [新增包](/docs/guide/engineering/new-package) |

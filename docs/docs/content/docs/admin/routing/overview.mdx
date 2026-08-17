@@ -1,0 +1,313 @@
+---
+title: 路由概览
+description: 理解 apps/admin 的 TanStack Router 约定式路由、routeTree.gen.ts、路由组和动态菜单模式
+---
+
+这一页解决一个问题：在 `apps/admin` 中，一个页面文件如何变成可访问的后台路由，并最终进入布局、菜单、标签页和权限链路。
+
+当前实现以 TanStack Router 的 file-based routing 为核心。页面文件放在 `apps/admin/src/pages`，Vite 插件生成 `apps/admin/src/features/router/routeTree.gen.ts`，应用启动时再把 route tree 交给 router 和后台布局系统。
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 新增后台业务页面 | `apps/admin/src/pages/(admin)`、`createFileRoute`、`staticData` |
+| 给表单页或编辑页开启页面缓存 | `staticData.keepAlive`、`staticData.tab.multi`、`AdminContent` |
+| 新增登录或认证页面 | `apps/admin/src/pages/(auth)`、登录 layout route |
+| 新增错误页 | `apps/admin/src/pages/(errors)`、`pages/not-found.tsx`、`pages/error.tsx` |
+| 理解路由文件为什么会变成某个 URL | `@skyroc/web-admin-vite` 的 TanStack Router 插件配置、`routeTree.gen.ts` |
+| 排查菜单有但页面打不开 | `routeTree.gen.ts`、动态菜单接口返回的 `path`、后台真实页面文件 |
+| 排查登录后跳转、403 或外链打开 | `pages/__root.tsx`、`pages/(admin)/layout.tsx`、`features/router/guard.ts` |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/pages` | TanStack Router 约定式路由目录，承载 root、layout、index、动态路由和业务页面。 |
+| `packages/web/admin-vite/src/plugins/router.ts` | 配置 TanStack Router Vite 插件：路由目录、生成文件、layout token、忽略目录等。 |
+| `apps/admin/src/features/router/routeTree.gen.ts` | TanStack Router 自动生成的 route tree。不要手改这个文件。 |
+| `apps/admin/src/features/router/index.ts` | 创建 router 实例，配置 route tree、search 解析、预加载、滚动恢复和初始 context。 |
+| `apps/admin/src/features/router/RouterProvider.tsx` | 从 `useAuth()` 读取认证和菜单上下文，注入 TanStack Router Provider。 |
+| `apps/admin/src/pages/__root.tsx` | 根路由。处理全局 loading、error、notFound 和已登录用户的认证预热。 |
+| `apps/admin/src/pages/(admin)/layout.tsx` | 后台 layout route。渲染 `WebAdminLayout`，并在进入后台页面前执行 `guardAdminRoute()`。 |
+| `apps/admin/src/bootstrap.tsx` | 将 `routeTree`、菜单分类、动态路由加载器和权限超级角色交给 `setupAdminLayouts()`。 |
+
+## 路由生成链路
+
+当前路由链路可以拆成“构建期生成”和“运行期消费”两段：
+
+```text
+apps/admin/src/pages
+  -> @tanstack/router-plugin/vite
+  -> apps/admin/src/features/router/routeTree.gen.ts
+  -> createRouter({ routeTree })
+  -> RouterProvider 注入 auth context
+  -> root beforeLoad 做已登录认证预热
+  -> admin layout beforeLoad 做后台进入守卫
+  -> WebAdminLayout、菜单、tabs、权限守卫消费路由信息
+```
+
+### 构建期：从文件生成 route tree
+
+`@skyroc/web-admin-vite` 在 Vite 插件中配置 TanStack Router：
+
+```ts
+tanstackRouter({
+  autoCodeSplitting: true,
+  generatedRouteTree: './src/features/router/routeTree.gen.ts',
+  routeFileIgnorePattern: '(?:^|/)(components|modules)(?:/|$)|(?:^|/)(loading|error|not-found)(?:.tsx?|$)',
+  routesDirectory: './src/pages',
+  routeToken: 'layout',
+  target: 'react'
+});
+```
+
+这几个配置决定了当前路由约定：
+
+| 配置 | 当前含义 |
+| --- | --- |
+| `routesDirectory` | 只有 `apps/admin/src/pages` 下面的路由文件会参与生成。 |
+| `generatedRouteTree` | 生成文件固定在 `src/features/router/routeTree.gen.ts`，方便 `features/router/index.ts` 和 `bootstrap.tsx` 同时引用。 |
+| `routeToken: 'layout'` | `layout.tsx` 表示 layout route，例如 `pages/(admin)/layout.tsx`。 |
+| `routeFileIgnorePattern` | `components`、`modules` 目录，以及 `loading`、`error`、`not-found` 文件不会被当作路由页面。 |
+| `autoCodeSplitting` | 路由文件会按 TanStack Router 规则自动拆分加载。 |
+
+因此，页面级组件可以放在页面目录下的 `modules`，不会意外变成 URL。
+
+### 运行期：router 和后台布局同时消费 route tree
+
+`features/router/index.ts` 使用同一个 `routeTree` 创建 TanStack Router：
+
+```ts
+export const router = createRouter({
+  routeTree,
+  defaultPreload: 'intent',
+  stringifySearch: stringifyQuery,
+  parseSearch: parseQuery,
+  scrollRestoration: true
+});
+```
+
+`bootstrap.tsx` 又把同一个 `routeTree` 传给 `setupAdminLayouts()`：
+
+```ts
+setupAdminLayouts({
+  defaultHome: globalConfig.defaultHome,
+  loadDynamicRoutes: loadAdminDynamicRoutes,
+  menuCategories,
+  permissionSuperRole: import.meta.env.VITE_STATIC_SUPER_ROLE,
+  routeMode: globalConfig.routeMode,
+  routeTree,
+  storage: localStg
+});
+```
+
+这个设计有两个结果：
+
+| 消费方 | 使用 route tree 做什么 |
+| --- | --- |
+| TanStack Router | 匹配 URL、执行 `beforeLoad`、渲染页面组件、处理 pending/error/notFound。 |
+| `@skyroc/web-admin-layouts` | 在静态模式下从路由 `staticData` 生成菜单；在动态模式下仍用 route tree 识别布局分组和真实页面边界。 |
+
+动态路由模式不是“后端临时注册 React 页面组件”。后台返回的菜单 path 仍然必须能落到前端已经存在的 TanStack Route，否则会在适配阶段被过滤，不进入菜单和动态授权索引。
+
+## `pages` 目录约定
+
+当前 `apps/admin/src/pages` 主要分为几类：
+
+`apps/admin` 是精简起步模板，`pages` 下的文件很少，正好可以完整列出：
+
+| 路径 | URL 表现 | 职责 |
+| --- | --- | --- |
+| `__root.tsx` | 根路由，不直接产生业务 URL | 全局 root route，挂载 loading、error、notFound、NProgress 和文档标题，并只在已有登录态时做认证预热。 |
+| `index.tsx` | `/` | 根路径重定向：已登录去 `context.getHomeRoute()`，未登录去 `/login`。 |
+| `error.tsx`、`not-found.tsx`、`loading.tsx` | 不产生 URL | 被插件的 `routeFileIgnorePattern` 排除，作为组件供 `__root.tsx` 引用。 |
+| `(admin)/layout.tsx` | 不直接出现在 URL 中 | 后台 layout route，渲染 `WebAdminLayout` 并执行 `guardAdminRoute()`。 |
+| `(admin)/home/index.tsx` | `/home` | 后台首页，模板中唯一的业务页面。 |
+| `(auth)/login/layout.tsx` | `/login` | 登录页 layout route，`validateSearch` 校验 `redirect`，已登录时回到 redirect 或首页。 |
+| `(auth)/login/index.tsx` | `/login` | 账号密码登录表单。 |
+| `(auth)/login-out.tsx` | `/login-out` | 退出登录。 |
+| `(errors)/403.tsx`、`404.tsx`、`500.tsx` | `/403`、`/404`、`/500` | 顶层错误页。 |
+
+`(admin)`、`(auth)`、`(errors)` 是路由组。它们用于组织目录和 layout 关系，不会出现在 URL 中。
+
+> 下文举例用到的 `manage/user`、`manage/user/$id`、`exception/*`、多级 `layout.tsx` 等页面，在 `apps/admin` 里并不存在——它们在 `apps/admin-example` 中有完整实现。写新页面时可以对照那边的目录结构。
+
+## 路由组和 layout route
+
+### `(admin)` 是后台壳边界
+
+所有登录后访问的后台页面都挂在 `pages/(admin)` 下。`pages/(admin)/layout.tsx` 做两件事：
+
+| 职责 | 当前实现 |
+| --- | --- |
+| 渲染后台布局 | 使用 `@skyroc/web-admin-layouts` 的 `AdminLayout`，注入 logo、footer、通知按钮、用户头像等 slot。 |
+| 进入前守卫 | `beforeLoad` 调用 `guardAdminRoute({ context, location, matches, preload })`。 |
+
+这意味着新增后台业务页面时，不需要在每个页面重复写登录校验。只要页面放在 `(admin)` 下面，就会经过后台 layout route 的守卫。
+
+### `(auth)` 是认证页面边界
+
+认证相关页面放在 `(auth)` 下。`apps/admin` 当前只有账号密码登录（`login/index.tsx`）和退出登录（`login-out.tsx`）；注册、验证码登录、重置密码在 `apps/admin-example` 的 `(auth)/login/` 下（`register.tsx`、`code-login.tsx`、`reset-pwd.tsx`）。
+
+`pages/(auth)/login/layout.tsx` 不负责认证初始化，只在用户已登录时做跳转兜底：
+
+```ts
+if (context.isLoggedIn) {
+  throw redirect({ to: search.redirect || context.getHomeRoute() });
+}
+```
+
+因此，访问 `/login` 时如果已有有效 token，会回到 redirect 指定路径或当前用户首页。
+
+### `(errors)` 是顶层错误页
+
+`pages/(errors)/403.tsx`、`404.tsx`、`500.tsx` 生成顶层 `/403`、`/404`、`/500`。`apps/admin-example` 里还额外有 `(admin)/exception/*` 页面，用于菜单中的异常页演示。两者职责不同：
+
+| 类型 | 例子 | 用途 |
+| --- | --- | --- |
+| 顶层错误页 | `/403`、`/404`、`/500` | 守卫和全局错误跳转使用。 |
+| 后台异常演示页 | `/exception/403`、`/exception/404`、`/exception/500` | 后台菜单中的业务示例页面。 |
+
+## 新增后台页面
+
+新增普通后台页面时，优先放在 `apps/admin/src/pages/(admin)` 下，并在路由对象上提供 `staticData`。最小形态如下：
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router';
+
+const ReportCenter = () => {
+  return <div>Report Center</div>;
+};
+
+export const Route = createFileRoute('/(admin)/report/center')({
+  component: ReportCenter,
+  staticData: {
+    title: 'report_center',
+    i18nKey: 'route.report_center',
+    menu: {
+      icon: 'mdi:file-chart-outline',
+      order: 12
+    }
+  }
+});
+```
+
+需要同时注意三件事：
+
+| 要点 | 原因 |
+| --- | --- |
+| `createFileRoute()` 的路径要和文件位置匹配 | TanStack Router 会用它和生成的 route tree 建立类型关系。 |
+| 后台页面放在 `(admin)` 下 | 才会经过后台 layout、菜单、tabs 和权限守卫。 |
+| 菜单、标题、权限写在 `staticData` | 静态模式菜单生成、面包屑、tabs 和权限判断都会消费这些元信息。 |
+
+如果页面还需要目录级布局，增加 `layout.tsx`：
+
+```text
+pages/(admin)/report/layout.tsx
+pages/(admin)/report/center.tsx
+pages/(admin)/report/audit.tsx
+```
+
+`layout.tsx` 负责渲染 `<Outlet />`，并在 `staticData.menu` 中配置一级菜单；子页面配置自己的二级菜单。
+
+## 动态参数路由
+
+动态参数用 `$` 前缀文件名表示。`apps/admin-example` 中的例子：
+
+```text
+pages/(admin)/manage/user/$id.tsx
+```
+
+它对应的路由是：
+
+```ts
+createFileRoute('/(admin)/manage/user/$id')
+```
+
+可访问 URL 是：
+
+```text
+/manage/user/123
+```
+
+详情页通常不出现在菜单里，而是让左侧菜单保持选中列表页：
+
+```ts
+staticData: {
+  title: 'manage_user_detail',
+  i18nKey: 'route.manage_user_$id',
+  menu: {
+    hide: true,
+    activeMenu: '/manage/user'
+  }
+}
+```
+
+`hide: true` 只是不渲染菜单项；路由仍然会被记录到 quick reference map 中，`activeMenu` 会让菜单和面包屑回到指定父级。
+
+## 静态模式和动态模式
+
+路由模式由 `.env` 中的 `VITE_AUTH_ROUTE_MODE` 控制。当前默认值是：
+
+```text
+VITE_AUTH_ROUTE_MODE=static
+```
+
+两种模式的差异在菜单和权限来源，不在页面组件来源：
+
+| 模式 | 菜单来源 | 权限来源 | 页面组件来源 |
+| --- | --- | --- | --- |
+| `static` | 前端 route tree 中的 `staticData` | route match 的 `staticData.permissions` | 前端 `apps/admin/src/pages` |
+| `dynamic` | 后端 `fetchGetBackendRoutes()` 返回的路由树，经 `loadAdminDynamicRoutes()` 适配 | 适配后的路由节点 `permissions`，再结合前端用户角色 | 前端 `apps/admin/src/pages` |
+
+动态模式下，`bootstrap.tsx` 提供的 `loadDynamicRoutes` 指向：
+
+```ts
+loadAdminDynamicRoutes
+```
+
+接口原始响应类型在 `packages/@core/types/src/api/route.d.ts` 中定义：
+
+```ts
+interface BackendRouteResponse {
+  home?: string | null;
+  routes: BackendRoutePayload[];
+}
+```
+
+`apps/admin/src/features/menus/dynamic-routes.ts` 会把后端 `name/path/component/handle` 响应适配成布局包消费的 `Api.Route.BackendRoute[]`。适配后才会进入和前端 `staticData` 接近的元信息结构，例如 `title`、`i18nKey`、`menu`、`permissions`、`href` 和 `url`。
+
+## 排查顺序
+
+| 现象 | 先检查 |
+| --- | --- |
+| 新增页面访问 404 | 文件是否在 `src/pages` 下，`createFileRoute()` 路径是否和目录约定一致，`routeTree.gen.ts` 是否重新生成。 |
+| 页面能访问但菜单不显示 | `staticData.menu.hide` 是否为 true，静态模式下是否有 `staticData`，动态模式下后端是否返回该 path。 |
+| 菜单显示但点击 404 | 动态菜单返回的 `path` 是否对应前端真实 TanStack Route。 |
+| 切换 tabs 后表单值丢失 | route 是否配置 `keepAlive`，tab 是否仍打开，带查询参数页面是否需要 `tab.multi`。 |
+| 详情页打开后左侧菜单不选中 | 隐藏页是否配置 `menu.activeMenu`，路径是否使用规范化后的可跳转路径，例如 `/manage/user`。 |
+| 登录后跳转到非预期页面 | `.env` 的 `VITE_ROUTE_HOME`、后端动态路由返回的 `home`、`useMenus().home`。 |
+| 进入后台直接 403 | 看 `VITE_AUTH_ROUTE_MODE`，静态模式查 `staticData.permissions`，动态模式查后端路由树和用户角色。 |
+| 修改路由文件后类型仍旧 | 重新启动 Vite 或执行会触发 TanStack Router 生成的脚本，确认 `routeTree.gen.ts` 已更新。 |
+
+## 常见误区
+
+| 误区 | 正确理解 |
+| --- | --- |
+| 动态路由模式可以让后端直接新增前端页面 | 动态模式只改变菜单和授权数据来源，React 页面组件仍必须存在于前端 route tree。 |
+| `routeTree.gen.ts` 可以手动修路由 | 这是生成文件，会被 TanStack Router 覆盖；要改页面文件或插件配置。 |
+| `(admin)` 会出现在 URL 里 | 括号目录是路由组，只影响组织和 layout，不进入 URL。 |
+| `modules` 里的组件会变成路由 | 当前插件明确忽略 `components` 和 `modules` 目录。 |
+| 每个后台页面都要自己写登录守卫 | 后台页面挂在 `(admin)` 下即可复用 `(admin)/layout.tsx` 的 `guardAdminRoute()`。 |
+
+## 相关位置
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 路由标题、菜单、图标、隐藏页、外链 | [路由元信息](./route-meta) |
+| 页面实例缓存、React Activity 和 tabs 切换验证 | [路由缓存](./route-cache) |
+| 登录拦截、用户初始化、外链 | [路由守卫](./guards) |
+| 403、静态/动态权限、超级角色 | [权限](./permission) |
+| 应用启动时如何注入 route tree 和菜单配置 | [启动流程](../architecture/bootstrap) |
+| 目录职责和 app/package 边界 | [项目结构](../getting-started/project-structure) |

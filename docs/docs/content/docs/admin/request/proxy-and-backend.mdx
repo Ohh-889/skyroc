@@ -1,0 +1,287 @@
+---
+title: 代理与后端对接
+description: 使用 VITE_SERVICE_BASE_URL、VITE_OTHER_SERVICE_BASE_URL、/proxy-default 和 /proxy-{key} 切换真实后端
+---
+
+这一页解决一个问题：本地开发、测试构建和生产构建分别怎样切换真实后端，以及为什么浏览器里看到的请求地址可能是 `/proxy-default`。
+
+当前代理链路由两部分共同完成：
+
+```text
+apps/admin/.env*
+  -> @skyroc/web-admin-vite 读取 env 并创建 Vite dev server proxy
+  -> apps/admin/src/utils/service.ts 读取 env 并生成请求 baseURL
+  -> apps/admin/src/service/request/index.ts 创建 request / demoRequest
+```
+
+Vite dev server 负责“把本地代理前缀转发到真实后端”；应用请求层负责“决定当前应该请求代理前缀还是真实域名”。两边必须使用同一套服务 key 和代理前缀。
+
+## 当前关键变量
+
+| 变量 | 作用 |
+| --- | --- |
+| `VITE_SERVICE_BASE_URL` | 主后台服务地址。开发代理开启时映射到 `/proxy-default`。 |
+| `VITE_OTHER_SERVICE_BASE_URL` | 其他服务地址，使用 JSON5 对象字符串。每个 key 映射到 `/proxy-{key}`。 |
+| `VITE_HTTP_PROXY` | dev server 下是否启用代理，当前为 `Y`。 |
+| `VITE_PROXY_LOG` | 是否在终端打印代理请求和真实请求地址，当前为 `Y`。 |
+| `VITE_SERVICE_SUCCESS_CODE` | 主业务请求成功 code。 |
+| `VITE_SERVICE_LOGOUT_CODES` | 直接登出 code，逗号分隔。 |
+| `VITE_SERVICE_MODAL_LOGOUT_CODES` | 弹窗确认后登出 code，逗号分隔。 |
+| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | token 过期后刷新并重试的 code，逗号分隔。 |
+
+当前 `.env.test` 和 `.env.prod` 都指向 Apifox mock 主服务；其他服务只有 `demo`：
+
+```dotenv
+VITE_SERVICE_BASE_URL=https://mock.apifox.cn/m1/3109515-0-default
+
+VITE_OTHER_SERVICE_BASE_URL= `{
+  "demo": "http://localhost:9528"
+}`
+```
+
+生产 mode 当前把 `demo` 指到 `http://localhost:9529`。
+
+## mode 决定读取哪个 env
+
+`apps/admin/package.json` 的脚本决定 Vite mode：
+
+| 命令 | Vite mode | 读取 |
+| --- | --- | --- |
+| `pnpm --filter skyroc-admin dev` | `test` | `.env` + `.env.test` |
+| `pnpm --filter skyroc-admin dev:prod` | `prod` | `.env` + `.env.prod` |
+| `pnpm --filter skyroc-admin build:test` | `test` | `.env` + `.env.test` |
+| `pnpm --filter skyroc-admin build` | `prod` | `.env` + `.env.prod` |
+
+本地默认开发命令是 `dev`，也就是 test mode。只改 `.env.prod` 后继续跑 `dev`，不会看到后端地址变化。
+
+修改 env 后要重启 Vite dev server。Vite env 是启动时读取，不是运行时热更新配置。
+
+## 代理前缀规则
+
+主服务固定使用：
+
+```text
+/proxy-default
+```
+
+其他服务使用：
+
+```text
+/proxy-{key}
+```
+
+例如当前 `demo` 服务对应：
+
+```text
+/proxy-demo
+```
+
+规则在两处保持一致：
+
+| 位置 | 函数 | 职责 |
+| --- | --- | --- |
+| `apps/admin/src/utils/service.ts` | `createProxyPattern()` | 给前端请求实例生成 baseURL。 |
+| `packages/web/admin-vite/src/proxy.ts` | `createAdminViteProxyPattern()` | 给 Vite dev server 生成 proxy key。 |
+
+这两个函数的默认结果都应该是 `/proxy-default`，带 key 时都是 `/proxy-{key}`。
+
+## dev server 代理怎么转发
+
+`@skyroc/web-admin-vite` 只在开发服务下创建代理：
+
+```text
+configEnv.command === 'serve'
+  && !configEnv.isPreview
+  && VITE_HTTP_PROXY === 'Y'
+```
+
+代理目标来自 env：
+
+```text
+VITE_SERVICE_BASE_URL
+VITE_OTHER_SERVICE_BASE_URL
+```
+
+转发时会去掉代理前缀：
+
+```text
+/proxy-default/v1/users -> {VITE_SERVICE_BASE_URL}/v1/users
+/proxy-demo/v1/users    -> {demo}/v1/users
+```
+
+如果 `VITE_PROXY_LOG=Y`，终端会打印两行信息：
+
+```text
+[proxy url]: GET /proxy-default/v1/users
+[real request url]: https://api.example.com/v1/users
+```
+
+浏览器 Network 面板看到 `/proxy-default` 是正常现象。真实请求地址要看 dev server 终端日志或代理配置。
+
+## 请求层怎么选择 baseURL
+
+`apps/admin/src/service/request/index.ts` 使用：
+
+```ts
+const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
+const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
+```
+
+结果如下：
+
+| 场景 | 主服务 | 其他服务 |
+| --- | --- | --- |
+| dev 且代理开启 | `/proxy-default` | `/proxy-{key}` |
+| dev 但代理关闭 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL[key]` |
+| build 产物 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL[key]` |
+
+所以“是否走代理”不是 API 模块决定的，而是 env 和运行环境共同决定的。
+
+## 切换真实测试后端
+
+默认开发命令使用 test mode，因此切测试后端优先改 `apps/admin/.env.test`：
+
+```dotenv
+VITE_SERVICE_BASE_URL=https://test-api.example.com
+VITE_OTHER_SERVICE_BASE_URL= `{
+  "demo": "https://test-demo.example.com"
+}`
+```
+
+重启开发服务：
+
+```bash
+pnpm --filter skyroc-admin dev
+```
+
+如果仍然保留：
+
+```dotenv
+VITE_HTTP_PROXY=Y
+```
+
+浏览器请求会继续显示 `/proxy-default` 和 `/proxy-demo`，但 Vite 代理目标已经切到新的测试后端。
+
+## 本地直接打远端域名
+
+如果要临时绕过 Vite dev server 代理，可以关闭代理：
+
+```dotenv
+VITE_HTTP_PROXY=N
+```
+
+然后重启：
+
+```bash
+pnpm --filter skyroc-admin dev
+```
+
+此时请求实例会直接使用：
+
+```text
+VITE_SERVICE_BASE_URL
+VITE_OTHER_SERVICE_BASE_URL.demo
+```
+
+这样浏览器会直接请求真实域名，可能遇到 CORS。后端没有配 CORS 时，保留本地代理是更稳定的联调方式。
+
+## 新增其他后端服务
+
+假设新增 `auth` 服务，先改 env：
+
+```dotenv
+VITE_OTHER_SERVICE_BASE_URL= `{
+  "demo": "http://localhost:9528",
+  "auth": "https://auth-api.example.com"
+}`
+```
+
+开发代理会生成：
+
+```text
+/proxy-demo
+/proxy-auth
+```
+
+然后同步类型中的 service key。当前其他服务 key 类型在 `packages/@core/types/src/api/service.d.ts`：
+
+```ts
+type OtherBaseURLKey = 'demo';
+```
+
+新增后应变成：
+
+```ts
+type OtherBaseURLKey = 'auth' | 'demo';
+```
+
+最后在 `apps/admin/src/service/request/index.ts` 创建或复用对应请求实例：
+
+```ts
+const { otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
+
+export const authRequest = createFlatRequest(
+  {
+    baseURL: otherBaseURL.auth
+  },
+  {
+    // 按 auth 服务的真实响应结构配置 transform / isBackendSuccess / onError
+  }
+);
+```
+
+只在 env 中增加 key 不会自动产生业务 API 模块。还需要在 `apps/admin/src/service/api` 下按模块补 `urls/api/hooks/keys/types`。
+
+## 业务 code 与后端约定
+
+主业务请求的行为由这些 env 变量决定：
+
+```dotenv
+VITE_SERVICE_SUCCESS_CODE=0000
+VITE_SERVICE_LOGOUT_CODES=8888,8889
+VITE_SERVICE_MODAL_LOGOUT_CODES=7777,7778
+VITE_SERVICE_EXPIRED_TOKEN_CODES=9999,9998,3333
+```
+
+对接真实后端时，必须确认后端响应结构和 code 语义是否匹配：
+
+```ts
+type Response<T> = {
+  code: string;
+  data: T;
+  msg: string;
+};
+```
+
+如果真实后端成功 code 不是 `0000`，只改 `VITE_SERVICE_SUCCESS_CODE`。如果真实后端字段不是 `code/data/msg`，就不是简单 env 切换，需要改请求实例的成功判断和响应转换。
+
+## 常见问题
+
+| 现象 | 先检查 |
+| --- | --- |
+| 改了 `.env.prod` 但本地没有变化 | 当前是否跑的是 `pnpm --filter skyroc-admin dev`。这个命令读 `.env.test`。 |
+| Network 里还是 `/proxy-default` | 代理开启时这是预期行为。看终端代理日志确认真实目标。 |
+| 代理没有创建 | 是否是 dev server、是否不是 preview、`VITE_HTTP_PROXY` 是否为 `Y`。 |
+| `/proxy-demo` 是 undefined | `VITE_OTHER_SERVICE_BASE_URL` 是否能被 JSON5 解析，`demo` key 是否存在。 |
+| 新增 key 后 TypeScript 报错 | 同步 `Api.Service.OtherBaseURLKey`。 |
+| 真实后端返回成功但前端提示失败 | `VITE_SERVICE_SUCCESS_CODE` 是否和后端一致。 |
+| token 过期没有刷新 | 后端过期 code 是否包含在 `VITE_SERVICE_EXPIRED_TOKEN_CODES`。 |
+| 关闭代理后跨域失败 | 这是浏览器 CORS 限制；恢复代理或让后端允许当前 origin。 |
+
+## 排查顺序
+
+1. 确认启动命令和 Vite mode。
+2. 确认当前 mode 读取的是 `.env.test` 还是 `.env.prod`。
+3. 确认 `VITE_HTTP_PROXY` 是否为 `Y`。
+4. 看浏览器 Network 面板中的请求前缀。
+5. 如果有代理前缀，看终端 `[real request url]`。
+6. 确认后端响应结构和业务 code。
+7. 最后再检查具体 `service/api/*` 模块是否拼错 URL。
+
+## 相关页面
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 请求封装和 token 刷新 | [请求概览](./overview) |
+| 新增业务接口模块 | [服务模块](./service-modules) |
+| env、Vite preset 和 application/vite 边界 | [环境变量与 Vite](../configuration/env-and-vite) |

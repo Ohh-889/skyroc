@@ -1,0 +1,142 @@
+---
+title: 通知系统 API
+description: NotificationProvider、useNotificationContext 与通知类型的签名、参数和返回值速查
+---
+
+这一页是 `@skyroc/web-admin-notification` 的 **API 速查**。三层职责、接入链路和演示页见 [通知系统](./notification)；这里只列 Provider props、context 返回值和类型。
+
+```ts
+import { NotificationButton, NotificationProvider, useNotificationContext } from '@skyroc/web-admin-notification';
+import type { NotificationConfig, NotificationItem, NotificationType } from '@skyroc/web-admin-notification';
+```
+
+事实源：`packages/web/admin-notification/src/{use-notification,NotificationProvider,useNotificationContext,types}.ts`。
+
+## NotificationProvider
+
+```tsx
+const NotificationProvider: (props: NotificationProviderProps) => JSX.Element;
+```
+
+必须包住所有使用通知 context 的页面和 header 按钮（当前位于 `App.tsx`）。props：
+
+| prop | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | ✅ | 可消费通知 context 的应用内容。 |
+| `soundUrl` | `string` | ⬜ | 通知声音资源 URL，由宿主应用注入。 |
+| `defaultConfig` | `Partial<NotificationConfig>` | ⬜ | 初始配置，与包默认值合并。 |
+| `onNavigate` | `(link: string, notification: NotificationItem) => void` | ⬜ | 浏览器通知点击跳转回调；不传则用 `window.location.href`。 |
+| `onPlaySoundError` | `(error: unknown) => void` | ⬜ | 声音播放失败回调。 |
+| `onBrowserNotificationError` | `(error: unknown) => void` | ⬜ | 浏览器通知展示失败回调。 |
+| `onBrowserNotificationUnsupported` | `() => void` | ⬜ | 当前浏览器无 Notification API 时回调。 |
+| `onRequestPermissionError` | `(error: unknown) => void` | ⬜ | 请求通知权限失败回调。 |
+
+## useNotificationContext
+
+```ts
+function useNotificationContext(): NotificationContextValue;
+```
+
+读取通知 context，必须在 `NotificationProvider` 子树内使用，否则抛出 `useNotificationContext must be used within NotificationProvider`。返回值如下。
+
+### 状态
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `notifications` | `NotificationItem[]` | 当前通知列表（新通知在前）。 |
+| `unreadCount` | `number` | 未读通知数量（派生值）。 |
+| `config` | `NotificationConfig` | 当前运行时配置。 |
+| `notificationPermission` | `NotificationPermission` | 浏览器通知权限：`'default'` / `'granted'` / `'denied'`。 |
+
+### 创建通知
+
+| 方法 | 签名 | 说明 |
+| --- | --- | --- |
+| `addNotification` | `(input: AddNotificationInput) => string` | 完整控制创建通知，返回通知 `id`。 |
+| `addInfoNotification` | `(title, content, options?) => string` | 快捷创建 `info` 通知。 |
+| `addSuccessNotification` | `(title, content, options?) => string` | 快捷创建 `success` 通知。 |
+| `addWarningNotification` | `(title, content, options?) => string` | 快捷创建 `warning` 通知。 |
+| `addErrorNotification` | `(title, content, options?) => string` | 快捷创建 `error` 通知。 |
+| `addMessageNotification` | `(title, content, options?) => string` | 快捷创建 `message` 通知。 |
+
+快捷方法的 `options` 类型是 `NotificationShortcutOptions`，可覆盖除 `title` / `content` / `type` 外的多数字段（如 `priority`、`link`、`silent`、`showBrowserNotification`、`meta`）。
+
+### 管理通知
+
+| 方法 | 签名 | 说明 |
+| --- | --- | --- |
+| `markAsRead` | `(id: string) => void` | 标记单条已读。 |
+| `markAllAsRead` | `() => void` | 全部标记已读。 |
+| `removeNotification` | `(id: string) => void` | 删除单条通知。 |
+| `clearReadNotifications` | `() => void` | 清除已读通知。 |
+| `clearAllNotifications` | `() => void` | 清空全部通知。 |
+| `updateConfig` | `(updates: Partial<NotificationConfig>) => void` | 合并更新运行时配置。 |
+| `requestNotificationPermission` | `() => Promise<boolean>` | 请求浏览器通知权限，返回是否获得授权。 |
+
+## 副作用顺序
+
+`addNotification()` 创建后按下面顺序处理副作用，并受配置与字段拦截：
+
+```text
+addNotification()
+  -> setNotifications([new, ...prev])  // 超过 maxNotifications 截断
+  -> playNotificationSound()           // silent 或 soundEnabled=false 跳过
+  -> showBrowserNotification()         // showBrowserNotification=false / 权限非 granted / 勿扰时段 跳过
+```
+
+## 类型
+
+```ts
+type NotificationType = 'error' | 'info' | 'message' | 'success' | 'warning';
+type NotificationPriority = 'high' | 'low' | 'normal' | 'urgent';
+
+interface NotificationItem {
+  id: string;                         // 不传时由 nanoid() 生成
+  title: string;
+  content: string;
+  type: NotificationType;
+  priority?: NotificationPriority;
+  read: boolean;                      // 新增时默认 false
+  timestamp: number;                  // 新增时默认 Date.now()
+  link?: string;                      // 浏览器通知点击目标
+  icon?: string;                      // 浏览器通知图标 URL
+  silent?: boolean;                   // 跳过声音与浏览器通知
+  showBrowserNotification?: boolean;  // 是否触发浏览器原生通知
+  meta?: Record<string, unknown>;     // 业务自定义数据
+}
+
+/** addNotification 入参：id/read/timestamp 可选，其余必填。 */
+type AddNotificationInput = Omit<NotificationItem, 'id' | 'read' | 'timestamp'> &
+  Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
+
+/** 快捷方法的可选项：不含 title/content/type。 */
+type NotificationShortcutOptions = Partial<
+  Omit<NotificationItem, 'content' | 'id' | 'read' | 'timestamp' | 'title' | 'type'>
+> &
+  Partial<Pick<NotificationItem, 'id' | 'read' | 'timestamp'>>;
+
+interface NotificationConfig {
+  browserNotificationEnabled: boolean; // 默认 true
+  soundEnabled: boolean;               // 默认 true
+  doNotDisturb: boolean;               // 默认 false
+  doNotDisturbTime?: { start: string; end: string }; // HH:mm
+  maxNotifications: number;            // 默认 99
+}
+```
+
+包默认配置：
+
+```ts
+const DEFAULT_NOTIFICATION_CONFIG: NotificationConfig = {
+  browserNotificationEnabled: true,
+  doNotDisturb: false,
+  maxNotifications: 99,
+  soundEnabled: true
+};
+```
+
+## 相关链接
+
+- 接入链路与演示页：[通知系统](./notification)
+- Ant Design 弹出式反馈：[Ant Design 全局反馈](./antd-feedback)、[全局反馈 API](./antd-feedback-api)
+- 布局 header 注入位置：[布局系统](../layout/overview)

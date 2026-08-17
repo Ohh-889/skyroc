@@ -1,0 +1,230 @@
+---
+title: 请求概览
+description: 看懂 apps/admin 的请求封装、业务 code、token 刷新和错误提示适配
+---
+
+这一页解决一个问题：页面调用一个业务接口时，请求从哪里创建、如何带上 token、后端业务 code 如何判断成功，以及错误提示和登录跳转由谁负责。
+
+当前请求层不是页面直接使用 axios。它分成三层：
+
+```text
+apps/admin/.env*
+  -> apps/admin/src/utils/service.ts
+  -> apps/admin/src/service/request/index.ts
+  -> @skyroc/service/createAppRequest
+  -> @skyroc/axios/createRequest
+  -> apps/admin/src/service/api/*
+  -> React Query hooks
+  -> 页面
+```
+
+`.env*` 提供后端地址和业务 code；`utils/service.ts` 把后端地址转换成真实 baseURL 或开发代理前缀；`service/request/index.ts` 创建请求实例；`service/api/*` 只负责具体业务接口；页面优先通过 React Query hooks 使用接口。
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `apps/admin/src/service/request/index.ts` | 创建 `request` 和 `demoRequest` 两个请求实例。 |
+| `apps/admin/src/utils/service.ts` | 根据 env 生成主服务和其他服务的 baseURL / proxyPattern。 |
+| `apps/admin/src/service/adapter.ts` | 把 antd message/modal、TanStack Router、local storage、i18n 和刷新 token 能力注入请求核心。 |
+| `packages/@core/service/src/request/create-request.ts` | 创建后台业务请求实例，默认处理 token、业务成功判断和响应转换。 |
+| `packages/@core/service/src/request/error-handler.ts` | 处理登出码、弹窗登出码、token 过期码和普通错误提示。 |
+| `packages/@core/service/src/request/shared.ts` | 构造 Authorization、刷新 token、防重复错误提示。 |
+| `packages/@core/axios/src/index.ts` | 底层 axios 实例、拦截器、request id、取消请求和 flat request。 |
+| `apps/admin/src/service/api/*` | 按业务模块组织接口、query keys、React Query hooks 和类型。 |
+
+## 两个请求实例
+
+`apps/admin/src/service/request/index.ts` 当前导出两个实例：
+
+| 实例 | 使用场景 | 响应形态 | baseURL 来源 |
+| --- | --- | --- | --- |
+| `request` | 主后台业务接口 | 默认返回 `response.data.data` | `VITE_SERVICE_BASE_URL` 或 `/proxy-default` |
+| `demoRequest` | 示例其他服务接口 | 返回 `{ data, error, response }` | `VITE_OTHER_SERVICE_BASE_URL.demo` 或 `/proxy-demo` |
+
+主业务模块通常使用 `request`：
+
+```ts
+import { request } from '../../request';
+
+export function fetchGetUserInfo() {
+  return request<Api.Auth.UserInfo>({ url: AUTH_URLS.GET_USER_INFO });
+}
+```
+
+`demoRequest` 使用 `createFlatRequest`。它不会直接抛出给调用方，而是把结果包成平铺对象，更适合示例服务或调用方想自己判断 `error` 的场景。
+
+```ts
+const result = await demoRequest<Api.Service.DemoResponse>({
+  url: '/demo'
+});
+
+if (result.error) {
+  // 调用方自己处理错误
+}
+```
+
+## baseURL 如何确定
+
+请求实例创建时会先判断是否使用本地代理：
+
+```ts
+const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
+const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
+```
+
+结果规则如下：
+
+| 环境 | `request.baseURL` | `demoRequest.baseURL` |
+| --- | --- | --- |
+| dev 且 `VITE_HTTP_PROXY=Y` | `/proxy-default` | `/proxy-demo` |
+| dev 但代理关闭 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL.demo` |
+| 构建产物 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL.demo` |
+
+这意味着本地开发时浏览器看到的可能是 `/proxy-default/api`，真实后端地址由 Vite dev server 代理转发。切后端优先改 `.env.test` 或 `.env.prod`，不要在接口模块里写死域名。
+
+## 主业务响应约定
+
+`request` 默认按这个后端响应结构处理：
+
+```ts
+type Response<T> = {
+  code: string;
+  data: T;
+  msg: string;
+};
+```
+
+成功 code 来自 env：
+
+```text
+VITE_SERVICE_SUCCESS_CODE=0000
+```
+
+默认成功判断是：
+
+```ts
+String(response.data.code) === codes.success
+```
+
+默认响应转换是：
+
+```ts
+response.data.data
+```
+
+所以业务 API 函数只需要声明实际 data 类型：
+
+```ts
+export function fetchGetRoleList(params: Api.SystemManage.RoleSearchParams) {
+  return request<Api.SystemManage.RoleList>({
+    method: 'get',
+    params,
+    url: SYSTEM_MANAGE_URLS.GET_ROLE_LIST
+  });
+}
+```
+
+调用方拿到的是 `Api.SystemManage.RoleList`，不是完整的 `{ code, data, msg }`。
+
+## token 如何注入和刷新
+
+主请求实例通过 `antdAdapter` 读取认证信息：
+
+| 行为 | 实现位置 |
+| --- | --- |
+| 读取 access token | `antdAdapter.getToken()` 读取 `localStg.get('token')` |
+| 注入请求头 | `getAuthorization(adapter)` 生成 `Bearer ${token}` |
+| 读取 refresh token | `antdAdapter.getRefreshToken()` 读取 `localStg.get('refreshToken')` |
+| 刷新 token | `antdAdapter.fetchRefreshToken()` 调用 `fetchRefreshToken(refreshToken)` |
+| 保存新 token | `antdAdapter.setAuth()` 调用认证状态的 `setAuth()` |
+| 刷新失败跳登录 | `handleRefreshToken()` 调用 `adapter.redirectToLogin(currentPath)` |
+
+token 过期码来自：
+
+```text
+VITE_SERVICE_EXPIRED_TOKEN_CODES=9999,9998,3333
+```
+
+当后端返回这些 code 时，请求层会：
+
+1. 使用 refresh token 换取新 token。
+2. 更新认证状态。
+3. 把原请求的 Authorization 替换成新 token。
+4. 重新发送原请求。
+
+并发过期请求会共用同一个 `refreshTokenPromise`，避免同一时间重复刷新 token。
+
+## 错误提示和登出行为
+
+请求层把后端业务失败分成几类：
+
+| code 配置 | 行为 |
+| --- | --- |
+| `VITE_SERVICE_LOGOUT_CODES` | 展示登出提示，然后直接跳转 `/login-out`。 |
+| `VITE_SERVICE_MODAL_LOGOUT_CODES` | 展示不可关闭的错误弹窗，用户确认后退出登录。 |
+| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | 静默刷新 token 并重试，不展示普通错误提示。 |
+| 其他业务失败 | 使用后端 `msg` 或 axios error message 展示错误提示。 |
+
+普通错误提示会经过 `showErrorMsg()` 去重。同一条错误消息展示期间不会重复弹出，避免并发请求同时失败时刷屏。
+
+平台相关能力都在 `apps/admin/src/service/adapter.ts`，核心包不直接依赖 antd、router 或 local storage。这是当前请求层的边界：跨端通用逻辑放在 `@skyroc/service`，应用平台差异放在 adapter。
+
+## `demoRequest` 的差异
+
+`demoRequest` 使用的是 `Api.Service.DemoResponse`：
+
+```ts
+type DemoResponse<T = unknown> = {
+  message: string;
+  result: T;
+  status: string;
+};
+```
+
+它的成功判断是：
+
+```ts
+response.data.status === '200'
+```
+
+转换结果是：
+
+```ts
+response.data.result
+```
+
+错误消息读取的是 `response.data.message`。它也会从 `localStg.get('token')` 手动注入 Authorization，但不走主业务请求的登出码、弹窗登出码和刷新 token 流程。
+
+如果一个接口属于后台主服务，优先用 `request`。只有当服务响应格式和主后台不一样，且调用方确实需要 flat result 时，才新增类似 `demoRequest` 的独立实例。
+
+## 新增接口时应该改哪里
+
+新增普通业务接口时通常只改 `apps/admin/src/service/api/{module}`：
+
+| 需求 | 位置 |
+| --- | --- |
+| 新增接口 URL | `{module}/urls.ts` |
+| 新增请求/响应类型 | `{module}/types.d.ts` |
+| 新增请求函数 | `{module}/api.ts` |
+| 新增 query 或 mutation key | `{module}/keys.ts` |
+| 页面用 React Query 接入 | `{module}/hooks.ts` |
+| 对外导出模块 | `{module}/index.ts` 和 `service/api/index.ts` |
+
+只有下面这些变化才需要动请求基础设施：
+
+| 变化 | 需要检查 |
+| --- | --- |
+| 新增后端服务域名 | `.env*`、`Api.Service.OtherBaseURLKey`、`utils/service.ts`、`service/request/index.ts` |
+| 后端主响应结构变化 | `@skyroc/service/createAppRequest` 的 `isBackendSuccess` 或 `transform` |
+| token 规则变化 | `antdAdapter` 和 `VITE_SERVICE_*_CODES` |
+| 错误展示策略变化 | `error-handler.ts` 和 `adapter.ts` |
+| 本地代理规则变化 | `packages/web/admin-vite/src/proxy.ts` 与 `utils/service.ts` |
+
+## 相关页面
+
+| 主题 | 继续查看 |
+| --- | --- |
+| 新增业务接口模块 | [服务模块](./service-modules) |
+| 切换真实后端和代理 | [代理与后端对接](./proxy-and-backend) |
+| env 与 Vite preset 边界 | [环境变量与 Vite](../configuration/env-and-vite) |

@@ -1,0 +1,108 @@
+---
+title: 目录结构总览
+description: monorepo 顶层目录与各 workspace 的职责一览
+---
+
+仓库共 **31 个包**（`packages/**` 28 个 + `internal/*` 3 个），外加 5 个应用（`apps/*`）和 3 个文档站（`docs/*`）。本页是这些 workspace 的权威清单——其它页面提到包数量或归属时，以这里为准。
+
+## 顶层结构
+
+```text
+soybean-admin-react/
+├── apps/                     # 应用（薄壳）
+│   ├── admin/                # 主管理后台 (skyroc-admin)
+│   ├── admin-example/        # 示例 admin（页面更全）
+│   ├── web-ui-playground/    # Web UI 组件演练场 (skyroc-ui-playground)
+│   ├── native-ui-playground/ # Native UI / Expo 演练场
+│   └── ruoyi-plus-fast/      # RuoYi-Plus 对接示例
+├── packages/                 # 所有 workspace 包（按平台优先组织）
+│   ├── @core/                # 跨端运行时基础设施（9 个包）
+│   ├── shared/               # 跨端纯类型（ui-types / type-utils）
+│   ├── hooks/                # 跨端 React hooks
+│   ├── primitives/           # 底层 primitive 库（如 @skyroc/form）
+│   ├── web/                  # Web 端能力包（UI / 主题 / 布局 / vite…）
+│   ├── native/               # React Native 端（@skyroc/native-ui）
+│   └── miniapp/              # 小程序端（预留，workspace glob 已就位）
+├── internal/                 # 内部配置包（不发布）
+│   ├── tsconfig/             # @skyroc/tsconfig
+│   ├── config/               # @skyroc/config（vitest + oxlint）
+│   └── uno-config/           # @sa/uno-config
+├── docs/                     # 文档站（fumadocs）
+│   ├── docs/                 # ← 主文档门户（本站点）
+│   ├── web-ui-docs/          # Web UI 组件站（独立部署）
+│   └── native-ui-docs/       # Native UI 组件站（独立部署）
+├── scripts/                  # 仓库级脚本
+├── turbo.json                # Turborepo 任务定义
+├── pnpm-workspace.yaml       # workspace + catalog + overrides
+├── vitest.config.ts          # 根测试配置
+├── .oxlintrc.json            # 根 lint 配置
+└── .oxfmtrc.json             # 根格式化配置
+```
+
+> 哪些目录会被识别成 workspace 包，由 `pnpm-workspace.yaml` 的 glob 决定，见 [Monorepo 与 pnpm workspace](/docs/guide/architecture/monorepo)。注意 `packages/web` 与 `packages/native` 本身不是包，只是平台目录。
+
+## packages/@core —— 基础设施层（9 个包）
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `types` | `@skyroc/types` | 全局类型声明（零依赖） |
+| `utils` | `@skyroc/utils` | 通用工具函数（含 `./web` 子入口） |
+| `color` | `@skyroc/color` | 颜色处理 & 调色板 |
+| `axios` | `@skyroc/axios` | 类型安全 HTTP 客户端 |
+| `state` | `@skyroc/core-state` | Jotai 状态封装 |
+| `logger` | `@skyroc/logger` | 跨端日志系统 |
+| `scheduler` | `@skyroc/scheduler` | 协作式任务调度 |
+| `service` | `@skyroc/service` | 请求 & 查询基础设施 |
+| `scripts` | `@skyroc/scripts` | 项目自动化 CLI（`sa`） |
+
+详见 [@core 总览](/docs/packages/core/overview)。
+
+## packages/web —— Web 端能力包（11 + 3 个包）
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `ui/shadcn` | `@skyroc/web-ui` | Radix + Tailwind 设计系统 |
+| `ui/compose` | `@skyroc/web-ui-compose` | 无状态复合组件 + 表格工具 |
+| `ui/antd` | `@skyroc/web-ui-antd` | Ant Design 业务组件层 |
+| `materials` | `@skyroc/materials` | 插槽式布局材料 |
+| `tailwind-plugin` | `@skyroc/tailwind-plugin` | Tailwind 主题插件 |
+| `antd-theme` | `@skyroc/adapter-antd-theme` | OKLCH antd 主题算法 |
+| `admin-theme` | `@skyroc/web-admin-theme` | 应用层主题管理 |
+| `admin-layouts` | `@skyroc/web-admin-layouts` | 完整 admin 布局壳 |
+| `admin-i18n` | `@skyroc/web-admin-i18n` | i18n 运行时 + 语言 UI |
+| `admin-notification` | `@skyroc/web-admin-notification` | 站内通知中心 |
+| `admin-runtime` | `@skyroc/web-admin-runtime` | 启动期副作用插件 |
+| `admin-styles` | `@skyroc/web-admin-styles` | 全局 CSS 资产 |
+| `admin-vite` | `@skyroc/web-admin-vite` | Vite 配置预设 |
+| `admin-devtools` | `@skyroc/web-admin-devtools` | 开发调试面板 |
+
+详见 [Web 端包总览](/docs/packages/web/overview)。三个 `ui/*` 包的组件文档、实时 Demo 与 Props 表在独立的 [Web UI 站点](/docs/packages/web/ui)。
+
+## packages/shared、hooks、primitives —— 跨端共享
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `shared/ui-types` | `@skyroc/ui-types` | 跨端 UI 类型 |
+| `shared/type-utils` | `@skyroc/type-utils` | 高级 TypeScript 工具类型（含 `./web` 子入口） |
+| `hooks` | `@skyroc/hooks` | 跨端 React hooks（含 `./web`） |
+| `primitives/filed-form` | `@skyroc/form` | 类型安全表单 primitive |
+
+详见 [跨端共享包](/docs/packages/shared/overview)、[`@skyroc/hooks`](/docs/packages/hooks)、[`@skyroc/form`](/docs/packages/form)。
+
+## packages/native —— React Native 端
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `native/ui` | `@skyroc/native-ui` | React Native / Expo 组件库 |
+
+组件文档与 Expo Demo 在独立的 Native UI 站点。
+
+## internal —— 内部配置包
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `tsconfig` | `@skyroc/tsconfig` | 共享 TS 编译配置 |
+| `config` | `@skyroc/config` | 共享 vitest / oxlint 配置 |
+| `uno-config` | `@sa/uno-config` | UnoCSS 预设 |
+
+详见 [内部配置包](/docs/packages/internal/overview)。

@@ -1,0 +1,223 @@
+---
+title: 构建体系
+description: Turborepo 编排 + tsdown 库构建 + Vite 应用构建的三层体系
+---
+
+## 三层构建
+
+```text
+                Turborepo  ← 总编排：缓存、依赖图、并行
+                    │
+        ┌───────────┼───────────┐
+        ▼                       ▼
+     tsdown                    Vite / Expo
+   （库 → dist/）             （应用 → dist/ / build/）
+```
+
+| 层 | 工具 | 适用 | 产物 |
+| --- | --- | --- | --- |
+| 编排 | Turborepo | 所有任务 | `.turbo/` 缓存 |
+| 库构建 | tsdown（Rolldown 内核） | `packages/**` | `dist/index.mjs` + `dist/*.d.mts` |
+| 应用构建 | Vite | `apps/admin` 等 Web 应用 | `dist/` |
+| 应用构建 | Expo / Metro | `apps/native-ui-playground` 等 RN 应用 | 平台特定 |
+
+## Turborepo
+
+### 任务定义（`turbo.json`）
+
+```jsonc
+{
+  "tasks": {
+    "build":     { "dependsOn": ["^build"], "inputs": ["$TURBO_DEFAULT$", ".env*"], "outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**", ".vercel/**"] },
+    "build:web": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "dev":       { "dependsOn": ["^build"], "cache": false, "persistent": true },
+    "test":      { "inputs": ["src/**", "__tests__/**", "vitest.config.*", "vitest.setup.*"], "outputs": ["coverage/**"] },
+    "test:e2e":  { "dependsOn": ["^build"], "cache": false, "outputs": ["playwright-report/**", "test-results/**"] },
+    "test:watch":{ "cache": false, "persistent": true },
+    "lint":      { "dependsOn": ["^build"], "outputs": [] },
+    "typecheck": { "dependsOn": ["^build"], "outputs": [] },
+    "clean":     { "cache": false }
+  }
+}
+```
+
+### 关键语义
+
+| 字段 | 作用 |
+| --- | --- |
+| `dependsOn: ["^build"]` | 自动等依赖包 build 完再跑（`^` = topo 上游） |
+| `inputs` | 影响缓存命中的文件 |
+| `outputs` | 缓存写入的目录 |
+| `cache: false` | 不缓存（dev / clean / watch / e2e） |
+| `persistent: true` | 长驻进程（dev / watch） |
+| `ui: "tui"` | 默认终端 UI |
+
+### 命令
+
+| 命令 | 行为 |
+| --- | --- |
+| `pnpm dev` | 所有包并发 `dev`（library 包多数是 tsdown watch） |
+| `pnpm build` | 全仓 build，使用缓存 |
+| `pnpm test` | 全仓单测 |
+| `pnpm lint` / `pnpm typecheck` | 全仓 lint / 类型检查 |
+| `turbo run build --filter=@skyroc/web-ui` | 仅构建某个包 |
+| `turbo run build --filter=...@skyroc/web-ui` | 构建该包及其下游 |
+| `turbo run lint --filter='[HEAD^1]'` | 只对上次提交以来改动过的包跑 lint |
+| `turbo run build --force` | 强制忽略缓存重跑 |
+
+### 缓存命中
+
+依据 `inputs` 与脚本本身的哈希。命中时直接复用 `outputs`，本地一般几秒完成；CI 配合远程缓存可显著加速。
+
+### 不经过 Turborepo 的任务
+
+格式化直接在根调用 Oxfmt，不走 turbo（Oxfmt 天然支持全仓库扫描）：
+
+```jsonc
+{
+  "format": "oxfmt",
+  "format:check": "oxfmt --check"
+}
+```
+
+## tsdown（库构建）
+
+`@skyroc` 所有发布包用 tsdown，约 25+ 个包统一标准。
+
+### 典型配置
+
+```ts
+// packages/@core/utils/tsdown.config.ts
+import { defineConfig } from 'tsdown';
+
+export default defineConfig({
+  entry: {
+    index: 'src/index.ts',
+    color: 'src/color/index.ts',     // 子入口
+    storage: 'src/storage/index.ts'
+  },
+  format: ['esm'],
+  dts: true,
+  clean: true,
+  external: [
+    /^node:/,
+    /^@skyroc\//,
+    'react',
+    'react-dom'
+  ]
+});
+```
+
+### 默认行为
+
+- 输出 `dist/<entry>.mjs` + `dist/<entry>.d.mts`；
+- 自动把 `dependencies` / `peerDependencies` 标 external；
+- 单文件 / 多入口都支持；
+- `clean: true` 每次清空 `dist/`；
+- `--watch` 模式 `pnpm dev`。
+
+### 与 package.json `exports` 联动
+
+通常 tsdown 不修改 `exports`，但 `exports` 必须与 entry 数量一一对应：
+
+```jsonc
+"exports": {
+  ".":         { "types": "./dist/index.d.mts",   "default": "./dist/index.mjs" },
+  "./color":   { "types": "./dist/color.d.mts",   "default": "./dist/color.mjs" },
+  "./storage": { "types": "./dist/storage.d.mts", "default": "./dist/storage.mjs" }
+}
+```
+
+详见 [Exports 策略](/docs/guide/engineering/exports-strategy)。
+
+### `external` 模式
+
+| 形式 | 含义 |
+| --- | --- |
+| `'react'` | 完全外部化 |
+| `/^node:/` | 所有 Node 内置模块外部化 |
+| `/^@skyroc\//` | 所有 @skyroc 包外部化（避免重复打包） |
+| 不写 | 跟随 pkg.dependencies / peerDependencies |
+
+> 把 `@skyroc/*` 外部化的好处：下游构建可以 dedup 它们，不会出现多份 `@skyroc/utils`。
+
+## Vite（应用构建）
+
+### `apps/admin/vite.config.ts` 总体结构
+
+实际配置由 [`@skyroc/web-admin-vite`](/docs/packages/web/admin-vite) 提供，业务侧只需：
+
+```ts
+// apps/admin/vite.config.ts（简化）
+import { defineConfig } from '@skyroc/web-admin-vite';
+
+export default defineConfig({
+  // 仅传业务变量（端口、代理等）
+});
+```
+
+预设包含：
+
+- `@vitejs/plugin-react`
+- `unplugin-icons`、`unplugin-auto-import`
+- `@unocss/vite`
+- `vite-plugin-svg-icons`、`vite-plugin-inspect`、`vite-plugin-remove-console`
+- `@tanstack/router-plugin`、`@tanstack/devtools-vite`
+- `jotai-babel`、`babel-plugin-react-compiler`
+
+### 模式
+
+| 命令 | mode | env 文件 |
+| --- | --- | --- |
+| `pnpm dev` | `test` | `.env`、`.env.test` |
+| `pnpm dev:prod` | `prod` | `.env`、`.env.prod` |
+| `pnpm build` | `prod` | `.env`、`.env.prod` |
+| `pnpm build:test` | `test` | `.env`、`.env.test` |
+
+### manualChunks
+
+默认按依赖分组：
+
+- `react` / `react-dom` → `react-vendor`
+- `antd` → `antd-vendor`
+- `@tanstack/*` → `tanstack-vendor`
+- `echarts` → `echarts-vendor`
+- `@skyroc/*` → 按子包
+
+降低首屏 chunk 体积。
+
+### 代理
+
+`vite.config.ts` 接受业务变量后由 admin-vite 自动配置 `server.proxy`，配合 `VITE_BASE_URL` / `VITE_PROXY_*`。
+
+## tsc / typecheck
+
+| 包 | 命令 |
+| --- | --- |
+| 库 | tsdown 内部跑类型，外加 `pnpm typecheck`（可选） |
+| 应用 | `tsc --noEmit --skipLibCheck` |
+| 全局 | `pnpm typecheck` → `turbo run typecheck` |
+
+## 构建产物清理
+
+```bash
+pnpm clean   # 全仓 turbo run clean
+```
+
+各包 `clean` 一般是 `rimraf dist .turbo`。
+
+## 构建调试
+
+| 工具 | 方式 |
+| --- | --- |
+| Vite inspect | dev 模式访问 `/__inspect/`（admin-vite 内置） |
+| Turborepo `--summarize` | `pnpm build --summarize` 生成 `.turbo/runs/*.json` |
+| Turborepo `--dry` | `pnpm build --dry` 仅看任务图，不执行 |
+| Build performance | `--profile=trace.json` 配合 chrome://tracing |
+
+## 与 Monorepo、Catalog 的协作
+
+- [Monorepo](/docs/guide/architecture/monorepo) 决定**谁**被构建（workspaces）；
+- [Catalog](/docs/guide/architecture/catalog) 决定**版本**（中心化）；
+- Turborepo 决定**何时 / 顺序**（dependsOn 拓扑）；
+- tsdown / Vite 决定**怎么构建**（产物形式）。

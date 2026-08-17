@@ -1,0 +1,16 @@
+{
+  "title": "工程化",
+  "description": "约定、构建、测试、提交、CI 全景",
+  "pages": [
+    "overview",
+    "conventions",
+    "typescript",
+    "build-system",
+    "exports-strategy",
+    "new-package",
+    "lint-and-format",
+    "test",
+    "git-commit",
+    "ci"
+  ]
+}

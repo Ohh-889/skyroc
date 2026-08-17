@@ -1,0 +1,197 @@
+---
+title: 开发约定
+description: 组件、Hook、命名、提交、目录的核心代码风格规范
+---
+
+## React 组件硬性规范
+
+> 这些规则在 `CLAUDE.md` / `AGENTS.md` 中定义，**违反视为代码错误**，CodeReview 不通过。
+
+### 1. 组件必须是箭头函数
+
+```tsx
+const Portal = (props: PortalProps) => {
+  // ...
+};
+```
+
+❌ 不允许函数声明：
+
+```tsx
+function Portal(props: PortalProps) {}
+```
+
+### 2. Props 类型必须独立 `interface`，每个字段必须有注释
+
+```tsx
+interface PortalProps {
+  /** 是否在容器不存在时自动创建 */
+  autoCreate?: boolean;
+
+  /** 传送门内容 */
+  children: ReactNode;
+
+  /** 容器 ID 或 CSS 选择器 */
+  container: string | HTMLElement;
+}
+```
+
+注释要解释**意图**，而不是重复 TS 类型。
+
+### 3. Props 必须在函数体内解构（不能写在参数里）
+
+```tsx
+const Portal = (props: PortalProps) => {
+  const {
+    autoCreate = false,
+    children,
+    container
+  } = props;
+  // ...
+};
+```
+
+❌ 禁止：
+
+```tsx
+const Portal = ({ autoCreate, children }: PortalProps) => {};
+```
+
+理由：
+
+- 单一可预测的入口；
+- 调试 / 重构更稳定；
+- 避免 props 名意外被遮蔽。
+
+### 4. 内部辅助函数必须是函数声明
+
+```tsx
+const Portal = (props: PortalProps) => {
+  function findTargetElement() {
+    // ...
+  }
+  // ...
+};
+```
+
+理由：清晰的执行意图、避免闭包污染、栈追踪更友好。
+
+## Hook 使用规范
+
+### `useCallback` —— **禁止使用**
+
+`useCallback` 不应该出现在 React 组件代码中。**理由**：
+
+- React 不是「防止重渲染」的游戏，Hook 是语义工具不是性能工具；
+- 99% 的 `useCallback` 是过度优化；
+- 真有性能问题应通过架构改造或 `React.memo` 解决；
+- 项目启用了 React Compiler，绝大多数手工 memo 都是浪费。
+
+### `useMemo` —— **仅允许两种场景**
+
+1. **从逻辑派生一个值**（非函数），逻辑非平凡；
+2. **官方建议的昂贵计算**（demonstrably expensive，不是预防性）。
+
+其他都禁止。判断标准是「这个 memo 拿掉会不会让代码变慢到用户可感知」——回答不出来就是不该写。
+
+### `react-hooks/exhaustive-deps` —— **默认禁止 disable**
+
+仅在以下条件**同时**满足时可禁用：
+
+- 完全理解依赖模型；
+- 行为是有意为之并已记录。
+
+禁用必须放在文件顶部：
+
+```ts
+/* eslint-disable react-hooks/exhaustive-deps */
+```
+
+### `useState` vs `useRef`
+
+| 用途 | 选择 |
+| --- | --- |
+| 影响渲染 | `useState` |
+| 不影响渲染（命令式 / 生命周期 / 可变状态） | `useRef` |
+
+**不要混用**。如果一个值变化频繁但不应触发重绘（如鼠标位置追踪），用 `useRef`。
+
+### `useEffect` 必须有明确意图
+
+Effect 表示：
+
+- 生命周期绑定；
+- 外部系统同步；
+- DOM / 命令式集成。
+
+读到 Effect 时其目的必须显而易见，副作用必须本地化，创建的资源必须有 cleanup。
+
+不要用 Effect 去模拟「事件回调」或「派生状态」——前者放到 handler，后者直接在 render 里算。
+
+## 命名风格
+
+新包一律用 `@skyroc/*` scope（`@sa/*` 是历史遗留，仅 `@sa/uno-config` 保留）。包名与目录的映射规则见 [命名规范](/docs/guide/architecture/naming)；代码内部的命名风格如下：
+
+| 类别 | 风格 | 示例 |
+| --- | --- | --- |
+| 包名 | `@skyroc/<kebab-case>` | `@skyroc/web-ui` |
+| 文件 | `kebab-case.ts` | `use-table.ts` |
+| 组件文件 | `PascalCase.tsx` | `AdminLayout.tsx` |
+| 组件 | `PascalCase` | `<AdminLayout />` |
+| Hook | `useXxx` 驼峰 | `useAdminState` |
+| Types | `PascalCase` | `UserInfo` |
+| 常量 | `UPPER_SNAKE_CASE` | `DEFAULT_THEME_COLOR` |
+
+详见 [命名规范](/docs/guide/architecture/naming)。
+
+## TypeScript 风格
+
+| 项 | 约定 |
+| --- | --- |
+| `interface` vs `type` | 数据结构 / props 用 `interface`；联合 / 工具类型用 `type` |
+| `import type` | 启用 `verbatimModuleSyntax`，强制 |
+| 全局命名空间 | `Api.*`、`Router.*`、`App.*`、`Theme.*`，不要重复 import |
+| 严格度 | 全仓库 `strict + noUncheckedIndexedAccess` |
+| 禁用 `any` | 工具未禁，但 review 不放过 |
+
+## 包内目录约定
+
+新代码该放进哪个平台目录，见 [平台优先目录](/docs/guide/architecture/platform-first) 与 [新建包流程](/docs/guide/engineering/new-package) 的决策树。包**内部**的结构则强烈建议统一成：
+
+```text
+<pkg>/
+├── src/
+│   ├── index.ts           # 主入口
+│   ├── <subentry>.ts      # 子入口（如有）
+│   ├── components/        # 组件
+│   ├── hooks/             # hooks
+│   ├── utils/             # 工具
+│   └── types/             # 类型
+├── __tests__/
+├── README.md
+├── package.json
+└── tsconfig.json
+```
+
+## 提交规范
+
+遵循 Conventional Commits（`<type>(<scope>): <subject>`），用 `pnpm commit` 走交互式表单生成。type 取值表、scope 写法、changelog 与发版流程见 [Git 提交与发版](/docs/guide/engineering/git-commit)。
+
+## 通用风格
+
+- 中文优先：本仓库 commit / PR 描述 / 注释 都允许且鼓励使用中文；
+- 行宽 120；
+- 单引号、分号、空格 2、LF；
+- import 按行组分组（`partitionByNewline: true`）；
+- 不允许 `console.log`（scripts 包豁免，logger 包用 `console.*` 是实现）。
+
+## 与代码风格冲突的来源
+
+| 优先级 | 内容 |
+| --- | --- |
+| 1（最高） | 用户直接指令 |
+| 2 | `CLAUDE.md` / `AGENTS.md` / Project Rules |
+| 3 | 本文档 |
+| 4 | 工具默认行为 |
+
+底层冲突以本文档为准；本文档与项目 Rules 冲突以 Rules 为准。

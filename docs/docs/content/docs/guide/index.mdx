@@ -1,0 +1,39 @@
+---
+title: 指南
+description: 把 Skyroc Admin 跑起来、读懂仓库分层、按仓库规范协作
+icon: Compass
+---
+
+这一栏讲的是**仓库本身**：怎么把项目跑起来、包是怎么组织的、以及往里提交代码要遵守什么约定。
+
+不涉及具体某个后台页面怎么写（那在 [Admin 应用](/docs/admin)），也不涉及某个包的 API 细节（那在 [包参考](/docs/packages)）。
+
+## 三个部分
+
+<Cards>
+  <Card
+    title="快速上手"
+    href="/docs/guide/getting-started/introduction"
+    description="项目定位、技术栈、装依赖跑起来、目录结构、名词表与常见问题"
+  />
+  <Card
+    title="架构设计"
+    href="/docs/guide/architecture/monorepo"
+    description="monorepo 分层、平台优先策略、适配器模式、依赖方向与 Turborepo"
+  />
+  <Card
+    title="工程化"
+    href="/docs/guide/engineering/overview"
+    description="编码约定、TypeScript、构建、导出策略、测试、提交与 CI"
+  />
+</Cards>
+
+## 第一次来看这里
+
+按顺序读三篇就够上手了：
+
+1. [项目简介与设计理念](/docs/guide/getting-started/introduction) —— 先理解为什么 `apps/admin` 这么「薄」
+2. [快速开始](/docs/guide/getting-started/quick-start) —— Node 20+、pnpm 10.4.1，按目标启动 Admin、Web UI 或 Native UI
+3. [目录结构总览](/docs/guide/getting-started/directory) —— 31 个包分别在哪、各自管什么
+
+之后按你要做的事分流：改后台页面去 [Admin 应用](/docs/admin)，查某个 `@skyroc/*` 的 API 去 [包参考](/docs/packages)。

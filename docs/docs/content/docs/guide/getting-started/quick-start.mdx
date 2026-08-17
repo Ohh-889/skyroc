@@ -1,0 +1,121 @@
+---
+title: 快速开始
+description: 获取仓库、安装依赖，并启动 Admin、Web UI 或 Native UI 开发环境
+---
+
+这一页帮助你从一个刚克隆的仓库开始，启动一个可以继续开发的应用。默认推荐从精简的 `apps/admin` 开始；如果你想查看完整示例、开发组件或对接 RuoYi，可以在安装依赖后切换到对应入口。
+
+## 环境要求
+
+| 工具    | 要求     | 说明                               |
+| ------- | -------- | ---------------------------------- |
+| Node.js | `>= 20`  | 以仓库根 `package.json` 为准       |
+| pnpm    | `10.4.1` | 仓库通过 `packageManager` 锁定版本 |
+
+先确认本机版本：
+
+```bash
+node -v
+pnpm -v
+```
+
+如果本机已提供 Corepack，但还没有启用仓库要求的 pnpm，可以执行：
+
+```bash
+corepack enable
+corepack prepare pnpm@10.4.1 --activate
+```
+
+## 获取代码并安装依赖
+
+```bash
+git clone https://github.com/Ohh-889/skyroc-admin.git
+cd skyroc-admin
+pnpm install
+```
+
+依赖必须从仓库根目录统一安装。项目使用 pnpm workspace、`workspace:*` 和 catalog 管理本地包及依赖版本，不要在单个 `apps/*` 或 `packages/*` 目录中单独安装。
+
+## 启动 Admin
+
+第一次进入项目，推荐只启动精简的 Admin 应用：
+
+```bash
+pnpm --filter skyroc-admin dev
+```
+
+启动完成后访问 [http://localhost:9527](http://localhost:9527)。开发服务器默认监听 `0.0.0.0`，并会自动打开浏览器。
+
+这个命令默认使用 Vite 的 `test` mode。当前测试环境通过开发代理访问 Apifox Mock，因此只想查看和开发前端时，不需要先启动本地后端。
+
+Admin 的 `predev` 会自动构建启动所需的 `@skyroc/web-admin-vite`，首次启动可能稍慢，但不需要提前执行全仓 `pnpm build`。
+
+如果需要读取 `.env.prod`，可以用生产 mode 启动开发服务器：
+
+```bash
+pnpm --filter skyroc-admin dev:prod
+```
+
+## 选择其他入口
+
+依赖安装完成后，可以根据开发目标启动不同应用：
+
+| 目标                 | 应用                        | 命令                                       |
+| -------------------- | --------------------------- | ------------------------------------------ |
+| 基于精简骨架开发后台 | `apps/admin`                | `pnpm --filter skyroc-admin dev`           |
+| 查看完整后台能力     | `apps/admin-example`        | `pnpm --filter admin-example dev`          |
+| 对接 RuoYi / FastAPI | `apps/ruoyi-plus-fast`      | `pnpm --filter ruoyi-plus-fast dev`        |
+| 开发 Web UI 组件     | `apps/web-ui-playground`    | `pnpm --filter skyroc-ui-playground dev`   |
+| 开发 Native UI 组件  | `apps/native-ui-playground` | `pnpm --filter native-ui-playground start` |
+
+Native UI playground 还需要 Expo 以及对应的 iOS 或 Android 本地开发环境，具体步骤见 [`apps/native-ui-playground/README.md`](https://github.com/Ohh-889/skyroc-admin/tree/master/apps/native-ui-playground)。
+
+`ruoyi-plus-fast` 的默认 `test` mode 会连接 `http://127.0.0.1:8000/api/v1`，需要先启动匹配当前接口契约的 FastAPI 后端；它不是 `skyroc-admin` 使用的免后端 Mock 路径。
+
+> 根命令 `pnpm dev` 会让 Turborepo 启动所有定义了 `dev` 脚本的 workspace。多个 Admin 应用和文档站可能使用相同的默认端口，因此它适合按需调整后的联调场景，不建议作为首次启动命令。
+
+## 构建与预览 Admin
+
+```bash
+# 生产环境构建
+pnpm --filter skyroc-admin build
+
+# 预览构建产物，默认端口 9725
+pnpm --filter skyroc-admin preview
+```
+
+测试环境构建使用：
+
+```bash
+pnpm --filter skyroc-admin build:test
+```
+
+构建模式、环境变量、代理和部署地址的完整说明见 [Admin 快速开始](/docs/admin/getting-started/quick-start) 与 [环境变量和 Vite](/docs/admin/configuration/env-and-vite)。
+
+## 常见问题
+
+### pnpm 版本不一致
+
+以根 `package.json` 的 `packageManager` 字段为准。切换版本后重新执行 `pnpm install`，不要混用 npm、Yarn 或不同 pnpm 版本生成依赖状态。
+
+### 9527 端口已被占用
+
+先关闭占用端口的进程，或在目标应用的 `vite.config.ts` 中覆盖 `server.port`。不要同时启动多个仍使用默认端口的 Admin 应用。
+
+### 页面能打开，但请求地址不正确
+
+确认当前使用的是 `dev` 还是 `dev:prod`，再检查目标应用的 `.env`、`.env.test` 或 `.env.prod`。修改环境变量后需要重新启动 Vite 开发服务器。
+
+### 安装卡在原生依赖
+
+仓库已经通过根 `package.json` 的 `pnpm.onlyBuiltDependencies` 声明允许执行安装脚本的依赖。先确认 pnpm 版本和当前网络环境，再查看 [常见问题](/docs/guide/getting-started/faq) 中的安装排查说明。
+
+## 下一步
+
+| 目标                           | 继续阅读                                                        |
+| ------------------------------ | --------------------------------------------------------------- |
+| 配置编辑器并开发 Admin         | [Admin 开发工具配置](/docs/admin/getting-started/editor-setup)  |
+| 理解 Admin 应用与共享包边界    | [Admin 项目结构](/docs/admin/getting-started/project-structure) |
+| 修改后端地址、代理或 Vite 配置 | [环境变量和 Vite](/docs/admin/configuration/env-and-vite)       |
+| 了解各 workspace 的职责        | [目录结构总览](/docs/guide/getting-started/directory)           |
+| 了解项目分层与设计原则         | [项目简介与设计理念](/docs/guide/getting-started/introduction)  |

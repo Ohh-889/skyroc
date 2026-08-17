@@ -1,0 +1,103 @@
+---
+title: Catalog 依赖管理
+description: 用 pnpm catalog 集中管理第三方依赖版本
+---
+
+## 问题：版本散落
+
+monorepo 里几十个包都依赖 `react`、`axios`、`dayjs`…如果每个 `package.json` 各写一个版本号，升级时要改几十处，还容易版本漂移。
+
+## 方案：pnpm catalog
+
+把版本集中在 `pnpm-workspace.yaml` 的 `catalogs:` 中，按**领域**分组：
+
+```yaml
+catalogs:
+  core:                       # React 生态核心
+    react: 19.1.0
+    react-dom: 19.1.0
+    typescript: ^6.0.3
+    vite: ^8.0.14
+    jotai: ^2.16.0
+    '@tanstack/react-query': ^5.90.12
+
+  dev:                        # 开发工具
+    oxlint: ^1.60.0
+    vitest: ^4.0.18
+    tsdown: ^0.18.2
+    turbo: ^2.7.1
+    msw: ^2.7.0
+    # …
+
+  web:                        # Web 专用
+    antd: ^6.1.0
+    '@tanstack/react-router': ^1.140.0
+    echarts: ^6.0.0
+
+  utils:                      # 通用工具库
+    dayjs: ^1.11.19
+    axios: ^1.7.9
+    zod: ^4.1.13
+    nanoid: ^5.0.9
+
+  ui-shared:                  # UI 共享
+    motion: ^12.23.26
+    '@iconify/react': ^6.0.2
+
+  i18n:
+    i18next: 25.7.2
+    react-i18next: 16.4.0
+
+  css:
+    tailwindcss: ^4.1.18
+    postcss: ^8.5.6
+
+  peer:                       # peer 依赖统一
+    react: 19.2.1
+    react-dom: 19.2.1
+```
+
+## 在包里引用
+
+子包用 `catalog:<域>` 引用，不写具体版本：
+
+```jsonc
+{
+  "dependencies": {
+    "react": "catalog:core",
+    "axios": "catalog:utils",
+    "antd": "catalog:web"
+  },
+  "devDependencies": {
+    "oxlint": "catalog:dev",
+    "vitest": "catalog:dev"
+  },
+  "peerDependencies": {
+    "react": "catalog:peer"
+  }
+}
+```
+
+## 收益
+
+- **单点升级**：改 `catalogs:` 一处，所有引用同步生效；
+- **版本一致**：杜绝同一依赖在不同包里出现不同版本；
+- **语义清晰**：按域分组，一眼看出某依赖属于哪个层面。
+
+## overrides 兜底
+
+对必须严格统一的版本（避免类型冲突），再用 `overrides` 强制：
+
+```yaml
+overrides:
+  '@types/react': ^19.2.7
+  '@types/react-dom': ^19.2.3
+  typescript: ^6.0.3
+  lightningcss: 1.30.1   # 根 package.json 中
+```
+
+## 新增依赖的流程
+
+1. 优先在 `catalogs:` 对应域里加版本；
+2. 在需要它的包 `package.json` 用 `catalog:<域>` 引用；
+3. 跑 `pnpm install`。

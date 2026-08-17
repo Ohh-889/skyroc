@@ -1,0 +1,216 @@
+---
+title: 路由缓存
+description: 理解 keepAlive 如何让后台页面在 tabs 切换时保留组件实例、表单状态和 DOM 草稿
+---
+
+这一页解释 `apps/admin` 当前的页面缓存机制。它解决的是后台常见场景：用户在一个表单页、编辑页或查询页输入了一些内容，切到其他页面后再回来，页面组件不应该重新挂载，表单 state 和 DOM 草稿也不应该丢失。
+
+当前实现不是简单在 `<Outlet />` 外面包一层通用缓存组件，而是在 `@skyroc/web-admin-layouts` 的内容区维护 TanStack Router 的路由状态快照。这样切换路由时，已标记缓存的页面会被隐藏，但组件实例、React state 和 DOM 状态会继续留在页面树里。
+
+## 适用场景
+
+| 场景 | 重点位置 |
+| --- | --- |
+| 给普通后台页面开启页面实例缓存 | route `staticData.keepAlive` |
+| 动态菜单模式下由后端声明缓存 | 后端 route `handle.keepAlive`、`loadAdminDynamicRoutes()` |
+| 排查页面切走后表单值丢失 | `AdminContent`、tabs 是否还打开、route 是否有 `keepAlive` |
+| 排查缓存页刷新后仍是旧状态 | `AdminTab` 的刷新按钮、`reloadPage()`、缓存 entry 是否被移除重建 |
+| 判断 React `Activity` 是否能替代当前实现 | React 版本、TanStack Router match 树、隐藏时 effect 行为 |
+
+## 当前实现位置
+
+| 文件 | 职责 |
+| --- | --- |
+| `packages/@core/types/src/app/router.d.ts` | 在 `Router.Meta` 上定义 `keepAlive`。 |
+| `packages/@core/types/src/app/global.d.ts` | 在 `App.Global.Tab` 上记录当前 tab 是否需要缓存页面实例。 |
+| `apps/admin/src/features/menus/dynamic-routes.ts` | 把后端 `handle.keepAlive` 适配成布局包可消费的 `BackendRoute.keepAlive`。 |
+| `packages/web/admin-layouts/src/features/menus/menu-generator.tsx` | 静态模式从 route `staticData.keepAlive` 生成 quick reference；动态模式从后端 route 节点保留 `keepAlive`。 |
+| `packages/web/admin-layouts/src/state/tabs/shared.tsx` | 创建 tab 时把 `menuInfo.keepAlive` 写入 `App.Global.Tab.keepAlive`。 |
+| `packages/web/admin-layouts/src/state/tabs/use-admin-tab.ts` | 已存在 tab 再次进入时同步最新 route meta，避免缓存标记过期。 |
+| `packages/web/admin-layouts/src/modules/AdminContent.tsx` | 页面缓存的核心实现：维护缓存 key、路由快照和隐藏/显示的缓存 pane。 |
+| `apps/admin-example/src/pages/(admin)/keep-alive-form.tsx` | 用于验证缓存行为的表单页面（`apps/admin` 中无此页面，`keepAlive` 机制本身两个应用一致）。 |
+
+## 开启缓存
+
+静态路由直接在 `staticData` 上声明：
+
+```tsx
+export const Route = createFileRoute('/(admin)/keep-alive-form')({
+  component: KeepAliveFormVerify,
+  staticData: {
+    title: 'keep_alive_form',
+    i18nKey: 'route.keep-alive-form',
+    keepAlive: true,
+    menu: {
+      icon: 'mdi:form-select',
+      order: 23
+    }
+  }
+});
+```
+
+动态菜单模式下，后端 route 的 `handle.keepAlive` 会被应用侧适配：
+
+```ts
+const handle = route.handle ?? route.meta ?? {};
+
+return {
+  keepAlive: handle.keepAlive ?? undefined,
+  path,
+  title: handle.title ?? route.name ?? undefined
+};
+```
+
+这两种入口最后都会进入 `Menu.QuickReferenceMenu.keepAlive`，再进入 tab 状态。页面缓存不是单独扫描 route tree，而是跟着“当前路由是否已经进入 tabs”这条链路走。
+
+## 缓存链路
+
+完整链路如下：
+
+```text
+route staticData.keepAlive
+  或 dynamic route handle.keepAlive
+  -> menu-generator quickReferenceMenus[path].keepAlive
+  -> getTabByMenuInfo(...).keepAlive
+  -> useAdminTab().tabs
+  -> AdminContent getKeepAliveKeys(...)
+  -> CachedRoutePane
+```
+
+`AdminContent` 会为每个需要缓存的页面维护一个缓存项：
+
+| 字段 | 含义 |
+| --- | --- |
+| `key` | 缓存身份，默认是规范化后的路由 path。 |
+| `contentKey` | 当前页面内容 key，通常是 `fullPath`，用于刷新时重新挂载。 |
+| `routeState` | 页面激活时的 TanStack Router state 快照。 |
+
+渲染时，每个缓存项都会创建一个独立的 `CachedRoutePane`。激活的 pane 显示出来，非激活的 pane 使用 `display: none` 隐藏。
+
+## 缓存 key 怎么确定
+
+缓存 key 复用 tabs 的 id 规则：
+
+```ts
+getTabIdByRoute(route.originPath, route.staticData?.tab?.multi ?? false, route.fullPath);
+```
+
+| `tab.multi` | 缓存 key | 适合场景 |
+| --- | --- | --- |
+| `false` 或未配置 | `originPath`，例如 `/manage/user` | 普通列表页、普通表单页，同一路由只保留一个实例。 |
+| `true` | `fullPath`，包含查询字符串 | 同一路由不同参数需要多份页面实例，例如多个详情页或多条件查询页。 |
+
+如果一个页面既需要缓存，又需要按照查询参数区分实例，就同时配置：
+
+```ts
+staticData: {
+  keepAlive: true,
+  tab: {
+    multi: true
+  }
+}
+```
+
+不要把 `keepAlive` 当作浏览器级缓存。它只决定 React 页面实例是否保留；接口数据仍然由 React Query、业务状态或组件自己的请求逻辑控制。
+
+## 为什么不是直接用 React Activity
+
+React 19.2 的 [`<Activity>`](https://react.dev/reference/react/Activity) 可以隐藏并恢复子树的 UI 和内部状态。官方文档说明，隐藏时 React 会用 `display: none` 视觉隐藏子节点，并清理隐藏子树的 Effects；重新显示时再恢复之前的 state 并重新创建 Effects。
+
+这和后台页面缓存的目标接近，但当前项目不能直接把它当作完整方案：
+
+| 问题 | 当前结论 |
+| --- | --- |
+| 当前 React 版本 | 仓库当前 `react` 是 `19.1.0`，本地包没有导出 `Activity`。 |
+| `<Outlet />` 的路由语义 | TanStack Router 切路由会切换当前 match 树。只隐藏 `<Outlet />` 外层，不能自动冻结旧 route match。 |
+| 路由上下文 | 缓存页里的 `useMatch`、`useChildMatches`、`Outlet` 需要读取旧的 router state，否则隐藏页会跟着当前路由变成新页面。 |
+| effect 语义 | `Activity` 隐藏时会清理 Effects；当前实现只是 `display: none` 隐藏，隐藏页的 Effects 仍然保持挂载。 |
+
+所以当前采用的是 TanStack Router 感知的缓存：隐藏页面时，同时保留该页面激活时的 router state 快照。这样 cached pane 里的 `Outlet` 仍然按照旧 match 树渲染，而不是被当前 URL 覆盖。
+
+以后如果项目升级到 React 19.2 或更高，可以考虑把隐藏层从普通 `div style={{ display: 'none' }}` 换成 `Activity mode="hidden"`，但仍然需要保留“路由 state 快照”这一层，否则路由上下文问题不会消失。
+
+## 生命周期行为
+
+当前缓存实现的行为如下：
+
+| 操作 | 缓存行为 |
+| --- | --- |
+| 首次进入 `keepAlive: true` 页面 | 创建缓存项，并显示当前 pane。 |
+| 切到其他路由 | 缓存 pane 留在 DOM 中，`display: none`。 |
+| 切回缓存页 | 复用原 pane，React state、表单 state、非受控 DOM 值都保留。 |
+| 关闭 tab | 该 tab 不再出现在 `keepAliveKeys` 中，对应缓存项会被移除。 |
+| 点击 tab 刷新 | `reloadFlag` 临时变成 `false`，当前缓存项会被移除；恢复渲染时重新创建页面实例。 |
+| 退出登录或切换用户 | tabs 会按认证流程缓存或清理；用户切换会清 `globalTabs`，避免跨用户恢复旧页面。 |
+
+因为当前实现不会像 `Activity` 一样清理隐藏页 Effects，所以给页面开启缓存前要确认页面是否有这些副作用：
+
+| 页面行为 | 建议 |
+| --- | --- |
+| 轮询接口 | 根据当前路由可见性或业务状态暂停轮询。 |
+| WebSocket / EventSource | 确认隐藏期间继续订阅是否符合业务预期。 |
+| 图表动画、定时器 | 需要自行在页面内收口，避免隐藏页持续消耗资源。 |
+| 页面级 `useEffect` 拉数据 | 如果只是普通加载通常可以保留；服务端数据缓存仍优先交给 React Query。 |
+
+## 验证页面
+
+当前仓库提供了一个验证页面：
+
+```text
+/keep-alive-form
+```
+
+页面文件是：
+
+```text
+apps/admin-example/src/pages/(admin)/keep-alive-form.tsx
+```
+
+它同时覆盖三类状态：
+
+| 状态类型 | 页面字段 |
+| --- | --- |
+| Ant Design Form 内部状态 | “项目名称”“优先级”“状态”“启用缓存项”。 |
+| React 受控 state | “处理人”和“计数器”。 |
+| 非受控 DOM 状态 | “原生草稿” textarea。 |
+
+手动验证步骤：
+
+1. 打开 `/keep-alive-form`。
+2. 填写“项目名称”“处理人”“原生草稿”，点击“加一”。
+3. 点击“切到关于”进入 `/about`。
+4. 点击 tab 或菜单里的“缓存表单”返回。
+5. 检查输入值、textarea 草稿、计数器和“实例 ID”是否保持不变。
+
+如果实例 ID 改变，说明组件重新挂载了；如果只有 textarea 丢失，说明 DOM 没有被保留；如果只有 Form 值丢失，说明页面实例可能保留了，但表单被重建或主动 reset。
+
+## 排查顺序
+
+| 现象 | 先检查 |
+| --- | --- |
+| 页面切回来后完全重置 | route 是否有 `staticData.keepAlive: true`，动态模式后端是否返回 `handle.keepAlive`。 |
+| 静态模式生效，动态模式不生效 | `loadAdminDynamicRoutes()` 是否把 `handle.keepAlive` 映射为 `keepAlive`。 |
+| 菜单能打开，但缓存不生效 | `menu-generator` 是否把 `keepAlive` 写入 quick reference，tab 里是否有 `keepAlive: true`。 |
+| 带查询参数的页面互相覆盖 | 是否需要配置 `staticData.tab.multi: true`。 |
+| 关闭 tab 后还有旧页面 | tab 是否仍在 `useAdminTab().tabs` 中，缓存项是否还在 `keepAliveKeys` 中。 |
+| 点击刷新后状态仍保留 | 检查 `reloadPage()` 是否让 `reloadFlag` 进入 `false`，当前 active cache key 是否被移除。 |
+| 隐藏页仍然请求接口 | 当前实现隐藏时不会清理 Effects，页面自己的轮询或订阅需要自行暂停。 |
+
+## 常见误区
+
+| 误区 | 正确理解 |
+| --- | --- |
+| `keepAlive` 会缓存接口数据 | 它只保留页面组件实例和 DOM；接口数据仍由 React Query 或业务状态控制。 |
+| 只要包一层通用 KeepAlive 就够了 | TanStack Router 的 `Outlet` 依赖当前 match 树；必须保留旧 router state。 |
+| React `Activity` 可以直接替代全部实现 | `Activity` 负责隐藏子树，不负责路由缓存 key、tabs 生命周期和 TanStack Router 快照。 |
+| 所有表单页都应该开缓存 | 只有用户会频繁切换并需要保留草稿的页面适合开；有轮询、订阅或敏感数据的页面要谨慎。 |
+| `tab.cache` 和 `keepAlive` 是同一个东西 | `tab.cache` 是跨刷新/退出写入 `globalTabs`；`keepAlive` 是当前运行时保留页面实例。 |
+
+## 相关位置
+
+| 主题 | 继续查看 |
+| --- | --- |
+| `staticData.keepAlive` 字段 | [路由元信息](./route-meta) |
+| tabs 创建、关闭和持久化 | [菜单与标签页](../layout/menus-and-tabs) |
+| 动态菜单如何适配后端返回 | [路由概览](./overview) |
+| 存储里的 `globalTabs` | [存储与缓存](../configuration/storage-and-cache) |

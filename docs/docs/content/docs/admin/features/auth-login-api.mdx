@@ -1,0 +1,117 @@
+---
+title: 登录认证 API
+description: useAuth / useInitLogin 及 setAuth / getToken / clearAuthStorage 的签名、参数与返回值速查
+---
+
+这一页是 `features/auth` 的 **API 速查**。登录链路、token 持久化、退出流程和请求层刷新见 [登录认证](./auth-login)；这里只列 hook 与导出函数的签名和返回值。
+
+```ts
+import { getToken, setAuth, useAuth } from '@/features/auth/use-auth';
+import { useInitLogin } from '@/features/auth/use-login';
+```
+
+事实源：`apps/admin/src/features/auth/{use-auth,use-login,shared}.ts`。
+
+## useAuth
+
+```ts
+function useAuth(): {
+  token: string | null;
+  userInfo: Api.Auth.UserInfo | undefined;
+  isLoggedIn: boolean;
+  isAuthInitialized: boolean;
+  initAuth: () => Promise<Api.Auth.UserInfo | null>;
+  logout: () => Promise<void>;
+  setAuth: (data: Api.Auth.LoginToken) => void;
+  initMenus: (userInfo) => Promise<void>;
+  getHomeRoute: () => string;
+  homeRoute: string;
+};
+```
+
+认证状态核心。`token` 来自 Jotai atom（初始值从 `localStg.get('token')` 读取），`userInfo` 来自 `useUserInfoQuery()`。
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `token` | `string \| null` | 当前 access token，`null` / 空表示未登录。 |
+| `userInfo` | `Api.Auth.UserInfo \| undefined` | 当前用户信息（React Query 数据）。 |
+| `isLoggedIn` | `boolean` | `Boolean(token)`。 |
+| `isAuthInitialized` | `boolean` | 是否完成首轮认证初始化（`atom.initialized`）。 |
+| `initAuth` | `() => Promise<UserInfo \| null>` | 拉取用户信息并 `initMenus`，成功置 `initialized=true`；失败返回 `null`。 |
+| `logout` | `() => Promise<void>` | 退出清理：记录 `lastLoginUserId` → `queryClient.clear()` → 清 token 状态 → `clearAuthStorage()` → `clearMenus()` → `cacheTabs()`。 |
+| `setAuth` | `(data: Api.Auth.LoginToken) => void` | 写入 token（atom + localStorage），与下方独立导出的 `setAuth` 同一实现。 |
+| `initMenus` | `(userInfo) => Promise<void>` | 来自 `useMenus()`，按用户与路由模式生成菜单 / 首页 / 授权索引。 |
+| `getHomeRoute` / `homeRoute` | `() => string` / `string` | 首页路由计算与当前首页（来自 `useMenus()`）。 |
+
+> `apps/admin-example` 中的 `useAuth()` 还额外返回 `hasAuth(codes: string | string[]) => boolean` 用于按钮级权限判断；`apps/admin` 当前未导出该方法。以你所在应用的实现为准。
+
+`initAuth()` 内部逻辑：
+
+```ts
+const { data } = await refetch();   // useUserInfoQuery
+if (!data) return null;
+await initMenus(data);
+setState(prev => ({ ...prev, initialized: true }));
+return data;
+```
+
+## useInitLogin
+
+```ts
+function useInitLogin(): {
+  login: (params: Api.Auth.LoginParams, redirect?: boolean) => Promise<void>;
+  loading: boolean;
+};
+```
+
+登录提交流程，封装防重复提交、调用登录接口、写 token、初始化用户和跳转。新增登录方式时应复用它，保持 `setAuth → initAuth → navigate` 链路一致。
+
+| 返回值 | 类型 | 说明 |
+| --- | --- | --- |
+| `login` | `(params, redirect = true) => Promise<void>` | 提交登录；`loading` 期间重复调用直接返回。 |
+| `loading` | `boolean` | 是否正在登录（来自 `useLoading()`）。 |
+
+`login()` 入参：
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `params` | `Api.Auth.LoginParams` | — | 登录参数（如 `userName` / `password`）。 |
+| `redirect` | `boolean` | `true` | 成功后是否回到 `search.redirect`；用户与上次不同会强制回 `/` 并清 `globalTabs`。 |
+
+成功链路：`setAuth(data)` → `initAuth()` → 按 `lastLoginUserId` 决定跳转 → `showSuccessNotification`。
+
+## 导出函数
+
+`use-auth.ts` / `shared.ts` 同时导出以下纯函数，供请求适配器和守卫等非组件场景使用：
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `getToken` | `() => string \| null` | 读取 `localStg.get('token')`。 |
+| `setAuth` | `(data: Api.Auth.LoginToken) => void` | 更新 token atom 并写入 `token` / `refreshToken`。 |
+| `clearAuthStorage` | `() => void` | 移除 `token` 与 `refreshToken` 缓存。 |
+
+```ts
+export function setAuth(data: Api.Auth.LoginToken) {
+  updateAtomValue(authAtom, prev => ({ ...prev, token: data.token }));
+  localStg.set('token', data.token);
+  localStg.set('refreshToken', data.refreshToken);
+}
+```
+
+## 退出登录
+
+退出登录通过路由 `/login-out` 实现，在 `beforeLoad` 中执行：
+
+```ts
+context.logout();
+throw redirect({ to: '/login', search: redirectPath ? { redirect: redirectPath } : undefined });
+```
+
+需要"退出登录"按钮时导航到 `/login-out`，不要在按钮里复制 `logout()` 的清理逻辑。
+
+## 相关链接
+
+- 登录链路与 token 刷新：[登录认证](./auth-login)
+- 认证表单校验：[表单规则](./form-rules)、[表单规则 API](./form-rules-api)
+- 路由守卫与权限：[路由守卫](../routing/guards)、[权限](../routing/permission)
+- 存储与缓存清理：[存储与缓存](../configuration/storage-and-cache)

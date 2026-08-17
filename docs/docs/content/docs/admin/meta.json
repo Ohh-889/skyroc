@@ -1,0 +1,24 @@
+{
+  "title": "Admin 应用",
+  "description": "apps/admin 的启动、路由、布局、请求、主题与部署",
+  "icon": "LayoutDashboard",
+  "root": true,
+  "pages": [
+    "index",
+    "---上手---",
+    "getting-started",
+    "architecture",
+    "configuration",
+    "---路由与布局---",
+    "routing",
+    "layout",
+    "---数据与外观---",
+    "request",
+    "theme",
+    "---功能实现---",
+    "features",
+    "---交付---",
+    "deployment",
+    "faq"
+  ]
+}

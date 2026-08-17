@@ -1,0 +1,209 @@
+---
+title: Git 提交与发版
+description: sa git-commit 提交规范、changelog 自动化、版本号 + 标签 + 发布的完整流程
+---
+
+## 工具链速览
+
+| 职责 | 工具 | 命令 |
+| --- | --- | --- |
+| 交互式提交 | `@skyroc/scripts` → `sa git-commit` | `pnpm commit` |
+| 提交校验 | `sa git-commit-verify` | git hook（commit-msg） |
+| 变更日志 | `@soybeanjs/changelog` 包装在 `sa changelog` | `sa changelog` |
+| 版本提升 | `bumpp` 包装在 `sa release` | `sa release` |
+| Git hooks | `simple-git-hooks`（待启用） | `pnpm dlx simple-git-hooks` |
+
+所有命令的实现都在 [`@skyroc/scripts`](/docs/packages/core/scripts)。
+
+## 提交规范（Conventional Commits）
+
+```text
+<type>(<scope>): <subject>
+
+<body?>
+
+<footer?>
+```
+
+| type | 含义 | 触发 changelog |
+| --- | --- | --- |
+| `feat` | 新功能 | ✅ Features |
+| `fix` | 修复 | ✅ Bug Fixes |
+| `docs` | 文档 | ✅ Documentation |
+| `style` | 仅格式 | ❌ |
+| `refactor` | 重构 | ✅ Refactor |
+| `perf` | 性能 | ✅ Performance |
+| `test` | 测试 | ❌ |
+| `chore` | 杂项 | ❌ |
+| `build` | 构建系统 | ❌ |
+| `ci` | CI | ❌ |
+| `revert` | 回滚 | ✅ Reverts |
+
+### scope
+
+通常是包名 / 模块名（不带 scope 前缀）：
+
+| 例子 | scope |
+| --- | --- |
+| 仅 admin 应用变更 | `admin` |
+| `@skyroc/utils` 修复 | `utils` |
+| `@skyroc/web-ui` 新增组件 | `web-ui` |
+| 仓库级变更（CI、turbo） | 不写或 `repo` |
+| 文档站 | `docs` |
+
+### subject
+
+- 一句话陈述意图；
+- 中文 / 英文均可（仓库内多为中文）；
+- **不要句尾加句号**；
+- 不超过 72 字符（提示，超了不强制）。
+
+## 交互式提交
+
+```bash
+# 在 apps/admin 内（或仓库根）
+pnpm commit
+# 等价于 sa git-commit
+```
+
+`sa git-commit` 会引导：
+
+1. 选择 type；
+2. 输入 scope（自由文本，回车跳过）；
+3. 输入 subject；
+4. （可选）输入 body / footer；
+5. 自动 `git commit -m "..."`。
+
+中文向导：
+
+```bash
+pnpm commit:zh
+# 等价于 sa git-commit -l=zh-cn
+```
+
+## commit-msg 校验
+
+`sa git-commit-verify` 在 commit-msg hook 中校验消息符合 conventional commits：
+
+```bash
+sa git-commit-verify   # 读 .git/COMMIT_EDITMSG 校验
+```
+
+### 启用 hook
+
+仓库使用 `simple-git-hooks`：
+
+```jsonc
+// package.json（参考）
+"simple-git-hooks": {
+  "commit-msg": "pnpm dlx sa git-commit-verify"
+}
+```
+
+`pnpm install` 后跑：
+
+```bash
+pnpm dlx simple-git-hooks
+```
+
+把 hook 写入 `.git/hooks/commit-msg`。
+
+> 当前仓库 `package.json` 暂未声明 `simple-git-hooks` 字段，校验功能本身可用；如需开启需自行补全。
+
+## 变更日志（changelog）
+
+```bash
+# 生成本次发版的 changelog（基于上一次 tag 到 HEAD）
+sa changelog
+
+# 写入 CHANGELOG.md 顶部
+sa changelog --output CHANGELOG.md
+
+# 只生成最近 n 次
+sa changelog --from <ref> --to <ref>
+```
+
+底层是 `@soybeanjs/changelog`，会：
+
+- 解析 commit type / scope；
+- 按 type 分组；
+- 生成 PR / Issue 链接（依据 repo URL）；
+- 输出 markdown。
+
+## 发版（release）
+
+```bash
+sa release
+```
+
+`sa release` 会：
+
+1. 调用 `bumpp` 交互式选择 patch / minor / major / custom；
+2. 更新 root `package.json.version`（及子包，可配置）；
+3. 跑 `sa changelog` 写入 `CHANGELOG.md`；
+4. `git add` + `git commit -m "chore(release): vX.Y.Z"`；
+5. 打 tag `vX.Y.Z`；
+6. 可选：`git push --follow-tags`。
+
+具体行为可在 `soybean.config.ts` 中配置：
+
+```ts
+// soybean.config.ts（参考）
+import { defineConfig } from '@skyroc/scripts';
+
+export default defineConfig({
+  changelog: {
+    excludeTypes: ['chore', 'test'],
+  },
+  release: {
+    tagPrefix: 'v',
+    push: true
+  }
+});
+```
+
+## 多包发版策略
+
+| 模式 | 说明 |
+| --- | --- |
+| **单一版本** | 所有 `@skyroc/*` 共享一个版本，整体打 tag |
+| **独立版本** | 各包独立 version，独立 tag（适合大库） |
+
+当前仓库以单一版本为主（admin 的 `version: 3.0.0` 与各包版本并不严格绑定，更多是历史标签）。
+
+> 如未来引入 Changesets，可替换 `sa release` 流程；目前以 `bumpp` 为主。
+
+## 推荐的提交粒度
+
+| 场景 | 推荐 |
+| --- | --- |
+| 一次提交一类变更 | ✅ |
+| 跨多个包的同一改动（如类型升级） | 一个提交但写清 body |
+| WIP / 半成品 | 本地多次 commit，PR 合并前 squash |
+| 自动化生成的文件（dist、CHANGELOG） | 单独提交，明确标 `chore:` |
+
+## 常见检查清单
+
+提交前：
+
+- [ ] `pnpm format` 跑过；
+- [ ] `pnpm lint` 通过；
+- [ ] `pnpm typecheck` 通过；
+- [ ] `pnpm test` 通过（涉及测试的包）；
+- [ ] `git status` 没有意外文件；
+- [ ] `pnpm commit` 走 `sa git-commit`。
+
+发版前：
+
+- [ ] 主分支无未合并 PR；
+- [ ] `pnpm build` 全仓通过；
+- [ ] `CHANGELOG.md` 看过没遗漏；
+- [ ] `sa release` 选对版本号；
+- [ ] 推送后 CI 通过。
+
+## 与 CI 的协作
+
+详见 [CI](/docs/guide/engineering/ci)：
+
+- PR 自动跑 `pnpm format:check + lint + typecheck + test + build`；
+- `master` 合并触发发版 workflow（可选）。
