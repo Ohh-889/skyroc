@@ -20,30 +20,6 @@ export default function HomeScreen() {
       <Button
         variant="solid"
         color="primary"
-        onPress={() => router.push('/components/checkbox')}
-      >
-        Checkbox
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/input')}
-      >
-        Input
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
-        onPress={() => router.push('/components/avatar')}
-      >
-        Avatar
-      </Button>
-
-      <Button
-        variant="solid"
-        color="primary"
         onPress={() => router.push('/components/collapse')}
       >
         Collapse
