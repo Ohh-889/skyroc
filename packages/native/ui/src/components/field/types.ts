@@ -1,6 +1,6 @@
+import type { AllPathsKeys, FormBaseProps, Rule } from '@skyroc/form';
 import type { ComponentPropsWithoutRef, ElementType, ReactElement, Ref } from 'react';
 import type { View } from 'react-native';
-import type { AllPathsKeys, FormBaseProps, Rule } from '@skyroc/form';
 import type { SlotClassNames } from '../../types';
 import type { FieldGroupGap } from './field-variants';
 
@@ -36,6 +36,47 @@ export type FieldGroupProps<Values = any, As extends ElementType = typeof View> 
     ref?: Ref<As>;
   };
 
+// ==================== FieldLabel / FieldExtra（内部组件） ====================
+
+/** FieldLabel 组件属性，两套布局共用同一段标签结构，样式一律由调用方传入 */
+export interface FieldLabelProps {
+  /** 排列容器的类名 */
+  className?: string;
+
+  /** 标签文本，为空时整行不渲染 */
+  label?: string;
+
+  /** 标签文本的类名 */
+  labelClassName?: string;
+
+  /** 是否显示必填星号 */
+  required?: boolean;
+
+  /** 必填星号的类名 */
+  requiredClassName?: string;
+
+  /** 标签列固定宽度，左右布局靠它对齐各行输入区；缺省则由文本撑开 */
+  width?: number;
+}
+
+/** FieldExtra 组件属性，两套布局共用同一段提示结构，样式一律由调用方传入 */
+export interface FieldExtraProps {
+  /** 外层容器的类名 */
+  className?: string;
+
+  /** 描述文本 */
+  description?: string;
+
+  /** 描述文本的类名 */
+  descriptionClassName?: string;
+
+  /** 错误文案，`null` 表示当前字段没有错误 */
+  message?: string | null;
+
+  /** 错误文案的类名 */
+  messageClassName?: string;
+}
+
 // ==================== FieldItem ====================
 
 /** FieldItem 可覆盖的 slot 名称 */
@@ -47,8 +88,7 @@ export type FieldItemClassNames = SlotClassNames<FieldItemSlots>;
 /**
  * FieldItem 组件属性。
  *
- * 字段配置逐条显式声明，没有直接继承 core 的 `FieldProps` —— 后者带 `Record<string, any>` 索引签名，
- * 继承过来会让所有拼错的属性名都变成合法输入。
+ * 字段配置逐条显式声明，没有直接继承 core 的 `FieldProps` —— 后者带 `Record<string, any>` 索引签名， 继承过来会让所有拼错的属性名都变成合法输入。
  */
 export interface FieldItemProps<Values = any> {
   /** 子组件 — 接收注入的 value / onChange / error */

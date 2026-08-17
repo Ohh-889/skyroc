@@ -1,6 +1,4 @@
-// 表单实例由字段组件消费，从这里一并出口，调用方不必再直接依赖 @skyroc/form
-export { useForm } from '@skyroc/form';
-export type { FormInstance, Rule } from '@skyroc/form';
+// @skyroc/form 的表单实例与校验类型统一由 form 模块出口（见 components/form/index.ts），此处不再重复导出
 export { FIELD_GROUP_GAP_CLASS, fieldItemVariants } from './field-variants';
 export type { FieldGroupGap, FieldItemVariantProps } from './field-variants';
 export { FieldGroup } from './FieldGroup';
