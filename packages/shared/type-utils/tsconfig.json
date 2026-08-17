@@ -1,0 +1,9 @@
+{
+  "extends": "@skyroc/tsconfig/library.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "outDir": "./dist",
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+  },
+  "include": ["src", "__tests__", "vitest.config.ts"]
+}

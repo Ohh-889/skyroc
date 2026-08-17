@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/scheduler",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "description": "Cooperative task scheduler - unified init, periodic tasks, and listener management",
   "keywords": [

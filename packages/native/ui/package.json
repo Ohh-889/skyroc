@@ -1,0 +1,135 @@
+{
+  "name": "@skyroc/native-ui",
+  "version": "0.1.0",
+  "private": false,
+  "description": "React Native UI component library powered by Uniwind (Tailwind CSS v4) for SoybeanAdmin",
+  "keywords": [
+    "component-library",
+    "design-system",
+    "expo",
+    "react",
+    "react-native",
+    "skyroc",
+    "soybean-admin",
+    "tailwind",
+    "tailwindcss",
+    "typescript",
+    "ui",
+    "ui-library",
+    "uniwind"
+  ],
+  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/native/ui",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "directory": "packages/native/ui"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "typesVersions": {
+    "*": {
+      "components": [
+        "./src/components/index.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "./components": {
+        "import": {
+          "types": "./dist/components/index.d.ts",
+          "default": "./dist/components/index.js"
+        }
+      }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "dev": "tsdown --watch",
+    "lint": "oxlint --fix",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "catalog:native",
+    "@radix-ui/react-compose-refs": "^1.1.2",
+    "@radix-ui/react-use-controllable-state": "^1.2.2",
+    "@rn-primitives/slot": "^1.2.0",
+    "@skyroc/utils": "workspace:*",
+    "@skyroc/hooks": "workspace:*",
+    "@skyroc/form": "workspace:*",
+    "react-native-confirmation-code-field": "catalog:native",
+    "react-native-ui-datepicker": "catalog:native",
+    "tailwind-variants": "catalog:utils"
+  },
+  "devDependencies": {
+    "@expo/vector-icons": "catalog:native",
+    "@shopify/react-native-skia": "catalog:native",
+    "@skyroc/tsconfig": "workspace:*",
+    "@skyroc/ui-types": "workspace:*",
+    "@types/react": "catalog:dev",
+    "eslint-plugin-sort": "catalog:dev",
+    "expo-haptics": "catalog:native",
+    "expo-image": "catalog:native",
+    "oxlint": "catalog:dev",
+    "react": "catalog:native",
+    "react-native": "catalog:native",
+    "react-native-gesture-handler": "catalog:native",
+    "react-native-modal": "catalog:native",
+    "react-native-pager-view": "catalog:native",
+    "react-native-reanimated": "catalog:native",
+    "react-native-worklets": "catalog:native",
+    "rimraf": "catalog:dev",
+    "tailwindcss": "catalog:css",
+    "tsdown": "catalog:dev",
+    "typescript": "catalog:core",
+    "uniwind": "catalog:native"
+  },
+  "peerDependencies": {
+    "@expo/vector-icons": ">=15.0.0",
+    "@gorhom/bottom-sheet": ">=5.2.0",
+    "@shopify/react-native-skia": ">=2.4.0",
+    "expo-haptics": ">=57.0.0",
+    "expo-image": ">=57.0.0",
+    "react": ">=19.0.0",
+    "react-native": ">=0.81.0",
+    "react-native-gesture-handler": ">=2.28.0",
+    "react-native-modal": ">=13.0.2",
+    "react-native-pager-view": ">=8.0.0",
+    "react-native-reanimated": ">=4.0.0",
+    "react-native-worklets": ">=0.5.0",
+    "tailwindcss": ">=4",
+    "uniwind": ">=1.7.0"
+  }
+}

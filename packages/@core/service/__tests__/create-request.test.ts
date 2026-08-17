@@ -1,8 +1,10 @@
 import type { RequestOption } from '@skyroc/axios';
 import { createRequest } from '@skyroc/axios';
+import { AxiosHeaders } from 'axios';
 import type { AxiosResponse } from 'axios';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAppRequest } from '../src/request/create-request';
+import { resetTokenRefresh } from '../src/request/token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from '../src/request/types';
 
 vi.mock('@skyroc/axios', async importOriginal => {
@@ -19,6 +21,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
     getRefreshToken: vi.fn(() => null),
     getToken: vi.fn(() => 'test-token'),
     redirectToLogin: vi.fn(),
+    refreshTokenUrl: '/auth/refreshToken',
     resetAuth: vi.fn(),
     setAuth: vi.fn(),
     showErrorMessage: vi.fn(),
@@ -43,10 +46,16 @@ beforeEach(() => {
     capturedOptions = options as typeof capturedOptions;
     const fn = Object.assign(async () => null, {
       cancelAllRequest: vi.fn(),
-      state: {} as RequestInstanceState
+      // 和真的 createRequest 一样从 defaultState 起步，否则这里替上游兜底会掩盖它没兜的情况
+      state: { ...options?.defaultState } as RequestInstanceState
     });
     return fn as any;
   });
+});
+
+// 刷新是模块级单例，刷完还有一秒的结果复用窗口，不重置的话上个用例的结果会漏给下一个
+afterEach(() => {
+  resetTokenRefresh();
 });
 
 describe('createAppRequest', () => {
@@ -134,20 +143,22 @@ describe('createAppRequest', () => {
       const adapter = createMockAdapter({ getToken: vi.fn(() => 'my-jwt') });
       createAppRequest({ adapter, codes: TEST_CODES });
 
-      const config = { headers: {} } as any;
+      const config = { headers: new AxiosHeaders() } as any;
       const result = await capturedOptions.onRequest!(config);
 
-      expect(result.headers.Authorization).toBe('Bearer my-jwt');
+      expect(result.headers.get('Authorization')).toBe('Bearer my-jwt');
     });
 
-    it('sets Authorization to null when no token', async () => {
+    it('clears a stale Authorization when there is no token', async () => {
       const adapter = createMockAdapter({ getToken: vi.fn(() => null) });
       createAppRequest({ adapter, codes: TEST_CODES });
 
-      const config = { headers: {} } as any;
+      // 大小写不同的同名头：走 headers.set() 才会命中并覆盖，Object.assign 会留下两份
+      const config = { headers: new AxiosHeaders({ authorization: 'Bearer stale' }) } as any;
       const result = await capturedOptions.onRequest!(config);
 
-      expect(result.headers.Authorization).toBeNull();
+      expect(result.headers.get('Authorization')).toBeNull();
+      expect(result.headers.toJSON()).not.toHaveProperty('authorization');
     });
   });
 
@@ -158,7 +169,7 @@ describe('createAppRequest', () => {
 
       const response = {
         data: { code: '8888', data: null, msg: 'err' },
-        config: { headers: {} }
+        config: { headers: new AxiosHeaders() }
       } as unknown as AxiosResponse;
       const instance = { request: vi.fn() } as any;
 
@@ -166,6 +177,23 @@ describe('createAppRequest', () => {
 
       expect(adapter.showErrorMessage).toHaveBeenCalledWith('request.logoutMsg');
       expect(adapter.redirectToLogin).toHaveBeenCalled();
+    });
+
+    it('把续签后重试的响应交回上游 —— 吞掉它等于刷完 token 还让调用方拿到失败', async () => {
+      const adapter = createMockAdapter();
+      createAppRequest({ adapter, codes: TEST_CODES });
+
+      const response = {
+        data: { code: '9999', data: null, msg: 'expired' },
+        config: { headers: new AxiosHeaders() }
+      } as unknown as AxiosResponse;
+      const retried = { data: { code: '0000', data: 'ok', msg: '' } };
+      const instance = { request: vi.fn().mockResolvedValue(retried) } as any;
+
+      const result = await capturedOptions.onBackendFail!(response, instance);
+
+      expect(adapter.fetchRefreshToken).toHaveBeenCalled();
+      expect(result).toBe(retried);
     });
   });
 

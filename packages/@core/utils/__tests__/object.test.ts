@@ -58,8 +58,8 @@ describe('isObjectType', () => {
     expect(isObjectType([])).toBe(true);
   });
 
-  it('null 应返回 true（typeof null === "object"）', () => {
-    expect(isObjectType(null)).toBe(true);
+  it('null 应返回 false（不能因为 typeof null === "object" 就把 null 收窄成 object）', () => {
+    expect(isObjectType(null)).toBe(false);
   });
 
   it('基本类型应返回 false', () => {

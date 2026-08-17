@@ -8,12 +8,13 @@ export const DARK_TEXT_BASE = '#FFFFFF';
 /**
  * Generate color palettes (dark mode)
  *
- * Uses generateOklchPaletteEx algorithm to replace antd's @ant-design/colors Reference Ant Design official dark
- * algorithm, palette mapping needs special handling:
+ * Uses generateDarkModePalette algorithm to replace antd's @ant-design/colors Reference Ant Design official dark
+ * algorithm, palette mapping needs special handling.
  *
- * Mapping strategy (reference antd dark theme): - 1-4: Use light segment (50-300), for background and border - 5-7:
- * Cross mapping mid-bright area (5→600, 6→500, 7→400), enhance interaction contrast - 8-10: Reuse 5-7 (8→600, 9→500,
- * 10→400), for text colors
+ * 档位号语义与亮色一致——50 最亮、950 最暗。暗色主题需要深色背景，因此 antd 的 1-4 档取的是色板暗端（950-700），而不是靠翻转档位号来实现。
+ *
+ * Mapping strategy (reference antd dark theme): - 1-4: 取暗端 (950-700)，用于背景与边框 - 5-7: 交叉映射中间亮区 (5→400, 6→500,
+ * 7→600)，增强交互对比 - 8-10: 复用 5-7 (8→400, 9→500, 10→600)，用于文字色
  */
 export const generateColorPalettes: GenerateColorMap = (baseColor: string): ColorMap => {
   const { palettes } = generateDarkModePalette(baseColor);
@@ -21,16 +22,16 @@ export const generateColorPalettes: GenerateColorMap = (baseColor: string): Colo
 
   return {
     // antd 1-10 format (dark mode special mapping, reference antd official implementation)
-    1: p50.hex, // 50 - lightest background
-    2: p100.hex, // 100 - background hover
-    3: p200.hex, // 200 - border
-    4: p300.hex, // 300 - border hover
-    5: p600.hex, // 600 - hover color (dark mode needs brighter)
+    1: p950.hex, // 950 - darkest background
+    2: p900.hex, // 900 - background hover
+    3: p800.hex, // 800 - border
+    4: p700.hex, // 700 - border hover
+    5: p400.hex, // 400 - hover color (dark mode needs brighter)
     6: p500.hex, // 500 - main color
-    7: p400.hex, // 400 - active color (dark mode needs brighter)
-    8: p600.hex, // 600 - text hover
+    7: p600.hex, // 600 - active color
+    8: p400.hex, // 400 - text hover
     9: p500.hex, // 500 - text color
-    10: p400.hex, // 400 - text active
+    10: p600.hex, // 600 - text active
     // Tailwind 50-950 format (keep original mapping)
     50: p50.hex,
     100: p100.hex,

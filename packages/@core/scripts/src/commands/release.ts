@@ -5,7 +5,7 @@ export async function release(execute = 'pnpm sa changelog', push = true) {
     all: true,
     commit: 'chore(projects): release v%s',
     execute,
-    files: ['**/package.json', '!**/node_modules'],
+    files: ['**/package.json', '!**/node_modules/**'],
     push,
     tag: true
   });

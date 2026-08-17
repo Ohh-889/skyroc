@@ -26,7 +26,7 @@ const themeColorKeys = [
 ] as const;
 
 /** Color palette number scale */
-const colorPaletteNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] as const;
+const colorPaletteNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 
 function buildAntdMainPalette(name: string) {
   return {
@@ -39,7 +39,8 @@ function buildAntdMainPalette(name: string) {
     600: `var(--${name}-600)`,
     700: `var(--${name}-700)`,
     800: `var(--${name}-800)`,
-    900: `var(--${name}-900)`
+    900: `var(--${name}-900)`,
+    950: `var(--${name}-950)`
   };
 }
 /**
@@ -70,9 +71,9 @@ function createColorsPalette(name: string) {
     hover: `var(--${name}-400)`,
     active: `var(--${name}-600)`,
 
-    // 语义别名（按深浅排序：lightest < lighter < light）
+    // 语义别名，色值由浅到深：lightest(50) → lighter(100) → light(200)
     lightest: `var(--${name}-50)`, // 50 - 最浅
-    lighter: `var(--${name}-300)`, // 100 - 次浅
+    lighter: `var(--${name}-100)`, // 100 - 次浅
     light: `var(--${name}-200)`, // 200 - 稍浅
 
     // 文字相关

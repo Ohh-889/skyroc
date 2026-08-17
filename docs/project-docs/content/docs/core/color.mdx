@@ -9,14 +9,14 @@ description: 颜色处理与调色板生成，支持 Ant Design / OKLCH / 推荐
 | --- | --- |
 | 包名 | `@skyroc/color` |
 | 版本 | 2.5.0 |
-| 依赖 | `@skyroc/utils`、colord、culori |
-| 测试 | ✅ 7 个测试文件 |
+| 依赖 | colord、culori |
+| 测试 | ✅ 6 个测试文件 / 143 用例 |
 
 提供颜色格式转换、混合、调色板生成与 WCAG 对比度计算，是主题系统的色彩底座（被 [`@skyroc/adapter-antd-theme`](/docs/web/antd-theme)、[`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 等消费）。
 
 ## 三种调色板算法
 
-统一入口 `getColorPalette(color, algorithm)` 返回 `Map<ColorPaletteNumber, string>`：
+统一入口 `getColorPalette(color, config)` 返回 `Map<ColorPaletteNumber, string>`。`config` 可以是算法名，也可以是 `{ algorithm, darkTheme, darkThemeMixColor }` 配置对象：
 
 | 算法 | 函数 | 特点 |
 | --- | --- | --- |
@@ -30,7 +30,12 @@ import { getColorPalette } from '@skyroc/color';
 const palette = getColorPalette('#1677ff', 'oklch');
 palette.get(500); // 主色
 palette.get(50);  // 最浅
+
+// antd 暗色变体
+const dark = getColorPalette('#1677ff', { algorithm: 'antd', darkTheme: true });
 ```
+
+输入色会被统一归一化为小写 6 位 hex，`'#1677FF'`、`'rgb(...)'`、`'red'` 等写法产出的档位值一致。
 
 ## 颜色工具（shared/colord）
 
@@ -46,7 +51,7 @@ import { getHex, mixColor, addColorAlpha, lightenColor, darkenColor, isValidColo
 | `lightenColor` / `darkenColor` / `adjustLightness` | 明度调整 |
 | `getDeltaE` | 色差计算 |
 | `isValidColor` / `isWhiteColor` | 校验 |
-| `getColorName(color)` | 从 1500+ 色名表匹配最近色名 |
+| `getColorName(color)` | 从 1500+ 色名表匹配最近色名（惰性预解析 + 结果缓存） |
 
 ## OKLCH 高级能力
 
@@ -61,12 +66,14 @@ import {
   findAccessibleTextColor
 } from '@skyroc/color';
 
-getContrastRatio('#fff', '#1677ff');         // 对比度数值
-meetsWcagContrast('#fff', '#1677ff', 'AA');   // 是否满足 WCAG AA
-findAccessibleTextColor('#1677ff');           // 在该背景上可读的文字色
+const ratio = getContrastRatio('#fff', '#1677ff'); // 对比度数值（1–21）
+meetsWcagContrast(ratio, 'AA', 'normal');          // 该对比度是否满足 WCAG AA
+findAccessibleTextColor('#1677ff', '#ffffff');     // 在白色背景上可读的色阶编号
 ```
 
-支持 `WcagLevel`（AA / AAA）与 `TextSize` 维度。
+支持 `WcagLevel`（AA / AAA）与 `TextSize`（normal / large）两个维度。
+
+`generateDarkModePalette` 生成的暗色色板档位语义与亮色一致——50 最亮、950 最暗，只是整条明度曲线更暗。
 
 ## 内置色板预设
 

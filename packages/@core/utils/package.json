@@ -1,8 +1,8 @@
 {
   "name": "@skyroc/utils",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "type": "module",
-  "description": "Platform-agnostic utility functions with ./web subpath for browser-only utilities (download, window, BOM helpers)",
+  "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./web, ./path, ./cn and ./crypto subpath exports",
   "keywords": [
     "browser",
     "crypto",
@@ -29,7 +29,10 @@
     "email": "1509326266@qq.com",
     "url": "https://github.com/Ohh-889"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/date/dayjs.ts",
+    "./dist/date/dayjs.js"
+  ],
   "files": [
     "dist",
     "README.md"
@@ -37,18 +40,10 @@
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./src/index.ts",
-  "typesVersions": {
-    "*": {
-      "path": [
-        "./src/path.ts"
-      ],
-      "web": [
-        "./src/web/index.ts"
-      ]
-    }
-  },
   "exports": {
     ".": "./src/index.ts",
+    "./cn": "./src/cn.ts",
+    "./crypto": "./src/crypto.ts",
     "./path": "./src/path.ts",
     "./web": "./src/web/index.ts"
   },
@@ -65,6 +60,18 @@
           "default": "./dist/index.js"
         }
       },
+      "./cn": {
+        "import": {
+          "types": "./dist/cn.d.ts",
+          "default": "./dist/cn.js"
+        }
+      },
+      "./crypto": {
+        "import": {
+          "types": "./dist/crypto.d.ts",
+          "default": "./dist/crypto.js"
+        }
+      },
       "./path": {
         "import": {
           "types": "./dist/path.d.ts",
@@ -77,7 +84,10 @@
           "default": "./dist/web/index.js"
         }
       }
-    }
+    },
+    "sideEffects": [
+      "./dist/date/dayjs.js"
+    ]
   },
   "scripts": {
     "build": "tsdown",
@@ -87,18 +97,17 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit --skipLibCheck"
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.web.json --noEmit"
   },
   "dependencies": {
     "@skyroc/type-utils": "workspace:*",
     "clsx": "catalog:utils",
-    "colord": "catalog:utils",
     "crypto-js": "catalog:utils",
     "dayjs": "catalog:utils",
     "klona": "catalog:utils",
     "localforage": "catalog:utils",
     "nanoid": "catalog:utils",
-    "radash": "^12.1.1",
+    "radash": "catalog:utils",
     "tailwind-merge": "catalog:utils"
   },
   "devDependencies": {

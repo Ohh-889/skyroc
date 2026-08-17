@@ -1,5 +1,6 @@
 import { BACKEND_ERROR_CODE } from '@skyroc/axios';
 import type { RequestInstance } from '@skyroc/axios';
+import { AxiosHeaders } from 'axios';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { backEndFail, handleError } from '../src/request/error-handler';
@@ -24,6 +25,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
     getRefreshToken: vi.fn(() => 'refresh-tok'),
     getToken: vi.fn(() => 'access-tok'),
     redirectToLogin: vi.fn(),
+    refreshTokenUrl: '/auth/refreshToken',
     resetAuth: vi.fn(),
     setAuth: vi.fn(),
     showErrorMessage: vi.fn(),
@@ -47,7 +49,8 @@ function createMockRequest(stateOverrides: Partial<RequestInstanceState> = {}) {
 function createMockResponse(code: string, msg = 'error', config: Record<string, unknown> = {}) {
   return {
     data: { code, data: null, msg },
-    config: { headers: {}, ...config }
+    // 用真的 AxiosHeaders：重试分支走的是 headers.set()，普通对象会静默少掉认证头
+    config: { headers: new AxiosHeaders(), ...config }
   } as unknown as AxiosResponse<{ code: string | number; data: any; msg: string }>;
 }
 
@@ -62,6 +65,7 @@ describe('backEndFail', () => {
 
     expect(result).toBeNull();
     expect(adapter.showErrorMessage).toHaveBeenCalledWith('request.logoutMsg');
+    expect(adapter.resetAuth).toHaveBeenCalled();
     expect(adapter.redirectToLogin).toHaveBeenCalledWith('/dashboard');
   });
 
@@ -95,6 +99,7 @@ describe('backEndFail', () => {
     const modalCall = vi.mocked(adapter.showErrorModal).mock.calls[0]![0];
     modalCall.onConfirm();
 
+    expect(adapter.resetAuth).toHaveBeenCalled();
     expect(adapter.redirectToLogin).toHaveBeenCalledWith('/dashboard');
     expect(removeListenerSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function));
     expect(request.state.errMsgStack).not.toContain('Session expired');
@@ -137,7 +142,33 @@ describe('backEndFail', () => {
     expect(adapter.fetchRefreshToken).toHaveBeenCalled();
     expect(adapter.setAuth).toHaveBeenCalled();
     expect(instance.request).toHaveBeenCalledWith(response.config);
+    // 重试必须带上刷新后的认证头，否则重试的结果还是过期码
+    expect((response.config.headers as AxiosHeaders).get('Authorization')).toBe('Bearer access-tok');
     expect(result).toBe(retryResponse);
+  });
+
+  it('已经续签重发过一次的请求不再刷新', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn() } as any;
+    const response = createMockResponse('9999', 'expired', { isTokenRefreshRetry: true });
+
+    const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(result).toBeNull();
+    expect(adapter.fetchRefreshToken).not.toHaveBeenCalled();
+    expect(instance.request).not.toHaveBeenCalled();
+  });
+
+  it('重试前会在 config 上打标记，让下一轮认得出来', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn().mockResolvedValue({ data: { code: '0000' } }) } as any;
+    const response = createMockResponse('9999');
+
+    await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(response.config.isTokenRefreshRetry).toBe(true);
   });
 
   it('returns null when expired token refresh fails', async () => {
@@ -172,6 +203,20 @@ describe('backEndFail', () => {
     const request = createMockRequest();
     const instance = { request: vi.fn() } as any;
     const response = createMockResponse('9999', 'expired', { isRefreshToken: true });
+
+    const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
+
+    expect(result).toBeNull();
+    expect(adapter.fetchRefreshToken).not.toHaveBeenCalled();
+    expect(instance.request).not.toHaveBeenCalled();
+  });
+
+  it('靠 adapter.refreshTokenUrl 认出续签请求，不必等 api 层记得打标记', async () => {
+    const adapter = createMockAdapter();
+    const request = createMockRequest();
+    const instance = { request: vi.fn() } as any;
+    // 没有 isRefreshToken —— 四个 app 里三个都是这么写的
+    const response = createMockResponse('9999', 'expired', { url: '/auth/refreshToken' });
 
     const result = await backEndFail(response, instance, request, adapter, TEST_CODES);
 

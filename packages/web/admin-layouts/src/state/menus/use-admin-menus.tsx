@@ -1,8 +1,8 @@
 /* eslint-disable complexity */
-import { globalStore } from '@skyroc/core-state';
+import { atomWithPartial } from '@skyroc/core-state';
 import { useNavigate } from '@tanstack/react-router';
 import { useUpdateEffect } from 'ahooks';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { useMemo } from 'react';
 
 import { useAdminLayoutContext } from '../../context';
@@ -26,12 +26,10 @@ const initialState: MenusAtom = {
 
 const EMPTY_GENERATED_MENUS: GeneratedMenu[] = [];
 
-const menusAtom = atom(initialState, (get, set, update: Partial<MenusAtom>) => {
-  set(menusAtom, { ...get(menusAtom), ...update } as MenusAtom);
-});
+const menusAtom = atomWithPartial(initialState);
 
 export const useAdminMenus = (categoryKey?: string) => {
-  const [menuState, setMenuState] = useAtom(menusAtom, { store: globalStore });
+  const [menuState, setMenuState] = useAtom(menusAtom);
   const { activeFirstLevelMenuKey, activeSecondLevelMenuKey, drawerVisible } = menuState;
   const adminLayoutContext = useAdminLayoutContext();
 

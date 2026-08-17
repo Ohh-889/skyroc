@@ -1,0 +1,59 @@
+{
+  "name": "native-ui-playground",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios  --device",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild --clean",
+    "prebuild:ios": "expo prebuild --platform ios --clean",
+    "test": "jest --watchAll",
+    "typecheck": "tsc --noEmit --skipLibCheck",
+    "lint": "oxlint --fix",
+    "deploy": "npx expo export -p web && npx eas-cli@latest deploy"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "15.1.1",
+    "@react-navigation/native": "^7.0.0",
+    "@shopify/react-native-skia": "catalog:native",
+    "@skyroc/native-ui": "workspace:*",
+    "expo": "^57.0.1",
+    "expo-constants": "~57.0.2",
+    "expo-font": "~57.0.0",
+    "expo-haptics": "catalog:native",
+    "expo-image": "catalog:native",
+    "expo-linking": "~57.0.1",
+    "expo-router": "~57.0.2",
+    "expo-status-bar": "~57.0.0",
+    "expo-system-ui": "~57.0.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-gesture-handler": "catalog:native",
+    "react-native-modal": "catalog:native",
+    "react-native-pager-view": "catalog:native",
+    "react-native-reanimated": "catalog:native",
+    "react-native-safe-area-context": "catalog:native",
+    "react-native-screens": "4.25.2",
+    "react-native-worklets": "catalog:native",
+    "tailwindcss": "catalog:css",
+    "uniwind": "catalog:native"
+  },
+  "devDependencies": {
+    "@skyroc/tailwind-plugin": "workspace:*",
+    "@types/jest": "^29.5.12",
+    "@types/react": "catalog:dev",
+    "eslint-plugin-sort": "catalog:dev",
+    "jest": "^29.2.1",
+    "jest-expo": "~57.0.0",
+    "oxlint": "catalog:dev",
+    "react-test-renderer": "19.1.0",
+    "typescript": "~6.0.3"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  }
+}

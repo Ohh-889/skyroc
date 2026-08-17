@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { REG_CODE_FOUR, REG_CODE_SIX, REG_EMAIL, REG_PHONE, REG_PWD, REG_URL, REG_USER_NAME } from '../src/reg';
+import {
+  REG_CODE_FOUR,
+  REG_CODE_SIX,
+  REG_EMAIL,
+  REG_PHONE,
+  REG_PWD,
+  REG_PWD_STRONG,
+  REG_URL,
+  REG_USER_NAME
+} from '../src/reg';
 
 // ==================== REG_USER_NAME ====================
 
@@ -34,6 +43,7 @@ describe('REG_PHONE', () => {
 
   it('无效手机号应不匹配', () => {
     expect(REG_PHONE.test('12345678901')).toBe(false);
+    expect(REG_PHONE.test('10800138000')).toBe(false);
     expect(REG_PHONE.test('1380013800')).toBe(false);
     expect(REG_PHONE.test('138001380001')).toBe(false);
   });
@@ -110,7 +120,40 @@ describe('REG_URL', () => {
     expect(REG_URL.test('https://example.com/path?q=1&b=2')).toBe(true);
   });
 
-  it('空字符串应不匹配', () => {
+  it('端口、协议相对、hash 应匹配', () => {
+    expect(REG_URL.test('https://example.com:8080/a/b')).toBe(true);
+    expect(REG_URL.test('//cdn.example.com/a.js')).toBe(true);
+    expect(REG_URL.test('example.com/docs#anchor')).toBe(true);
+  });
+
+  it('空字符串与非法输入应不匹配', () => {
     expect(REG_URL.test('')).toBe(false);
+    expect(REG_URL.test('not a url')).toBe(false);
+    expect(REG_URL.test('http://')).toBe(false);
+  });
+
+  it('长串失配时应在常数级时间内返回（无灾难性回溯）', () => {
+    const evil = `http://${'a'.repeat(60)}!`;
+    const start = performance.now();
+
+    expect(REG_URL.test(evil)).toBe(false);
+    expect(performance.now() - start).toBeLessThan(100);
+  });
+});
+
+// ==================== REG_PWD_STRONG ====================
+
+describe('REG_PWD_STRONG', () => {
+  it('同时含大小写与数字的 8-32 位应匹配，允许符号', () => {
+    expect(REG_PWD_STRONG.test('Abcdef12')).toBe(true);
+    expect(REG_PWD_STRONG.test('Abcdef12!@#')).toBe(true);
+  });
+
+  it('缺少任一类别或长度不足应不匹配', () => {
+    expect(REG_PWD_STRONG.test('abcdef12')).toBe(false);
+    expect(REG_PWD_STRONG.test('ABCDEF12')).toBe(false);
+    expect(REG_PWD_STRONG.test('Abcdefgh')).toBe(false);
+    expect(REG_PWD_STRONG.test('Abcde1')).toBe(false);
+    expect(REG_PWD_STRONG.test(`A1${'a'.repeat(31)}`)).toBe(false);
   });
 });

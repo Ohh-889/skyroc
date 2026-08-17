@@ -21,11 +21,16 @@ export async function handleRefreshToken(adapter: RequestAdapter): Promise<boole
   try {
     // 取不到就传空串，让后端去拒：这里提前返回的话，调用方分不清「没登录」和「续签失败」
     const data = await adapter.fetchRefreshToken(adapter.getRefreshToken() || '');
+
     adapter.setAuth(data);
 
     return true;
   } catch {
+    // 换不回来说明 refresh token 也废了，留着只会让下一次请求再走一遍失败的续签
+    adapter.resetAuth();
+
     const fullPath = adapter.getCurrentPath();
+
     adapter.redirectToLogin(fullPath);
 
     return false;

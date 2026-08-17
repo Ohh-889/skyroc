@@ -2,19 +2,22 @@
 // oxlint-disable no-continue
 // oxlint-disable no-await-in-loop
 import { existsSync } from 'node:fs';
-import { cp, mkdtemp, readFile, readdir, rm, stat } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { Generator, configSchema } from '@tanstack/router-generator';
+import process from 'node:process';
 import { cyan, green, red, yellow } from 'kolorist';
 
-interface SyncAdminTemplateOptions {
-  /** Check whether the template matches apps/admin without changing files. */
+import { getPackageRoot, getWorkspaceRoot } from '../shared';
+import { TEMPLATE_META_FILE, stringifyTemplateMeta } from '../template/meta';
+import { resolveTemplateMeta } from '../template/resolve';
+
+export interface SyncAdminTemplateOptions {
+  /** 只检查模板是否落后于 apps/admin，不写文件。 */
   check?: boolean;
-  /** Source admin app directory. Defaults to apps/admin. */
+  /** 源 admin 应用目录，默认 apps/admin。 */
   source?: string;
-  /** Target template directory. Defaults to packages/@core/scripts/templates/admin. */
+  /** 目标模板目录，默认 packages/@core/scripts/templates/admin。 */
   target?: string;
 }
 
@@ -27,39 +30,10 @@ interface DirectoryDifference {
 
 const TEMPLATE_NAME = 'admin';
 
-const TECHNICAL_DIRS = new Set(['.turbo', 'dist', 'node_modules']);
+const MAX_REPORTED_DIFFERENCES = 20;
 
-function getPackageRoot() {
-  let currentDir = path.dirname(fileURLToPath(import.meta.url));
-
-  while (currentDir !== path.dirname(currentDir)) {
-    const packageJsonPath = path.join(currentDir, 'package.json');
-
-    if (existsSync(packageJsonPath)) {
-      return currentDir;
-    }
-
-    currentDir = path.dirname(currentDir);
-  }
-
-  throw new Error('Cannot resolve @skyroc/scripts package root.');
-}
-
-function getWorkspaceRoot(startDir = process.cwd()) {
-  let currentDir = path.resolve(startDir);
-
-  while (currentDir !== path.dirname(currentDir)) {
-    const workspaceConfigPath = path.join(currentDir, 'pnpm-workspace.yaml');
-
-    if (existsSync(workspaceConfigPath)) {
-      return currentDir;
-    }
-
-    currentDir = path.dirname(currentDir);
-  }
-
-  throw new Error('Cannot resolve workspace root. Run this command inside the monorepo.');
-}
+/** 构建产物与工具缓存目录，同步时既不复制也不参与比对。 */
+const TECHNICAL_DIRS = new Set(['.tanstack', '.turbo', 'coverage', 'dist', 'node_modules']);
 
 function normalizeRelativePath(filePath: string) {
   return filePath.split(path.sep).join('/');
@@ -120,6 +94,13 @@ async function copyAdminSource(sourceDir: string, targetDir: string) {
 }
 
 async function generateRouteTree(targetDir: string) {
+  // 只有仓库内的同步才需要路由生成器，独立安装 @skyroc/scripts 的用户跑不到这里，因此按需加载而不是常驻依赖。
+  const { configSchema, Generator } = await import('@tanstack/router-generator').catch(() => {
+    throw new Error(
+      '@tanstack/router-generator is not installed. sync-admin-template only runs inside the skyroc-admin monorepo.'
+    );
+  });
+
   const routeTreeTmpDir = await mkdtemp(path.join(tmpdir(), 'skyroc-route-tree-'));
 
   try {
@@ -182,19 +163,18 @@ async function compareFiles(leftFile: string, rightFile: string) {
 
 async function compareDirectories(leftDir: string, rightDir: string) {
   const [leftFiles, rightFiles] = await Promise.all([collectFiles(leftDir), collectFiles(rightDir)]);
+  const leftFileSet = new Set(leftFiles);
+  const rightFileSet = new Set(rightFiles);
   const allFiles = Array.from(new Set([...leftFiles, ...rightFiles])).toSorted((a, b) => a.localeCompare(b));
   const differences: DirectoryDifference[] = [];
 
   for (const file of allFiles) {
-    const leftHasFile = leftFiles.includes(file);
-    const rightHasFile = rightFiles.includes(file);
-
-    if (!leftHasFile) {
+    if (!leftFileSet.has(file)) {
       differences.push({ path: file, type: 'added' });
       continue;
     }
 
-    if (!rightHasFile) {
+    if (!rightFileSet.has(file)) {
       differences.push({ path: file, type: 'removed' });
       continue;
     }
@@ -209,46 +189,67 @@ async function compareDirectories(leftDir: string, rightDir: string) {
   return differences;
 }
 
-async function generateSnapshot(sourceDir: string, targetDir: string) {
+/**
+ * 产出一份完整快照：模板目录 + 物化元数据。
+ *
+ * 元数据放在模板目录外层，这样 `templates/admin/` 依然是 `apps/admin` 的逐字节镜像，比对逻辑不需要为 sidecar 开特例。
+ */
+async function generateSnapshot(workspaceRoot: string, sourceDir: string, targetDir: string) {
   if (!existsSync(sourceDir)) {
     throw new Error(`Admin source is missing: ${sourceDir}`);
   }
 
   await copyAdminSource(sourceDir, targetDir);
   await generateRouteTree(targetDir);
+
+  const meta = await resolveTemplateMeta({ sourceDir, workspaceRoot });
+  const metaContent = stringifyTemplateMeta(meta);
+
+  await writeFile(path.join(path.dirname(targetDir), TEMPLATE_META_FILE), metaContent);
+
+  return { meta, metaContent };
 }
 
 function formatDifferences(differences: DirectoryDifference[]) {
-  return differences
-    .slice(0, 20)
+  const detail = differences
+    .slice(0, MAX_REPORTED_DIFFERENCES)
     .map(item => `  ${item.type.padEnd(7)} ${item.path}`)
     .join('\n');
+
+  if (differences.length <= MAX_REPORTED_DIFFERENCES) return detail;
+
+  return `${detail}\n  ...and ${differences.length - MAX_REPORTED_DIFFERENCES} more`;
 }
 
-async function checkAdminTemplate(sourceDir: string, targetDir: string) {
+async function readMetaContent(metaPath: string) {
+  if (!existsSync(metaPath)) return '';
+
+  return readFile(metaPath, 'utf8');
+}
+
+async function checkAdminTemplate(workspaceRoot: string, sourceDir: string, targetDir: string) {
   const tempDir = await mkdtemp(path.join(tmpdir(), 'skyroc-admin-template-'));
   const generatedDir = path.join(tempDir, TEMPLATE_NAME);
 
   try {
-    await generateSnapshot(sourceDir, generatedDir);
+    const { metaContent } = await generateSnapshot(workspaceRoot, sourceDir, generatedDir);
 
     const differences = await compareDirectories(targetDir, generatedDir);
+    const currentMetaContent = await readMetaContent(path.join(path.dirname(targetDir), TEMPLATE_META_FILE));
+
+    if (currentMetaContent !== metaContent) {
+      differences.push({ path: TEMPLATE_META_FILE, type: currentMetaContent ? 'changed' : 'added' });
+    }
 
     if (differences.length > 0) {
-      const detail = formatDifferences(differences);
-      const suffix = differences.length > 20 ? `\n  ...and ${differences.length - 20} more` : '';
-
       throw new Error(
         [
           red('Admin template is out of date.'),
           `${cyan('source')} ${sourceDir}`,
           `${cyan('target')} ${targetDir}`,
           yellow('Run pnpm sa sync-admin-template to regenerate it.'),
-          detail,
-          suffix
-        ]
-          .filter(Boolean)
-          .join('\n')
+          formatDifferences(differences)
+        ].join('\n')
       );
     }
 
@@ -264,13 +265,22 @@ export async function syncAdminTemplate(options: SyncAdminTemplateOptions = {}) 
   const targetDir = resolveTargetDir(options.target);
 
   if (options.check) {
-    await checkAdminTemplate(sourceDir, targetDir);
+    await checkAdminTemplate(workspaceRoot, sourceDir, targetDir);
     return;
   }
 
-  await generateSnapshot(sourceDir, targetDir);
+  const { meta } = await generateSnapshot(workspaceRoot, sourceDir, targetDir);
 
   console.log(green('Synced admin template.'));
   console.log(`${cyan('source')} ${sourceDir}`);
   console.log(`${cyan('target')} ${targetDir}`);
+  console.log(`${cyan('meta')}   ${path.join(path.dirname(targetDir), TEMPLATE_META_FILE)}`);
+
+  if (meta.unpublishedPackages.length > 0) {
+    console.log(
+      yellow(
+        `warning  standalone apps will not install these private workspace packages: ${meta.unpublishedPackages.join(', ')}`
+      )
+    );
+  }
 }

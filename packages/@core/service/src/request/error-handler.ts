@@ -1,7 +1,7 @@
 import type { RequestInstance } from '@skyroc/axios';
 /* eslint-disable max-params */
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import { getAuthorization, showErrorMsg } from './shared';
+import { getAuthorization, isRefreshTokenRequest, showErrorMsg } from './shared';
 import { refreshToken } from './token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
 
@@ -16,6 +16,10 @@ export async function backEndFail(
   const responseCode = String(response.data.code);
 
   function handleLogout() {
+    // 先清凭据再跳：平台的 redirectToLogin 只负责「跳到哪」，清不清由这一层说了算，
+    // 否则没在路由里顺手清的平台会带着一份废凭据停在登录页。
+    adapter.resetAuth();
+
     const fullPath = adapter.getCurrentPath();
     adapter.redirectToLogin(fullPath);
   }
@@ -57,11 +61,22 @@ export async function backEndFail(
 
   // 续签接口自己拿到过期码时不能再去续签：它会 await 自己那次还没完成的刷新，把它和所有
   // 等着刷新的请求一起永久挂起。这里放行让它 reject，由 handleRefreshToken 跳登录页。
-  if (codes.expiredToken.includes(responseCode) && !response.config?.isRefreshToken) {
+  //
+  // 已经续签重发过一次的也不再刷：重发的请求会完整走一遍响应拦截器，失败了就再次落回这里，
+  // onBackendFail 本身不设递归上限。而刷完还是过期码说明问题不在 token 上（多副本没同步、
+  // 时钟偏移，或者这个码根本就不该配进 expiredToken），此时 refreshToken 的一秒复用窗口会让
+  // 第二次起直接返回缓存结果——连一次网络往返的退避都没有，就是一个纯粹的热循环重发。
+  const canRefresh =
+    codes.expiredToken.includes(responseCode) &&
+    !isRefreshTokenRequest(response.config, adapter) &&
+    !response.config.isTokenRefreshRetry;
+
+  if (canRefresh) {
     const success = await refreshToken(adapter);
     if (success) {
-      const Authorization = getAuthorization(adapter);
-      Object.assign(response.config.headers, { Authorization });
+      response.config.headers.set('Authorization', getAuthorization(adapter));
+      response.config.isTokenRefreshRetry = true;
+
       return instance.request(response.config) as Promise<AxiosResponse>;
     }
   }

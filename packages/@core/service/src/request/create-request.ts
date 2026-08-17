@@ -27,15 +27,17 @@ export function createAppRequest(options: CreateRequestOptions) {
         ((response: AxiosResponse<{ code: string | number }>) => {
           return String(response.data.code) === codes.success;
         }),
-      async onBackendFail(response, instance) {
-        await backEndFail(response, instance, request, adapter, codes);
+      // 必须把结果交回去：续签成功后 backEndFail 返回的是重试的响应，吞掉它等于刷完了 token
+      // 还让调用方拿到失败。
+      // 返回类型必须显式写出来：不写的话 request 的类型要经由这里回推自己，TS 判成循环推断
+      onBackendFail(response, instance): Promise<AxiosResponse | null> {
+        return backEndFail(response, instance, request, adapter, codes);
       },
       onError(error) {
         handleError(error, request, adapter, codes);
       },
       async onRequest(config) {
-        const Authorization = getAuthorization(adapter);
-        Object.assign(config.headers, { Authorization });
+        config.headers.set('Authorization', getAuthorization(adapter));
 
         // 加密放在最后：认证头不能跟着 body 一起被加密掉
         return sealRequest(config);
@@ -47,10 +49,6 @@ export function createAppRequest(options: CreateRequestOptions) {
         })
     }
   );
-
-  // createRequest 内部将 state 初始化为 {}，手动补全默认值
-  const defaultState: RequestInstanceState = { errMsgStack: [] };
-  request.state = Object.assign(defaultState, request.state);
 
   return request;
 }

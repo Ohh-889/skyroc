@@ -1,0 +1,190 @@
+---
+title: Button
+description: 触发即时操作的按钮组件
+---
+
+按钮（Button）用于触发即时操作，是移动端界面中最常用的交互元素。组件基于 React Native 的 `Pressable` 封装，按下时整体降低不透明度（`active:opacity-80`），并按尺寸补偿触摸热区。
+
+```tsx
+import { Button } from '@skyroc/native-ui';
+```
+
+## 何时使用
+
+- 需要一个即时操作的触发器时，使用按钮。
+- 同一屏内主操作（`solid` + `primary`）建议只出现一次，其余降级为 `tonal` / `outline` / `ghost`。
+- 表单提交、底部行动区推荐配合 `block` 通栏，符合移动端的拇指操作习惯。
+
+## 变体
+
+通过 `variant` 控制视觉强度，从高到低依次为：
+
+| 变体      | 视觉强度 | 表现                          | 适用场景         |
+| --------- | -------- | ----------------------------- | ---------------- |
+| `solid`   | 最强     | 主题色填充背景，前景色文字    | 主操作（默认）   |
+| `tonal`   | 中       | 主题色 15% 淡背景，主题色文字 | 次级操作         |
+| `outline` | 中低     | 主题色描边，无背景            | 并列的可选操作   |
+| `ghost`   | 最低     | 无背景无边框，仅文字          | 弱化操作、工具栏 |
+
+<Demo src="@playground/button/ButtonVariant" />
+
+## 颜色
+
+`color` 提供 7 种语义色：
+
+| 颜色          | 语义     | 适用场景               |
+| ------------- | -------- | ---------------------- |
+| `primary`     | 主操作   | 页面中最重要的行为     |
+| `destructive` | 危险操作 | 删除、注销等不可逆操作 |
+| `secondary`   | 次级操作 | 辅助性、低优先级操作   |
+| `success`     | 成功确认 | 操作成功、确认完成     |
+| `warning`     | 警告提示 | 需要注意的操作         |
+| `info`        | 信息提示 | 信息性操作             |
+| `muted`       | 中性     | 不带语义倾向的中性操作 |
+
+<Demo src="@playground/button/ButtonColor" />
+
+`muted` 与其他颜色不同：它在所有变体下的文字色统一为 `text-muted-foreground`，不随 `variant` 切换。
+
+## 尺寸
+
+`size` 提供 3 个常规尺寸和 1 个图标尺寸：
+
+| 尺寸   | 高度        | 字号 | 图标间距 | 触摸热区补偿 | 适用场景             |
+| ------ | ----------- | ---- | -------- | ------------ | -------------------- |
+| `sm`   | 32          | 14   | 6        | 6            | 紧凑布局、列表内操作 |
+| `md`   | 40          | 16   | 8        | 2            | 常规场景（默认）     |
+| `lg`   | 56          | 17   | 10       | 0            | 表单提交、主要 CTA   |
+| `icon` | 40（宽 40） | —    | —        | 2            | 纯图标按钮           |
+
+<Demo src="@playground/button/ButtonSize" />
+
+热区补偿通过 `hitSlop` 实现，让每个尺寸的实际可点区域都不低于 44pt —— 这是 iOS HIG 与 Material 的共同底线，不需要你在业务侧再包一层。
+
+## 形状
+
+`shape` 控制圆角形态。`rounded` 的圆角随尺寸变化（`sm` 稍小），`circle` 则在任意尺寸下都收成正圆。
+
+| 形状      | 圆角                       | 说明                           |
+| --------- | -------------------------- | ------------------------------ |
+| `rounded` | `sm` 较小，其余为大圆角    | 标准圆角（默认）               |
+| `pill`    | 全圆角                     | 药丸形，适用于标签式操作       |
+| `circle`  | 全圆角 + 正方形比例、无横向内边距 | 圆形图标按钮             |
+
+<Demo src="@playground/button/ButtonShape" />
+
+## 通栏
+
+设置 `block` 让按钮占满父容器宽度，常用于表单底部和弹层的确认操作。
+
+<Demo src="@playground/button/ButtonBlock" />
+
+## 插槽
+
+`leading` 和 `trailing` 分别在文字前后放置图标或其他内容，间距由 `size` 决定（见上表「图标间距」）。
+
+<Demo src="@playground/button/ButtonSlot" />
+
+插槽内容不会自动继承按钮的文字颜色：`TextClassContext` 只作用于 `@skyroc/native-ui` 的 `Text`，`@expo/vector-icons` 之类的图标组件需要自己传 `color`。
+
+## 加载
+
+`loading` 为 `true` 时按钮自动禁用，并在 `leading` 位置渲染 `ActivityIndicator`——占用同一个位置而不是额外插入节点，避免按钮宽度跳动。指示器颜色跟随 `variant` / `color`，与文字色保持一致。
+
+<Demo src="@playground/button/ButtonLoading" />
+
+注意 `loading` 会顶掉你传入的 `leading` 内容（web 端的实现是保留自定义 leading，native 这里不同）。
+
+## 禁用
+
+`disabled` 或 `loading` 任一成立时，按钮不可点击并降低到 50% 不透明度。
+
+<Demo src="@playground/button/ButtonDisabled" />
+
+## 文字与自定义
+
+- `children` 为 `string` / `number` 时自动包一层 `Text`，样式来自 `TextClassContext`。
+- 传入自定义节点时不做包裹，若节点内是 `@skyroc/native-ui` 的 `Text`，同样会继承按钮的文字样式。
+- `className` 追加到容器上，`classNames` 按 slot（`root` / `text` / `indicator`）细粒度覆盖，两者都会与内置变体合并。
+
+## 无障碍
+
+按钮默认设置了 `role="button"`，并把 `loading` / `disabled` 映射到 `accessibilityState` 的 `busy` 与 `disabled`，读屏器可以正确播报状态。
+
+## API
+
+### Button
+
+除下表外，`Button` 透传 `Pressable` 的全部属性（`onPress`、`onLongPress`、`testID` 等）。
+
+<PropsTable
+  data={[
+    {
+      name: 'variant',
+      description: '视觉样式',
+      type: "'solid' | 'tonal' | 'outline' | 'ghost'",
+      default: "'solid'"
+    },
+    {
+      name: 'color',
+      description: '主题颜色',
+      type: "'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info' | 'muted'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸，同时决定高度、字号、内边距与触摸热区补偿',
+      type: "'sm' | 'md' | 'lg' | 'icon'",
+      default: "'md'"
+    },
+    {
+      name: 'shape',
+      description: '圆角形态',
+      type: "'rounded' | 'pill' | 'circle'",
+      default: "'rounded'"
+    },
+    { name: 'block', description: '占满父容器宽度', type: 'boolean', default: 'false' },
+    {
+      name: 'loading',
+      description: '加载状态，自动禁用并在 leading 位置显示指示器',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'disabled', description: '禁用状态', type: 'boolean', default: 'false' },
+    { name: 'leading', description: '前置内容，显示在文字之前', type: 'ReactNode' },
+    { name: 'trailing', description: '后置内容，显示在文字之后', type: 'ReactNode' },
+    {
+      name: 'children',
+      description: '按钮内容，string / number 会被自动包裹为 Text',
+      type: 'ReactNode'
+    },
+    { name: 'className', description: '容器类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description:
+        '各 slot 的类名覆盖，text 通过 TextClassContext 下发给子 Text，indicator 作用于 loading 指示器的 colorClassName，只接受 accent-* 颜色类',
+      type: "SlotClassNames<'indicator' | 'root' | 'text'>"
+    },
+    {
+      name: 'ref',
+      description: '底层 Pressable 的 ref，用于 measure / 滚动定位等命令式操作',
+      type: 'Ref<View>'
+    }
+  ]}
+/>
+
+### 类型
+
+```ts
+import type {
+  ButtonColor,
+  ButtonProps,
+  ButtonShape,
+  ButtonSize,
+  ButtonSlots,
+  ButtonVariant
+} from '@skyroc/native-ui';
+```
+
+`ButtonColor` / `ButtonVariant` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上表一一对应；
+`ButtonSlots` 是可覆盖的 slot 名称联合，供 `classNames` 使用。

@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/web-admin-runtime",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "Reusable web admin runtime helpers for bootstrap plugins.",
   "keywords": [
@@ -77,6 +77,7 @@
     "@types/nprogress": "catalog:dev",
     "@types/react": "catalog:dev",
     "dayjs": "catalog:utils",
+    "happy-dom": "catalog:dev",
     "nprogress": "catalog:ui-shared",
     "oxlint": "catalog:dev",
     "react": "catalog:core",
@@ -90,5 +91,8 @@
     "dayjs": ">=1.11.0",
     "nprogress": ">=0.2.0",
     "react": ">=18.0.0"
+  },
+  "dependencies": {
+    "@skyroc/scheduler": "workspace:*"
   }
 }

@@ -1,0 +1,165 @@
+import { Button, Text } from '@skyroc/native-ui';
+import { useRouter } from 'expo-router';
+import { View } from 'react-native';
+
+export default function HomeScreen() {
+  const router = useRouter();
+
+  return (
+    <View className="flex-1 bg-red-500">
+      <Text color="primary">Welcome to the Native UI Playground!</Text>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/tabs')}
+      >
+        Press Me
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/floating-button')}
+      >
+        FloatingButton
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/back-top')}
+      >
+        BackTop
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/date-picker')}
+      >
+        DatePicker
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/calendar')}
+      >
+        Calendar
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/dropdown-menu')}
+      >
+        DropdownMenu
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/grid')}
+      >
+        Grid
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/field')}
+      >
+        Field
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/form')}
+      >
+        Form
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/index-bar')}
+      >
+        IndexBar
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/pagination')}
+      >
+        Pagination
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/search')}
+      >
+        Search
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/share-sheet')}
+      >
+        ShareSheet
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/signature')}
+      >
+        Signature
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/slider')}
+      >
+        Slider
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/switch')}
+      >
+        Switch
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/text-ellipsis')}
+      >
+        TextEllipsis
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/time-picker')}
+      >
+        TimePicker
+      </Button>
+
+      <Button
+        variant="solid"
+        color="primary"
+        onPress={() => router.push('/components/tree-select')}
+      >
+        TreeSelect
+      </Button>
+    </View>
+  );
+}

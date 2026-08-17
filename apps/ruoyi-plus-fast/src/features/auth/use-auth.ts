@@ -1,4 +1,4 @@
-import { globalStore, updateAtomValue } from '@skyroc/core-state';
+import { setAtomValue } from '@skyroc/core-state';
 import { cacheTabs, useMenus } from '@skyroc/web-admin-layouts';
 import { atom, useAtom, useAtomValue } from 'jotai';
 
@@ -33,18 +33,18 @@ export function clearAuthStorage() {
 }
 
 export function setAuth(data: Api.Auth.LoginToken) {
-  updateAtomValue(authAtom, prev => ({ ...prev, token: data.token }));
+  setAtomValue(authAtom, prev => ({ ...prev, token: data.token }));
 
   localStg.set('token', data.token);
   localStg.set('refreshToken', data.refreshToken);
 }
 
 export function useAuthToken() {
-  return useAtomValue(authAtom, { store: globalStore }).token;
+  return useAtomValue(authAtom).token;
 }
 
 export function useAuth() {
-  const [state, setState] = useAtom(authAtom, { store: globalStore });
+  const [state, setState] = useAtom(authAtom);
   const { clearMenus, getHomeRoute, home, initMenus } = useMenus();
   const isLoggedIn = Boolean(state.token);
   const { data: userInfo, refetch } = useUserInfoQuery();

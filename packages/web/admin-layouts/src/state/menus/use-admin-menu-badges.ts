@@ -1,4 +1,4 @@
-import { globalStore, setAtomValue, updateAtomValue } from '@skyroc/core-state';
+import { setAtomValue } from '@skyroc/core-state';
 import { atom, useAtomValue } from 'jotai';
 
 export type MenuBadgeValues = Record<string, Router.MenuBadgeValue | undefined>;
@@ -6,7 +6,7 @@ export type MenuBadgeValues = Record<string, Router.MenuBadgeValue | undefined>;
 const menuBadgeValuesAtom = atom<MenuBadgeValues>({});
 
 function updateMenuBadgeValues(getNextValues: (currentValues: MenuBadgeValues) => MenuBadgeValues) {
-  updateAtomValue(menuBadgeValuesAtom, getNextValues);
+  setAtomValue(menuBadgeValuesAtom, getNextValues);
 }
 
 export function setMenuBadgeValue(key: string, value: Router.MenuBadgeValue | undefined) {
@@ -35,7 +35,7 @@ export function clearMenuBadgeValues(keys?: string[]) {
 }
 
 export function useAdminMenuBadges() {
-  const badgeValues = useAtomValue(menuBadgeValuesAtom, { store: globalStore });
+  const badgeValues = useAtomValue(menuBadgeValuesAtom);
 
   return {
     badgeValues,

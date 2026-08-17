@@ -4,14 +4,7 @@ import type { CliOption } from '../types';
 
 const defaultOptions: CliOption = {
   cwd: process.cwd(),
-  cleanupDirs: [
-    '**/dist',
-    '**/package-lock.json',
-    '**/yarn.lock',
-    '**/pnpm-lock.yaml',
-    '**/node_modules',
-    '!node_modules/**'
-  ],
+  cleanupDirs: ['**/dist', '**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml', '**/node_modules'],
   ncuCommandArgs: ['--deep', '-u'],
   changelogOptions: {},
   gitCommitVerifyIgnores: [
@@ -26,10 +19,22 @@ const defaultOptions: CliOption = {
   ]
 };
 
+/**
+ * 加载 CLI 配置。
+ *
+ * 先读历史遗留的 `soybean.*`，再让 `skyroc.*` 覆盖在上面——包名早已改成 `@skyroc/scripts`，但旧配置文件不该一升级就失效。
+ */
 export async function loadCliOptions(overrides?: Partial<CliOption>, cwd = process.cwd()) {
-  const { config } = await loadConfig<Partial<CliOption>>({
+  const { config: legacyConfig } = await loadConfig<Partial<CliOption>>({
     name: 'soybean',
     defaults: defaultOptions,
+    cwd,
+    packageJson: true
+  });
+
+  const { config } = await loadConfig<Partial<CliOption>>({
+    name: 'skyroc',
+    defaults: legacyConfig as Partial<CliOption>,
     overrides,
     cwd,
     packageJson: true

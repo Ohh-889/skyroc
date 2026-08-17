@@ -74,7 +74,8 @@ function ComputedField<Values = any>({
   const fieldContext = useFieldContext<Values>();
 
   // Extract form instance methods
-  const { getFieldValue, getInternalHooks, isHidden } = fieldContext as unknown as InternalFormInstance<Values>;
+  const { getFieldsValue, getFieldValue, getInternalHooks, isHidden, setFieldValue } =
+    fieldContext as unknown as InternalFormInstance<Values>;
 
   // Local state to track computed value for re-rendering
 
@@ -104,6 +105,11 @@ function ComputedField<Values = any>({
 
     // Set validation rules if provided
     if (rules) setFieldRules(name, rules);
+
+    // Registration only wires up the dependency graph - the compute function runs on the next
+    // dependency change. Without this first pass the field stays empty until a dependency is
+    // edited, which is most visible when the deps come from `initialValues`.
+    setFieldValue(name, compute(dep => getFieldValue(dep), getFieldsValue() as Values));
 
     // Cleanup: unregister computed field and field entity
     return () => {

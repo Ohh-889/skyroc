@@ -7,6 +7,7 @@ import { mergeDeep } from '@unocss/core';
 import themes from './theme.json';
 import type {
   ColorOptions,
+  CssInJsLike,
   FeedbackColorOfThemeCssVarKey,
   FeedbackColorOfThemeCssVars,
   FeedbackColorOfThemeCssVarsVariant,
@@ -166,7 +167,7 @@ function createBuiltinSidebarColorTheme(): SidebarColorOfThemeCssVarsVariant {
   return defaultSidebarColorsHsl as SidebarColorOfThemeCssVarsVariant;
 }
 
-export function generateCSSVars(theme: ThemeOptions, onlyOne = true, native = false): object {
+export function generateCSSVars(theme: ThemeOptions, onlyOne = true, native = false): CssInJsLike {
   const {
     color = 'default',
     darkSelector = '.dark',
@@ -195,6 +196,24 @@ export function generateCSSVars(theme: ThemeOptions, onlyOne = true, native = fa
     const darkThemeCSSVars = getColorCSSVars({ ...feedbackColor.dark, ...dark, ...sidebar.dark }, native);
 
     const lightThemeCSSVars = getColorCSSVars({ ...feedbackColor.light, ...light, ...sidebar.light }, native);
+
+    if (native) {
+      // Uniwind 的原生端不解析 class 选择器：`.dark { --xxx }` 会被当成一条普通规则，
+      // 且紧跟在 `:root` 之后时会继承 root 标记，把暗色变量直接写进全局变量表，
+      // 导致 App 无视系统外观恒为暗色。原生端主题必须用 @variant 声明，
+      // Uniwind 才会把它们收集成 scopedVars 并按当前主题切换。
+      return {
+        ':root': {
+          '--radius': `${radius}rem`
+        },
+        '@variant light': {
+          ...lightThemeCSSVars
+        },
+        '@variant dark': {
+          ...darkThemeCSSVars
+        }
+      };
+    }
 
     return {
       [themeSelector]: {

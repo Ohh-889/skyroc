@@ -20,7 +20,18 @@
  * 内部结构：
  *
  * - Map<string, T> 存储（O(1) 去重 / 查找 / 删除）
- * - Sorted T[] 惰性缓存（读多写少场景，仅写操作时重建）
+ * - Sorted T[] 缓存，仅写操作时重建
+ *
+ * ⚠️ 复杂度（重要，别被 "PriorityQueue" 这个名字误导）：
+ *
+ * 它不是二叉堆。每次写操作都会对全量元素重排一次：
+ *
+ * - `enqueue` / `remove` / `update`：O(n log n)
+ * - `enqueueMany` / `removeBy` / `updateBy`：整批只排一次，O(n log n)
+ * - `peek` / `get` / `has` / `toArray`：O(1)
+ *
+ * 也就是说逐条插入 n 个元素是 O(n² log n)。适用场景是 **读多写少、n 较小** （通知中心、Banner 队列这类几十条量级）；高频入队请批量调用 `enqueueMany`，
+ * 或换成真正的堆实现。
  *
  * @example
  *   ```ts

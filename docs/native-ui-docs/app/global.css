@@ -1,0 +1,24 @@
+/* react-native-web 注入的样式统一压到最低优先级，避免盖掉 Tailwind / fumadocs */
+@layer rnw;
+
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import 'uniwind';
+
+@plugin "@skyroc/tailwind-plugin" {
+  platform: 'native';
+}
+
+@source '../../../packages/native/ui/src';
+/* 文档里的 <Demo /> 直接渲染 playground 的 demo 源码，类名要一起进扫描范围 */
+@source '../../../apps/native-ui-playground/src/demos';
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}

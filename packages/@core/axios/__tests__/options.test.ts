@@ -7,7 +7,6 @@ import { createAxiosConfig, createDefaultOptions, createRetryOptions } from '../
 
 const customCheck = (response: AxiosResponse) => response.data.code === 0;
 const customTransform = async (response: AxiosResponse) => response.data.inner;
-const deprecatedTransform = async (response: AxiosResponse) => response.data.legacy;
 
 // ==================== createDefaultOptions ====================
 
@@ -41,27 +40,6 @@ describe('createDefaultOptions', () => {
     expect(result).toBe('extracted');
   });
 
-  it('未传 transform 但传了 transformBackendResponse 时应回退使用 transformBackendResponse', async () => {
-    const opts = createDefaultOptions({ transformBackendResponse: deprecatedTransform });
-
-    const mockResponse = { data: { legacy: 'old-style' } } as AxiosResponse;
-    const result = await opts.transform(mockResponse);
-
-    expect(result).toBe('old-style');
-  });
-
-  it('同时传 transform 和 transformBackendResponse 时应优先使用 transform', async () => {
-    const opts = createDefaultOptions<{ new: string; old: string }, string>({
-      transform: async response => response.data.new,
-      transformBackendResponse: async response => response.data.old
-    });
-
-    const mockResponse = { data: { new: 'preferred', old: 'ignored' } } as AxiosResponse;
-    const result = await opts.transform(mockResponse);
-
-    expect(result).toBe('preferred');
-  });
-
   it('自定义选项应覆盖默认值', () => {
     const opts = createDefaultOptions({ isBackendSuccess: customCheck });
 
@@ -69,19 +47,25 @@ describe('createDefaultOptions', () => {
     expect(opts.isBackendSuccess({ data: { code: 1 } } as AxiosResponse)).toBe(false);
   });
 
-  it('默认 transformBackendResponse 应返回 response.data', async () => {
-    const opts = createDefaultOptions();
-    const mockResponse = { data: { code: 200 } } as AxiosResponse;
-
-    const result = await opts.transformBackendResponse(mockResponse);
-
-    expect(result).toEqual({ code: 200 });
-  });
-
   it('defaultState 应支持自定义', () => {
     const opts = createDefaultOptions({ defaultState: { token: 'abc' } as any });
 
     expect(opts.defaultState).toEqual({ token: 'abc' });
+  });
+
+  it('requestIdKey 默认应为 X-Request-Id，且可覆盖为 false', () => {
+    expect(createDefaultOptions().requestIdKey).toBe('X-Request-Id');
+    expect(createDefaultOptions({ requestIdKey: false }).requestIdKey).toBe(false);
+  });
+
+  // Object.assign 会把显式传入的 undefined 也写进去，把默认实现擦成 undefined，
+  // 直到 opts.transform(response) 那一刻才炸
+  it('显式传入 undefined 不应擦掉默认实现', async () => {
+    const opts = createDefaultOptions({ isBackendSuccess: undefined, transform: undefined });
+
+    expect(typeof opts.transform).toBe('function');
+    expect(opts.isBackendSuccess({} as AxiosResponse)).toBe(true);
+    await expect(opts.transform({ data: { code: 200 } } as AxiosResponse)).resolves.toEqual({ code: 200 });
   });
 });
 
@@ -95,9 +79,17 @@ describe('createRetryOptions', () => {
   });
 
   it('传入配置应覆盖默认值', () => {
-    const config = createRetryOptions({ retries: 3 } as any);
+    const config = createRetryOptions({ retries: 3 });
 
     expect(config.retries).toBe(3);
+  });
+
+  // 只配 retryDelay 不配 retries 时，若整个对象替换掉默认值，retries 会落到 axios-retry 自己的
+  // 默认值 3，等于凭空打开了重试
+  it('只传部分字段时 retries 仍应保持 0', () => {
+    const config = createRetryOptions({ retryDelay: () => 0 });
+
+    expect(config.retries).toBe(0);
   });
 });
 

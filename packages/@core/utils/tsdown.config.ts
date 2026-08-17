@@ -7,7 +7,7 @@ const dependencies = (pkg as { dependencies?: Record<string, string> }).dependen
 export default defineConfig({
   clean: true,
   dts: true,
-  entry: ['src/index.ts', 'src/path.ts', 'src/web/index.ts'],
+  entry: ['src/index.ts', 'src/cn.ts', 'src/crypto.ts', 'src/path.ts', 'src/web/index.ts'],
   external: Object.keys(dependencies),
   minify: false,
   platform: 'neutral',

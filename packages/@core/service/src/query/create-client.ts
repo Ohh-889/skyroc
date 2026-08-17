@@ -20,6 +20,8 @@ export function createQueryClient(options: CreateQueryClientOptions = {}) {
 
   return new QueryClient({
     defaultOptions: {
+      // 先摊开原样透传 dehydrate / hydrate 这些没有内置默认值的键，只逐字段兜底 queries 和 mutations
+      ...defaultOptions,
       mutations: { ...DEFAULT_MUTATION_CONFIG, ...defaultOptions?.mutations },
       queries: { ...DEFAULT_QUERY_CONFIG, ...defaultOptions?.queries }
     },

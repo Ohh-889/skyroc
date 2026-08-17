@@ -6,6 +6,7 @@ export const locales = {
   'en-us': {
     gitCommitMessages: {
       description: `Please enter a description (add prefix ${yellow('!')} to indicate breaking change)`,
+      emptyDescription: `${bgRed(' ERROR ')} ${red('commit description must not be empty.')}`,
       scopes: 'Please select a scope',
       types: 'Please select a type'
     },
@@ -44,6 +45,7 @@ export const locales = {
   'zh-cn': {
     gitCommitMessages: {
       description: `请输入描述信息（${yellow('!')}开头表示破坏性改动`,
+      emptyDescription: `${bgRed(' 错误 ')} ${red('提交描述不能为空。')}`,
       scopes: '请选择提交范围',
       types: '请选择提交类型'
     },

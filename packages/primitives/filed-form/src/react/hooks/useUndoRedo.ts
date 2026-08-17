@@ -190,7 +190,9 @@ export function useUndoRedo<Values = any>(form?: FormInstance<Values>) {
 
   /** Applies a batch of patches in the specified direction (undo or redo) */
   const applyBatch = (batch: Patch[], dir: 'redo' | 'undo') => {
-    const context = formInstance as InternalFormInstance;
+    // patch 里的 path 是运行时字符串，静态上无法收敛到 AllPathsKeys<Values>，
+    // 因此这里刻意退到 InternalFormInstance<any> 来访问内部 hooks。
+    const context = formInstance as unknown as InternalFormInstance;
 
     const { arrayOp, setFieldValue, transaction } = context.getInternalHooks();
 

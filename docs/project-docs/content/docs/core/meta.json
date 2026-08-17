@@ -3,7 +3,6 @@
   "pages": [
     "overview",
     "types",
-    "type-utils",
     "utils",
     "color",
     "axios",

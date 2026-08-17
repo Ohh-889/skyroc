@@ -119,7 +119,6 @@ pnpm --filter <docs-package-name> dev
 | `@skyroc/scheduler` | 协作式任务调度器——统一初始化、周期任务与监听器管理 |
 | `@skyroc/color` | 色彩工具与调色板生成（基于 colord / culori，OKLCH 算法，Ant Design 色阶） |
 | `@skyroc/types` | 全局类型定义，跨平台支持 |
-| `@skyroc/type-utils` | 高级 TypeScript 工具类型（表单路径、类型变换等） |
 | `@skyroc/scripts` | 项目 CLI——changelog、release、git-commit、cleanup 等自动化脚本 |
 
 ### 🎨 UI 组件库（`packages/web/ui/*`）
@@ -152,6 +151,7 @@ pnpm --filter <docs-package-name> dev
 |------|------|
 | `@skyroc/ui-tokens` | 跨平台设计令牌——颜色、间距、圆角、字体，零运行时依赖 |
 | `@skyroc/ui-types` | 跨平台共享 UI 类型定义 |
+| `@skyroc/type-utils` | 高级 TypeScript 工具类型（表单路径、类型变换等），零依赖纯类型 |
 | `@skyroc/form` | 类型安全的高级表单处理库（`filed-form`），支持字段管理与验证 |
 | `@skyroc/hooks` | 平台无关 React Hooks 核心，含 `./web` 子路径提供浏览器专用 hooks |
 
@@ -238,9 +238,14 @@ pnpm --filter skyroc-admin build
 ### 创建新 Admin 项目
 
 ```bash
-# 通过 CLI 脚手架基于当前模板创建新项目
-pnpm create:admin
+# 在本仓库 apps/ 下新增一个 app，保留 workspace: / catalog: 协议
+pnpm create:admin my-admin
+
+# 生成一个脱离本仓库也能 pnpm install 的独立工程
+pnpm sa create-admin my-admin --target ~/projects/my-admin
 ```
+
+两者的区别见 [`@skyroc/scripts` 文档](packages/@core/scripts/README.md#sa-create-admin)。
 
 ---
 
@@ -258,7 +263,7 @@ pnpm create:admin
 | `pnpm test:e2e` | 运行端到端测试（Playwright） |
 | `pnpm test:ui` | 启动 Vitest UI |
 | `pnpm clean` | 清理所有构建产物 |
-| `pnpm create:admin` | CLI 脚手架创建新 admin 项目 |
+| `pnpm create:admin <name>` | CLI 脚手架在 `apps/` 下创建新 admin 项目（仓库内模式） |
 | `pnpm sync:admin-template` | 同步 admin 模板变更 |
 
 ---
@@ -282,7 +287,6 @@ skyroc-admin/
 │   │   ├── scheduler/                  # @skyroc/scheduler
 │   │   ├── color/                      # @skyroc/color（OKLCH）
 │   │   ├── types/                      # @skyroc/types
-│   │   ├── type-utils/                 # @skyroc/type-utils
 │   │   └── scripts/                    # @skyroc/scripts（CLI 工具）
 │   │
 │   ├── web/                            # Web 工程套件
@@ -304,7 +308,8 @@ skyroc-admin/
 │   │
 │   ├── shared/                         # 跨端共享
 │   │   ├── ui-tokens/                  # @skyroc/ui-tokens（设计令牌）
-│   │   └── ui-types/                   # @skyroc/ui-types
+│   │   ├── ui-types/                   # @skyroc/ui-types
+│   │   └── type-utils/                 # @skyroc/type-utils（零依赖类型工具）
 │   │
 │   ├── primitives/
 │   │   └── filed-form/                 # @skyroc/form（类型安全表单）

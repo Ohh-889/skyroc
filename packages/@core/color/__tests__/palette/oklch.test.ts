@@ -1,9 +1,11 @@
+import { differenceEuclidean, oklch, parse } from 'culori';
 import { describe, expect, it } from 'vitest';
 import {
   findAccessibleTextColor,
   generateDarkModePalette,
   generateOklchPalette,
   generateOklchPaletteAdvanced,
+  generateOklchPaletteAnchored,
   generateOklchPaletteEx,
   generateOklchPaletteWithContrast,
   getContrastRatio,
@@ -20,6 +22,12 @@ const avg = (hex: string) => {
   const b = Number.parseInt(hex.slice(5, 7), 16);
   return (r + g + b) / 3;
 };
+
+/** 取颜色的 OKLCH 明度，用于断言档位顺序 */
+const lightnessOf = (color: string) => oklch(parse(color)!)!.l;
+
+/** 用 culori 独立实现的 ΔEOK，作为 match 计算的对拍基准 */
+const oklabDistance = differenceEuclidean('oklab');
 
 // ==================== generateOklchPalette ====================
 
@@ -156,15 +164,26 @@ describe('generateOklchPaletteAdvanced', () => {
     expect(() => generateOklchPaletteAdvanced('invalid')).toThrow('Invalid color');
   });
 
-  it('forceStep 应将输入色固定到指定步骤', () => {
-    const result = generateOklchPaletteAdvanced('#3b82f6', { forceStep: 400 });
-    expect(result.palettes).toHaveLength(11);
+  it('forceStep 应改变基准色度，产出不同色板', () => {
+    const auto = generateOklchPaletteAdvanced('#3b82f6');
+    const forced = generateOklchPaletteAdvanced('#3b82f6', { forceStep: 50 });
+
+    expect(forced.palettes).toHaveLength(11);
+    expect(forced.palettes.map(p => p.hex)).not.toEqual(auto.palettes.map(p => p.hex));
   });
 
-  it('lightnessCurve 长度不为 11 时应回退到默认曲线', () => {
-    // lightnessCurve.length !== 11 → 回退到 PALETTE_CONFIG，走 false 分支
-    const result = generateOklchPaletteAdvanced('#3b82f6', { lightnessCurve: [0.9, 0.8, 0.7] });
+  it('lightnessCurve 长度不为 11 时应抛错而不是静默回退', () => {
+    expect(() => generateOklchPaletteAdvanced('#3b82f6', { lightnessCurve: [0.9, 0.8, 0.7] })).toThrow(
+      'expected 11 values, received 3'
+    );
+  });
+
+  it('lightnessCurve 长度为 11 时应生效', () => {
+    const curve = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45];
+    const result = generateOklchPaletteAdvanced('#3b82f6', { lightnessCurve: curve });
+
     expect(result.palettes).toHaveLength(11);
+    expect(result.palettes.map(p => p.hex)).not.toEqual(generateOklchPalette('#3b82f6').palettes.map(p => p.hex));
   });
 
   it('灰色应跳过最小色度强制（safeChroma ≤ 0.05）', () => {
@@ -352,5 +371,103 @@ describe('findAccessibleTextColor', () => {
     const step = findAccessibleTextColor('#777777', '#888888');
     // 可能返回 null 或找到极端色阶
     expect(step === null || typeof step === 'number').toBe(true);
+  });
+});
+
+// ==================== 行为契约（回归） ====================
+
+describe('调色板契约', () => {
+  const SAMPLES = ['#6366f1', '#3b82f6', '#e11d48', '#94a3b8', '#f59e0b', '#10b981', '#a855f7', '#808080'];
+
+  it('所有档位的 hex 必须是小写 6 位', () => {
+    for (const color of SAMPLES) {
+      for (const palette of generateOklchPalette(color).palettes) {
+        expect(palette.hex).toMatch(HEX_REGEX);
+      }
+    }
+  });
+
+  it('明度必须从 50 到 950 严格单调递减', () => {
+    for (let hue = 0; hue < 360; hue += 30) {
+      for (const [l, c] of [
+        [0.95, 0.05],
+        [0.7, 0.15],
+        [0.5, 0.2],
+        [0.3, 0.1]
+      ]) {
+        const { palettes } = generateOklchPalette(`oklch(${l} ${c} ${hue})`);
+
+        for (let i = 1; i < palettes.length; i += 1) {
+          expect(lightnessOf(palettes[i].hex)).toBeLessThan(lightnessOf(palettes[i - 1].hex));
+        }
+      }
+    }
+  });
+
+  it('match 必须是感知距离上真正最近的档位', () => {
+    for (const color of SAMPLES) {
+      const result = getOklchColorPalette(color);
+
+      const nearest = result.palettes.reduce((prev, curr) =>
+        oklabDistance(color, curr.hex) < oklabDistance(color, prev.hex) ? curr : prev
+      );
+
+      expect(result.match.number).toBe(nearest.number);
+    }
+  });
+
+  it('#e11d48 应匹配到 600 而不是 700（色相差符号回归）', () => {
+    expect(getOklchColorPalette('#e11d48').match.number).toBe(600);
+  });
+
+  it('getOklchPaletteColorByNumber 应与整板结果一致', () => {
+    const family = generateOklchPalette('#3b82f6');
+
+    for (const palette of family.palettes) {
+      expect(getOklchPaletteColorByNumber('#3b82f6', palette.number)).toBe(palette.hex);
+    }
+  });
+});
+
+// ==================== generateOklchPaletteAnchored ====================
+
+describe('generateOklchPaletteAnchored', () => {
+  it('generateOklchPaletteEx 应为其别名', () => {
+    expect(generateOklchPaletteEx).toBe(generateOklchPaletteAnchored);
+  });
+
+  it('大写输入也应归一化为小写 hex', () => {
+    const result = generateOklchPaletteAnchored('#6366F1');
+    const matched = result.palettes.find(p => p.number === result.matchedStep);
+
+    expect(matched?.hex).toBe('#6366f1');
+    result.palettes.forEach(p => {
+      expect(p.hex).toMatch(HEX_REGEX);
+    });
+  });
+
+  it('每个档位的 oklch 字段应与其 hex 自洽', () => {
+    for (const palette of generateOklchPaletteAnchored('#3b82f6').palettes) {
+      expect(palette.oklch.l).toBeCloseTo(lightnessOf(palette.hex), 3);
+    }
+  });
+});
+
+// ==================== 暗色模式档位语义 ====================
+
+describe('generateDarkModePalette 档位语义', () => {
+  it('50 应最亮、950 应最暗（与亮色色板契约一致）', () => {
+    const { palettes } = generateDarkModePalette('#1677ff');
+
+    expect(palettes[0].number).toBe(50);
+    expect(palettes[10].number).toBe(950);
+    expect(lightnessOf(palettes[0].hex)).toBeGreaterThan(lightnessOf(palettes[10].hex));
+  });
+
+  it('整体应比亮色色板更暗', () => {
+    const light = generateOklchPalette('#1677ff');
+    const dark = generateDarkModePalette('#1677ff');
+
+    expect(lightnessOf(dark.palettes[0].hex)).toBeLessThan(lightnessOf(light.palettes[0].hex));
   });
 });

@@ -114,6 +114,7 @@ catalogs:
     # 配置和执行工具
     c12: ^2.0.4
     cac: ^6.7.14
+    confbox: ^0.1.8
     enquirer: ^2.4.1
     execa: ^9.5.2
     # 终端美化工具
@@ -156,6 +157,54 @@ catalogs:
     '@tanstack/devtools-vite': ^0.7.0
     '@tanstack/react-router-devtools': ^1.140.0
 
+  # ==================== Native 端专用 ====================
+  native:
+    # React Native 运行时（版本跟随 Expo SDK 57 的锁定值）
+    react: 19.2.3
+    'react-native': 0.86.0
+
+    # 样式方案：Tailwind CSS v4 for React Native
+    uniwind: ^1.10.1
+
+    # 图标（版本跟随 Expo SDK 57 的锁定值）
+    '@expo/vector-icons': 15.1.1
+
+    # 图片底座：Image 基于其封装（版本跟随 Expo SDK 57 的锁定值）
+    'expo-image': ~57.0.3
+
+    # 动画与手势翻页（版本跟随 Expo SDK 57 的锁定值）
+    'react-native-reanimated': 4.5.1
+    'react-native-pager-view': 8.0.2
+
+    # 手势底座：SwipeCell 基于其封装；worklets 是 reanimated 4 拆出的运行时（版本跟随 Expo SDK 57 的锁定值）
+    'react-native-gesture-handler': ~2.32.0
+    'react-native-worklets': 0.10.1
+
+    # 安全区（版本跟随 Expo SDK 57 的锁定值）
+    'react-native-safe-area-context': ~5.7.0
+
+    # 弹出层底座：Popup 基于其封装。npm latest 即为该 rc 版本
+    'react-native-modal': 14.0.0-rc.1
+
+    # 底部面板底座：Sheet 基于其封装。纯 JS 无原生模块（建在 reanimated + gesture-handler 之上），
+    # 直接进 native-ui 的 dependencies
+    '@gorhom/bottom-sheet': ^5.2.14
+
+    # 触感反馈：Picker 滚动吸附时调用（版本跟随 Expo SDK 57 的锁定值）
+    'expo-haptics': ~57.0.1
+
+    # 验证码格子输入底座：PasswordInput 基于其封装。纯 JS 无原生模块，直接进 native-ui 的 dependencies
+    'react-native-confirmation-code-field': 9.0.0
+
+    # 月历底座：Calendar 基于其封装。纯 JS 无原生模块，直接进 native-ui 的 dependencies；
+    # 它自带的默认 classNames 用的就是 shadcn 那套语义 token，与本仓库的 tailwind-plugin 同名
+    'react-native-ui-datepicker': ^3.1.2
+
+    # 2D 图形引擎：Signature 的画布基于其封装。含原生模块，走 devDep + peerDep。
+    # 它的预编译二进制（~700M）由 scripts/skia-prebuilt.sh 装，不走官方 postinstall——
+    # 因此根 package.json 把它列进了 pnpm.ignoredBuiltDependencies
+    '@shopify/react-native-skia': 2.4.18
+
   # ==================== 共享工具库 ====================
   utils:
     # 通用工具
@@ -165,6 +214,7 @@ catalogs:
     clsx: ^2.1.1
     colord: ^2.9.3
     klona: ^2.0.6
+    radash: ^12.1.1
     'crypto-js': ^4.2.0
     'node-forge': ^1.4.0
     localforage: ^1.10.0

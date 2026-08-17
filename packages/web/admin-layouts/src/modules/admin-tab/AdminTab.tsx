@@ -8,7 +8,7 @@ import { clsx } from 'clsx';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { isPC } from '@skyroc/utils';
+import { isPC } from '@skyroc/utils/web';
 
 import { useAdminTab } from '../../state/tabs/use-admin-tab';
 import { useAdminState } from '../../state/use-admin-state';

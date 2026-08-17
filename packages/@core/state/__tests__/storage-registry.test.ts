@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { AtomStorage } from '../src/types';
 import {
   __clearStorageRegistry,
@@ -18,6 +18,10 @@ function createMockStorage(): AtomStorage {
 }
 
 describe('storage-registry', () => {
+  beforeEach(() => {
+    __clearStorageRegistry();
+  });
+
   it('注册后可正常获取存储', () => {
     const mock = createMockStorage();
     registerStorage('reg-get-test', mock);
@@ -65,8 +69,5 @@ describe('storage-registry', () => {
     __clearStorageRegistry();
     expect(hasStorage('clear-1')).toBe(false);
     expect(hasStorage('clear-2')).toBe(false);
-
-    // 重新注册其它测试需要的名字（避免顺序敏感）
-    registerStorage('reg-get-test', createMockStorage());
   });
 });

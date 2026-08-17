@@ -1,9 +1,9 @@
-import { globalStore } from '@skyroc/core-state';
+import { atomWithPartial, createAtomWithStorage, getAtomValue, setAtomValue } from '@skyroc/core-state';
 import { useSettingsTheme } from '@skyroc/web-admin-theme';
 import { useNavigate } from '@tanstack/react-router';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
-import { getAdminLayoutsOptions } from '../../setup';
+import { ADMIN_LAYOUTS_STORAGE } from '../../setup';
 import { useAdminMenus } from '../menus/use-admin-menus';
 
 import {
@@ -31,18 +31,20 @@ const initialState: TabState = {
   activeTabId: ''
 };
 
-const tabStateAtom = atom(initialState, (get, set, update: Partial<TabState>) => {
-  set(tabStateAtom, { ...get(tabStateAtom), ...update });
+const tabStateAtom = atomWithPartial(initialState);
+
+/** Tabs persisted across reloads, restored on init when the tab cache setting is on. */
+const cachedTabsAtom = createAtomWithStorage<App.Global.Tab[]>('globalTabs', [], {
+  storageName: ADMIN_LAYOUTS_STORAGE
 });
 
 /** Cache tabs to local storage */
 export function cacheTabs() {
-  const { tabs } = globalStore.get(tabStateAtom);
-  getAdminLayoutsOptions().storage.set('globalTabs', tabs);
+  setAtomValue(cachedTabsAtom, getAtomValue(tabStateAtom).tabs);
 }
 
 export const useAdminTab = () => {
-  const [tabState, setTabState] = useAtom(tabStateAtom, { store: globalStore });
+  const [tabState, setTabState] = useAtom(tabStateAtom);
 
   const navigate = useNavigate();
 
@@ -51,7 +53,6 @@ export const useAdminTab = () => {
   const {
     tab: { cache }
   } = useSettingsTheme();
-  const { storage } = getAdminLayoutsOptions();
 
   /** Get all tabs (including home tab and reordered by fixed index) */
   const allTabs = getAllTabs(tabState.tabs, tabState.homeTab);
@@ -98,13 +99,13 @@ export const useAdminTab = () => {
    * @param allRoutes All available route IDs for validation
    */
   function initTabStore() {
-    const storageTabs = storage.get('globalTabs');
+    const storageTabs = getAtomValue(cachedTabsAtom);
 
     const homeTab = initHomeTab(home);
 
     let tabs: App.Global.Tab[] = [];
 
-    if (cache && storageTabs) {
+    if (cache && storageTabs.length) {
       const allRoutes = Array.from(quickReferenceMenus?.keys() || []);
 
       const extractedTabs = extractTabsByAllRoutes(allRoutes, storageTabs);
@@ -133,7 +134,7 @@ export const useAdminTab = () => {
 
     const isHomeTab = homeTabId && homeTabId === tab.id;
 
-    const oldTabs = globalStore.get(tabStateAtom).tabs;
+    const oldTabs = getAtomValue(tabStateAtom).tabs;
     const existingTab = oldTabs.find(item => item.id === tab.id);
 
     if (!isHomeTab && !existingTab) {

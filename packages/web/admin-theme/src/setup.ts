@@ -1,4 +1,4 @@
-import { createStorage } from '@skyroc/utils';
+import { createStorage } from '@skyroc/utils/web';
 import { defaultThemeSettings } from './config/default';
 import { themeSettingsAtom } from './hooks';
 import { mergeThemeSettings } from './utils/settings';

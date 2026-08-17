@@ -1,6 +1,7 @@
+import { atomWithPartial } from '@skyroc/core-state';
 import { useSettingsTheme } from '@skyroc/web-admin-theme';
 import { useResponsive } from 'ahooks';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 
 import { LAYOUT_MODE_VERTICAL_HYBRID_HEADER_FIRST, LAYOUT_MODE_VERTICAL_MIX } from '../constant';
@@ -15,9 +16,7 @@ const initialState = {
   mixSiderFixed: false
 };
 
-const adminStateAtom = atom(initialState, (get, set, update: Partial<typeof initialState>) => {
-  set(adminStateAtom, { ...get(adminStateAtom), ...update });
-});
+const adminStateAtom = atomWithPartial(initialState);
 
 export function getVerticalMenuWidth(
   layoutMode: Theme.ThemeLayoutMode,

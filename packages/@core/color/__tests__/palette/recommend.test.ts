@@ -73,3 +73,48 @@ describe('getRecommendedPaletteColorByNumber', () => {
     expect(red).not.toBe(blue);
   });
 });
+
+// ==================== 输入归一化（回归） ====================
+
+describe('推荐算法输入归一化', () => {
+  const EQUIVALENT_INPUTS = ['#1677ff', '#1677FF', 'rgb(22, 119, 255)', 'hsl(217, 100%, 54%)'];
+
+  it('大写 hex / rgb / hsl 输入都应产出小写 6 位 hex', () => {
+    for (const input of EQUIVALENT_INPUTS) {
+      for (const palette of getRecommendedColorPaletteFamily(input).palettes) {
+        expect(palette.hex).toMatch(HEX_REGEX);
+      }
+    }
+  });
+
+  it('指向同一颜色的输入应产出完全相同的色板', () => {
+    // hsl 字符串经过舍入后并不精确等于 #1677ff，这里只对严格等价的写法做对比
+    const expected = getRecommendedColorPaletteFamily('#1677ff').palettes.map(p => p.hex);
+
+    for (const input of ['#1677FF', 'rgb(22, 119, 255)']) {
+      expect(getRecommendedColorPaletteFamily(input).palettes.map(p => p.hex)).toEqual(expected);
+    }
+  });
+
+  it('命名色输入不应把色名字符串泄漏进 hex 字段', () => {
+    for (const palette of getRecommendedColorPaletteFamily('red').palettes) {
+      expect(palette.hex).toMatch(HEX_REGEX);
+    }
+  });
+
+  it('match 必须是色板中真实存在的档位', () => {
+    for (const input of [...EQUIVALENT_INPUTS, 'red', '#ABCDEF']) {
+      const result = getRecommendedColorPalette(input);
+
+      expect(result.match).toBeDefined();
+      expect(result.colorMap.get(result.match.number)).toEqual(result.match);
+      expect(result.match.hex).toMatch(HEX_REGEX);
+    }
+  });
+
+  it('输入色应原样出现在其匹配档位上', () => {
+    const result = getRecommendedColorPalette('#1677FF');
+
+    expect(result.match.hex).toBe('#1677ff');
+  });
+});
