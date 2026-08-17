@@ -11,7 +11,7 @@
     "typescript",
     "utility-types"
   ],
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/@core/type-utils",
+  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/shared/type-utils",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc-admin/issues"
   },
@@ -24,7 +24,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc-admin.git",
-    "directory": "packages/@core/type-utils"
+    "directory": "packages/shared/type-utils"
   },
   "files": [
     "dist",

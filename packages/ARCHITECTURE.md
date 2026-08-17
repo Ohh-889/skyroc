@@ -9,7 +9,8 @@ packages/
 ├── @core/                       # 跨端的运行时基础(axios / utils / state / scheduler ...)
 ├── shared/                      # 跨端的纯类型 / tokens / utils(零或极轻依赖)
 │   ├── ui-types/                # 跨端 UI 类型(ThemeColor / WithClassName ...)
-│   └── ui-tokens/               # 设计变量(spacing / radius / typography / colors)
+│   ├── ui-tokens/               # 设计变量(spacing / radius / typography / colors)
+│   └── type-utils/              # 语言级类型工具(Primitive / Path / DeepPartial ...)
 ├── hooks/                       # 跨端 React hooks
 ├── i18n/
 ├── web/                         # ← Web 端一整棵
@@ -33,7 +34,7 @@ packages/
 
 | 包类别 | 规则 | 示例 |
 |---|---|---|
-| 跨端共享(纯数据/类型) | 不带平台前缀 | `@skyroc/ui-types`, `@skyroc/ui-tokens` |
+| 跨端共享(纯数据/类型) | 不带平台前缀 | `@skyroc/ui-types`, `@skyroc/ui-tokens`, `@skyroc/type-utils` |
 | Web 端 UI | `@skyroc/web-*` | `@skyroc/web-ui`, `@skyroc/web-ui-compose`, `@skyroc/web-ui-antd` |
 | Web 端 theme / 工具 | `@skyroc/web-*` 或保留专名 | `@skyroc/web-admin-theme`, `@skyroc/tailwind-plugin` |
 | Native 端 | `@skyroc/native-*` | `@skyroc/native-ui`, `@skyroc/native-theme` |

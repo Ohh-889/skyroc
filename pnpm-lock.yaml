@@ -2162,34 +2162,13 @@ importers:
         specifier: catalog:core
         version: 6.0.3
 
-  packages/@core/type-utils:
-    devDependencies:
-      '@skyroc/config':
-        specifier: workspace:*
-        version: link:../../../internal/config
-      '@skyroc/tsconfig':
-        specifier: workspace:*
-        version: link:../../../internal/tsconfig
-      oxlint:
-        specifier: catalog:dev
-        version: 1.60.0
-      rimraf:
-        specifier: catalog:dev
-        version: 6.1.3
-      tsdown:
-        specifier: catalog:dev
-        version: 0.18.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)(typescript@6.0.3)
-      typescript:
-        specifier: catalog:core
-        version: 6.0.3
-
   packages/@core/types: {}
 
   packages/@core/utils:
     dependencies:
       '@skyroc/type-utils':
         specifier: workspace:*
-        version: link:../type-utils
+        version: link:../../shared/type-utils
       clsx:
         specifier: catalog:utils
         version: 2.1.1
@@ -2378,7 +2357,7 @@ importers:
         version: 1.2.3(@types/react@19.2.14)(react@19.1.0)
       '@skyroc/type-utils':
         specifier: workspace:*
-        version: link:../../@core/type-utils
+        version: link:../../shared/type-utils
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../@core/utils
@@ -2407,6 +2386,27 @@ importers:
       react-dom:
         specifier: catalog:core
         version: 19.1.0(react@19.1.0)
+      rimraf:
+        specifier: catalog:dev
+        version: 6.1.3
+      tsdown:
+        specifier: catalog:dev
+        version: 0.18.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)(typescript@6.0.3)
+      typescript:
+        specifier: catalog:core
+        version: 6.0.3
+
+  packages/shared/type-utils:
+    devDependencies:
+      '@skyroc/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
+      '@skyroc/tsconfig':
+        specifier: workspace:*
+        version: link:../../../internal/tsconfig
+      oxlint:
+        specifier: catalog:dev
+        version: 1.60.0
       rimraf:
         specifier: catalog:dev
         version: 6.1.3
@@ -19115,7 +19115,7 @@ snapshots:
   '@antfu/install-pkg@1.1.0':
     dependencies:
       package-manager-detector: 1.6.0
-      tinyexec: 1.2.2
+      tinyexec: 1.3.0
 
   '@asamuzakjp/css-color@5.1.11':
     dependencies:
@@ -19896,7 +19896,7 @@ snapshots:
 
   '@babel/generator@7.29.1':
     dependencies:
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
@@ -20461,8 +20461,8 @@ snapshots:
   '@babel/traverse@7.27.7':
     dependencies:
       '@babel/code-frame': 7.29.0
-      '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.0
+      '@babel/generator': 7.29.8
+      '@babel/parser': 7.29.8
       '@babel/template': 7.28.6
       '@babel/types': 7.29.8
       debug: 4.4.3
@@ -20473,9 +20473,9 @@ snapshots:
   '@babel/traverse@7.29.0':
     dependencies:
       '@babel/code-frame': 7.29.0
-      '@babel/generator': 7.29.1
+      '@babel/generator': 7.29.8
       '@babel/helper-globals': 7.29.7
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.8
       '@babel/template': 7.28.6
       '@babel/types': 7.29.8
       debug: 4.4.3
@@ -27658,7 +27658,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.12
       diff: 8.0.3
       pathe: 2.0.3
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
     transitivePeerDependencies:
       - supports-color
 
@@ -27785,7 +27785,7 @@ snapshots:
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
 
   '@types/babel__traverse@7.28.0':
@@ -28533,7 +28533,7 @@ snapshots:
       mlly: 1.8.2
       pathe: 2.0.3
       perfect-debounce: 2.1.0
-      tinyexec: 1.2.2
+      tinyexec: 1.3.0
       vite: 8.0.14(@types/node@24.10.13)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
@@ -33986,7 +33986,7 @@ snapshots:
 
   magicast@0.5.2:
     dependencies:
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.8
       '@babel/types': 7.29.8
       source-map-js: 1.2.1
 
@@ -37978,8 +37978,8 @@ snapshots:
 
   tinyglobby@0.2.15:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
+      fdir: 6.5.0(picomatch@4.0.5)
+      picomatch: 4.0.5
 
   tinyglobby@0.2.16:
     dependencies:
@@ -38097,12 +38097,12 @@ snapshots:
       hookable: 6.0.1
       import-without-cache: 0.2.5
       obug: 2.1.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       rolldown: 1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)
       rolldown-plugin-dts: 0.20.0(rolldown@1.0.0-beta.57(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3))(typescript@6.0.3)
-      semver: 7.7.4
-      tinyexec: 1.2.2
-      tinyglobby: 0.2.16
+      semver: 7.8.5
+      tinyexec: 1.3.0
+      tinyglobby: 0.2.17
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
       unrun: 0.2.27(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)
@@ -38126,12 +38126,12 @@ snapshots:
       hookable: 6.0.1
       import-without-cache: 0.2.5
       obug: 2.1.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       rolldown: 1.0.0-beta.57(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)
       rolldown-plugin-dts: 0.20.0(rolldown@1.0.0-beta.57(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2))(typescript@6.0.3)
-      semver: 7.7.4
-      tinyexec: 1.2.2
-      tinyglobby: 0.2.16
+      semver: 7.8.5
+      tinyexec: 1.3.0
+      tinyglobby: 0.2.17
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
       unrun: 0.2.27(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(synckit@0.11.12)
@@ -38358,11 +38358,11 @@ snapshots:
       magic-string: 0.30.21
       mlly: 1.8.2
       pathe: 2.0.3
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       pkg-types: 2.3.0
       scule: 1.3.0
       strip-literal: 3.1.0
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
       unplugin: 2.3.11
       unplugin-utils: 0.3.1
 
@@ -38539,13 +38539,13 @@ snapshots:
   unplugin-utils@0.3.1:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.4
+      picomatch: 4.0.5
 
   unplugin@2.3.11:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       acorn: 8.16.0
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       webpack-virtual-modules: 0.6.2
 
   unplugin@3.0.0:
