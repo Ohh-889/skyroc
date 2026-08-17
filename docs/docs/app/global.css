@@ -1,12 +1,291 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/generated/glass.css';
+@import 'fumadocs-ui/css/shadcn.css';
 @import 'fumadocs-ui/css/preset.css';
 
+@plugin "@skyroc/tailwind-plugin" {
+}
+
+@source "../../../packages/web/ui/shadcn/src/**/*.{ts,tsx}";
+
+:root,
+.dark {
+  --fd-layout-width: 1480px;
+  --color-fd-background: hsl(var(--background));
+  --color-fd-foreground: hsl(var(--foreground));
+  --color-fd-muted: hsl(var(--muted));
+  --color-fd-muted-foreground: hsl(var(--muted-foreground));
+  --color-fd-popover: hsl(var(--popover));
+  --color-fd-popover-foreground: hsl(var(--popover-foreground));
+  --color-fd-card: hsl(var(--card) / 0.28);
+  --color-fd-card-foreground: hsl(var(--card-foreground));
+  --color-fd-border: hsl(var(--border) / 0.55);
+  --color-fd-primary: hsl(var(--primary));
+  --color-fd-primary-foreground: hsl(var(--primary-foreground));
+  --color-fd-secondary: hsl(var(--secondary) / 0.42);
+  --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-fd-accent: hsl(var(--primary) / 0.1);
+  --color-fd-accent-foreground: hsl(var(--foreground));
+  --color-fd-ring: hsl(var(--ring));
+}
+
+#fd-glass-layout {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(circle at 46% 0%, hsl(var(--primary) / 0.09), transparent 30rem),
+    linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px;
+}
+
+#nd-sidebar {
+  --color-fd-muted: hsl(var(--muted));
+  --color-fd-muted-foreground: hsl(var(--muted-foreground));
+  --color-fd-secondary: hsl(var(--secondary) / 0.38);
+  --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-fd-accent: hsl(var(--primary) / 0.1);
+  --color-fd-accent-foreground: hsl(var(--foreground));
+  --color-fd-primary: hsl(var(--primary));
+  --color-fd-primary-foreground: hsl(var(--primary-foreground));
+  --color-fd-ring: hsl(var(--ring));
+
+  background-color: hsl(var(--background) / 0.68);
+  border-color: hsl(var(--border) / 0.55);
+}
+
+.skyroc-docs-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  grid-area: left-margin / left-margin / right / right;
+  align-self: start;
+  height: 0;
+  padding: 8px 12px 0;
+  pointer-events: none;
+}
+
+.skyroc-docs-header-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  padding: 5px 6px 5px 14px;
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background) / 0.62);
+  border: 1px solid hsl(var(--border) / 0.55);
+  border-radius: 999px;
+  box-shadow: 0 18px 55px -42px hsl(var(--foreground) / 0.55);
+  backdrop-filter: saturate(1.2) blur(14px);
+  pointer-events: auto;
+}
+
+.skyroc-docs-header-brand {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--foreground));
+  font-family: 'Avenir Next', 'SF Pro Display', 'PingFang SC', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-decoration: none;
+}
+
+.skyroc-docs-header-leading {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.skyroc-docs-header-badge {
+  padding: 2px 6px;
+  color: hsl(var(--primary));
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 6px;
+}
+
+.skyroc-docs-header-nav {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.skyroc-docs-header-nav a {
+  padding: 7px 10px;
+  color: hsl(var(--foreground) / 0.68);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 9px;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.skyroc-docs-header-nav a:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.05);
+}
+
+.skyroc-docs-header-github {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  color: hsl(var(--foreground) / 0.68);
+  border-radius: 10px;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.skyroc-docs-header-github:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.06);
+}
+
+.skyroc-docs-header-github svg {
+  width: 17px;
+  height: 17px;
+}
+
+.skyroc-docs-sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  color: hsl(var(--foreground) / 0.68);
+  background: hsl(var(--background) / 0.68);
+  border: 1px solid hsl(var(--border) / 0.65);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px -20px hsl(var(--foreground) / 0.5);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.skyroc-docs-sidebar-toggle:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.06);
+}
+
+.skyroc-docs-sidebar-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+.skyroc-docs-header-actions {
+  position: static;
+  z-index: auto;
+  display: flex;
+  flex: 0 1 250px;
+  grid-area: auto;
+  height: auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+.skyroc-docs-title {
+  max-width: 760px;
+  font-size: clamp(2.35rem, 5vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+}
+
+.skyroc-docs-description {
+  max-width: 720px;
+  color: hsl(var(--muted-foreground));
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.skyroc-docs-actions {
+  border-color: hsl(var(--border) / 0.55);
+}
+
+.skyroc-docs-body a[class*='bg-fd-card'] {
+  background-color: hsl(var(--card) / 0.25);
+  border-color: hsl(var(--border) / 0.55);
+  box-shadow: 0 18px 48px -42px hsl(var(--foreground) / 0.5);
+}
+
+.skyroc-docs-body a[class*='bg-fd-card']:hover {
+  background-color: hsl(var(--card) / 0.52);
+  border-color: hsl(var(--primary) / 0.35);
+}
+
+@media (max-width: 1120px) {
+  .skyroc-docs-header-nav {
+    display: none;
+  }
+
+  .skyroc-docs-header-actions {
+    margin-inline-start: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .skyroc-docs-header-actions > button.me-auto {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .skyroc-docs-header {
+    grid-area: left / left / right / right;
+    padding: 8px 8px 0;
+  }
+
+  .skyroc-docs-header-inner {
+    min-height: 52px;
+    padding-inline: 10px 6px;
+    border-radius: 16px;
+  }
+
+  .skyroc-docs-header-actions {
+    flex: none;
+  }
+
+  .skyroc-docs-header-github {
+    display: none;
+  }
+
+  .skyroc-docs-sidebar-toggle {
+    display: none;
+  }
+}
+
 html {
+  scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
 
 html > body[data-scroll-locked] {
-  margin-right: 0px !important;
+  margin-right: 0 !important;
   --removed-body-scroll-bar-size: 0px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

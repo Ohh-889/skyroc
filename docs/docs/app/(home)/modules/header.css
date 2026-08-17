@@ -1,0 +1,4 @@
+/* 滚动后的玻璃材质由多个滤镜共同组成，保留为独立 CSS。 */
+.header-glass {
+  backdrop-filter: saturate(1.2) blur(8px);
+}
