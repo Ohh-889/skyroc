@@ -31,50 +31,63 @@ const TypeData = (props: TypeDataDef) => {
   const anchorId = toTypeAnchorId(name);
 
   return (
-    <div className="not-prose mb-8">
-      <h4 id={anchorId} className="text-lg font-semibold my-3 scroll-mt-24">
-        {name}
-      </h4>
-      {description ? (
-        <p className="text-sm text-fd-muted-foreground mb-3">{description}</p>
-      ) : null}
-      <table className="w-full table-fixed border-collapse text-[14px] leading-[1.7]">
-        <colgroup>
-          <col className="w-[20%]" />
-          <col className="w-[40%]" />
-          <col className="w-[40%]" />
-        </colgroup>
-        <thead>
-          <tr className="border-b-2 border-fd-border">
-            <th className="py-3 pr-4 text-left font-semibold text-fd-foreground">字段</th>
-            <th className="py-3 pr-4 text-left font-semibold text-fd-foreground">类型</th>
-            <th className="py-3 text-left font-semibold text-fd-foreground">说明</th>
-          </tr>
-        </thead>
-        <tbody className="text-fd-foreground/90">
-          {fields.map((field) => (
-            <tr
-              key={field.name}
-              className="border-b border-fd-border/50 transition-colors duration-150 hover:bg-fd-accent/5"
-            >
-              <td className="break-all pl-3 py-3 pr-4 border-r align-top font-mono text-[13px] text-fd-primary">
-                {field.name}
-                {field.required ? (
-                  <span className="ml-1 text-[11px] text-red-500" aria-label="必填" title="必填">
-                    *
-                  </span>
-                ) : null}
-              </td>
-              <td className="break-all pl-3 py-3 pr-4 border-r align-top font-mono text-[13px] text-fd-foreground/65">
-                {typeToReactNode(field.type)}
-              </td>
-              <td className="py-3 pl-3 align-top text-fd-foreground/75">
-                {field.description || '—'}
-              </td>
+    <div className="skyroc-api-table not-prose mb-8 overflow-hidden rounded-2xl border border-fd-border bg-fd-card/30 shadow-sm">
+      <div className="border-b border-fd-border px-4 py-3">
+        <h4
+          id={anchorId}
+          className="scroll-mt-24 text-sm font-semibold text-fd-foreground"
+        >
+          {name}
+        </h4>
+        {description ? <p className="mt-1 text-xs text-fd-muted-foreground">{description}</p> : null}
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-160 w-full table-fixed border-collapse text-[13px] leading-[1.65]">
+          <colgroup>
+            <col className="w-[20%]" />
+            <col className="w-[40%]" />
+            <col className="w-[40%]" />
+          </colgroup>
+          <thead>
+            <tr className="border-b border-fd-border bg-fd-muted/35">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-wide text-fd-muted-foreground uppercase">
+                字段
+              </th>
+              <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-wide text-fd-muted-foreground uppercase">
+                类型
+              </th>
+              <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-wide text-fd-muted-foreground uppercase">
+                说明
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-fd-foreground/90">
+            {fields.map(field => (
+              <tr
+                key={field.name}
+                className="border-b border-fd-border/55 transition-colors duration-150 last:border-b-0 hover:bg-fd-accent/6"
+              >
+                <td className="break-all border-r border-fd-border/45 px-4 py-3.5 align-top font-mono text-[12px] font-semibold text-fd-primary">
+                  {field.name}
+                  {field.required ? (
+                    <span
+                      className="ml-1 text-[11px] text-red-500"
+                      aria-label="必填"
+                      title="必填"
+                    >
+                      *
+                    </span>
+                  ) : null}
+                </td>
+                <td className="break-all border-r border-fd-border/45 px-4 py-3.5 align-top font-mono text-[12px] text-fd-foreground/65">
+                  {typeToReactNode(field.type)}
+                </td>
+                <td className="px-4 py-3.5 align-top text-fd-foreground/75">{field.description || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
@@ -84,8 +97,11 @@ const TypeTable = (props: TypeTableProps) => {
 
   return (
     <div>
-      {data.map((item) => (
-        <TypeData key={item.name} {...item} />
+      {data.map(item => (
+        <TypeData
+          key={item.name}
+          {...item}
+        />
       ))}
     </div>
   );
@@ -106,15 +122,16 @@ const UnionType = (props: UnionTypeProps) => {
   const anchorId = toTypeAnchorId(name);
 
   return (
-    <div className="not-prose mb-6">
-      <h4 id={anchorId} className="text-lg font-semibold my-3 scroll-mt-24">
+    <div className="not-prose mb-6 rounded-xl border border-fd-border bg-fd-card/30 p-4">
+      <h4
+        id={anchorId}
+        className="scroll-mt-24 text-sm font-semibold text-fd-foreground"
+      >
         {name}
       </h4>
-      {description ? (
-        <p className="text-sm text-fd-muted-foreground mb-2">{description}</p>
-      ) : null}
-      <div className="pt-1 pb-3">
-        <span className="inline font-mono text-[13px] px-2 py-1 text-fd-accent-foreground border border-fd-accent-foreground/15 rounded-md">
+      {description ? <p className="mt-1 text-xs text-fd-muted-foreground">{description}</p> : null}
+      <div className="pt-3">
+        <span className="inline rounded-md border border-fd-accent-foreground/15 bg-fd-muted/35 px-2 py-1 font-mono text-[12px] text-fd-accent-foreground">
           {typeToReactNode(type)}
         </span>
       </div>
