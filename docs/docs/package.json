@@ -4,10 +4,15 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "deploy": "pnpm run worker:build && opennextjs-cloudflare deploy",
     "dev": "next dev",
+    "lint": "oxlint",
+    "preview": "pnpm run worker:build && opennextjs-cloudflare preview",
     "start": "next start",
     "types:check": "next typegen && tsc --noEmit",
-    "lint": "oxlint"
+    "upload": "pnpm run worker:build && opennextjs-cloudflare upload",
+    "worker:build": "pnpm --filter @skyroc/ui-types --filter @skyroc/type-utils run build && opennextjs-cloudflare build"
   },
   "dependencies": {
     "@skyroc/web-ui": "workspace:*",
@@ -21,6 +26,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.2",
     "@skyroc/tailwind-plugin": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.14",
@@ -30,6 +36,7 @@
     "oxlint": "^1.78.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "4.123.0"
   }
 }
