@@ -16,7 +16,7 @@ import { AesCrypto } from '@skyroc/utils/crypto';
   密钥强度取决于口令本身，**不适合**用来保护真正的机密。
   它的合理用途是本地存储混淆——让 localStorage / 缓存里的内容不可直接肉眼读取。
   需要真实加密强度时请改用 Web Crypto（`crypto.subtle`）或服务端加密；
-  接口传输加密用 [`@skyroc/service` 的信封加密](/docs/packages/core/service#接口传输加密)。
+  接口传输加密用 [`@skyroc/service` 的信封加密](/docs/core/service#接口传输加密)。
 </Callout>
 
 它只在 `@skyroc/utils/crypto` 子入口导出，**不在主入口**——不用加密的应用不必把 crypto-js 拉进包里。

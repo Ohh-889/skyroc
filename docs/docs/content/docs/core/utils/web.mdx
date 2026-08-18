@@ -17,8 +17,8 @@ import { downloadFileFromUrl, createStorage, openWindow, toggleHtmlClass } from 
 | `download` | `downloadFileFromUrl` 等 7 个函数 | 多策略文件下载（本页） |
 | `window` | `openWindow` | 安全地在新窗口打开 URL（本页） |
 | `class` | `toggleHtmlClass` | 切换 `<html>` 元素上的 class（本页） |
-| `storage` | `createStorage`、`createLocalforage` | [类型安全的存储封装](/docs/packages/core/utils/storage) |
-| `env` | `isWindow`、`isMacOs`、`isWindowsOs`、`isPC` | [环境与设备检测](/docs/packages/core/utils/utils) |
+| `storage` | `createStorage`、`createLocalforage` | [类型安全的存储封装](/docs/core/utils/storage) |
+| `env` | `isWindow`、`isMacOs`、`isWindowsOs`、`isPC` | [环境与设备检测](/docs/core/utils/utils) |
 | `input` | `isCheckBoxInput`、`isRadioInput`、`isFileInput`、`getEventValue` | 表单元素判定与取值（本页） |
 | `compose-props` | `mergeProps`、`withClassName` | React props 合并（本页） |
 
@@ -301,7 +301,7 @@ const props = mergeProps(
 
 ### `withClassName(element, ...className)`
 
-给一个 React 元素追加 class，内部走 [`cn`](/docs/packages/core/utils/overview#cn--tailwind-class-合并)，因此 Tailwind 冲突类会被正确覆盖：
+给一个 React 元素追加 class，内部走 [`cn`](/docs/core/utils/overview#cn--tailwind-class-合并)，因此 Tailwind 冲突类会被正确覆盖：
 
 ```tsx
 withClassName(<Icon className="size-4" />, 'text-red-500');

@@ -18,7 +18,7 @@ description: "平台无关工具函数集合，提供日期、事件、数组、
 <Callout type="warn">
   主入口只允许出现 Node / 浏览器 / React Native 三端都能跑的代码——不得直接引用 `window`、`document`、`navigator`、`localStorage` 等宿主全局。
   该约束由 tsconfig 强制：主入口所属的 TS 项目 `lib` 只有 `ESNext`，没有 DOM。
-  所有浏览器专用工具都在 [`@skyroc/utils/web`](/docs/packages/core/utils/web)。
+  所有浏览器专用工具都在 [`@skyroc/utils/web`](/docs/core/utils/web)。
 </Callout>
 
 ## 模块一览
@@ -30,25 +30,25 @@ description: "平台无关工具函数集合，提供日期、事件、数组、
 | `cn` | `cn` | Tailwind class 合并 |
 | `nanoid` | `nanoid` | 唯一 ID 生成 |
 | `klona` | `jsonClone` | JSON 安全深拷贝 |
-| `date` | `formatDate`、`addDate` 等 30+ 函数 | [分层日期工具](/docs/packages/core/utils/date) |
-| `array` | `toArray`、`arraysEqual` | [数组工具](/docs/packages/core/utils/array) |
-| `reg` | `REG_USER_NAME` 等 8 个正则 | [常用校验正则](/docs/packages/core/utils/reg) |
+| `date` | `formatDate`、`addDate` 等 30+ 函数 | [分层日期工具](/docs/core/utils/date) |
+| `array` | `toArray`、`arraysEqual` | [数组工具](/docs/core/utils/array) |
+| `reg` | `REG_USER_NAME` 等 8 个正则 | [常用校验正则](/docs/core/utils/reg) |
 | `object` | `shallowEqual`、`diffObject`、`isObjectType`、`isEventObject` | 对象比较与 diff（本页） |
-| `utils` | `noop`、`isNil`、`isHttpUrl`、`omitUndefined`、`microtask` | [基础工具函数](/docs/packages/core/utils/utils) |
-| `path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` 等 | [深层路径读写与字段路径工具](/docs/packages/core/utils/path) |
-| `query` | `parseQuery`、`stringifyQuery` | [URL query 解析与序列化](/docs/packages/core/utils/query) |
-| `emitter` | `Emitter` | [事件总线](/docs/packages/core/utils/emitter) |
-| `createSubject` | `createSubject` | [极简 Subject](/docs/packages/core/utils/subject) |
-| `singleflight` | `Singleflight`、`createSingleflight` | [并发请求去重](/docs/packages/core/utils/singleflight) |
-| `priority-queue` | `PriorityQueue` | [带去重与容量上限的优先级队列](/docs/packages/core/utils/priority-queue) |
+| `utils` | `noop`、`isNil`、`isHttpUrl`、`omitUndefined`、`microtask` | [基础工具函数](/docs/core/utils/utils) |
+| `path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` 等 | [深层路径读写与字段路径工具](/docs/core/utils/path) |
+| `query` | `parseQuery`、`stringifyQuery` | [URL query 解析与序列化](/docs/core/utils/query) |
+| `emitter` | `Emitter` | [事件总线](/docs/core/utils/emitter) |
+| `createSubject` | `createSubject` | [极简 Subject](/docs/core/utils/subject) |
+| `singleflight` | `Singleflight`、`createSingleflight` | [并发请求去重](/docs/core/utils/singleflight) |
+| `priority-queue` | `PriorityQueue` | [带去重与容量上限的优先级队列](/docs/core/utils/priority-queue) |
 | `radash` | 类型守卫族 + `assign` | 白名单转出（本页） |
 
 **子入口**
 
 | 子入口 | 主要导出 | 说明 |
 | --- | --- | --- |
-| `@skyroc/utils/crypto` | `AesCrypto` | [AES 对称加密](/docs/packages/core/utils/crypto) |
-| `@skyroc/utils/web` | `createStorage`、`createLocalforage`、`downloadFileFrom*`、`openWindow`、`isPC` 等 | [浏览器专用工具](/docs/packages/core/utils/web) |
+| `@skyroc/utils/crypto` | `AesCrypto` | [AES 对称加密](/docs/core/utils/crypto) |
+| `@skyroc/utils/web` | `createStorage`、`createLocalforage`、`downloadFileFrom*`、`openWindow`、`isPC` 等 | [浏览器专用工具](/docs/core/utils/web) |
 
 以下模块有独立文档页，本页仅覆盖 `cn`、`nanoid`、`jsonClone`、`object` 和 `radash` 这几个相对轻量的模块。
 

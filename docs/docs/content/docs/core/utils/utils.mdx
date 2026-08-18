@@ -26,7 +26,7 @@ import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils/web';
 | `@skyroc/utils/web` | `isMacOs` / `isWindowsOs` / `isPC` | 操作系统与设备检测 |
 
 <Callout>
-  后四个读的是 `window` / `navigator`，属于宿主全局，因此在 [`@skyroc/utils/web`](/docs/packages/core/utils/web) 而不是主入口——
+  后四个读的是 `window` / `navigator`，属于宿主全局，因此在 [`@skyroc/utils/web`](/docs/core/utils/web) 而不是主入口——
   主入口的 TS 项目 `lib` 只有 `ESNext`，没有 DOM，这类代码在那里根本编译不过。
 </Callout>
 

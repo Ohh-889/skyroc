@@ -281,7 +281,7 @@ createRequest<BackendResponse>(axiosConfig, {
 });
 ```
 
-这套逻辑 `@skyroc/service` 已经实现好了，直接用它即可，见 [Token 刷新机制](/docs/packages/core/service#token-刷新机制)。
+这套逻辑 `@skyroc/service` 已经实现好了，直接用它即可，见 [Token 刷新机制](/docs/core/service#token-刷新机制)。
 
 ## 请求取消
 
@@ -330,7 +330,7 @@ request.state.token = 'new-token';
 
 ## 与 @skyroc/service
 
-在实际项目中，通常不直接使用 `@skyroc/axios`，而是通过 [`@skyroc/service`](/docs/packages/core/service) 进行上层封装。它基于本包提供了**平台适配器模式**、**业务状态码管理**、**Token 自动刷新**、**错误消息去重**、**接口传输加密**等开箱即用的能力。详见 [@skyroc/service 文档](/docs/packages/core/service)。
+在实际项目中，通常不直接使用 `@skyroc/axios`，而是通过 [`@skyroc/service`](/docs/core/service) 进行上层封装。它基于本包提供了**平台适配器模式**、**业务状态码管理**、**Token 自动刷新**、**错误消息去重**、**接口传输加密**等开箱即用的能力。详见 [@skyroc/service 文档](/docs/core/service)。
 
 ## 常量与类型导出
 
