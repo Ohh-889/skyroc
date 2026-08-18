@@ -1,10 +1,10 @@
-import { type DocsSection, getSectionPageTree } from '@/lib/source';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { baseOptions } from '@/lib/layout.shared';
-import { AISearch, AISearchPanel, AISearchTrigger } from '@/components/ai/search';
-import { MessageCircleIcon } from 'lucide-react';
-import { cn } from '@/lib/cn';
 import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { MessageCircleIcon } from 'lucide-react';
+import { AISearch, AISearchPanel, AISearchTrigger } from '@/components/ai/search';
+import { cn } from '@/lib/cn';
+import { baseOptions } from '@/lib/layout.shared';
+import { type DocsSection, getSectionPageTree } from '@/lib/source';
 
 const Layout = async (props: LayoutProps<'/[...slug]'>) => {
   const { children, params } = props;
@@ -16,8 +16,9 @@ const Layout = async (props: LayoutProps<'/[...slug]'>) => {
     <DocsLayout
       sidebar={{
         collapsible: false,
-        defaultOpenLevel: 10,
+        defaultOpenLevel: 10
       }}
+      containerProps={{ className: 'skyroc-docs-layout' }}
       tabs={false}
       tree={getSectionPageTree(docsSection)}
       {...baseOptions()}
@@ -29,8 +30,8 @@ const Layout = async (props: LayoutProps<'/[...slug]'>) => {
           className={cn(
             buttonVariants({
               variant: 'secondary',
-              className: 'text-fd-muted-foreground rounded-2xl',
-            }),
+              className: 'text-fd-muted-foreground rounded-2xl'
+            })
           )}
         >
           <MessageCircleIcon className="size-4.5" />
