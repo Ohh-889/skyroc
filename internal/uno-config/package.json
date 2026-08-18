@@ -12,13 +12,13 @@
     "unocss"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/internal/uno-config",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/internal/uno-config",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "internal/uno-config"
   },
   "author": {

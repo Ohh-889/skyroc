@@ -14,13 +14,13 @@
     "ui"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/shared/ui-types",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/shared/ui-types",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/shared/ui-types"
   },
   "author": {

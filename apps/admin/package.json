@@ -4,9 +4,9 @@
   "private": false,
   "description": "A fresh and elegant admin template, based on React18、Vite5、TypeScript、Ant Design and UnoCSS. 一个基于React18、Vite5、TypeScript、Ant Design and UnoCSS的清新优雅的中后台模版。",
   "keywords": [],
-  "homepage": "https://github.com/Ohh-889/skyroc-admin",
+  "homepage": "https://github.com/Ohh-889/skyroc",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "license": "MIT",
   "author": {
@@ -15,7 +15,7 @@
     "url": "https://github.com/mufeng889"
   },
   "repository": {
-    "url": "https://github.com/Ohh-889/skyroc-admin.git"
+    "url": "https://github.com/Ohh-889/skyroc.git"
   },
   "type": "module",
   "scripts": {

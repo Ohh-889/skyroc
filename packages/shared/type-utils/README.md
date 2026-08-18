@@ -257,5 +257,5 @@ MIT License
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/Ohh-889/skyroc-admin)
-- [Issue Tracker](https://github.com/Ohh-889/skyroc-admin/issues)
+- [GitHub Repository](https://github.com/Ohh-889/skyroc)
+- [Issue Tracker](https://github.com/Ohh-889/skyroc/issues)

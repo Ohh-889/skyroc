@@ -4,9 +4,9 @@
   "private": false,
   "description": "Ruoyi Plus Fast admin application",
   "keywords": [],
-  "homepage": "https://github.com/Ohh-889/skyroc-admin",
+  "homepage": "https://github.com/Ohh-889/skyroc",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "license": "MIT",
   "author": {
@@ -15,7 +15,7 @@
     "url": "https://github.com/mufeng889"
   },
   "repository": {
-    "url": "https://github.com/Ohh-889/skyroc-admin.git"
+    "url": "https://github.com/Ohh-889/skyroc.git"
   },
   "type": "module",
   "scripts": {

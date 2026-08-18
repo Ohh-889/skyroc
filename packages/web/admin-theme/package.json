@@ -18,16 +18,16 @@
     "theme-presets",
     "theme-utilities"
   ],
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/main/packages/web/antdtheme#readme",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/admin-theme#readme",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "license": "MIT",
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ohh-889/skyroc-admin.git",
-    "directory": "packages/web/antdtheme"
+    "url": "git+https://github.com/Ohh-889/skyroc.git",
+    "directory": "packages/web/admin-theme"
   },
   "sideEffects": false,
   "types": "./src/index.ts",

@@ -12,9 +12,9 @@
     "typescript",
     "ui"
   ],
-  "homepage": "https://github.com/soybeanjs/soybean-admin-react/tree/main/packages/ui/antd",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/ui/antd",
   "bugs": {
-    "url": "https://github.com/soybeanjs/soybean-admin-react/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "license": "MIT",
   "author": {
@@ -23,8 +23,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/soybeanjs/soybean-admin-react.git",
-    "directory": "packages/ui/antd"
+    "url": "https://github.com/Ohh-889/skyroc.git",
+    "directory": "packages/web/ui/antd"
   },
   "files": [
     "dist",

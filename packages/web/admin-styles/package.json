@@ -14,13 +14,13 @@
     "web"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/web/admin-styles",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/admin-styles",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/web/admin-styles"
   },
   "author": {

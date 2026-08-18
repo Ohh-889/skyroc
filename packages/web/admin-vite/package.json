@@ -9,9 +9,9 @@
     "vite",
     "web"
   ],
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/web/admin-vite",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/admin-vite",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "license": "MIT",
   "author": {
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/web/admin-vite"
   },
   "files": [

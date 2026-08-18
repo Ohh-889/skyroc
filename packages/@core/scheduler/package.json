@@ -12,13 +12,13 @@
     "timer"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Ohh-889/skyroc-admin/tree/master/packages/@core/scheduler",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/scheduler",
   "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc-admin/issues"
+    "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc-admin.git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/@core/scheduler"
   },
   "author": {
