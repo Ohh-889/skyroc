@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useStore } from '@skyroc/hooks';
 
 import { buildRealtimeUrl } from '@/features/realtime/url';
 import { refreshAppToken } from '@/service/adapter';
@@ -31,7 +31,7 @@ export function getAppSseClient(): SseClient {
 /** 订阅应用连接。状态变了才重渲染，收消息请自行 client.on(...)。 */
 export function useAppSse() {
   const client = getAppSseClient();
-  const state = useSyncExternalStore(client.subscribe, client.getSnapshot, client.getSnapshot);
+  const state = useStore(client);
 
   return { client, state };
 }

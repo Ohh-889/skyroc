@@ -1,3 +1,5 @@
+import { Store } from '@skyroc/hooks';
+
 import { ServerCloseCode } from '@/features/realtime/close-codes';
 import type { RealtimeReadyPayload } from '@/features/realtime/message';
 import { parseRealtimeReady } from '@/features/realtime/message';
@@ -27,9 +29,9 @@ function readCloseInfo(raw: string): SseCloseInfo {
  * 2. 把「连上了」的判定推迟到 ready 事件，和 WebSocket 用同一套状态机。
  * 3. 令牌过期时先停掉自动重连再续签。自带的那套会拿着 URL 里那张过期令牌一直重试， 每次都被同样地拒掉。
  *
- * 状态和监听器都收在实例里，React 侧用 subscribe / getSnapshot 直接订阅，不需要另建一个模块 转发状态 —— 那样会多出一份和这里同步不上的镜像。
+ * 连接状态由 `Store<ConnectionState>` 托管：subscribe / getSnapshot 都来自基类，React 侧 用 `useStore(client)` 直接订阅，不需要另建一个模块转发状态 —— 那样会多出一份和这里同步不上 的镜像。业务事件另有一套监听表，两者互不干扰。
  */
-export class SseClient {
+export class SseClient extends Store<ConnectionState> {
   /** 事件监听表。每种事件一个 Set，同一个事件可以有多个订阅方。 */
   private listeners: { [K in SseEventName]: Set<SseEventMap[K]> } = {
     authFailed: new Set(),
@@ -62,10 +64,9 @@ export class SseClient {
    */
   private source: EventSource | null = null;
 
-  /** 对外可见的连接状态，唯一真相，React 侧读的就是它。 */
-  private state: ConnectionState = 'idle';
-
-  constructor(private readonly options: SseClientOptions) {}
+  constructor(private readonly options: SseClientOptions) {
+    super('idle');
+  }
 
   // ==================== 公开 API ====================
 
@@ -88,6 +89,7 @@ export class SseClient {
   destroy() {
     this.disconnect();
 
+    this.clearListeners();
     Object.values(this.listeners).forEach(set => set.clear());
   }
 
@@ -100,13 +102,6 @@ export class SseClient {
     return this.readyPayload;
   }
 
-  /**
-   * 读当前状态。
-   *
-   * 返回字符串而不是对象：useSyncExternalStore 按引用比较快照，返回对象会每次都判定成变了， 一直重渲染。
-   */
-  getSnapshot = (): ConnectionState => this.state;
-
   /** 退订。一般用不上，直接调 on 返回的那个函数更省事。 */
   off<K extends SseEventName>(event: K, listener: SseEventMap[K]) {
     (this.listeners[event] as Set<SseEventMap[K]>).delete(listener);
@@ -118,13 +113,6 @@ export class SseClient {
 
     return () => this.off(event, listener);
   }
-
-  /**
-   * 订阅状态变化，配合 getSnapshot 交给 useSyncExternalStore。
-   *
-   * 写成箭头属性是因为 useSyncExternalStore 要求函数身份稳定，写成普通方法每次渲染取到的 都是同一个引用，但 this 会丢。
-   */
-  subscribe = (listener: () => void): (() => void) => this.on('stateChange', listener);
 
   // ==================== 内部：事件 ====================
 
@@ -242,12 +230,19 @@ export class SseClient {
     this.open();
   }
 
-  /** 改状态并通知订阅方。状态没变就不通知，免得 React 白渲染一轮。 */
-  private setState(next: ConnectionState) {
-    if (this.state === next) return;
+  /**
+   * 改状态并通知订阅方。状态没变基类不会落快照，这里也就不发事件，免得 React 白渲染一轮。
+   *
+   * 覆盖基类是为了在快照更新之后补一发 stateChange：React 侧走基类的 subscribe，只需要 「变了」这个信号；而 `on('stateChange')` 的订阅方要的是具体的新状态。
+   */
+  protected override setState(next: ConnectionState) {
+    const prev = this.getSnapshot();
 
-    this.state = next;
-    this.emit('stateChange', next);
+    super.setState(next);
+
+    if (this.getSnapshot() !== prev) {
+      this.emit('stateChange', next);
+    }
   }
 
   /** 关掉当前连接但不改状态，也不进入「主动断开」—— 续签后还要再连回来。 */
