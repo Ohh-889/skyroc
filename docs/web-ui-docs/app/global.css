@@ -13,13 +13,263 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* 首页导航滚动后由模糊、饱和度和半透明背景共同形成悬浮玻璃材质。 */
+.ui-home-header-glass {
+  backdrop-filter: saturate(1.2) blur(10px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .ui-home-header-glass {
+    background-color: hsl(var(--background) / 0.92);
+  }
+}
+
 /*
  * Lighten Fumadocs card color globally to reduce grey feel.
  * The original --color-fd-card is hsl(0, 0%, 94.7%) — too grey.
  * We raise it to near-white.
  */
-:root {
-  --color-fd-card: hsl(0, 0%, 98.5%);
+:root,
+.dark {
+  --fd-layout-width: 1480px;
+  --color-fd-background: hsl(var(--background));
+  --color-fd-foreground: hsl(var(--foreground));
+  --color-fd-muted: hsl(var(--muted));
+  --color-fd-muted-foreground: hsl(var(--muted-foreground));
+  --color-fd-popover: hsl(var(--popover));
+  --color-fd-popover-foreground: hsl(var(--popover-foreground));
+  --color-fd-card: hsl(var(--card) / 0.32);
+  --color-fd-card-foreground: hsl(var(--card-foreground));
+  --color-fd-border: hsl(var(--border) / 0.58);
+  --color-fd-primary: hsl(var(--primary));
+  --color-fd-primary-foreground: hsl(var(--primary-foreground));
+  --color-fd-secondary: hsl(var(--secondary) / 0.46);
+  --color-fd-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-fd-accent: hsl(var(--primary) / 0.1);
+  --color-fd-accent-foreground: hsl(var(--foreground));
+  --color-fd-ring: hsl(var(--ring));
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+}
+
+.skyroc-docs-layout {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(circle at 52% 0%, hsl(var(--primary) / 0.075), transparent 30rem),
+    linear-gradient(hsl(var(--border) / 0.27) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.27) 1px, transparent 1px);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px;
+}
+
+.skyroc-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  letter-spacing: -0.025em;
+}
+
+.skyroc-nav-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.skyroc-nav-brand-badge {
+  padding: 2px 6px;
+  color: hsl(var(--primary));
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.18);
+  border-radius: 6px;
+}
+
+#nd-sidebar {
+  --color-fd-card: hsl(var(--background) / 0.72);
+  --color-fd-accent: hsl(var(--primary) / 0.1);
+  --color-fd-accent-foreground: hsl(var(--foreground));
+  --color-fd-primary: hsl(var(--primary));
+
+  backdrop-filter: saturate(1.1) blur(16px);
+}
+
+#nd-sidebar > div {
+  background-color: hsl(var(--background) / 0.7);
+  border-color: hsl(var(--border) / 0.55);
+}
+
+.skyroc-docs-hero {
+  position: relative;
+  padding: 26px 28px 24px;
+  overflow: hidden;
+  background: hsl(var(--card) / 0.3);
+  border: 1px solid hsl(var(--border) / 0.55);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px -54px hsl(var(--foreground) / 0.55);
+}
+
+.skyroc-docs-hero::after {
+  position: absolute;
+  top: -90px;
+  right: -80px;
+  width: 240px;
+  height: 240px;
+  pointer-events: none;
+  content: '';
+  background: hsl(var(--primary) / 0.09);
+  border-radius: 999px;
+  filter: blur(42px);
+}
+
+.skyroc-docs-kicker {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: hsl(var(--primary));
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.skyroc-docs-title {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin-top: 14px;
+  font-size: clamp(2.65rem, 5vw, 4.35rem);
+  line-height: 1.02;
+  letter-spacing: -0.06em;
+}
+
+.skyroc-docs-description {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin-top: 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.skyroc-component-meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.skyroc-component-meta span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 9px;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  font-weight: 600;
+  background: hsl(var(--background) / 0.55);
+  border: 1px solid hsl(var(--border) / 0.55);
+  border-radius: 9px;
+}
+
+.skyroc-component-meta svg {
+  color: hsl(var(--primary));
+}
+
+.skyroc-docs-actions {
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+  border-color: hsl(var(--border) / 0.55);
+}
+
+.skyroc-docs-body {
+  padding-top: 10px;
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.skyroc-docs-body > h2 {
+  margin-top: 3.5rem;
+  padding-top: 1.1rem;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  border-top: 1px solid hsl(var(--border) / 0.55);
+}
+
+.skyroc-docs-body > h2:first-of-type {
+  margin-top: 2.5rem;
+}
+
+.skyroc-docs-body > h3 {
+  margin-top: 2rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.skyroc-docs-body > p,
+.skyroc-docs-body > ul,
+.skyroc-docs-body > ol {
+  max-width: 760px;
+}
+
+.skyroc-docs-body pre {
+  border-color: hsl(var(--border) / 0.58);
+  border-radius: 14px;
+  box-shadow: 0 16px 44px -38px hsl(var(--foreground) / 0.48);
+}
+
+.skyroc-demo-stage {
+  background-color: hsl(var(--background) / 0.62);
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.2) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.skyroc-demo,
+.skyroc-api-table {
+  box-shadow: 0 24px 66px -54px hsl(var(--foreground) / 0.6);
+}
+
+@media (max-width: 767px) {
+  .skyroc-docs-hero {
+    padding: 22px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .skyroc-docs-title {
+    font-size: clamp(2.35rem, 12vw, 3.25rem);
+  }
+
+  .skyroc-docs-description {
+    font-size: 0.925rem;
+  }
+
+  .skyroc-demo > div:first-child {
+    align-items: flex-start;
+  }
+
+  .skyroc-demo-stage {
+    padding: 2rem 1rem;
+  }
 }
 
 /* Demo live editor */
