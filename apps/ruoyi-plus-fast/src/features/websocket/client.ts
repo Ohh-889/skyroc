@@ -1,3 +1,4 @@
+import { Store } from '@skyroc/hooks';
 import { nanoid } from '@skyroc/utils';
 
 import { ClientCloseCode, ServerCloseCode } from '@/features/realtime/close-codes';
@@ -28,9 +29,9 @@ const DEFAULT_PING_FRAME = 'ping';
  *
  * 不含业务逻辑。协议相关的两件事（怎么认出就绪消息、怎么认出心跳响应）由选项注入， 换后端协议不用改这个文件。
  *
- * 状态和监听器都收在实例里，React 侧用 subscribe / getSnapshot 直接订阅，不需要 另建一个模块转发状态 —— 那样会多出一份和这里同步不上的镜像。
+ * 连接状态由 `Store<ConnectionState>` 托管：subscribe / getSnapshot 都来自基类，React 侧 用 `useStore(client)` 直接订阅，不需要另建一个模块转发状态 —— 那样会多出一份和这里同步 不上的镜像。业务事件另有一套监听表，两者互不干扰。
  */
-export class WebSocketClient<TReady = unknown> {
+export class WebSocketClient<TReady = unknown> extends Store<ConnectionState> {
   /** 心跳发送定时器，非 null 表示心跳正在跑。 */
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -75,10 +76,9 @@ export class WebSocketClient<TReady = unknown> {
    */
   private socket: WebSocket | null = null;
 
-  /** 对外可见的连接状态，唯一真相，React 侧读的就是它。 */
-  private state: ConnectionState = 'idle';
-
-  constructor(private readonly options: WebSocketClientOptions<TReady>) {}
+  constructor(private readonly options: WebSocketClientOptions<TReady>) {
+    super('idle');
+  }
 
   // ==================== 公开 API ====================
 
@@ -113,6 +113,7 @@ export class WebSocketClient<TReady = unknown> {
   destroy() {
     this.disconnect();
 
+    this.clearListeners();
     Object.values(this.listeners).forEach(set => set.clear());
   }
 
@@ -122,13 +123,6 @@ export class WebSocketClient<TReady = unknown> {
    * 挂载晚于就绪帧的订阅方用它补上错过的那次 ready，之后再靠事件接重连。不并进 getSnapshot： 那个快照要按引用比较，返回对象会让每次订阅通知都判定成变了。
    */
   getReady = (): TReady | null => this.readyPayload;
-
-  /**
-   * 读当前状态。
-   *
-   * 返回字符串而不是对象：useSyncExternalStore 按引用比较快照，返回对象会每次都判定成 变了，一直重渲染。
-   */
-  getSnapshot = (): ConnectionState => this.state;
 
   /** 退订。一般用不上，直接调 on 返回的那个函数更省事。 */
   off<K extends WebSocketEventName>(event: K, listener: WebSocketEventMap<TReady>[K]) {
@@ -175,13 +169,6 @@ export class WebSocketClient<TReady = unknown> {
   sendJson(payload: unknown): boolean {
     return this.send(JSON.stringify(payload));
   }
-
-  /**
-   * 订阅状态变化，配合 getSnapshot 交给 useSyncExternalStore。
-   *
-   * 写成箭头属性是因为 useSyncExternalStore 要求函数身份稳定，写成普通方法每次渲染 取到的都是同一个引用，但 this 会丢。
-   */
-  subscribe = (listener: () => void): (() => void) => this.on('stateChange', listener);
 
   // ==================== 内部：清理 ====================
 
@@ -393,12 +380,19 @@ export class WebSocketClient<TReady = unknown> {
     }, delay);
   }
 
-  /** 改状态并通知订阅方。状态没变就不通知，免得 React 白渲染一轮。 */
-  private setState(next: ConnectionState) {
-    if (this.state === next) return;
+  /**
+   * 改状态并通知订阅方。状态没变基类不会落快照，这里也就不发事件，免得 React 白渲染一轮。
+   *
+   * 覆盖基类是为了在快照更新之后补一发 stateChange：React 侧走基类的 subscribe，只需要 「变了」这个信号；而 `on('stateChange')` 的订阅方要的是具体的新状态。
+   */
+  protected override setState(next: ConnectionState) {
+    const prev = this.getSnapshot();
 
-    this.state = next;
-    this.emit('stateChange', next);
+    super.setState(next);
+
+    if (this.getSnapshot() !== prev) {
+      this.emit('stateChange', next);
+    }
   }
 
   // ==================== 内部：心跳 ====================

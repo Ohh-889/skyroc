@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useStore } from '@skyroc/hooks';
 
 import type { RealtimeReadyPayload } from '@/features/realtime/message';
 import { parseRealtimeReady } from '@/features/realtime/message';
@@ -35,7 +35,7 @@ export function getAppWebSocketClient(): WebSocketClient<RealtimeReadyPayload> {
 /** 订阅应用连接。状态变了才重渲染，收发消息请自行 client.on(...)。 */
 export function useAppWebSocket() {
   const client = getAppWebSocketClient();
-  const state = useSyncExternalStore(client.subscribe, client.getSnapshot, client.getSnapshot);
+  const state = useStore(client);
 
   return { client, state };
 }
