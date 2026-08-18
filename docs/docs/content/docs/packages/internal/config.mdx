@@ -1,6 +1,6 @@
 ---
 title: "@skyroc/config"
-description: 共享 Oxlint 预设（base / react / next）+ Vitest 配置工具
+description: 共享 Oxlint 预设（base / react / next / react-native）+ Vitest 共享常量与配置对象
 ---
 
 ## 概览
@@ -11,93 +11,22 @@ description: 共享 Oxlint 预设（base / react / next）+ Vitest 配置工具
 | 目录 | `internal/config` |
 | 版本 | 1.0.0 |
 | private | ✅ |
-| 构建 | tsdown → `dist/` |
+| 构建 | tsdown（entry `src/vitest/index.ts`，ESM + dts）→ `dist/` |
+| 内容 | `oxlint/` 4 个 JSON 预设 + `src/vitest/` 共享配置 |
 
-`@skyroc/config` 把 Oxlint 与 Vitest 的共享配置打包成可复用的预设。两种工具的接入形式不同：Oxlint 通过 JSON `extends`，Vitest 通过 TS 模块 import。
+两种工具的接入形式不同：**Oxlint 走 JSON `extends`（相对路径）**，**Vitest 走 TS 模块 import（包名子路径）**。
 
-## Oxlint 预设
-
-| 文件 | 内容 | 适用 |
-| --- | --- | --- |
-| `oxlint/base.json` | 基础规则（import、unicorn、typescript、eslint 核心） | 所有 TS / JS 包 |
-| `oxlint/react.json` | extends base + react 插件 | React 应用 / 组件 |
-| `oxlint/next.json` | extends react + nextjs + jsx-a11y | Next.js 应用（如 docs） |
-
-### 引用
+## 快速上手
 
 ```jsonc
 // apps/admin/.oxlintrc.json
 { "extends": ["../../internal/config/oxlint/react.json"] }
-
-// docs/project-docs/.oxlintrc.json
-{ "extends": ["../../internal/config/oxlint/next.json"] }
 ```
-
-### base 关键规则
-
-| 规则 | 级别 | 说明 |
-| --- | --- | --- |
-| `eqeqeq` | error | 强制 `===` / `!==` |
-| `no-console` | warn | 禁止 `console.log`（CLI 包豁免） |
-| `no-unused-vars` | error | 未使用变量（`_` 前缀豁免） |
-| `prefer-const` | error | 未重赋值必须 `const` |
-| `no-var` | error | 禁 `var` |
-| `typescript/consistent-type-imports` | error | 强制 `import type` |
-| `typescript/no-explicit-any` | off | 允许 `any`（不硬限） |
-| `complexity` / `max-depth` / `max-params` | error | 限制复杂度、嵌套、参数 |
-
-完整规则与各包扩展见 [Lint 与格式化](/docs/engineering/lint-and-format)。
-
-## Vitest 共享配置
-
-构建产物为 ESM 模块，通过 `@skyroc/config/vitest` import：
-
-```ts
-import {
-  TEST_ENVIRONMENT,
-  COVERAGE_PROVIDER,
-  TEST_PATTERNS,
-  SOURCE_PATTERNS,
-  COVERAGE_EXCLUDE,
-  baseTestConfig,
-  baseCoverageConfig
-} from '@skyroc/config/vitest';
-```
-
-### 导出常量
-
-| 常量 | 默认值 |
-| --- | --- |
-| `TEST_ENVIRONMENT` | `'happy-dom'` |
-| `COVERAGE_PROVIDER` | `'v8'` |
-| `TEST_PATTERNS` | `['__tests__/**/*.{test,spec}.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}']` |
-| `SOURCE_PATTERNS` | `['src/**/*.{ts,tsx}']` |
-| `COVERAGE_EXCLUDE` | `['**/dist/**', '**/__tests__/**', '**/*.d.ts', '**/types/**', '**/*.config.*']` |
-
-### 预设对象
-
-```ts
-baseTestConfig = {
-  environment: TEST_ENVIRONMENT,
-  globals: true,
-  include: TEST_PATTERNS,
-  setupFiles: ['./vitest.setup.ts']    // 可选
-};
-
-baseCoverageConfig = {
-  provider: COVERAGE_PROVIDER,
-  reporter: ['text', 'json', 'html'],
-  include: SOURCE_PATTERNS,
-  exclude: COVERAGE_EXCLUDE
-};
-```
-
-### 在子包中使用
 
 ```ts
 // packages/@core/service/vitest.config.ts
+import { COVERAGE_EXCLUDE, baseCoverageConfig, baseTestConfig } from '@skyroc/config/vitest';
 import { defineConfig } from 'vitest/config';
-import { baseCoverageConfig, baseTestConfig, COVERAGE_EXCLUDE } from '@skyroc/config/vitest';
 
 export default defineConfig({
   test: {
@@ -110,44 +39,232 @@ export default defineConfig({
 });
 ```
 
-包级 config 可以覆盖任何字段，但默认值已经够大多数场景使用。
-
-## 子入口
+### 子入口
 
 ```jsonc
 {
+  "files": ["dist", "oxlint"],
   "exports": {
-    "./oxlint/base.json":   "./oxlint/base.json",
-    "./oxlint/react.json":  "./oxlint/react.json",
-    "./oxlint/next.json":   "./oxlint/next.json",
-    "./package.json":       "./package.json",
+    "./oxlint/base.json": "./oxlint/base.json",
+    "./oxlint/next.json": "./oxlint/next.json",
+    "./oxlint/react.json": "./oxlint/react.json",
+    "./package.json": "./package.json",
     "./vitest": {
-      "types":   "./dist/index.d.mts",
+      "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     }
   }
 }
 ```
 
-JSON 直接暴露源路径，TS 模块通过 dist 暴露（避免应用层意外编译 TS 源）。
+JSON 暴露源路径，TS 模块只暴露 `dist`（避免应用层意外编译 TS 源）。
+
+> 仓库内所有 `.oxlintrc.json` 用的都是**相对路径** `../../internal/config/oxlint/*.json`——oxlint 自己解析 `extends`，不走 Node 的 exports 字段，所以 `exports` 里漏掉的 `./oxlint/react-native.json` 并不影响使用。
+
+## Oxlint 预设
+
+| 文件 | extends | 新增 plugins | 适用 |
+| --- | --- | --- | --- |
+| `oxlint/base.json` | — | node / import / unicorn / typescript / eslint / oxc / vitest（+ jsPlugin `eslint-plugin-sort`） | 所有 TS / JS 包 |
+| `oxlint/react.json` | base | react | React 应用 / 组件库 |
+| `oxlint/next.json` | react | jsx-a11y、nextjs | Next.js 应用（文档站、playground） |
+| `oxlint/react-native.json` | react | — （加 RN 全局变量） | RN 包与 Expo 应用 |
+
+## 预设详解
+
+### base.json
+
+**类别开关**是理解这份配置的前提：
+
+```jsonc
+{
+  "categories": {
+    "correctness": "off",
+    "suspicious": "error"
+  }
+}
+```
+
+`correctness` 整类被关掉，改为在 `rules` 里**逐条显式开启**——这样规则集是白名单，升级 oxlint 时不会凭空多出一批报错。
+
+关键规则（节选）：
+
+| 规则 | 级别 | 说明 |
+| --- | --- | --- |
+| `eqeqeq` | error | 强制 `===` / `!==` |
+| `no-var` / `prefer-const` | error | `prefer-const` 带 `destructuring: "all"` |
+| `no-unused-vars` | error | `^_` 前缀的变量与参数豁免 |
+| `no-shadow` / `no-param-reassign` | error | 禁变量遮蔽与参数重赋值 |
+| `complexity` / `max-depth` / `max-params` / `max-nested-callbacks` | error | 复杂度、嵌套、参数、回调层数上限 |
+| `no-nested-ternary` / `no-lonely-if` / `no-else-return` | error | 控制流可读性 |
+| `no-plusplus` / `no-bitwise` / `no-continue` | error | 风格性禁令 |
+| `prefer-template` / `object-shorthand` / `prefer-object-spread` | error | 现代语法 |
+| `no-await-in-loop` | error | 循环内 await 一律报错 |
+| `no-warning-comments` | error | `TODO` / `FIXME` 留在代码里会失败 |
+| `unicorn/prefer-node-protocol` | error | Node 内置模块必须写 `node:fs` |
+| `import/first` / `import/no-duplicates` | error | import 组织 |
+
+`jsPlugins: ["eslint-plugin-sort"]` 额外接入了一组排序规则，这是仓库里最容易撞到的一类：
+
+| 规则 | 级别 | 作用 |
+| --- | --- | --- |
+| `sort/import-members` | error | 单条 import 的具名成员按自然序、区分大小写 |
+| `sort/string-unions` / `sort/string-enums` | error | 字符串联合类型、字符串枚举成员排序 |
+| `sort/exports` | warn | export 语句按分组顺序（依赖 → 其他 → 相对路径 → 无源 → default） |
+| `sort/export-members` / `sort/type-properties` / `sort/destructuring-properties` | warn | 导出成员、类型属性、解构属性排序 |
+
+**overrides 分四组：**
+
+| files | 作用 |
+| --- | --- |
+| `**/scripts/**`、`**/cli.*` | 关掉 `no-console`（CLI 需要输出） |
+| `__tests__/**`、`*.test.*`、`*.spec.*`、`*.bench.*` | 关掉 `no-unused-expressions`（断言写法） |
+| `**/*.?([cm])[jt]s?(x)` | 打开全部 `typescript/*` 规则；同时**关掉一批被 TS 编译器覆盖的 ESLint 规则**（`no-const-assign`、`no-dupe-keys`、`constructor-super`、`no-this-before-super`、`no-obj-calls` 等）——类型检查已经报错，无需 lint 重复报 |
+| `**/*.js`、`**/*.cjs` | 放开 `typescript/no-require-imports` |
+
+TypeScript 相关的关键取舍：
+
+| 规则 | 级别 | 说明 |
+| --- | --- | --- |
+| `typescript/consistent-type-imports` | error | `prefer: "type-imports"`，与 tsconfig 的 `verbatimModuleSyntax` 配套 |
+| `typescript/no-explicit-any` | off | 允许 `any`，不硬限 |
+| `typescript/no-non-null-assertion` | off | 允许 `!` |
+| `typescript/ban-ts-comment` | error | `@ts-expect-error` 必须写至少 10 个字符的理由 |
+| `typescript/no-namespace` | error | 全局类型用 `.d.ts` 声明而非 `namespace` |
+| `typescript/consistent-type-definitions` | off | `type` 与 `interface` 不强制二选一 |
+
+### react.json
+
+在 base 之上加 `react` 插件。**最重要的一条是禁用 `useCallback`**：
+
+```jsonc
+{
+  "no-restricted-imports": [
+    "error",
+    {
+      "paths": [
+        {
+          "name": "react",
+          "importNames": ["useCallback"],
+          "message": "useCallback is forbidden — see AGENTS.md §2. Hoist the function, use a ref, or re-draw the component boundary instead."
+        }
+      ]
+    }
+  ]
+}
+```
+
+这条规则把 `AGENTS.md` 的组件规范落成了 lint 错误，详见 [编码规范](/docs/guide/engineering/conventions)。
+
+其余：
+
+| 规则 | 级别 | 说明 |
+| --- | --- | --- |
+| `react/hook-use-state` | error | `useState` 返回值命名必须成对（允许解构） |
+| `react/self-closing-comp` | error | 空组件与空 html 标签必须自闭合 |
+| `react/jsx-curly-brace-presence` | warn | 字符串 props / children 不写多余大括号 |
+| `react/jsx-fragments` | warn | 用 `<>` 语法而非 `<Fragment>` |
+| `react/jsx-no-useless-fragment` | warn | 无意义 Fragment |
+| `react/only-export-components` | warn | 允许额外导出 `loader` / `action` / `handle` / `shouldRevalidate`（React Router 约定） |
+| `react/react-in-jsx-scope` | off | 新 JSX transform |
+
+`**/*.jsx`、`**/*.tsx` 的 override 里再开 `react/rules-of-hooks`（error）、`react/exhaustive-deps`（error）、`react/jsx-key`、`react/display-name` 等。
+
+### next.json
+
+extends react，追加 `jsx-a11y` 与 `nextjs` 插件，打开整套 `nextjs/*` 规则（`no-html-link-for-pages`、`no-document-import-in-page`、`inline-script-id` 等为 error，其余多为 warn），并把 `react/only-export-components` 关掉——Next.js 的 `page.tsx` 需要同时导出 `metadata`、`generateStaticParams`。
+
+### react-native.json
+
+extends react，主要做三件事：
+
+- 注入 RN 全局变量：`__DEV__`、`ErrorUtils`、`HermesInternal`、`__turboModuleProxy`、`nativeFabricUIManager`、`_WORKLET`（Reanimated worklet）；
+- 关掉 `unicorn/no-array-reverse`、`unicorn/no-array-sort`、`react/no-unescaped-entities`（RN 文本节点没有 HTML 转义问题）；
+- `react/exhaustive-deps` 降为 warn，`no-use-before-define` 放开 `variables`（RN 里 `StyleSheet.create` 常写在组件下方）。
+
+## Vitest 共享配置
+
+`src/vitest/index.ts` 经 tsdown 构建为 ESM，通过 `@skyroc/config/vitest` 引用：
+
+```ts
+import {
+  COVERAGE_EXCLUDE,
+  COVERAGE_PROVIDER,
+  SOURCE_PATTERNS,
+  TEST_ENVIRONMENT,
+  TEST_PATTERNS,
+  baseCoverageConfig,
+  baseTestConfig
+} from '@skyroc/config/vitest';
+```
+
+### 导出常量
+
+| 常量 | 值 |
+| --- | --- |
+| `TEST_ENVIRONMENT` | `'happy-dom'` |
+| `COVERAGE_PROVIDER` | `'v8'` |
+| `TEST_PATTERNS` | `['__tests__/**/*.test.ts', '__tests__/**/*.test.tsx']` |
+| `SOURCE_PATTERNS` | `['src/**/*.ts', 'src/**/*.tsx']` |
+| `COVERAGE_EXCLUDE` | `['**/*.test.ts', '**/*.test.tsx', '**/index.ts', '**/*.d.ts', '**/vitest.setup.ts']` |
+
+测试文件**只认 `__tests__/` 目录**——`src/` 里的 `*.test.ts` 不会被匹配到。
+
+### 预设对象
+
+```ts
+export const baseTestConfig: InlineConfig = {
+  globals: true,
+  environment: TEST_ENVIRONMENT,
+  include: TEST_PATTERNS
+};
+
+export const baseCoverageConfig: CoverageOptions = {
+  provider: COVERAGE_PROVIDER,
+  enabled: true,
+  include: SOURCE_PATTERNS,
+  exclude: COVERAGE_EXCLUDE
+};
+```
+
+`baseTestConfig` **不含 `setupFiles`**，需要前置文件的包（`packages/hooks`、`packages/@core/utils`、`packages/@core/state`）在自己的 `vitest.config.ts` 里加；`baseCoverageConfig` 也**不含 `reporter`**，用 vitest 默认值。
+
+## 仓库内实际使用
+
+**Oxlint：**
+
+| 预设 | 使用方 |
+| --- | --- |
+| `base.json` | 仓库根 `.oxlintrc.json` |
+| `react.json` | `apps/{admin,admin-example,ruoyi-plus-fast}`、`packages/web/{admin-devtools,admin-layouts,admin-notification,admin-theme,materials}`、`packages/web/ui/{shadcn,antd,compose}`、`packages/@core/scripts/templates/admin` |
+| `next.json` | `apps/web-ui-playground`、`docs/{project-docs,core-docs,web-kit-docs,web-ui-docs}` |
+| `react-native.json` | `packages/native/ui`、`apps/native-ui-playground` |
+
+`docs/docs`、`docs/admin-docs`、`docs/native-ui-docs` 目前是各自独立的 `.oxlintrc.json`，**没有 extends 本包**，属于待收敛项。
+
+**Vitest：** 17 个子包的 `vitest.config.ts` 以及根 `vitest.config.ts` 都从 `@skyroc/config/vitest` 取值。根配置只复用常量（`TEST_ENVIRONMENT` / `COVERAGE_PROVIDER` / `SOURCE_PATTERNS` / `COVERAGE_EXCLUDE`），自己定义根视角的 `include`（`packages/**/__tests__/**`）、排除走 Jest 的 `packages/native/**`，并把覆盖率范围限定在已有测试的包上，避免无测试包刷出大量 0%。
+
+**lint 脚本：**
+
+| 位置 | 脚本 |
+| --- | --- |
+| 仓库根 | `turbo run lint` |
+| `apps/*`、`packages/web/ui/*`、`packages/native/ui` | `oxlint --fix` |
+| `docs/docs` | `oxlint` |
 
 ## 升级影响范围
 
-升级本包的预设会**自动影响所有 extends / import 它的包**。常见的升级流程：
+改预设会**自动影响所有 extends / import 它的包**，流程是：
 
-1. 修改预设 JSON / vitest 常量；
-2. 跑根 `pnpm lint` / `pnpm test` 确认所有包都通过；
-3. 提交。
+1. 修改预设 JSON 或 vitest 常量；
+2. 在仓库根跑 `pnpm lint`、`pnpm test` 确认所有包通过；
+3. 一次性修完违规再提交。
 
-由于规则集中，引入新规则要一次性修复所有包的违规，比 ESLint 配置分散好治理。
+规则集中带来的好处是治理简单，代价是引入新规则的成本一次性付清。
 
-## 与各包 lint 脚本
+## 相关文档
 
-| 包 | `lint` 脚本 |
-| --- | --- |
-| `apps/admin` | `oxlint --fix` |
-| `docs/project-docs` | `oxlint` |
-| `packages/web/ui/*` | `oxlint --fix` |
-| `apps/web-ui-playground` | `oxlint` |
-
-详细命令与 Turborepo 集成见 [Lint 与格式化](/docs/engineering/lint-and-format)。
+- [Lint 与格式化](/docs/guide/engineering/lint-and-format) —— 完整规则说明、oxfmt 与提交前检查
+- [测试](/docs/guide/engineering/test) —— 测试组织方式与覆盖率要求
+- [编码规范](/docs/guide/engineering/conventions) —— `useCallback` 禁令等规则背后的理由
+- [`@skyroc/tsconfig`](/docs/packages/internal/tsconfig) —— 与之配套的 TS 编译预设

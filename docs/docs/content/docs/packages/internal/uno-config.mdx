@@ -1,6 +1,6 @@
 ---
 title: "@sa/uno-config"
-description: UnoCSS 预设：主题色 CSS 变量、shortcuts、动画、字号、间距、圆角
+description: UnoCSS 预设：18 色调色板 CSS 变量、shortcuts、动画规则、字号 / 间距 / 圆角 / 阴影 token
 ---
 
 ## 概览
@@ -10,21 +10,49 @@ description: UnoCSS 预设：主题色 CSS 变量、shortcuts、动画、字号�
 | 包名 | `@sa/uno-config` |
 | 目录 | `internal/uno-config` |
 | 版本 | 1.0.0 |
+| private | ❌（带 `publishConfig`，可发布） |
+| 入口 | `exports["."] → ./src/index.ts`（源码直出，由消费方的 Vite 编译） |
+| 发布入口 | `publishConfig` 覆盖为 `dist/index.js` + `dist/index.d.ts` |
 | 命名说明 | 历史遗留 `@sa` 而非 `@skyroc` |
-| 可发布 | ✅（未声明 `private: true`） |
 
-`@sa/uno-config` 提供 admin 应用的 UnoCSS 预设——主题色 CSS 变量、常用 shortcuts（flex / position / text / common）、动画规则、字号 / 间距 / 圆角 / 阴影 token。
+`presetSoybeanAdmin()` 提供 admin 应用的 UnoCSS 预设——调色板 CSS 变量、常用 shortcuts、`radius-*` / `text-*` 规则、进场与折叠动画、以及一整套 design token。
 
-## 主导出
+## 快速上手
 
 ```ts
-import {
-  presetSoybeanAdmin,            // 默认 export
+// apps/admin/uno.config.ts
+import { presetSoybeanAdmin } from '@sa/uno-config';
+import { defineConfig, presetWind3, transformerDirectives, transformerVariantGroup } from 'unocss';
+
+export default defineConfig({
+  content: {
+    pipeline: {
+      include: [/\.tsx($|\?)/],
+      exclude: ['node_modules', 'dist']
+    },
+    filesystem: ['../../ui-kit/ui', '../../packages/web/ui/shadcn/src/**/*.{ts,tsx}']
+  },
+  presets: [
+    presetWind3({ dark: 'class', variablePrefix: '', important: '.root', preflight: 'on-demand' }),
+    presetSoybeanAdmin()
+  ],
+  transformers: [transformerDirectives(), transformerVariantGroup()]
+});
+```
+
+预设**只提供规则与 theme，不注入色值**——`--primary`、`--primary-500`、`--color-text` 这些变量由 [`@skyroc/web-admin-theme`](/docs/packages/web/theme/admin-theme) 在运行时写到 `:root` 上。两者缺一不可。
+
+使用方：`apps/admin`、`apps/admin-example`、`apps/ruoyi-plus-fast`，以及 `packages/@core/scripts` 的 admin 模板。
+
+## 导出清单
+
+```ts
+import presetSoybeanAdmin, {          // default = presetSoybeanAdmin
+  presetSoybeanAdmin,                 // 具名导出（同一个函数）
   allShortcuts,
   flexShortcuts,
   positionShortcuts,
   textShortcuts,
-  commonShortcuts,
   themeColorKeys,
   colorPaletteNumbers,
   colorPaletteVars,
@@ -35,106 +63,125 @@ import {
 } from '@sa/uno-config';
 ```
 
-## 使用
+> `commonShortcuts` 定义在 `src/shortcuts.ts`，但**没有从 `src/index.ts` 再导出**——它已经通过 `allShortcuts` 进入预设，只是无法单独 import。
 
-```ts
-// apps/admin/uno.config.ts
-import { presetSoybeanAdmin } from '@sa/uno-config';
-import {
-  defineConfig,
-  presetWind3,
-  transformerDirectives,
-  transformerVariantGroup
-} from 'unocss';
+## 预设内容详解
 
-export default defineConfig({
-  presets: [
-    presetWind3({
-      dark: 'class',
-      important: '.root',
-      preflight: 'on-demand'
-    }),
-    presetSoybeanAdmin()
-  ],
-  transformers: [
-    transformerDirectives(),
-    transformerVariantGroup()
-  ]
-});
-```
+### 调色板与 CSS 变量
 
-## presetSoybeanAdmin 提供的内容
-
-### 1. 主题色 CSS 变量映射
+`themeColorKeys` 共 **18 个色键**：
 
 ```text
-text-primary       → color: var(--primary-color)
-bg-success         → background: var(--success-color)
-text-primary-500   → color: var(--primary-color-500)   (11 档)
+primary  info  success  warning  error
+blue  purple  cyan  green  magenta  pink  red  orange  yellow  volcano  geekblue  gold  lime
 ```
 
-`themeColorKeys` 列出所有可用色键（`primary` / `success` / `warning` / `error` / `info`）；`colorPaletteNumbers` 列出色阶（50/100/200/.../900/950）。
+`colorPaletteNumbers` 为 11 档：`50 / 100 / 200 / 300 / 400 / 500 / 600 / 700 / 800 / 900 / 950`。
 
-### 2. 常用 shortcuts
+每个色键会展开成一组指向 CSS 变量的颜色对象：
 
-| 组 | 例子 |
+```text
+text-primary        → color: var(--primary)
+bg-primary-500      → background: var(--primary-500)
+border-primary-hover → var(--primary-300)
+```
+
+除数字档位外还有一层**语义别名**：
+
+| 别名 | 映射 | 用途 |
+| --- | --- | --- |
+| `DEFAULT` | `var(--primary)` | 主色 |
+| `bg` / `bg-hover` | 50 / 100 | 背景与背景悬停 |
+| `border` / `border-hover` | 200 / 300 | 边框与边框悬停 |
+| `hover` / `active` | 400 / 600 | 交互状态（浅=即将激活，深=已按下） |
+| `lightest` / `lighter` / `light` | 50 / 100 / 200 | 由浅到深的浅色区 |
+| `text` / `text-hover` / `text-active` | 500 / 400 / 700 | 文字三态 |
+
+`theme.colors` 里另有一组布局色，不走调色板：`base-text`、`base-bg`、`mask`、`blur`、`inverted`、`layout`、`nprogress`，以及 `link`（DEFAULT / hover / active）、`border`（DEFAULT / secondary / disabled）、`container`（DEFAULT / disabled）。
+
+### shortcuts
+
+| 分组 | 内容 |
 | --- | --- |
-| `flexShortcuts` | `flex-center`、`flex-x-center`、`flex-y-center` |
-| `positionShortcuts` | `absolute-center`、`absolute-lt` 等 |
-| `textShortcuts` | `text-ellipsis`、`text-overflow-2` 行截断 |
-| `commonShortcuts` | `card-shadow`、`hover-effect` 等 |
+| `flexShortcuts` | `flex-center`、`flex-x-center`、`flex-y-center`、`flex-col`、`flex-col-center`、`flex-col-stretch`、`flex-1-hidden`，以及对应的 `i-` 内联版本 |
+| `positionShortcuts` | `absolute-lt` / `absolute-rt` / `absolute-lb` / `absolute-rb`（含 `tl` / `tr` / `bl` / `br` 别名）、`absolute-center`，以及 `fixed-*` 同款 |
+| `textShortcuts` | `nowrap-hidden`、`ellipsis-text` |
+| `commonShortcuts` | `card`、`card-sm`、`card-lg`（bg-container + 圆角 + 阴影 + 纵向 flex + 内边距）、`card-wrapper` |
 
-### 3. 动画规则
+`allShortcuts` 是四组的合并，预设直接用它。
 
-内置：
+### 自定义规则
 
-- accordion 折叠展开
-- collapsible 上下展开
-- enter 进场动画
+| 规则 | 生成 |
+| --- | --- |
+| `text-base` | `color: var(--color-text)` |
+| `text-secondary` / `tertiary` / `quaternary` / `placeholder` / `disabled` / `heading` / `label` / `description` / `light-solid` | `color: var(--color-text-<variant>)` |
+| `radius` | `border-radius: var(--border-radius)` |
+| `radius-md` / `radius-DEFAULT` | `border-radius: var(--radius)` |
+| `radius-none` | `border-radius: 0` |
+| `radius-xs` … `radius-4xl` / `radius-full` | `border-radius: var(--radius-<variant>)` |
+| `animate-accordion-down` / `-up` | Radix accordion 折叠展开（0.2s ease-out） |
+| `animate-collapsible-down` / `-up` | Radix collapsible 展开 |
+| `enter-x:nth-child(n)` / `enter-y:nth-child(n)` | 逐项进场动画，第 n 项延迟 `0.1 × n` 秒 |
+| `-enter-x:nth-child(n)` / `-enter-y:nth-child(n)` | 反方向进场 |
 
-可直接：
+进场动画常用于列表 / 卡片：
 
 ```html
-<div class="animate-accordion-down">...</div>
+<div class="enter-y:nth-child(1)">...</div>
+<div class="enter-y:nth-child(2)">...</div>
 ```
 
-### 4. Theme tokens
+### preflights
 
-- `fontSize` / `lineHeight`：覆盖默认字号
-- `spacing`：扩展间距
-- `borderRadius`：扩展圆角（与 `builtinRadiuses` 一致）
-- `boxShadow`：扩展阴影
+预设注入两段全局 CSS：
+
+- 动画所需的 `@keyframes`（`shadcn-down` / `shadcn-up` / `shadcn-collapsible-*` / `enter-x-animation` / `enter-y-animation`）；
+- **根字号档位**：`html.size-xs` → 12px、`size-sm` → 14px、`size-md` → 16px、`size-lg` → 18px、`size-xl` → 20px、`size-2xl` → 24px。给 `<html>` 换 class 即可整体缩放 rem 布局。
+
+### theme token
+
+| token | 说明 |
+| --- | --- |
+| `fontSize` | `xs` … `9xl`，每档是 `[var(--text-*), var(--line-height-*)]` 二元组 |
+| `lineHeight` | `xs`(18px) … `9xl`(136px) 的固定 rem 值 |
+| `spacing` | `DEFAULT` / `3xs` / `2xs` / `xs` / `md` … `9xl`（0.25rem → 9rem） |
+| `width` / `height` / `maxWidth` / `maxHeight` / `minWidth` / `minHeight` | 与 `spacing` 同一套档位 |
+| `borderRadius` | `none` / `xs`(2px) / `sm`(4px) / `md`(6px，DEFAULT) / `lg`(8px) / `xl`(12px) / `2xl`(16px) / `3xl`(24px) / `4xl`(32px) / `full` |
+| `boxShadow` | `float`（三层浮层阴影）、`header` / `sider` / `tab`（读 CSS 变量） |
+
+注意尺寸档位里**没有 `sm`**，从 `xs` 直接跳到 `md`——这是刻意与 `presetWind3` 的默认 `sm` 保持不冲突。
 
 ## 工具函数
 
-| 函数 | 作用 |
-| --- | --- |
-| `createColorPaletteVars(name)` | 给一个色键生成 `{ DEFAULT, 50, 100, ... }` 的 CSS 变量映射对象 |
-| `createColorsPalette()` | 一次性生成所有 `themeColorKeys` 的 palette |
-| `colorPaletteVars` | 已生成的常量映射 |
-| `textVariants` | tailwind-variants 风格的文本样式 |
-| `builtinRadiuses` | 内置圆角值表 |
-
-## 与 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 的关系
-
-| 维度 | `@sa/uno-config` | `@skyroc/tailwind-plugin` |
+| 导出 | 签名 | 作用 |
 | --- | --- | --- |
-| 用途 | apps/admin 业务页面的工具类 | `@skyroc/web-ui` 组件库的 token 注入 |
-| 工具 | UnoCSS | Tailwind 4（亦含 UnoCSS preset） |
-| 范围 | admin 应用样式 | 设计系统层 |
+| `createColorsPalette(name)` | `(name: string) => Record<string, string>` | 给**单个**色键生成 `{ 50…950, DEFAULT, bg, border, hover, active, text… }` 映射 |
+| `createColorPaletteVars()` | `() => Record<string, Record<string, string>>` | 遍历 `themeColorKeys`，一次生成**全部**色键的 palette |
+| `colorPaletteVars` | 常量 | `createColorPaletteVars()` 的执行结果，预设 `theme.colors` 直接展开它 |
+| `themeColorKeys` | `readonly string[]` | 18 个色键 |
+| `colorPaletteNumbers` | `readonly number[]` | 11 个色阶 |
+| `textVariants` | `string[]` | 10 个文字样式名，用于生成 `text-*` 规则 |
+| `builtinRadiuses` | `readonly [0, 0.3, 0.5, 0.75, 1]` | 主题设置面板里可选的内置圆角值（单位 rem） |
 
-两者**互不冲突**：admin 页面用 UnoCSS（`uno.config.ts`）；引入的 web-ui 组件自带 Tailwind 编译产物（`style.css`）。
+## 与 `@skyroc/tailwind-plugin` 的关系
 
-## 历史命名说明
+| 维度 | `@sa/uno-config` | [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) |
+| --- | --- | --- |
+| 服务对象 | admin 应用的业务页面 | `@skyroc/web-ui` 组件库 |
+| 工具 | UnoCSS（`presetWind3` + 本预设） | Tailwind 4 |
+| 范围 | 应用样式 | 设计系统层 token 注入 |
 
-包名 `@sa/uno-config` 中 `@sa` 是项目早期的 scope 缩写，后来统一改为 `@skyroc`，但 uno-config 因 publishConfig 已发布、改名会破坏外部用户而保留。新增包**一律使用 `@skyroc/*`**，参见 [命名规范](/docs/architecture/naming)。
+两者**互不冲突**：admin 页面用 UnoCSS 按需生成；引入的 web-ui 组件自带 Tailwind 编译产物（`style.css`）。共同点是都消费同一套 CSS 变量，因此换主题色时两边同步生效。
 
-## 源码结构
+## 注意事项
 
-```text
-src/
-├── index.ts            # 主导出
-└── shortcuts.ts        # 各类 shortcuts 分组
-```
+- **README 已过期**：`internal/uno-config/README.md` 里写的 `createUnoContentConfig`、`scanUiKitPackagesSync`（UI Kit 扫描器）当前**没有导出**，示例中的 `presetWind4` 与实际使用的 `presetWind3` 也对不上；应用的 `content.filesystem` 是手写路径。以本页与 `src/index.ts` 为准。
+- **残留依赖**：`package.json` 声明了 `@skyroc/color`、`colord`、`glob`，但 `src/` 里没有任何引用——它们是被移除的扫描器留下的，可在下次清理时删掉。
+- **`@sa` 命名**：`@sa` 是项目早期的 scope 缩写，该包已按此名发布，改名会破坏外部用户，因此保留。新增包一律使用 `@skyroc/*`，见 [命名规范](/docs/guide/architecture/naming)。
 
-> 注意：README 中提到的 `createUnoContentConfig`、`scanUiKitPackagesSync` 当前**未导出**——admin 应用的 `content.filesystem` 是手写路径。
+## 相关文档
+
+- [`@skyroc/web-admin-theme`](/docs/packages/web/theme/admin-theme) —— 本预设消费的 CSS 变量由谁写入
+- [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) —— 组件库侧的等价物
+- [Admin 样式方案](/docs/packages/web/admin-styles) —— 应用层样式的整体组织

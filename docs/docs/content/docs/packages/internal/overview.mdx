@@ -1,62 +1,71 @@
 ---
 title: 内部配置包总览
-description: internal/ 下的 tsconfig / config / uno-config 三个不发布的工程化配置包
+description: internal/ 下的 tsconfig / config / uno-config 三个工程化配置包
 ---
 
-## 定位
+## 概览
 
-`internal/` 目录存放**不对外发布**的工程化配置包。它们被仓库内部多个 workspace 共享，避免 tsconfig / eslint / uno 等配置在每个包里重复维护：
+`internal/` 目录存放**面向仓库内部**的工程化配置包。它们被多个 workspace 共享，避免 tsconfig / oxlint / vitest / uno 配置在每个包里重复维护：
 
 ```text
 internal/
-├── tsconfig/       # @skyroc/tsconfig    共享 TS 编译预设
-├── config/         # @skyroc/config      共享 vitest + oxlint 预设
-└── uno-config/     # @sa/uno-config      UnoCSS 预设
+├── tsconfig/       # @skyroc/tsconfig    7 个共享 TS 编译预设
+├── config/         # @skyroc/config      4 个 Oxlint 预设 + Vitest 共享配置
+└── uno-config/     # @sa/uno-config      UnoCSS presetSoybeanAdmin
 ```
+
+## 快速上手
+
+| 包 | 引用方式 |
+| --- | --- |
+| `@skyroc/tsconfig` | `"extends": "@skyroc/tsconfig/web-app.json"` |
+| `@skyroc/config`（Oxlint） | `"extends": ["../../internal/config/oxlint/react.json"]`（相对路径） |
+| `@skyroc/config`（Vitest） | `import { baseTestConfig } from '@skyroc/config/vitest'` |
+| `@sa/uno-config` | `import { presetSoybeanAdmin } from '@sa/uno-config'` |
+
+Oxlint 预设走**相对路径**而不是包名子路径——`.oxlintrc.json` 的 `extends` 由 oxlint 自己解析，不经过 Node 的 exports 字段，详见 [`@skyroc/config`](/docs/packages/internal/config)。
 
 ## 三个包速览
 
-| 目录 | 包名 | 内容 | private |
-| --- | --- | --- | --- |
-| `tsconfig` | `@skyroc/tsconfig` | 7 个 `*.json` TS 预设 | ✅ |
-| `config` | `@skyroc/config` | Oxlint JSON 预设 + Vitest TS 预设 | ✅ |
-| `uno-config` | `@sa/uno-config` | UnoCSS `presetSoybeanAdmin()` | ❌（可发布） |
+| 目录 | 包名 | 内容 | private | 构建 |
+| --- | --- | --- | --- | --- |
+| `tsconfig` | `@skyroc/tsconfig` | 7 个 `*.json` TS 预设 | ✅ | 无（纯 JSON） |
+| `config` | `@skyroc/config` | 4 个 Oxlint JSON 预设 + Vitest TS 预设 | ✅ | tsdown → `dist/`（仅 vitest 部分） |
+| `uno-config` | `@sa/uno-config` | UnoCSS `presetSoybeanAdmin()` | ❌ | 源码直出 `src/`，`publishConfig` 才指向 `dist/` |
 
-> 注意 `@sa/uno-config` 用的是 `@sa` 而不是 `@skyroc`——这是历史遗留命名，已记录在 [命名规范](/docs/architecture/naming) 中。
+三者里只有 `@sa/uno-config` 没有声明 `private: true`，带 `publishConfig`，是可发布到 npm 的；另外两个只在 workspace 内通过 `workspace:*` 消费。
 
 ## 为什么单独成包
 
 | 收益 | 说明 |
 | --- | --- |
-| **单点维护** | 升级 React 版本、改 vitest 默认环境，只改一处 |
+| **单点维护** | 调 TS 严格度、换 vitest 默认环境、加一条 lint 规则，只改一处 |
 | **新建包零样板** | 新包只需 extends 预设即可拿到完整配置 |
-| **跨平台预设** | tsconfig 提供 web / node / react-native / 应用 / 库 五种基线 |
-| **强约束** | 通过预设强制全仓库行为一致（如 verbatimModuleSyntax） |
+| **跨平台预设** | tsconfig 提供 base / library / node / web / web-app / RN / RN-app 七种基线 |
+| **强约束** | 通过预设强制全仓库行为一致（如 `verbatimModuleSyntax`、禁用 `useCallback`） |
 
-## 加载方式
-
-| 包 | 引用方式 |
-| --- | --- |
-| `@skyroc/tsconfig` | `"extends": "@skyroc/tsconfig/web-app.json"` |
-| `@skyroc/config/oxlint/*` | `"extends": ["@skyroc/config/oxlint/react.json"]` |
-| `@skyroc/config/vitest` | `import { baseTestConfig } from '@skyroc/config/vitest'` |
-| `@sa/uno-config` | `import { presetSoybeanAdmin } from '@sa/uno-config'` |
+代价是**升级影响面大**：改预设会同时影响所有 extends 它的包，引入新规则要一次性修完所有违规。
 
 ## 与 engineering 文档的关系
 
+本目录描述**包本身**——提供哪些预设、导出哪些常量、如何被消费；规则细节与规范说明放在 guide/engineering：
+
 | 主题 | 对应文档 |
 | --- | --- |
-| Oxlint 规则细节 | [Lint 与格式化](/docs/engineering/lint-and-format) |
-| Vitest 用法 | [测试](/docs/engineering/test) |
-| TypeScript 策略 | [TypeScript 配置](/docs/engineering/typescript) |
-| UnoCSS / Tailwind 选型 | [Tailwind 与 UnoCSS](/docs/web/tailwind-plugin)、本目录 |
+| Oxlint 规则细节与格式化 | [Lint 与格式化](/docs/guide/engineering/lint-and-format) |
+| Vitest 用法与测试组织 | [测试](/docs/guide/engineering/test) |
+| TypeScript 策略 | [TypeScript 配置](/docs/guide/engineering/typescript) |
+| 新包该 extends 哪个预设 | [新建包流程](/docs/guide/engineering/new-package) |
+| UnoCSS / Tailwind 选型 | [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) |
 
-本目录主要描述**包本身**——extends 哪个 JSON、提供哪些常量、如何被消费；规则细节、规范说明放在 engineering 目录。
+## 关于 `@sa` 命名
 
-## 推荐阅读
+`@sa/uno-config` 用的是 `@sa` 而不是 `@skyroc`——`@sa` 是项目早期的 scope 缩写，该包已按此名发布，改名会破坏外部用户，因此保留。新增包**一律使用 `@skyroc/*`**，见 [命名规范](/docs/guide/architecture/naming)。
+
+## 相关文档
 
 <Cards>
-  <Card title="@skyroc/tsconfig" href="/docs/internal/tsconfig" description="7 个 TS 编译预设（web / node / RN / app / library）" />
-  <Card title="@skyroc/config" href="/docs/internal/config" description="Oxlint 预设 + Vitest 共享配置" />
-  <Card title="@sa/uno-config" href="/docs/internal/uno-config" description="UnoCSS presetSoybeanAdmin" />
+  <Card title="@skyroc/tsconfig" href="/docs/packages/internal/tsconfig" description="7 个 TS 编译预设（base / library / node / web / web-app / RN / RN-app）" />
+  <Card title="@skyroc/config" href="/docs/packages/internal/config" description="4 个 Oxlint 预设 + Vitest 共享常量与配置对象" />
+  <Card title="@sa/uno-config" href="/docs/packages/internal/uno-config" description="UnoCSS presetSoybeanAdmin：调色板、shortcuts、动画、design token" />
 </Cards>
