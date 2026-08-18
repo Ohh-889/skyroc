@@ -23,7 +23,7 @@ const DOCUMENTATION_AREAS = [
   {
     className: 'border-b border-border/50 md:border-r',
     description: 'Monorepo、包分层、适配器模式、依赖方向与命名约定。',
-    href: '/docs/architecture',
+    href: '/docs/guide/architecture/monorepo',
     icon: GitBranch,
     label: 'Architecture',
     title: '架构设计'
@@ -31,7 +31,7 @@ const DOCUMENTATION_AREAS = [
   {
     className: 'border-b border-border/50',
     description: '请求、状态、调度、色彩、日志、类型与通用工具。',
-    href: '/docs/packages/core/overview',
+    href: '/docs/core',
     icon: Braces,
     label: '23 topics · Core',
     title: 'Core 基础包'
@@ -39,14 +39,14 @@ const DOCUMENTATION_AREAS = [
   {
     className: 'border-b border-border/50 md:border-b-0 md:border-r',
     description: '后台布局、运行时、多语言、主题与 Vite 工程预设。',
-    href: '/docs/packages/web/overview',
+    href: '/docs/web',
     icon: Blocks,
     label: '21 topics · Web Kit',
     title: 'Web Kit'
   },
   {
     description: '架构约定、包开发、质量检查、构建发布与协作规范。',
-    href: '/docs/engineering/overview',
+    href: '/docs/guide/engineering/overview',
     icon: Wrench,
     label: '10 topics · Engineering',
     title: '工程化'

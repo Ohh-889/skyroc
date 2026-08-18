@@ -8,11 +8,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { gitConfig } from '@/lib/shared';
 
+/**
+ * 中间导航按「读者意图」分三组，而不是镜像侧栏的 7 个 root。
+ *
+ * 7 个 root 在侧栏切换器里是折叠的（只渲染当前项），header 是唯一常驻可见的站内导航，
+ * 但塞不下 7 项。这三项各自是一类读者意图的入口，`/docs/packages` 落地页开头的分流表
+ * 负责把人送到 core / hooks / form / web 四棵包树。
+ */
 const DOCS_NAVIGATION = [
-  { href: '/docs', label: '文档首页' },
+  { href: '/docs/guide', label: '指南' },
   { href: '/docs/admin', label: 'Admin' },
-  { href: '/docs/packages', label: 'Packages' },
-  { href: '/docs/architecture', label: '架构设计' }
+  { href: '/docs/packages', label: '包文档' }
 ] as const;
 
 interface DocsGlassHeaderProps {

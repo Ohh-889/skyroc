@@ -5,7 +5,7 @@ const READING_PATHS = [
   {
     description: '完成环境准备、依赖安装和应用启动，先确认本地开发链路正常。',
     eyebrow: '01 · 初次接入',
-    href: '/docs/getting-started/quick-start',
+    href: '/docs/guide/getting-started/quick-start',
     icon: Zap,
     title: '搭起第一个 Admin 应用'
   },

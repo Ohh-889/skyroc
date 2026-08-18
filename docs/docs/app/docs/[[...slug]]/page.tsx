@@ -4,7 +4,8 @@ import {
   DocsPage,
   DocsTitle,
   MarkdownCopyButton,
-  ViewOptionsPopover
+  ViewOptionsPopover,
+  PageLastUpdate
 } from 'fumadocs-ui/layouts/glass/page';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import type { Metadata } from 'next';
@@ -15,11 +16,16 @@ import { getPageImageUrl, getPageMarkdownUrl, source } from '@/lib/source';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
+
   const page = source.getPage(params.slug);
+
   if (!page) notFound();
 
   const MDX = page.data.body;
+
   const markdownUrl = getPageMarkdownUrl(page).url;
+
+  const lastModifiedTime = page.data.lastModified;
 
   return (
     <DocsPage
@@ -27,14 +33,18 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       full={page.data.full}
     >
       <DocsTitle className="skyroc-docs-title">{page.data.title}</DocsTitle>
+
       <DocsDescription className="skyroc-docs-description mb-0">{page.data.description}</DocsDescription>
+
       <div className="skyroc-docs-actions flex flex-row items-center gap-2 border-b pb-6">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
+
         <ViewOptionsPopover
           markdownUrl={markdownUrl}
           githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
         />
       </div>
+
       <DocsBody className="skyroc-docs-body">
         <MDX
           components={getMDXComponents({
@@ -42,6 +52,8 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
             a: createRelativeLink(source, page)
           })}
         />
+
+        {lastModifiedTime && <PageLastUpdate date={lastModifiedTime} />}
       </DocsBody>
     </DocsPage>
   );

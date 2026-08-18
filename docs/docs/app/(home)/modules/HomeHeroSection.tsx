@@ -5,7 +5,7 @@ import Link from 'next/link';
 const HERO_ENTRIES = [
   {
     description: '环境准备、安装依赖并启动 Admin',
-    href: '/docs/getting-started/quick-start',
+    href: '/docs/guide/getting-started/quick-start',
     icon: Route,
     label: 'Quick start',
     title: '快速开始'
@@ -72,7 +72,7 @@ export const HomeHeroSection = () => {
                   shape="rounded"
                   shadow="lg"
                 >
-                  <Link href="/docs/getting-started/quick-start">
+                  <Link href="/docs/guide/getting-started/quick-start">
                     开始搭建 Admin{' '}
                     <ArrowRight
                       aria-hidden="true"
@@ -156,7 +156,7 @@ export const HomeHeroSection = () => {
 
             <Link
               className="mt-4 flex items-center justify-between rounded-xl border border-dashed border-border/50 bg-card/15 px-4 py-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:bg-card/35 hover:text-primary"
-              href="/docs/architecture"
+              href="/docs/guide/architecture/monorepo"
             >
               <span className="inline-flex items-center gap-2">
                 <Braces

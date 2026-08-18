@@ -7,7 +7,6 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
     <GlassLayout
       slots={{ header: DocsGlassHeader }}
       tree={source.getPageTree()}
-      githubUrl="https://github.com/Ohh-889/skyroc"
       nav={{
         title: <span className="text-fd-muted-foreground text-xs font-semibold tracking-[0.08em]">文档目录</span>,
         transparentMode: 'always'
