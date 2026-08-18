@@ -5,21 +5,34 @@
 
 ---
 
-## 一、最终目录结构（`content/docs/`，共约 118 篇，拆成 3 个 root）
+## 一、最终目录结构（`content/docs/`，共约 134 篇，拆成 7 个 root）
 
-侧边栏不是一棵，而是**三棵独立的树**。Fumadocs 里在文件夹 `meta.json` 加 `"root": true` 即可，
+侧边栏不是一棵，而是**七棵独立的树**。Fumadocs 里在文件夹 `meta.json` 加 `"root": true` 即可，
 `DocsLayout` 的 `tabs` 默认就是 `getLayoutTabs(tree)`，会自动把每个 root 变成顶部切换器的一项，
-`app/docs/layout.tsx` 无需改动。三个 root 共用同一个应用、同一份搜索索引、同一次构建。
+`app/docs/layout.tsx` 无需改动。七个 root 共用同一个应用、同一份搜索索引、同一次构建。
 
 | root                | URL 前缀          | 篇数 | 读者意图                             |
 | ------------------- | ----------------- | ---- | ------------------------------------ |
 | 指南 `guide/`       | `/docs/guide/`    | 23   | 「这项目怎么跑、怎么组织、怎么协作」 |
 | Admin 应用 `admin/` | `/docs/admin/`    | 39   | 「我要改 admin 的某个功能」          |
-| 包参考 `packages/`  | `/docs/packages/` | 55   | 「`@skyroc/xxx` 这个 API 怎么用」    |
+| 跨端核心 `core/`    | `/docs/core/`     | 23   | 「`@core/*` 的这个 API 怎么用」      |
+| 跨端 Hooks `hooks/` | `/docs/hooks/`    | 10   | 「这个 hook 的签名和行为是什么」     |
+| 表单原语 `form/`    | `/docs/form/`     | 9    | 「表单怎么写、怎么校验、怎么不重渲染」 |
+| Web 端包 `web/`     | `/docs/web/`      | 21   | 「`web/*` 的这个 API 怎么用」        |
+| 包总览 `packages/`  | `/docs/packages/` | 9    | 「31 个包都有啥、这个能力在哪个包」  |
+
+原来五棵包树全挂在 `packages/` 下面，`core` + `web` 就占 44 篇，把侧边栏压垮了。
+四棵各自提为 root：`core/` 与 `web/` 本来就是从 core-docs / web-kit-docs 两个独立站整站搬来的，提上来是还原原本形态，
+且 URL 与旧站一致（`/docs/core/:slug`、`/docs/web/:slug`），第三节的重定向表因此少两条规则；
+`hooks/` 与 `form/` 原本各只有一篇几百行的单页，提为 root 时按源码结构拆成 10 / 9 篇。
+
+`packages/` 留下 `index.mdx` 全局总表 + `shared/` + `internal/`，改名「包总览」——
+不叫「包参考」是因为 core / hooks / form / web 都不在里面了，挂那块牌子会误导；
+「包总览」与 `index.mdx` 的 frontmatter、header 中间导航的「包文档」一项三处对齐。
 
 ```text
 content/docs/
-├── meta.json                       根导航：index / guide / admin / packages
+├── meta.json                       根导航：index / guide / admin / core / hooks / form / web / packages
 ├── index.mdx                       门户首页（不属于任何 root，落在 fallback 树）
 │
 ├── guide/                 23 篇    root: true　icon: Compass
@@ -52,34 +65,53 @@ content/docs/
 │   deployment/         build-and-deploy
 │   faq
 │
-├── packages/              55 篇    root: true　icon: Package
-│   ├── index.mdx                   新写（31 个包总表 + 分层图 + 依赖关系）
-│   │
-│   ├── core/              23 篇
-│   │   overview                    ← project-docs/core/overview.mdx（降级为目录页）
-│   │   axios / color / scheduler / scripts / service / state
-│   │                               ← core-docs/*.mdx（唯一事实源）
-│   │   logger / types              ← project-docs/core/*.mdx（core-docs 无此两篇，需补写）
-│   │   utils/             14 篇    ← core-docs/utils/*
-│   │       overview / array / crypto / date / emitter / path / priority-queue /
-│   │       query / reg / singleflight / storage / subject / utils / web
-│   │
-│   ├── web/               21 篇    ✅ 已执行
-│   │   index                       新写目录页（与 core 一致用 index.mdx，非 overview）
-│   │   admin-vite / admin-runtime / admin-i18n / materials / tailwind-plugin
-│   │                               ← web-kit-docs/*.mdx（唯一事实源）
-│   │   admin-layouts/      8 篇    ← web-kit-docs/admin-layouts/*
-│   │       overview / quick-start / menus / static-menu-generation /
-│   │       dynamic-menu-generation / slots / state-tabs / api
-│   │   theme/              3 篇    ← web-kit-docs/theme/*（overview / antd-theme / admin-theme）
-│   │   admin-devtools / admin-notification / admin-styles
-│   │                               ← project-docs/web/*.mdx，已对着源码重写补详
-│   │   ui.mdx                      新写：一页指路，跳 ui.skyroc.xxx
-│   │                               取代 ui-shadcn / ui-antd / ui-compose 三篇
-│   │
-│   ├── shared/             3 篇    ← project-docs/shared/{overview,type-utils,ui-types}.mdx
-│   ├── form.mdx            1 篇    ← project-docs/shared/form.mdx（@skyroc/form 在 primitives/，不属 shared）
-│   ├── hooks.mdx           1 篇    ← project-docs/shared/hooks.mdx（@skyroc/hooks 在 packages/hooks，不属 shared）
+├── core/                  23 篇    root: true　icon: Box　✅ 已执行
+│   index                           @core 总览（原 project-docs/core/overview.mdx 降级为目录页）
+│   axios / color / scheduler / scripts / service / state
+│                                   ← core-docs/*.mdx（唯一事实源）
+│   logger / types                  ← project-docs/core/*.mdx（core-docs 无此两篇，需补写）
+│   utils/                 14 篇    ← core-docs/utils/*
+│       overview / array / crypto / date / emitter / path / priority-queue /
+│       query / reg / singleflight / storage / subject / utils / web
+│
+├── hooks/                 10 篇    root: true　icon: Webhook　✅ 已执行
+│   index                           总览：子入口边界、hook 清单、跨端策略
+│   store                           Store<S> 基类 + useStore + Subscribable
+│   use-array / use-loading / use-count-down-timer / use-captcha / use-now
+│                                   ← 主入口五个 hook，逐个对着源码写
+│   use-copy / use-system-theme     ← ./web 子入口两个 DOM hook
+│                                   （原 packages/hooks.mdx 单页 181 行拆开）
+│
+├── form/                   9 篇    root: true　icon: ClipboardList　✅ 已执行
+│   index                           总览：包信息、四条主线、目录结构、测试
+│   quick-start                     基础表单 / 动态数组 / 带校验
+│   type-safety                     泛型 Values 与 type-utils 驱动的路径推导
+│   subscription                    ChangeTag bitmask 精确订阅
+│   components                      Form / Field / List / ComputedField
+│   hooks                           八个 hook 的签名与用途
+│   validation                      StandardSchema / Rule / 错误读取
+│   form-core                       FormStore / event / middleware / resolver
+│   web-ui                          在 @skyroc/web-ui 中的使用
+│                                   （原 packages/form.mdx 单页 260 行拆开）
+│
+├── web/                   21 篇    root: true　icon: Globe　✅ 已执行
+│   index                           目录页（与 core 一致用 index.mdx，非 overview）
+│   admin-vite / admin-runtime / admin-i18n / materials / tailwind-plugin
+│                                   ← web-kit-docs/*.mdx（唯一事实源）
+│   admin-layouts/          8 篇    ← web-kit-docs/admin-layouts/*
+│       overview / quick-start / menus / static-menu-generation /
+│       dynamic-menu-generation / slots / state-tabs / api
+│   theme/                  3 篇    ← web-kit-docs/theme/*（overview / antd-theme / admin-theme）
+│   admin-devtools / admin-notification / admin-styles
+│                                   ← project-docs/web/*.mdx，已对着源码重写补详
+│   ui.mdx                          新写：一页指路，跳 ui.skyroc.xxx
+│                                   取代 ui-shadcn / ui-antd / ui-compose 三篇
+│
+└── packages/               9 篇    root: true　icon: Package　title「包总览」
+    ├── index.mdx                   31 个包总表 + 分层图 + 依赖关系；
+    │                               开头一张分流表指向 core / hooks / form / web 四个 root，
+    │                               总表每行的链接也直接指过去
+    ├── shared/             3 篇    ← project-docs/shared/{overview,type-utils,ui-types}.mdx
     └── internal/           4 篇    ← project-docs/internal/*
         overview / tsconfig / config / uno-config
 ```
@@ -90,7 +122,7 @@ content/docs/
 
 ```json
 {
-  "pages": ["index", "guide", "admin", "packages"]
+  "pages": ["index", "guide", "admin", "core", "hooks", "form", "web", "packages"]
 }
 ```
 
@@ -115,7 +147,7 @@ content/docs/
 }
 ```
 
-`admin/meta.json` 用 `LayoutDashboard`，`packages/meta.json` 用 `Package`（`lucideIconsPlugin()` 已在 `lib/source.ts` 启用）。
+`admin/meta.json` 用 `LayoutDashboard`，`core/` 用 `Box`，`hooks/` 用 `Webhook`，`form/` 用 `ClipboardList`，`web/` 用 `Globe`，`packages/` 用 `Package`（`lucideIconsPlugin()` 已在 `lib/source.ts` 启用）。
 
 ### 侧边栏排序规则
 
@@ -124,7 +156,7 @@ content/docs/
 1. **目录页永远第一**：`index`（root 与包目录）或 `overview`（子目录）打头。
 2. **其余按依赖方向从上到下**：先应用直接消费的，再往底层走；`packages/*` 的分组名与 `packages/index.mdx` 里的分组表保持一致，读者在两处看到的顺序相同。
 
-`packages/web/meta.json` 是这条规则的样板（分组名与 `packages/index.mdx` 的「设计系统 / 主题 / 布局与样式 / 运行时 / 构建」逐字对应）：
+`web/meta.json` 是这条规则的样板（分组名与 `packages/index.mdx` 的「设计系统 / 主题 / 布局与样式 / 运行时 / 构建」逐字对应）：
 
 ```json
 {
@@ -143,7 +175,7 @@ content/docs/
 
 `theme/` 与 `admin-layouts/` 两个子目录同理：前者按算法层 → React 层排（`overview` / `antd-theme` / `admin-theme`），后者按接入路径排（概览 → 快速接入 → 菜单三篇 → 插槽 → 状态与页签 → API）。
 
-`packages/core/meta.json` 的 `title` 仍是脚手架遗留的 `Core Docs`，待与其它 root 一起改成中文名。
+`core/meta.json` 的 `title` 原本是脚手架遗留的 `Core Docs`，提为 root 时已改成「跨端核心」。
 
 ## 二、重复内容的取舍（每个主题只留一个事实源）
 
@@ -210,12 +242,12 @@ content/docs/
 | `content/docs/test.mdx`    | 删除（脚手架残留）                                                                                                                                                                                                                             |
 | `content/docs/index.mdx`   | 重写，去掉 Fumadocs/Next.js 官方 Cards                                                                                                                                                                                                         |
 | `content/docs/meta.json`   | 新建，见上                                                                                                                                                                                                                                     |
-| `lib/shared.ts`            | `gitConfig.branch: 'main'` → **`'master'`**（仓库默认分支是 master，现在所有"编辑此页"链接都会 404）；`appName` 保持 `Skyroc Docs`                                                                                                             |
-| `lib/layout.shared.tsx`    | 补统一顶部导航 `links`：官网 / 文档 / Admin / Web UI / Native UI / Playground / GitHub（六站共用同一份，另外五站复制同样配置）                                                                                                                 |
+| `lib/shared.ts`            | ✅ 已改 `gitConfig.branch: 'main'` → `'master'`（远端默认分支就是 master，之前所有"编辑此页"链接 404）；`repo: 'skyroc'` 是对的——仓库已从 `skyroc-admin` 改名                                                                                                             |
+| `app/docs/DocsGlassHeader.tsx` | ✅ 中间导航改为「指南 / Admin / 包文档」三项（见下）；GitHub 图标去重。跨站链接待域名定稿后以「生态 ▾」下拉补在 GitHub 图标左侧，六站共用同一份                                                                                                                 |
 | `next.config.mjs`          | 加 `redirects()`：旧站路径 → 新路径永久跳转，见下                                                                                                                                                                                              |
 | `package.json`             | `name: "docs"` → `"@skyroc/docs"`；`dev` 固定端口（接管 project-docs 的 `--port 8848`）                                                                                                                                                        |
 | `app/(home)/1.md`          | 移出 `app/`（这是诊断记录，不该留在路由目录），归入 `docs/internal/` 或删除                                                                                                                                                                    |
-| `app/(home)/modules/*.tsx` | 目前 `DocumentationMapSection`、`ReadingPathsSection`、`HeaderNavigation`、`HomeHeroSection` 的 href 全是占位 `/docs`、`#documentation-map`；导航定稿后换成真实路径（`/docs/getting-started/quick-start`、`/docs/admin`、`/docs/packages` 等） |
+| `app/(home)/modules/*.tsx` | ✅ `DocumentationMapSection`、`ReadingPathsSection`、`HomeHeroSection` 的死链已全部改成真实路径；`#documentation-map` 这类锚点占位仍在 |
 | `app/api/search/route.ts`  | 后续接跨站索引：主站搜索结果里带上 Web UI / Native UI，并标注来源站点                                                                                                                                                                          |
 
 ### 重定向映射（`next.config.mjs`）
@@ -227,20 +259,20 @@ content/docs/
 /docs/architecture/:slug*    → /docs/guide/architecture/:slug*
 /docs/engineering/:slug*     → /docs/guide/engineering/:slug*
 
-# 旧 project-docs 包路径 → packages root
-/docs/core/:slug            → /docs/packages/core/:slug
-/docs/web/admin-layouts     → /docs/packages/web/admin-layouts/overview
-/docs/web/ui-shadcn|ui-antd|ui-compose → /docs/packages/web/ui
-/docs/web/:slug             → /docs/packages/web/:slug
-/docs/shared/form           → /docs/packages/form
-/docs/shared/hooks          → /docs/packages/hooks
+# 旧 project-docs 包路径 → core / web / packages 三个 root
+/docs/core/:slug            → 无需重定向（core 已提为 root，路径原样保留）
+/docs/web/:slug             → 无需重定向（同上）
+/docs/web/admin-layouts     → /docs/web/admin-layouts/overview
+/docs/web/ui-shadcn|ui-antd|ui-compose → /docs/web/ui
+/docs/shared/form           → /docs/form
+/docs/shared/hooks          → /docs/hooks
 /docs/shared/:slug          → /docs/packages/shared/:slug
 /docs/internal/:slug        → /docs/packages/internal/:slug
 /docs/admin-app/:slug*      → /docs/admin/:slug*     （修复 meta.json:15 与 index.mdx:51 的死链）
 
 # 旧独立站整站跳转
-core-docs 全站  /:slug*     → docs.skyroc.xxx/docs/packages/core/:slug*
-web-kit-docs 全站 /:slug*   → docs.skyroc.xxx/docs/packages/web/:slug*
+core-docs 全站  /:slug*     → docs.skyroc.xxx/docs/core/:slug*
+web-kit-docs 全站 /:slug*   → docs.skyroc.xxx/docs/web/:slug*
 admin-docs 全站  /:slug*    → docs.skyroc.xxx/docs/admin/:slug*
 project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 ```
@@ -249,11 +281,17 @@ project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 
 ## 四、跨站引流（三层，六站统一）
 
-1. **顶部导航**（所有站点同一份）：官网 | 文档 | Admin | Web UI | Native UI | Playground | GitHub
+1. **顶部导航**分两块，按「站内定位」与「跨站跳转」切开：
+
+   - **中间三项（站内）**：指南 | Admin | 包文档。7 个 root 在侧栏切换器里是折叠的（可见 DOM 只渲染当前项），
+     header 是唯一常驻可见的站内导航但塞不下 7 项，所以按读者意图收敛成三组；
+     「包文档」落到 `/docs/packages`，那页开头的分流表负责把人送到 core / hooks / form / web 四棵包树。
+   - **右侧（跨站）**：官网 | Web UI | Native UI | Playground | GitHub，六站共用同一份。
+     域名还是 `.xxx` 占位，定稿后以「生态 ▾」下拉挂在 GitHub 图标左侧，不占横向宽度。
 2. **上下游链接**（写在页面正文固定位置）：
    - 架构页 → 对应包的详细 API
-   - `packages/core/*`、`packages/web/*` → "在 Admin 中如何使用"（`/docs/admin/...`）
-   - `admin/*` → "查看完整包 API"（`/docs/packages/...`）
+   - `core/*`、`hooks/*`、`form/*`、`web/*` → "在 Admin 中如何使用"（`/docs/admin/...`）
+   - `admin/*` → "查看完整包 API"（`/docs/core/...`、`/docs/hooks/...`、`/docs/form/...`、`/docs/web/...`）
    - Web UI 组件页 → "Admin 使用案例"
    - Native UI 组件页 → "在 Expo Playground 中打开"
 3. **页脚"相关内容"**四槽位：上一层概览 / 应用指南 / 底层 API / 相关组件
@@ -274,10 +312,11 @@ project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 ## 六、落地顺序
 
 1. 定 `content/docs/meta.json` 与 URL 方案，`docs/docs` 先跑起来（不动正文）
-2. 修 `lib/shared.ts` 的 branch、删 `test.mdx`、重写 `index.mdx`、挪走 `app/(home)/1.md`
+2. 修 `lib/shared.ts` 的 branch（✅）、删 `test.mdx`、重写 `index.mdx`（✅）、挪走 `app/(home)/1.md`
 3. 搬 `admin-docs` 整站 → `content/docs/admin/`（同时修掉 admin-app 死链）
-4. 搬 `core-docs` → `packages/core/`，`web-kit-docs` → `packages/web/`（✅ 已完成，`web/` 21 篇齐；`web-kit-docs` 站壳待第 8 步统一删）
+4. 搬 `core-docs` → `core/`，`web-kit-docs` → `web/`（✅ 已完成，两棵已提为独立 root，`web/` 21 篇齐；两个站壳待第 8 步统一删）
 5. 搬 `project-docs` 的 getting-started / architecture / engineering / shared / internal，逐篇按第二节表格取舍重复页
+   （✅ 已完成；其中 `shared/hooks.mdx`、`shared/form.mdx` 两个单页已提为 `hooks/`、`form/` 两个 root 并按源码拆页）
 6. 配 `next.config.mjs` 重定向 + 六站统一顶部导航 + 页脚"相关内容"
-7. 首页 `app/(home)/modules/*` 换成真实链接
+7. 首页 `app/(home)/modules/*` 换成真实链接（✅ 死链部分已完成）
 8. 删旧站外壳与重复正文，最后接跨站搜索
