@@ -1,0 +1,94 @@
+---
+title: 组件
+description: Form / Field / List / ComputedField 四个组件的职责与 props 类型
+---
+
+四个组件都从 `@skyroc/form` 与 `@skyroc/form/react` 导出。
+
+## Form
+
+表单容器，创建或接收 `FormInstance` 并通过 context 向下传递。
+
+| 导出类型 | 说明 |
+| --- | --- |
+| `FormProps` | 完整 props |
+| `FormBaseProps` | 基础 props（供二次封装继承） |
+
+```tsx
+<Form
+  form={form}
+  schema={schema}
+  onFinish={onSubmit}
+>
+  {/* fields */}
+</Form>
+```
+
+`form` 不传时 `Form` 内部自建实例；需要在组件外调用 `form.submit()` / `form.setFieldValue()` 就用 `useForm()` 创建后传进来。
+
+`schema` 见 [校验](/docs/form/validation)。
+
+## Field
+
+字段绑定，自动处理 `value` / `onChange` / `onBlur`。
+
+| 导出类型 | 说明 |
+| --- | --- |
+| `FieldProps` | `name` 的类型是 `AllPathsKeys<Values>` |
+
+```tsx
+<Field name="user.email">
+  <input type="email" />
+</Field>
+```
+
+子元素通过 `@radix-ui/react-slot` 注入 props，所以自定义组件只要转发 `value` / `onChange` 就能直接用，不需要额外适配层。
+
+`FieldElement` 类型从 `@skyroc/type-utils/web` 透传，用于标注可绑定的元素。
+
+每个 `Field` 是独立订阅单元，见 [精确订阅](/docs/form/subscription)。
+
+## List
+
+动态数组字段，负责增删改与 key 管理。
+
+| 导出类型 | 说明 |
+| --- | --- |
+| `ListProps` | `name` 的类型是 `ArrayKeys<Values>` |
+
+```tsx
+<List name="tags">
+  {({ add, fields, remove }) => (
+    <>
+      {fields.map((field, i) => (
+        <Field
+          key={field.key}
+          name={`tags.${i}`}
+        >
+          <input />
+        </Field>
+      ))}
+      <button
+        type="button"
+        onClick={() => add('')}
+      >
+        +
+      </button>
+    </>
+  )}
+</List>
+```
+
+`field.key` 是 List 维护的稳定标识。**用下标当 React key 会在删除中间项时导致状态错位。**
+
+在 `List` 之外操作同一个数组用 [`useArrayField`](/docs/form/hooks)。
+
+## ComputedField
+
+派生字段——值由其它字段计算得出，并参与表单数据与提交。
+
+| 导出类型 | 说明 |
+| --- | --- |
+| `ComputedFieldProps` | — |
+
+和「在渲染里算一个变量」的区别是:`ComputedField` 的结果是**表单数据的一部分**,会进 `onFinish` 的 values,也能被校验。纯展示用途不需要它,用 [`useSelector`](/docs/form/subscription) 即可。

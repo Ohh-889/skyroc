@@ -1,0 +1,72 @@
+---
+title: useCopy
+description: 剪贴板复制 hook，Clipboard API 优先，非安全上下文自动降级
+---
+
+<Callout>
+仅 `./web` 子入口导出：`import { useCopy } from '@skyroc/hooks/web'`。RN 端不可用。
+</Callout>
+
+```ts
+function useCopy(): {
+  copied: boolean;
+  copiedText: string;
+  copy: (text: string) => Promise<boolean>;
+};
+```
+
+| 返回 | 类型 | 说明 |
+| --- | --- | --- |
+| `copied` | `boolean` | 最近一次是否复制成功 |
+| `copiedText` | `string` | 最近一次成功复制的文本 |
+| `copy` | `(text: string) => Promise<boolean>` | 执行复制，返回是否成功 |
+
+```tsx
+import { useCopy } from '@skyroc/hooks/web';
+
+interface CopyButtonProps {
+  /** 待复制的文本 */
+  text: string;
+}
+
+const CopyButton = (props: CopyButtonProps) => {
+  const { text } = props;
+
+  const { copied, copy } = useCopy();
+
+  return (
+    <button
+      type="button"
+      onClick={() => copy(text)}
+    >
+      {copied ? '已复制' : '复制'}
+    </button>
+  );
+};
+```
+
+## 两条路径
+
+```ts
+if (navigator.clipboard && window.isSecureContext) {
+  await navigator.clipboard.writeText(text);
+} else {
+  await legacyCopy(text);
+}
+```
+
+`legacyCopy` 建一个视觉上不可见（`position: fixed` 移出视口 + `opacity: 0` + `pointer-events: none` + `tabIndex: -1` + `readonly`）的 `textarea`，`select()` 后走 `document.execCommand('copy')`，最后在 `finally` 里移除节点。
+
+这条降级路径是给 **HTTP 内网环境**准备的——`navigator.clipboard` 只在安全上下文（HTTPS / localhost）可用。
+
+## 行为约定
+
+| 情况 | 结果 |
+| --- | --- |
+| `text` 为空串 | 直接返回 `false`，不改状态 |
+| 复制成功 | `copied = true`，`copiedText = text`，返回 `true` |
+| 复制失败 | `copied = false`，`copiedText = ''`，返回 `false` |
+
+`copied` **不会自动复位**。要做「已复制」两秒后恢复的效果，业务自己起定时器，或直接用返回的 boolean 触发一次性提示。
+
+后台里 [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts/overview) 用它提供复制能力。

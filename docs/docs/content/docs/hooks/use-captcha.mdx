@@ -1,0 +1,121 @@
+---
+title: useCaptcha
+description: 验证码发送 hook，组合倒计时与 loading，内置手机号校验与文案切换
+---
+
+```ts
+function useCaptcha(
+  defaultLabel?: string,
+  getCountingLabel?: (count: number) => string,
+  options?: UseCaptchaOptions
+): {
+  count: number;
+  getCaptcha: (target: string) => Promise<void>;
+  isCounting: boolean;
+  label: string;
+  loading: boolean;
+};
+```
+
+| 参数 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `defaultLabel` | `string` | `'获取验证码'` | 空闲态文案 |
+| `getCountingLabel` | `CaptchaCountingLabelGetter` | `` count => `${count}秒后重新获取` `` | 倒计时文案生成器 |
+| `options.request` | `CaptchaRequest` | 500ms 空 Promise | 发送验证码的实际请求 |
+| `options.seconds` | `number` | `10` | 倒计时时长 |
+| `options.validateTarget` | `CaptchaTargetValidator` | 内置手机号正则 | 发送前校验接收目标 |
+
+<Callout type="warn">
+`seconds` 默认是 **10 秒**，不是常见的 60。业务里几乎都要显式传。
+</Callout>
+
+## label 的三态
+
+`label` 由 `loading` 和 `isCounting` 推导，组件直接渲染即可：
+
+| 状态 | `label` |
+| --- | --- |
+| 请求中 | `''`（空串，留给按钮自己放 spinner） |
+| 倒计时中 | `getCountingLabel(count)` |
+| 空闲 | `defaultLabel` |
+
+判定顺序是先 loading 后 counting，所以两者同时为真时显示倒计时文案。
+
+## getCaptcha 的短路
+
+```ts
+async function getCaptcha(target: string) {
+  const valid = validateTarget(target);
+
+  if (!valid || loading) return;
+
+  startLoading();
+
+  try {
+    await request(target);
+    start();
+  } finally {
+    endLoading();
+  }
+}
+```
+
+两点行为要注意：
+
+- **校验不通过或正在请求时静默返回**，不抛错也不给反馈——错误提示要业务自己在校验层做
+- **倒计时只在 `request` resolve 后才启动**，请求失败（reject）不会进入倒计时，用户可以立即重试
+
+## 用法
+
+```tsx
+import { useCaptcha } from '@skyroc/hooks';
+import type { CaptchaRequest } from '@skyroc/hooks';
+
+interface CaptchaButtonProps {
+  /** 发送验证码的请求逻辑 */
+  request: CaptchaRequest;
+  /** 验证码接收目标 */
+  target: string;
+}
+
+const CaptchaButton = (props: CaptchaButtonProps) => {
+  const { request, target } = props;
+
+  const { getCaptcha, isCounting, label, loading } = useCaptcha('发送验证码', count => `${count}s 后重试`, {
+    request,
+    seconds: 60,
+    validateTarget: value => Boolean(value.trim())
+  });
+
+  function handleClick() {
+    getCaptcha(target);
+  }
+
+  return (
+    <button
+      disabled={isCounting || loading}
+      type="button"
+      onClick={handleClick}
+    >
+      {label}
+    </button>
+  );
+};
+```
+
+## 内置手机号校验
+
+不传 `validateTarget` 时用包内自带的中国大陆手机号正则。校验邮箱或其它形态一定要自己传。
+
+`@core/utils` 也有一份公共正则表（`REG_PHONE`、`REG_EMAIL` 等），见 [常用校验正则](/docs/core/utils/reg)——两处目前是各写各的。
+
+## 导出的类型
+
+| 类型 | 定义 |
+| --- | --- |
+| `CaptchaRequest` | `(target: string) => Promise<void> \| void` |
+| `CaptchaTargetValidator` | `(target: string) => boolean` |
+| `CaptchaCountingLabelGetter` | `(count: number) => string` |
+| `UseCaptchaOptions` | `{ request?, seconds?, validateTarget? }` |
+
+倒计时部分由 [`useCountDownTimer`](/docs/hooks/use-count-down-timer) 提供，请求态由 [`useLoading`](/docs/hooks/use-loading) 提供。

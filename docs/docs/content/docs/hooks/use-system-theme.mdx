@@ -1,0 +1,49 @@
+---
+title: useSystemTheme
+description: 监听 prefers-color-scheme，跟随系统亮暗色
+---
+
+<Callout>
+仅 `./web` 子入口导出：`import { useSystemTheme } from '@skyroc/hooks/web'`。RN 端不可用。
+</Callout>
+
+```ts
+function useSystemTheme(): {
+  isDarkMode: boolean;
+  isLightMode: boolean;
+  themeName: 'dark' | 'light';
+};
+```
+
+导出的 `ThemeName` 类型即 `'dark' | 'light'`。
+
+```tsx
+import { useSystemTheme } from '@skyroc/hooks/web';
+
+const ThemeIndicator = () => {
+  const { themeName } = useSystemTheme();
+
+  return <span>当前系统主题：{themeName}</span>;
+};
+```
+
+## SSR 安全
+
+初始值用惰性 initializer，服务端直接返回 `false`：
+
+```ts
+const [isDarkMode, setIsDarkMode] = useState(() => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+});
+```
+
+`useEffect` 里会再 `setIsDarkMode(mediaQuery.matches)` 同步一次真实值,所以 hydration 后即使首屏渲染成 light 也会立刻纠正。**服务端渲染的首帧一律是 light**，需要避免闪烁就在 `<head>` 里内联一段脚本提前打 class。
+
+监听通过 `mediaQuery.addEventListener('change', ...)` 注册，卸载时 `removeEventListener`。
+
+## 与应用主题的关系
+
+这个 hook 只反映**系统偏好**，不代表应用当前主题——应用可能被用户显式锁定为亮色或暗色。后台的完整主题状态（含「跟随系统 / 强制亮 / 强制暗」三态、持久化、CSS 变量注入）在 [`@skyroc/web-admin-theme`](/docs/web/theme/admin-theme)，它内部消费的正是这个 hook。
+
+业务代码要读当前主题，用 `web-admin-theme` 的 hooks，不要直接用 `useSystemTheme`。

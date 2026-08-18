@@ -1,0 +1,110 @@
+---
+title: 快速上手
+description: 基础表单、动态数组与提交的最小可运行示例
+---
+
+## 基础表单
+
+```tsx
+import { Field, Form, useForm } from '@skyroc/form';
+
+interface Login {
+  email: string;
+  password: string;
+}
+
+const LoginForm = () => {
+  const form = useForm<Login>();
+
+  function onSubmit(values: Login) {
+    console.log(values);
+  }
+
+  return (
+    <Form
+      form={form}
+      onFinish={onSubmit}
+    >
+      <Field name="email">
+        <input type="email" />
+      </Field>
+      <Field name="password">
+        <input type="password" />
+      </Field>
+      <button
+        type="button"
+        onClick={() => form.submit()}
+      >
+        登录
+      </button>
+    </Form>
+  );
+};
+```
+
+`useForm<Login>()` 的泛型是整张表的数据形状——所有字段路径、值类型、错误对象形状都从它推导，见 [类型安全](/docs/form/type-safety)。
+
+`Field` 自动处理 `value` / `onChange` / `onBlur` 的绑定，子元素只要是受控 input 就能直接放进去。
+
+## 动态数组
+
+```tsx
+import { Field, List } from '@skyroc/form';
+
+<List name="tags">
+  {({ add, fields, remove }) => (
+    <>
+      {fields.map((field, i) => (
+        <Field
+          key={field.key}
+          name={`tags.${i}`}
+        >
+          <input />
+        </Field>
+      ))}
+      <button
+        type="button"
+        onClick={() => add('')}
+      >
+        +
+      </button>
+    </>
+  )}
+</List>;
+```
+
+`field.key` 是 `List` 维护的稳定标识，**不要用下标当 React key**——删除中间项会导致后续项状态错位。
+
+需要在 `List` 之外操作数组，用 [`useArrayField`](/docs/form/hooks)。
+
+## 带校验
+
+```tsx
+import { z } from 'zod';
+
+const schema = z.object({
+  age: z.number().int().min(18),
+  email: z.string().email()
+});
+
+<Form schema={schema}>
+  <Field name="email">
+    <input />
+  </Field>
+  <Field name="age">
+    <input type="number" />
+  </Field>
+</Form>;
+```
+
+完整校验能力（时机、错误读取、自定义 Rule、多语言消息）见 [校验](/docs/form/validation)。
+
+## 下一步
+
+| 你想做什么 | 去哪 |
+| --- | --- |
+| 让大表单不整体重渲染 | [精确订阅](/docs/form/subscription) |
+| 查组件的完整 props | [组件](/docs/form/components) |
+| 查 hook 签名 | [Hooks](/docs/form/hooks) |
+| 理解内部状态引擎 | [form-core](/docs/form/form-core) |
+| 直接用后台风格的表单 | [在 web-ui 中的使用](/docs/form/web-ui) |

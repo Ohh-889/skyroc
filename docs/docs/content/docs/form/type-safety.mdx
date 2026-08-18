@@ -1,0 +1,52 @@
+---
+title: 类型安全
+description: 泛型 Values 如何贯穿全链路，字段路径为什么不是 string
+---
+
+## 泛型 Values 贯穿全链路
+
+整张表的数据形状作为泛型传给 `useForm`，之后所有 API 的路径参数和值类型都由它推导：
+
+```ts
+type Profile = { user: { name: string; age: number }; tags: string[] };
+
+const form = useForm<Profile>();
+
+form.setFieldValue('user.name', 'Alice'); // ✅ 类型安全
+form.setFieldValue('user.xxx', 'Alice'); // ❌ 编译报错（user.xxx 不存在）
+form.setFieldValue('user.age', 'Alice'); // ❌ 编译报错（age 不是 string）
+```
+
+关键在于**路径不是 `string`**，而是从 `Values` 结构展开出来的字面量联合。写错路径、写错值类型都在编译期挡住，不用等运行时。
+
+## 路径类型由 type-utils 驱动
+
+推导逻辑不在本包，而在 [`@skyroc/type-utils`](/docs/packages/shared/type-utils)：
+
+| 用处 | 类型 |
+| --- | --- |
+| `FieldProps.name` | `AllPathsKeys<Values>` |
+| `useWatch(name)` 的返回 | `PathToDeepType<Values, T>` |
+| `List` / `useArrayField` 的 `name` | `ArrayKeys<Values>` |
+| 数组元素值 | `ArrayElementValue<Values, K>` |
+| `arrayOp(name)` 的 insert / remove 参数 | 与数组元素类型绑定 |
+
+`AllPathsKeys` 会把嵌套对象和数组下标一并展开，所以 `'user.name'`、`'tags.0'` 都是合法路径。
+
+`AllPathsKeys` 从主入口透传出来，业务侧要标注路径变量时可以直接用：
+
+```ts
+import type { AllPathsKeys } from '@skyroc/form';
+
+type ProfilePath = AllPathsKeys<Profile>;
+```
+
+## 错误对象也是推导的
+
+`useFieldError(names)` 返回的形状跟着传入的路径走，不是笼统的 `Record<string, string[]>`。配合 `ValidateErrorEntity` 使用，见 [校验](/docs/form/validation)。
+
+## 边界
+
+路径推导是递归条件类型，**表单数据形状嵌套过深或含大量联合类型时会显著拖慢 tsserver**。遇到编辑器卡顿，优先把深层结构拆成子表单而不是关掉类型检查。
+
+TS 配置见 [TypeScript 规范](/docs/guide/engineering/typescript)。

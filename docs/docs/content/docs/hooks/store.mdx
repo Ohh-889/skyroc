@@ -1,0 +1,124 @@
+---
+title: Store 与 useStore
+description: 通用状态引擎基类与 React 桥接 hook，class 管逻辑、hook 管渲染
+---
+
+`Store<S>` 是包内所有有状态 hook 的底座，`useStore` 负责把它接进 React 渲染周期。两者都从主入口导出，RN 安全。
+
+## 设计动机
+
+React 里管理一段带行为的状态，通常写成 `useState` + 一堆 `useCallback` 包出来的操作函数。问题是操作逻辑散在组件里，既不能单测，引用稳定性也要靠 `useCallback` 手工维护。
+
+这里换一个分工：**class 管逻辑与状态，hook 只做桥接**。
+
+- 操作方法写成 class 的箭头函数属性 → 引用天生稳定，不需要 `useCallback`
+- 逻辑不依赖 React → 可以脱离渲染直接单测
+- 订阅走 `useSyncExternalStore` → 并发渲染安全
+
+相比 jotai 更面向 OOP，相比 Zustand 更轻量、可继承。
+
+## Store\<S\>
+
+```ts
+export class Store<S> {
+  protected state: S;
+
+  constructor(initialState: S);
+
+  /** 订阅状态变化，返回取消订阅函数 */
+  subscribe: (listener: () => void) => () => void;
+
+  /** 获取当前状态快照 */
+  getSnapshot: () => S;
+
+  /** 全量状态更新，支持直接传值或 updater 函数 */
+  protected setState(nextOrUpdater: S | ((prev: S) => S)): void;
+}
+```
+
+三条约束写死在基类里：
+
+| 约束 | 做法 | 为什么 |
+| --- | --- | --- |
+| 状态只能走 `setState` 改 | `state` 是 `protected`，禁止 `this.state = ...` | 保证每次变更都通知订阅者 |
+| 通知不可绕过 | `emit` 私有，`setState` 内部调用 | 杜绝「忘记通知」 |
+| 订阅集合不可被子类顶掉 | `#listeners` 用 `#` 私有字段而非 `private` | `private` 只是编译期约束，运行时子类同名成员会悄悄覆盖基类 |
+
+`setState` 用 `Object.is` 比较，值没变就不通知。
+
+`subscribe` 和 `getSnapshot` 都写成箭头函数属性，直接传给 `useSyncExternalStore` 不会丢 `this`。
+
+## useStore
+
+```ts
+function useStore<S>(store: Subscribable<S>): S;
+function useStore<S, R>(store: Subscribable<S>, selector: (state: S) => R): R;
+```
+
+带 selector 的重载用来订阅状态切片，减少无关重渲染——**selector 应返回原始值或稳定引用**，返回新对象会每次都判定为变化。
+
+## Subscribable
+
+`useStore` 约束的是**接口而非 Store 类**，鸭子类型，任何满足下面两个方法的对象都能被消费：
+
+```ts
+export interface Subscribable<S> {
+  getSnapshot: () => S;
+  subscribe: (listener: () => void) => () => void;
+}
+```
+
+所以外部的 store 实现（甚至第三方库）不继承 `Store` 也能接进来。
+
+## 用法
+
+```tsx
+import { Store, useStore } from '@skyroc/hooks';
+
+class CounterStore extends Store<{ count: number }> {
+  constructor() {
+    super({ count: 0 });
+  }
+
+  increment = () => {
+    this.setState(prev => ({ count: prev.count + 1 }));
+  };
+
+  reset = () => {
+    this.setState({ count: 0 });
+  };
+}
+
+const counter = new CounterStore();
+
+interface CounterProps {
+  /** 计数按钮文案 */
+  label: string;
+}
+
+const Counter = (props: CounterProps) => {
+  const { label } = props;
+
+  const { count } = useStore(counter);
+
+  return (
+    <button
+      type="button"
+      onClick={counter.increment}
+    >
+      {label}: {count}
+    </button>
+  );
+};
+```
+
+store 实例定义在组件外就是全局单例；要每个组件一份，用 `useCreation` 在 hook 里创建——[`useArray`](/docs/hooks/use-array) 和 [`useNow`](/docs/hooks/use-now) 就是这么做的。
+
+## 与 @skyroc/core-state 的分工
+
+| | 定位 |
+| --- | --- |
+| `Store` / `useStore` | 组件级或模块级的**局部**状态引擎，OOP 风格，无全局注册 |
+| [`@skyroc/core-state`](/docs/core/state) | 基于 Jotai 的**全局** store，支持持久化原子与组件外访问 |
+
+选型规则：状态归某个功能模块私有就用 `Store`，需要跨路由共享或持久化就用 `core-state`。

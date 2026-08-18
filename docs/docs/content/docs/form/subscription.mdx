@@ -1,0 +1,60 @@
+---
+title: 精确订阅
+description: ChangeTag bitmask 如何把重渲染限制在真正变化的字段上
+---
+
+## 问题
+
+表单库最常见的性能问题是：任何一个字段变化都触发整棵表单树重渲染。字段一多就明显卡顿。
+
+## ChangeTag bitmask
+
+`form-core/event.ts` 把变化类型编码成 bitmask 的不同位——值变化、校验状态变化、数组结构变化各占一位。订阅方声明关心哪些位，派发时按位匹配，不匹配就不通知。
+
+配套类型 `SubscribeMaskOptions` 从主入口导出。
+
+## 两种订阅方式
+
+### useWatch —— 按路径订阅
+
+```ts
+import { useWatch } from '@skyroc/form';
+
+// 只在 user.name 变化时重渲染
+const name = useWatch('user.name');
+```
+
+返回值类型是 `PathToDeepType<Values, 'user.name'>`，也就是 `string`，不需要手工标注。
+
+也可以传路径数组一次订阅多个字段。
+
+### useSelector —— 自定义选择器 + 显式依赖
+
+```ts
+import { useSelector } from '@skyroc/form';
+
+const summary = useSelector(values => `${values.user.name} - ${values.user.age}`, {
+  deps: ['user.name', 'user.age']
+});
+```
+
+`deps` 是**显式声明的依赖路径**,不是自动追踪。漏写会导致该字段变化时选择器不重算,写多了会引入无谓重渲染。
+
+<Callout type="warn">
+selector 返回新对象会每次都判定为变化。要返回派生对象就自己做记忆化,或者拆成多个返回原始值的 selector。
+</Callout>
+
+## Field 的订阅
+
+`Field` 内部用 `useSyncExternalStore` 订阅自己那条路径,所以**每个 Field 是独立的订阅单元**——改 `user.name` 不会让 `user.age` 的 Field 重渲染。这是默认行为,不需要额外配置。
+
+## 什么时候需要手动优化
+
+| 场景 | 做法 |
+| --- | --- |
+| 只读某个字段做展示 | `useWatch(path)`,不要读整个 `values` |
+| 需要跨字段派生值 | `useSelector` + 精确 `deps` |
+| 字段间联动写值 | [`useEffectField`](/docs/form/hooks),不要在渲染期 setState |
+| 派生字段要参与提交 | `ComputedField`,见 [组件](/docs/form/components) |
+
+反模式是在组件里 `form.getFieldsValue()` 拿全量再自己挑——那会退化成全量订阅。

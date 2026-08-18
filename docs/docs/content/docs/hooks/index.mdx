@@ -1,0 +1,127 @@
+---
+title: '@skyroc/hooks'
+description: 跨端 React hooks 集合，主入口 RN 安全，./web 子入口提供浏览器专用 hooks
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/hooks` |
+| 目录 | `packages/hooks` |
+| 版本 | 1.0.0 |
+| 运行时依赖 | `ahooks` |
+| peer | `react >= 18.0.0` |
+| 子入口 | `.`、`./web` |
+| 测试 | ✅ 9 个 |
+
+`@skyroc/hooks` 把项目中跨端复用的 React hooks 收拢成一个包。设计上严格区分**「RN 安全」与「Web 专用」**两个层级，避免 Native 端误打包浏览器 API。
+
+## 子入口边界
+
+| 入口 | 包含内容 | 适用平台 |
+| --- | --- | --- |
+| `.` | Store + 平台无关 hooks | Web / RN / MiniApp |
+| `./web` | 主入口全部 + 浏览器 DOM hooks | 仅浏览器 |
+
+```ts
+import { useCaptcha } from '@skyroc/hooks'; // ✅ 跨端
+import { useCopy } from '@skyroc/hooks/web'; // ✅ 仅 Web
+```
+
+`web/index.ts` 会 `export * from '../index'` re-export 主入口，所以 Web 端只 import `'@skyroc/hooks/web'` 一处即可。
+
+## Hook 清单
+
+### 状态引擎
+
+| 导出 | 用途 |
+| --- | --- |
+| [`Store<S>`](/docs/hooks/store) | 通用状态引擎基类，Observer 模式 + `useSyncExternalStore` 契约 |
+| [`useStore`](/docs/hooks/store) | 把任意 `Subscribable` 对象桥接到 React，支持 selector 重载 |
+
+### 主入口（`.`）
+
+| Hook | 用途 |
+| --- | --- |
+| [`useArray`](/docs/hooks/use-array) | 数组状态，返回 `[state, store]`，store 上有 14 个操作方法 |
+| [`useLoading`](/docs/hooks/use-loading) | loading 状态，`startLoading` / `endLoading` |
+| [`useCountDownTimer`](/docs/hooks/use-count-down-timer) | 通用倒计时器 |
+| [`useCaptcha`](/docs/hooks/use-captcha) | 验证码倒计时，含目标校验与文案切换 |
+| [`useNow`](/docs/hooks/use-now) | 实时时间，可暂停 / 恢复 |
+
+### `./web` 额外
+
+| Hook | 用途 |
+| --- | --- |
+| [`useCopy`](/docs/hooks/use-copy) | 剪贴板复制，带 `execCommand` 降级 |
+| [`useSystemTheme`](/docs/hooks/use-system-theme) | 监听 `(prefers-color-scheme: dark)` |
+
+## Class 管逻辑，Hook 管渲染
+
+`useArray` 和 `useNow` 都不是把状态塞进 `useState`，而是各自定义一个 `Store` 子类承载全部逻辑，hook 只负责用 `useCreation` 创建实例、用 `useStore` 订阅：
+
+```ts
+export default function useArray<T, K extends keyof T>(initState: T[], key?: K): [T[], ArrayStore<T, K>] {
+  const store = useCreation(() => new ArrayStore(initState, key), []);
+
+  const state = useStore(store);
+
+  return [state, store];
+}
+```
+
+好处是操作方法的引用天然稳定（class 的箭头函数属性），不需要 `useCallback`；逻辑也能脱离 React 单测。详见 [Store 与 useStore](/docs/hooks/store)。
+
+## ahooks 是内部实现
+
+包**没有 re-export** ahooks 的任何 hook，只是在内部封装特定 hook（`useCreation`、`useBoolean`、`useCountDown`）形成更直接的 API。业务想用 ahooks 的其它 hook，直接 `import { useXxx } from 'ahooks'`。
+
+## 跨端策略
+
+主入口 `src/index.ts` 的所有 hooks 遵循「**不依赖浏览器或 RN 平台 API**」原则，只使用 React、平台无关的 ahooks 能力和 JavaScript 运行时 API。
+
+需要 DOM 的两个 hook 全部放 `./web`：`useCopy` 用 `navigator.clipboard`，`useSystemTheme` 用 `window.matchMedia`。
+
+```ts
+// ❌ Native 端：会引入浏览器 API 报错
+import { useCopy } from '@skyroc/hooks/web';
+
+// ✅ Native 端：只用主入口
+import { useArray, useLoading } from '@skyroc/hooks';
+```
+
+约束的来由见 [平台优先与目录切分](/docs/guide/architecture/platform-first)。
+
+## 目录结构
+
+```text
+src/
+├── index.ts                    # 主入口（RN 安全）
+├── use-array.ts
+├── use-captcha.ts
+├── use-count-down-timer.ts
+├── use-loading.ts
+├── use-now.ts
+├── store/
+│   ├── store.ts                # Store<S> 基类
+│   ├── use-store.ts            # useStore hook + Subscribable
+│   └── README.md
+└── web/
+    ├── index.ts                # Web 子入口（含主入口 re-export）
+    ├── use-copy.ts
+    └── use-system-theme.ts
+```
+
+## 在项目中的消费
+
+| 消费方 | 用到什么 |
+| --- | --- |
+| [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts/overview) | `useCopy` 提供复制能力 |
+| [`@skyroc/web-admin-theme`](/docs/web/theme/admin-theme) | `useSystemTheme` 跟随系统暗色 |
+| `@skyroc/native-ui` | 主入口 hooks（RN 端） |
+| `apps/admin-example`、`apps/ruoyi-plus-fast` | 登录页用 `useCaptcha` |
+
+## 测试覆盖
+
+9 个测试文件覆盖 Store、各 hook 与 web 子入口，hook 测试用 `@testing-library/react` 的 `renderHook`。跑法见 [测试](/docs/guide/engineering/test)。

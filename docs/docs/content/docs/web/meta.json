@@ -1,6 +1,8 @@
 {
   "title": "Web 端包",
   "description": "packages/web 下 14 个 Web 平台包：设计系统、主题、布局、运行时与构建",
+  "icon": "Globe",
+  "root": true,
   "pages": [
     "index",
     "---设计系统---",

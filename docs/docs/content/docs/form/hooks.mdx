@@ -1,0 +1,59 @@
+---
+title: Hooks
+description: useForm / useWatch / useSelector 等八个 hook 的签名与用途
+---
+
+全部从 `@skyroc/form` 与 `@skyroc/form/react` 导出。
+
+| Hook | 用途 |
+| --- | --- |
+| `useForm<Values>()` | 创建 form 实例，返回 `FormInstance<Values>` |
+| `useWatch(name)` | 按路径订阅单字段或多字段 |
+| `useSelector(selector, { deps })` | 自定义选择器 + 显式依赖路径 |
+| `useFieldState(name)` | 字段 meta：touched / dirty / validating |
+| `useFieldError(names)` | 错误对象，形状由传入路径推导 |
+| `useArrayField(name)` | 数组字段操作：push / remove / insert / move |
+| `useEffectField(name, effect)` | 字段变化副作用 |
+| `useUndoRedo()` | 撤销 / 重做 |
+
+<Callout>
+文件名是 `useFieldArray.ts` / `useFieldEffect.ts`，**导出名是 `useArrayField` / `useEffectField`**。以导出名为准。
+</Callout>
+
+## useForm
+
+```ts
+const form = useForm<Values>(options?);
+```
+
+返回 `FormInstance<Values>`——表单的命令式句柄，`setFieldValue`、`getFieldsValue`、`submit`、`resetFields` 等都挂在上面，路径与值类型全部按 `Values` 推导（见 [类型安全](/docs/form/type-safety)）。
+
+`options.middlewares` 用于挂中间件，见 [form-core](/docs/form/form-core)。
+
+## useWatch / useSelector
+
+订阅相关的两个 hook 在 [精确订阅](/docs/form/subscription) 里单独讲。
+
+## useFieldState / useFieldError
+
+前者读字段的交互 meta（`Meta` 类型从主入口导出），后者读校验错误。区别在于：错误只有校验跑过才有，而 `touched` / `dirty` 从用户交互起就有值——做「只在用户碰过之后才提示错误」的效果要两个一起用。
+
+## useArrayField
+
+在 `List` 组件之外操作数组字段：
+
+```ts
+const { insert, move, push, remove } = useArrayField('tags');
+```
+
+`name` 限定为 `ArrayKeys<Values>`，操作参数与 `ArrayElementValue<Values, K>` 绑定。
+
+## useEffectField
+
+字段变化时跑副作用，用于字段联动（改省份清空城市这类）。
+
+**不要在渲染期直接 `setFieldValue` 做联动**，会引起循环更新；联动统一走这个 hook。
+
+## useUndoRedo
+
+撤销 / 重做。历史记录由 form-core 的 middleware 管道记录，见 [form-core](/docs/form/form-core)。

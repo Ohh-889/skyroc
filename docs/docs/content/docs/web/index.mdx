@@ -14,7 +14,7 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 三个 `ui/*` 包的组件文档、实时 Demo 与 Props 表在独立的 Web UI 站点，主站只保留一页指路。
 
 <Cards>
-  <Card title="@skyroc/web-ui 系列" href="/docs/packages/web/ui">
+  <Card title="@skyroc/web-ui 系列" href="/docs/web/ui">
     `web-ui`（Radix + Tailwind）、`web-ui-compose`（无状态复合组件与 `useTable`）、`web-ui-antd`（antd 业务组件）三层组件库的入口与分工。
   </Card>
 </Cards>
@@ -22,16 +22,16 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 ### 主题
 
 <Cards>
-  <Card title="Theme 系统概述" href="/docs/packages/web/theme/overview">
+  <Card title="Theme 系统概述" href="/docs/web/theme/overview">
     算法层 → React 层 → 应用层的三层主题架构，以及切换暗色时的完整数据流。
   </Card>
-  <Card title="@skyroc/tailwind-plugin" href="/docs/packages/web/tailwind-plugin">
+  <Card title="@skyroc/tailwind-plugin" href="/docs/web/tailwind-plugin">
     Tailwind 插件：CSS 变量主题系统、12 套内置配色、语义化 token 与可配置圆角，Web / Native 双平台共用。
   </Card>
-  <Card title="@skyroc/adapter-antd-theme" href="/docs/packages/web/theme/antd-theme">
+  <Card title="@skyroc/adapter-antd-theme" href="/docs/web/theme/antd-theme">
     Ant Design 主题算法适配器，用 OKLCH 感知均匀色彩空间替换默认调色板生成器。
   </Card>
-  <Card title="@skyroc/web-admin-theme" href="/docs/packages/web/theme/admin-theme">
+  <Card title="@skyroc/web-admin-theme" href="/docs/web/theme/admin-theme">
     应用级主题管理：Jotai 状态、切换组件、5 套预设、副作用收口与 antd 集成。
   </Card>
 </Cards>
@@ -39,13 +39,13 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 ### 布局与样式
 
 <Cards>
-  <Card title="@skyroc/materials" href="/docs/packages/web/materials">
+  <Card title="@skyroc/materials" href="/docs/web/materials">
     插槽式 `AdminLayout` 骨架与多风格 `PageTab`，只负责视觉与结构，不含业务状态。
   </Card>
-  <Card title="@skyroc/web-admin-layouts" href="/docs/packages/web/admin-layouts/overview">
+  <Card title="@skyroc/web-admin-layouts" href="/docs/web/admin-layouts/overview">
     完整后台应用壳：菜单生成、权限、页签、布局状态、主题抽屉与业务插槽。
   </Card>
-  <Card title="@skyroc/web-admin-styles" href="/docs/packages/web/admin-styles">
+  <Card title="@skyroc/web-admin-styles" href="/docs/web/admin-styles">
     纯 CSS 包：reset、全局基线与滚动条、NProgress 样式，按子路径引入。
   </Card>
 </Cards>
@@ -53,16 +53,16 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 ### 运行时
 
 <Cards>
-  <Card title="@skyroc/web-admin-runtime" href="/docs/packages/web/admin-runtime">
+  <Card title="@skyroc/web-admin-runtime" href="/docs/web/admin-runtime">
     启动期插件助手：Dayjs、Iconify 离线 provider、NProgress 与应用版本更新检测。
   </Card>
-  <Card title="@skyroc/web-admin-i18n" href="/docs/packages/web/admin-i18n">
+  <Card title="@skyroc/web-admin-i18n" href="/docs/web/admin-i18n">
     管理端多语言运行时：i18next 初始化、语言状态、语言切换组件与内置翻译资源。
   </Card>
-  <Card title="@skyroc/web-admin-notification" href="/docs/packages/web/admin-notification">
+  <Card title="@skyroc/web-admin-notification" href="/docs/web/admin-notification">
     站内通知中心：不依赖 React 的通知仓库 + Provider + 铃铛按钮 + 通知面板。
   </Card>
-  <Card title="@skyroc/web-admin-devtools" href="/docs/packages/web/admin-devtools">
+  <Card title="@skyroc/web-admin-devtools" href="/docs/web/admin-devtools">
     仅开发环境的调试面板，聚合 TanStack Query / Router 与 Jotai 三套 DevTools。
   </Card>
 </Cards>
@@ -70,7 +70,7 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 ### 构建
 
 <Cards>
-  <Card title="@skyroc/web-admin-vite" href="/docs/packages/web/admin-vite">
+  <Card title="@skyroc/web-admin-vite" href="/docs/web/admin-vite">
     Vite 配置预设：构建产物、开发代理、插件链、自动导入、别名与开发服务器默认值。
   </Card>
 </Cards>
@@ -94,7 +94,7 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 @skyroc/web-admin-devtools / admin-styles / admin-vite   无内部依赖
 ```
 
-完整的 31 包总表、跨层依赖规则和被依赖排行见 [包参考首页](/docs/packages)。
+完整的 31 包总表、跨层依赖规则和被依赖排行见 [包总览](/docs/packages)。
 
 ## 命名映射
 
@@ -110,6 +110,6 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 
 ## 推荐阅读顺序
 
-1. **从外到内读壳**：[admin-layouts](/docs/packages/web/admin-layouts/overview) → [materials](/docs/packages/web/materials) → [admin-theme](/docs/packages/web/theme/admin-theme) → [adapter-antd-theme](/docs/packages/web/theme/antd-theme) → [tailwind-plugin](/docs/packages/web/tailwind-plugin)
-2. **接入一个新后台**：[admin-vite](/docs/packages/web/admin-vite) → [admin-runtime](/docs/packages/web/admin-runtime) → [admin-layouts/快速接入](/docs/packages/web/admin-layouts/quick-start) → [admin-i18n](/docs/packages/web/admin-i18n)
+1. **从外到内读壳**：[admin-layouts](/docs/web/admin-layouts/overview) → [materials](/docs/web/materials) → [admin-theme](/docs/web/theme/admin-theme) → [adapter-antd-theme](/docs/web/theme/antd-theme) → [tailwind-plugin](/docs/web/tailwind-plugin)
+2. **接入一个新后台**：[admin-vite](/docs/web/admin-vite) → [admin-runtime](/docs/web/admin-runtime) → [admin-layouts/快速接入](/docs/web/admin-layouts/quick-start) → [admin-i18n](/docs/web/admin-i18n)
 3. **看这些包在 Admin 里怎么用**：[Admin 应用文档](/docs/admin)

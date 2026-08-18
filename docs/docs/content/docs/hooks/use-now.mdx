@@ -1,0 +1,59 @@
+---
+title: useNow
+description: 实时时间 hook，可配置更新间隔，支持暂停与恢复
+---
+
+```ts
+function useNow(options?: { immediate?: boolean; interval?: number }): {
+  now: Date;
+  pause: () => void;
+  resume: () => void;
+};
+```
+
+| 参数 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `immediate` | `boolean` | `true` | 是否挂载后立即开始计时 |
+| `interval` | `number` | `1000` | 更新间隔（毫秒） |
+
+```tsx
+import { useNow } from '@skyroc/hooks';
+
+const Clock = () => {
+  const { now, pause, resume } = useNow({ interval: 1000 });
+
+  return (
+    <>
+      <time>{now.toLocaleTimeString()}</time>
+      <button type="button" onClick={pause}>暂停</button>
+      <button type="button" onClick={resume}>继续</button>
+    </>
+  );
+};
+```
+
+## 实现要点
+
+定时器生命周期由一个 `NowStore extends Store<Date>` 管理，hook 只负责创建实例、按 `immediate` 决定是否 `resume`，并在卸载时 `pause`：
+
+```ts
+const store = useCreation(() => new NowStore(interval), []);
+
+useEffect(() => {
+  if (immediate) store.resume();
+
+  return () => store.pause();
+}, [store, immediate]);
+
+const now = useStore(store);
+```
+
+`resume` 内部先判空再建定时器，重复调用不会叠加多个 `setInterval`；`pause` 清掉后置 `null`，也可以安全重复调用。
+
+<Callout type="warn">
+`interval` 通过 `useCreation(..., [])` 传入，**只在首次渲染生效**。运行时改这个值不会重建定时器。需要变频就换个 `key` 让组件重挂载。
+</Callout>
+
+初始值是 `new Date()`（构造 store 时取），所以首帧就有正确时间，不会先渲染一个空值再跳。
+
+设计背景见 [Store 与 useStore](/docs/hooks/store)。

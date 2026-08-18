@@ -1,0 +1,45 @@
+---
+title: 在 web-ui 中的使用
+description: "@skyroc/web-ui 的 Form preset 如何基于本包封装"
+---
+
+[`@skyroc/web-ui`](/docs/web/ui) 的 `Form` preset 组件基于本包封装，业务直接用它就能拿到：
+
+- antd 风格的 label / error 视觉
+- 与 Radix `Slot` 集成的 Control 绑定
+- Tailwind variant 自动应用
+
+```tsx
+import { Form, FormField } from '@skyroc/web-ui';
+
+<Form>
+  <FormField
+    label="邮箱"
+    name="email"
+  >
+    <Input />
+  </FormField>
+</Form>;
+```
+
+## 什么时候用哪个
+
+| 场景 | 用 |
+| --- | --- |
+| 后台业务表单 | `@skyroc/web-ui` 的 `Form` / `FormField` |
+| 需要完全自定义视觉，或非 Web 平台 | `@skyroc/form` 原语 |
+| 组件库自己实现表单控件 | `@skyroc/form` 原语 |
+
+`@skyroc/native-ui` 走的是第三种——RN 端直接消费本包，不经过 web-ui。
+
+## 依赖方向
+
+```text
+@skyroc/web-ui  ──┐
+                  ├──→ @skyroc/form ──→ @skyroc/type-utils
+@skyroc/native-ui ┘                 └─→ @skyroc/utils
+```
+
+本包在 `packages/primitives/`，位于跨平台层，**不能反向依赖任何平台包**。约束见 [包分层与依赖方向](/docs/guide/architecture/package-layering)。
+
+web-ui 三个包的组件文档、实时 Demo 与 Props 表在独立的 Web UI 站点，主站只保留 [一页指路](/docs/web/ui)。

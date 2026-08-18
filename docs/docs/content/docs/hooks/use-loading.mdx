@@ -1,0 +1,50 @@
+---
+title: useLoading
+description: loading 布尔状态，封装 ahooks 的 useBoolean，导出语义化的 start / end
+---
+
+```ts
+function useLoading(initValue?: boolean): {
+  loading: boolean;
+  startLoading: () => void;
+  endLoading: () => void;
+};
+```
+
+| 参数 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `initValue` | `boolean` | `false` | 初始 loading 状态 |
+
+实现就是把 ahooks 的 `useBoolean` 换成语义化命名：`setTrue` → `startLoading`，`setFalse` → `endLoading`。没有 `toggle`——loading 语义下切换是错误操作。
+
+```tsx
+import { useLoading } from '@skyroc/hooks';
+
+const SubmitButton = () => {
+  const { endLoading, loading, startLoading } = useLoading();
+
+  async function handleSubmit() {
+    startLoading();
+
+    try {
+      await submit();
+    } finally {
+      endLoading();
+    }
+  }
+
+  return (
+    <button
+      disabled={loading}
+      type="button"
+      onClick={handleSubmit}
+    >
+      {loading ? '提交中…' : '提交'}
+    </button>
+  );
+};
+```
+
+`endLoading` 放 `finally`，异常路径也要复位。
+
+[`useCaptcha`](/docs/hooks/use-captcha) 内部就用它管理发送请求期间的按钮状态。

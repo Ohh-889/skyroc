@@ -7,8 +7,8 @@ description: "Admin Layouts 菜单系统的公共概念：生成入口、统一�
 
 这一页只讲静态模式和动态模式都会复用的公共概念。两条生成链路的细节拆在独立页面里：
 
-- [静态路由菜单生成](/docs/packages/web/admin-layouts/static-menu-generation)：适合前端路由文件声明菜单。
-- [动态路由菜单生成](/docs/packages/web/admin-layouts/dynamic-menu-generation)：适合后端返回路由树和菜单配置。
+- [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation)：适合前端路由文件声明菜单。
+- [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation)：适合后端返回路由树和菜单配置。
 
 ## 菜单链路
 
@@ -40,8 +40,8 @@ renderCommonMenus(...)
 
 | 模式 | 数据来源 | 适用场景 | 深入文档 |
 | --- | --- | --- | --- |
-| `static` | TanStack Router route 的 `staticData` | 路由和菜单由前端仓库管理，权限也由前端 meta 参与过滤。 | [静态路由菜单生成](/docs/packages/web/admin-layouts/static-menu-generation) |
-| `dynamic` | `loadDynamicRoutes` 返回的后端路由树 | 菜单、首页和路由树由后端或权限中心下发。 | [动态路由菜单生成](/docs/packages/web/admin-layouts/dynamic-menu-generation) |
+| `static` | TanStack Router route 的 `staticData` | 路由和菜单由前端仓库管理，权限也由前端 meta 参与过滤。 | [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation) |
+| `dynamic` | `loadDynamicRoutes` 返回的后端路由树 | 菜单、首页和路由树由后端或权限中心下发。 | [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation) |
 
 无论哪种模式，最终都会得到同一组运行时数据：
 

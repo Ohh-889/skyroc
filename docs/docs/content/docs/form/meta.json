@@ -1,0 +1,20 @@
+{
+  "title": "表单原语",
+  "description": "@skyroc/form：类型安全的 React 表单，路径级精确订阅 + StandardSchema 校验",
+  "icon": "ClipboardList",
+  "root": true,
+  "pages": [
+    "index",
+    "quick-start",
+    "---类型与订阅---",
+    "type-safety",
+    "subscription",
+    "---API---",
+    "components",
+    "hooks",
+    "validation",
+    "---内部---",
+    "form-core",
+    "web-ui"
+  ]
+}

@@ -1,0 +1,48 @@
+---
+title: useCountDownTimer
+description: 通用倒计时器，按秒返回剩余时间与计时状态
+---
+
+```ts
+function useCountDownTimer(seconds: number): {
+  count: number;
+  isCounting: boolean;
+  start: (updateSeconds?: number) => void;
+  stop: () => void;
+};
+```
+
+| 返回 | 类型 | 说明 |
+| --- | --- | --- |
+| `count` | `number` | 剩余秒数（毫秒值 `Math.round` 到秒） |
+| `isCounting` | `boolean` | 是否在倒计时中（剩余毫秒 > 0） |
+| `start` | `(updateSeconds?: number) => void` | 开始，不传参用 `seconds`，传参覆盖本次时长 |
+| `stop` | `() => void` | 立即停止，`count` 归 0 |
+
+```tsx
+import { useCountDownTimer } from '@skyroc/hooks';
+
+const Resend = () => {
+  const { count, isCounting, start } = useCountDownTimer(60);
+
+  return (
+    <button
+      disabled={isCounting}
+      type="button"
+      onClick={() => start()}
+    >
+      {isCounting ? `${count}s` : '重新发送'}
+    </button>
+  );
+};
+```
+
+## 实现要点
+
+内部用 ahooks 的 `useCountDown({ targetDate })`：`start` 把目标时间设为 `Date.now() + updateSeconds * 1000`，`stop` 把目标时间设回 `0`。
+
+因为倒计时基准是**绝对时间戳**而不是自减计数，页面挂起或标签页切走再回来，剩余时间仍然正确。
+
+`count` 是 `Math.round(countdown / 1000)`，所以起步瞬间就显示完整秒数，不会先闪一下 `n-1`。
+
+带文案切换和目标校验的版本见 [`useCaptcha`](/docs/hooks/use-captcha)。

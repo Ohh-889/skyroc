@@ -1,0 +1,59 @@
+---
+title: 校验
+description: StandardSchema 集成、Rule 与错误读取
+---
+
+## StandardSchema 集成
+
+给 `Form` 传 `schema` 即可：
+
+```tsx
+import { z } from 'zod';
+
+const schema = z.object({
+  age: z.number().int().min(18),
+  email: z.string().email()
+});
+
+<Form schema={schema}>
+  <Field name="email">
+    <input />
+  </Field>
+  <Field name="age">
+    <input type="number" />
+  </Field>
+</Form>;
+```
+
+接入点是 [StandardSchema](https://standardschema.dev) 的 `~standard.validate` 接口，所以 **Zod / Yup / Valibot / ArkType 等都能直接用**，本包不依赖任何具体校验库。
+
+实现在 `form-core/resolver/`：`standard.ts` 适配 `StandardSchemaV1`，`resolver.ts` 兼容自定义 schema。resolver 本身是一个 middleware，见 [form-core](/docs/form/form-core)。
+
+## Rule
+
+`Rule` 类型从主入口导出，用于不走 schema 的字段级规则。schema 与 Rule 可以并存——schema 管数据形状，Rule 管跨字段或运行时才知道的约束。
+
+## 错误读取
+
+```ts
+const errors = useFieldError(['email', 'age']);
+```
+
+返回形状由传入路径推导，不是笼统的 `Record<string, string[]>`。
+
+提交失败时 `onFinishFailed` 收到 `ValidateErrorEntity`，从 `@skyroc/form` 导出。
+
+配合 `useFieldState` 的 `touched` 可以做「用户碰过才提示」：
+
+```tsx
+const { touched } = useFieldState('email');
+const errors = useFieldError('email');
+
+{touched && errors?.length ? <span>{errors[0]}</span> : null}
+```
+
+## 多语言消息
+
+`ValidateMessages` 类型从主入口导出，用于覆盖内置文案模板。后台的语言资源统一在 [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n)。
+
+Admin 里表单规则的实际组织方式（含公共正则复用）见 [表单校验规则](/docs/admin/features/form-rules)。

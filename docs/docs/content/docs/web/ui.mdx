@@ -35,7 +35,7 @@ import { Button, Dialog, Form } from '@skyroc/web-ui';
 import * as DialogPrimitive from '@skyroc/web-ui/primitives';
 ```
 
-样式 token 由 [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) 提供，两者必须成对使用——没有装插件，组件的颜色变量会全部落空。
+样式 token 由 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 提供，两者必须成对使用——没有装插件，组件的颜色变量会全部落空。
 
 ## @skyroc/web-ui-compose
 
@@ -50,10 +50,10 @@ import * as DialogPrimitive from '@skyroc/web-ui/primitives';
 
 需要 antd 生态时才用，组件是围绕后台常见交互做的封装：`ButtonIcon`、`ButtonLink`、`ReloadButton`、`PinToggler`、`FullScreen`、`BeyondHiding`、`AppTree`、`ExceptionBase`、`ErrorBoundary`。
 
-[`@skyroc/web-admin-layouts`](/docs/packages/web/admin-layouts/overview) 和 [`@skyroc/web-admin-notification`](/docs/packages/web/admin-notification) 的 Header 部件就建在这一层上。
+[`@skyroc/web-admin-layouts`](/docs/web/admin-layouts/overview) 和 [`@skyroc/web-admin-notification`](/docs/web/admin-notification) 的 Header 部件就建在这一层上。
 
 ## 相关内容
 
-- [Web 端包总览](/docs/packages/web) —— 三个 ui 包在整棵 Web 树里的位置
-- [Tailwind 插件](/docs/packages/web/tailwind-plugin) —— 组件消费的 CSS 变量从哪来
+- [Web 端包总览](/docs/web) —— 三个 ui 包在整棵 Web 树里的位置
+- [Tailwind 插件](/docs/web/tailwind-plugin) —— 组件消费的 CSS 变量从哪来
 - [组件边界](/docs/admin/getting-started/component-boundaries) —— Admin 里什么时候该下沉到包、什么时候留在应用

@@ -32,13 +32,13 @@ import type { AdminLayoutProps, AdminLayoutsOptions } from '@skyroc/web-admin-la
 
 | 导出 | 类型 | 说明 |
 | --- | --- | --- |
-| `AdminLayout` | Component | 应用级后台布局壳。插槽细节见 [布局插槽](/docs/packages/web/admin-layouts/slots)。 |
+| `AdminLayout` | Component | 应用级后台布局壳。插槽细节见 [布局插槽](/docs/web/admin-layouts/slots)。 |
 | `setupAdminLayouts` | Function | 启动阶段注入布局全局配置。 |
 | `useMenus` | Hook | 初始化和读取菜单原始数据。 |
-| `useAdminMenus` | Hook | 读取当前布局菜单视图和菜单交互方法。详见 [状态与页签](/docs/packages/web/admin-layouts/state-tabs)。 |
-| `useAdminState` | Hook | 读取和修改布局运行时状态。详见 [状态与页签](/docs/packages/web/admin-layouts/state-tabs)。 |
-| `useAdminTab` | Hook | 读取和操作路由页签。详见 [状态与页签](/docs/packages/web/admin-layouts/state-tabs)。 |
-| `useAdminMenuBadges` | Hook | 读取和更新菜单 badge 动态值。详见 [状态与页签](/docs/packages/web/admin-layouts/state-tabs)。 |
+| `useAdminMenus` | Hook | 读取当前布局菜单视图和菜单交互方法。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
+| `useAdminState` | Hook | 读取和修改布局运行时状态。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
+| `useAdminTab` | Hook | 读取和操作路由页签。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
+| `useAdminMenuBadges` | Hook | 读取和更新菜单 badge 动态值。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
 | `setMenuBadgeValue` | Function | 非组件环境更新单个 badge 动态值。 |
 | `setMenuBadgeValues` | Function | 非组件环境批量更新 badge 动态值。 |
 | `clearMenuBadgeValues` | Function | 清理全部或部分 badge 动态值。 |
@@ -72,7 +72,7 @@ import type { AdminLayoutProps, AdminLayoutsOptions } from '@skyroc/web-admin-la
 - `ThemeDrawer`、`AdminEffect` 和 tab effect。
 - `useSettingsTheme`、`useAdminState`、`useAdminMenus` 计算出的布局状态。
 
-`AdminLayout` 的详细插槽说明见 [布局插槽](/docs/packages/web/admin-layouts/slots)，这里不重复展开。
+`AdminLayout` 的详细插槽说明见 [布局插槽](/docs/web/admin-layouts/slots)，这里不重复展开。
 
 ### setupAdminLayouts
 
@@ -191,7 +191,7 @@ interface AdminLayoutSlots {
 }
 ```
 
-插槽行为见 [布局插槽](/docs/packages/web/admin-layouts/slots)。
+插槽行为见 [布局插槽](/docs/web/admin-layouts/slots)。
 
 ## 菜单数据 API
 
@@ -237,8 +237,8 @@ async function initAuth() {
 
 | `routeMode` | 行为 |
 | --- | --- |
-| `static` | 从 `routeTree` 的 `staticData` 生成菜单。详见 [静态路由菜单生成](/docs/packages/web/admin-layouts/static-menu-generation)。 |
-| `dynamic` | 调用 `loadDynamicRoutes`，从后端路由结构生成菜单。详见 [动态路由菜单生成](/docs/packages/web/admin-layouts/dynamic-menu-generation)。 |
+| `static` | 从 `routeTree` 的 `staticData` 生成菜单。详见 [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation)。 |
+| `dynamic` | 调用 `loadDynamicRoutes`，从后端路由结构生成菜单。详见 [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation)。 |
 
 动态模式但未配置 `loadDynamicRoutes` 时会抛错：
 
@@ -248,7 +248,7 @@ Admin layouts routeMode is dynamic, but loadDynamicRoutes is not configured.
 
 ### useAdminMenus
 
-`useAdminMenus` 已在 [状态与页签](/docs/packages/web/admin-layouts/state-tabs) 展开。它基于 `useMenus` 的原始数据，计算当前布局需要的菜单视图：
+`useAdminMenus` 已在 [状态与页签](/docs/web/admin-layouts/state-tabs) 展开。它基于 `useMenus` 的原始数据，计算当前布局需要的菜单视图：
 
 - 当前菜单分类下的 Ant Design 菜单项。
 - 一级、二级、子级菜单。

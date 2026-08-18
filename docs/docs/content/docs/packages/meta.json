@@ -1,17 +1,12 @@
 {
-  "title": "包参考",
-  "description": "31 个 @skyroc/* 包的完整 API",
+  "title": "包总览",
+  "description": "31 个包的总表与分层，以及 shared / internal",
   "icon": "Package",
   "root": true,
   "pages": [
     "index",
-    "---跨端基础---",
-    "core",
+    "---跨端---",
     "shared",
-    "hooks",
-    "form",
-    "---Web 端---",
-    "web",
     "---内部配置---",
     "internal"
   ]

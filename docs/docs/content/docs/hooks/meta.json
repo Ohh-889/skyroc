@@ -1,0 +1,20 @@
+{
+  "title": "跨端 Hooks",
+  "description": "@skyroc/hooks：主入口 RN 安全，./web 子入口提供浏览器专用 hooks",
+  "icon": "Webhook",
+  "root": true,
+  "pages": [
+    "index",
+    "---状态引擎---",
+    "store",
+    "---主入口---",
+    "use-array",
+    "use-loading",
+    "use-count-down-timer",
+    "use-captcha",
+    "use-now",
+    "---./web 子入口---",
+    "use-copy",
+    "use-system-theme"
+  ]
+}

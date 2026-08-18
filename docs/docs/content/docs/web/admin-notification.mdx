@@ -10,7 +10,7 @@ description: "站内通知中心：不依赖 React 的通知仓库、Provider、
 | 包名 | `@skyroc/web-admin-notification` |
 | 目录 | `packages/web/admin-notification` |
 | 版本 | 0.1.0 |
-| 依赖 | [`@skyroc/utils`](/docs/packages/core/utils/overview)、[`@skyroc/web-ui-antd`](/docs/packages/web/ui)、[`@skyroc/web-ui-compose`](/docs/packages/web/ui)、`clsx`、`dayjs` |
+| 依赖 | [`@skyroc/utils`](/docs/core/utils/overview)、[`@skyroc/web-ui-antd`](/docs/web/ui)、[`@skyroc/web-ui-compose`](/docs/web/ui)、`clsx`、`dayjs` |
 | peer | `antd`、`i18next`、`react`、`react-dom`、`react-i18next` |
 | 子入口 | `.`、`./mock` |
 
@@ -45,7 +45,7 @@ import { NotificationButton } from '@skyroc/web-admin-notification';
 
 按钮自带未读 Badge（超过 99 显示 `99+`），点击弹出 `NotificationPanel`。不传 `onViewAll` 时面板底部的"查看全部"入口会隐藏。
 
-在 Admin 中它作为 [`AdminLayout`](/docs/packages/web/admin-layouts/slots) 的 `headerMiddleActions` 插槽传入：
+在 Admin 中它作为 [`AdminLayout`](/docs/web/admin-layouts/slots) 的 `headerMiddleActions` 插槽传入：
 
 ```tsx
 <WebAdminLayout headerMiddleActions={<NotificationButton className="px-12px" />} />
@@ -118,7 +118,7 @@ interface NotificationItem {
 
 ## 排序规则
 
-队列基于 [`PriorityQueue`](/docs/packages/core/utils/priority-queue)，排序三级：**优先级** → **时间倒序** → **入队序号倒序**。
+队列基于 [`PriorityQueue`](/docs/core/utils/priority-queue)，排序三级：**优先级** → **时间倒序** → **入队序号倒序**。
 
 优先级权重 `urgent(0) < high(1) < normal(2) < low(3)`，越小越靠前；没标优先级的按 `normal` 算。已读与否**不参与排序**——否则点一下已读整个列表会跳动。
 
@@ -264,4 +264,4 @@ src/
 
 - [Admin 通知功能](/docs/admin/features/notification) —— 在 Admin 里的完整接入与页面
 - [通知 API 速查](/docs/admin/features/notification-api)
-- [布局插槽](/docs/packages/web/admin-layouts/slots) —— 铃铛按钮挂在哪个插槽
+- [布局插槽](/docs/web/admin-layouts/slots) —— 铃铛按钮挂在哪个插槽

@@ -1,10 +1,20 @@
 ---
-title: 包参考
+title: 包总览
 description: 31 个包的用途、分层与依赖关系
 icon: Package
 ---
 
-仓库把后台系统里反复出现的能力拆成了 **31 个包**。这一栏是它们的完整 API 参考。
+仓库把后台系统里反复出现的能力拆成了 **31 个包**。这一页是它们的全局视图：总表、分层、依赖关系与命名规则。
+
+API 参考按平台分成三处，下面的总表每一行都直接指过去：
+
+| 去哪 | 内容 |
+| --- | --- |
+| [跨端核心](/docs/core) | `packages/@core/*` 九个包：工具函数、请求、状态、调度、色彩、日志 |
+| [跨端 Hooks](/docs/hooks) | `packages/hooks`：Store 基类与七个 React hooks |
+| [表单原语](/docs/form) | `packages/primitives/filed-form`：类型安全表单 |
+| [Web 端包](/docs/web) | `packages/web/*` 十四个包：设计系统、主题、布局、运行时、构建 |
+| 本栏 | `shared/*` 纯类型包与 `internal/*` 配置预设 |
 
 想知道这些能力**在应用里怎么装配**，去 [Admin 应用](/docs/admin)；想理解**为什么这么拆**，去 [包分层与依赖方向](/docs/guide/architecture/package-layering)。
 
@@ -51,15 +61,15 @@ icon: Package
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/types`](/docs/packages/core/types) | `@core/types` | 全局类型声明，挂 `Api` / `Router` / `I18n` / `App` 命名空间 | — |
-| [`@skyroc/utils`](/docs/packages/core/utils/overview) | `@core/utils` | 跨端工具函数，含 `./web`、`./path`、`./cn`、`./crypto` 子入口 | `type-utils` |
-| [`@skyroc/color`](/docs/packages/core/color) | `@core/color` | 颜色处理与调色板，基于 colord / culori，OKLCH + antd 色板 | — |
-| [`@skyroc/axios`](/docs/packages/core/axios) | `@core/axios` | 类型安全 HTTP 客户端：重试、转换管线、取消、可插拔后端响应处理 | `utils` |
-| [`@skyroc/service`](/docs/packages/core/service) | `@core/service` | 平台无关的请求 & 查询基础设施，适配器模式 | `axios` |
-| [`@skyroc/core-state`](/docs/packages/core/state) | `@core/state` | Jotai 状态封装，跨端 | — |
-| [`@skyroc/logger`](/docs/packages/core/logger) | `@core/logger` | 基于 LogLayer 的跨端日志（Web / RN / 小程序） | — |
-| [`@skyroc/scheduler`](/docs/packages/core/scheduler) | `@core/scheduler` | 协作式任务调度：统一初始化、周期任务、监听器管理 | — |
-| [`@skyroc/scripts`](/docs/packages/core/scripts) | `@core/scripts` | CLI `sa`：changelog、release、git-commit、cleanup | — |
+| [`@skyroc/types`](/docs/core/types) | `@core/types` | 全局类型声明，挂 `Api` / `Router` / `I18n` / `App` 命名空间 | — |
+| [`@skyroc/utils`](/docs/core/utils/overview) | `@core/utils` | 跨端工具函数，含 `./web`、`./path`、`./cn`、`./crypto` 子入口 | `type-utils` |
+| [`@skyroc/color`](/docs/core/color) | `@core/color` | 颜色处理与调色板，基于 colord / culori，OKLCH + antd 色板 | — |
+| [`@skyroc/axios`](/docs/core/axios) | `@core/axios` | 类型安全 HTTP 客户端：重试、转换管线、取消、可插拔后端响应处理 | `utils` |
+| [`@skyroc/service`](/docs/core/service) | `@core/service` | 平台无关的请求 & 查询基础设施，适配器模式 | `axios` |
+| [`@skyroc/core-state`](/docs/core/state) | `@core/state` | Jotai 状态封装，跨端 | — |
+| [`@skyroc/logger`](/docs/core/logger) | `@core/logger` | 基于 LogLayer 的跨端日志（Web / RN / 小程序） | — |
+| [`@skyroc/scheduler`](/docs/core/scheduler) | `@core/scheduler` | 协作式任务调度：统一初始化、周期任务、监听器管理 | — |
+| [`@skyroc/scripts`](/docs/core/scripts) | `@core/scripts` | CLI `sa`：changelog、release、git-commit、cleanup | — |
 
 ### packages/shared —— 类型层（2）
 
@@ -72,8 +82,8 @@ icon: Package
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/hooks`](/docs/packages/hooks) | `hooks` | 跨端 React hooks，浏览器能力隔离在 `./web` 子入口 | — |
-| [`@skyroc/form`](/docs/packages/form) | `primitives/filed-form` | 类型安全表单原语，字段级订阅 | `type-utils`、`utils` |
+| [`@skyroc/hooks`](/docs/hooks) | `hooks` | 跨端 React hooks，浏览器能力隔离在 `./web` 子入口 | — |
+| [`@skyroc/form`](/docs/form) | `primitives/filed-form` | 类型安全表单原语，字段级订阅 | `type-utils`、`utils` |
 
 ### packages/web —— Web 平台（14）
 
@@ -81,42 +91,42 @@ icon: Package
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/web-ui`](/docs/packages/web/ui) | `web/ui/shadcn` | Radix + Tailwind 组件库，50+ 组件，preset / primitives 双层 API | `color`、`ui-types`、`utils`、`form`、`tailwind-plugin` |
-| [`@skyroc/web-ui-compose`](/docs/packages/web/ui) | `web/ui/compose` | 无状态复合组件 + `useTable` 系列表格能力 | `color`、`utils` |
-| [`@skyroc/web-ui-antd`](/docs/packages/web/ui) | `web/ui/antd` | Ant Design 复合业务组件 | `web-ui-compose` |
+| [`@skyroc/web-ui`](/docs/web/ui) | `web/ui/shadcn` | Radix + Tailwind 组件库，50+ 组件，preset / primitives 双层 API | `color`、`ui-types`、`utils`、`form`、`tailwind-plugin` |
+| [`@skyroc/web-ui-compose`](/docs/web/ui) | `web/ui/compose` | 无状态复合组件 + `useTable` 系列表格能力 | `color`、`utils` |
+| [`@skyroc/web-ui-antd`](/docs/web/ui) | `web/ui/antd` | Ant Design 复合业务组件 | `web-ui-compose` |
 
 **主题**
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) | `web/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板 | `color` |
-| [`@skyroc/adapter-antd-theme`](/docs/packages/web/theme/antd-theme) | `web/antd-theme` | antd 主题算法适配，OKLCH 色彩空间 | `color` |
-| [`@skyroc/web-admin-theme`](/docs/packages/web/theme/admin-theme) | `web/admin-theme` | 应用级主题：配置、预设、hooks、CSS 变量、暗色模式 | `adapter-antd-theme`、`color`、`hooks`、`utils`、`web-ui-antd`、`web-ui-compose` |
+| [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) | `web/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板 | `color` |
+| [`@skyroc/adapter-antd-theme`](/docs/web/theme/antd-theme) | `web/antd-theme` | antd 主题算法适配，OKLCH 色彩空间 | `color` |
+| [`@skyroc/web-admin-theme`](/docs/web/theme/admin-theme) | `web/admin-theme` | 应用级主题：配置、预设、hooks、CSS 变量、暗色模式 | `adapter-antd-theme`、`color`、`hooks`、`utils`、`web-ui-antd`、`web-ui-compose` |
 
 **布局与样式**
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/materials`](/docs/packages/web/materials) | `web/materials` | 插槽式 `AdminLayout` 与多风格 `PageTab` | `color`、`utils`、`web-ui` |
-| [`@skyroc/web-admin-layouts`](/docs/packages/web/admin-layouts/overview) | `web/admin-layouts` | 完整后台壳：菜单、权限、tabs、布局状态、主题抽屉 | 10 个，见下 |
-| [`@skyroc/web-admin-styles`](/docs/packages/web/admin-styles) | `web/admin-styles` | 全局 CSS 资产（`global.css`） | — |
+| [`@skyroc/materials`](/docs/web/materials) | `web/materials` | 插槽式 `AdminLayout` 与多风格 `PageTab` | `color`、`utils`、`web-ui` |
+| [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts/overview) | `web/admin-layouts` | 完整后台壳：菜单、权限、tabs、布局状态、主题抽屉 | 10 个，见下 |
+| [`@skyroc/web-admin-styles`](/docs/web/admin-styles) | `web/admin-styles` | 全局 CSS 资产（`global.css`） | — |
 
 **运行时**
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/web-admin-runtime`](/docs/packages/web/admin-runtime) | `web/admin-runtime` | 启动期插件 helper：Dayjs、Iconify、NProgress、更新检测 | `scheduler` |
-| [`@skyroc/web-admin-i18n`](/docs/packages/web/admin-i18n) | `web/admin-i18n` | 后台 i18n 运行时与语言切换 UI，语言 JSON 也在这里 | `core-state`、`web-ui-antd` |
-| [`@skyroc/web-admin-notification`](/docs/packages/web/admin-notification) | `web/admin-notification` | 通知 Provider、hooks、通知面板、header action | `utils`、`web-ui-antd`、`web-ui-compose` |
-| [`@skyroc/web-admin-devtools`](/docs/packages/web/admin-devtools) | `web/admin-devtools` | 仅开发环境的调试面板 | — |
+| [`@skyroc/web-admin-runtime`](/docs/web/admin-runtime) | `web/admin-runtime` | 启动期插件 helper：Dayjs、Iconify、NProgress、更新检测 | `scheduler` |
+| [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n) | `web/admin-i18n` | 后台 i18n 运行时与语言切换 UI，语言 JSON 也在这里 | `core-state`、`web-ui-antd` |
+| [`@skyroc/web-admin-notification`](/docs/web/admin-notification) | `web/admin-notification` | 通知 Provider、hooks、通知面板、header action | `utils`、`web-ui-antd`、`web-ui-compose` |
+| [`@skyroc/web-admin-devtools`](/docs/web/admin-devtools) | `web/admin-devtools` | 仅开发环境的调试面板 | — |
 
 **构建**
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/web-admin-vite`](/docs/packages/web/admin-vite) | `web/admin-vite` | Vite 配置预设与插件集合，`defineConfig` 出口 | — |
+| [`@skyroc/web-admin-vite`](/docs/web/admin-vite) | `web/admin-vite` | Vite 配置预设与插件集合，`defineConfig` 出口 | — |
 
-三个 `ui/*` 包的组件文档、实时 Demo 和 Props 表在独立的 Web UI 站点，主站只保留 [一页指路](/docs/packages/web/ui)。
+三个 `ui/*` 包的组件文档、实时 Demo 和 Props 表在独立的 Web UI 站点，主站只保留 [一页指路](/docs/web/ui)。
 
 ### packages/native —— Native 平台（1）
 

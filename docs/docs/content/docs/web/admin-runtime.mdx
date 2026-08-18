@@ -126,7 +126,7 @@ setupApp();
 
 `setupI18n()` 仍然单独保留。它是异步初始化，并且通常要在 React render 前完成。语言切换后的第三方同步由宿主应用的 `LangEffect.onLocaleChange` 承接，runtime 包不应该把这个时序吞进一个看似通用的 helper。
 
-更完整的多语言接入、资源维护和语言副作用说明见 [`@skyroc/web-admin-i18n`](/docs/packages/web/admin-i18n)。
+更完整的多语言接入、资源维护和语言副作用说明见 [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n)。
 
 ## 聚合 API
 
@@ -579,17 +579,17 @@ pnpm --filter skyroc-admin typecheck
 pnpm --filter skyroc-admin build:test
 ```
 
-修改 `docs/web-kit-docs` 文档后，建议执行：
+修改 `docs/docs` 文档后，建议执行：
 
 ```bash
-pnpm --dir docs/web-kit-docs types:check
-pnpm --dir docs/web-kit-docs build
+pnpm --dir docs/docs types:check
+pnpm --dir docs/docs build
 ```
 
 如果只改文案，也可以先做更轻量的检查：
 
 ```bash
-pnpm exec oxfmt --check docs/web-kit-docs/content/docs/admin-runtime.mdx docs/web-kit-docs/content/docs/meta.json
+pnpm exec oxfmt --check docs/docs/content/docs/web/admin-runtime.mdx docs/docs/content/docs/web/meta.json
 ```
 
 ## 常见问题

@@ -1,0 +1,62 @@
+---
+title: form-core
+description: 框架无关的状态引擎：FormStore、ChangeTag、Middleware 与 resolver
+---
+
+`form-core/` 不依赖 React，是整个包的状态引擎；`react/` 只负责把它桥接到 React。
+
+## FormStore
+
+`createStore.ts` 里的状态引擎，职责：
+
+- 字段注册与注销
+- 值与 meta（touched / dirty / validating）
+- 校验调度
+- 数组操作
+- submit 生命周期
+
+## ChangeTag
+
+`event.ts` 把「值 / 校验状态 / 数组结构」变化标记为 bitmask 的不同位，订阅时按位匹配。这是精确订阅的底层机制，用法侧见 [精确订阅](/docs/form/subscription)。
+
+相关文件还有 `event-value.ts` 与 `flag-set.ts`。
+
+## Middleware
+
+`middleware.ts` 提供 Action 拦截管道。所有状态变更都以 Action 形式经过管道，中间件可以观察、改写或拦截。
+
+```ts
+const logger: Middleware = (action, next, store) => {
+  console.log('[form]', action.type, action.payload);
+  return next(action);
+};
+
+useForm({ middlewares: [logger] });
+```
+
+`Action` 类型从主入口导出。
+
+schema resolver 本身就是一个中间件——[校验](/docs/form/validation) 不是特例逻辑，而是走同一条管道。[`useUndoRedo`](/docs/form/hooks) 的历史记录同理。
+
+## resolver
+
+| 文件 | 作用 |
+| --- | --- |
+| `resolver/standard.ts` | 适配 `StandardSchemaV1`（Zod / Yup / Valibot / ArkType） |
+| `resolver/resolver.ts` | 自定义 schema 接入 |
+| `resolver/utils.ts` | 路径与错误结构转换 |
+
+## React 层怎么接
+
+| React 层 | 做什么 |
+| --- | --- |
+| `Form` | 创建 store，通过 context 向下传 |
+| `Field` | `useSyncExternalStore` 订阅自己那条路径 |
+| 各 hook | 包装 store 方法，提供 React 友好的 API |
+| `FieldContext.ts` | `FormInstance` 的实现与类型核心 |
+
+## 能不能脱离 React 用
+
+理论上可以（React Native、Solid 等），但**当前 `./react` 是唯一公开子入口**，form-core 没有单独发布入口。要复用得直接从源码路径引，不在公开 API 承诺范围内。
+
+分层动机见 [包分层与依赖方向](/docs/guide/architecture/package-layering)。
