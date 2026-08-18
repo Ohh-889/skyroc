@@ -64,16 +64,16 @@ content/docs/
 │   │       overview / array / crypto / date / emitter / path / priority-queue /
 │   │       query / reg / singleflight / storage / subject / utils / web
 │   │
-│   ├── web/               21 篇
-│   │   overview                    ← project-docs/web/overview.mdx（降级为目录页）
+│   ├── web/               21 篇    ✅ 已执行
+│   │   index                       新写目录页（与 core 一致用 index.mdx，非 overview）
 │   │   admin-vite / admin-runtime / admin-i18n / materials / tailwind-plugin
 │   │                               ← web-kit-docs/*.mdx（唯一事实源）
 │   │   admin-layouts/      8 篇    ← web-kit-docs/admin-layouts/*
 │   │       overview / quick-start / menus / static-menu-generation /
 │   │       dynamic-menu-generation / slots / state-tabs / api
-│   │   theme/              3 篇    ← web-kit-docs/theme/*（overview / admin-theme / antd-theme）
+│   │   theme/              3 篇    ← web-kit-docs/theme/*（overview / antd-theme / admin-theme）
 │   │   admin-devtools / admin-notification / admin-styles
-│   │                               ← project-docs/web/*.mdx（web-kit 无，唯一版本，建议补详）
+│   │                               ← project-docs/web/*.mdx，已对着源码重写补详
 │   │   ui.mdx                      新写：一页指路，跳 ui.skyroc.xxx
 │   │                               取代 ui-shadcn / ui-antd / ui-compose 三篇
 │   │
@@ -117,6 +117,34 @@ content/docs/
 
 `admin/meta.json` 用 `LayoutDashboard`，`packages/meta.json` 用 `Package`（`lucideIconsPlugin()` 已在 `lib/source.ts` 启用）。
 
+### 侧边栏排序规则
+
+`pages` 数组一律**手写**，不用文件名字母序。两条规则：
+
+1. **目录页永远第一**：`index`（root 与包目录）或 `overview`（子目录）打头。
+2. **其余按依赖方向从上到下**：先应用直接消费的，再往底层走；`packages/*` 的分组名与 `packages/index.mdx` 里的分组表保持一致，读者在两处看到的顺序相同。
+
+`packages/web/meta.json` 是这条规则的样板（分组名与 `packages/index.mdx` 的「设计系统 / 主题 / 布局与样式 / 运行时 / 构建」逐字对应）：
+
+```json
+{
+  "title": "Web 端包",
+  "description": "packages/web 下 14 个 Web 平台包：设计系统、主题、布局、运行时与构建",
+  "pages": [
+    "index",
+    "---设计系统---", "ui",
+    "---主题---", "tailwind-plugin", "theme",
+    "---布局与样式---", "materials", "admin-layouts", "admin-styles",
+    "---运行时---", "admin-runtime", "admin-i18n", "admin-notification", "admin-devtools",
+    "---构建---", "admin-vite"
+  ]
+}
+```
+
+`theme/` 与 `admin-layouts/` 两个子目录同理：前者按算法层 → React 层排（`overview` / `antd-theme` / `admin-theme`），后者按接入路径排（概览 → 快速接入 → 菜单三篇 → 插槽 → 状态与页签 → API）。
+
+`packages/core/meta.json` 的 `title` 仍是脚手架遗留的 `Core Docs`，待与其它 root 一起改成中文名。
+
 ## 二、重复内容的取舍（每个主题只留一个事实源）
 
 `project-docs/core/*` 与 `core-docs/*`、`project-docs/web/*` 与 `web-kit-docs/*` 是同题两写，行数差距悬殊，一律**保留详细版，短版降级为目录页或删除**：
@@ -139,7 +167,17 @@ content/docs/
 | antd-theme      | 106 行             | 477 行                         | 删短版，用详版                             |
 | admin-layouts   | 193 行（1 篇）     | 8 篇 / 1640 行                 | 短版删除，用详版目录                       |
 
-**只有短版、没有详版的 5 篇**（`core/logger`、`core/types`、`web/admin-devtools`、`web/admin-notification`、`web/admin-styles`）直接搬过来，标记为"待补详"。
+**只有短版、没有详版的 5 篇**（`core/logger`、`core/types`、`web/admin-devtools`、`web/admin-notification`、`web/admin-styles`）搬过来后对着源码重写。
+
+`web/` 这三篇搬过来时发现短版已经落后于代码，已按源码修正：
+
+| 页面 | 落后点 |
+| --- | --- |
+| `web/admin-devtools` | 缺 `AdminDevtoolsConfig.enabled`；`jotai` 实为 `boolean \| AdminJotaiDevtoolsConfig`（旧文档写成 `\| false`）；`theme` 在根配置而非 `jotai` 内；`triggerOffset` 值是 `number \| string`，补上四个 CSS 变量与默认值判定表 |
+| `web/admin-notification` | 整个通知模型写错（`description`/`time`/`data` 实为 `content`/`timestamp`/`meta`，`type` 五种、`priority` 四档）；漏掉 `NotificationStore` 与 `DEFAULT_NOTIFICATION_CONFIG` 两个导出、五个语义快捷方法、优先级排序规则、免打扰、浏览器原生通知与 React 树外投递；依赖表写了并不存在的 `nanoid` |
+| `web/admin-styles` | `global.css` 自己 `@import` 了另外两个文件，旧文档教人三个都引；各文件作用描述过泛，已按实际 CSS 补细节 |
+
+`web/admin-vite` 是详版，配置面写得完整，但没有公共导出速查，已补一节 `## 公共导出`（`defineConfig` 之外的 9 个 helper 与 8 个插件工厂）。其余 web-kit-docs 迁过来的详版逐个核对过导出符号，与源码一致。
 
 ### guide 内部的去重（已执行）
 
@@ -238,7 +276,7 @@ project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 1. 定 `content/docs/meta.json` 与 URL 方案，`docs/docs` 先跑起来（不动正文）
 2. 修 `lib/shared.ts` 的 branch、删 `test.mdx`、重写 `index.mdx`、挪走 `app/(home)/1.md`
 3. 搬 `admin-docs` 整站 → `content/docs/admin/`（同时修掉 admin-app 死链）
-4. 搬 `core-docs` → `packages/core/`，`web-kit-docs` → `packages/web/`
+4. 搬 `core-docs` → `packages/core/`，`web-kit-docs` → `packages/web/`（✅ 已完成，`web/` 21 篇齐；`web-kit-docs` 站壳待第 8 步统一删）
 5. 搬 `project-docs` 的 getting-started / architecture / engineering / shared / internal，逐篇按第二节表格取舍重复页
 6. 配 `next.config.mjs` 重定向 + 六站统一顶部导航 + 页脚"相关内容"
 7. 首页 `app/(home)/modules/*` 换成真实链接
