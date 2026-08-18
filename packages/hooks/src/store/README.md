@@ -26,6 +26,8 @@ Store<S> 基类（纯逻辑）  +  useStore hook（React 桥接）
 | `subscribe`               | `public`    | 订阅状态变化，返回取消函数                      |
 | `getSnapshot`             | `public`    | 获取当前状态快照                                |
 | `setState(nextOrUpdater)` | `protected` | 统一状态更新入口，支持直接传值或 updater 函数   |
+| `patchState(patch)`       | `protected` | 局部更新（仅对象状态），自动与当前状态合并      |
+| `clearListeners()`        | `protected` | 清空所有订阅者，一次性实例 destroy 时用         |
 
 ### `useStore(store, selector?)` — Hook
 
