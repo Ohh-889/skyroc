@@ -1,0 +1,62 @@
+---
+title: 内部配置包总览
+description: internal/ 下的 tsconfig / config / uno-config 三个不发布的工程化配置包
+---
+
+## 定位
+
+`internal/` 目录存放**不对外发布**的工程化配置包。它们被仓库内部多个 workspace 共享，避免 tsconfig / eslint / uno 等配置在每个包里重复维护：
+
+```text
+internal/
+├── tsconfig/       # @skyroc/tsconfig    共享 TS 编译预设
+├── config/         # @skyroc/config      共享 vitest + oxlint 预设
+└── uno-config/     # @sa/uno-config      UnoCSS 预设
+```
+
+## 三个包速览
+
+| 目录 | 包名 | 内容 | private |
+| --- | --- | --- | --- |
+| `tsconfig` | `@skyroc/tsconfig` | 7 个 `*.json` TS 预设 | ✅ |
+| `config` | `@skyroc/config` | Oxlint JSON 预设 + Vitest TS 预设 | ✅ |
+| `uno-config` | `@sa/uno-config` | UnoCSS `presetSoybeanAdmin()` | ❌（可发布） |
+
+> 注意 `@sa/uno-config` 用的是 `@sa` 而不是 `@skyroc`——这是历史遗留命名，已记录在 [命名规范](/docs/architecture/naming) 中。
+
+## 为什么单独成包
+
+| 收益 | 说明 |
+| --- | --- |
+| **单点维护** | 升级 React 版本、改 vitest 默认环境，只改一处 |
+| **新建包零样板** | 新包只需 extends 预设即可拿到完整配置 |
+| **跨平台预设** | tsconfig 提供 web / node / react-native / 应用 / 库 五种基线 |
+| **强约束** | 通过预设强制全仓库行为一致（如 verbatimModuleSyntax） |
+
+## 加载方式
+
+| 包 | 引用方式 |
+| --- | --- |
+| `@skyroc/tsconfig` | `"extends": "@skyroc/tsconfig/web-app.json"` |
+| `@skyroc/config/oxlint/*` | `"extends": ["@skyroc/config/oxlint/react.json"]` |
+| `@skyroc/config/vitest` | `import { baseTestConfig } from '@skyroc/config/vitest'` |
+| `@sa/uno-config` | `import { presetSoybeanAdmin } from '@sa/uno-config'` |
+
+## 与 engineering 文档的关系
+
+| 主题 | 对应文档 |
+| --- | --- |
+| Oxlint 规则细节 | [Lint 与格式化](/docs/engineering/lint-and-format) |
+| Vitest 用法 | [测试](/docs/engineering/test) |
+| TypeScript 策略 | [TypeScript 配置](/docs/engineering/typescript) |
+| UnoCSS / Tailwind 选型 | [Tailwind 与 UnoCSS](/docs/web/tailwind-plugin)、本目录 |
+
+本目录主要描述**包本身**——extends 哪个 JSON、提供哪些常量、如何被消费；规则细节、规范说明放在 engineering 目录。
+
+## 推荐阅读
+
+<Cards>
+  <Card title="@skyroc/tsconfig" href="/docs/internal/tsconfig" description="7 个 TS 编译预设（web / node / RN / app / library）" />
+  <Card title="@skyroc/config" href="/docs/internal/config" description="Oxlint 预设 + Vitest 共享配置" />
+  <Card title="@sa/uno-config" href="/docs/internal/uno-config" description="UnoCSS presetSoybeanAdmin" />
+</Cards>

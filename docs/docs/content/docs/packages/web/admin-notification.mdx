@@ -1,0 +1,130 @@
+---
+title: "@skyroc/web-admin-notification"
+description: 站内通知中心：Provider + Header 按钮 + 通知面板
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-notification` |
+| 目录 | `packages/web/admin-notification` |
+| 版本 | 0.1.0 |
+| 依赖 | [`@skyroc/web-ui-antd`](/docs/web/ui-antd)、[`@skyroc/web-ui-compose`](/docs/web/ui-compose)、`clsx`、`dayjs`、`nanoid` |
+| peer | antd、i18next、react、react-dom、react-i18next |
+| 子入口 | `.`、`./mock` |
+| 测试 | ❌ |
+
+站内通知中心的开箱组件：在 Header 放一个铃铛按钮（`NotificationButton`），点击展开通知面板（`NotificationPanel`），通过 `NotificationProvider` 提供上下文。
+
+## 用法
+
+### 1. 装配 Provider
+
+```tsx
+import { NotificationProvider } from '@skyroc/web-admin-notification';
+import soundUrl from '@/assets/audio/wechat-style-notification.wav';
+
+<NotificationProvider soundUrl={soundUrl}>
+  <App />
+</NotificationProvider>;
+```
+
+`soundUrl` 是新通知到达时播放的提示音（可选）。
+
+### 2. Header 上放按钮
+
+```tsx
+import { NotificationButton } from '@skyroc/web-admin-notification';
+
+<NotificationButton />;
+```
+
+按钮自动显示未读数 Badge，点击弹出 `NotificationPanel`。
+
+### 3. 推送通知
+
+```ts
+import { useNotification } from '@skyroc/web-admin-notification';
+
+const { addNotification, markAsRead, markAllRead, clear } = useNotification();
+
+addNotification({
+  type: 'message',           // message | reminder | system
+  title: '新订单',
+  description: '订单 #123 已下单',
+  priority: 'high'
+});
+```
+
+## 主入口导出
+
+| 类别 | 符号 |
+| --- | --- |
+| 组件 | `NotificationProvider`、`NotificationButton`、`NotificationPanel` |
+| Context | `NotificationContext`、`useNotificationContext` |
+| Hook | `useNotification` |
+| Config | `DEFAULT_NOTIFICATION_CONFIG` |
+| 类型 | `NotificationButtonProps`、`NotificationPanelProps`、`NotificationProviderProps`、`NotificationContextValue` + 全部 `types` |
+
+## 子入口 `./mock`
+
+提供示例数据，方便本地调试 / Storybook：
+
+```ts
+import { useMockNotifications, mockNotifications } from '@skyroc/web-admin-notification/mock';
+
+useMockNotifications();          // 启动后注入示例通知
+```
+
+## 通知模型
+
+```ts
+interface Notification {
+  id: string;
+  type: 'message' | 'reminder' | 'system';
+  title: string;
+  description?: string;
+  priority?: 'low' | 'normal' | 'high';
+  time: number;                  // 时间戳
+  read: boolean;
+  data?: unknown;                // 业务自定义
+}
+```
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── mock.ts                    # 子入口
+├── NotificationProvider.tsx
+├── NotificationContext.ts
+├── NotificationButton.tsx
+├── NotificationPanel.tsx
+├── use-notification.ts
+├── useNotificationContext.ts
+├── types.ts
+└── notification.css
+```
+
+## 设计要点
+
+- **本地状态**：当前实现是纯内存 + Context，不绑定后端推送方式；
+- **推送接入**：业务可在 `NotificationProvider` 外层挂 WebSocket / SSE / 轮询，调用 `addNotification` 注入；
+- **去重**：通过 nanoid 生成 id，业务可传自定义 id 避免重复；
+- **音效**：`soundUrl` 在新通知到达时播放（用户首次交互后才可播放，受浏览器策略限制）。
+
+## 在 apps/admin 的位置
+
+```tsx
+// App.tsx
+<NotificationProvider soundUrl={wechatStyleNotification}>
+  <LazyAnimate>
+    <RouterProvider />
+    <GlobalEffect />
+  </LazyAnimate>
+</NotificationProvider>
+```
+
+`NotificationButton` 通常由 [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts) 的 Header 渲染（或业务自行放入）。

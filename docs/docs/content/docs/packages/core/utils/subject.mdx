@@ -1,0 +1,187 @@
+---
+title: "createSubject"
+description: "轻量 RxJS Subject 实现，用于多播值推送与模块间单向数据流"
+---
+
+## 概述
+
+`createSubject` 创建一个 **Subject**。Subject 既是生产者（可以 `next` 推送值），也是消费者（可以被 `subscribe` 订阅），实现了简化版的 [RxJS Subject](https://rxjs.dev/guide/subject) 语义。
+
+与 `Emitter` 的核心区别：
+
+| | `Emitter` | `createSubject` |
+| --- | --- | --- |
+| 承载内容 | 多种具名事件 | 单一类型的值流 |
+| 适合场景 | 跨模块事件广播 | 单向数据流、状态推送 |
+| 订阅方式 | `on(eventName, fn)` | `subscribe(fn)` 或 `subscribe({ next })` |
+| 生命周期 | 手动 offAll | `complete()` 关闭并清理 |
+
+## 快速上手
+
+```ts
+import { createSubject } from '@skyroc/utils';
+
+const subject = createSubject<string>();
+
+// 订阅：传函数
+const sub1 = subject.subscribe(value => {
+  console.log('订阅者 1:', value);
+});
+
+// 订阅：传 Observer 对象
+const sub2 = subject.subscribe({
+  next: value => console.log('订阅者 2:', value),
+});
+
+subject.next('hello');
+// 订阅者 1: hello
+// 订阅者 2: hello
+
+// 取消单个订阅
+sub1.unsubscribe();
+
+subject.next('world');
+// 订阅者 2: world
+
+// 关闭 Subject（清理所有订阅者，之后无法再订阅）
+subject.complete();
+```
+
+## API
+
+### `createSubject<T>()`
+
+工厂函数，返回一个 `Subject<T>` 实例。
+
+```ts
+const subject = createSubject<number>();
+```
+
+---
+
+### `subject.next(value)`
+
+向所有当前活跃的订阅者推送一个值。
+
+- 推送前会对订阅者列表做**快照**，避免在迭代期间新增 / 删除订阅者引发问题
+- 单个订阅者抛出的错误会被捕获并 `console.error`，不会中断其他订阅者的执行
+- Subject 已 `complete` 或没有订阅者时为 no-op
+
+```ts
+subject.next(42);
+```
+
+---
+
+### `subject.subscribe(obsOrFn)`
+
+注册订阅者，返回 `Teardown`（含 `unsubscribe` 方法）。
+
+```ts
+// 函数形式
+const teardown = subject.subscribe(v => console.log(v));
+
+// Observer 对象形式
+const teardown = subject.subscribe({ next: v => console.log(v) });
+
+// 取消订阅
+teardown.unsubscribe();
+```
+
+Subject 已 `complete` 后调用 `subscribe` 会立即返回一个空的 teardown，不会注册任何订阅者。
+
+---
+
+### `subject.unsubscribe()`
+
+移除**所有**订阅者，但不关闭 Subject（之后还可以继续 subscribe）。
+
+```ts
+subject.unsubscribe(); // 清空，但 subject 仍可继续使用
+```
+
+---
+
+### `subject.complete()`
+
+关闭 Subject：移除所有订阅者，并将 `closed` 标记置为 `true`。关闭后：
+
+- `next()` 调用无效
+- `subscribe()` 返回空 teardown
+
+```ts
+subject.complete();
+console.log(subject.closed); // true
+```
+
+---
+
+### `subject.hasObservers()`
+
+返回当前是否存在活跃订阅者。
+
+```ts
+subject.hasObservers(); // false（无订阅者）
+subject.subscribe(v => {});
+subject.hasObservers(); // true
+```
+
+---
+
+### `subject.closed`（只读）
+
+`true` 表示 Subject 已被 `complete()` 关闭。
+
+---
+
+### `subject.size`（只读）
+
+当前活跃订阅者数量。
+
+```ts
+console.log(subject.size); // 0 / 1 / 2 ...
+```
+
+## 在 React 中使用
+
+Subject 适合在模块边界传递单向数据流，例如从服务层向组件层推送通知：
+
+```ts
+// notificationService.ts
+import { createSubject } from '@skyroc/utils';
+
+export type Notification = { id: string; message: string };
+
+// 单例 subject，跨模块共享
+export const notification$ = createSubject<Notification>();
+
+// 服务层推送
+export function pushNotification(msg: Notification) {
+  notification$.next(msg);
+}
+```
+
+```tsx
+// NotificationCenter.tsx
+import { useEffect } from 'react';
+import { notification$, type Notification } from './notificationService';
+
+const NotificationCenter = () => {
+  useEffect(() => {
+    const sub = notification$.subscribe((n: Notification) => {
+      // 更新本地 state 或触发 toast
+      console.log('收到通知:', n.message);
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
+  return null;
+};
+```
+
+## 与 Emitter 的选择建议
+
+- 需要**多个不同事件**（login、logout、resize…）→ 用 `Emitter`
+- 只需要**一条数据流**（单一类型的值不断推送）→ 用 `createSubject`
+- 需要**粘性语义**（消费者可能晚注册）→ 用 `Emitter`（Subject 不缓存历史值）

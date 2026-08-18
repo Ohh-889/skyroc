@@ -1,0 +1,360 @@
+---
+title: "@skyroc/axios"
+description: "基于 Axios 的请求客户端工厂，提供类型安全的请求实例、业务错误处理、Token 刷新、请求取消等能力"
+---
+
+## 概述
+
+`@skyroc/axios` 是一个基于 [Axios](https://axios-http.com/) 的请求客户端工厂包，采用**工厂函数 + 钩子策略**的设计模式，在原生 Axios 之上提供：
+
+- **两种请求风格**：`createRequest`（抛异常）和 `createFlatRequest`（Result 风格，不抛异常）
+- **业务错误与 HTTP 错误的统一处理**
+- **请求/响应拦截器钩子**（`onRequest`、`isBackendSuccess`、`onBackendFail`、`onError`、`transform`）
+- **自动请求 ID**（默认携带 `X-Request-Id`，可改名或用 `requestIdKey: false` 关闭）
+- **请求取消管理**（`cancelAllRequest`）
+- **可选的 axios-retry 重试机制**（`retry` 选项，默认不重试）
+- **响应类型推导**（`json`、`blob`、`text`、`arraybuffer` 等）
+- **二进制响应里的 JSON 信封自动解包**（`blob` / `arraybuffer` 下载失败时仍能读到业务错误码）
+
+## 架构
+
+```
+用户调用 request(config)
+    │
+    ▼
+┌─────────────────────────┐
+│   请求拦截器             │
+│  • 生成 X-Request-Id    │
+│  • 挂载 AbortController │
+│  • 调用 onRequest 钩子   │
+└────────────┬────────────┘
+             ▼
+      Axios 发送请求
+             │
+             ▼
+┌──────────────────────────────────┐
+│   响应拦截器（成功 / 失败两侧）    │
+│  • transformResponse（解二进制信封）│
+│  • 非 JSON 或业务成功  ──► response │
+│  • 业务失败 / HTTP 错误            │
+│    → onBackendFail（返回响应即补救）│
+│    → onError → reject             │
+└────────────┬─────────────────────┘
+             ▼
+┌─────────────────────────┐
+│ createRequest:           │
+│   JSON → transform(res) │
+│   其他 → response.data   │
+├─────────────────────────┤
+│ createFlatRequest:       │
+│   成功 → { data, error: null }  │
+│   失败 → { data: null, error }  │
+└─────────────────────────┘
+```
+
+## 推荐用法
+
+**推荐使用 `createRequest`**（抛异常风格），搭配 [TanStack Query](https://tanstack.com/query) 使用效果最佳：
+
+- `createRequest` 在失败时抛出异常，天然契合 TanStack Query 的错误捕获机制
+- TanStack Query 负责缓存、去重、自动重试、后台刷新、loading/error 状态管理
+- `createRequest` 专注于请求发送、业务校验、数据转换
+
+```ts
+// 1. 定义请求函数 —— 只关心「发请求 + 拿数据」
+export function fetchUserList(params: Api.UserListParams) {
+  return request<Api.UserList>({
+    url: '/api/users',
+    params,
+  });
+}
+
+// 2. 封装 Query Hook —— TanStack Query 接管状态
+export function useUserListQuery(params: Api.UserListParams) {
+  return useQuery({
+    queryKey: ['users', params],
+    queryFn: () => fetchUserList(params),
+  });
+}
+
+// 3. 封装 Mutation Hook —— 写操作同理
+export function useCreateUserMutation() {
+  return useMutation({
+    mutationFn: (data: Api.CreateUserParams) =>
+      request<Api.User>({ url: '/api/users', method: 'post', data }),
+  });
+}
+
+// 4. 在组件中使用
+const UserList = () => {
+  const { data, isLoading, error } = useUserListQuery({ page: 1 });
+  const { mutate: createUser, isPending } = useCreateUserMutation();
+  // ...
+};
+```
+
+`createFlatRequest` 适合不使用 TanStack Query、需要手动控制错误流程的场景。
+
+## API
+
+### `createRequest`
+
+创建一个**抛异常风格**的请求实例。业务失败或 HTTP 错误会抛出 `AxiosError`。
+
+```ts
+function createRequest<ResponseData, ApiData, State>(
+  axiosConfig?: CreateAxiosDefaults,
+  options?: Partial<RequestOption<ResponseData, ApiData, State>>
+): RequestInstance<ApiData, State>
+```
+
+**类型参数：**
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `ResponseData` | 后端原始响应体类型 | `{ code: number; data: any; msg: string }` |
+| `ApiData` | `transform` 转换后的业务数据类型 | `any` |
+| `State` | 挂载在实例上的自定义状态类型 | `Record<string, unknown>` |
+
+**示例：**
+
+```ts
+interface BackendResponse<T = any> {
+  code: number;
+  data: T;
+  msg: string;
+}
+
+const request = createRequest<BackendResponse>(
+  { baseURL: 'https://api.example.com' },
+  {
+    isBackendSuccess: (response) => response.data.code === 200,
+    transform: (response) => response.data.data,
+    onRequest: async (config) => {
+      config.headers.set('Authorization', `Bearer ${getToken()}`);
+      return config;
+    },
+    onError: (error) => console.error(error.message),
+  }
+);
+
+const userInfo = await request<Api.UserInfo>({ url: '/api/user' });
+```
+
+### `createFlatRequest`
+
+创建一个 **Result 风格**的请求实例，永远不抛异常。
+
+```ts
+function createFlatRequest<ResponseData, ApiData, State>(
+  axiosConfig?: CreateAxiosDefaults,
+  options?: Partial<RequestOption<ResponseData, ApiData, State>>
+): FlatRequestInstance<ResponseData, ApiData, State>
+```
+
+**返回值：**
+
+```ts
+// 成功
+{ data: ApiData; error: null; response: AxiosResponse }
+// 失败
+{ data: null; error: AxiosError; response?: AxiosResponse }
+```
+
+失败分支的 `response` 是**可选**的：网络错误、超时、取消，以及请求拦截器里就抛错的场景根本没有响应。
+`transform` 自身抛错时请求其实已经成功，包会把它包成 `AxiosError` 并补上那次响应，状态码和响应体仍然查得到。
+
+**示例：**
+
+```ts
+const flatRequest = createFlatRequest<BackendResponse, BackendResponse['data']>(
+  { baseURL: 'https://api.example.com' },
+  {
+    isBackendSuccess: (response) => response.data.code === 200,
+    transform: (response) => response.data.data,
+  }
+);
+
+const { data, error } = await flatRequest({ url: '/api/users' });
+if (error) {
+  console.error(error.message);
+  return;
+}
+console.log(data);
+```
+
+## 配置项
+
+### Axios 默认配置
+
+通过第一个参数传入，会与以下默认值合并：
+
+| 配置 | 默认值 |
+|------|--------|
+| `headers.Content-Type` | `application/json` |
+| `timeout` | `10000`（10 秒） |
+| `paramsSerializer` | `qs.stringify` |
+| `validateStatus` | `200-299` 或 `304` |
+
+### RequestOption 钩子与选项
+
+| 钩子 / 选项 | 默认值 | 说明 |
+|------|------|------|
+| `isBackendSuccess` | 恒为 `true` | HTTP 成功后判断业务是否成功（仅 JSON） |
+| `transform` | `response => response.data` | 将原始响应转换为业务数据（仅 JSON 且业务成功） |
+| `onRequest` | 原样返回 config | 请求前修改配置（注入 Token 等）。**必须把 config 返回出去**，返回空会直接抛 `ERR_BAD_OPTION`，拦截器不会替你兜底沿用旧配置 |
+| `onBackendFail` | 空实现 | 业务失败处理，返回一个响应表示已就地补救（典型是续签后重试），返回空则继续走 `onError` 并 reject |
+| `onError` | 空实现 | 所有错误的统一回调 |
+| `defaultState` | `{}` | 初始化实例 `state`，两种请求风格都支持 |
+| `requestIdKey` | `'X-Request-Id'` | 请求 ID 的 header 名。传 `false` 则不发送——自定义 header 会让跨域请求多一次 OPTIONS 预检，不需要链路追踪时可以关掉 |
+| `retry` | `{ retries: 0 }` | [axios-retry](https://github.com/softonic/axios-retry) 的配置。**独立成一项，不要塞进 `axiosConfig`**：`CreateAxiosDefaults` 没有 `retries` 字段 |
+
+```ts
+const request = createRequest<BackendResponse>(
+  { baseURL: '/api' },
+  {
+    requestIdKey: false,                         // 关掉请求 ID，省一次预检
+    retry: { retries: 2, retryDelay: attempt => attempt * 500 },
+  }
+);
+```
+
+<Callout type="warn">
+  `onBackendFail` 返回的响应**不再**经过 `isBackendSuccess` 复检，重进本钩子的次数也没有上限：
+  用 `instance` 重发的请求会完整走一遍响应拦截器，失败了就再次落到这里。
+  补救逻辑必须自己在 `config` 上打标记来终止循环，否则「补救完还是同一个失败码」就是一个没有退避的无限重发。
+</Callout>
+
+## 错误处理
+
+| 场景 | `createRequest` | `createFlatRequest` |
+|------|----------------|---------------------|
+| HTTP 错误 (4xx/5xx)，响应体是对象 | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }` |
+| HTTP 错误，响应体非对象（网关 HTML 502、空 body 500） | `onError` → 抛出异常 | `{ data: null, error, response }` |
+| 业务错误（HTTP 200 但业务码失败） | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }` |
+| 网络错误 / 超时 / 请求取消 | `onError`（`ERR_CANCELED` 等）→ 抛出 | `{ data: null, error }`（无 `response`） |
+
+<Callout>
+  `onBackendFail` 在**两侧**都会被调用：HTTP 200 的业务失败走成功拦截器，真实 HTTP 错误码走失败拦截器。
+  后端用真实状态码表达失败（401 带业务信封）时，续签、登出这些按业务码分岔的流程才不会失效。
+  失败侧只在 `response.data` 是对象时才进钩子——信封字段读不出来的响应没必要打扰它。
+</Callout>
+
+通过 `BACKEND_ERROR_CODE` 区分业务错误与 HTTP 错误：
+
+```ts
+import { BACKEND_ERROR_CODE } from '@skyroc/axios';
+
+if (error.code === BACKEND_ERROR_CODE) {
+  // 业务错误：HTTP 成功但 code 不正确
+} else {
+  // HTTP 错误或网络错误
+}
+```
+
+## Token 刷新重试
+
+通过 `onBackendFail` 实现：
+
+```ts
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    // 必须是字符串键：axios 的 mergeConfig 用 Object.keys 遍历配置，
+    // Symbol 键在 instance.request() 重新 merge 时会被丢掉，标记等于没打
+    isTokenRefreshRetry?: boolean;
+  }
+}
+
+createRequest<BackendResponse>(axiosConfig, {
+  async onBackendFail(response, instance) {
+    // 已经因为续签重发过一次的不再刷：钩子本身不设递归上限
+    if (String(response.data.code) === '401' && !response.config.isTokenRefreshRetry) {
+      const success = await refreshToken();
+      if (success) {
+        response.config.headers.set('Authorization', `Bearer ${getNewToken()}`);
+        response.config.isTokenRefreshRetry = true;
+        return instance.request(response.config);
+      }
+    }
+    return null;
+  },
+});
+```
+
+这套逻辑 `@skyroc/service` 已经实现好了，直接用它即可，见 [Token 刷新机制](/docs/packages/core/service#token-刷新机制)。
+
+## 请求取消
+
+```ts
+// cancelAllRequest 取消所有由包管理的请求
+request.cancelAllRequest();
+
+// 自定义 signal 的请求不受 cancelAllRequest 影响
+const controller = new AbortController();
+request({ url: '/api/data', signal: controller.signal });
+request.cancelAllRequest(); // 不会取消上面的请求
+controller.abort();         // 手动取消
+```
+
+## 响应类型
+
+TypeScript 自动推导返回值类型：
+
+```ts
+const data = await request<Api.User>({ url: '/user' });            // → Api.User
+const blob = await request({ url: '/file', responseType: 'blob' }); // → Blob
+const text = await request({ url: '/text', responseType: 'text' }); // → string
+```
+
+非 JSON 响应不经过 `transform`，直接返回 `response.data`。
+
+`responseType` 的取值必须与 axios 的字面量逐字对齐（全小写）：`arraybuffer`、`blob`、`document`、`formdata`、`stream`、`text`。
+这些值会被原样赋给 `XMLHttpRequest.responseType`，大小写写错浏览器会按非法枚举值静默忽略，拿回来的是文本。
+
+**二进制信封解包**：`responseType: 'blob'` / `'arraybuffer'` 的响应如果带着 `content-type: application/json`
+（典型是文件下载失败，后端回的其实是 JSON 错误信封），包会先把它解成对象再交给 `isBackendSuccess` / `onBackendFail`，
+否则钩子拿到的是一坨 Blob，业务码无从判断。解不出 JSON 时保留原始 data。
+
+## 实例状态
+
+请求实例的 `state` 属性用于在请求生命周期中共享状态，`createRequest` 和 `createFlatRequest` 都支持：
+
+```ts
+const request = createFlatRequest<BackendResponse, any, { token: string }>(
+  axiosConfig,
+  { defaultState: { token: '' } }
+);
+
+request.state.token = 'new-token';
+```
+
+## 与 @skyroc/service
+
+在实际项目中，通常不直接使用 `@skyroc/axios`，而是通过 [`@skyroc/service`](/docs/packages/core/service) 进行上层封装。它基于本包提供了**平台适配器模式**、**业务状态码管理**、**Token 自动刷新**、**错误消息去重**、**接口传输加密**等开箱即用的能力。详见 [@skyroc/service 文档](/docs/packages/core/service)。
+
+## 常量与类型导出
+
+**常量：**
+
+| 常量 | 值 | 说明 |
+|------|-----|------|
+| `BACKEND_ERROR_CODE` | `'BACKEND_ERROR'` | 业务失败的 AxiosError code |
+| `REQUEST_ID_KEY` | `'X-Request-Id'` | 请求 ID header key |
+
+**类型：**
+
+| 类型 | 说明 |
+|------|------|
+| `RequestOption` | 请求选项 |
+| `RequestInstanceCommon` | 两种实例共有的 `cancelAllRequest` / `state` |
+| `RequestInstance` | `createRequest` 返回类型 |
+| `FlatRequestInstance` | `createFlatRequest` 返回类型 |
+| `FlatResponseData` | Flat 请求的联合返回类型 |
+| `FlatResponseSuccessData` / `FlatResponseFailData` | 上面联合类型的两个分支 |
+| `CustomAxiosRequestConfig` | 请求配置（支持 responseType 推导） |
+| `ResponseTransform` | `transform` 钩子的函数签名 |
+| `MappedType` | 响应类型映射 |
+| `ResponseType` | 响应类型字面量 |
+| `ContentType` | Content-Type 字面量 |
+
+本包同时把 axios 的 `AxiosError` 与 `CreateAxiosDefaults` 原样转出，上层不必再单独依赖 `axios` 只为拿这两个类型。

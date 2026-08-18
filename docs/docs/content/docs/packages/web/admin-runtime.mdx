@@ -1,0 +1,146 @@
+---
+title: "@skyroc/web-admin-runtime"
+description: 启动期插件集合：dayjs / nprogress / iconify 离线 / 版本更新通知
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-runtime` |
+| 目录 | `packages/web/admin-runtime` |
+| 版本 | 1.0.0 |
+| 依赖 | 无 |
+| peer | `@iconify/react`、`dayjs`、`nprogress`、`react` |
+| 测试 | ✅ `plugins.test.ts` |
+
+把 admin 应用启动期常见的「插件初始化」（dayjs locale、NProgress 顶部进度条、Iconify 离线图标、版本更新通知）打包到一个可配置的 `setupAdminRuntimePlugins` 里，避免在 bootstrap 里手写一长串副作用代码。
+
+## 主入口导出
+
+```ts
+import {
+  setupAdminRuntimePlugins,
+  setupDayjs,
+  setupNProgress,
+  setupIconifyOffline,
+  setupAppVersionNotification,
+  getHtmlBuildTime
+} from '@skyroc/web-admin-runtime';
+```
+
+| 函数 | 作用 |
+| --- | --- |
+| `setupAdminRuntimePlugins` | 一次性装配全部插件（每个插件可单独禁用） |
+| `setupDayjs` | 加载 dayjs locale 与时区插件 |
+| `setupNProgress` | 把 NProgress 实例存到全局 / 配置 parent |
+| `setupIconifyOffline` | 离线模式：从 `VITE_ICONIFY_URL` 加载 iconify JSON |
+| `setupAppVersionNotification` | 监测 `BUILD_TIME` 变化弹更新提示，返回 cleanup 函数 |
+| `getHtmlBuildTime` | 读取 HTML meta 中注入的 build time |
+
+各 `setup*Options` 类型同名导出。
+
+## 一键装配
+
+```ts
+import { setupAdminRuntimePlugins } from '@skyroc/web-admin-runtime';
+import nprogress from 'nprogress';
+import { showSuccessNotification } from '@/config';
+
+setupAdminRuntimePlugins({
+  dayjs: { locale: 'zh-cn', timezone: 'Asia/Shanghai' },
+  appVersionNotification: createAdminAppVersionNotificationPluginOptions(),
+  iconifyOffline: { url: import.meta.env.VITE_ICONIFY_URL },
+  nprogress: { instance: nprogress, parent: '.root' }
+});
+```
+
+任何一项传 `false` 都会禁用对应插件：
+
+```ts
+setupAdminRuntimePlugins({
+  iconifyOffline: false              // 走 CDN
+});
+```
+
+## 各插件细节
+
+### dayjs
+
+- 加载 locale（zh-cn / en 等）
+- 加载常用 plugin（utc / timezone / relativeTime / weekday）
+- 与 [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n) 的 `LangEffect` 配合：切换语言时同步 dayjs locale
+
+### NProgress
+
+- 全局唯一实例：避免不同包各自创建
+- `parent` 选项：把进度条挂到指定容器（admin 用 `.root` 而不是 `<body>`，避免在登录页等无 admin 布局时跑出去）
+- TanStack Router 的导航前后调 `nprogress.start()` / `done()`
+
+### Iconify Offline
+
+- 默认从 Iconify CDN 拉图标
+- 离线模式：从内网 URL（`VITE_ICONIFY_URL`）拉自部署的 iconify-api 服务
+- 完全离线场景：使用 `unplugin-icons` 的本地图标集（在 vite plugin 层处理）
+
+### App Version Notification
+
+- 启动时记录 HTML 注入的 `BUILD_TIME`
+- 定期轮询 `index.html` 提取最新 `BUILD_TIME`
+- 不一致 → 弹「应用已更新，请刷新」通知
+- 返回 cleanup 函数（用于卸载时停止轮询）
+
+应用层封装示例：
+
+```ts
+// plugins/app.tsx
+export function createAdminAppVersionNotificationPluginOptions() {
+  return {
+    title: $t('system.updateTitle'),
+    description: $t('system.updateContent'),
+    onConfirm: () => location.reload(),
+    showNotification: showSuccessNotification
+  };
+}
+```
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── plugins.ts                # setupAdminRuntimePlugins 统一入口
+├── dayjs.ts
+├── nprogress.ts
+├── iconify.ts
+└── app-update.ts
+```
+
+## 在 apps/admin 的链路
+
+```ts
+// plugins/index.ts
+import { setupAdminRuntimePlugins } from '@skyroc/web-admin-runtime';
+
+export function setupAdminPlugins() {
+  setupAdminRuntimePlugins({
+    dayjs: { locale: 'zh-cn' },
+    appVersionNotification: createAdminAppVersionNotificationPluginOptions(),
+    iconifyOffline: { url: import.meta.env.VITE_ICONIFY_URL },
+    nprogress: { instance: nprogress, parent: '.root' }
+  });
+}
+
+// bootstrap.tsx
+setupAdminPlugins();
+```
+
+## 与 [`@skyroc/scheduler`](/docs/core/scheduler) 的对比
+
+| 维度 | `web-admin-runtime` | `scheduler` |
+| --- | --- | --- |
+| 定位 | Admin 应用专属、4 个预设插件 | 通用任务调度（init / periodic / listener） |
+| API 形态 | 显式装配函数 | 统一 `register` + 单心跳 |
+| 适合 | 直接套用 admin 启动模板 | 自定义启动流程或周期任务 |
+
+将来可以把 runtime 的 4 个插件全部迁移成 scheduler 的 init 任务，让两者形成更统一的「启动期生命周期」抽象，但当前是并存的两种方案。

@@ -1,0 +1,174 @@
+---
+title: "Storage"
+description: "类型安全的浏览器存储封装，提供带前缀的 localStorage/sessionStorage 工厂与 localforage 驱动选择器"
+---
+
+## 概述
+
+`@skyroc/utils/web` 提供两个存储工厂函数。它们直接操作 `localStorage` / `sessionStorage` / IndexedDB，因此只在 **web 子入口**导出，不在平台无关的主入口：
+
+| 函数 | 底层 | 适合场景 |
+| --- | --- | --- |
+| `createStorage` | `localStorage` / `sessionStorage` | 同步读写、简单 key-value、体积小的数据 |
+| `createLocalforage` | IndexedDB / WebSQL / localStorage（可选） | 异步读写、大体积数据、需要比 localStorage 更好的性能 |
+
+两者都支持**泛型约束**，通过 TypeScript 类型系统在编译期保证 key 名合法、value 类型正确。
+
+## createStorage
+
+### 基本用法
+
+```ts
+import { createStorage } from '@skyroc/utils/web';
+
+// 定义存储结构类型
+type AppStorage = {
+  token: string;
+  userInfo: { id: number; name: string };
+  theme: 'light' | 'dark';
+};
+
+// 创建实例：指定 localStorage/sessionStorage + key 前缀
+const storage = createStorage<AppStorage>('local', 'app__');
+
+// 写入（自动 JSON 序列化）
+storage.set('token', 'eyJ...');
+storage.set('theme', 'dark');
+
+// 读取（自动 JSON 反序列化，类型自动推导）
+const token = storage.get('token');    // string | null
+const theme = storage.get('theme');    // 'light' | 'dark' | null
+
+// 删除
+storage.remove('token');
+
+// 清空（整个 Storage，谨慎使用）
+storage.clear();
+```
+
+### 参数说明
+
+```ts
+createStorage<T extends object>(
+  type: 'local' | 'session',
+  storagePrefix: string
+)
+```
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `type` | `'local' \| 'session'` | 使用 `localStorage` 还是 `sessionStorage` |
+| `storagePrefix` | `string` | 所有 key 的统一前缀，避免多项目 / 多实例的 key 冲突 |
+
+### API
+
+#### `set<K>(key, value)`
+
+将 value 序列化为 JSON 后写入存储，key 会自动拼接前缀。
+
+```ts
+storage.set('userInfo', { id: 1, name: 'Alice' });
+// 实际写入 key: 'app__userInfo'
+// 实际写入 value: '{"id":1,"name":"Alice"}'
+```
+
+#### `get<K>(key)` → `T[K] | null`
+
+读取并反序列化。有以下行为：
+
+- 读取到合法 JSON → 返回解析后的值（含 `false`、`0`、`[]`、`{}` 等 falsy 值）
+- JSON 解析失败 → 自动删除该 key，返回 `null`
+- key 不存在 → 返回 `null`
+
+```ts
+const info = storage.get('userInfo'); // { id: 1, name: 'Alice' } | null
+```
+
+#### `remove(key)`
+
+删除指定 key（自动拼接前缀）。
+
+```ts
+storage.remove('token');
+```
+
+#### `clear()`
+
+调用底层 `Storage.clear()`，清空**整个** localStorage / sessionStorage，包括其他非本实例写入的 key，使用时需注意。
+
+---
+
+## createLocalforage
+
+[localforage](https://localforage.github.io/localForage/) 是一个异步存储库，支持 IndexedDB / WebSQL / localStorage，API 与 localStorage 相似但全部返回 Promise。
+
+`createLocalforage` 在其基础上增加了**泛型约束**，确保 `getItem` / `setItem` 的 key 和 value 类型在编译期可检查。
+
+### 基本用法
+
+```ts
+import { createLocalforage } from '@skyroc/utils/web';
+
+type CacheStorage = {
+  dashboardData: { charts: unknown[]; updatedAt: number };
+  userPreferences: { lang: string; fontSize: number };
+};
+
+const cache = createLocalforage<CacheStorage>('indexedDB');
+
+// 写入（异步）
+await cache.setItem('dashboardData', {
+  charts: [],
+  updatedAt: Date.now(),
+});
+
+// 读取
+const data = await cache.getItem('dashboardData');
+// data: { charts: unknown[]; updatedAt: number } | null
+
+// 删除
+await cache.removeItem('dashboardData');
+```
+
+### 参数说明
+
+```ts
+createLocalforage<T extends object>(
+  driver: 'indexedDB' | 'local' | 'webSQL'
+)
+```
+
+| 驱动 | 说明 | 推荐场景 |
+| --- | --- | --- |
+| `'indexedDB'` | 性能最好，容量大（通常数百 MB） | 大体积数据、离线缓存 |
+| `'local'` | 降级到 localStorage | 兼容性要求高 |
+| `'webSQL'` | 仅 Chrome / Safari 旧版支持，已弃用 | 不推荐新项目使用 |
+
+### API
+
+`createLocalforage` 返回的是经过泛型约束的 `localforage` 实例，完整 API 见 [localforage 文档](https://localforage.github.io/localForage/)。常用方法：
+
+| 方法 | 说明 |
+| --- | --- |
+| `setItem(key, value)` | 异步写入 |
+| `getItem(key)` | 异步读取，不存在返回 `null` |
+| `removeItem(key)` | 异步删除 |
+| `clear()` | 清空所有数据 |
+| `length()` | 获取存储条目数 |
+| `keys()` | 获取所有 key |
+
+## 选型建议
+
+```
+需要同步读写？
+  └─ 是 → createStorage (localStorage / sessionStorage)
+
+需要存大量数据（> 5MB）？
+  └─ 是 → createLocalforage('indexedDB')
+
+需要跨 tab 共享且持久？
+  └─ 是 → createStorage('local', ...)
+
+仅当前 tab 生命周期？
+  └─ 是 → createStorage('session', ...)
+```

@@ -1,0 +1,180 @@
+---
+title: "概述"
+description: "平台无关工具函数集合，提供日期、事件、数组、对象、路径与 query 工具，附带 cn / crypto / path / web 四个子入口"
+---
+
+## 概述
+
+`@skyroc/utils` 是项目的通用工具包，分为一个主入口和四个子入口：
+
+| 入口 | 导入路径 | 适用环境 |
+| --- | --- | --- |
+| 主入口 | `@skyroc/utils` | **平台无关**（Node.js / 浏览器 / React Native 均可） |
+| `cn` 子入口 | `@skyroc/utils/cn` | 只要 `cn` 时用，避免拉进整个主入口；主入口也导出它 |
+| `crypto` 子入口 | `@skyroc/utils/crypto` | AES 对称加密，**不在主入口** |
+| `path` 子入口 | `@skyroc/utils/path` | 路径工具的独立子路径；常规使用可直接从主入口导入 |
+| `web` 子入口 | `@skyroc/utils/web` | **仅浏览器环境** |
+
+<Callout type="warn">
+  主入口只允许出现 Node / 浏览器 / React Native 三端都能跑的代码——不得直接引用 `window`、`document`、`navigator`、`localStorage` 等宿主全局。
+  该约束由 tsconfig 强制：主入口所属的 TS 项目 `lib` 只有 `ESNext`，没有 DOM。
+  所有浏览器专用工具都在 [`@skyroc/utils/web`](/docs/packages/core/utils/web)。
+</Callout>
+
+## 模块一览
+
+**主入口 `@skyroc/utils`**
+
+| 模块 | 主要导出 | 说明 |
+| --- | --- | --- |
+| `cn` | `cn` | Tailwind class 合并 |
+| `nanoid` | `nanoid` | 唯一 ID 生成 |
+| `klona` | `jsonClone` | JSON 安全深拷贝 |
+| `date` | `formatDate`、`addDate` 等 30+ 函数 | [分层日期工具](/docs/packages/core/utils/date) |
+| `array` | `toArray`、`arraysEqual` | [数组工具](/docs/packages/core/utils/array) |
+| `reg` | `REG_USER_NAME` 等 8 个正则 | [常用校验正则](/docs/packages/core/utils/reg) |
+| `object` | `shallowEqual`、`diffObject`、`isObjectType`、`isEventObject` | 对象比较与 diff（本页） |
+| `utils` | `noop`、`isNil`、`isHttpUrl`、`omitUndefined`、`microtask` | [基础工具函数](/docs/packages/core/utils/utils) |
+| `path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` 等 | [深层路径读写与字段路径工具](/docs/packages/core/utils/path) |
+| `query` | `parseQuery`、`stringifyQuery` | [URL query 解析与序列化](/docs/packages/core/utils/query) |
+| `emitter` | `Emitter` | [事件总线](/docs/packages/core/utils/emitter) |
+| `createSubject` | `createSubject` | [极简 Subject](/docs/packages/core/utils/subject) |
+| `singleflight` | `Singleflight`、`createSingleflight` | [并发请求去重](/docs/packages/core/utils/singleflight) |
+| `priority-queue` | `PriorityQueue` | [带去重与容量上限的优先级队列](/docs/packages/core/utils/priority-queue) |
+| `radash` | 类型守卫族 + `assign` | 白名单转出（本页） |
+
+**子入口**
+
+| 子入口 | 主要导出 | 说明 |
+| --- | --- | --- |
+| `@skyroc/utils/crypto` | `AesCrypto` | [AES 对称加密](/docs/packages/core/utils/crypto) |
+| `@skyroc/utils/web` | `createStorage`、`createLocalforage`、`downloadFileFrom*`、`openWindow`、`isPC` 等 | [浏览器专用工具](/docs/packages/core/utils/web) |
+
+以下模块有独立文档页，本页仅覆盖 `cn`、`nanoid`、`jsonClone`、`object` 和 `radash` 这几个相对轻量的模块。
+
+---
+
+## cn — Tailwind class 合并
+
+```ts
+import { cn } from '@skyroc/utils';
+```
+
+组合 [clsx](https://github.com/lukeed/clsx) 和 [tailwind-merge](https://github.com/dcastil/tailwind-merge)：先用 `clsx` 处理条件 class，再用 `twMerge` 解决 Tailwind 工具类冲突。
+
+```ts
+cn('px-4 py-2', 'px-6');
+// 'py-2 px-6'（px-4 被 px-6 覆盖）
+
+cn('text-red-500', { 'font-bold': true, 'text-blue-500': false });
+// 'text-red-500 font-bold'
+
+cn('base-class', condition && 'extra-class', ['array-class']);
+// 同 clsx 的所有参数形式均支持
+```
+
+---
+
+## nanoid — 唯一 ID 生成
+
+```ts
+import { nanoid } from '@skyroc/utils';
+```
+
+直接 re-export 自 [nanoid](https://github.com/ai/nanoid)，生成 URL 安全的随机唯一字符串，默认 21 位。
+
+```ts
+nanoid();      // 'V1StGXR8_Z5jdHi6B-myT'
+nanoid(10);    // 'IRFa-VaY2b'（指定长度）
+```
+
+---
+
+## jsonClone — JSON 安全深拷贝
+
+```ts
+import { jsonClone } from '@skyroc/utils';
+```
+
+来自 [klona/json](https://github.com/lukeed/klona) 的快速深拷贝，基于 JSON 序列化实现。
+
+**限制：** 仅支持 JSON 可序列化的类型，`Date`、`Map`、`Set`、`Function`、`undefined` 等会丢失或变形。
+
+```ts
+const original = { a: 1, b: { c: [2, 3] } };
+const clone = jsonClone(original);
+
+clone.b.c.push(4);
+console.log(original.b.c); // [2, 3]（不受影响）
+```
+
+---
+
+## object — 对象工具
+
+```ts
+import { shallowEqual, diffObject, isObjectType, isEventObject } from '@skyroc/utils';
+```
+
+#### `shallowEqual(a, b)` → `boolean`
+
+浅比较两个对象：先用 `Object.is` 判断引用，再逐键用 `Object.is` 比较一级属性值。
+
+```ts
+shallowEqual({ a: 1, b: 2 }, { a: 1, b: 2 }); // true
+shallowEqual({ a: 1, b: { c: 3 } }, { a: 1, b: { c: 3 } }); // false（嵌套对象引用不同）
+```
+
+#### `diffObject<T>(obj1, obj2)` → `Partial<T>`
+
+递归计算两个对象的差异，返回 `obj2` 中与 `obj1` 不同的部分。命名为 `diffObject` 以与 radash 的数组 `diff` 区分。
+
+```ts
+diffObject({ name: 'Alice', age: 30 }, { name: 'Alice', age: 31 });
+// { age: 31 }
+```
+
+#### `isObjectType(value)` → `value is object`
+
+判断值的 `typeof` 是否为 `'object'` **且不为 `null`**。
+
+#### `isEventObject(event)` → `event is Event`
+
+判断值是否为「事件形状」的对象：非 null 的非数组、非 Date 对象都算，plain object（`{ target: ... }`）同样算。
+
+用于表单取值——受控组件的 `onChange` 第一个参数既可能是原生 / 合成事件，也可能是裸值，这里只做形状判断。
+
+---
+
+## radash — 白名单转出
+
+`@skyroc/utils` **只转出 radash 的类型守卫族 + `assign`**，其余请直接从 `radash` 导入：
+
+```ts
+// ✅ 类型守卫与 assign，从本包拿
+import { isArray, isEmpty, isEqual, isFunction, isString, assign } from '@skyroc/utils';
+
+// ✅ 其余 radash 函数，直接从 radash 拿
+import { group, unique, omit, pick, cluster, sleep, retry } from 'radash';
+```
+
+完整白名单：
+
+| 类别 | 导出 |
+| --- | --- |
+| 类型守卫 | `isArray`、`isDate`、`isEmpty`、`isEqual`、`isFloat`、`isFunction`、`isInt`、`isNumber`、`isObject`、`isPrimitive`、`isPromise`、`isString`、`isSymbol` |
+| 其他 | `assign` |
+
+<Callout type="warn">
+  这里曾经是 `export * from 'radash'`，后来收窄成白名单，原因有三：
+
+  1. 星号转出等于把第三方的全部 API 变成本包的公开契约，radash 发个 minor 就可能改动本包的 API 面；
+  2. 上游一旦新增与本包同名的导出（如 `isNil` / `toArray`），ESM 会把歧义名从导出中剔除，直接变成构建期错误；
+  3. radash 自带 `get` / `set` / `crush` / `construct`，与本包的 `deepGet` / `deepSet` / `unflatten` 语义重叠，全量转出会让调用方不知道该用哪个。
+
+  类型守卫是例外：它们高频、零依赖、语义稳定，散落在各处按需 import 反而更吵。
+</Callout>
+
+radash 的 `diff` 是**数组差集**工具，本包的对象递归比较函数叫 `diffObject`，两者不是一回事——`diff` 现在不再从本包转出，不会再撞名。
+
+完整 radash API 见 **[radash 官方文档 →](https://radash-docs.vercel.app/)**。

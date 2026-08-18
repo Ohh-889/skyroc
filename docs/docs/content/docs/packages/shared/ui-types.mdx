@@ -1,0 +1,102 @@
+---
+title: "@skyroc/ui-types"
+description: 跨端 UI 组件共享 TypeScript 类型层
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/ui-types` |
+| 目录 | `packages/shared/ui-types` |
+| 版本 | 0.1.0 |
+| 运行时依赖 | `clsx`（仅 re-export `ClassValue` 类型） |
+| 测试 | ❌ |
+
+`@skyroc/ui-types` 提供**跨端组件共享的 TS 类型**：theme variant 联合类型、`className` 约定、通用 props 工具类型。它没有运行时逻辑，只是 compile-time only 的类型库。
+
+## 完整导出
+
+### Theme 变体
+
+```ts
+type ThemeColor       // 'primary' | 'secondary' | 'destructive' | ...
+type ThemeSize        // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type ThemeOrientation // 'horizontal' | 'vertical'
+type ThemeAlign       // 'start' | 'center' | 'end'
+type ThemeSide        // 'top' | 'right' | 'bottom' | 'left'
+```
+
+所有 Skyroc UI 组件的 `color`、`size`、`orientation` 等 props 都来自这里，保证多端一致。
+
+### 通用工具类型
+
+```ts
+type WithClassName<T = {}>     // T & { className?: ClassValue }
+type Value<T>                  // 解构 union 取值类型
+type MaybeArray<T>             // T | T[]
+type AcceptableValue           // 表单/数据层可接受的基础值
+type ClassValue                // re-export 自 clsx
+```
+
+### `WithClassName` 使用
+
+```ts
+import type { WithClassName } from '@skyroc/ui-types';
+
+interface ButtonProps extends WithClassName {
+  variant?: ThemeColor;
+}
+
+// 等价于:
+interface ButtonProps {
+  className?: ClassValue;
+  variant?: ThemeColor;
+}
+```
+
+让所有组件 props 自动具备一致的 className 约定。
+
+## 子入口
+
+仅 `.` 主入口。
+
+## 在 web-ui 中的使用
+
+`@skyroc/web-ui` 的 `src/types/shared.ts` 直接 re-export 本包全部类型：
+
+```ts
+// packages/web/ui/shadcn/src/types/shared.ts
+export * from '@skyroc/ui-types';
+```
+
+这样组件可以从同包内 import：
+
+```ts
+import type { ThemeColor, WithClassName } from '@skyroc/web-ui';
+```
+
+同时也直接从 ui-types 暴露（用户两种 import 都行）。
+
+## 为什么单独成包
+
+| 维度 | 说明 |
+| --- | --- |
+| **跨端复用** | Native UI 库（未来）可以共享同一套 ThemeColor 联合类型 |
+| **零成本** | 纯类型，sideEffects: false，编译后不增加 bundle 体积 |
+| **API 稳定** | 类型变化少，作为公共契约不轻易调整 |
+
+## clsx 依赖
+
+虽然依赖 `clsx`，但**只 re-export 了 `ClassValue` 类型**，没有引入任何运行时逻辑：
+
+```ts
+// shared.ts
+export type { ClassValue } from 'clsx';
+```
+
+Bundler 看到这里只用 `import type`，会把 clsx 整个 tree-shake 掉。
+
+## ARCHITECTURE.md 与命名
+
+包的定位与命名（无平台前缀的纯类型包）见 [架构 · 命名规范](/docs/architecture/naming)。

@@ -1,0 +1,4 @@
+{
+  "title": "@skyroc/utils",
+  "pages": ["overview", "array", "reg", "crypto", "utils", "path", "query", "emitter", "subject", "singleflight", "priority-queue", "storage", "date", "web"]
+}

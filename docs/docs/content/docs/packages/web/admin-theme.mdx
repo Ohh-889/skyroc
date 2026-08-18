@@ -1,0 +1,158 @@
+---
+title: "@skyroc/web-admin-theme"
+description: Admin 应用的主题运行时：OKLCH 调色、暗色模式、CSS 变量、5 套预设
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-theme` |
+| 目录 | `packages/web/admin-theme` |
+| 版本 | 1.0.0 |
+| 依赖 | [`@skyroc/adapter-antd-theme`](/docs/web/antd-theme)、[`@skyroc/color`](/docs/core/color)、[`@skyroc/hooks`](/docs/shared/hooks)、[`@skyroc/web-ui-antd`](/docs/web/ui-antd)、[`@skyroc/web-ui-compose`](/docs/web/ui-compose)、[`@skyroc/utils`](/docs/core/utils)、antd、defu、jotai |
+| peer | antd、react |
+| 子入口 | `.`、`./types` |
+| 测试 | ✅ 丰富 |
+
+`@skyroc/web-admin-theme` 是 Admin 应用的**主题运行时层**——把 [`@skyroc/adapter-antd-theme`](/docs/web/antd-theme) 的算法、[`@skyroc/color`](/docs/core/color) 的调色板、Jotai 状态、CSS 变量注入、暗色模式、5 套预设主题全部装配到一起，对外暴露易用的 `AntdProvider` + `useTheme` + 命令式消息 API。
+
+## 解决了什么
+
+- **跨组件的主题状态**：用 Jotai atom 持久化到 localStorage
+- **运行时切换**：改主题色 → 重算 token → CSS 变量更新（无需刷新）
+- **暗色模式**：跟随系统 / 手动切换 / OKLCH 暗色调色
+- **antd 主题统一**：提供已注入 algorithm + token 的 `AntdProvider`
+- **命令式消息**：在非组件代码里调用 `showSuccessMessage('xxx')`
+
+## 核心导出
+
+### Setup
+
+```ts
+import { setupTheme, defineThemeOverrides } from '@skyroc/web-admin-theme';
+
+setupTheme({ buildTime: BUILD_TIME });
+```
+
+`setupTheme` 在应用启动时（任何组件读取主题 atom 前）完成：
+
+1. 加载默认配置（`defaultThemeSettings`）
+2. 读取 localStorage 缓存（生产环境）
+3. 版本覆盖检测：若 `buildTime` 变化、清掉旧缓存
+
+### Provider 与 hooks
+
+| 导出 | 作用 |
+| --- | --- |
+| `AntdProvider` | 包装 antd `ConfigProvider`，注入 OKLCH theme + 国际化 |
+| `useTheme` | 读取/修改主题状态（settings + 暗色模式） |
+| `themeSettingsAtom` | 底层 Jotai atom |
+| `themeUserNameAtom` | 当前用户名 atom（与主题隔离） |
+
+### 命令式 antd UI
+
+把 antd 的 message / modal / notification 包装成可命令式调用：
+
+```ts
+import {
+  showMessage, showSuccessMessage, showErrorMessage, showWarningMessage,
+  showInfoMessage, showLoadingMessage, destroyMessage,
+  showModal, showSuccessModal, showErrorModal, showWarningModal, showInfoModal,
+  showConfirmModal,
+  showNotification, showSuccessNotification, showErrorNotification,
+  showWarningNotification, showInfoNotification, destroyNotification
+} from '@skyroc/web-admin-theme';
+
+showSuccessMessage('保存成功');
+showErrorModal('操作失败：' + msg);
+```
+
+这套 API 解决了「antd v5 的 `message.success(...)` 静态调用不会响应 ConfigProvider 主题」的问题。
+
+### 主题组件
+
+| 组件 | 用途 |
+| --- | --- |
+| `ThemeEffect` | 监听 atom，把 token 写入 `<html>` CSS 变量；通常挂在 GlobalEffect 里 |
+| `ThemeSchemaSegmented` | 暗色模式分段控制器（light / dark / auto） |
+| `ThemeSchemaSwitch` | 暗色模式开关（light ⇄ dark） |
+
+### 预设主题
+
+```ts
+import { presets, getPreset, getAllPresets, defaultPreset, dark, compact, azir, shadcn } from '@skyroc/web-admin-theme';
+```
+
+5 套内置：`default`、`dark`、`compact`、`azir`、`shadcn`，以 JSON 形式存于 `src/presets/`。
+
+### Utils
+
+| 函数 | 用途 |
+| --- | --- |
+| `mergeThemeSettings` | 用 defu 合并多个主题设置 |
+| `getThemeColors` | 从设置中算出最终颜色集 |
+| `toggleCssDarkMode` | 切换 `<html class="dark">` |
+| `toggleAuxiliaryColorModes` | 灰度 / 弱化色模式 |
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── setup.ts
+├── antd/                  # AntdProvider + ui.ts (showXxx API) + shared
+├── components/            # ThemeEffect、ThemeSchema{Switch,Segmented}
+├── config/default.ts      # defaultThemeSettings
+├── hooks/use-theme.ts
+├── presets/               # default / dark / compact / azir / shadcn (.json)
+├── types/
+│   ├── index.ts
+│   └── theme.d.ts         # 子入口 ./types 指向，全局 Theme namespace
+└── utils/                 # dark-mode / filters / settings
+```
+
+## 子入口 `./types`
+
+`./types` 指向 `src/types/theme.d.ts`，里面有全局 `Theme` namespace 的扩展声明。应用侧通过 `tsconfig.json` 的 `types` 包含它，就能在任何文件里直接用 `Theme.ColorPaletteFamily` 等类型而无需 import：
+
+```jsonc
+// tsconfig.json
+{
+  "compilerOptions": {
+    "types": ["@skyroc/web-admin-theme/types"]
+  }
+}
+```
+
+## 在 apps/admin 的使用链路
+
+```ts
+// bootstrap.tsx（启动期）
+setupTheme({ buildTime: BUILD_TIME });
+
+// App.tsx
+import AntdProvider from '@/features/antd/AntdProvider';  // 内部用本包的 AntdProvider
+
+// features/effects/GlobalEffect.tsx
+<ThemeEffect />   // 主题写入 CSS 变量
+
+// 任意业务代码
+const { darkMode, settings, setSettings } = useTheme();
+showSuccessMessage('已保存');
+```
+
+## OKLCH 主题色阶
+
+主题色通过 [`@skyroc/color`](/docs/core/color) 的 OKLCH 算法生成 11 档色阶，由 [`@skyroc/adapter-antd-theme`](/docs/web/antd-theme) 转成 antd token，再由 `ThemeEffect` 注入 CSS 变量：
+
+```text
+themeColor (#1677ff)
+   ↓ OKLCH palette
+   ↓ 11 档色（primary-50 ... primary-900）
+   ↓ adapter-antd-theme
+   ↓ antd MapToken
+   ↓ ConfigProvider + CSS Vars
+       ↓
+   antd 组件 / web-ui 组件 / 业务组件
+```

@@ -1,0 +1,111 @@
+---
+title: "@skyroc/types"
+description: "全局类型声明包，零运行时依赖，通过 declare global 注入 Api / Common / Menu / Router 等命名空间"
+---
+
+## 概述
+
+`@skyroc/types` **没有任何运行时值导出**。它通过 `declare global` 注入全局命名空间，所有包和应用都能直接使用这些类型，**无需 import**。
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/types` |
+| 依赖 | 无（零依赖） |
+| 子入口 | `.`、`./types`（指向 `index.d.ts`） |
+
+## 目录结构
+
+```text
+src/
+├── api/                # 后端接口契约
+│   ├── auth.d.ts
+│   ├── common.d.ts
+│   ├── route.d.ts
+│   ├── service.d.ts
+│   └── system-manage.d.ts
+├── app/                # 应用内类型
+│   ├── common.d.ts
+│   ├── global.d.ts
+│   ├── menu.d.ts
+│   ├── router.d.ts
+│   ├── storage.d.ts
+│   └── union-key.d.ts
+├── locales/i18n.d.ts   # i18n Schema 与 key 推导
+├── index.d.ts
+└── index.ts            # re-export 各 .d.ts 触发类型合并
+```
+
+## 全局命名空间
+
+| 命名空间 | 主要类型 | 用途 |
+| --- | --- | --- |
+| `Api.Auth` | `LoginParams`、`LoginToken`、`UserInfo` | 登录与用户信息 |
+| `Api.Common` | `PaginatingQueryRecord<T>`、`CommonRecord<T>`、`EnableStatus` | 分页与通用记录 |
+| `Api.Route` | `BackendRoute`、`BackendRouteResponse` | 后端动态路由 |
+| `Api.Service` | `Response<T>`、`ServiceConfig` | 后端响应信封、多 baseURL 配置 |
+| `Api.SystemManage` | `Role`、`User`、`Menu`、`MenuTree` | 系统管理实体 |
+| `Common` | `Option<K, M>`、`YesOrNo`、`EnableStatus`、`RecordNullable<T>`、`StrategicPattern` | 前端通用工具类型 |
+| `App.Global` | `Tab`、`AntdMenu`、`AdminLayout.HeaderProps` | 应用全局 |
+| `Menu` | `CommonMenu`、`QuickReferenceMenu`、`Menus` | 菜单数据结构 |
+| `Router` | `RoutePath`、`RouteId`、`Meta`、`MenuBadge`、`MenuCategoryKey` | 路由（可扩展注册表） |
+| `StorageType` | `Local`、`Session` | 本地存储 key（纯扩展点，本包内为空） |
+| `UnionKey` | `ThemeLayoutMode`、`LoginModule`、`ThemeScrollMode` 等 | 联合字面量 |
+| `I18n` | `Schema`、`I18nKey`、`LangType`、`$T` | i18n 类型推导 |
+
+## 可扩展的注册表模式
+
+`Router`、`StorageType`、`I18n` 等使用「空接口 + 模块增强」模式，让应用按需扩展。
+本包只给出形状，具体成员由应用声明：
+
+```ts
+// 应用侧 src/types/router.d.ts
+declare global {
+  namespace Router {
+    interface RoutePathRegistry {
+      '/home': '/home';
+      '/manage/user': '/manage/user';
+    }
+  }
+}
+```
+
+这样 `Router.RoutePath` 就会自动收窄到应用注册的路径，获得类型安全的导航。
+
+推导规则统一是「注册表为空则退化为 `string`」：
+
+```ts
+type RoutePath = keyof RoutePathRegistry extends never
+  ? string
+  : Extract<keyof RoutePathRegistry, string>;
+```
+
+**好处**：没注册的应用照样能编译（退化成 `string`，不会到处报错）；注册了的应用立刻获得字面量收窄和自动补全。
+
+`Router` 下同样模式的注册表还有 `RouteIdRegistry`、`MenuExtraRegistry`、`MenuCategoryRegistry`；
+`StorageType.Local` / `StorageType.Session` 用来约束 localStorage / sessionStorage 的 key；
+`I18n.LangRegistry` 本包预置了 `'en-US'` 和 `'zh-CN'`，应用可继续追加。
+
+## 使用
+
+```ts
+// 无需 import，直接使用全局类型
+function getUser(): Api.Auth.UserInfo {
+  /* ... */
+}
+
+const option: Common.Option = { label: '启用', value: '1' };
+
+// 注册过 RoutePathRegistry 后，这里有字面量补全
+function navigate(path: Router.RoutePath) {
+  /* ... */
+}
+```
+
+要让全局声明生效，应用的 `tsconfig.json` 需要包含本包——`@skyroc/tsconfig` 的基础配置已经处理好，
+详见 [`@skyroc/tsconfig`](/docs/packages/internal/tsconfig)。
+
+## 测试
+
+纯类型声明包，无 `__tests__`，也无需运行时测试；类型正确性由各消费方的 `tsc --noEmit` 保证。
+
+包内另有两份更深入的说明文档：`packages/@core/types/TYPE_SYSTEM.md`（类型体系全貌）与 `EXTENDING.md`（扩展指南）。

@@ -1,0 +1,480 @@
+---
+title: "@skyroc/service"
+description: "平台无关的请求与查询基础设施，通过适配器模式将业务状态码管理、Token 自动刷新、错误消息去重、QueryClient 配置等能力跨端复用"
+---
+
+## 概述
+
+`@skyroc/service` 是 `@skyroc/axios` 和 `@tanstack/react-query` 的上层封装，采用**适配器（Adapter）模式**将平台差异（UI 反馈、认证存储、路由导航、国际化）从核心逻辑中分离：
+
+- **`createAppRequest`**：创建请求实例，内置业务状态码驱动的错误处理、Token 自动刷新与重试、错误消息去重
+- **`createQueryClient`**：创建预配置的 TanStack Query `QueryClient`，提供合理的缓存与重试默认值
+- **接口传输加密**：标了 `encrypt: true` 的请求，body 走 RSA + AES-GCM 信封加密
+- **零平台假设**：antd、Material UI、React Native、Next.js 等均可通过实现 `RequestAdapter` 接口接入
+
+## 架构
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  业务层 (React 组件 / hooks)                              │
+│  useQuery / useMutation / request(...)                   │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+         ┌─────────────▼────────────────┐
+         │      @skyroc/service         │
+         │                              │
+         │  createAppRequest            │
+         │    ├─ normalizeCodes         │
+         │    ├─ isBackendSuccess       │
+         │    ├─ onRequest              │
+         │    │    ├─ 注入 Authorization │
+         │    │    └─ sealRequest (加密) │
+         │    ├─ onBackendFail          │
+         │    │    ├─ logout 码 → 登出   │
+         │    │    ├─ modalLogout → 弹窗 │
+         │    │    └─ expiredToken → 刷新│
+         │    └─ onError (去重展示)      │
+         │                              │
+         │  createQueryClient           │
+         │    ├─ DEFAULT_QUERY_CONFIG   │
+         │    └─ DEFAULT_MUTATION_CONFIG│
+         └──────────────┬───────────────┘
+                        │
+         ┌──────────────▼───────────────┐
+         │      @skyroc/axios           │
+         │  createRequest / Axios       │
+         └──────────────────────────────┘
+```
+
+## 快速上手
+
+### 1. 实现平台适配器
+
+```ts
+import type { RequestAdapter } from '@skyroc/service';
+
+const adapter: RequestAdapter = {
+  // 必填：用来识别「拿到过期码的是续签请求自己」，必须和 fetchRefreshToken 实际请求的 url 一致
+  refreshTokenUrl: '/auth/refreshToken',
+  getToken: () => localStorage.getItem('token'),
+  getRefreshToken: () => localStorage.getItem('refreshToken'),
+  setAuth: ({ token, refreshToken }) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
+  },
+  resetAuth: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+  },
+  getCurrentPath: () => window.location.pathname,
+  redirectToLogin: (redirectPath) => {
+    window.location.href = `/login?redirect=${redirectPath}`;
+  },
+  showErrorMessage: (msg, onClose) => {
+    message.error({ content: msg, onClose });
+  },
+  showErrorModal: ({ title, content, onConfirm, maskClosable }) => {
+    Modal.error({ title, content, onOk: onConfirm, maskClosable });
+  },
+  t: (key) => i18n.t(key),
+  fetchRefreshToken: async (refreshToken) => {
+    const res = await fetch('/api/auth/refreshToken', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return res.json();
+  },
+};
+```
+
+<Callout type="warn">
+  `refreshTokenUrl` 是**必填**的，别漏。续签请求自己拿到过期码时绝不能再去续签：
+  它会 `await` 自己那次还没完成的刷新，把自己和所有等着刷新的请求一起永久挂起——不是报错，是转圈不动。
+  做成必填而不是靠请求上的 `isRefreshToken` 标记，是因为标记要靠写 api 的人记得加，漏了要到 refresh token 也过期那天才发作；这个字段漏了是编译错误。
+
+  只有续签走的 url 跟它对不上（网关重写、多租户前缀、续签换了个域名）时，才需要在那个请求上额外补一个 `isRefreshToken: true`。
+</Callout>
+
+### 2. 创建请求实例
+
+```ts
+import { createAppRequest } from '@skyroc/service';
+
+export const request = createAppRequest({
+  adapter,
+  codes: {
+    success: '0000',
+    logout: ['8888'],
+    modalLogout: ['7777'],
+    expiredToken: ['9999'],
+  },
+  axiosConfig: {
+    baseURL: import.meta.env.VITE_API_BASE_URL,
+  },
+  // 可选：只有标了 encrypt: true 的接口才会用到
+  crypto: {
+    header: 'X-Api-Key',
+    publicKey: import.meta.env.VITE_API_CRYPTO_PUBLIC_KEY,
+  },
+});
+```
+
+`codes` 里的值通常直接来自 `import.meta.env.X?.split(',')`，包内部会先做一次规整：
+逐项 `trim` 并丢弃空串（`'8888, 8889'` 这种带空格的配法否则永远匹配不上），`success` 缺失时兜底为 `'0000'`（否则每个请求都会被判成失败）。
+
+### 3. 创建 QueryClient
+
+```ts
+import { createQueryClient } from '@skyroc/service/query';
+
+export const queryClient = createQueryClient({
+  queryCache: {
+    onError: (error) => console.error('Query error:', error),
+  },
+});
+```
+
+### 4. 在组件中使用
+
+```tsx
+import { QueryClientProvider } from '@tanstack/react-query';
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <Router />
+  </QueryClientProvider>
+);
+
+// API 定义
+function fetchUsers(params: Api.UserListParams) {
+  return request<Api.UserList>({ url: '/api/users', params });
+}
+
+// Hook
+function useUsers(params: Api.UserListParams) {
+  return useQuery({
+    queryKey: ['users', params],
+    queryFn: () => fetchUsers(params),
+  });
+}
+```
+
+## API
+
+### `createAppRequest(options)`
+
+创建一个平台无关的请求实例，内置完整的错误处理和 Token 管理。
+
+```ts
+function createAppRequest(options: CreateRequestOptions): RequestInstance
+```
+
+**参数：**
+
+```ts
+interface CreateRequestOptions {
+  /** 平台适配器 */
+  adapter: RequestAdapter;
+  /** Axios 基础配置 */
+  axiosConfig?: CreateAxiosDefaults;
+  /** 后端业务状态码 */
+  codes: ServiceCodes;
+  /** 接口传输加密。不配也能跑，但标了 `encrypt: true` 的请求会直接抛错 */
+  crypto?: ApiCryptoOptions;
+  /** 自定义后端成功判断（默认：String(response.data.code) === codes.success） */
+  isBackendSuccess?: (response: { data: { code: string | number } }) => boolean;
+  /** 自定义响应数据转换（默认：response.data.data） */
+  transform?: (response: any) => any;
+}
+```
+
+**返回值：**
+
+返回一个 `RequestInstance`，用法与 `@skyroc/axios` 的 `createRequest` 一致，额外提供：
+
+| 属性 / 方法 | 说明 |
+|---|---|
+| `request(config)` | 发送请求，返回转换后的业务数据 |
+| `request.cancelAllRequest()` | 取消所有进行中的请求 |
+| `request.state` | 实例内部状态，目前只有 `errMsgStack`（错误消息去重栈） |
+
+### `createQueryClient(options?)`
+
+创建一个预配置的 TanStack Query `QueryClient`，合并内置默认值与自定义配置。
+
+```ts
+function createQueryClient(options?: CreateQueryClientOptions): QueryClient
+```
+
+**参数：**
+
+```ts
+interface CreateQueryClientOptions {
+  /** 覆盖默认 defaultOptions（会与内置默认值浅合并） */
+  defaultOptions?: DefaultOptions;
+  /** MutationCache 配置（onError / onSuccess / onSettled / onMutate） */
+  mutationCache?: MutationCacheConfig;
+  /** QueryCache 配置（onError / onSuccess / onSettled） */
+  queryCache?: QueryCacheConfig;
+}
+```
+
+## 核心接口
+
+### `RequestAdapter`
+
+平台适配器接口，不同平台（antd / Material UI / RN / Next.js）实现此接口即可接入。
+
+| 方法 / 字段 | 说明 |
+|---|---|
+| `refreshTokenUrl` | **必填**。续签接口的 url，必须和 `fetchRefreshToken` 里实际请求的那个是同一个 |
+| `getToken()` | 获取 access token |
+| `getRefreshToken()` | 获取 refresh token |
+| `setAuth(tokens)` | 保存认证信息 `{ token, refreshToken }` |
+| `resetAuth()` | 清除认证信息 |
+| `getCurrentPath()` | 获取当前路由路径 |
+| `redirectToLogin(path?)` | 重定向到登录页 |
+| `showErrorMessage(msg, onClose?)` | 展示错误消息（toast / message） |
+| `showErrorModal(options)` | 展示错误弹窗（modal / dialog） |
+| `t(key)` | 国际化翻译 |
+| `fetchRefreshToken(refreshToken)` | 使用 refresh token 换取新 token |
+
+### `ServiceCodes`
+
+后端业务状态码配置，不同环境 / 后端可能使用不同的 code 体系。
+
+```ts
+interface ServiceCodes {
+  /** 请求成功的状态码 */
+  success: string;
+  /** 需要登出的状态码 */
+  logout: string[];
+  /** 需要弹窗确认后登出的状态码 */
+  modalLogout: string[];
+  /** Token 过期需要刷新的状态码 */
+  expiredToken: string[];
+}
+```
+
+## 错误处理流程
+
+`createAppRequest` 内置了一套基于业务状态码的错误处理策略：
+
+```
+后端返回 response
+    │
+    ▼
+isBackendSuccess? ──── Yes ──► transform(response) → 返回数据
+    │
+    No
+    ▼
+┌─ onBackendFail ──────────────────────────────────────────────┐
+│                                                               │
+│  logout 码?       → showErrorMessage + resetAuth + 跳登录页    │
+│  modalLogout 码?  → showErrorModal → onConfirm → 登出         │
+│  expiredToken 码? → 刷新 Token → 重试原请求（两道防重入闸门）   │
+│  其他             → 返回 null → 进入 onError                  │
+│                                                               │
+└───────────────────────────────────────────────────────────────┘
+    │
+    ▼
+onError → 登出 / 弹窗登出 / 过期码 → 静默（提示已由上一步给过或正在重试）
+       → 其他 → showErrorMsg（去重展示）
+```
+
+`onError` 取的是**信封里的 `msg`**，取不到才回落到 axios 的 `error.message`。
+不看 `error.code` 是不是 `BACKEND_ERROR`：真实 HTTP 错误带的是 axios 自己的 `ERR_BAD_REQUEST` / `ERR_BAD_RESPONSE`，认它就只剩「status code 401」那一句。
+
+### 登出码
+
+清凭据、展示错误消息并重定向到登录页：
+
+```ts
+codes: { logout: ['8888'] }
+// 后端返回 code: '8888' → adapter.showErrorMessage → adapter.resetAuth → adapter.redirectToLogin
+```
+
+先清凭据再跳：平台的 `redirectToLogin` 只负责「跳到哪」，清不清由这一层说了算，否则没在路由里顺手清的平台会带着一份废凭据停在登录页。
+
+### 弹窗登出码
+
+弹窗确认后登出，同一消息不重复弹窗：
+
+```ts
+codes: { modalLogout: ['7777'] }
+// 后端返回 code: '7777' → 调用 adapter.showErrorModal → 用户确认 → 登出
+```
+
+### Token 过期码
+
+自动刷新 Token 并重试原请求，并发请求共享同一个刷新 Promise，避免重复刷新：
+
+```ts
+codes: { expiredToken: ['9999'] }
+// 后端返回 code: '9999' → fetchRefreshToken → setAuth → 带新 Token 重试
+```
+
+## Token 刷新机制
+
+```
+请求 A ─┐                      ┌─ 带新 Token 重试 A
+请求 B ─┤  共享同一个            ├─ 带新 Token 重试 B
+请求 C ─┤  模块级 inFlight       ├─ 带新 Token 重试 C
+        └──────────────────────┘
+                  │
+     1 秒复用窗口过后清空，下次过期重新刷新
+```
+
+并发的 Token 过期请求只触发一次 `fetchRefreshToken`，其余请求等待同一个 Promise 的结果后重试。
+
+在途刷新放在**模块级**而不是挂在某个请求实例上：HTTP、WebSocket、SSE 用的是同一次登录的凭据，
+各刷各的会让后发的那次拿着已经轮换掉的 refresh token 去换，换回来一次失败和一次莫名其妙的登出。
+因此任何传输拿到「令牌过期」都该走导出的 `refreshToken(adapter)`，不要自己调 `adapter.fetchRefreshToken`。
+
+刷新完成后有一个 1 秒的**复用窗口**：窗口内再次调用直接拿缓存结果，一批几乎同时拿到过期码的请求不会一人再发一次刷新。
+
+**两道防重入闸门**（缺一个就是热循环重发）：
+
+1. 续签请求自己拿到过期码时不再续签——由 `refreshTokenUrl` 识别，放行让它 reject，由刷新流程跳登录页；
+2. 已经因续签重发过一次的请求（`config.isTokenRefreshRetry`）不再刷。刷完还是过期码说明问题不在 token 上（多副本没同步、时钟偏移，或者这个码根本就不该配进 `expiredToken`），而复用窗口会让第二次起直接返回缓存结果，连一次网络往返的退避都没有。
+
+`resetTokenRefresh()` 用于测试：清掉在途状态，避免用例之间互相影响。
+
+## 错误消息去重
+
+`showErrorMsg` 维护一个消息栈，同一条消息在展示期间不会重复弹出：
+
+```
+showErrorMsg("网络异常")  → 展示 ✅
+showErrorMsg("网络异常")  → 跳过（栈中已存在）
+       ↓ 用户关闭消息（adapter 回调 onClose）
+showErrorMsg("网络异常")  → 展示 ✅（已从栈移除）
+```
+
+`adapter.showErrorMessage` 的 `onClose` 是可选的，平台大可以不回调（RN 的 `Alert.alert` 就没这个回调）。
+因此每条消息还带一个 **5 秒兜底**：到点自动把**自己这一条**摘掉——只摘自己，不清空整个栈，
+否则会连带抹掉这期间进来的其他消息，让它们绕过去重再弹一次。
+
+## 接口传输加密
+
+给请求加上 `encrypt: true`，body 就会在发出前被换成密文，一次性 AES 密钥放进约定的请求头：
+
+```ts
+await request({ url: '/auth/login', method: 'post', data: { userName, password }, encrypt: true });
+```
+
+报文格式（和后端的 `@api_encrypt()` 是同一份契约，两边必须同时开或同时关）：
+
+```text
+密钥头  base64( RSA-OAEP-SHA256(服务端公钥, aesKey) )
+body    base64( nonce(12B) ‖ AES-256-GCM(aesKey, 明文) ‖ tag(16B) )
+```
+
+分两层是因为非对称算法有明文长度上限而且慢，只能拿来传密钥；body 大小不设上限，必须走对称算法。
+
+| 行为 | 说明 |
+|---|---|
+| 声明位置 | 写在调用处，不按 url 匹配名单——名单和接口分处两地，加接口的人不会想起来去改它 |
+| 缺公钥 | 造实例时**不**报错（没有加密需求的部署不用先生成 RSA 密钥），但标了 `encrypt: true` 的请求会在发出前抛错，不会退化成明文发出去 |
+| 加密时机 | 排在 `onRequest` 最后，认证头不会跟着 body 一起被加密掉 |
+| Content-Type | 加密后改写为 `text/plain`——body 是一段 base64，声明成 JSON 会让网关和 WAF 按 JSON 去解析它 |
+| 请求体限制 | 只支持 JSON 请求体，`FormData` / `Blob` / `ArrayBuffer` 会抛 `TypeError`，上传文件的接口去掉 `encrypt: true` |
+| 实现 | 走 `node-forge` 而不是 WebCrypto：`crypto.subtle` 只在安全上下文里存在，用 http + 局域网 IP 访问开发服务器时整条链路会直接不可用 |
+
+底层能力也单独导出，可用于非 axios 的传输：
+
+```ts
+import { importPublicKey, seal } from '@skyroc/service';
+
+const key = importPublicKey(pem);            // PEM 可以是多行原文，也可以是 env 里的单行 \n 形式
+const { body, sealedKey } = seal(plaintext, key);  // 每次都换新的 AES 密钥和 nonce
+```
+
+## 默认 Query / Mutation 配置
+
+### Query 默认配置
+
+| 配置项 | 默认值 | 说明 |
+|---|---|---|
+| `gcTime` | `600000`（10 分钟） | 垃圾回收时间 |
+| `staleTime` | `30000`（30 秒） | 数据过期时间 |
+| `retry` | `2` | 失败重试次数 |
+| `retryDelay` | 指数退避，上限 30 秒 | `min(1000 × 2^n, 30000)` |
+| `refetchOnMount` | `true` | 组件挂载时重新获取 |
+| `refetchOnReconnect` | `true` | 网络恢复时重新获取 |
+| `refetchOnWindowFocus` | `false` | 窗口聚焦时不重新获取 |
+| `retryOnMount` | `true` | 上次失败的 query 在重新挂载时继续重试 |
+| `throwOnError` | `false` | 不向上抛出错误 |
+| `networkMode` | `'online'` | 仅在线时发起请求 |
+
+### Mutation 默认配置
+
+| 配置项 | 默认值 | 说明 |
+|---|---|---|
+| `gcTime` | `60000`（1 分钟） | 垃圾回收时间 |
+| `retry` | `1` | 失败重试次数 |
+| `retryDelay` | 指数退避，上限 10 秒 | `min(1000 × 2^n, 10000)` |
+| `throwOnError` | `false` | 不向上抛出错误 |
+| `networkMode` | `'online'` | 仅在线时发起请求 |
+
+可通过 `defaultOptions` 覆盖任意配置项：
+
+```ts
+const queryClient = createQueryClient({
+  defaultOptions: {
+    queries: { staleTime: 60_000, retry: 3 },
+    mutations: { retry: 2 },
+  },
+});
+```
+
+## 与 @skyroc/axios 的关系
+
+| 层次 | 职责 |
+|---|---|
+| `@skyroc/axios` | 请求工厂（拦截器钩子、请求 ID、请求取消、重试） |
+| `@skyroc/service` | 业务封装（适配器模式、状态码策略、Token 管理、QueryClient） |
+
+`@skyroc/service` 调用 `@skyroc/axios` 的 `createRequest`，向钩子中注入业务逻辑。日常开发**只需引用 `@skyroc/service`**，无需直接操作底层 axios 包。
+
+## 导出一览
+
+**主入口 `@skyroc/service`**
+
+| 导出 | 说明 |
+|---|---|
+| `createAppRequest` | 创建平台无关的请求实例 |
+| `createQueryClient` | 创建预配置的 `QueryClient`（也可从 `@skyroc/service/query` 导入） |
+| `refreshToken(adapter)` | 刷新令牌，并发调用共用同一次请求。非 HTTP 传输（WebSocket / SSE）拿到过期码时走这里 |
+| `resetTokenRefresh()` | 清掉在途刷新状态，测试用 |
+| `importPublicKey` / `seal` | 信封加密底层能力 |
+
+**类型**
+
+| 类型 | 说明 |
+|---|---|
+| `RequestAdapter` | 平台适配器接口 |
+| `ServiceCodes` | 业务状态码配置 |
+| `RequestInstanceState` | 请求实例内部状态（`errMsgStack` + 任意扩展键） |
+| `CreateRequestOptions` | `createAppRequest` 参数类型 |
+| `CreateQueryClientOptions` | `createQueryClient` 参数类型 |
+| `ApiCryptoOptions` | 加密配置（`header` / `publicKey`） |
+| `SealedPayload` | `seal` 的返回值（`body` / `sealedKey`） |
+
+**`@skyroc/service/query` 子入口**还额外导出 `DEFAULT_QUERY_CONFIG` / `DEFAULT_MUTATION_CONFIG` 两份默认配置，便于在自定义 `defaultOptions` 里做局部覆盖。
+
+## 测试
+
+```bash
+# 从 monorepo 根目录
+npx vitest run packages/@core/service/__tests__
+
+# 或在包目录内
+cd packages/@core/service && pnpm test
+
+# 含覆盖率报告
+pnpm test --coverage
+```
+
+覆盖范围：请求实例创建与默认回调、业务状态码（登出 / 弹窗登出 / Token 过期）处理、续签请求自身的防重入、Token 刷新与并发共享、错误消息去重、信封加密、QueryClient 配置合并、指数退避重试延迟。

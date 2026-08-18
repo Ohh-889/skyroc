@@ -11,11 +11,11 @@
 `DocsLayout` 的 `tabs` 默认就是 `getLayoutTabs(tree)`，会自动把每个 root 变成顶部切换器的一项，
 `app/docs/layout.tsx` 无需改动。三个 root 共用同一个应用、同一份搜索索引、同一次构建。
 
-| root | URL 前缀 | 篇数 | 读者意图 |
-| --- | --- | --- | --- |
-| 指南 `guide/` | `/docs/guide/` | 23 | 「这项目怎么跑、怎么组织、怎么协作」 |
-| Admin 应用 `admin/` | `/docs/admin/` | 39 | 「我要改 admin 的某个功能」 |
-| 包参考 `packages/` | `/docs/packages/` | 55 | 「`@skyroc/xxx` 这个 API 怎么用」 |
+| root                | URL 前缀          | 篇数 | 读者意图                             |
+| ------------------- | ----------------- | ---- | ------------------------------------ |
+| 指南 `guide/`       | `/docs/guide/`    | 23   | 「这项目怎么跑、怎么组织、怎么协作」 |
+| Admin 应用 `admin/` | `/docs/admin/`    | 39   | 「我要改 admin 的某个功能」          |
+| 包参考 `packages/`  | `/docs/packages/` | 55   | 「`@skyroc/xxx` 这个 API 怎么用」    |
 
 ```text
 content/docs/
@@ -103,8 +103,15 @@ content/docs/
   "description": "跑起来、读懂仓库、按规范协作",
   "icon": "Compass",
   "root": true,
-  "pages": ["index", "---快速上手---", "getting-started",
-            "---架构设计---", "architecture", "---工程化---", "engineering"]
+  "pages": [
+    "index",
+    "---快速上手---",
+    "getting-started",
+    "---架构设计---",
+    "architecture",
+    "---工程化---",
+    "engineering"
+  ]
 }
 ```
 
@@ -114,23 +121,23 @@ content/docs/
 
 `project-docs/core/*` 与 `core-docs/*`、`project-docs/web/*` 与 `web-kit-docs/*` 是同题两写，行数差距悬殊，一律**保留详细版，短版降级为目录页或删除**：
 
-| 主题 | project-docs（短） | core-docs / web-kit-docs（详） | 处置 |
-| --- | --- | --- | --- |
-| axios | 68 行 | 309 行 | 删短版，用详版 |
-| color | 84 行 | 735 行 | 删短版，用详版 |
-| scheduler | 136 行 | 337 行 | 删短版，用详版 |
-| scripts | 121 行 | 385 行 | 删短版，用详版 |
-| service | 184 行 | 382 行 | 删短版，用详版 |
-| state | 91 行 | 452 行 | 删短版，用详版 |
-| utils | 114 行（1 篇） | 14 篇 / 3141 行 | 短版改写成 `utils/overview` 之外的目录入口 |
-| admin-i18n | 143 行 | 433 行 | 删短版，用详版 |
-| admin-runtime | 146 行 | 631 行 | 删短版，用详版 |
-| admin-vite | 217 行 | 1029 行 | 删短版，用详版 |
-| materials | 149 行 | 451 行 | 删短版，用详版 |
-| tailwind-plugin | 123 行 | 605 行 | 删短版，用详版 |
-| admin-theme | 158 行 | 759 行 | 删短版，用详版 |
-| antd-theme | 106 行 | 477 行 | 删短版，用详版 |
-| admin-layouts | 193 行（1 篇） | 8 篇 / 1640 行 | 短版删除，用详版目录 |
+| 主题            | project-docs（短） | core-docs / web-kit-docs（详） | 处置                                       |
+| --------------- | ------------------ | ------------------------------ | ------------------------------------------ |
+| axios           | 68 行              | 309 行                         | 删短版，用详版                             |
+| color           | 84 行              | 735 行                         | 删短版，用详版                             |
+| scheduler       | 136 行             | 337 行                         | 删短版，用详版                             |
+| scripts         | 121 行             | 385 行                         | 删短版，用详版                             |
+| service         | 184 行             | 382 行                         | 删短版，用详版                             |
+| state           | 91 行              | 452 行                         | 删短版，用详版                             |
+| utils           | 114 行（1 篇）     | 14 篇 / 3141 行                | 短版改写成 `utils/overview` 之外的目录入口 |
+| admin-i18n      | 143 行             | 433 行                         | 删短版，用详版                             |
+| admin-runtime   | 146 行             | 631 行                         | 删短版，用详版                             |
+| admin-vite      | 217 行             | 1029 行                        | 删短版，用详版                             |
+| materials       | 149 行             | 451 行                         | 删短版，用详版                             |
+| tailwind-plugin | 123 行             | 605 行                         | 删短版，用详版                             |
+| admin-theme     | 158 行             | 759 行                         | 删短版，用详版                             |
+| antd-theme      | 106 行             | 477 行                         | 删短版，用详版                             |
+| admin-layouts   | 193 行（1 篇）     | 8 篇 / 1640 行                 | 短版删除，用详版目录                       |
 
 **只有短版、没有详版的 5 篇**（`core/logger`、`core/types`、`web/admin-devtools`、`web/admin-notification`、`web/admin-styles`）直接搬过来，标记为"待补详"。
 
@@ -138,19 +145,19 @@ content/docs/
 
 上表处理的是**跨站同题两写**。`guide/` 这棵树内部还有一批**站内自我重复**，已按「同一个事实只留一处正文，其余用链接指过去」收敛：
 
-| 重复内容 | 唯一事实源 | 其余各页的处置 |
-| --- | --- | --- |
-| Turborepo 任务定义与语义 | `engineering/build-system` | 删除 `architecture/turborepo`（整篇被覆盖），链接改指 build-system |
-| 平台目录树 / 为什么按平台切 | `architecture/platform-first` | `naming` 删前两节；`introduction` 树改为一句话；`conventions` 目录表删除 |
-| 目录 → 包名映射规则 | `architecture/naming` | `platform-first`、`conventions`、`new-package` 三处表格改链接 |
-| 分层图 / 禁止的依赖方向 | `architecture/package-layering` | `dependency-graph` 只留 7 条具体功能链路，改名「关键依赖链路」 |
-| `RequestAdapter` 接口与注入 | `architecture/adapter-pattern` | `package-layering` 的代码块改为一段说明 + 链接 |
-| catalog 配置与流程 | `architecture/catalog` | `tech-stack`「版本治理」压成三条规则表 + 链接 |
-| workspace glob | `architecture/monorepo` | `directory` 删除同款 yaml |
-| commit type 表 | `engineering/git-commit` | `conventions` 删表留链接 |
-| tsdown 配置 | `engineering/build-system` | `exports-strategy` 删代码块留约束描述 |
-| 包数量 / workspace 清单 | `getting-started/directory` | `faq` 删表、`dependency-graph` 删「包数量速览」 |
-| useCallback / useMemo 规则 | `engineering/conventions` | `faq` 两个 Q 删除；`introduction`、`overview` 保留一行 + 链接 |
+| 重复内容                    | 唯一事实源                      | 其余各页的处置                                                           |
+| --------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| Turborepo 任务定义与语义    | `engineering/build-system`      | 删除 `architecture/turborepo`（整篇被覆盖），链接改指 build-system       |
+| 平台目录树 / 为什么按平台切 | `architecture/platform-first`   | `naming` 删前两节；`introduction` 树改为一句话；`conventions` 目录表删除 |
+| 目录 → 包名映射规则         | `architecture/naming`           | `platform-first`、`conventions`、`new-package` 三处表格改链接            |
+| 分层图 / 禁止的依赖方向     | `architecture/package-layering` | `dependency-graph` 只留 7 条具体功能链路，改名「关键依赖链路」           |
+| `RequestAdapter` 接口与注入 | `architecture/adapter-pattern`  | `package-layering` 的代码块改为一段说明 + 链接                           |
+| catalog 配置与流程          | `architecture/catalog`          | `tech-stack`「版本治理」压成三条规则表 + 链接                            |
+| workspace glob              | `architecture/monorepo`         | `directory` 删除同款 yaml                                                |
+| commit type 表              | `engineering/git-commit`        | `conventions` 删表留链接                                                 |
+| tsdown 配置                 | `engineering/build-system`      | `exports-strategy` 删代码块留约束描述                                    |
+| 包数量 / workspace 清单     | `getting-started/directory`     | `faq` 删表、`dependency-graph` 删「包数量速览」                          |
+| useCallback / useMemo 规则  | `engineering/conventions`       | `faq` 两个 Q 删除；`introduction`、`overview` 保留一行 + 链接            |
 
 `getting-started/faq` 同时做了瘦身：只保留正文没覆盖的「为什么这么设计」与一次性排查经验，操作类问题统一在开头指路。
 
@@ -160,18 +167,18 @@ content/docs/
 
 ## 三、`docs/docs` 代码侧要改的文件
 
-| 文件 | 改动 |
-| --- | --- |
-| `content/docs/test.mdx` | 删除（脚手架残留） |
-| `content/docs/index.mdx` | 重写，去掉 Fumadocs/Next.js 官方 Cards |
-| `content/docs/meta.json` | 新建，见上 |
-| `lib/shared.ts` | `gitConfig.branch: 'main'` → **`'master'`**（仓库默认分支是 master，现在所有"编辑此页"链接都会 404）；`appName` 保持 `Skyroc Docs` |
-| `lib/layout.shared.tsx` | 补统一顶部导航 `links`：官网 / 文档 / Admin / Web UI / Native UI / Playground / GitHub（六站共用同一份，另外五站复制同样配置） |
-| `next.config.mjs` | 加 `redirects()`：旧站路径 → 新路径永久跳转，见下 |
-| `package.json` | `name: "docs"` → `"@skyroc/docs"`；`dev` 固定端口（接管 project-docs 的 `--port 8848`） |
-| `app/(home)/1.md` | 移出 `app/`（这是诊断记录，不该留在路由目录），归入 `docs/internal/` 或删除 |
+| 文件                       | 改动                                                                                                                                                                                                                                           |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content/docs/test.mdx`    | 删除（脚手架残留）                                                                                                                                                                                                                             |
+| `content/docs/index.mdx`   | 重写，去掉 Fumadocs/Next.js 官方 Cards                                                                                                                                                                                                         |
+| `content/docs/meta.json`   | 新建，见上                                                                                                                                                                                                                                     |
+| `lib/shared.ts`            | `gitConfig.branch: 'main'` → **`'master'`**（仓库默认分支是 master，现在所有"编辑此页"链接都会 404）；`appName` 保持 `Skyroc Docs`                                                                                                             |
+| `lib/layout.shared.tsx`    | 补统一顶部导航 `links`：官网 / 文档 / Admin / Web UI / Native UI / Playground / GitHub（六站共用同一份，另外五站复制同样配置）                                                                                                                 |
+| `next.config.mjs`          | 加 `redirects()`：旧站路径 → 新路径永久跳转，见下                                                                                                                                                                                              |
+| `package.json`             | `name: "docs"` → `"@skyroc/docs"`；`dev` 固定端口（接管 project-docs 的 `--port 8848`）                                                                                                                                                        |
+| `app/(home)/1.md`          | 移出 `app/`（这是诊断记录，不该留在路由目录），归入 `docs/internal/` 或删除                                                                                                                                                                    |
 | `app/(home)/modules/*.tsx` | 目前 `DocumentationMapSection`、`ReadingPathsSection`、`HeaderNavigation`、`HomeHeroSection` 的 href 全是占位 `/docs`、`#documentation-map`；导航定稿后换成真实路径（`/docs/getting-started/quick-start`、`/docs/admin`、`/docs/packages` 等） |
-| `app/api/search/route.ts` | 后续接跨站索引：主站搜索结果里带上 Web UI / Native UI，并标注来源站点 |
+| `app/api/search/route.ts`  | 后续接跨站索引：主站搜索结果里带上 Web UI / Native UI，并标注来源站点                                                                                                                                                                          |
 
 ### 重定向映射（`next.config.mjs`）
 

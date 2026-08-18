@@ -1,0 +1,104 @@
+---
+title: Web 端包总览
+description: packages/web 命名空间下 14 个 Web 端能力包的定位与依赖关系
+---
+
+## 定位
+
+`packages/web/` 是 **Web 平台一整棵能力树**，覆盖从 UI 组件、主题、布局到 Vite 配置、开发工具的全部 Web 专属能力。它的设计哲学：
+
+> 与其抽一个「通用 UI」让多端共享，不如让每个平台目录各自完整。Web 端的 antd / Tailwind / Vite / IndexedDB 等强平台耦合就让它们留在 `web/` 里，跨端共享的只有 token 和类型。
+
+详见 [平台优先与命名](/docs/architecture/naming)。
+
+## 包列表（按层组织）
+
+### 基础适配层
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `tailwind-plugin` | [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) | Tailwind 主题插件（OKLCH tokens） |
+| `antd-theme` | [`@skyroc/adapter-antd-theme`](/docs/web/antd-theme) | Ant Design 自定义 algorithm + token 生成 |
+
+### 设计系统层
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `ui/shadcn` | [`@skyroc/web-ui`](/docs/web/ui-shadcn) | Radix + Tailwind 组件库（50+ 组件） |
+| `ui/compose` | [`@skyroc/web-ui-compose`](/docs/web/ui-compose) | 复合组件 + antd Table Hook 体系 |
+| `ui/antd` | [`@skyroc/web-ui-antd`](/docs/web/ui-antd) | Ant Design 业务组件层（按钮 / 异常页 / 全屏） |
+
+### 材料层
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `materials` | [`@skyroc/materials`](/docs/web/materials) | 插槽式 AdminLayout 骨架 + 三种 PageTab |
+
+### Admin 应用层
+
+| 目录 | 包名 | 职责 |
+| --- | --- | --- |
+| `admin-theme` | [`@skyroc/web-admin-theme`](/docs/web/admin-theme) | 主题运行时：CSS 变量、预设、AntdProvider |
+| `admin-i18n` | [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n) | i18next 运行时 + 内置中英双语 + 语言切换 UI |
+| `admin-layouts` | [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts) | 完整 Admin 壳：Header / Sider / Tab / 主题抽屉 / 搜索 |
+| `admin-notification` | [`@skyroc/web-admin-notification`](/docs/web/admin-notification) | 站内通知中心 |
+| `admin-runtime` | [`@skyroc/web-admin-runtime`](/docs/web/admin-runtime) | 启动期插件（dayjs / nprogress / iconify / 版本更新） |
+| `admin-styles` | [`@skyroc/web-admin-styles`](/docs/web/admin-styles) | 全局 CSS 资产（reset / global / nprogress） |
+| `admin-vite` | [`@skyroc/web-admin-vite`](/docs/web/admin-vite) | Vite 配置预设（插件链 / proxy / manualChunks） |
+| `admin-devtools` | [`@skyroc/web-admin-devtools`](/docs/web/admin-devtools) | 集成 Query / Router / Jotai DevTools |
+
+## 依赖关系图
+
+```text
+@skyroc/tailwind-plugin (@skyroc/color)
+    └─ peer: @skyroc/web-ui
+
+@skyroc/adapter-antd-theme (@skyroc/color)
+    └─ @skyroc/web-admin-theme
+          └─ @skyroc/web-admin-layouts
+                  ├─ @skyroc/materials → @skyroc/web-ui
+                  ├─ @skyroc/web-admin-i18n
+                  └─ @skyroc/web-ui-antd → @skyroc/web-ui-compose
+
+@skyroc/web-admin-notification → web-ui-antd + web-ui-compose
+@skyroc/web-admin-devtools / runtime / styles / vite → 相对独立
+```
+
+`@skyroc/web-admin-layouts` 是**组合度最高**的包，把主题、UI、i18n、materials 拼装成 Admin 壳，其它包是它的依赖。
+
+## 测试与文档覆盖
+
+| 包 | README | 测试 |
+| --- | --- | --- |
+| tailwind-plugin | ✅ | ✅（generate / index） |
+| adapter-antd-theme | ✅ | ✅（algorithm / gen-* tokens） |
+| web-ui (shadcn) | ✅ | ✅（大量组件 + exports） |
+| web-ui-compose | ❌ | ✅（index / table） |
+| web-ui-antd | ❌ | ❌ |
+| materials | ✅ | ✅ |
+| admin-theme | ✅ | ✅（丰富） |
+| admin-i18n | ✅ | ❌ |
+| admin-layouts | ✅ | ✅ |
+| admin-notification | ❌ | ❌ |
+| admin-runtime | ❌ | ✅（plugins） |
+| admin-styles | ✅ | ❌ |
+| admin-vite | ✅ | ❌ |
+| admin-devtools | ❌ | ❌ |
+
+## 命名映射
+
+部分包目录与包名不一致，常见映射：
+
+| 目录 | 包名 |
+| --- | --- |
+| `packages/web/ui/shadcn` | `@skyroc/web-ui` |
+| `packages/web/antd-theme` | `@skyroc/adapter-antd-theme` |
+| 其它 `packages/web/*` | `@skyroc/web-*` 同名 |
+
+详见 [命名规范](/docs/architecture/naming)。
+
+## 推荐阅读顺序
+
+1. 从外到内：[admin-layouts](/docs/web/admin-layouts) → [admin-theme](/docs/web/admin-theme) → [adapter-antd-theme](/docs/web/antd-theme) → [tailwind-plugin](/docs/web/tailwind-plugin)
+2. 设计系统：[web-ui (shadcn)](/docs/web/ui-shadcn) → [web-ui-compose](/docs/web/ui-compose) → [web-ui-antd](/docs/web/ui-antd)
+3. 工程化：[admin-vite](/docs/web/admin-vite) → [admin-runtime](/docs/web/admin-runtime) → [admin-devtools](/docs/web/admin-devtools)

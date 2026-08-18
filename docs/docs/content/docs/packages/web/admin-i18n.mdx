@@ -1,0 +1,143 @@
+---
+title: "@skyroc/web-admin-i18n"
+description: i18next + react-i18next 运行时封装，含内置中英双语与语言切换 UI
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-i18n` |
+| 目录 | `packages/web/admin-i18n` |
+| 版本 | 1.0.0 |
+| peer | [`@skyroc/core-state`](/docs/core/state)、[`@skyroc/web-ui-antd`](/docs/web/ui-antd)、antd、i18next、jotai、react、react-i18next |
+| 测试 | ❌ |
+
+`@skyroc/web-admin-i18n` 是 Admin 应用的国际化运行时层：把 i18next 实例创建、Jotai 语言 atom、内置中英资源、`<LangEffect>` 副作用、`<LangSwitch>` 切换 UI 全部装配好，应用只需一行 `setupI18n()`。
+
+## 核心导出
+
+### Setup 与运行时
+
+```ts
+import { setupI18n, i18n, reactI18nextInstance, $t, setLng, getCurrentLang, loadLocaleMessages } from '@skyroc/web-admin-i18n';
+
+await setupI18n({
+  initialLang: 'zh-CN',
+  fallbackLang: 'en-US',
+  storage: localStg,
+  onChange: locale => syncLocales(locale)
+});
+
+$t('common.confirm');         // 等价 i18n.t('common.confirm')
+setLng('en-US');               // 切换语言
+getCurrentLang();              // 'zh-CN' | 'en-US'
+```
+
+### Atoms
+
+| Atom | 用途 |
+| --- | --- |
+| `langAtom` | 当前语言 |
+| `fallbackLangAtom` | 兜底语言 |
+| `currentLangOptionAtom` | 当前语言对应的 option 对象 |
+| `localeOptionsAtom` | 所有可选语言 option 列表 |
+
+### Hooks
+
+```ts
+import { useLang } from '@skyroc/web-admin-i18n';
+
+const { locale, locales, setLocale } = useLang();
+```
+
+### 组件
+
+| 组件 | 用途 |
+| --- | --- |
+| `LangEffect` | 监听语言切换，调用 `onLocaleChange` 回调（如同步 dayjs locale） |
+| `LangSwitch` | 语言切换下拉菜单，挂在 Header |
+
+### Config
+
+| 导出 | 内容 |
+| --- | --- |
+| `defaultLangConfig` | 默认配置（initialLang、fallbackLang、loadPath…） |
+
+### 类型
+
+`LangConfig`、`LangOption`、`LangType`、`LocaleChangeHandler`、`LocaleSetupOptions`、`LocaleStorage`、`UseLangReturn`。
+
+## 内置语言资源
+
+```text
+src/langs/
+├── en-us/
+│   ├── common      # 通用按钮、占位
+│   ├── datatable   # 表格相关
+│   ├── dropdown    # 下拉菜单
+│   ├── form        # 表单验证
+│   ├── icon        # 图标相关
+│   ├── notification
+│   ├── page        # 页面级文案（例如菜单名）
+│   ├── request     # 请求错误
+│   ├── route       # 路由名称
+│   ├── system      # 系统级（如登出确认）
+│   └── theme       # 主题面板
+└── zh-cn/          # 同上结构
+```
+
+业务可通过 `loadLocaleMessages(locale, namespace, messages)` 追加自定义命名空间。
+
+## 全局类型推导
+
+i18next 与 [`@skyroc/types`](/docs/core/types) 的 `I18n` namespace 协作，让 `$t('xxx')` 的 key 在编译期类型安全：
+
+```ts
+$t('common.confirm');          // ✅
+$t('common.xxx_not_exist');    // ❌ 编译报错
+```
+
+类型 schema 由 `@skyroc/types/locales/i18n.d.ts` 定义，资源文件结构必须与 schema 对齐。
+
+## 在 apps/admin 的链路
+
+```ts
+// bootstrap.tsx
+await setupI18n();
+
+// App.tsx
+import AntdProvider from '@/features/antd/AntdProvider';
+// AntdProvider 内部读 useLang() 拿 locale 注入 antd ConfigProvider
+
+// features/effects/GlobalEffect.tsx
+<LangEffect onLocaleChange={syncLocales} />
+// syncLocales 来自 apps/admin/src/locales/sync.ts，
+// 切换语言时同步 dayjs locale
+```
+
+## 与 [`@skyroc/core-state`](/docs/core/state) 的集成
+
+`langAtom` 等都挂在 `globalStore` 上（通过 peer 依赖 core-state 拿到 store），所以在拦截器、非组件代码中也能读写：
+
+```ts
+import { getAtomValue, setAtomValue } from '@skyroc/core-state';
+import { langAtom } from '@skyroc/web-admin-i18n';
+
+const lang = getAtomValue(langAtom);   // 'zh-CN'
+setAtomValue(langAtom, 'en-US');       // 全局切换
+```
+
+## 工具函数
+
+| 函数 | 用途 |
+| --- | --- |
+| `getLangFromStorage(storage)` | 从存储读语言 |
+| `saveLangToStorage(storage, lang)` | 写入存储 |
+| `getLangLabel(lang)` | 取语言显示名 |
+
+## 设计要点
+
+- **资源懒加载**：`loadLocaleMessages` 异步加载，按需引入；
+- **避免 React Suspense**：自带 fallback，避免首屏抖动；
+- **与 dayjs 联动**：`LangEffect` 的 `onLocaleChange` 是切换 dayjs locale 的标准位置。

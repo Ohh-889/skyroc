@@ -1,0 +1,140 @@
+---
+title: "@sa/uno-config"
+description: UnoCSS 预设：主题色 CSS 变量、shortcuts、动画、字号、间距、圆角
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@sa/uno-config` |
+| 目录 | `internal/uno-config` |
+| 版本 | 1.0.0 |
+| 命名说明 | 历史遗留 `@sa` 而非 `@skyroc` |
+| 可发布 | ✅（未声明 `private: true`） |
+
+`@sa/uno-config` 提供 admin 应用的 UnoCSS 预设——主题色 CSS 变量、常用 shortcuts（flex / position / text / common）、动画规则、字号 / 间距 / 圆角 / 阴影 token。
+
+## 主导出
+
+```ts
+import {
+  presetSoybeanAdmin,            // 默认 export
+  allShortcuts,
+  flexShortcuts,
+  positionShortcuts,
+  textShortcuts,
+  commonShortcuts,
+  themeColorKeys,
+  colorPaletteNumbers,
+  colorPaletteVars,
+  createColorPaletteVars,
+  createColorsPalette,
+  textVariants,
+  builtinRadiuses
+} from '@sa/uno-config';
+```
+
+## 使用
+
+```ts
+// apps/admin/uno.config.ts
+import { presetSoybeanAdmin } from '@sa/uno-config';
+import {
+  defineConfig,
+  presetWind3,
+  transformerDirectives,
+  transformerVariantGroup
+} from 'unocss';
+
+export default defineConfig({
+  presets: [
+    presetWind3({
+      dark: 'class',
+      important: '.root',
+      preflight: 'on-demand'
+    }),
+    presetSoybeanAdmin()
+  ],
+  transformers: [
+    transformerDirectives(),
+    transformerVariantGroup()
+  ]
+});
+```
+
+## presetSoybeanAdmin 提供的内容
+
+### 1. 主题色 CSS 变量映射
+
+```text
+text-primary       → color: var(--primary-color)
+bg-success         → background: var(--success-color)
+text-primary-500   → color: var(--primary-color-500)   (11 档)
+```
+
+`themeColorKeys` 列出所有可用色键（`primary` / `success` / `warning` / `error` / `info`）；`colorPaletteNumbers` 列出色阶（50/100/200/.../900/950）。
+
+### 2. 常用 shortcuts
+
+| 组 | 例子 |
+| --- | --- |
+| `flexShortcuts` | `flex-center`、`flex-x-center`、`flex-y-center` |
+| `positionShortcuts` | `absolute-center`、`absolute-lt` 等 |
+| `textShortcuts` | `text-ellipsis`、`text-overflow-2` 行截断 |
+| `commonShortcuts` | `card-shadow`、`hover-effect` 等 |
+
+### 3. 动画规则
+
+内置：
+
+- accordion 折叠展开
+- collapsible 上下展开
+- enter 进场动画
+
+可直接：
+
+```html
+<div class="animate-accordion-down">...</div>
+```
+
+### 4. Theme tokens
+
+- `fontSize` / `lineHeight`：覆盖默认字号
+- `spacing`：扩展间距
+- `borderRadius`：扩展圆角（与 `builtinRadiuses` 一致）
+- `boxShadow`：扩展阴影
+
+## 工具函数
+
+| 函数 | 作用 |
+| --- | --- |
+| `createColorPaletteVars(name)` | 给一个色键生成 `{ DEFAULT, 50, 100, ... }` 的 CSS 变量映射对象 |
+| `createColorsPalette()` | 一次性生成所有 `themeColorKeys` 的 palette |
+| `colorPaletteVars` | 已生成的常量映射 |
+| `textVariants` | tailwind-variants 风格的文本样式 |
+| `builtinRadiuses` | 内置圆角值表 |
+
+## 与 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 的关系
+
+| 维度 | `@sa/uno-config` | `@skyroc/tailwind-plugin` |
+| --- | --- | --- |
+| 用途 | apps/admin 业务页面的工具类 | `@skyroc/web-ui` 组件库的 token 注入 |
+| 工具 | UnoCSS | Tailwind 4（亦含 UnoCSS preset） |
+| 范围 | admin 应用样式 | 设计系统层 |
+
+两者**互不冲突**：admin 页面用 UnoCSS（`uno.config.ts`）；引入的 web-ui 组件自带 Tailwind 编译产物（`style.css`）。
+
+## 历史命名说明
+
+包名 `@sa/uno-config` 中 `@sa` 是项目早期的 scope 缩写，后来统一改为 `@skyroc`，但 uno-config 因 publishConfig 已发布、改名会破坏外部用户而保留。新增包**一律使用 `@skyroc/*`**，参见 [命名规范](/docs/architecture/naming)。
+
+## 源码结构
+
+```text
+src/
+├── index.ts            # 主导出
+└── shortcuts.ts        # 各类 shortcuts 分组
+```
+
+> 注意：README 中提到的 `createUnoContentConfig`、`scanUiKitPackagesSync` 当前**未导出**——admin 应用的 `content.filesystem` 是手写路径。

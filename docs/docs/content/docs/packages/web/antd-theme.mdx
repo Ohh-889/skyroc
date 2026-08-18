@@ -1,0 +1,106 @@
+---
+title: "@skyroc/adapter-antd-theme"
+description: Ant Design 的自定义主题算法，基于 OKLCH 色彩空间生成 token
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/adapter-antd-theme` |
+| 版本 | 1.0.0 |
+| 依赖 | [`@skyroc/color`](/docs/core/color) |
+| peer | `antd` |
+| 测试 | ✅（algorithm、各 `gen*` token 函数） |
+
+Ant Design v5+ 提供了自定义 theme algorithm 的能力——给定 `seedToken`，返回 `MapToken`，token 再驱动整套组件主题。本包用 [OKLCH 色彩空间](https://oklch.com/) 替换了 Ant Design 默认的 HSV 算法，让色阶**感知更均匀**，更容易满足 WCAG 对比度要求。
+
+## 解决了什么问题
+
+Ant Design 默认调色板基于 HSV，明度在不同色相下视觉感受不一致（蓝色看着深、黄色看着浅）。OKLCH 是基于人眼感知的色彩空间，相同 L 在所有色相下亮度感知接近——非常适合做无障碍设计与暗色模式。
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── seed/index.ts                       # seed token + 默认 preset colors
+├── algorithm/
+│   ├── default/                        # 亮色 derivative
+│   └── dark/                           # 暗色 derivativeDark
+└── shared/
+    ├── genColorMapToken.ts
+    ├── genCommonMapToken.ts
+    ├── genControlHeight.ts
+    ├── genFontMapToken.ts
+    ├── genRadiusMapToken.ts
+    ├── genSizeMapToken.ts
+    └── colorAlgorithm.ts
+```
+
+## 核心导出
+
+| 类别 | 符号 |
+| --- | --- |
+| Algorithm | `derivative`（亮色）、`derivativeDark`（暗色） |
+| Seed | `seedToken`、`defaultPresetColors` |
+| Token 生成 | `genColorMapToken`、`genCommonMapToken`、`genControlHeight`、`genFontMapToken`、`genRadiusMapToken`、`genSizeMapToken` |
+| 颜色工具 re-export | `adjustLightness`、`darkenColor`、`lightenColor`、`mixColor` |
+| 常量 | `ANTD_INDEXES`、`TAILWIND_INDEXES`、`FONT_SIZES`、`RADIUS_MULTIPLIERS`、`SPACING_MULTIPLIERS` |
+| 类型 | `SemanticColorConfig`、`FontSizeKey`、`RadiusMapToken`、`SpacingSizeKey` 等 |
+
+## 使用
+
+### 直接接入 antd ConfigProvider
+
+```tsx
+import { ConfigProvider, theme as antdTheme } from 'antd';
+import { derivative, derivativeDark, seedToken } from '@skyroc/adapter-antd-theme';
+
+<ConfigProvider
+  theme={{
+    algorithm: darkMode ? derivativeDark : derivative,
+    token: { ...seedToken, colorPrimary: '#1677ff' }
+  }}
+>
+  <App />
+</ConfigProvider>;
+```
+
+### 在 admin 中通过 `@skyroc/web-admin-theme` 使用
+
+```ts
+import { setupTheme, AntdProvider } from '@skyroc/web-admin-theme';
+// 内部已经接好了 algorithm + seedToken + token 生成器
+```
+
+直接通过 [`@skyroc/web-admin-theme`](/docs/web/admin-theme) 是更常见的用法，本包是它的底层依赖。
+
+## token 生成器
+
+每个 `gen*` 函数对应 antd MapToken 的一类：
+
+| 函数 | 产物 |
+| --- | --- |
+| `genColorMapToken` | `colorPrimary` / `colorBgBase` / `colorTextBase` 等全色阶（OKLCH 推导） |
+| `genCommonMapToken` | 通用 token：成功/警告/危险 |
+| `genControlHeight` | 各尺寸 control 高度 |
+| `genFontMapToken` | 字号阶梯（含 `fontSizeHeading1-5`） |
+| `genRadiusMapToken` | 圆角阶梯（基于乘数） |
+| `genSizeMapToken` | 间距阶梯 |
+
+设计这些函数都是为了支持「**用户改一个 seed，整套 token 自动重算**」——主题抽屉的实时调整功能因此而生。
+
+## OKLCH 是什么
+
+[OKLCH](https://oklch.com/) 是 CSS Color Module Level 4 引入的色彩空间：
+
+- `L`（Lightness）：感知亮度，0~1；
+- `C`（Chroma）：色度，越大越鲜艳；
+- `H`（Hue）：色相角度。
+
+相对 HSL/HSV，OKLCH 让明度对所有色相视觉一致——这对企业 admin 主题尤其重要（蓝色品牌色不能因为换成绿色就感觉"变暗了"）。
+
+## 测试
+
+`__tests__/` 包含算法、各 `gen*` 函数的 snapshot 与边界用例，确保 token 数值稳定（升级 antd 时也能立即发现行为差异）。

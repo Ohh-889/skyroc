@@ -1,0 +1,98 @@
+---
+title: "@skyroc/web-admin-styles"
+description: Admin 应用共享全局样式资产（reset / global / nprogress）
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-styles` |
+| 目录 | `packages/web/admin-styles` |
+| 版本 | 0.1.0 |
+| 依赖 | 无 |
+| 测试 | ❌ |
+
+这是一个**纯 CSS 包**，不导出任何 JS / TS 符号。它把 admin 应用要用到的「reset / 全局变量 / NProgress 样式」打包成可单独引用的 CSS 文件，子入口分别暴露。
+
+## 内容
+
+```text
+src/
+├── global.css       # 全局变量、布局基线
+├── reset.css        # CSS Reset
+└── nprogress.css    # NProgress 样式（颜色 + 位置覆盖）
+```
+
+## 子入口
+
+`package.json` 直接把 CSS 暴露成子路径：
+
+```jsonc
+{
+  "exports": {
+    "./global.css":   "./src/global.css",
+    "./reset.css":    "./src/reset.css",
+    "./nprogress.css": "./src/nprogress.css"
+  }
+}
+```
+
+无 `.` 主入口。
+
+## 使用
+
+```ts
+// plugins/assets.ts
+import '@skyroc/web-admin-styles/reset.css';
+import '@skyroc/web-admin-styles/global.css';
+import '@skyroc/web-admin-styles/nprogress.css';
+```
+
+通常在应用启动期的「assets 注入」位置一次性引入：
+
+```ts
+// bootstrap.tsx
+import './plugins/assets';
+```
+
+## 各文件作用
+
+### reset.css
+
+- 标准化浏览器默认样式
+- 重置 margin / padding / box-sizing
+- 移除 input / button 默认外观
+
+### global.css
+
+- `:root` 上的常用 CSS 变量（与 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 协作）
+- `body` / `html` 高度、字体基线
+- 滚动条样式（覆盖默认 webkit / firefox 样式）
+- Admin 布局相关的全局基线（z-index 分层等）
+
+### nprogress.css
+
+- 把 NProgress 顶部进度条颜色绑到主题色
+- 调整高度、阴影、动画
+- 配合 [`@skyroc/web-admin-runtime`](/docs/web/admin-runtime) 的 `setupNProgress` 使用
+
+## 为什么单独成包
+
+| 原因 | 说明 |
+| --- | --- |
+| **可单独按需引入** | 不想引入 NProgress 的项目可只 import reset/global |
+| **样式与逻辑解耦** | NProgress 的 JS（nprogress 包）与样式分开，便于自定义视觉 |
+| **多 admin 应用共享** | `apps/admin` 与 `apps/admin-example` 共用同一份样式 |
+
+## 与 web-ui (shadcn) 的样式分工
+
+| 包 | 样式职责 |
+| --- | --- |
+| `@skyroc/web-admin-styles` | Admin 应用级（reset / 滚动条 / NProgress / body 基线） |
+| `@skyroc/web-ui` | 组件级（Tailwind 编译后的设计系统样式） |
+| `@skyroc/tailwind-plugin` | 提供 CSS 变量（被两者消费） |
+| `@sa/uno-config` | UnoCSS 预设（业务页面用） |
+| `apps/admin/src/styles/scss/global.scss` | 应用自身的 SCSS（被 vite `additionalData` 注入） |
+
+应用启动时四层样式分别加载，互相覆盖优先级为：reset → 库样式 → 应用样式。

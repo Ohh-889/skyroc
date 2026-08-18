@@ -1,0 +1,135 @@
+---
+title: "@skyroc/web-ui-compose"
+description: 无状态复合组件 + Ant Design Table 的完整 Hook 体系
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-ui-compose` |
+| 目录 | `packages/web/ui/compose` |
+| 版本 | 0.1.0 |
+| 依赖 | `@better-scroll/core`、`@dnd-kit/*`、`@iconify/react`、`@skyroc/color`、`@skyroc/utils`、`ahooks`、`clsx`、`tailwind-variants` |
+| peer | `@tanstack/react-query`、`antd`、`i18next`、`motion`、`react-i18next` |
+| 测试 | ✅ `index.test.tsx`、`table.test.tsx` |
+
+`@skyroc/web-ui-compose` 是一组**复合 UI 组件**与**面向 antd Table 的完整 Hook 体系**。它不绑定具体业务，但比纯 UI 库稍上一层——包含 BetterScroll、动画、Portal、Table 交互等"业务常用但不属于设计系统"的组件。
+
+## 两块内容
+
+### 1. 复合 UI 组件
+
+| 组件 | 用途 |
+| --- | --- |
+| `BetterScroll` | better-scroll 的 React 封装（移动端友好滚动） |
+| `DarkModeContainer` | 暗色模式包裹容器 |
+| `FlipText` | 翻牌动画文本 |
+| `I18nLabel` | 翻译 label 简写组件 |
+| `LazyAnimate` | Motion 懒加载 + Suspense |
+| `LookForward` | 「敬请期待」占位组件 |
+| `NumberTicker` | 数字滚动动画 |
+| `Portal` | 传送门（受控 container） |
+| `SvgIcon` | SVG icon 组件（配合 `vite-plugin-svg-icons`） |
+| `TypingAnimation` | 打字机动画 |
+| `WaveBg` | 波浪背景 |
+
+### 2. Table Hook 体系
+
+围绕 Ant Design Table，提供分页 / 排序 / 列控制 / CRUD 弹窗 / 拖拽列顺序的完整解决方案。
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── animate-feature.ts
+├── components/             # 上述复合组件
+│   └── index.ts
+└── table/
+    ├── index.ts
+    ├── types.ts
+    ├── hooks.ts
+    ├── use-table.ts
+    ├── use-table-operate.ts
+    ├── use-table-scroll.ts
+    ├── TableHeaderOperation.tsx
+    └── DragContent.tsx
+```
+
+## 主入口导出
+
+### 组件
+
+```ts
+import {
+  BetterScroll, DarkModeContainer, FlipText, I18nLabel,
+  LazyAnimate, LookForward, NumberTicker, Portal,
+  SvgIcon, TypingAnimation, WaveBg
+} from '@skyroc/web-ui-compose';
+```
+
+### Table
+
+```ts
+import {
+  // 主 Hook
+  useTable,
+  useHookTable,
+
+  // 操作
+  useTableOperate,         // 新增 / 编辑弹窗状态
+  useTableScroll,          // 表格滚动 / 高度自适应
+
+  // 工具
+  getTableScrollX,
+  defaultTableTransformer,
+  getAntdColumnChecks,
+  getAntdColumns,
+  formatSearchParams,
+
+  // 组件
+  DragContent,             // 拖拽列顺序
+  TableHeaderOperation     // 列显隐 / 刷新 / 全屏 等头部操作
+} from '@skyroc/web-ui-compose';
+```
+
+完整 table 类型从同入口导出。
+
+## `useTable` 设计要点
+
+| 能力 | 说明 |
+| --- | --- |
+| **React Query 集成** | 用 `useQuery` 拉取数据，自动缓存 + 重试 |
+| **分页 / 排序 / 筛选** | 支持 antd Pagination 模型，自动序列化为 query 参数 |
+| **URL 同步** | 可选把分页参数写入 URL，刷新保持状态 |
+| **列控制** | 通过 `getAntdColumnChecks` 暴露列显隐 |
+| **行选择** | 提供 `rowSelection` 工具 |
+
+`useTableOperate` 把"新增 / 编辑 / 详情弹窗"的样板状态收敛：
+
+```ts
+const { open, openType, current, openAdd, openEdit, close } = useTableOperate();
+// openType: 'add' | 'edit' | undefined
+```
+
+## 子入口
+
+仅 `.`。Table 通过主入口 re-export。
+
+## 在 admin 中的应用
+
+- `apps/admin-example/src/pages/(admin)/manage/*` 的所有 CRUD 页面都用 `useTable` + `TableHeaderOperation`；
+- `LazyAnimate` 是 `App.tsx` 包裹整个 RouterProvider 的动画容器；
+- `SvgIcon` 配合 `vite-plugin-svg-icons` 把 `src/assets/svg-icon/*.svg` 注册为 `<svg>` 引用。
+
+## 与 web-ui (shadcn) 的区别
+
+| 维度 | `@skyroc/web-ui` | `@skyroc/web-ui-compose` |
+| --- | --- | --- |
+| 定位 | 设计系统原子组件 | 业务常用复合 / Table 体系 |
+| 基础 | Radix + Tailwind | antd / 自有 |
+| 主题 | OKLCH tokens | 跟随 antd 主题 |
+| 典型用户 | 任何需要 UI 组件的页面 | 后台 CRUD 列表、动画装饰 |
+
+两者**互不依赖**，可同时使用。

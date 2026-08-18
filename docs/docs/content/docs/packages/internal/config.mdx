@@ -1,0 +1,153 @@
+---
+title: "@skyroc/config"
+description: 共享 Oxlint 预设（base / react / next）+ Vitest 配置工具
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/config` |
+| 目录 | `internal/config` |
+| 版本 | 1.0.0 |
+| private | ✅ |
+| 构建 | tsdown → `dist/` |
+
+`@skyroc/config` 把 Oxlint 与 Vitest 的共享配置打包成可复用的预设。两种工具的接入形式不同：Oxlint 通过 JSON `extends`，Vitest 通过 TS 模块 import。
+
+## Oxlint 预设
+
+| 文件 | 内容 | 适用 |
+| --- | --- | --- |
+| `oxlint/base.json` | 基础规则（import、unicorn、typescript、eslint 核心） | 所有 TS / JS 包 |
+| `oxlint/react.json` | extends base + react 插件 | React 应用 / 组件 |
+| `oxlint/next.json` | extends react + nextjs + jsx-a11y | Next.js 应用（如 docs） |
+
+### 引用
+
+```jsonc
+// apps/admin/.oxlintrc.json
+{ "extends": ["../../internal/config/oxlint/react.json"] }
+
+// docs/project-docs/.oxlintrc.json
+{ "extends": ["../../internal/config/oxlint/next.json"] }
+```
+
+### base 关键规则
+
+| 规则 | 级别 | 说明 |
+| --- | --- | --- |
+| `eqeqeq` | error | 强制 `===` / `!==` |
+| `no-console` | warn | 禁止 `console.log`（CLI 包豁免） |
+| `no-unused-vars` | error | 未使用变量（`_` 前缀豁免） |
+| `prefer-const` | error | 未重赋值必须 `const` |
+| `no-var` | error | 禁 `var` |
+| `typescript/consistent-type-imports` | error | 强制 `import type` |
+| `typescript/no-explicit-any` | off | 允许 `any`（不硬限） |
+| `complexity` / `max-depth` / `max-params` | error | 限制复杂度、嵌套、参数 |
+
+完整规则与各包扩展见 [Lint 与格式化](/docs/engineering/lint-and-format)。
+
+## Vitest 共享配置
+
+构建产物为 ESM 模块，通过 `@skyroc/config/vitest` import：
+
+```ts
+import {
+  TEST_ENVIRONMENT,
+  COVERAGE_PROVIDER,
+  TEST_PATTERNS,
+  SOURCE_PATTERNS,
+  COVERAGE_EXCLUDE,
+  baseTestConfig,
+  baseCoverageConfig
+} from '@skyroc/config/vitest';
+```
+
+### 导出常量
+
+| 常量 | 默认值 |
+| --- | --- |
+| `TEST_ENVIRONMENT` | `'happy-dom'` |
+| `COVERAGE_PROVIDER` | `'v8'` |
+| `TEST_PATTERNS` | `['__tests__/**/*.{test,spec}.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}']` |
+| `SOURCE_PATTERNS` | `['src/**/*.{ts,tsx}']` |
+| `COVERAGE_EXCLUDE` | `['**/dist/**', '**/__tests__/**', '**/*.d.ts', '**/types/**', '**/*.config.*']` |
+
+### 预设对象
+
+```ts
+baseTestConfig = {
+  environment: TEST_ENVIRONMENT,
+  globals: true,
+  include: TEST_PATTERNS,
+  setupFiles: ['./vitest.setup.ts']    // 可选
+};
+
+baseCoverageConfig = {
+  provider: COVERAGE_PROVIDER,
+  reporter: ['text', 'json', 'html'],
+  include: SOURCE_PATTERNS,
+  exclude: COVERAGE_EXCLUDE
+};
+```
+
+### 在子包中使用
+
+```ts
+// packages/@core/service/vitest.config.ts
+import { defineConfig } from 'vitest/config';
+import { baseCoverageConfig, baseTestConfig, COVERAGE_EXCLUDE } from '@skyroc/config/vitest';
+
+export default defineConfig({
+  test: {
+    ...baseTestConfig,
+    coverage: {
+      ...baseCoverageConfig,
+      exclude: [...COVERAGE_EXCLUDE, 'src/cli/**']
+    }
+  }
+});
+```
+
+包级 config 可以覆盖任何字段，但默认值已经够大多数场景使用。
+
+## 子入口
+
+```jsonc
+{
+  "exports": {
+    "./oxlint/base.json":   "./oxlint/base.json",
+    "./oxlint/react.json":  "./oxlint/react.json",
+    "./oxlint/next.json":   "./oxlint/next.json",
+    "./package.json":       "./package.json",
+    "./vitest": {
+      "types":   "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  }
+}
+```
+
+JSON 直接暴露源路径，TS 模块通过 dist 暴露（避免应用层意外编译 TS 源）。
+
+## 升级影响范围
+
+升级本包的预设会**自动影响所有 extends / import 它的包**。常见的升级流程：
+
+1. 修改预设 JSON / vitest 常量；
+2. 跑根 `pnpm lint` / `pnpm test` 确认所有包都通过；
+3. 提交。
+
+由于规则集中，引入新规则要一次性修复所有包的违规，比 ESLint 配置分散好治理。
+
+## 与各包 lint 脚本
+
+| 包 | `lint` 脚本 |
+| --- | --- |
+| `apps/admin` | `oxlint --fix` |
+| `docs/project-docs` | `oxlint` |
+| `packages/web/ui/*` | `oxlint --fix` |
+| `apps/web-ui-playground` | `oxlint` |
+
+详细命令与 Turborepo 集成见 [Lint 与格式化](/docs/engineering/lint-and-format)。

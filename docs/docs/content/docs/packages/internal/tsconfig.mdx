@@ -1,0 +1,132 @@
+---
+title: "@skyroc/tsconfig"
+description: 7 个分场景的 TypeScript 编译预设（base / library / node / web / RN / 应用变体）
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/tsconfig` |
+| 目录 | `internal/tsconfig` |
+| 版本 | 1.0.0 |
+| private | ✅ |
+| 内容 | 7 个 JSON 预设，无 JS 源码 |
+
+`@skyroc/tsconfig` 提供分场景的 TypeScript 编译预设。所有包通过 `extends` 引用对应预设，避免重复维护 compilerOptions。
+
+## 7 个预设
+
+| 文件 | 适用场景 | 关键 options |
+| --- | --- | --- |
+| `base.json` | 所有 TS 包共同基线 | `strict`、`target: ESNext`、`moduleResolution: bundler`、`verbatimModuleSyntax: true` |
+| `library.json` | 发布到 npm 的库包 | extends base，`declaration: true`、`emitDeclarationOnly: true` |
+| `node.json` | Node 工具 / 脚本包 | `moduleResolution: node`、`types: ["node"]` |
+| `web.json` | Web 端包（含 DOM lib + 测试） | DOM lib、`jsx: react-jsx`、vitest globals |
+| `web-app.json` | Web 应用 | extends web，额外 types：`vite/client`、`unplugin-icons`、`@skyroc/types`、`@skyroc/web-admin-theme` |
+| `react-native.json` | RN 库包 | RN 类型 + JSX |
+| `react-native-app.json` | RN 应用 | extends react-native，应用级 types |
+
+## 引用方式
+
+```jsonc
+// apps/admin/tsconfig.json
+{
+  "extends": "@skyroc/tsconfig/web-app.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
+  }
+}
+```
+
+```jsonc
+// packages/@core/utils/tsconfig.json
+{
+  "extends": "@skyroc/tsconfig/library.json",
+  "include": ["src", "__tests__"]
+}
+```
+
+```jsonc
+// packages/@core/scripts/tsconfig.json
+{
+  "extends": "@skyroc/tsconfig/node.json"
+}
+```
+
+## 关键 base 配置（节选）
+
+| Option | 值 | 作用 |
+| --- | --- | --- |
+| `strict` | `true` | 全部严格模式 |
+| `target` | `ESNext` | 不降级，Vite / esbuild 处理 |
+| `module` | `ESNext` | ESM-first |
+| `moduleResolution` | `bundler` | 现代 bundler 解析 |
+| `verbatimModuleSyntax` | `true` | 强制 `import type` 与 `export type`（避免运行时副作用） |
+| `noUncheckedIndexedAccess` | `true` | 数组/对象 indexed access 自动加 `\| undefined` |
+| `skipLibCheck` | `true` | 加速类型检查 |
+
+## verbatimModuleSyntax
+
+这个选项是项目 TS 风格的关键约束之一——任何**只用于类型**的 import 必须用 `import type`：
+
+```ts
+// ❌ 编译报错
+import { SomeType } from './types';
+
+// ✅ 必须显式 type
+import type { SomeType } from './types';
+
+// ✅ 也可以混合
+import { someValue, type SomeType } from './module';
+```
+
+好处：
+
+- 编译产物不会因为类型 import 引入运行时副作用；
+- Bundler 可以更精准地 tree-shake；
+- 与 Oxlint 的 `typescript/consistent-type-imports` 规则配合。
+
+## 应用层 types 注入
+
+`web-app.json` 在 `types` 字段额外加入：
+
+- `vite/client` — `import.meta.env` 类型
+- `unplugin-icons` — `~icons/*` 模块声明
+- `@skyroc/types` — 全局 `Api`、`Router`、`App` namespace
+- `@skyroc/web-admin-theme` — 全局 `Theme` namespace
+
+应用代码可以直接用 `Api.Auth.UserInfo`、`Theme.ColorPaletteFamily` 等而不需要 import。
+
+## exports 字段
+
+```jsonc
+{
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./node.json": "./node.json",
+    "./web.json": "./web.json",
+    "./web-app.json": "./web-app.json",
+    "./react-native.json": "./react-native.json",
+    "./react-native-app.json": "./react-native-app.json"
+  }
+}
+```
+
+每个 JSON 显式暴露子路径，避免 `tsc` 解析 extends 失败。
+
+## 新建包的标准 tsconfig
+
+| 包类型 | extends | 备注 |
+| --- | --- | --- |
+| Web 应用 | `@skyroc/tsconfig/web-app.json` | + `paths` |
+| Web 库 / 组件 | `@skyroc/tsconfig/web.json` 或 `library.json` | 视是否需要 DOM lib |
+| Node 工具 | `@skyroc/tsconfig/node.json` | |
+| 跨端库 | `@skyroc/tsconfig/library.json` | 不绑 DOM |
+| RN 应用 | `@skyroc/tsconfig/react-native-app.json` | |
+
+详见 [新建包流程](/docs/engineering/new-package)。

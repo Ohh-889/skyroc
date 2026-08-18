@@ -1,0 +1,230 @@
+---
+title: "@skyroc/logger"
+description: "基于 LogLayer 的跨端日志系统，提供写入本地存储、命中白名单后批量上传、按保留期清理一整套生命周期"
+---
+
+## 概述
+
+`@skyroc/logger` 基于 [LogLayer](https://loglayer.dev/) 封装了一套跨端日志生命周期：**写入本地存储 → 命中白名单后批量上传 → 按保留期清理**。
+
+- **移动端 / Web 端故障日志上报**
+- **灰度用户的精准采集**：只对白名单内的设备上传，其余设备只写本地
+- **离线友好**：先落本地，恢复网络后补传
+
+## 架构
+
+```text
+                ┌──── ConsoleTransport（仅 isDev）
+LogLayer ──────┤
+                └──── StorageTransport ──→ IStorageAdapter ──→ IndexedDB / AsyncStorage
+
+WhitelistManager  ──→ 周期请求接口，判断本设备是否在白名单
+UploadManager     ──→ 命中白名单后分批 POST 上传，成功即删除已传记录
+CleanupManager    ──→ 按 retentionDays 清理过期日志
+```
+
+## 平台适配
+
+| 平台 | 存储 | 适配器 |
+| --- | --- | --- |
+| **Web** | IndexedDB | `WebStorageAdapter`（基于 `idb`） |
+| **React Native** | AsyncStorage | `RNStorageAdapter` |
+| **小程序（预留）** | 文件系统 | 目前只有常量 `MP_LOG_DIRECTORY` / `MP_LOG_FILE_EXTENSION`，尚无适配器 |
+
+`createLogger({ platform })` 会自动选择适配器。`platform` 默认 `'web'`，传 `'mini-program'` 目前也会回退到 `WebStorageAdapter`；
+需要自定义存储时用 `storageAdapter` 直接传一个 `IStorageAdapter` 实现。
+
+## 快速上手
+
+### 仅控制台（开发态）
+
+```ts
+import { createConsoleLogger } from '@skyroc/logger';
+
+// 同步，无参数，直接返回 LogLayer 实例
+const logger = createConsoleLogger();
+
+logger.info('hello');
+```
+
+### 完整生产配置
+
+```ts
+import { createLogger } from '@skyroc/logger';
+
+// 异步：内部要先取设备 ID 并 init 存储适配器
+const { logger, uploadLogs, cleanupLogs, dispose } = await createLogger({
+  platform: 'web',
+  isDev: false,
+  retentionDays: 7,
+  whitelistEndpoint: '/api/log/whitelist',
+  uploadEndpoint: '/api/log/upload',
+});
+
+// LogLayer 链式 API
+logger.info('Application started');
+logger.withMetadata({ userId: '123' }).info('User action');
+logger.withError(new Error('boom')).error('Operation failed');
+
+// 应用退出
+dispose();
+```
+
+<Callout type="warn">
+  `createLogger` 是 **async** 的，`createConsoleLogger` 是同步的，两者返回值形状也不同：
+  前者返回 `LoggerInstance`（`logger` 只是其中一个字段），后者直接返回 `LogLayer`。
+</Callout>
+
+## API
+
+### `createLogger(config?)` → `Promise<LoggerInstance>`
+
+```ts
+interface LoggerConfig {
+  /** 平台类型，默认 'web' */
+  platform?: 'web' | 'react-native' | 'mini-program';
+  /** 是否为开发模式，默认 true */
+  isDev?: boolean;
+  /** 日志保留天数，默认 7 */
+  retentionDays?: number;
+  /** 白名单检查端点 */
+  whitelistEndpoint?: string;
+  /** 日志上传端点 */
+  uploadEndpoint?: string;
+  /** 白名单检查间隔（ms），默认 5 分钟 */
+  whitelistCheckInterval?: number;
+  /** 批量上传大小，默认 100 条 */
+  uploadBatchSize?: number;
+  /** 自定义存储适配器，给了就不再按 platform 自动选 */
+  storageAdapter?: IStorageAdapter;
+  /** 日志刷盘间隔（ms），默认 5000 */
+  flushInterval?: number;
+  /** 是否在开发模式下也启用存储，默认 false */
+  enableStorageInDev?: boolean;
+}
+```
+
+**返回值：**
+
+| 字段 | 说明 |
+| --- | --- |
+| `logger` | LogLayer 实例，日常写日志用它 |
+| `adapter` | 实际使用的存储适配器 |
+| `whitelistManager` / `uploadManager` / `cleanupManager` | 三个管理器，**可能是 `undefined`**（见下方启用条件） |
+| `uploadLogs()` | 手动触发上传（会先 flush 缓冲区）。没有 uploadManager 时返回 `undefined` |
+| `cleanupLogs()` | 手动触发清理。没有 cleanupManager 时返回 `undefined` |
+| `dispose()` | 销毁：flush 并关闭 StorageTransport，停掉白名单与清理定时器 |
+
+### 各部件的启用条件
+
+这套 config 的组合逻辑不太直觉，单独列一下：
+
+| 部件 | 启用条件 |
+| --- | --- |
+| ConsoleTransport | `isDev` 为真 |
+| StorageTransport（落盘） | `!isDev`，或 `enableStorageInDev` 为真 |
+| UploadManager | `!isDev` **且**落盘已启用 **且**配了 `uploadEndpoint` |
+| WhitelistManager | 以上都满足 **且**配了 `whitelistEndpoint`（它依赖 UploadManager） |
+| CleanupManager | `!isDev` 且落盘已启用（无需任何 endpoint） |
+
+<Callout>
+  `isDev` 默认是 `true`。这意味着不传任何配置时，`createLogger()` 只会往控制台打，
+  不落盘、不上传、不清理——生产环境记得显式传 `isDev: false`（或从环境变量读）。
+</Callout>
+
+### `createConsoleLogger()` → `LogLayer`
+
+不带存储的简单控制台日志实例，无参数。
+
+## 白名单 + 上传流程
+
+```text
+应用启动
+  └─ WhitelistManager 每 whitelistCheckInterval 请求一次 whitelistEndpoint
+     ├─ 设备不在白名单 → 只写本地，不上传
+     └─ 设备首次入白名单 → 触发历史日志全量上传，之后持续上传新增
+
+UploadManager：
+  - 从存储读出待传 LogRecord[]
+  - 按 uploadBatchSize 分批 POST 到 uploadEndpoint
+  - 成功后删除已传记录；失败留着下次再试
+```
+
+## 设备 ID
+
+`getOrCreateDeviceId(platform)` 用 nanoid 生成并持久化设备 ID，存储键为 `DEVICE_ID_STORAGE_KEY`（`'skyroc_device_id'`）。
+
+设备 ID 挂在**上传请求**上（`LogUploadRequest.deviceId`）和白名单请求上（`WhitelistRequest.deviceId`），
+`LogRecord` 本身不带这个字段——同一台设备的所有日志共用一个 ID，没必要每条都存一遍。
+
+## 导出一览
+
+| 类别 | 符号 |
+| --- | --- |
+| 工厂 | `createLogger`、`createConsoleLogger` |
+| 适配器 | `BaseStorageAdapter`、`WebStorageAdapter`、`RNStorageAdapter` |
+| Transport | `StorageTransport` |
+| 管理器 | `WhitelistManager`、`UploadManager`、`CleanupManager` |
+| 工具 | `getOrCreateDeviceId` |
+| 类型 | `LoggerConfig`、`LoggerInstance`、`LogRecord`、`IStorageAdapter`、`Platform`、`UploadResult`、`LogUploadRequest` / `LogUploadResponse`、`WhitelistRequest` / `WhitelistResponse` |
+| Re-export | `LogLayer`（值）、`LogLevel`（类型），均来自 `loglayer` |
+
+## 常量
+
+| 常量 | 值 |
+| --- | --- |
+| `DAY_IN_MS` | `86400000` |
+| `DEFAULT_RETENTION_DAYS` | `7` |
+| `DEFAULT_WHITELIST_CHECK_INTERVAL` | `300000`（5 分钟） |
+| `DEFAULT_UPLOAD_BATCH_SIZE` | `100` |
+| `DEFAULT_FLUSH_INTERVAL` | `5000` |
+| `DEFAULT_BUFFER_SIZE` | `100` |
+| `DEVICE_ID_STORAGE_KEY` | `'skyroc_device_id'` |
+| `IDB_DATABASE_NAME` / `IDB_STORE_NAME` / `IDB_VERSION` | `'skyroc_logs'` / `'logs'` / `1` |
+| `RN_LOG_KEY_PREFIX` / `RN_LOG_INDEX_KEY` | `'skyroc_log_'` / `'skyroc_log_index'` |
+| `MP_LOG_DIRECTORY` / `MP_LOG_FILE_EXTENSION` | `'skyroc_logs'` / `'.jsonl'` |
+
+## 核心类型
+
+### `LogRecord`
+
+```ts
+interface LogRecord {
+  id: string;
+  timestamp: number;
+  level: LogLevel;
+  message: string;
+  /** 附加数据 */
+  data?: Record<string, any>;
+  /** 上下文数据 */
+  context?: Record<string, any>;
+  /** 序列化后的错误信息 */
+  error?: Record<string, any>;
+}
+```
+
+### `IStorageAdapter`
+
+自定义存储要实现的接口，全部为异步：
+
+| 方法 | 说明 |
+| --- | --- |
+| `init()` | 初始化（建库、建表等），`createLogger` 会替你调 |
+| `write(record)` / `writeBatch(records)` | 写入单条 / 批量 |
+| `read(startTime?, endTime?)` | 读取指定时间范围的日志 |
+| `deleteBeforeTime(time)` | 删除该时刻之前的日志，返回删除条数 |
+| `count()` | 日志总数 |
+| `clear()` | 清空 |
+
+## LogLayer API 亮点
+
+- **结构化 metadata**：`logger.withMetadata({ ... }).info(...)`
+- **错误对象序列化**：`logger.withError(e).error(...)`（走 `serialize-error`，实例创建时开了 `errorFieldInMetadata`）
+- **级别**：`trace` / `debug` / `info` / `warn` / `error` / `fatal`
+
+更完整的链式 API 见 [LogLayer 官方文档 →](https://loglayer.dev/)
+
+## 现状
+
+本包**尚无单元测试**，`apps/admin` 目前也没有消费它——属于「随项目沉淀、按需启用」型基础设施。
+接进生产链路前建议先在目标平台上跑通落盘与上传两条链路。

@@ -75,6 +75,8 @@ export const DocsGlassHeader = (props: DocsGlassHeaderProps) => {
           ))}
         </nav>
 
+        <GlassHeader className="skyroc-docs-header-actions" />
+
         <a
           aria-label="GitHub"
           className="skyroc-docs-header-github"
@@ -87,8 +89,6 @@ export const DocsGlassHeader = (props: DocsGlassHeaderProps) => {
             icon="lucide:github"
           />
         </a>
-
-        <GlassHeader className="skyroc-docs-header-actions" />
       </div>
     </header>
   );

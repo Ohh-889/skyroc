@@ -1,0 +1,48 @@
+---
+title: "@skyroc/type-utils"
+description: 高级 TypeScript 工具类型，服务表单与路径处理
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/type-utils` |
+| 版本 | 0.1.0 |
+| 依赖 | 无运行时依赖 |
+| 构建 | tsdown（产出 ESM + CJS + d.ts） |
+
+`@skyroc/type-utils` 提供面向**表单字段管理、路径操作、类型变换**的高级 TypeScript 工具类型。它主要被 [`@skyroc/form`](/docs/shared/form) 等 primitive 库消费，用于在编译期推导嵌套字段路径、值类型等。
+
+## 目录结构
+
+```text
+src/
+├── fn.ts             # 函数相关工具类型
+├── form.ts           # 表单字段类型推导（仅类型导出）
+├── utility-types.ts  # 通用工具类型
+├── utils.ts          # 工具
+└── index.ts
+```
+
+入口聚合：
+
+```ts
+export * from './fn';
+export type * from './form';
+export * from './utility-types';
+export * from './utils';
+```
+
+## 定位
+
+与 [`@skyroc/types`](/docs/core/types) 的区别：
+
+| 包 | 内容 | 形态 |
+| --- | --- | --- |
+| `@skyroc/types` | 业务/全局类型（Api、Router、I18n…） | `declare global` 全局注入 |
+| `@skyroc/type-utils` | 通用**工具类型**（路径、字段、变换） | 普通 `export`，按需 import |
+
+类型工具的典型场景：给定一个表单数据对象类型，推导出所有合法的「字段路径」字符串字面量联合，从而让 `form.getFieldValue('user.name')` 这样的调用获得精确类型。这类能力是 [`@skyroc/form`](/docs/shared/form) 类型安全的基础。
+
+> 该包以类型为主，无运行时测试。

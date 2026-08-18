@@ -1,0 +1,193 @@
+---
+title: "@skyroc/web-admin-layouts"
+description: 完整 Admin 壳：Header / Sider / Tab / Content / 主题抽屉 / 全局搜索 / 菜单生成
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-layouts` |
+| 目录 | `packages/web/admin-layouts` |
+| 版本 | 0.1.0 |
+| 依赖 | `@better-scroll/core`、`ahooks`、`clsx`、`defu`、`jotai` + 多个 `@skyroc/*` |
+| peer | `@tanstack/react-router`、antd、i18next、motion、react、react-i18next |
+| 测试 | ✅ `admin-layouts.test.tsx` |
+
+这是项目里**组合度最高**的 Web 端包——它把 [materials](/docs/web/materials) 骨架、[admin-theme](/docs/web/admin-theme)、[admin-i18n](/docs/web/admin-i18n)、[web-ui](/docs/web/ui-shadcn)、[web-ui-antd](/docs/web/ui-antd)、[web-ui-compose](/docs/web/ui-compose) 全部装配成一个**开箱即用的 Admin 壳**。
+
+```text
++-----------------------------------------+
+|  AdminHeader (logo · breadcrumb · search·
+|              theme · lang · avatar)      |
++-----+-----------------------------------+
+|     |  AdminTab (current pages)          |
+|     +-----------------------------------+
+|Sider|                                    |
+|+Menu|         AdminContent (Outlet)      |
+|     |                                    |
+|     +-----------------------------------+
+|     |          AdminFooter               |
++-----+-----------------------------------+
+        +-------------------------+
+        | ThemeDrawer (right)     |
+        +-------------------------+
+```
+
+## 一键装配：`setupAdminLayouts`
+
+```ts
+import { setupAdminLayouts } from '@skyroc/web-admin-layouts';
+import { localStg } from '@/utils/storage';
+
+setupAdminLayouts({
+  routeTree,                       // TanStack Router routeTree
+  storage: localStg,               // 持久化存储
+  defaultHome: '/home',
+  defaultIcon: 'mdi:menu',
+  menuCategories,                  // 哪些路由属于 admin 布局
+  menuNodeCallback,                // 注入额外菜单节点（如 divider）
+  extras: menuExtras,              // 顶层 admin extras
+  loadDynamicRoutes,               // 动态路由模式的加载器
+  routeMode: 'static' | 'dynamic',
+  permissionSuperRole: 'R_SUPER'
+});
+```
+
+应用启动时调用一次，把项目自身的路由、存储、菜单分类等注入到 admin 布局体系。
+
+## 主入口导出
+
+### 布局壳
+
+| 导出 | 作用 |
+| --- | --- |
+| `AdminLayout` | 顶层布局组件（包 Header / Sider / Tab / Content / Footer / ThemeDrawer） |
+| `AdminLayoutProps` | Props 类型 |
+| `AdminLayoutLogoComponent` / `AdminLayoutLogoProps` | Logo 插槽 |
+| `AdminLayoutSlots` | 所有 slot 类型 |
+
+### 菜单 / 路由
+
+| 导出 | 作用 |
+| --- | --- |
+| `createAdminDynamicRouteLoader` | 创建动态路由加载器（包装 loadBackendRoutes） |
+| `createBackendRouteNormalizer` | 后端路由结构标准化 |
+| `normalizeBackendRouteResponse` | 标准化单条后端响应 |
+| `collectAvailableRoutePaths` | 从 routeTree 收集所有路径 |
+| `normalizePath` | 路径归一 |
+| `hasRoutePermission` / `hasAnyRoutePermission` / `hasMatchedRoutePermission` | 权限判定 |
+| `hasAuthorizedRoutePath` | 用户对某路径是否有权 |
+| `useMenus` | 当前用户的菜单 |
+| `getQuickReferenceMenuByPath` | 快速反查菜单项 |
+
+### 状态 Hooks（基于 Jotai）
+
+| Hook | 用途 |
+| --- | --- |
+| `useAdminState` | 布局开关（侧栏折叠、ThemeDrawer 等） |
+| `useRoute` | 当前路由 + meta |
+| `useAdminMenus` | 当前菜单数据 |
+| `useAdminMenuBadges` / `setMenuBadgeValue` / `setMenuBadgeValues` / `clearMenuBadgeValues` | 菜单角标 |
+| `useAdminTab` / `cacheTabs` | Tab 状态与持久化 |
+
+### 类型
+
+`GeneratedMenu`、`GeneratedMenus`、`GenerateMenuOptions`、`GenerateMenuResult`、`AdminLayoutMenuCategory`、`AdminLayoutsDynamicRoutes`、`AdminLayoutsOptions`、`AdminLayoutsStorage`、`MenuNodeCallback`、`MenuNodeConfig`、`MenuBadgeValues` 等。
+
+## 目录结构
+
+```text
+src/
+├── index.ts、AdminLayout.tsx、setup.ts、context.tsx、options.tsx、constant.ts
+├── features/
+│   ├── use-route.ts
+│   └── menus/
+│       ├── dynamic-routes.ts、menu-generator.tsx、menu-renderer.tsx
+│       ├── permissions.ts、use-menus.ts、MenuBadge.tsx
+├── modules/
+│   ├── AdminContent.tsx、AdminFooter.tsx、AdminLogo.tsx、AdminSider.tsx
+│   ├── admin-header/         # Header + Breadcrumb + ThemeButton
+│   ├── admin-menu/           # 6 种菜单布局（VerticalMenu / HorizontalMenu / FirstLevelMenu …）
+│   ├── admin-tab/            # AdminTab + TabContextMenu + useTabScroll
+│   ├── admin-search/         # 全局搜索 Modal
+│   └── theme-drawer/         # 主题抽屉（外观/布局/通用/预设）
+├── state/
+│   ├── use-admin-state.ts、AdminEffect.tsx、AdminTabEffect.tsx
+│   ├── menus/                # useAdminMenus / useAdminMenuBadges / MenuToggler
+│   └── tabs/                 # useAdminTab / cacheTabs
+└── types/                    # storage.ts、router.d.ts
+```
+
+## 菜单生成的两种模式
+
+### static（前端静态权限）
+
+`setupAdminLayouts({ routeMode: 'static', routeTree, permissionSuperRole })` 时：
+
+- 直接从 `routeTree` 扫所有路由的 `staticData.menu` 配置；
+- 按 `staticData.roles` 与当前用户的 `roles` 求交决定可见性；
+- 适合权限简单、路由前端可见的场景。
+
+### dynamic（后端下发路由）
+
+`setupAdminLayouts({ routeMode: 'dynamic', loadDynamicRoutes })` 时：
+
+- `loadDynamicRoutes(userInfo)` 返回后端路由列表；
+- 用 `createAdminDynamicRouteLoader` 包装：标准化 → 与 `routeTree` 可用 path 求交 → 生成菜单；
+- 适合企业级动态权限。
+
+应用侧示例（admin）：
+
+```ts
+// features/menus/dynamic-routes.ts
+export const loadAdminDynamicRoutes = createAdminDynamicRouteLoader({
+  routeTree,
+  loadBackendRoutes: () => queryClient.ensureQueryData(queryMenusOptions())
+});
+```
+
+## 主题抽屉
+
+`ThemeDrawer` 嵌入完整设置面板：
+
+- **外观**：暗色模式 / 主题色 / 灰度模式
+- **布局**：6 种 layout mode（vertical / horizontal / vertical-mix / ...）
+- **通用**：Header 高度、Sider 宽度、是否显示 Tab / Footer
+- **预设**：default / dark / compact / azir / shadcn
+
+设置实时写入 [`@skyroc/web-admin-theme`](/docs/web/admin-theme) 的 atom，CSS 变量与 antd token 同步更新。
+
+## 全局搜索
+
+`AdminSearch` 用 `cmdk` 风格的 Modal 提供路由级搜索：
+
+- 支持中英文 / 拼音模糊匹配
+- 支持键盘上下选择
+- 支持快捷键唤起（`mod+k`）
+
+## Tab 系统
+
+`AdminTab` 提供 Chrome / Button / Slider 三种样式（来自 [`@skyroc/materials`](/docs/web/materials)），叠加：
+
+- 右键菜单（`TabContextMenu`）：关闭其它 / 关闭右侧 / 关闭全部
+- Tab 缓存：`cacheTabs()` 把当前 Tab 状态写入存储，重启恢复
+- Tab 滚动：超出宽度时水平滚动 + 居中当前
+
+## 与 admin 应用的依赖关系
+
+`apps/admin` 的 `(admin)/layout.tsx` 几乎只有一行：
+
+```tsx
+import { AdminLayout } from '@skyroc/web-admin-layouts';
+export const Route = createFileRoute('/(admin)')({
+  beforeLoad: guardAdminRoute,
+  component: () => <AdminLayout />
+});
+```
+
+整套 admin 壳的 UI / 状态 / 菜单 / 主题都被这个包消化了，apps 层只需要提供 routeTree、storage、菜单元数据等"项目特有的部分"。
+
+## 测试
+
+`__tests__/admin-layouts.test.tsx` 验证布局组件渲染、菜单生成、权限过滤等关键路径。

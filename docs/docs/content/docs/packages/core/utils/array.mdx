@@ -1,0 +1,224 @@
+---
+title: "Array"
+description: "数组工具函数：将任意值规范化为数组、无序比较两个数组是否等价"
+---
+
+## 概述
+
+```ts
+import { toArray, arraysEqual } from '@skyroc/utils';
+```
+
+`array` 模块提供两个函数，解决日常开发中两类高频需求：
+
+- **`toArray`** — 将"单值 or 数组 or 空"三种形态统一规范化为数组
+- **`arraysEqual`** — 判断两个数组的元素集合是否等价（无序，基于计数）
+
+---
+
+## toArray
+
+### 签名
+
+```ts
+function toArray<T>(value?: T | T[] | null): T[]
+```
+
+### 问题背景
+
+很多接口或组件参数允许传单个值或数组：
+
+```ts
+// 这种参数设计很常见
+type Props = {
+  value?: string | string[];
+};
+```
+
+在代码里统一处理之前，往往要写大量的防御判断：
+
+```ts
+// ❌ 重复的模板代码
+const arr = value === null || value === undefined
+  ? []
+  : Array.isArray(value)
+    ? value
+    : [value];
+```
+
+`toArray` 将这套逻辑封装为一行：
+
+```ts
+// ✅
+const arr = toArray(value);
+```
+
+### 转换规则
+
+| 输入 | 输出 | 说明 |
+| --- | --- | --- |
+| `null` | `[]` | 空值转为空数组 |
+| `undefined` | `[]` | 未传参转为空数组 |
+| `'hello'` | `['hello']` | 单值包裹为数组 |
+| `['a', 'b']` | `['a', 'b']` | 数组原样返回 |
+| `0` | `[0]` | falsy 单值也会被包裹（不是空数组） |
+| `false` | `[false]` | 同上 |
+| `''` | `['']` | 空字符串是单值，不是 nil |
+
+### 示例
+
+```ts
+import { toArray } from '@skyroc/utils';
+
+// 基础用法
+toArray('hello');        // ['hello']
+toArray(['a', 'b']);     // ['a', 'b']
+toArray(null);           // []
+toArray(undefined);      // []
+toArray();               // []
+
+// 数字 / boolean / 空字符串（非 nil）
+toArray(0);              // [0]
+toArray(false);          // [false]
+toArray('');             // ['']
+
+// 泛型推导
+toArray<number>(42);              // [42]，类型 number[]
+toArray<string>(['a', 'b', 'c']); // ['a', 'b', 'c']，类型 string[]
+```
+
+### 常用场景
+
+**组件参数规范化：**
+
+```tsx
+interface TagProps {
+  value?: string | string[];
+}
+
+const Tag = (props: TagProps) => {
+  const { value } = props;
+  const tags = toArray(value); // 不管单值还是数组，统一处理
+
+  return (
+    <div>
+      {tags.map(tag => <span key={tag}>{tag}</span>)}
+    </div>
+  );
+};
+```
+
+**接口返回值兼容：**
+
+```ts
+// 接口返回可能是单个对象或数组（历史接口常见问题）
+const raw = await api.getItems(); // Item | Item[] | null
+const items = toArray(raw);       // 统一为 Item[]
+```
+
+**默认参数展开：**
+
+```ts
+function process(ids?: string | string[]) {
+  const list = toArray(ids);
+  return list.map(id => fetch(`/api/${id}`));
+}
+```
+
+---
+
+## arraysEqual
+
+### 签名
+
+```ts
+function arraysEqual<T>(a: T[], b: T[]): boolean
+```
+
+### 算法说明
+
+`arraysEqual` 判断两个数组是否包含**完全相同的元素集合**（无序，基于 Map 计数）：
+
+1. 长度不同 → 直接返回 `false`
+2. 遍历 `a`，在 Map 中统计每个元素出现次数
+3. 遍历 `b`，在 Map 中逐一扣减；计数不存在或已归零 → 返回 `false`
+4. 全部通过 → 返回 `true`
+
+时间复杂度 `O(n)`，使用 Map 避免嵌套循环。
+
+### 示例
+
+```ts
+import { arraysEqual } from '@skyroc/utils';
+
+// 基础：顺序无关
+arraysEqual([1, 2, 3], [3, 2, 1]); // true
+arraysEqual([1, 2, 3], [1, 2, 3]); // true
+
+// 长度不同 → false
+arraysEqual([1, 2], [1, 2, 3]);     // false
+
+// 重复元素计数必须一致
+arraysEqual([1, 1, 2], [1, 2, 2]); // false（1 的个数不同）
+arraysEqual([1, 1, 2], [2, 1, 1]); // true（计数相同，顺序无关）
+
+// 空数组
+arraysEqual([], []);                // true
+arraysEqual([], [1]);               // false
+
+// 字符串
+arraysEqual(['a', 'b'], ['b', 'a']); // true
+```
+
+### 比较语义说明
+
+`arraysEqual` 使用 `Map<T, number>` 做计数，元素比较基于 Map 的键比较（即 `===` 严格相等 / 引用相等）。
+
+```ts
+// 基本类型 — 按值比较 ✅
+arraysEqual([1, 2], [2, 1]); // true
+
+// 对象 — 按引用比较 ⚠️
+const obj = { a: 1 };
+arraysEqual([obj], [obj]);          // true（同一引用）
+arraysEqual([{ a: 1 }], [{ a: 1 }]); // false（不同引用）
+```
+
+如需对象按深度内容比较，应在比较前先序列化或使用专门的深度比较库。
+
+### 常用场景
+
+**权限列表变更检测：**
+
+```ts
+const prevRoles = ['admin', 'editor'];
+const nextRoles = ['editor', 'admin'];
+
+if (!arraysEqual(prevRoles, nextRoles)) {
+  // 权限有变更，重新加载
+}
+```
+
+**表单多选项是否修改：**
+
+```ts
+const original = ['tag-1', 'tag-2'];
+const current = form.getFieldValue('tags');
+
+const isDirty = !arraysEqual(original, current);
+```
+
+**测试断言（顺序无关的集合相等）：**
+
+```ts
+expect(arraysEqual(result, expected)).toBe(true);
+```
+
+### 与其他方案对比
+
+| 方案 | 有序 | 深度比较 | 适合场景 |
+| --- | --- | --- | --- |
+| `arraysEqual` | ❌ 无序 | ❌ 浅比较（===） | 基本类型集合的无序等价检测 |
+| `JSON.stringify(a) === JSON.stringify(b)` | ✅ 有序 | ✅ 结构比较 | 简单对象，顺序有意义 |
+| `a.every((v, i) => v === b[i])` | ✅ 有序 | ❌ 浅比较 | 有序数组的逐位比较 |
+| lodash `isEqual` | ❌ 无序可选 | ✅ 深度比较 | 复杂嵌套结构 |

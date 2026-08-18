@@ -1,0 +1,128 @@
+---
+title: "@skyroc/web-ui-antd"
+description: 基于 Ant Design 的 Admin 专用复合组件（按钮 / 异常页 / 全屏 …）
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-ui-antd` |
+| 目录 | `packages/web/ui/antd` |
+| 版本 | 0.1.0 |
+| 依赖 | [`@skyroc/web-ui-compose`](/docs/web/ui-compose)、`@iconify/react`、`clsx` |
+| peer | `@tanstack/react-router`、`antd`、`react-error-boundary` |
+| 测试 | ❌ |
+
+`@skyroc/web-ui-antd` 提供一组**面向 Admin 应用、绑定 antd UI 风格**的复合组件。它建立在 [`@skyroc/web-ui-compose`](/docs/web/ui-compose) 之上，添加了 antd 风格的按钮变体、异常页、全屏与刷新按钮等。
+
+## 组件清单
+
+| 组件 | 用途 |
+| --- | --- |
+| `BeyondHiding` | 单行超出隐藏 + tooltip 显示 |
+| `ButtonIcon` | 带 hover 动画的图标按钮（含 `IconHoverAnimation` 类型） |
+| `ButtonLink` | TanStack Router `Link` 风格的按钮（`ButtonLinkComponentProps`） |
+| `ErrorBoundary` | 基于 react-error-boundary 的 antd 风格错误兜底 |
+| `ExceptionBase` | 403/404/500 异常页基础组件（业务页可基于它拼装） |
+| `FullScreen` | 切换全屏的按钮 + 状态 hook |
+| `PinToggler` | 钉住 / 取消钉住按钮 |
+| `ReloadButton` | 刷新按钮 |
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── styles.d.ts                                     # CSS module 类型声明
+└── components/
+    ├── BeyondHiding.tsx
+    ├── ButtonIcon.tsx
+    ├── ButtonLink.tsx
+    ├── ErrorBoundary.tsx
+    ├── ExceptionBase.tsx
+    ├── FullScreen.tsx
+    ├── PinToggler.tsx
+    ├── ReloadButton.tsx
+    └── styles/button-icon-animations.css
+```
+
+## 主入口导出
+
+```ts
+export {
+  BeyondHiding,
+  ButtonIcon,
+  ButtonLink,
+  ErrorBoundary,
+  ExceptionBase,
+  FullScreen,
+  PinToggler,
+  ReloadButton
+};
+export type { ButtonIconProps, ButtonLinkComponentProps, IconHoverAnimation };
+```
+
+## 典型用法
+
+### 路由按钮（ButtonLink）
+
+```tsx
+import { ButtonLink } from '@skyroc/web-ui-antd';
+
+<ButtonLink to="/manage/user" type="primary">
+  跳转到用户管理
+</ButtonLink>;
+```
+
+底层用 TanStack Router 的 `Link`，自动获得类型安全的 `to`、预加载行为。
+
+### 异常页
+
+```tsx
+import { ExceptionBase } from '@skyroc/web-ui-antd';
+
+// 403 / 404 / 500
+<ExceptionBase
+  type="404"
+  homePath="/home"
+  onBackHome={() => navigate({ to: '/home' })}
+/>;
+```
+
+`apps/admin/src/pages/(errors)/*` 直接基于它实现三个异常页面。
+
+### 全屏
+
+```tsx
+import { FullScreen } from '@skyroc/web-ui-antd';
+
+<FullScreen className="text-xl" full={false} />;
+```
+
+被 `@skyroc/web-admin-layouts` 的 Header 默认引入。
+
+### 图标按钮
+
+```tsx
+<ButtonIcon
+  icon="mdi:refresh"
+  iconHoverAnimation="rotate"
+  onClick={refresh}
+/>;
+```
+
+`IconHoverAnimation` 提供旋转、缩放、上下浮动等内置动画。
+
+## 与 compose 的分工
+
+| 层 | 包 | 内容 |
+| --- | --- | --- |
+| 基础 | `@skyroc/web-ui-compose` | BetterScroll、Portal、Table Hook 体系等通用复合 |
+| antd 业务层 | `@skyroc/web-ui-antd` | 异常页、按钮变体、全屏等 antd 风味组件 |
+
+两层各司其职：`compose` 关心"通用 UI 模式"，`web-ui-antd` 关心"antd 主题下的 admin 业务交互"。
+
+## 注意
+
+包内无 README、无 `__tests__`。它的定位接近"业务壳层"，预期跟随 admin 业务一起迭代。

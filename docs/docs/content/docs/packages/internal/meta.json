@@ -1,0 +1,5 @@
+{
+  "title": "内部配置包",
+  "description": "internal/ 下的 tsconfig / config / uno-config 配置预设",
+  "pages": ["overview", "tsconfig", "config", "uno-config"]
+}

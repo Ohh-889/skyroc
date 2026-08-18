@@ -1,0 +1,217 @@
+---
+title: "@skyroc/web-admin-vite"
+description: Admin 项目的 Vite 配置预设：插件链 / 代理 / manualChunks / 环境变量
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-vite` |
+| 目录 | `packages/web/admin-vite` |
+| 版本 | 0.1.0 |
+| 依赖 | `@vitejs/plugin-react`、`@tanstack/router-plugin`、`@tanstack/devtools-vite`、`@unocss/vite`、`unplugin-auto-import`、`unplugin-icons`、`vite-plugin-svg-icons`、`babel-plugin-react-compiler`、`jotai-babel`、`vite-plugin-inspect`、`vite-plugin-remove-console` |
+| peer | `jotai`、`vite` |
+| 测试 | ❌ |
+
+把 admin 应用的 Vite 配置（插件链、proxy、build manualChunks、环境变量、HTML meta）打包成可复用的 `defineConfig` 预设。`apps/admin/vite.config.ts` 几乎只有一行：
+
+```ts
+import { defineConfig } from '@skyroc/web-admin-vite';
+
+export default defineConfig({
+  application: {
+    css: { additionalData: '@use "@/styles/scss/global.scss" as *;' }
+  }
+});
+```
+
+> 注意：因为 `vite.config.ts` 静态 import 本包，`apps/admin/package.json` 的 `predev` 与 `prebuild` 都会先 build 这个包：`"predev": "pnpm run build:admin-vite"`。
+
+## 主入口导出（按模块）
+
+### config
+
+```ts
+import { defineConfig } from '@skyroc/web-admin-vite';
+
+export default defineConfig({
+  application: {
+    /** 应用级 css 配置 */
+    css?: AdminViteCssOptions;
+    /** UnoCSS / icon 等可选透传 */
+    icon?: AdminViteIconOptions;
+  },
+  vite: {
+    /** 原生 vite UserConfig 透传 */
+  }
+});
+```
+
+类型：`AdminViteUserConfig`、`AdminViteEnv`、`AdminViteApplicationOptions` 等。
+
+### plugins
+
+| 函数 | 作用 |
+| --- | --- |
+| `setupAdminVitePlugins` | 装配完整插件链 |
+| `setupAdminViteReactPlugin` | React + React Compiler |
+| `setupAdminViteBabelPlugin` | jotai-babel 等 |
+| `setupAdminViteRouterPlugin` | TanStack Router（生成 routeTree） |
+| `setupAdminViteAutoImportPlugin` | unplugin-auto-import |
+| `setupAdminViteUnocssPlugin` | UnoCSS |
+| `setupAdminViteUnpluginIconPlugin` | unplugin-icons |
+| `setupAdminViteHtmlPlugin` | HTML meta（title、build time 等注入） |
+| `setupAdminViteInfoPlugin` | 启动时打印项目信息 |
+
+类型：`SetupAdminVitePluginsConfig`、`AdminViteIconOptions`、`MaybePluginConfig`。
+
+### build
+
+```ts
+import { createAdminBuildOptions, createAdminScssPreprocessorOptions } from '@skyroc/web-admin-vite';
+```
+
+- `createAdminBuildOptions`：默认 `rollupOptions.output.manualChunks`，把 react、antd、i18n、router 分到独立 chunk；
+- `createAdminScssPreprocessorOptions`：默认 SCSS 预编译选项（含 `@use` 自动注入）。
+
+### proxy
+
+```ts
+import { createAdminViteProxy, createAdminViteServiceConfig, createAdminViteProxyPattern } from '@skyroc/web-admin-vite';
+```
+
+- `createAdminViteProxy`：根据环境变量生成 dev proxy 表；
+- `createAdminViteServiceConfig`：解析 `VITE_SERVICE_BASE_URL` / `VITE_OTHER_SERVICE_BASE_URL`（JSON5）。
+
+详见下面「Proxy 工作机制」。
+
+### time
+
+```ts
+import { getBuildTime } from '@skyroc/web-admin-vite';
+```
+
+返回构建时间字符串（注入到 `BUILD_TIME` 全局常量与 HTML meta）。
+
+## 目录结构
+
+```text
+src/
+├── index.ts                     # re-export config / build / proxy / time / plugins / types
+├── config.ts                    # defineConfig 主入口
+├── build.ts                     # manualChunks + SCSS
+├── proxy.ts                     # dev proxy
+├── time.ts                      # BUILD_TIME
+├── types.ts
+└── plugins/
+    ├── index.ts                 # setupAdminVitePlugins
+    ├── react.ts、babel.ts、router.ts、auto-import.ts
+    ├── unocss.ts、unplugin-icon.ts、html.ts、info.ts
+    └── icon-utils.ts
+```
+
+## Proxy 工作机制
+
+仅在 `VITE_HTTP_PROXY=Y` 且 `mode=development` 时启用：
+
+```text
+请求 → /proxy-default/xxx   →  rewrite 为 ${VITE_SERVICE_BASE_URL}/xxx
+请求 → /proxy-demo/xxx      →  rewrite 为 ${VITE_OTHER_SERVICE_BASE_URL.demo}/xxx
+请求 → /proxy-<key>/xxx     →  来自 VITE_OTHER_SERVICE_BASE_URL JSON5
+```
+
+`VITE_OTHER_SERVICE_BASE_URL` 用 JSON5 而不是 JSON，方便手写：
+
+```dotenv
+VITE_OTHER_SERVICE_BASE_URL={ demo: 'https://api.demo.com' }
+```
+
+`VITE_PROXY_LOG=Y` 时打印每条代理请求（kolorist 着色）。
+
+## 内置插件链
+
+| 插件 | 作用 |
+| --- | --- |
+| `@vitejs/plugin-react` | React JSX + Fast Refresh |
+| `babel-plugin-react-compiler` | React Compiler 自动优化 |
+| `jotai-babel` | Jotai atom debugLabel 自动注入 |
+| `@tanstack/router-plugin` | 扫 `src/pages/` 生成 routeTree.gen.ts，autoCodeSplitting |
+| `@tanstack/devtools-vite` | TanStack DevTools |
+| `@unocss/vite` | UnoCSS |
+| `unplugin-icons` | 编译期内联 Iconify 图标（按需打包） |
+| `unplugin-auto-import` | 自动 import 常用 API（hooks 等） |
+| `vite-plugin-svg-icons` | `src/assets/svg-icon/*.svg` 注册成 sprite |
+| `vite-plugin-remove-console` | prod 模式移除 console |
+| `vite-plugin-inspect` | dev 模式调试插件链 |
+| **HTML 插件**（自研） | title / build time / icon prefix 注入 |
+| **Info 插件**（自研） | 启动横幅 |
+
+## 默认 dev server
+
+```ts
+{
+  host: '0.0.0.0',
+  port: 9527,
+  open: true,
+  proxy: createAdminViteProxy(env, mode)
+}
+```
+
+## 默认 build
+
+```ts
+{
+  rollupOptions: {
+    output: {
+      manualChunks: {
+        react: ['react', 'react-dom'],
+        antd: ['antd'],
+        router: ['@tanstack/react-router'],
+        i18n: ['i18next', 'react-i18next'],
+        ...
+      }
+    }
+  }
+}
+```
+
+## 环境变量
+
+`loadEnv(mode, root)` 加载 `.env*`，常用变量：
+
+| 变量 | 说明 |
+| --- | --- |
+| `VITE_AUTH_ROUTE_MODE` | `static` / `dynamic` |
+| `VITE_ROUTE_HOME` | 登录后首页 |
+| `VITE_HTTP_PROXY` | `Y` 启用 dev proxy |
+| `VITE_PROXY_LOG` | `Y` 打印代理日志 |
+| `VITE_SERVICE_BASE_URL` | 主接口 baseURL |
+| `VITE_OTHER_SERVICE_BASE_URL` | 其它服务（JSON5） |
+| `VITE_STORAGE_PREFIX` | localStorage key 前缀 |
+| `VITE_APP_TITLE` | 应用标题 |
+| `VITE_ICON_LOCAL_PREFIX` | 本地 SVG icon 前缀 |
+| `VITE_ICONIFY_URL` | Iconify 离线接口 |
+| `VITE_MENU_ICON` | 菜单默认图标 |
+| `VITE_STATIC_SUPER_ROLE` | 超管角色 |
+| `VITE_SERVICE_SUCCESS_CODE` / `VITE_SERVICE_LOGOUT_CODES` / `VITE_SERVICE_MODAL_LOGOUT_CODES` / `VITE_SERVICE_EXPIRED_TOKEN_CODES` | 业务码 |
+
+完整清单见 [Admin 环境变量](/docs/admin-app/env-vars)。
+
+## 全局注入
+
+`define`：
+
+```ts
+{
+  __DEV__: JSON.stringify(mode === 'development'),
+  BUILD_TIME: JSON.stringify(getBuildTime())
+}
+```
+
+类型在 `apps/admin/src/types/global.d.ts` 中声明：
+
+```ts
+declare const BUILD_TIME: string;
+declare const __DEV__: boolean;
+```

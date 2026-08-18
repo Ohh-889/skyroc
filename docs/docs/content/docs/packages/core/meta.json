@@ -1,0 +1,15 @@
+{
+  "title": "Core Docs",
+  "pages": [
+    "index",
+    "utils",
+    "axios",
+    "service",
+    "state",
+    "scheduler",
+    "color",
+    "logger",
+    "types",
+    "scripts"
+  ]
+}

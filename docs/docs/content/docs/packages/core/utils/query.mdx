@@ -1,0 +1,175 @@
+---
+title: "Query"
+description: "URL query 字符串解析与序列化工具，用于路由 search 参数、表格筛选参数和跳转回调地址"
+---
+
+## 概述
+
+```ts
+import { parseQuery, stringifyQuery } from '@skyroc/utils';
+```
+
+`query` 模块提供一组轻量的 URL search 参数工具，适合在路由层把 `?key=value` 转成普通对象，或把对象稳定地写回 URL。
+
+它的语义接近 `URLSearchParams`，但保留了项目路由需要的两点行为：
+
+- 重复 key 会解析成数组。
+- 只有 key、没有 `=` 的参数会解析成 `null`，序列化时也会写成 `?key`。
+
+## 类型
+
+```ts
+type LocationQueryValue = string | null;
+
+type LocationQuery = Record<string, LocationQueryValue | LocationQueryValue[]>;
+
+type LocationQueryValueRaw = string | number | null | undefined;
+
+type LocationQueryRaw = Record<string | number, LocationQueryValueRaw | LocationQueryValueRaw[]>;
+```
+
+这个模块只处理 URL 查询参数的基础类型：`string`、`number`、`null`、`undefined` 以及它们的数组。复杂对象、布尔值、JSON search 参数不在这个工具的职责内。
+
+## 解析 query
+
+### `parseQuery(search)`
+
+将 query 字符串解析为 `LocationQuery`。`search` 可以带 `?`，也可以不带。
+
+```ts
+parseQuery('?name=Alex&age=18');
+// { name: 'Alex', age: '18' }
+
+parseQuery('name=Alex&age=18');
+// { name: 'Alex', age: '18' }
+```
+
+### 重复参数
+
+同名参数会按出现顺序合并为数组：
+
+```ts
+parseQuery('?tag=a&tag=b');
+// { tag: ['a', 'b'] }
+```
+
+### 空值与 null 值
+
+有 `=` 但没有值时，结果是空字符串；没有 `=` 时，结果是 `null`。
+
+```ts
+parseQuery('?empty=&enabled');
+// { empty: '', enabled: null }
+```
+
+`&&` 或结尾多余的 `&` 会被当作空片段跳过，但显式空 key 会被保留：
+
+```ts
+parseQuery('?a=1&&b=2&');
+// { a: '1', b: '2' }
+
+parseQuery('?=value&');
+// { '': 'value' }
+```
+
+### 空格与加号
+
+解析时，`+` 会按 URL search 的习惯转为空格；如果业务值本身就是加号，需要使用 `%2B`。
+
+```ts
+parseQuery('?keyword=hello+world&symbol=%2B');
+// { keyword: 'hello world', symbol: '+' }
+```
+
+### 原型 key
+
+解析结果使用无原型对象承载，因此 `toString`、`constructor`、`__proto__` 会被当作普通 query key，而不会误命中对象原型链。
+
+```ts
+const query = parseQuery('?constructor=value&__proto__=safe');
+
+Object.getPrototypeOf(query);
+// null
+
+query.constructor;
+// 'value'
+```
+
+## 序列化 query
+
+### `stringifyQuery(query)`
+
+将 query 对象序列化为带 `?` 的 search 字符串；没有有效参数时返回空字符串。
+
+```ts
+stringifyQuery({ name: 'Alex', page: 1 });
+// '?name=Alex&page=1'
+
+stringifyQuery({});
+// ''
+```
+
+### null 与 undefined
+
+`null` 会只写 key，`undefined` 会被跳过。
+
+```ts
+stringifyQuery({
+  enabled: null,
+  keyword: undefined,
+  page: 1,
+});
+// '?enabled&page=1'
+```
+
+数组里的 `undefined` 也会被跳过，`null` 会保留为只有 key 的参数：
+
+```ts
+stringifyQuery({
+  tag: ['a', null, undefined, 'b'],
+});
+// '?tag=a&tag&tag=b'
+```
+
+### 0 与空字符串
+
+`0` 和空字符串都是有效值，不会被跳过。
+
+```ts
+stringifyQuery({
+  empty: '',
+  page: 0,
+});
+// '?empty=&page=0'
+```
+
+## 编码工具
+
+通常业务代码只需要 `parseQuery` 和 `stringifyQuery`。如果需要单独编码 key 或 value，可以使用：
+
+```ts
+import { encodeQueryKey, encodeQueryValue } from '@skyroc/utils';
+
+encodeQueryKey('a=b');
+// 'a%3Db'
+
+encodeQueryValue('a b+c#d&e');
+// 'a+b%2Bc%23d%26e'
+```
+
+## 在路由中使用
+
+TanStack Router 的 `parseSearch` 和 `stringifySearch` 需要函数分别处理 URL search 的读写：
+
+```ts
+import { createRouter } from '@tanstack/react-router';
+import { parseQuery, stringifyQuery } from '@skyroc/utils';
+
+export const router = createRouter({
+  parseSearch: parseQuery,
+  stringifySearch: stringifyQuery,
+  routeTree,
+});
+```
+
+`stringifyQuery` 返回值已经包含开头的 `?`，可以直接作为 `stringifySearch` 使用。

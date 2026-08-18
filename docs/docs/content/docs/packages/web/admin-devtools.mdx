@@ -1,0 +1,134 @@
+---
+title: "@skyroc/web-admin-devtools"
+description: 集成 TanStack Query / Router / Jotai 的开发调试面板
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/web-admin-devtools` |
+| 目录 | `packages/web/admin-devtools` |
+| 版本 | 0.1.0 |
+| 依赖 | `@tanstack/react-devtools`、`@tanstack/react-query-devtools`、`@tanstack/react-router-devtools`、`jotai-devtools` |
+| peer | `@tanstack/react-query`、`@tanstack/react-router`、`jotai`、`react`、`react-dom` |
+| 子入口 | `.`、`./jotai` |
+| 测试 | ❌ |
+
+把三套 DevTools 聚合到一个浮动面板里：
+
+- **Query DevTools**：查看 React Query 缓存、状态、refetch
+- **Router DevTools**：查看 TanStack Router 当前路由树、匹配、context
+- **Jotai DevTools**：查看 atom 状态、变化时间线、Redux DevTools 集成
+
+## 使用
+
+```tsx
+import { AdminDevtools } from '@skyroc/web-admin-devtools';
+
+<AdminDevtools
+  config={{
+    position: 'bottom-right',
+    query: true,
+    router: true,
+    jotai: {
+      name: 'My Admin',
+      panel: true,
+      position: 'bottom-left',
+      timeline: true,
+      triggerOffset: { left: 248 }
+    }
+  }}
+  queryClient={queryClient}
+  router={router}
+  store={globalStore}
+/>;
+```
+
+### 主入口导出
+
+| 类别 | 符号 |
+| --- | --- |
+| 组件 | `AdminDevtools` |
+| 类型 | `AdminDevtoolsConfig`、`AdminDevtoolsProps`、`AdminJotaiDevtoolsConfig`、`AdminJotaiDevtoolsTriggerOffset` |
+
+### 子入口 `./jotai`
+
+```ts
+import '@skyroc/web-admin-devtools/jotai';
+```
+
+仅 side-effect：`import 'jotai-devtools/utils'`，让任何 `atom()` 调用自动注入 `debugLabel`。`apps/admin/src/main.tsx` 在开发态最先 import 它：
+
+```ts
+async function bootstrap() {
+  if (import.meta.env.DEV) {
+    await import('@skyroc/web-admin-devtools/jotai');
+  }
+  await import('./bootstrap');
+}
+```
+
+这样后续创建的所有 atom 都能在 Jotai DevTools 里以变量名显示，而不是 `<no debugLabel>`。
+
+## 配置项
+
+```ts
+interface AdminDevtoolsConfig {
+  /** 整体位置 */
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  /** 启用 React Query DevTools */
+  query?: boolean;
+  /** 启用 Router DevTools */
+  router?: boolean;
+  /** Jotai 配置（false 禁用） */
+  jotai?: AdminJotaiDevtoolsConfig | false;
+}
+
+interface AdminJotaiDevtoolsConfig {
+  name?: string;
+  panel?: boolean;            // 浮动面板
+  position?: 'bottom-right' | 'bottom-left' | ...;
+  timeline?: boolean;         // Redux DevTools 时间线
+  triggerOffset?: {           // 浮动 trigger 按钮偏移
+    left?: number; right?: number; top?: number; bottom?: number;
+  };
+  theme?: 'dark' | 'light';
+}
+```
+
+## 在 apps/admin 的接入
+
+```tsx
+// App.tsx
+const AdminDevtools = import.meta.env.DEV
+  ? lazy(() => import('@skyroc/web-admin-devtools').then(mod => ({ default: mod.AdminDevtools })))
+  : (_props: AdminDevtoolsProps) => null;
+//                ^^^ 生产环境替换为 no-op，整个包会被 tree-shaking
+
+const Devtools = () => {
+  const { darkMode } = useSettingsTheme();
+  const config = useMemo(() => ({
+    ...globalConfig.devtools,
+    theme: darkMode ? 'dark' : 'light'
+  }), [darkMode]);
+
+  return (
+    <Suspense fallback={null}>
+      <AdminDevtools config={config} queryClient={queryClient} router={router} store={globalStore} />
+    </Suspense>
+  );
+};
+```
+
+通过 `import.meta.env.DEV` 三元 + lazy import，确保**生产 bundle 完全不包含 devtools 代码**。
+
+## 主题联动
+
+`config.theme` 跟随应用的 `darkMode` 切换，DevTools 面板的暗色 / 亮色与主题一致。
+
+## 设计要点
+
+- **统一面板**：避免三套 DevTools 各自一个浮动按钮挤占屏幕；
+- **可定位**：每套子 DevTools 都可以独立配置位置；
+- **零运行时成本**：dev only + lazy + tree-shaking 三层保护。

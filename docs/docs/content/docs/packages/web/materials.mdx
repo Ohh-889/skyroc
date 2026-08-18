@@ -1,0 +1,149 @@
+---
+title: "@skyroc/materials"
+description: 插槽式 AdminLayout 骨架与三种 PageTab 视觉风格
+---
+
+## 概览
+
+| 项 | 值 |
+| --- | --- |
+| 包名 | `@skyroc/materials` |
+| 目录 | `packages/web/materials` |
+| 版本 | 2.5.0 |
+| 依赖 | [`@skyroc/color`](/docs/core/color)、[`@skyroc/web-ui`](/docs/web/ui-shadcn)、[`@skyroc/utils`](/docs/core/utils)、`clsx` |
+| 测试 | ✅ `index.test.tsx` |
+
+`@skyroc/materials` 提供**结构性 UI 材料**——不包含业务逻辑、不绑定状态管理，只负责"形"。它有两块内容：
+
+- `AdminLayout`：Slot 式后台布局骨架
+- `PageTab`：三种风格的页面 Tab 组件
+
+## AdminLayout（Slot 骨架）
+
+```text
+┌────────────────────────────────────┐
+│            Header (slot)            │
+├──────┬─────────────────────────────┤
+│      │         Tab (slot)           │
+│      ├─────────────────────────────┤
+│Sider │                              │
+│(slot)│       Content (slot)         │
+│      │                              │
+│      ├─────────────────────────────┤
+│      │         Footer (slot)        │
+└──────┴─────────────────────────────┘
+```
+
+通过 `AdminLayoutProps` 的 slot 属性传入各区域组件：
+
+```tsx
+import { AdminLayout, type AdminLayoutProps } from '@skyroc/materials';
+
+<AdminLayout
+  mode="vertical"
+  scrollMode="content"
+  header={<MyHeader />}
+  sider={<MySider />}
+  tab={<MyTab />}
+  content={<RouterOutlet />}
+  footer={<MyFooter />}
+/>;
+```
+
+`LayoutMode` 支持：
+
+- `vertical`：经典侧栏 + 顶栏（默认）
+- `horizontal`：纯顶栏布局
+- `vertical-mix` / `horizontal-mix`：左侧只显一级菜单 + 顶部/侧栏二级
+
+`LayoutScrollMode`：
+
+- `content`：仅内容区滚动
+- `wrapper`：整个 wrapper 滚动
+
+## PageTab（三种视觉风格）
+
+| 模式 | 组件 | 风格 |
+| --- | --- | --- |
+| `button` | `ButtonTab` | 普通按钮式 |
+| `chrome` | `ChromeTab` + `ChromeTabBg` | Chrome 浏览器标签风格 |
+| `slider` | `SliderTab` | 滑块跟随式 |
+
+```tsx
+import { PageTab } from '@skyroc/materials';
+
+<PageTab
+  mode="chrome"
+  active="/home"
+  tabs={[{ key: '/home', label: '首页' }, ...]}
+  onChange={key => navigate({ to: key })}
+  onClose={key => closeTab(key)}
+/>;
+```
+
+## 关键常量与类型
+
+| 导出 | 用途 |
+| --- | --- |
+| `LAYOUT_MAX_Z_INDEX` | 布局元素的最大 z-index（避免与业务组件冲突） |
+| `LAYOUT_SCROLL_EL_ID` | 滚动容器 DOM id（业务可通过 ID 滚动到顶部） |
+| `AdminLayoutProps` / `LayoutMode` / `LayoutScrollMode` | 布局类型 |
+| `PageTabProps` / `PageTabMode` | 标签页类型 |
+
+## 目录结构
+
+```text
+src/
+├── index.ts
+├── types/index.ts
+└── libs/
+    ├── admin-layout/
+    │   ├── index.tsx
+    │   ├── shared.ts
+    │   └── index.module.css
+    └── page-tab/
+        ├── index.tsx          # PageTab 路由组件
+        ├── hook.ts
+        ├── shared.ts
+        ├── ButtonTab.tsx
+        ├── ChromeTab.tsx
+        ├── ChromeTabBg.tsx
+        ├── SliderTab.tsx
+        ├── SvgClose.tsx
+        └── index.module.css
+```
+
+## 与 admin-layouts 的关系
+
+`@skyroc/materials` **只是骨架**，没有业务、没有状态、没有菜单生成逻辑。
+
+`@skyroc/web-admin-layouts` 才是"装上灵魂"的完整 admin 壳：
+
+```text
+@skyroc/materials (骨架 + Tab 样式)
+        ↑
+@skyroc/web-admin-layouts (header / sider / tab / menu / theme drawer / search)
+        ↑
+apps/admin (业务接入 + storage + routeTree)
+```
+
+这种「骨架 / 实现 / 装配」的分层让：
+
+- 同一套布局骨架可以被多个产品复用；
+- Tab 样式可以独立替换，不影响布局逻辑；
+- React Native 端将来可以共用 `LayoutMode` 类型但提供自己的实现。
+
+## CSS 变量驱动
+
+布局的关键尺寸（侧栏宽度、Header 高度等）通过 CSS 变量驱动，业务可以覆盖：
+
+```css
+.root {
+  --layout-sider-width: 240px;
+  --layout-header-height: 56px;
+}
+```
+
+## 测试
+
+`__tests__/index.test.tsx` 验证三种 Tab 模式的渲染、布局 slot 的注入与切换。
