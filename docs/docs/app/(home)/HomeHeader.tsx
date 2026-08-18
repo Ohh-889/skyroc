@@ -37,7 +37,7 @@ export const HomeHeader = (props: HomeHeaderProps) => {
       >
         <HeaderBrand docsUrl={docsUrl} />
 
-        <HeaderNavigation docsUrl={docsUrl} />
+        <HeaderNavigation />
 
         <HeaderActions
           docsUrl={docsUrl}
