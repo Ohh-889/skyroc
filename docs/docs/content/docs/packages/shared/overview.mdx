@@ -7,28 +7,28 @@ description: packages/shared、hooks、primitives —— 跨端可复用的纯�
 
 `packages/shared`、`packages/hooks`、`packages/primitives` 三个目录都属于「跨端共享层」——它们要么是**零依赖的纯数据/类型**，要么是 **React 跨端的 hooks 与 primitive**，可同时服务 Web / React Native / 小程序。
 
-详细的准入标准见 [命名规范 · shared 准入规则](/docs/architecture/naming#shared-准入规则)。
+详细的准入标准见 [命名规范 · shared 准入规则](/docs/guide/architecture/naming#shared-准入规则)。
 
 ## 包列表
 
 | 目录 | 包名 | 形态 | 跨端 |
 | --- | --- | --- | --- |
-| `shared/ui-types` | [`@skyroc/ui-types`](/docs/shared/ui-types) | 纯类型 | Web / RN / MiniApp |
-| `shared/type-utils` | [`@skyroc/type-utils`](/docs/shared/type-utils) | 纯类型（含 `./web` 子入口） | Web / RN / MiniApp |
-| `hooks` | [`@skyroc/hooks`](/docs/shared/hooks) | React hooks（含 `./web` 子入口） | RN 安全 + Web 增强 |
-| `primitives/filed-form` | [`@skyroc/form`](/docs/shared/form) | React 表单 primitive | React 通用 |
+| `shared/ui-types` | [`@skyroc/ui-types`](/docs/packages/shared/ui-types) | 纯类型 | Web / RN / MiniApp |
+| `shared/type-utils` | [`@skyroc/type-utils`](/docs/packages/shared/type-utils) | 纯类型（含 `./web` 子入口） | Web / RN / MiniApp |
+| `hooks` | [`@skyroc/hooks`](/docs/packages/hooks) | React hooks（含 `./web` 子入口） | RN 安全 + Web 增强 |
+| `primitives/filed-form` | [`@skyroc/form`](/docs/packages/form) | React 表单 primitive | React 通用 |
 
 ## 设计原则
 
 ### 1. shared 必须「零或极轻依赖」
 
-`packages/shared/*` 不允许引入 React 运行时 / DOM API / RN API / 大型库（antd、tailwindcss 等）。具体见 [shared 准入规则](/docs/architecture/naming#shared-准入规则)。
+`packages/shared/*` 不允许引入 React 运行时 / DOM API / RN API / 大型库（antd、tailwindcss 等）。具体见 [shared 准入规则](/docs/guide/architecture/naming#shared-准入规则)。
 
 例如：
 
 - ✅ `ThemeColor`、`WithClassName`（纯类型）放 `@skyroc/ui-types`
 - ❌ OKLCH 调色板生成算法（依赖 colord / culori）→ 不能放 shared，要放 `@skyroc/color`
-- ❌ 设计令牌常量 → 三端统一走 Tailwind，令牌直接住在唯一的翻译层 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 里，不再单独成包
+- ❌ 设计令牌常量 → 三端统一走 Tailwind，令牌直接住在唯一的翻译层 [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) 里，不再单独成包
 
 ### 2. hooks 用平台子入口隔离
 
@@ -45,7 +45,7 @@ Native 端引用 `.` 不会误打包 `navigator.clipboard` 等浏览器 API。
 
 `@skyroc/form` 是典型的 primitive：它定义了一套**类型安全的表单状态引擎**，但不绑定具体 UI。
 
-- [`@skyroc/web-ui`](/docs/web/ui-shadcn) 的 `Form` 组件基于它实现
+- [`@skyroc/web-ui`](/docs/packages/web/ui) 的 `Form` 组件基于它实现
 - 将来 Native UI 库也可以基于同一个 form-core 实现
 
 ## 与 @core 的区别
@@ -75,8 +75,8 @@ Native 端引用 `.` 不会误打包 `navigator.clipboard` 等浏览器 API。
 ## 推荐阅读
 
 <Cards>
-  <Card title="@skyroc/ui-types" href="/docs/shared/ui-types" description="跨端 UI 类型（ThemeColor / WithClassName）" />
-  <Card title="@skyroc/type-utils" href="/docs/shared/type-utils" description="高级 TS 工具类型（路径 / 字段 / 变换）" />
-  <Card title="@skyroc/hooks" href="/docs/shared/hooks" description="跨端 React hooks + Store 基类" />
-  <Card title="@skyroc/form" href="/docs/shared/form" description="类型安全的 React 表单 primitive" />
+  <Card title="@skyroc/ui-types" href="/docs/packages/shared/ui-types" description="跨端 UI 类型（ThemeColor / WithClassName）" />
+  <Card title="@skyroc/type-utils" href="/docs/packages/shared/type-utils" description="高级 TS 工具类型（路径 / 字段 / 变换）" />
+  <Card title="@skyroc/hooks" href="/docs/packages/hooks" description="跨端 React hooks + Store 基类" />
+  <Card title="@skyroc/form" href="/docs/packages/form" description="类型安全的 React 表单 primitive" />
 </Cards>
