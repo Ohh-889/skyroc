@@ -40,15 +40,15 @@ export default defineConfig({
 });
 ```
 
-预设**只提供规则与 theme，不注入色值**——`--primary`、`--primary-500`、`--color-text` 这些变量由 [`@skyroc/web-admin-theme`](/docs/packages/web/theme/admin-theme) 在运行时写到 `:root` 上。两者缺一不可。
+预设**只声明规则与 theme，不定义任何色值**——它生成的每个类都指向 CSS 变量（`--primary`、`--primary-500`、`--color-text-*`、`--radius-*` 等）。这些变量本身由主题层提供，见 [Admin 主题](/docs/web/theme/admin-theme) 与 [Admin 样式方案](/docs/web/admin-styles)；缺了主题层，工具类会解析到空值。
 
 使用方：`apps/admin`、`apps/admin-example`、`apps/ruoyi-plus-fast`，以及 `packages/@core/scripts` 的 admin 模板。
 
 ## 导出清单
 
 ```ts
-import presetSoybeanAdmin, {          // default = presetSoybeanAdmin
-  presetSoybeanAdmin,                 // 具名导出（同一个函数）
+import {
+  presetSoybeanAdmin,                 // 也是 default 导出
   allShortcuts,
   flexShortcuts,
   positionShortcuts,
@@ -150,7 +150,7 @@ border-primary-hover → var(--primary-300)
 | `borderRadius` | `none` / `xs`(2px) / `sm`(4px) / `md`(6px，DEFAULT) / `lg`(8px) / `xl`(12px) / `2xl`(16px) / `3xl`(24px) / `4xl`(32px) / `full` |
 | `boxShadow` | `float`（三层浮层阴影）、`header` / `sider` / `tab`（读 CSS 变量） |
 
-注意尺寸档位里**没有 `sm`**，从 `xs` 直接跳到 `md`——这是刻意与 `presetWind3` 的默认 `sm` 保持不冲突。
+注意尺寸档位（`spacing` / `width` / `height` / `min*` / `max*`）里**没有 `sm`**，从 `xs`(0.75rem) 直接跳到 `md`(1rem)；写 `p-sm` 会落回 `presetWind3` 的默认值而不是这套 token。
 
 ## 工具函数
 
@@ -166,7 +166,7 @@ border-primary-hover → var(--primary-300)
 
 ## 与 `@skyroc/tailwind-plugin` 的关系
 
-| 维度 | `@sa/uno-config` | [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) |
+| 维度 | `@sa/uno-config` | [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) |
 | --- | --- | --- |
 | 服务对象 | admin 应用的业务页面 | `@skyroc/web-ui` 组件库 |
 | 工具 | UnoCSS（`presetWind3` + 本预设） | Tailwind 4 |
@@ -182,6 +182,6 @@ border-primary-hover → var(--primary-300)
 
 ## 相关文档
 
-- [`@skyroc/web-admin-theme`](/docs/packages/web/theme/admin-theme) —— 本预设消费的 CSS 变量由谁写入
-- [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) —— 组件库侧的等价物
-- [Admin 样式方案](/docs/packages/web/admin-styles) —— 应用层样式的整体组织
+- [`@skyroc/web-admin-theme`](/docs/web/theme/admin-theme) —— 本预设消费的 CSS 变量由谁写入
+- [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) —— 组件库侧的等价物
+- [Admin 样式方案](/docs/web/admin-styles) —— 应用层样式的整体组织

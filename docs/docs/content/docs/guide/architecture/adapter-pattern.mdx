@@ -66,7 +66,7 @@ const request = createAppRequest({
 
 RN 端可以注入自己的 fetch / okhttp 适配器，service 流水线完全复用。
 
-详见 [@skyroc/service](/docs/packages/core/service)。
+详见 [@skyroc/service](/docs/core/service)。
 
 ### 2. `@skyroc/logger` 的 `StorageAdapter`
 
@@ -89,7 +89,7 @@ export interface StorageAdapter {
 | `@skyroc/logger/web` | `WebStorageAdapter`（IndexedDB / localStorage） | Web |
 | `@skyroc/logger/native` | `RNStorageAdapter`（AsyncStorage） | RN |
 
-业务方按需 import 对应实现并注入。详见 [@skyroc/logger](/docs/packages/core/logger)。
+业务方按需 import 对应实现并注入。详见 [@skyroc/logger](/docs/core/logger)。
 
 ### 3. `@skyroc/utils/storage` 的 `IStorage`
 

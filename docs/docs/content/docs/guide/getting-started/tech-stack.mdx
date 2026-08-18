@@ -30,7 +30,7 @@ description: 从平台、共享基础设施与工程治理三个层面理解项�
 - **i18next + react-i18next**：`@skyroc/web-admin-i18n` 负责语言资源、运行时切换和组件接入。
 - **Motion**：动画能力按需加载，应用通过 `LazyAnimate` 延后加载动画运行时。
 
-文档站不是 Vite 应用。`docs/*` 使用 **Next.js + Fumadocs**，负责主文档、包参考以及 Web / Native UI 的独立文档站。
+文档站不是 Vite 应用。`docs/*` 使用 **Next.js + Fumadocs**，负责主文档、包文档以及 Web / Native UI 的独立文档站。
 
 ## Native 与跨端能力
 
@@ -44,7 +44,7 @@ Web 和 Native 共享的是类型、设计语义和不依赖平台的逻辑，�
 - `@skyroc/color` 与 `@skyroc/tailwind-plugin` 生成颜色和语义 token；
 - `@skyroc/logger` 提供 Web / React Native 的日志存储与可选上传能力。
 
-完整的平台目录与包职责见 [目录结构总览](/docs/guide/getting-started/directory) 和 [包参考](/docs/packages)。
+完整的平台目录与包职责见 [目录结构总览](/docs/guide/getting-started/directory) 和 [包总览](/docs/packages)。
 
 ## 数据与状态如何协作
 
@@ -109,4 +109,4 @@ TanStack Query 不用于代替本地 UI 状态，Jotai 也不重复实现服务�
 
 只有兼容性或类型一致性必须强制统一时，才动根 `overrides`。catalog 的分域方式、完整配置与新增依赖的流程见 [Catalog 依赖管理](/docs/guide/architecture/catalog)。
 
-当你需要进一步确认代码应该放在哪里时，继续阅读 [目录结构总览](/docs/guide/getting-started/directory)；当你需要了解某个包的公开职责和入口时，进入 [包参考](/docs/packages)。
+当你需要进一步确认代码应该放在哪里时，继续阅读 [目录结构总览](/docs/guide/getting-started/directory)；当你需要了解某个包的公开职责和入口时，进入 [包总览](/docs/packages)。

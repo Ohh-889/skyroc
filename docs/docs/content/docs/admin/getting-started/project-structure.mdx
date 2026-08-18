@@ -15,7 +15,7 @@ Skyroc Admin React 采用 monorepo 组织方式。`apps/admin` 是实际运行�
 | `apps/admin/src` | 后台应用源码，负责把共享包能力接入到具体业务页面。 |
 | `packages/web/*` | Web 后台相关共享包，提供布局壳、主题、Vite 预设、国际化、通知、运行时和 UI 组件。 |
 | `packages/web/ui/*` | Web UI 组件包，提供基础组件、Ant Design 组合组件和无状态组合能力。 |
-| [包参考 / Web](/docs/packages/web/overview) | `packages/web/*` 的共享包文档，不承载 `apps/admin` 的业务用法细节。 |
+| [Web 端包](/docs/web) | `packages/web/*` 的共享包文档，不承载 `apps/admin` 的业务用法细节。 |
 
 ## `apps/admin/src`
 
@@ -38,7 +38,7 @@ Skyroc Admin React 采用 monorepo 组织方式。`apps/admin` 是实际运行�
 | `types` | 应用类型声明：`global.d.ts`、`router.d.ts`、`storage.d.ts`、`vite-env.d.ts`、`auto-imports.d.ts`。 |
 | `utils` | 应用内工具函数。适合放和当前应用强绑定的工具，不适合沉淀通用工具。 |
 
-> 后端 API 类型不在 `apps/admin` 里。`Api.Auth`、`Api.Route`、`Api.SystemManage`、`Api.Common`、`Api.Service` 这些全局命名空间统一声明在 [`@skyroc/types`](/docs/packages/core/types)（`packages/@core/types/src/api/*.d.ts`），业务代码直接用、不需要 `import`。
+> 后端 API 类型不在 `apps/admin` 里。`Api.Auth`、`Api.Route`、`Api.SystemManage`、`Api.Common`、`Api.Service` 这些全局命名空间统一声明在 [`@skyroc/types`](/docs/core/types)（`packages/@core/types/src/api/*.d.ts`），业务代码直接用、不需要 `import`。
 >
 > `apps/admin` 目前**没有** `hooks/`、`constants/`、`enums/` 目录。需要应用内复用 hook 时可以新建 `src/hooks`（`apps/admin-example` 就是这么做的），常量与枚举目前直接放在使用它的模块里。
 
@@ -83,7 +83,7 @@ main.tsx
 | `features/antd` | `AntdProvider.tsx` | Ant Design ConfigProvider 和应用级主题适配。 |
 | `features/effects` | `GlobalEffect.tsx` | 全局副作用入口，例如运行时和 UI 状态同步。 |
 
-> 表格与表单能力**不在** `features` 里。`useTable()`、`useTableOperate()`、`useTableScroll()`、`TableHeaderOperation` 由共享包 [`@skyroc/web-ui-compose`](/docs/packages/web/ui) 提供（`packages/web/ui/compose/src/table/`），应用直接 import 使用，不需要在 app 内再包一层。表单规则则是 `features/auth/use-auth-form-rules.ts` 这样按场景就近放置。
+> 表格与表单能力**不在** `features` 里。`useTable()`、`useTableOperate()`、`useTableScroll()`、`TableHeaderOperation` 由共享包 [`@skyroc/web-ui-compose`](/docs/web/ui) 提供（`packages/web/ui/compose/src/table/`），应用直接 import 使用，不需要在 app 内再包一层。表单规则则是 `features/auth/use-auth-form-rules.ts` 这样按场景就近放置。
 
 当某段逻辑会被多个 admin 页面复用，但还没有跨应用复用价值时，优先放在 `features`。当它已经不依赖 `apps/admin` 的业务约定，再考虑下沉到 `packages/web/*`。
 

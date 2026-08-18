@@ -27,7 +27,7 @@ apps/admin/src/service/api
   -> index.ts
 ```
 
-模块内**没有** `types.d.ts`。请求参数和响应类型统一声明在 [`@skyroc/types`](/docs/packages/core/types) 的全局 `Api` 命名空间下（`packages/@core/types/src/api/*.d.ts`），业务代码直接用 `Api.Auth.UserInfo`、`Api.SystemManage.User` 这样的类型，不需要 `import`。
+模块内**没有** `types.d.ts`。请求参数和响应类型统一声明在 [`@skyroc/types`](/docs/core/types) 的全局 `Api` 命名空间下（`packages/@core/types/src/api/*.d.ts`），业务代码直接用 `Api.Auth.UserInfo`、`Api.SystemManage.User` 这样的类型，不需要 `import`。
 
 ## 分层职责
 

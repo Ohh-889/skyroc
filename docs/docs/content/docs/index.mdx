@@ -3,7 +3,7 @@ title: Skyroc Admin 开发文档
 description: 从应用启动、路由权限和请求服务，到后台布局、主题系统与公共包边界，在一处理解完整的 Admin 开发链路。
 ---
 
-这里是 Skyroc Admin 的主文档门户。应用指南负责解释功能如何装配，架构文档说明职责与依赖方向，包参考继续深入 Core、Shared 与 Web Kit 的公开 API。
+这里是 Skyroc Admin 的主文档门户。应用指南负责解释功能如何装配，架构文档说明职责与依赖方向，包文档继续深入每个 `@skyroc/*` 的公开 API。
 
 ## 从当前任务开始
 
@@ -24,8 +24,28 @@ description: 从应用启动、路由权限和请求服务，到后台布局、�
     href="/docs/guide"
   />
   <Card
-    title="Packages"
-    description="向下追到 Core、Shared、Web Kit 的 API 与源码边界。"
+    title="跨端核心"
+    description="packages/@core 九个包：工具函数、请求、状态、调度、色彩与日志。"
+    href="/docs/core"
+  />
+  <Card
+    title="跨端 Hooks"
+    description="Store 状态引擎基类与七个 React hooks，主入口 RN 安全。"
+    href="/docs/hooks"
+  />
+  <Card
+    title="表单原语"
+    description="类型安全的 React 表单：路径级精确订阅 + StandardSchema 校验。"
+    href="/docs/form"
+  />
+  <Card
+    title="Web 端包"
+    description="packages/web 十四个包：设计系统、主题、布局、运行时与构建。"
+    href="/docs/web"
+  />
+  <Card
+    title="包总览"
+    description="31 个包的总表、分层、依赖关系与命名规则。"
     href="/docs/packages"
   />
 </Cards>

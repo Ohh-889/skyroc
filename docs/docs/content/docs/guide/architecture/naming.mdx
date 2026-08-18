@@ -39,7 +39,7 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 - ❌ React 运行时 / DOM API / React Native API / 任何平台原生模块
 - ❌ 大型依赖（antd、tailwindcss 等）
 
-举例：颜色 **算法**（OKLCH 调色板生成）放 `@skyroc/color`——它依赖 colord/culori，不符合 shared 准入。颜色 **token**（hex / hsl 常量）曾经放在 shared，现已并入 [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin)：三端统一走 Tailwind 后该插件是唯一消费者，令牌没有第二个读者，独立成包只剩形式意义。
+举例：颜色 **算法**（OKLCH 调色板生成）放 `@skyroc/color`——它依赖 colord/culori，不符合 shared 准入。颜色 **token**（hex / hsl 常量）曾经放在 shared，现已并入 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin)：三端统一走 Tailwind 后该插件是唯一消费者，令牌没有第二个读者，独立成包只剩形式意义。
 
 ## 包子入口（exports）约定
 

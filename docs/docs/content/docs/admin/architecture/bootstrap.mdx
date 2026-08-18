@@ -97,7 +97,7 @@ import 'virtual:svg-icons-register';
 import '@skyroc/web-admin-styles/global.css';
 ```
 
-注意第三行来自共享包 [`@skyroc/web-admin-styles`](/docs/packages/web/admin-styles)，不是应用本地样式文件——全局 CSS 资产是沉淀在包里的，应用只负责 import。
+注意第三行来自共享包 [`@skyroc/web-admin-styles`](/docs/web/admin-styles)，不是应用本地样式文件——全局 CSS 资产是沉淀在包里的，应用只负责 import。
 
 这类样式和资源注册属于应用级副作用，应该继续放在启动编排附近，而不是放进具体页面。
 
