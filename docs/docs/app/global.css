@@ -168,6 +168,7 @@
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
   border-radius: 9px;
   transition:
     color 160ms ease,
@@ -177,6 +178,85 @@
 .skyroc-docs-header-nav a:hover {
   color: hsl(var(--foreground));
   background: hsl(var(--foreground) / 0.05);
+}
+
+/* 当前所在分区。header 是唯一常驻可见的站内导航，不高亮就等于没告诉读者自己在哪一块 */
+.skyroc-docs-header-nav a[aria-current='page'] {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+}
+
+.skyroc-docs-header-nav a[aria-current='page']:hover {
+  background: hsl(var(--primary) / 0.16);
+}
+
+.skyroc-docs-header-previews {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  align-items: center;
+}
+
+.skyroc-docs-header-preview {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  height: 34px;
+  padding: 0 11px;
+  color: hsl(var(--primary));
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.28);
+  border-radius: 10px;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.skyroc-docs-header-preview:hover {
+  background: hsl(var(--primary) / 0.18);
+  border-color: hsl(var(--primary) / 0.45);
+}
+
+/* 次要 demo：只描边不填色，右侧不出现两个同等份量的 CTA */
+.skyroc-docs-header-preview.is-muted {
+  color: hsl(var(--foreground) / 0.72);
+  background: transparent;
+  border-color: hsl(var(--border) / 0.75);
+}
+
+.skyroc-docs-header-preview.is-muted:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.05);
+  border-color: hsl(var(--border));
+}
+
+.skyroc-docs-header-preview svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* 两个 demo 一起放，窄屏先收文字只留图标，再窄就只留主推那个 */
+@media (max-width: 1440px) {
+  .skyroc-docs-header-preview span {
+    display: none;
+  }
+
+  .skyroc-docs-header-preview {
+    justify-content: center;
+    width: 34px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .skyroc-docs-header-preview.is-muted {
+    display: none;
+  }
 }
 
 .skyroc-docs-header-github {
@@ -271,7 +351,9 @@
   border-color: hsl(var(--primary) / 0.35);
 }
 
-@media (max-width: 1120px) {
+/* 导航平铺 7 个 root 后比历史上任何版本都宽，断点跟着上调；
+   低于这个宽度整条隐藏，靠侧栏 root 切换器兜底 */
+@media (max-width: 1200px) {
   .skyroc-docs-header-nav {
     display: none;
   }
