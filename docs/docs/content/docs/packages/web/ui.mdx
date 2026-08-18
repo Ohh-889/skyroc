@@ -1,0 +1,59 @@
+---
+title: "@skyroc/web-ui 系列"
+description: "packages/web/ui 下三个组件库包的分工、入口与安装方式，组件级文档与实时 Demo 在独立的 Web UI 站点"
+---
+
+`packages/web/ui/` 下是三个各司其职的组件库包。它们的组件级文档——每个组件的实时 Demo、Props 表、可复制代码——都在独立的 **Web UI 文档站**，主站这一页只讲三者的分工、入口和该去哪查。
+
+<Callout>
+  查具体组件怎么用，去 Web UI 站点；查它们在整棵 Web 树里的位置和依赖关系，留在本页。
+</Callout>
+
+## 三个包的分工
+
+| 包 | 目录 | 一句话 | 依赖 antd |
+| --- | --- | --- | --- |
+| `@skyroc/web-ui` | `web/ui/shadcn` | Radix UI + Tailwind 的基础组件库，48 组组件 | ❌ |
+| `@skyroc/web-ui-compose` | `web/ui/compose` | 无状态复合组件 + `useTable` 表格能力 | ❌ |
+| `@skyroc/web-ui-antd` | `web/ui/antd` | 基于 antd 的业务组件层 | ✅ peer |
+
+分层是单向的：`web-ui-antd` → `web-ui-compose`，`web-ui` 与另外两个平行、互不依赖。选包的判断顺序是「先看 `web-ui` 有没有基础件 → 再看 `web-ui-compose` 有没有现成组合 → 需要 antd 生态才用 `web-ui-antd`」。
+
+## @skyroc/web-ui
+
+Radix UI primitives 加 Tailwind 样式，双层 API：
+
+| 子入口 | 内容 | 什么时候用 |
+| --- | --- | --- |
+| `@skyroc/web-ui` | `preset/` 下 48 组开箱组件 + `cn` + 类型 | 默认走这里 |
+| `@skyroc/web-ui/primitives` | `components/` 下 55 组未包装的底层件 | 要自己拼装、改结构时 |
+| `@skyroc/web-ui/style.css` | 编译后的组件样式 | 应用启动时引一次 |
+
+```tsx
+import { Button, Dialog, Form } from '@skyroc/web-ui';
+// 需要自己拼结构时：
+import * as DialogPrimitive from '@skyroc/web-ui/primitives';
+```
+
+样式 token 由 [`@skyroc/tailwind-plugin`](/docs/packages/web/tailwind-plugin) 提供，两者必须成对使用——没有装插件，组件的颜色变量会全部落空。
+
+## @skyroc/web-ui-compose
+
+两块内容，都不依赖 antd：
+
+- **复合组件**：`DarkModeContainer`、`SvgIcon`、`LazyAnimate`、`Portal`、`BetterScroll`、`I18nLabel`、`WaveBg`，以及 `NumberTicker` / `FlipText` / `TypingAnimation` / `LookForward` 这组动效件；
+- **表格能力**：`useTable`、`useTableOperate`、`useTableScroll` 与 `TableHeaderOperation`、`DragContent`，是 Admin 里所有列表页的底座。
+
+`useTable` 在 Admin 中的完整用法见 [表格与表单](/docs/admin/features/table-and-form) 与 [useTable API](/docs/admin/features/use-table-api)。
+
+## @skyroc/web-ui-antd
+
+需要 antd 生态时才用，组件是围绕后台常见交互做的封装：`ButtonIcon`、`ButtonLink`、`ReloadButton`、`PinToggler`、`FullScreen`、`BeyondHiding`、`AppTree`、`ExceptionBase`、`ErrorBoundary`。
+
+[`@skyroc/web-admin-layouts`](/docs/packages/web/admin-layouts/overview) 和 [`@skyroc/web-admin-notification`](/docs/packages/web/admin-notification) 的 Header 部件就建在这一层上。
+
+## 相关内容
+
+- [Web 端包总览](/docs/packages/web) —— 三个 ui 包在整棵 Web 树里的位置
+- [Tailwind 插件](/docs/packages/web/tailwind-plugin) —— 组件消费的 CSS 变量从哪来
+- [组件边界](/docs/admin/getting-started/component-boundaries) —— Admin 里什么时候该下沉到包、什么时候留在应用

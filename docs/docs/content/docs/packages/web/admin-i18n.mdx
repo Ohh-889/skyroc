@@ -1,143 +1,433 @@
 ---
-title: "@skyroc/web-admin-i18n"
-description: i18next + react-i18next 运行时封装，含内置中英双语与语言切换 UI
+title: '@skyroc/web-admin-i18n'
+description: 'Skyroc Admin 的管理端多语言运行时，统一 i18next 初始化、语言状态、语言切换组件和语言副作用入口'
 ---
 
-## 概览
+`@skyroc/web-admin-i18n` 是 Skyroc Admin 管理端的多语言基础包。它把后台应用通用的 i18next 初始化、语言状态、语言切换 UI、内置翻译资源和语言切换副作用入口收口到一个包里。
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/web-admin-i18n` |
-| 目录 | `packages/web/admin-i18n` |
-| 版本 | 1.0.0 |
-| peer | [`@skyroc/core-state`](/docs/core/state)、[`@skyroc/web-ui-antd`](/docs/web/ui-antd)、antd、i18next、jotai、react、react-i18next |
-| 测试 | ❌ |
+这个包不试图做所有平台的通用 i18n 抽象。它面向 Web 管理后台，默认语言模型是 `zh-CN` / `en-US`，并且和 React、Jotai、i18next、react-i18next 这套运行时配合使用。
 
-`@skyroc/web-admin-i18n` 是 Admin 应用的国际化运行时层：把 i18next 实例创建、Jotai 语言 atom、内置中英资源、`<LangEffect>` 副作用、`<LangSwitch>` 切换 UI 全部装配好，应用只需一行 `setupI18n()`。
+## 解决什么问题
 
-## 核心导出
+后台应用里多语言逻辑通常会分散在几个位置：
 
-### Setup 与运行时
+- 启动阶段要初始化 i18next、加载语言资源、读写本地缓存。
+- Header 或登录页要提供语言切换按钮。
+- 菜单、主题抽屉、通知、表单校验和页面文案要共享同一套翻译资源。
+- Ant Design、Dayjs、`document.lang` 等第三方能力要跟着当前语言变化。
+- 应用侧要保留自己的 `localStorage` 适配、默认语言配置和业务级语言选项。
 
-```ts
-import { setupI18n, i18n, reactI18nextInstance, $t, setLng, getCurrentLang, loadLocaleMessages } from '@skyroc/web-admin-i18n';
+`@skyroc/web-admin-i18n` 的职责是把这些能力拆清楚：
 
-await setupI18n({
-  initialLang: 'zh-CN',
-  fallbackLang: 'en-US',
-  storage: localStg,
-  onChange: locale => syncLocales(locale)
-});
+| 能力                                    | 放在哪里                                         | 说明                                      |
+| --------------------------------------- | ------------------------------------------------ | ----------------------------------------- |
+| i18next 实例、资源加载、语言 atom       | `@skyroc/web-admin-i18n`                         | 多个后台应用可复用。                      |
+| `useLang()`、`LangSwitch`、`LangEffect` | `@skyroc/web-admin-i18n`                         | React 侧读取和切换语言。                  |
+| 当前应用的默认语言、语言缓存            | `apps/admin/src/locales/index.ts`                | 应用决定从哪里读写语言。                  |
+| Dayjs locale 映射                       | `apps/admin/src/locales/sync.ts`                 | 第三方库的 locale key 通常是应用约定。    |
+| Ant Design locale 对象                  | `apps/admin/src/locales/antd.ts`                 | AntD locale 通过 Provider reactive 渲染。 |
+| 菜单、路由、页面等业务文案 key          | `packages/web/admin-i18n/src/langs/*` + app 类型 | 翻译资源在包内，业务类型在应用侧约束。    |
 
-$t('common.confirm');         // 等价 i18n.t('common.confirm')
-setLng('en-US');               // 切换语言
-getCurrentLang();              // 'zh-CN' | 'en-US'
-```
-
-### Atoms
-
-| Atom | 用途 |
-| --- | --- |
-| `langAtom` | 当前语言 |
-| `fallbackLangAtom` | 兜底语言 |
-| `currentLangOptionAtom` | 当前语言对应的 option 对象 |
-| `localeOptionsAtom` | 所有可选语言 option 列表 |
-
-### Hooks
-
-```ts
-import { useLang } from '@skyroc/web-admin-i18n';
-
-const { locale, locales, setLocale } = useLang();
-```
-
-### 组件
-
-| 组件 | 用途 |
-| --- | --- |
-| `LangEffect` | 监听语言切换，调用 `onLocaleChange` 回调（如同步 dayjs locale） |
-| `LangSwitch` | 语言切换下拉菜单，挂在 Header |
-
-### Config
-
-| 导出 | 内容 |
-| --- | --- |
-| `defaultLangConfig` | 默认配置（initialLang、fallbackLang、loadPath…） |
-
-### 类型
-
-`LangConfig`、`LangOption`、`LangType`、`LocaleChangeHandler`、`LocaleSetupOptions`、`LocaleStorage`、`UseLangReturn`。
-
-## 内置语言资源
+## 分层边界
 
 ```text
-src/langs/
-├── en-us/
-│   ├── common      # 通用按钮、占位
-│   ├── datatable   # 表格相关
-│   ├── dropdown    # 下拉菜单
-│   ├── form        # 表单验证
-│   ├── icon        # 图标相关
-│   ├── notification
-│   ├── page        # 页面级文案（例如菜单名）
-│   ├── request     # 请求错误
-│   ├── route       # 路由名称
-│   ├── system      # 系统级（如登出确认）
-│   └── theme       # 主题面板
-└── zh-cn/          # 同上结构
+bootstrap.tsx
+  setupI18n()
+    初始化 i18next，解析初始语言，写入 Jotai language atoms。
+
+App.tsx
+  <AntdProvider>
+    <RouterProvider />
+    <GlobalEffect />
+  </AntdProvider>
+
+GlobalEffect.tsx
+  <LangEffect onLocaleChange={syncLocales} />
+    document.lang 和 Dayjs 等响应式语言副作用集中在这里。
+
+AntdProvider.tsx
+  useLang().locale -> antdLocales[locale]
+    Ant Design locale 通过 React Provider 跟随当前语言重渲染。
 ```
 
-业务可通过 `loadLocaleMessages(locale, namespace, messages)` 追加自定义命名空间。
+关键原则：
 
-## 全局类型推导
+- `setupI18n()` 是启动初始化，不应该承接 DOM 或第三方 UI 库的响应式副作用。
+- `LangEffect.onLocaleChange` 是 React 挂载后的语言副作用入口，适合同步 `document.lang`、Dayjs 等需要跟随语言切换的能力。
+- Ant Design 不需要放进 `LangEffect`，它已经通过 `useLang().locale` 和 Provider 自然重渲染。
+- `@skyroc/web-admin-runtime` 只负责 Dayjs 插件注册，不负责语言切换后的 Dayjs locale 映射。
 
-i18next 与 [`@skyroc/types`](/docs/core/types) 的 `I18n` namespace 协作，让 `$t('xxx')` 的 key 在编译期类型安全：
+## 快速接入
+
+### 1. 初始化 i18n
+
+应用侧保留一个很薄的 `locales/index.ts`，把本应用的配置适配给共享包：
 
 ```ts
-$t('common.confirm');          // ✅
-$t('common.xxx_not_exist');    // ❌ 编译报错
+import { setupI18n as setupCoreI18n } from '@skyroc/web-admin-i18n';
+import type { LocaleSetupOptions } from '@skyroc/web-admin-i18n';
+
+import { globalConfig } from '@/config';
+import { localStg } from '@/utils/storage';
+
+export { $t } from '@skyroc/web-admin-i18n';
+
+export async function setupI18n(options: LocaleSetupOptions<I18n.LangType> = {}) {
+  await setupCoreI18n({
+    defaultLocale: globalConfig.defaultLang,
+    fallbackLocale: 'en-US',
+    localeOptions: globalConfig.defaultLangOptions,
+    missingWarn: import.meta.env.DEV,
+    storage: {
+      getLocale: () => localStg.get('lang'),
+      setLocale: lang => localStg.set('lang', lang)
+    },
+    ...options
+  });
+}
 ```
 
-类型 schema 由 `@skyroc/types/locales/i18n.d.ts` 定义，资源文件结构必须与 schema 对齐。
+这里的应用侧职责只有三件事：
 
-## 在 apps/admin 的链路
+- 决定默认语言从哪里来，例如 `globalConfig.defaultLang`。
+- 决定语言列表展示什么，例如 `中文` / `English`。
+- 决定语言缓存写到哪里，例如 `localStg.get('lang')` / `localStg.set('lang', lang)`。
+
+### 2. 在启动阶段调用
+
+`setupI18n()` 是异步初始化，应该在 React render 前完成：
+
+```tsx
+async function setupApp() {
+  const container = document.getElementById('app');
+
+  if (!container) return;
+
+  setupTheme({ buildTime: BUILD_TIME });
+  setupAdminLayouts({ routeTree, storage: localStg });
+  setupAdminPlugins();
+
+  await setupI18n();
+
+  createRoot(container).render(<App />);
+}
+```
+
+这个顺序保证组件首次渲染时已经有当前语言、fallback 语言和语言选项。React 组件内部可以直接使用 `useTranslation()`、`useLang()` 或 `$t`。
+
+### 3. 同步第三方 locale
+
+第三方语言同步集中放在应用侧 `locales/sync.ts`：
 
 ```ts
-// bootstrap.tsx
-await setupI18n();
+// oxlint-disable import/no-unassigned-import
+import { locale } from 'dayjs';
 
-// App.tsx
-import AntdProvider from '@/features/antd/AntdProvider';
-// AntdProvider 内部读 useLang() 拿 locale 注入 antd ConfigProvider
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
 
-// features/effects/GlobalEffect.tsx
-<LangEffect onLocaleChange={syncLocales} />
-// syncLocales 来自 apps/admin/src/locales/sync.ts，
-// 切换语言时同步 dayjs locale
+const localeMap: Record<I18n.LangType, string> = {
+  'zh-CN': 'zh-cn',
+  'en-US': 'en'
+};
+
+export function syncLocales(lang: I18n.LangType) {
+  locale(localeMap[lang]);
+}
 ```
 
-## 与 [`@skyroc/core-state`](/docs/core/state) 的集成
+然后在全局副作用组件里接入：
 
-`langAtom` 等都挂在 `globalStore` 上（通过 peer 依赖 core-state 拿到 store），所以在拦截器、非组件代码中也能读写：
+```tsx
+import { LangEffect } from '@skyroc/web-admin-i18n';
+import { ThemeEffect } from '@skyroc/web-admin-theme';
+
+import { syncLocales } from '@/locales/sync';
+
+const GlobalEffect = () => {
+  return (
+    <>
+      <ThemeEffect />
+      <LangEffect onLocaleChange={syncLocales} />
+    </>
+  );
+};
+
+export default GlobalEffect;
+```
+
+`LangEffect` 自身会同步 `document.documentElement.lang`，传入的 `onLocaleChange` 用来承接 Dayjs 这类应用级第三方映射。
+
+### 4. 同步 Ant Design locale
+
+Ant Design 的语言对象通过 Provider 传入，不走 `LangEffect`：
+
+```tsx
+import { useLang } from '@skyroc/web-admin-i18n';
+import { AntdProvider } from '@skyroc/web-admin-theme';
+import type { PropsWithChildren } from 'react';
+
+import { antdLocales } from '@/locales/antd';
+
+const AppAntdProvider = (props: PropsWithChildren) => {
+  const { children } = props;
+
+  const { locale } = useLang();
+
+  return <AntdProvider locale={antdLocales[locale]}>{children}</AntdProvider>;
+};
+```
+
+这种方式更符合 React 数据流：语言状态变化后 Provider 重渲染，DatePicker、Pagination 等 AntD 组件自然拿到新的 locale。
+
+## 包内结构
+
+```text
+packages/web/admin-i18n/src
+  ├─ atoms/lang.ts                 当前语言、fallback、语言选项和当前选项
+  ├─ config/default.ts             默认 zh-CN / en-US 配置
+  ├─ features/lang/LangEffect.tsx  DOM 和第三方语言副作用入口
+  ├─ features/lang/LangSwitch.tsx  Ant Design Dropdown 语言切换按钮
+  ├─ hooks/use-lang.ts             React 语言状态 hook
+  ├─ i18n.ts                       i18next 初始化、资源加载、setLng
+  ├─ langs/                        分语言、分 namespace 的 JSON 资源
+  ├─ locales.ts                    兼容 i18next resources 形状的内部资源描述
+  ├─ types.ts                      LangType、LocaleSetupOptions 等类型
+  └─ utils/helpers.ts              语言缓存和 label helper
+```
+
+公共入口从 `src/index.ts` 导出稳定 API。不要从 `config/i18n`、`features/lang/use-lang` 之类内部路径导入；这些中间 re-export 层已经被移除。
+
+## API 参考
+
+### setupI18n(options)
+
+初始化 i18next、配置运行时语言选项，并加载初始语言资源。
 
 ```ts
-import { getAtomValue, setAtomValue } from '@skyroc/core-state';
-import { langAtom } from '@skyroc/web-admin-i18n';
-
-const lang = getAtomValue(langAtom);   // 'zh-CN'
-setAtomValue(langAtom, 'en-US');       // 全局切换
+await setupI18n({
+  defaultLocale: 'zh-CN',
+  fallbackLocale: 'en-US',
+  localeOptions: [
+    { key: 'zh-CN', label: '中文' },
+    { key: 'en-US', label: 'English' }
+  ],
+  missingWarn: import.meta.env.DEV,
+  storage: {
+    getLocale: () => localStg.get('lang'),
+    setLocale: lang => localStg.set('lang', lang)
+  }
+});
 ```
 
-## 工具函数
+常用字段：
 
-| 函数 | 用途 |
-| --- | --- |
-| `getLangFromStorage(storage)` | 从存储读语言 |
-| `saveLangToStorage(storage, lang)` | 写入存储 |
-| `getLangLabel(lang)` | 取语言显示名 |
+| 字段             | 说明                                                                     |
+| ---------------- | ------------------------------------------------------------------------ |
+| `defaultLocale`  | 初始语言。通常由应用缓存或默认配置解析。                                 |
+| `fallbackLocale` | i18next fallback 语言。当前 admin 默认是 `en-US`。                       |
+| `localeOptions`  | 语言切换组件展示的选项。                                                 |
+| `missingWarn`    | 开发环境下缺失 key 时输出警告。                                          |
+| `storage`        | 应用持有的语言缓存适配器。                                               |
+| `resources`      | 额外预置给 i18next 的资源。                                              |
+| `i18nextOptions` | 透传给 i18next 的其他初始化配置。                                        |
+| `onLocaleChange` | 底层语言变化回调。应用内第三方同步优先放到 `LangEffect.onLocaleChange`。 |
 
-## 设计要点
+### useLang()
 
-- **资源懒加载**：`loadLocaleMessages` 异步加载，按需引入；
-- **避免 React Suspense**：自带 fallback，避免首屏抖动；
-- **与 dayjs 联动**：`LangEffect` 的 `onLocaleChange` 是切换 dayjs locale 的标准位置。
+读取和切换当前语言。
+
+```tsx
+import { useLang } from '@skyroc/web-admin-i18n';
+
+const LanguageStatus = () => {
+  const { currentOption, isCurrentLang, locale, localeOptions, setLocale } = useLang();
+
+  function changeToEnglish() {
+    setLocale('en-US');
+  }
+
+  return (
+    <button disabled={isCurrentLang('en-US')} type="button" onClick={changeToEnglish}>
+      {currentOption?.label ?? locale} / {localeOptions.length}
+    </button>
+  );
+};
+```
+
+返回值：
+
+| 字段                         | 说明                         |
+| ---------------------------- | ---------------------------- |
+| `locale`                     | 当前语言。                   |
+| `currentOption`              | 当前语言对应的展示项。       |
+| `localeOptions`              | 可切换语言列表。             |
+| `fallbackLang`               | 当前 fallback 语言。         |
+| `changeLocale` / `setLocale` | 切换语言并加载对应资源。     |
+| `isCurrentLang(lang)`        | 判断某个语言是否为当前语言。 |
+
+### LangSwitch
+
+内置语言切换按钮，使用 Ant Design `Dropdown` 和 `@skyroc/web-ui-antd` 的 `ButtonIcon`。
+
+```tsx
+import { LangSwitch } from '@skyroc/web-admin-i18n';
+
+const HeaderActions = () => {
+  return <LangSwitch showTooltip visible />;
+};
+```
+
+Props：
+
+| 字段          | 默认值      | 说明                                       |
+| ------------- | ----------- | ------------------------------------------ |
+| `className`   | `undefined` | 传给图标按钮的 class。                     |
+| `showTooltip` | `true`      | 是否展示 `icon.lang` 对应的 tooltip。      |
+| `visible`     | `true`      | 是否渲染语言切换按钮，适合由布局配置控制。 |
+
+### LangEffect
+
+监听当前语言变化，并执行 DOM / 第三方同步。
+
+```tsx
+import { LangEffect } from '@skyroc/web-admin-i18n';
+
+import { syncLocales } from '@/locales/sync';
+
+const GlobalEffect = () => {
+  return <LangEffect onLocaleChange={syncLocales} />;
+};
+```
+
+`LangEffect` 会做两件事：
+
+- 设置 `document.documentElement.lang = locale`。
+- 调用可选的 `onLocaleChange(locale)`。
+
+这个组件应该只挂载一次，通常放在 `App` 的全局副作用层。
+
+### $t / setLng / getCurrentLang
+
+这些 API 适合非组件代码使用：
+
+```ts
+import { $t, getCurrentLang, setLng } from '@skyroc/web-admin-i18n';
+
+const message = $t('common.confirm');
+const current = getCurrentLang();
+
+await setLng('en-US');
+```
+
+使用建议：
+
+- React 组件优先使用 `useTranslation()` 或 `useLang()`。
+- service、通知回调、路由配置等非组件代码可以使用 `$t`。
+- `setLng()` 会加载资源、切换 i18next 语言、更新 Jotai atom，并触发底层 `onLocaleChange`。
+
+## 翻译资源维护
+
+当前资源按语言和 namespace 拆分：
+
+```text
+packages/web/admin-i18n/src/langs
+  ├─ en-us
+  │  ├─ common.json
+  │  ├─ form.json
+  │  ├─ icon.json
+  │  ├─ notification.json
+  │  ├─ page.json
+  │  ├─ route.json
+  │  ├─ system.json
+  │  └─ theme.json
+  ├─ zh-cn
+  │  ├─ common.json
+  │  ├─ form.json
+  │  ├─ icon.json
+  │  ├─ notification.json
+  │  ├─ page.json
+  │  ├─ route.json
+  │  ├─ system.json
+  │  └─ theme.json
+  └─ index.ts
+```
+
+维护规则：
+
+1. 中英文资源要同时补齐，避免某个语言缺 key。
+2. 新增 namespace 时，在 `langs/en-us` 和 `langs/zh-cn` 下各加一个 JSON 文件。
+3. 在 `packages/web/admin-i18n/src/langs/index.ts` 中导入并加入 `enUS` / `zhCN` 聚合对象。
+4. 如果应用侧需要 `I18n.I18nKey` 类型约束，同时更新 `apps/admin/src/types/locales/*.d.ts`。
+5. 页面、路由、菜单、主题等已有 namespace 不要随意混用。优先把 key 放到语义最接近的 namespace。
+
+示例：新增 `report` namespace。
+
+```ts
+import enUSReport from './en-us/report.json';
+import zhCNReport from './zh-cn/report.json';
+
+const enUS = {
+  // ...
+  report: enUSReport
+};
+
+const zhCN = {
+  // ...
+  report: zhCNReport
+};
+```
+
+## 与其他包的关系
+
+| 包                          | 关系                                                                                          |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| `@skyroc/web-admin-layouts` | Header 中可以直接使用 `LangSwitch`，菜单标题通过 `I18nLabel` 或 `useTranslation()` 读取翻译。 |
+| `@skyroc/web-admin-theme`   | `AntdProvider` 接收 app 侧根据 `useLang().locale` 解析出的 AntD locale。                      |
+| `@skyroc/web-admin-runtime` | 注册 Dayjs 插件等同步 runtime 能力，但不处理语言切换后的 locale 映射。                        |
+| `@skyroc/web-admin-vite`    | 自动导入 React、react-i18next 等开发体验能力，但不拥有语言状态。                              |
+| `apps/admin`                | 拥有启动顺序、语言缓存、Dayjs locale 映射、AntD locale 映射和业务类型约束。                   |
+
+## 常见问题
+
+### 为什么 Dayjs 不在 `setupI18n()` 里同步？
+
+`setupI18n()` 是启动初始化。Dayjs locale 需要在语言切换后继续变化，属于 React 挂载后的响应式副作用。把它放到 `LangEffect.onLocaleChange` 后，`document.lang` 和 Dayjs 同步都从同一个语言变化入口触发。
+
+### 为什么 Ant Design 不在 `syncLocales()` 里同步？
+
+Ant Design 的 locale 是 React Provider props。`AntdProvider` 读取 `useLang().locale` 后传入 `antdLocales[locale]`，组件树会自然重渲染，不需要额外 imperative 同步。
+
+### 什么时候可以用 `LocaleSetupOptions.onLocaleChange`？
+
+这个字段保留给更底层或非 React 的集成场景。`apps/admin` 这类 React 后台应用优先使用 `LangEffect.onLocaleChange`，因为它和组件生命周期一致，也能避免初始化阶段副作用和渲染后副作用混在一起。
+
+### 为什么 `locales.ts` 保留但不从入口导出？
+
+`locales.ts` 是兼容 i18next resource 形状的内部描述。普通应用只需要 `setupI18n()`、`useLang()`、`LangSwitch`、`LangEffect` 和 `$t`。不把 `locales` 作为公共 API 暴露，可以减少外部对内部资源结构的耦合。
+
+### 为什么语言类型还在应用侧有一份 `I18n` namespace？
+
+共享包定义的是运行时语言能力，应用侧的 `I18n.I18nKey` 还要约束业务翻译 key。这个类型和路由、页面、业务枚举有关，仍然属于应用侧类型系统。
+
+## 验证建议
+
+修改 i18n 包或 app 侧语言接线后，建议至少执行：
+
+```bash
+pnpm --filter @skyroc/web-admin-i18n typecheck
+pnpm --filter @skyroc/web-admin-i18n build
+pnpm --filter skyroc-admin typecheck
+pnpm --filter skyroc-admin build:test
+pnpm --dir docs/web-kit-docs types:check
+pnpm exec oxfmt --check docs/web-kit-docs/content/docs/admin-i18n.mdx
+git diff --check
+```
+
+涉及语言切换行为时，还应做一次浏览器验证：
+
+1. 打开登录页或后台 Header。
+2. 点击语言切换按钮，从 `中文` 切到 `English`。
+3. 确认页面文案切换为英文。
+4. 确认 `document.documentElement.lang` 变为 `en-US`。
+5. 确认 Dayjs 当前 locale 变为 `en`，AntD 日期类组件显示英文 locale。

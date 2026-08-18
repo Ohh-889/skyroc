@@ -1,0 +1,23 @@
+{
+  "title": "Web 端包",
+  "description": "packages/web 下 14 个 Web 平台包：设计系统、主题、布局、运行时与构建",
+  "pages": [
+    "index",
+    "---设计系统---",
+    "ui",
+    "---主题---",
+    "tailwind-plugin",
+    "theme",
+    "---布局与样式---",
+    "materials",
+    "admin-layouts",
+    "admin-styles",
+    "---运行时---",
+    "admin-runtime",
+    "admin-i18n",
+    "admin-notification",
+    "admin-devtools",
+    "---构建---",
+    "admin-vite"
+  ]
+}

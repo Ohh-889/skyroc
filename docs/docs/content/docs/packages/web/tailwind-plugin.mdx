@@ -1,123 +1,605 @@
 ---
 title: "@skyroc/tailwind-plugin"
-description: Skyroc UI 的 Tailwind CSS 插件，注入 OKLCH design tokens 与语义色阶
+description: "Skyroc UI 的 Tailwind CSS 插件 — 通过 CSS 变量提供主题系统、12 套内置配色、语义化 token、可配置圆角与一组常用 utility，支持 Web / Native 双平台与运行时主题切换"
 ---
 
-## 概览
+## 概述
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/tailwind-plugin` |
-| 版本 | 0.0.1 |
-| 依赖 | [`@skyroc/color`](/docs/core/color)、`@unocss/core`、`tailwindcss` |
-| peer | `@skyroc/web-ui` |
-| 测试 | ✅ `generate.test.ts`、`index.test.ts` |
+`@skyroc/tailwind-plugin` 是面向 Skyroc UI 的 Tailwind CSS 插件，使用一个 `plugin.withOptions` 同时完成两件事：
 
-`@skyroc/tailwind-plugin` 是 [`@skyroc/web-ui`](/docs/web/ui-shadcn) 的样式基础：通过 Tailwind plugin 的形式注入语义色（primary / destructive / sidebar 等）、扩展圆角与字号刻度，并支持 Web（`hsl(var(--x))`）与 Native（`var(--x)`）双平台输出。
+- **`addBase`** — 注入 CSS 变量、全局样式、字号档位与动画 keyframes
+- **`addUtilities`** — 注册一组高频复用的 flex / 动画 utility（如 `flex-center`、`animate-accordion-down`）
 
-## 目录结构
+并通过 `withOptions` 的第二个参数向 Tailwind 主题注入：
 
-```text
+- 一组完整的语义化颜色（`primary`、`destructive`、`success`、`warning`、`info`、`carbon` 含 50–950 完整色阶 + `DEFAULT` + `foreground`）
+- 与 `--radius` 联动的圆角系统（`sm` / `md` / `lg` / `xl`）
+- 三档极小字号（`2xs` / `3xs` / `4xs`）
+
+颜色实现完全基于 CSS 变量驱动，可在运行时通过修改 `:root` 或 `.dark` 下的变量切换主题，无需重新构建。
+
+## 架构
+
+```
 src/
-├── index.ts              # 默认导出 skyrocUIPlugin
-├── generate.ts           # generateCSSVars
-├── presets.ts            # presetSkyrocUI（UnoCSS preset）
-├── themePresets.ts       # skyrocUITheme
-├── theme.json            # 内置主题色 / 圆角 / 色板
-└── types.ts
+├── index.ts              skyrocUIPlugin 主入口（plugin.withOptions）
+├── presets.ts            presetSkyrocUI()：flex-* / animate-* utility
+├── themePresets.ts       skyrocUITheme()：base 样式（CSS 变量 + keyframes + html.size-* 字号档）
+├── generate.ts           generateCSSVars / generateGlobalStyles + 色板生成
+├── theme.json            12 套内置颜色主题（default / zinc / blue / rose ...）的亮暗 CSS 变量
+└── types.ts              类型定义（HslColorString / ThemeOptions / SkyrocUIPluginOptions ...）
 ```
 
-## 主入口导出
+数据流：
 
-| 类别 | 符号 |
-| --- | --- |
-| 默认 | `skyrocUIPlugin`（Tailwind plugin withOptions） |
-| 命名 | `presetSkyrocUI`、`skyrocUITheme`、`generateCSSVars` |
-| 常量 | `builtinColors`、`builtinColorMap`、`builtinRadiuses` |
-| 类型 | `SkyrocUIPluginOptions`、`ThemeColorKey`、`ThemeConfig`、`ThemeConfigColor`、`ThemeOptions` |
+```
+SkyrocUIPluginOptions
+        │
+        ▼
+skyrocUITheme(options)            ← addBase
+        ├─ generateCSSVars()         为 :root / .dark 生成 --xxx 变量
+        ├─ generateGlobalStyles()    *.borderColor、body 背景/前景
+        ├─ html.size-xs ~ size-2xl   根字号档位（12px ~ 24px）
+        └─ shadcn-* keyframes        accordion / collapsible 动画
+        │
+presetSkyrocUI()                  ← addUtilities
+        └─ flex-center / flex-c / flex-1-hidden / animate-* ...
+        │
+withOptions 第二参                 ← Tailwind theme.extend
+        ├─ borderRadius { sm/md/lg/xl }   随 options.radius 动态计算
+        ├─ colors { primary / destructive / sidebar-* / ... }   c() 包装
+        └─ fontSize { '2xs' / '3xs' / '4xs' }
+```
 
-## 使用
+## 安装
 
-### 1. Tailwind 应用
+```bash
+pnpm add -D @skyroc/tailwind-plugin tailwindcss
+```
 
-```ts
-// tailwind.config.ts
+**Peer / 同伴依赖**：`tailwindcss`（catalog 中为 css 通道版本，需 ≥ 3.4）。本包同时依赖 `@skyroc/color`，由 monorepo workspace 自动解析。
+
+## 快速上手
+
+### 1. 基础配置
+
+在 `tailwind.config.js` 中启用插件：
+
+```js
 import { skyrocUIPlugin } from '@skyroc/tailwind-plugin';
 
 export default {
-  content: ['./src/**/*.{ts,tsx}', './node_modules/@skyroc/web-ui/dist/**/*.js'],
-  plugins: [skyrocUIPlugin({ platform: 'web' })]
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  plugins: [skyrocUIPlugin()]
 };
 ```
 
-`platform: 'native'` 时 CSS 变量改用 `var(--x)`（无 `hsl()` 包裹），适配 React Native 的 NativeWind。
+无任何参数时使用默认值：`color = 'default'`、`radius = 0.5`、`platform = 'web'`、`globals = true`、`darkSelector = '.dark'`。
 
-### 2. 注入的 token
+### 2. 带选项配置
 
-| 类别 | 示例 |
-| --- | --- |
-| 语义色 | `primary`、`primary-foreground`、`destructive`、`muted`、`accent`、`popover` |
-| 表面 | `background`、`foreground`、`card`、`border`、`input`、`ring` |
-| Sidebar | `sidebar`、`sidebar-foreground`、`sidebar-primary`、`sidebar-accent`、`sidebar-border` |
-| 圆角 | `rounded-xs`、`-sm`、`-md`、`-lg`、`-xl` |
-| 字号 | 扩展超小字号 `text-2xs` 等 |
+```js
+import { skyrocUIPlugin } from '@skyroc/tailwind-plugin';
 
-### 3. 配合 web-ui 组件
-
-```tsx
-import { Button } from '@skyroc/web-ui';
-
-<Button variant="destructive">删除</Button>;
-// → bg-destructive text-destructive-foreground 来自本插件提供的 token
+export default {
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  plugins: [
+    skyrocUIPlugin({
+      color: 'blue',     // 12 套内置主题之一
+      radius: 0.75,      // 圆角基准（rem）
+      platform: 'web',   // 'web' | 'native'
+      globals: true,     // 是否注入 *.borderColor、body 背景/前景
+      darkSelector: '.dark'
+    })
+  ]
+};
 ```
 
-## generateCSSVars
+### 3. 在组件中使用
 
-把主题对象（`ThemeOptions`）转换为 `:root { --primary: ...; }` 的 CSS 变量字符串：
+```tsx
+<div className="bg-background text-foreground">
+  <button className="bg-primary text-primary-foreground rounded-md px-4 py-2">
+    主要按钮
+  </button>
+
+  <div className="bg-card border border-border rounded-lg p-4">
+    <p className="text-muted-foreground">次要文字</p>
+  </div>
+
+  {/* 使用色阶 */}
+  <div className="bg-primary-100 text-primary-900">浅色主背景</div>
+  <div className="bg-destructive-500 text-destructive-foreground">错误状态</div>
+
+  {/* 使用 utility */}
+  <div className="flex-center gap-2">居中内容</div>
+</div>
+```
+
+### 4. 暗色模式
+
+通过为根元素加 `.dark` 类即可切换（class 名由 `darkSelector` 决定）：
 
 ```ts
-import { generateCSSVars } from '@skyroc/tailwind-plugin';
+document.documentElement.classList.toggle('dark');
+```
 
-const css = generateCSSVars({
-  colors: { primary: '#1677ff' },
-  radius: 'md'
+`generateCSSVars` 会同时输出 `:root` 与 `.dark` 两组 CSS 变量，所有依赖 `hsl(var(--xxx))` 的 utility 自动跟随。
+
+## 配置选项
+
+完整接口：
+
+```ts
+interface SkyrocUIPluginOptions extends ThemeOptions {
+  /** 是否注入 *.borderColor 与 body 全局样式，默认 true */
+  globals?: boolean;
+  /** 目标平台：native 模式下变量值输出为 hex，支持 opacity modifier，默认 'web' */
+  platform?: 'native' | 'web';
+}
+
+interface ThemeOptions {
+  /** 主题色：内置名称、完整 ThemeCSSVarsVariant 对象，或 { base, ...override }，默认 'default' */
+  color?: ColorOptions | false;
+  /** 暗色选择器，默认 '.dark' */
+  darkSelector?: string;
+  /** 反馈色（success / warning / info / carbon）覆盖 */
+  feedbackColor?: FeedbackColorOfThemeCssVarsVariant;
+  /** 圆角基准（rem），默认 0.5 */
+  radius?: number | false;
+  /** Sidebar 颜色覆盖 */
+  sidebar?: SidebarColorOfThemeCssVarsVariant;
+}
+```
+
+### 内置颜色主题
+
+`theme.json` 提供 12 套主题，每套都有完整的 `light` / `dark` CSS 变量：
+
+| 名称       | 风格         |
+| ---------- | ------------ |
+| `default`  | 经典靛蓝主色 |
+| `zinc`     | 锌灰         |
+| `slate`    | 石板灰       |
+| `stone`    | 石灰         |
+| `gray`     | 中性灰       |
+| `neutral`  | 纯中性       |
+| `red`      | 红           |
+| `rose`     | 玫瑰         |
+| `orange`   | 橙           |
+| `green`    | 绿           |
+| `blue`     | 蓝           |
+| `yellow`   | 黄           |
+| `violet`   | 紫罗兰       |
+
+```ts
+import { builtinColors, builtinColorMap } from '@skyroc/tailwind-plugin';
+
+builtinColors;    // ['default', 'zinc', 'slate', ...]
+builtinColorMap;  // { default: '236.9 100% 69.61%', zinc: '...', ... }
+```
+
+### 自定义颜色
+
+`color` 字段除内置名称外还接受两种形式：
+
+**方式一 · 基于内置主题局部覆盖**（最常用）：
+
+```ts
+skyrocUIPlugin({
+  color: {
+    base: 'blue',
+    light: { primary: '210 100% 50%' },
+    dark: { primary: '210 100% 60%' }
+  }
 });
 ```
 
-用于运行时切换主题（被 [`@skyroc/web-admin-theme`](/docs/web/admin-theme) 消费）。
+`base` 决定起点，其余字段会通过 `mergeDeep` 深度合并到内置主题之上。
 
-## UnoCSS 兼容
-
-`presetSkyrocUI` 是同一套规则的 UnoCSS 预设版本：
+**方式二 · 完整 `ThemeCSSVarsVariant`**：
 
 ```ts
-import { defineConfig } from 'unocss';
-import { presetSkyrocUI } from '@skyroc/tailwind-plugin';
-
-export default defineConfig({ presets: [presetSkyrocUI()] });
+skyrocUIPlugin({
+  color: {
+    name: 'corp',
+    light: { /* 全部 ThemeCSSVars 字段 */ },
+    dark:  { /* ... */ }
+  }
+});
 ```
 
-> 注意：apps/admin 当前用 `@sa/uno-config` 的 `presetSoybeanAdmin`（更接近 admin 业务），`presetSkyrocUI` 主要面向 web-ui playground。
+设置 `color: false` 时只输出 `--radius` 变量，不生成任何颜色相关 CSS。
 
-## 设计令牌住在哪
+### 圆角
 
-令牌常量在本包的 `src/tokens.ts`，是三端（web / native / miniapp）共用的单一数据源。
+`radius` 是一个 rem 数值（推荐 `0`、`0.3`、`0.5`、`0.75`、`1`），与 Tailwind 的 `rounded-*` 联动：
 
-早期它是独立包 `@skyroc/ui-tokens`，设想是「令牌中立、各端各自翻译」。实际落地后三端统一走
-Tailwind，本插件成了唯一的翻译层——Native 通过宿主 App 的 `global.css` 以 `platform: 'native'`
-消费同一个插件，而不是绕开插件直接读裸令牌。既然再没有第二个消费者，独立成包只剩下发布边界的
-形式意义，于是并入本包。
+```ts
+import { builtinRadiuses } from '@skyroc/tailwind-plugin';
 
-`tokens.ts` 分两类内容，都从包出口导出：
+builtinRadiuses; // [0, 0.3, 0.5, 0.75, 1] as const
+```
 
-| 内容 | 谁在消费 |
-| --- | --- |
-| `defaultFeedbackColorsHsl`、`defaultSidebarColorsHsl` | 本插件的 `generate.ts`，生成 CSS 变量 |
-| `defaultBrandColors` | 品牌语义色基准（hex），供外部读取 |
-| `spacing`、`borderRadius`、`fontSize`、`fontWeight` | 尺度基准表，当前无代码消费 |
+最终生效的映射（`r = options.radius`）：
 
-尺度基准表保留是有意为之：它是一份显式的尺度定义，既作为写 className 时的参考，也给将来需要以
-JS 形式读取尺度的场景（miniapp 主题、设计稿对表、Figma 同步等）留好接口。
+```
+rounded-sm → r - 0.25 rem
+rounded-md → r - 0.125 rem
+rounded-lg → r rem            ← 与 --radius 同值
+rounded-xl → r + 0.25 rem
+```
 
-注意 `borderRadius` 是**基准表**，与插件实际注入 Tailwind 的圆角不是同一套值——后者在 `index.ts`
-里按 `radius` 选项动态计算。
+任何负数计算结果都会被 `Math.max(0, value)` 夹紧到 0，并保留三位小数。
+
+### 反馈色与 Sidebar 色覆盖
+
+`feedbackColor` 与 `sidebar` 是两个独立的 variant 对象，便于在不修改主题的前提下统一调整警示色或后台侧边栏：
+
+```ts
+skyrocUIPlugin({
+  color: 'default',
+  feedbackColor: {
+    light: {
+      success: '160 84% 39%', 'success-foreground': '0 0% 100%',
+      warning: '38 92% 50%',  'warning-foreground': '0 0% 100%',
+      info: '199 89% 48%',    'info-foreground': '0 0% 100%',
+      carbon: '240 4% 16%',   'carbon-foreground': '0 0% 98%'
+    },
+    dark: { /* 同结构 */ }
+  }
+});
+```
+
+不传时使用 `createBuiltinFeedbackColorTheme()` 与 `createBuiltinSidebarColorTheme()` 的内置默认值。
+
+### Web vs Native
+
+| 平台     | 颜色值形态                  | Tailwind 写法                | opacity 修饰符 |
+| -------- | --------------------------- | ---------------------------- | -------------- |
+| `web`    | `hsl()` 三元组（`H S% L%`） | `hsl(var(--primary))`        | 不支持         |
+| `native` | hex（`#rrggbb`）            | `var(--primary)`             | 支持           |
+
+切换示例：
+
+```ts
+skyrocUIPlugin({ platform: 'native' });
+```
+
+`generateCSSVars` 会调用 `hslToHex` 将所有变量值转为 hex；色板（50–950）也同步输出为 hex。
+
+## 主题颜色 Token
+
+### 基础颜色
+
+| Token                | 描述               |
+| -------------------- | ------------------ |
+| `background`         | 页面背景           |
+| `foreground`         | 默认文字           |
+| `card`               | 卡片背景           |
+| `card-foreground`    | 卡片文字           |
+| `popover`            | 弹层背景           |
+| `popover-foreground` | 弹层文字           |
+| `muted`              | 禁用 / 次要背景    |
+| `muted-foreground`   | 次要文字           |
+| `accent`             | 强调               |
+| `accent-foreground`  | 强调文字           |
+| `border`             | 边框               |
+| `input`              | 输入框边框         |
+| `ring`               | focus ring         |
+| `secondary`          | 次要颜色           |
+| `secondary-foreground` | 次要颜色文字     |
+
+### 语义颜色（含 50–950 全色阶）
+
+| Token         | 用途             |
+| ------------- | ---------------- |
+| `primary`     | 主品牌色         |
+| `destructive` | 错误 / 危险      |
+| `warning`     | 警告             |
+| `success`     | 成功             |
+| `info`        | 信息             |
+| `carbon`      | 中性碳色         |
+
+每个语义色都展开为 `<token>-{50,100,200,300,400,500,600,700,800,900,950}` + `<token>` 主色 + `<token>-foreground` 文字色。色阶由 `@skyroc/color` 的 `getColorPalette` 基于主色推导而来。
+
+### Sidebar 颜色
+
+| Token                            | 描述           |
+| -------------------------------- | -------------- |
+| `sidebar-background`             | 侧栏背景       |
+| `sidebar-foreground`             | 侧栏文字       |
+| `sidebar-primary`                | 侧栏主色       |
+| `sidebar-primary-foreground`     | 侧栏主色文字   |
+| `sidebar-accent`                 | 侧栏强调       |
+| `sidebar-accent-foreground`      | 侧栏强调文字   |
+| `sidebar-border`                 | 侧栏边框       |
+| `sidebar-ring`                   | 侧栏 focus ring |
+
+## 内置 Utility
+
+`presetSkyrocUI()` 注册的高频 utility（出自 `src/presets.ts`）：
+
+### Flex 布局
+
+| Class             | 等价于                                             |
+| ----------------- | -------------------------------------------------- |
+| `flex-center`     | `flex justify-center items-center`                 |
+| `flex-x-center`   | `flex justify-center`                              |
+| `flex-y-center`   | `flex items-center`                                |
+| `flex-c`          | `flex flex-col`                                    |
+| `flex-c-center`   | `flex justify-center items-center flex-col`        |
+| `flex-c-stretch`  | `flex flex-col items-stretch`                      |
+| `flex-1-hidden`   | `flex-1 overflow-hidden`                           |
+
+`i-flex-*` 系列对应 `inline-flex` 版本（`i-flex-center` / `i-flex-c-center` 等）。
+
+### 动画
+
+| Class                         | 用途                                  |
+| ----------------------------- | ------------------------------------- |
+| `animate-accordion-down`      | shadcn Accordion 展开动画             |
+| `animate-accordion-up`        | shadcn Accordion 折叠动画             |
+| `animate-collapsible-down`    | shadcn Collapsible 展开动画           |
+| `animate-collapsible-up`      | shadcn Collapsible 折叠动画           |
+
+依赖的 keyframes（`shadcn-down` / `shadcn-up` / `shadcn-collapsible-down` / `shadcn-collapsible-up`）由 `skyrocUITheme()` 通过 `addBase` 同步注入，无需额外配置。
+
+## 根字号档位
+
+`themePresets.ts` 在 `addBase` 中注入了 6 个根字号档，配合在 `<html>` 上加 class 即可整体放缩：
+
+```
+html.size-xs   → 12px
+html.size-sm   → 14px
+html.size-md   → 16px   （默认）
+html.size-lg   → 18px
+html.size-xl   → 20px
+html.size-2xl  → 24px
+```
+
+由于 Tailwind 的 `rem` 体系依赖根字号，这套档位可以为「极小信息密度」「适老化模式」等场景一键全局切换字号比例。
+
+## 字号扩展
+
+```
+text-2xs  → 0.625rem / line-height 1.2
+text-3xs  → 0.5rem  / line-height 1.25
+text-4xs  → 0.375rem / line-height 1.333
+```
+
+补足 Tailwind 默认从 `text-xs` 起步，无更小档位的空白。
+
+## API 参考
+
+### `skyrocUIPlugin`
+
+主插件函数（默认导出 + 命名导出）：
+
+```ts
+skyrocUIPlugin(options?: SkyrocUIPluginOptions)
+```
+
+### `skyrocUITheme`
+
+返回 `addBase` 输入对象，可在自定义 plugin 中复用：
+
+```ts
+import { skyrocUITheme } from '@skyroc/tailwind-plugin';
+
+const baseStyles = skyrocUITheme({ color: 'blue', radius: 0.75 });
+```
+
+### `presetSkyrocUI`
+
+返回 `addUtilities` 输入对象，包含全部 `flex-*` 与 `animate-*` 定义：
+
+```ts
+import { presetSkyrocUI } from '@skyroc/tailwind-plugin';
+```
+
+### `generateCSSVars`
+
+底层 CSS 变量生成器，可在 SSR / 服务端直接生成主题 CSS：
+
+```ts
+function generateCSSVars(
+  theme: ThemeOptions,
+  onlyOne?: boolean,   // 是否只输出当前一套主题，默认 true
+  native?: boolean     // 是否输出 hex 而非 hsl，默认 false
+): object
+```
+
+`onlyOne = false` 时会以 `.theme-<name>` 作为额外作用域包裹（除 `default` 外），便于在同一文档中并存多套主题。
+
+### `generateGlobalStyles`
+
+返回 `*` / `body` / `.lucide` 的全局样式片段，独立可用：
+
+```ts
+import { generateGlobalStyles } from '@skyroc/tailwind-plugin';
+```
+
+### 辅助导出
+
+```ts
+import {
+  skyrocUIPlugin,    // 主插件
+  skyrocUITheme,     // 主题 base 样式生成
+  presetSkyrocUI,    // utility 预设
+  generateCSSVars,   // CSS 变量生成器
+  builtinColors,     // 内置颜色名数组
+  builtinColorMap,   // 颜色名 → 主色 hsl 字符串映射
+  builtinRadiuses    // 可用圆角枚举
+} from '@skyroc/tailwind-plugin';
+```
+
+## 类型参考
+
+### `HslColorString`
+
+CSS 变量的统一格式：
+
+```ts
+type HslColorString = `${number} ${number}% ${number}%`;
+// 例：'236.9 100% 69.61%'
+```
+
+约定不带 `hsl()` 包装与 `,` 分隔符，便于在 utility 中 `hsl(var(--xxx) / <alpha>)` 拼接 alpha。
+
+### `ThemeCSSVars`
+
+主题色 + 基础色的完整字段集合：
+
+```ts
+interface ThemeCSSVars {
+  background: HslColorString;
+  foreground: HslColorString;
+  card: HslColorString;
+  'card-foreground': HslColorString;
+  popover: HslColorString;
+  'popover-foreground': HslColorString;
+  primary: HslColorString;
+  'primary-foreground': HslColorString;
+  secondary: HslColorString;
+  'secondary-foreground': HslColorString;
+  muted: HslColorString;
+  'muted-foreground': HslColorString;
+  accent: HslColorString;
+  'accent-foreground': HslColorString;
+  destructive: HslColorString;
+  'destructive-foreground': HslColorString;
+  border: HslColorString;
+  input: HslColorString;
+  ring: HslColorString;
+}
+```
+
+### `FeedbackColorOfThemeCssVars`
+
+```ts
+interface FeedbackColorOfThemeCssVars {
+  carbon: HslColorString;
+  'carbon-foreground': HslColorString;
+  info: HslColorString;
+  'info-foreground': HslColorString;
+  success: HslColorString;
+  'success-foreground': HslColorString;
+  warning: HslColorString;
+  'warning-foreground': HslColorString;
+}
+```
+
+### `SidebarColorOfThemeCssVars`
+
+```ts
+interface SidebarColorOfThemeCssVars {
+  'sidebar-background': HslColorString;
+  'sidebar-foreground': HslColorString;
+  'sidebar-primary': HslColorString;
+  'sidebar-primary-foreground': HslColorString;
+  'sidebar-accent': HslColorString;
+  'sidebar-accent-foreground': HslColorString;
+  'sidebar-border': HslColorString;
+  'sidebar-ring': HslColorString;
+}
+```
+
+### `ThemeColorKey`
+
+`updateThemeColors`、`genColorMapToken` 等场景中常用的语义色键集合：
+
+```ts
+type ThemeColorKey =
+  | 'primary' | 'secondary' | 'destructive'
+  | 'carbon' | 'info' | 'success' | 'warning';
+```
+
+### `ThemeConfig`
+
+`theme.json` 中每一项的形态：
+
+```ts
+interface ThemeConfig<T = ThemeConfigColor> {
+  name: T;
+  label: string;
+  cssVars: { light: ThemeCSSVars; dark: ThemeCSSVars };
+}
+
+type ThemeConfigColor =
+  | 'default' | 'blue' | 'gray' | 'green' | 'neutral'
+  | 'orange' | 'red' | 'rose' | 'slate' | 'stone'
+  | 'violet' | 'yellow' | 'zinc';
+```
+
+## 高级用法
+
+### 多主题并存
+
+设置 `generateCSSVars(theme, false)` 可生成 `.theme-<name>` 命名空间，搭配在同一页面切换 wrapper class 即可对比效果：
+
+```css
+.theme-blue   { /* 蓝色变量 */ }
+.theme-blue.dark { /* 蓝色暗色变量 */ }
+.theme-rose   { /* 玫瑰色变量 */ }
+.theme-rose.dark { /* 玫瑰色暗色变量 */ }
+```
+
+### 与 React Native 集成
+
+```ts
+skyrocUIPlugin({ platform: 'native', color: 'blue' });
+```
+
+输出后所有变量值为 hex，组件中可写 `bg-primary/50`、`text-foreground/80` 等带 alpha 的写法，由 NativeWind 等 RN Tailwind 实现解析。
+
+### 关闭全局样式
+
+某些需要嵌入第三方页面的场景，应避免污染外部 `*` 选择器：
+
+```ts
+skyrocUIPlugin({ globals: false });
+```
+
+此时不会注入 `* { border-color: ... }` 与 `body { background, color }`，但 CSS 变量、utility、keyframes 仍然生效。
+
+### 仅输出圆角
+
+```ts
+skyrocUIPlugin({ color: false, radius: 0.75 });
+// → :root { --radius: 0.75rem }
+```
+
+适用于颜色由其他系统（如 `@skyroc/web-admin-theme` + Ant Design）接管，仅希望 Tailwind 端共享 `rounded-*` 数值。
+
+## 设计说明
+
+### 为什么用 `hsl(var(--xxx))` 而不是直接 `var(--xxx)`
+
+CSS 变量存的是「`H S% L%`」三元组而非完整 `hsl()`。这样在 utility 层可以拼接 alpha：
+
+```css
+.bg-primary\/50 { background: hsl(var(--primary) / 0.5); }
+```
+
+如果直接存 `hsl(...)` 完整字符串，Tailwind 的 opacity modifier 就无法工作。Native 平台不需要 alpha modifier，因此存 hex 即可。
+
+### 为什么 `radius` 用 rem 而不是 px
+
+Tailwind 的语义化尺寸全部以 rem 为基准；用 rem 表达 radius 可以让 `html.size-xs ~ size-2xl` 的根字号档位自动放缩圆角，与字号、间距保持比例一致。
+
+### 为什么 keyframes 与 utility 分散注入
+
+- keyframes（`@keyframes shadcn-*`）通过 `addBase` 注入，因为它们是文档级声明而非 class
+- 对应的 `animate-*` 通过 `addUtilities` 注入，因为它们是 class
+- 两者必须同时存在才能完整工作；插件已自动处理，使用方无需手动配置 keyframes
+
+### 与 `@skyroc/web-admin-theme` 的关系
+
+| 场景               | 用法                                                                   |
+| ------------------ | ---------------------------------------------------------------------- |
+| 仅用 Tailwind      | 直接使用本插件，所有颜色和 utility 走 CSS 变量                         |
+| Tailwind + Ant Design | 本插件提供 utility 与基础色阶；`@skyroc/web-admin-theme` 接管 antd token 与运行时主题切换 |
+| 仅用 Ant Design    | 不需要本插件                                                           |
+
+两者互不依赖：本插件负责 Tailwind 端的样式系统，`@skyroc/web-admin-theme` 负责 React 状态与 antd 集成。

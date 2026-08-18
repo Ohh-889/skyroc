@@ -1,0 +1,14 @@
+{
+  "title": "@skyroc/web-admin-layouts",
+  "description": "后台应用壳：接入、菜单生成、插槽、状态与页签、API 速查",
+  "pages": [
+    "overview",
+    "quick-start",
+    "menus",
+    "static-menu-generation",
+    "dynamic-menu-generation",
+    "slots",
+    "state-tabs",
+    "api"
+  ]
+}

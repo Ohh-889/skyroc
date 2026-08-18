@@ -1,0 +1,5 @@
+{
+  "title": "主题",
+  "description": "OKLCH 算法层 → React 状态层 → 应用集成的三层主题架构",
+  "pages": ["overview", "antd-theme", "admin-theme"]
+}

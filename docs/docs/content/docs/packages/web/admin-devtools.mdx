@@ -1,9 +1,9 @@
 ---
 title: "@skyroc/web-admin-devtools"
-description: 集成 TanStack Query / Router / Jotai 的开发调试面板
+description: "把 TanStack Query / Router 与 Jotai 三套 DevTools 聚合进一个浮动面板的开发期调试包，生产构建完全不打包"
 ---
 
-## 概览
+## 概述
 
 | 项 | 值 |
 | --- | --- |
@@ -13,13 +13,12 @@ description: 集成 TanStack Query / Router / Jotai 的开发调试面板
 | 依赖 | `@tanstack/react-devtools`、`@tanstack/react-query-devtools`、`@tanstack/react-router-devtools`、`jotai-devtools` |
 | peer | `@tanstack/react-query`、`@tanstack/react-router`、`jotai`、`react`、`react-dom` |
 | 子入口 | `.`、`./jotai` |
-| 测试 | ❌ |
 
-把三套 DevTools 聚合到一个浮动面板里：
+三套 DevTools 各自都会往页面右下角塞一个浮动按钮。这个包把它们收进一个 `TanStackDevtools` 壳里：Query 和 Router 作为壳的两个 plugin 面板，Jotai 单独渲染但共用同一份主题和一套位置配置。
 
-- **Query DevTools**：查看 React Query 缓存、状态、refetch
-- **Router DevTools**：查看 TanStack Router 当前路由树、匹配、context
-- **Jotai DevTools**：查看 atom 状态、变化时间线、Redux DevTools 集成
+- **Query 面板**：React Query 缓存、请求状态、手动 refetch
+- **Router 面板**：TanStack Router 的路由树、当前匹配、route context
+- **Jotai**：atom 检视面板 + Redux DevTools 时间线
 
 ## 使用
 
@@ -28,16 +27,17 @@ import { AdminDevtools } from '@skyroc/web-admin-devtools';
 
 <AdminDevtools
   config={{
-    position: 'bottom-right',
-    query: true,
-    router: true,
     jotai: {
       name: 'My Admin',
       panel: true,
       position: 'bottom-left',
       timeline: true,
       triggerOffset: { left: 248 }
-    }
+    },
+    position: 'bottom-right',
+    query: true,
+    router: true,
+    theme: 'dark'
   }}
   queryClient={queryClient}
   router={router}
@@ -45,57 +45,93 @@ import { AdminDevtools } from '@skyroc/web-admin-devtools';
 />;
 ```
 
-### 主入口导出
+三个实例参数都是可选的，但**不传就没有对应面板**：`queryClient` 缺席时 Query 面板不注册，`router` 缺席时 Router 面板不注册，`store` 缺席时 Jotai 读的是默认 store。
+
+## 主入口导出
 
 | 类别 | 符号 |
 | --- | --- |
 | 组件 | `AdminDevtools` |
 | 类型 | `AdminDevtoolsConfig`、`AdminDevtoolsProps`、`AdminJotaiDevtoolsConfig`、`AdminJotaiDevtoolsTriggerOffset` |
 
-### 子入口 `./jotai`
+## 配置项
+
+```ts
+interface AdminDevtoolsConfig {
+  /** 总开关，只有显式传 false 才整体不渲染 */
+  enabled?: boolean;
+  /** false 关闭 Jotai；传对象做细粒度配置 */
+  jotai?: boolean | AdminJotaiDevtoolsConfig;
+  /** TanStack 壳的触发器位置，默认 'bottom-right' */
+  position?: TanStackDevtoolsConfig['position'];
+  /** 启用 Query 面板，默认开 */
+  query?: boolean;
+  /** 启用 Router 面板，默认开 */
+  router?: boolean;
+  /** 三套面板共用的主题 */
+  theme?: 'dark' | 'light';
+}
+
+interface AdminJotaiDevtoolsConfig {
+  /** Redux DevTools 连接名，默认 'skyroc-admin' */
+  name?: string;
+  /** 内嵌 atom 检视面板，默认开 */
+  panel?: boolean;
+  /** 面板位置，默认 'bottom-left' */
+  position?: DevToolsProps['position'];
+  /** Redux DevTools 时间线记录，默认开 */
+  timeline?: boolean;
+  /** 浮动 trigger 的偏移，避开 sider 等应用外框 */
+  triggerOffset?: AdminJotaiDevtoolsTriggerOffset;
+}
+
+interface AdminJotaiDevtoolsTriggerOffset {
+  bottom?: number | string;
+  left?: number | string;
+  right?: number | string;
+  top?: number | string;
+}
+```
+
+几个容易踩的默认值语义：
+
+| 字段 | 判定方式 | 结果 |
+| --- | --- | --- |
+| `enabled` | `=== false` 才关 | 不传即渲染 |
+| `query` / `router` | `!== false` 即开 | 但还要对应实例存在 |
+| `jotai` | `=== false` 才关 | 传 `true` 等价于传 `{}` |
+| `panel` / `timeline` | `!== false` 即开 | 两个都关掉时整块 Jotai 不渲染 |
+
+`theme` 只在根配置上，不在 `jotai` 里——Jotai 面板的主题是从根配置继承下去的。
+
+`triggerOffset` 的数字会补成 `px`，字符串原样写入，最终落到四个 CSS 变量上：
+
+```css
+--skyroc-jotai-devtools-trigger-bottom
+--skyroc-jotai-devtools-trigger-left
+--skyroc-jotai-devtools-trigger-right
+--skyroc-jotai-devtools-trigger-top
+```
+
+## 子入口 `./jotai`
 
 ```ts
 import '@skyroc/web-admin-devtools/jotai';
 ```
 
-仅 side-effect：`import 'jotai-devtools/utils'`，让任何 `atom()` 调用自动注入 `debugLabel`。`apps/admin/src/main.tsx` 在开发态最先 import 它：
+纯 side-effect，内容就是 `import 'jotai-devtools/utils'`，作用是让之后每个 `atom()` 调用自动带上 `debugLabel`。**必须在任何 atom 创建之前执行**，所以 `apps/admin/src/main.tsx` 把它放在动态 import `./bootstrap` 之前：
 
 ```ts
 async function bootstrap() {
   if (import.meta.env.DEV) {
     await import('@skyroc/web-admin-devtools/jotai');
   }
+
   await import('./bootstrap');
 }
 ```
 
-这样后续创建的所有 atom 都能在 Jotai DevTools 里以变量名显示，而不是 `<no debugLabel>`。
-
-## 配置项
-
-```ts
-interface AdminDevtoolsConfig {
-  /** 整体位置 */
-  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
-  /** 启用 React Query DevTools */
-  query?: boolean;
-  /** 启用 Router DevTools */
-  router?: boolean;
-  /** Jotai 配置（false 禁用） */
-  jotai?: AdminJotaiDevtoolsConfig | false;
-}
-
-interface AdminJotaiDevtoolsConfig {
-  name?: string;
-  panel?: boolean;            // 浮动面板
-  position?: 'bottom-right' | 'bottom-left' | ...;
-  timeline?: boolean;         // Redux DevTools 时间线
-  triggerOffset?: {           // 浮动 trigger 按钮偏移
-    left?: number; right?: number; top?: number; bottom?: number;
-  };
-  theme?: 'dark' | 'light';
-}
-```
+顺序反了的话，先创建的那批 atom 在面板里会显示成 `<no debugLabel>`。
 
 ## 在 apps/admin 的接入
 
@@ -104,14 +140,15 @@ interface AdminJotaiDevtoolsConfig {
 const AdminDevtools = import.meta.env.DEV
   ? lazy(() => import('@skyroc/web-admin-devtools').then(mod => ({ default: mod.AdminDevtools })))
   : (_props: AdminDevtoolsProps) => null;
-//                ^^^ 生产环境替换为 no-op，整个包会被 tree-shaking
+//                ^^^ 生产环境是个 no-op 组件，整个包会被 tree-shaking 掉
 
 const Devtools = () => {
   const { darkMode } = useSettingsTheme();
-  const config = useMemo(() => ({
-    ...globalConfig.devtools,
-    theme: darkMode ? 'dark' : 'light'
-  }), [darkMode]);
+
+  const config = useMemo<AdminDevtoolsProps['config']>(
+    () => ({ ...globalConfig.devtools, theme: darkMode ? 'dark' : 'light' }),
+    [darkMode]
+  );
 
   return (
     <Suspense fallback={null}>
@@ -121,14 +158,30 @@ const Devtools = () => {
 };
 ```
 
-通过 `import.meta.env.DEV` 三元 + lazy import，确保**生产 bundle 完全不包含 devtools 代码**。
+静态部分写在 `globalConfig.devtools` 里，`theme` 在运行时跟着 [`useSettingsTheme`](/docs/packages/web/theme/admin-theme) 的 `darkMode` 合并进去：
 
-## 主题联动
+```ts
+devtools: {
+  jotai: {
+    name: import.meta.env.VITE_APP_TITLE,
+    panel: true,
+    position: 'bottom-left',
+    timeline: true,
+    triggerOffset: {
+      left: defaultThemeSettings.sider.width + 8
+    }
+  },
+  position: 'bottom-right',
+  query: true,
+  router: true
+} satisfies AdminDevtoolsConfig
+```
 
-`config.theme` 跟随应用的 `darkMode` 切换，DevTools 面板的暗色 / 亮色与主题一致。
+`triggerOffset.left` 取的是 sider 宽度加 8px，让 Jotai 的浮动按钮正好落在侧边栏右侧而不是压在上面。
 
 ## 设计要点
 
-- **统一面板**：避免三套 DevTools 各自一个浮动按钮挤占屏幕；
-- **可定位**：每套子 DevTools 都可以独立配置位置；
-- **零运行时成本**：dev only + lazy + tree-shaking 三层保护。
+- **统一面板**：三套 DevTools 各占一个浮动按钮太挤，收进一个壳里；
+- **可定位**：TanStack 壳和 Jotai 面板各有独立位置，`triggerOffset` 再补一层像素级微调；
+- **零生产成本**：`import.meta.env.DEV` 三元 + `lazy` 动态 import + tree-shaking 三层保护，生产 bundle 里不含任何 devtools 代码；
+- **懒加载到底**：包内部四个 DevTools 组件本身也都是 `lazy()`，Jotai 的样式表也在 lazy 工厂里才 import。

@@ -1,0 +1,190 @@
+---
+title: "状态与页签"
+description: "Admin Layouts 的运行时状态、菜单状态、页签状态、缓存和动态 badge 值更新"
+---
+
+`@skyroc/web-admin-layouts` 使用 Jotai 和全局 store 管理布局运行时状态。业务页面可以读取这些状态，但更常见的是只通过布局组件自然消费。
+
+## 状态分层
+
+```text
+useAdminState
+  管理布局运行时：移动端、侧边栏折叠、内容横向滚动、全屏内容、mix 菜单固定。
+
+useMenus
+  管理菜单原始数据：allMenus、quickReferenceMenus、home、initMenus、clearMenus。
+
+useAdminMenus
+  管理当前布局菜单视图：selectedKey、openKeys、一级/二级/子级菜单、当前路由菜单信息。
+
+useAdminTab
+  管理页签：homeTab、tabs、activeTabId、添加、关闭、清理、切换和缓存。
+
+useAdminMenuBadges
+  管理菜单 badge 动态值表。
+```
+
+## useAdminState
+
+`useAdminState` 面向布局运行时行为。
+
+```tsx
+import { useAdminState } from '@skyroc/web-admin-layouts';
+
+const CollapseButton = () => {
+  const { siderCollapse, toggleSiderCollapse } = useAdminState();
+
+  return (
+    <button type="button" onClick={toggleSiderCollapse}>
+      {siderCollapse ? 'Expand' : 'Collapse'}
+    </button>
+  );
+};
+```
+
+常用返回值：
+
+| 返回值 | 说明 |
+| --- | --- |
+| `isMobile` | 是否进入移动端布局。 |
+| `siderCollapse` | 侧边栏是否折叠。 |
+| `toggleSiderCollapse` | 切换侧边栏折叠。 |
+| `fullContent` | 是否隐藏 Header、Sider、Footer，只显示内容区。 |
+| `contentXScrollable` | 内容区是否启用横向滚动场景。 |
+| `mixSiderFixed` | mix / hybrid 子菜单是否固定。 |
+
+## useMenus
+
+`useMenus` 是菜单数据的源头，通常在认证初始化阶段调用。
+
+```tsx
+const { initMenus } = useMenus();
+
+async function initAuth() {
+  const userInfo = await queryClient.ensureQueryData(queryUserInfoOptions());
+
+  await initMenus(userInfo);
+
+  return userInfo;
+}
+```
+
+`initMenus` 会根据 `routeMode` 决定从静态 routeTree 生成菜单，或调用 `loadDynamicRoutes` 获取后端菜单。
+
+## useAdminMenus
+
+`useAdminMenus` 面向菜单渲染和交互。
+
+```tsx
+const {
+  menus,
+  firstLevelMenus,
+  secondLevelMenus,
+  childLevelMenus,
+  selectedKey,
+  openKeys,
+  routerPushByKey
+} = useAdminMenus();
+```
+
+常用返回值：
+
+| 返回值 | 说明 |
+| --- | --- |
+| `menus` | 当前菜单分类下的完整 Ant Design 菜单树。 |
+| `firstLevelMenus` | 一级菜单，混合布局会使用。 |
+| `secondLevelMenus` | 当前一级菜单下的二级菜单。 |
+| `childLevelMenus` | 当前二级菜单下的子菜单。 |
+| `selectedKey` | 当前路由对应的选中菜单 key。 |
+| `openKeys` | 当前路由应该展开的父级 key。 |
+| `currentMenu` | 当前路由在 quickReferenceMenus 中的记录。 |
+| `routerPushByKey` | 根据菜单 key 跳转到对应路由。 |
+
+## useAdminTab
+
+`useAdminTab` 管理路由页签。
+
+```tsx
+const {
+  activeTabId,
+  allTabs,
+  removeActiveTab,
+  clearLeftTabs,
+  clearRightTabs,
+  clearOtherTabs
+} = useAdminTab();
+```
+
+页签来源于 `quickReferenceMenus`。每次路由变化时，布局 effect 会把当前路由转换成 tab 并加入状态。
+
+### Tab 缓存
+
+如果主题设置启用 tab 缓存，布局会把 tabs 写入 `storage.globalTabs`。
+
+```text
+useAdminTab()
+  ├─ initTabStore()
+  │    ├─ 读取 storage.globalTabs
+  │    ├─ 过滤已经不存在的路由
+  │    └─ 初始化 homeTab
+  └─ cacheTabs()
+       └─ 写入 storage.globalTabs
+```
+
+登录用户切换或退出时，应清理无效 tabs。`apps/admin` 的认证模块会在 `clearAuth` 中调用 `cacheTabs` 和 `clearMenus`，保持菜单与页签状态一致。
+
+## 动态菜单 Badge
+
+菜单 badge 的配置在路由里，值可以在业务侧异步更新。
+
+```ts
+staticData: {
+  menu: {
+    badge: {
+      type: 'normal',
+      valueKey: 'message.unread'
+    }
+  }
+}
+```
+
+组件内更新：
+
+```tsx
+import { useAdminMenuBadges } from '@skyroc/web-admin-layouts';
+
+const MessageBadgeSync = () => {
+  const { setMenuBadgeValue } = useAdminMenuBadges();
+  const unreadCount = useUnreadMessageCount();
+
+  useEffect(() => {
+    setMenuBadgeValue('message.unread', unreadCount);
+  }, [setMenuBadgeValue, unreadCount]);
+
+  return null;
+};
+```
+
+非组件代码更新：
+
+```ts
+import { clearMenuBadgeValues, setMenuBadgeValue, setMenuBadgeValues } from '@skyroc/web-admin-layouts';
+
+setMenuBadgeValue('message.unread', 8);
+
+setMenuBadgeValues({
+  'todo.count': 3,
+  'audit.pending': 12
+});
+
+clearMenuBadgeValues(['message.unread']);
+```
+
+`MenuBadge` 会订阅同一个值表，所以数量更新不需要重新生成菜单树。
+
+## 状态使用边界
+
+- 页面只需要更新菜单数量时，优先使用 `useAdminMenuBadges`。
+- 页面需要跳转菜单时，使用 `useAdminMenus().routerPushByKey`。
+- 业务按钮需要折叠侧边栏时，使用 `useAdminState`。
+- tabs 的增删改查一般由布局内部处理，业务侧只在明确需要时调用 `useAdminTab`。

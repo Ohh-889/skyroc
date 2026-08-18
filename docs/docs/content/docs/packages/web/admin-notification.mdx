@@ -1,21 +1,25 @@
 ---
 title: "@skyroc/web-admin-notification"
-description: 站内通知中心：Provider + Header 按钮 + 通知面板
+description: "站内通知中心：不依赖 React 的通知仓库、Provider、铃铛按钮与通知面板，含优先级排序、去重、音效、免打扰与浏览器原生通知"
 ---
 
-## 概览
+## 概述
 
 | 项 | 值 |
 | --- | --- |
 | 包名 | `@skyroc/web-admin-notification` |
 | 目录 | `packages/web/admin-notification` |
 | 版本 | 0.1.0 |
-| 依赖 | [`@skyroc/web-ui-antd`](/docs/web/ui-antd)、[`@skyroc/web-ui-compose`](/docs/web/ui-compose)、`clsx`、`dayjs`、`nanoid` |
-| peer | antd、i18next、react、react-dom、react-i18next |
+| 依赖 | [`@skyroc/utils`](/docs/packages/core/utils/overview)、[`@skyroc/web-ui-antd`](/docs/packages/web/ui)、[`@skyroc/web-ui-compose`](/docs/packages/web/ui)、`clsx`、`dayjs` |
+| peer | `antd`、`i18next`、`react`、`react-dom`、`react-i18next` |
 | 子入口 | `.`、`./mock` |
-| 测试 | ❌ |
 
-站内通知中心的开箱组件：在 Header 放一个铃铛按钮（`NotificationButton`），点击展开通知面板（`NotificationPanel`），通过 `NotificationProvider` 提供上下文。
+通知中心分成两层：
+
+- **`NotificationStore`** —— 纯 TypeScript 类，不碰 React。负责去重排序的通知队列、运行时配置、音效与浏览器原生通知；
+- **`useNotification` / `NotificationProvider` / `NotificationButton` / `NotificationPanel`** —— React 侧，通过 `useSyncExternalStore` 订阅 store 的快照。
+
+数据从哪来（WebSocket、SSE、轮询、手动调用）这个包一概不管，留给宿主应用——否则包会被绑死在某一套后端协议上。
 
 ## 用法
 
@@ -23,6 +27,7 @@ description: 站内通知中心：Provider + Header 按钮 + 通知面板
 
 ```tsx
 import { NotificationProvider } from '@skyroc/web-admin-notification';
+
 import soundUrl from '@/assets/audio/wechat-style-notification.wav';
 
 <NotificationProvider soundUrl={soundUrl}>
@@ -30,67 +35,213 @@ import soundUrl from '@/assets/audio/wechat-style-notification.wav';
 </NotificationProvider>;
 ```
 
-`soundUrl` 是新通知到达时播放的提示音（可选）。
-
-### 2. Header 上放按钮
+### 2. Header 上放铃铛
 
 ```tsx
 import { NotificationButton } from '@skyroc/web-admin-notification';
 
-<NotificationButton />;
+<NotificationButton className="px-12px" onViewAll={() => navigate({ to: '/notifications' })} />;
 ```
 
-按钮自动显示未读数 Badge，点击弹出 `NotificationPanel`。
+按钮自带未读 Badge（超过 99 显示 `99+`），点击弹出 `NotificationPanel`。不传 `onViewAll` 时面板底部的"查看全部"入口会隐藏。
 
-### 3. 推送通知
+在 Admin 中它作为 [`AdminLayout`](/docs/packages/web/admin-layouts/slots) 的 `headerMiddleActions` 插槽传入：
+
+```tsx
+<WebAdminLayout headerMiddleActions={<NotificationButton className="px-12px" />} />
+```
+
+### 3. 投递通知
 
 ```ts
-import { useNotification } from '@skyroc/web-admin-notification';
+import { useNotificationContext } from '@skyroc/web-admin-notification';
 
-const { addNotification, markAsRead, markAllRead, clear } = useNotification();
+const { addMessageNotification, addNotification, markAllAsRead, unreadCount } = useNotificationContext();
 
+// 通用入口，返回这条通知的 id
 addNotification({
-  type: 'message',           // message | reminder | system
+  content: '订单 #123 已下单',
+  priority: 'high',
   title: '新订单',
-  description: '订单 #123 已下单',
-  priority: 'high'
+  type: 'message'
 });
+
+// 五个语义快捷方法：(title, content, options?)
+addMessageNotification('新消息', 'John Doe 给您发送了一条新消息', { priority: 'high' });
 ```
+
+## 通知模型
+
+```ts
+type NotificationType = 'error' | 'info' | 'message' | 'success' | 'warning';
+type NotificationPriority = 'urgent' | 'high' | 'normal' | 'low';
+
+interface NotificationItem {
+  /** 面板里展示的正文 */
+  content: string;
+  /** 浏览器原生通知的图标地址 */
+  icon?: string;
+  /** 稳定唯一标识，去重靠它 */
+  id: string;
+  /** 点击浏览器通知后跳转的地址 */
+  link?: string;
+  /** 调用方自定义的扩展元数据 */
+  meta?: Record<string, unknown>;
+  priority?: NotificationPriority;
+  read: boolean;
+  /** 是否同时弹浏览器原生通知，默认弹 */
+  showBrowserNotification?: boolean;
+  /** 跳过音效，同时也不弹浏览器通知 */
+  silent?: boolean;
+  /** 毫秒时间戳 */
+  timestamp: number;
+  title: string;
+  type: NotificationType;
+}
+```
+
+`addNotification` 收的是 `AddNotificationInput`：`id` / `read` / `timestamp` 三个字段可省，省了就分别取随机 id、`false`、`Date.now()`。
+
+<Callout type="warn">
+  不传 `id` 等于声明这条不参与去重。推送场景要去重，就把服务端信封里的稳定 id 带进来——WebSocket 和 SSE 同时连着时同一条会推两遍，同 id 的重复投递会被静默丢掉，不会重复播音效。
+</Callout>
+
+`type` 决定面板里的图标和配色：
+
+| type | 图标 | 语义 |
+| --- | --- | --- |
+| `message` | `carbon:chat` | 来自其他人的消息、@ 提醒 |
+| `info` | `carbon:information-filled` | 中性告知，用户不需要处理 |
+| `success` | `carbon:checkmark-filled` | 操作成功回执 |
+| `warning` | `carbon:warning-filled` | 需要留意但没中断流程 |
+| `error` | `carbon:close-filled` | 出错了，通常要用户介入 |
+
+## 排序规则
+
+队列基于 [`PriorityQueue`](/docs/packages/core/utils/priority-queue)，排序三级：**优先级** → **时间倒序** → **入队序号倒序**。
+
+优先级权重 `urgent(0) < high(1) < normal(2) < low(3)`，越小越靠前；没标优先级的按 `normal` 算。已读与否**不参与排序**——否则点一下已读整个列表会跳动。
+
+超出 `maxNotifications`（默认 99）时由队列自动挤掉末尾。
+
+## 运行时配置
+
+```ts
+interface NotificationConfig {
+  /** 浏览器原生通知总开关 */
+  browserNotificationEnabled: boolean;
+  /** 免打扰 */
+  doNotDisturb: boolean;
+  /** 免打扰时段，HH:mm，支持跨午夜 */
+  doNotDisturbTime?: { end: string; start: string };
+  /** 队列容量上限 */
+  maxNotifications: number;
+  /** 音效总开关 */
+  soundEnabled: boolean;
+}
+```
+
+默认值导出为 `DEFAULT_NOTIFICATION_CONFIG`：`browserNotificationEnabled: true`、`doNotDisturb: false`、`maxNotifications: 99`、`soundEnabled: true`。
+
+免打扰**只静音，不拦截**：通知照样进队列、照样算未读数，用户回来能在面板里看到全部，只是当时不响也不弹。
+
+改配置走 `updateConfig(partial)`，调小 `maxNotifications` 会立刻挤掉超出的部分。
 
 ## 主入口导出
 
 | 类别 | 符号 |
 | --- | --- |
 | 组件 | `NotificationProvider`、`NotificationButton`、`NotificationPanel` |
-| Context | `NotificationContext`、`useNotificationContext` |
-| Hook | `useNotification` |
-| Config | `DEFAULT_NOTIFICATION_CONFIG` |
-| 类型 | `NotificationButtonProps`、`NotificationPanelProps`、`NotificationProviderProps`、`NotificationContextValue` + 全部 `types` |
+| Hook | `useNotification`、`useNotificationContext` |
+| Context | `NotificationContext` |
+| 类 / 常量 | `NotificationStore`、`DEFAULT_NOTIFICATION_CONFIG` |
+| 类型 | `NotificationProviderProps`、`NotificationButtonProps`、`NotificationPanelProps`、`NotificationContextValue`，以及 `types` 全量导出 |
+
+### useNotification 返回值
+
+`useNotificationContext()` 拿到的就是 `useNotification()` 的返回值：
+
+| 字段 | 说明 |
+| --- | --- |
+| `notifications` | 排序后的通知列表 |
+| `unreadCount` | 未读数 |
+| `config` | 当前运行时配置 |
+| `notificationPermission` | 浏览器授权状态 |
+| `addNotification(input)` | 通用投递，返回 id |
+| `addInfoNotification` / `addSuccessNotification` / `addWarningNotification` / `addErrorNotification` / `addMessageNotification` | `(title, content, options?)` 语义快捷方法 |
+| `markAsRead(id)` / `markAllAsRead()` | 标记已读 |
+| `removeNotification(id)` / `clearAllNotifications()` / `clearReadNotifications()` | 删除 |
+| `updateConfig(partial)` | 改运行时配置 |
+| `requestNotificationPermission()` | 弹浏览器授权框，返回是否授权 |
+| `store` | 底层 `NotificationStore` 实例 |
+
+方法都是 store 上的箭头属性，引用天然稳定，消费侧不用再包 `useCallback`。
+
+## Provider 参数
+
+```ts
+interface NotificationProviderProps {
+  children: ReactNode;
+  /** 初始配置，与包内默认值合并；传了 store 时此项忽略 */
+  defaultConfig?: Partial<NotificationConfig>;
+  onBrowserNotificationError?: (error: unknown) => void;
+  onBrowserNotificationUnsupported?: () => void;
+  /** 点击带 link 的浏览器通知时调，交给前端路由 */
+  onNavigate?: (link: string, notification: NotificationItem) => void;
+  onPlaySoundError?: (error: unknown) => void;
+  onRequestPermissionError?: (error: unknown) => void;
+  soundUrl?: string;
+  /** 复用外部 store */
+  store?: NotificationStore;
+}
+```
+
+五个 `onXxx` 回调都是"失败了怎么办交给宿主决定"：包内部不弹 toast、不打 console，全部往外抛。`onNavigate` 没注入时，带 `link` 的浏览器通知点击后走 `window.location.href` 硬跳。
+
+## React 树之外投递
+
+推送连接（WebSocket / SSE）的回调不在 React 树里，拿不到 Context。做法是宿主自己持有 store 单例，两边传同一个实例：
+
+```ts
+// notification-store.ts
+export const notificationStore = new NotificationStore({ soundUrl });
+
+// 推送侧，直接调
+socket.on('message', payload => {
+  notificationStore.add({ content: payload.body, id: payload.msgId, title: payload.title, type: 'message' });
+});
+```
+
+```tsx
+// App.tsx
+<NotificationProvider store={notificationStore}>{children}</NotificationProvider>
+```
+
+传了 `store` 之后 `defaultConfig` 不再生效——配置在 `new NotificationStore({ defaultConfig })` 时给。
+
+## 浏览器原生通知
+
+四道闸门全过才会弹：`browserNotificationEnabled` 开着、不在免打扰时段、`permission === 'granted'`、这条通知没标 `silent` 也没把 `showBrowserNotification` 设成 `false`。任意一道不过就安静跳过，面板里那条通知不受影响。
+
+授权状态不在构造函数里读——服务端渲染读不到、客户端 hydrate 读得到，两边对不上会报 mismatch。改由 `useNotification` 在 effect 里调 `syncPermission()`。
+
+`requestPermission()` 必须由用户手势触发。页面一加载就调会被浏览器直接拒掉，而且用户拒过一次之后再调也不会重新弹框。
+
+## 音效
+
+`soundUrl` 由宿主注入，全部通知共用一个 `HTMLAudioElement`（每条新建一个的话，连着来几条会同时响）。播放前把 `currentTime` 归零，上一条没播完也能重新触发。
+
+用户还没和页面交互过时浏览器会拒绝 `play()`，所以播放失败是常态而不是异常，交给 `onPlaySoundError` 由宿主决定要不要提示。
 
 ## 子入口 `./mock`
 
-提供示例数据，方便本地调试 / Storybook：
-
 ```ts
-import { useMockNotifications, mockNotifications } from '@skyroc/web-admin-notification/mock';
+import { useMockNotifications } from '@skyroc/web-admin-notification/mock';
 
-useMockNotifications();          // 启动后注入示例通知
+const { mockNotifications } = useMockNotifications();
 ```
 
-## 通知模型
-
-```ts
-interface Notification {
-  id: string;
-  type: 'message' | 'reminder' | 'system';
-  title: string;
-  description?: string;
-  priority?: 'low' | 'normal' | 'high';
-  time: number;                  // 时间戳
-  read: boolean;
-  data?: unknown;                // 业务自定义
-}
-```
+返回 8 条覆盖全部 5 种 `type`、4 档 `priority` 的示例数据（`AddNotificationInput[]`），供本地调试和演示页使用。`apps/admin-example` 的通知演示页就是消费的它。
 
 ## 目录结构
 
@@ -98,33 +249,19 @@ interface Notification {
 src/
 ├── index.ts
 ├── mock.ts                    # 子入口
+├── notification-store.ts      # NotificationStore + DEFAULT_NOTIFICATION_CONFIG
+├── use-notification.ts        # useSyncExternalStore 订阅
 ├── NotificationProvider.tsx
 ├── NotificationContext.ts
-├── NotificationButton.tsx
-├── NotificationPanel.tsx
-├── use-notification.ts
 ├── useNotificationContext.ts
+├── NotificationButton.tsx     # Badge + Dropdown
+├── NotificationPanel.tsx      # 列表、相对时间、空态
 ├── types.ts
 └── notification.css
 ```
 
-## 设计要点
+## 相关内容
 
-- **本地状态**：当前实现是纯内存 + Context，不绑定后端推送方式；
-- **推送接入**：业务可在 `NotificationProvider` 外层挂 WebSocket / SSE / 轮询，调用 `addNotification` 注入；
-- **去重**：通过 nanoid 生成 id，业务可传自定义 id 避免重复；
-- **音效**：`soundUrl` 在新通知到达时播放（用户首次交互后才可播放，受浏览器策略限制）。
-
-## 在 apps/admin 的位置
-
-```tsx
-// App.tsx
-<NotificationProvider soundUrl={wechatStyleNotification}>
-  <LazyAnimate>
-    <RouterProvider />
-    <GlobalEffect />
-  </LazyAnimate>
-</NotificationProvider>
-```
-
-`NotificationButton` 通常由 [`@skyroc/web-admin-layouts`](/docs/web/admin-layouts) 的 Header 渲染（或业务自行放入）。
+- [Admin 通知功能](/docs/admin/features/notification) —— 在 Admin 里的完整接入与页面
+- [通知 API 速查](/docs/admin/features/notification-api)
+- [布局插槽](/docs/packages/web/admin-layouts/slots) —— 铃铛按钮挂在哪个插槽

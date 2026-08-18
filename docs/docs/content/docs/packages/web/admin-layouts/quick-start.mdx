@@ -1,0 +1,136 @@
+---
+title: "快速接入"
+description: "在应用入口调用 setupAdminLayouts，并在后台 layout route 中渲染 AdminLayout"
+---
+
+接入 `@skyroc/web-admin-layouts` 分两步：启动阶段注入全局配置，后台 layout route 渲染布局壳。
+
+## 安装
+
+```bash
+pnpm add @skyroc/web-admin-layouts
+```
+
+通常它会和这些包一起使用：
+
+```bash
+pnpm add @skyroc/web-admin-theme @skyroc/materials @tanstack/react-router antd jotai
+```
+
+## 应用入口
+
+在应用初始化阶段先完成主题初始化，再调用 `setupAdminLayouts`。
+
+```tsx
+import { setupAdminLayouts } from '@skyroc/web-admin-layouts';
+import { setupTheme } from '@skyroc/web-admin-theme';
+
+import { globalConfig } from '@/config';
+import { menuExtras } from '@/features/menus/extras';
+import { loadAdminDynamicRoutes } from '@/features/menus/dynamic-routes';
+import { menuNodeCallback } from '@/features/menus/menu-config';
+import { routeTree } from '@/features/router/routeTree.gen';
+import { localStg } from '@/utils/storage';
+
+setupTheme({
+  buildTime: BUILD_TIME
+});
+
+setupAdminLayouts({
+  defaultHome: globalConfig.defaultHome,
+  defaultIcon: globalConfig.defaultIcon,
+  extras: menuExtras,
+  loadDynamicRoutes: loadAdminDynamicRoutes,
+  menuCategories: {
+    admin: {
+      key: 'admin',
+      layout: '/(admin)'
+    }
+  },
+  menuNodeCallback,
+  permissionSuperRole: import.meta.env.VITE_STATIC_SUPER_ROLE,
+  routeMode: globalConfig.routeMode,
+  routeTree,
+  storage: localStg
+});
+```
+
+### 配置责任
+
+| 配置 | 说明 |
+| --- | --- |
+| `defaultHome` | 没有动态菜单首页时使用的默认首页。 |
+| `defaultIcon` | 菜单未声明 icon 时使用的兜底图标。 |
+| `routeTree` | TanStack Router 生成的静态路由树。 |
+| `routeMode` | `static` 从静态 route meta 生成菜单；`dynamic` 从后端路由数据生成菜单。 |
+| `loadDynamicRoutes` | 动态菜单加载器，仅动态模式需要。 |
+| `menuCategories` | 菜单分类配置。分类 key 标识一组菜单，`layout` 指向承载这组菜单的 TanStack layout route id。 |
+| `menuNodeCallback` | 给特定路由节点追加菜单项或 divider。 |
+| `extras` | 自定义菜单 extra 组件注册表。 |
+| `storage` | tabs、布局状态等本地缓存适配器。 |
+
+## 后台 layout route
+
+后台 layout route 负责路由守卫和业务插槽，布局细节交给 `AdminLayout`。
+
+```tsx
+import { AdminLayout, hasMatchedRoutePermission } from '@skyroc/web-admin-layouts';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+
+import SystemLogo from '@/components/SystemLogo';
+import UserAvatar from '@/features/auth/components/UserAvatar';
+
+const AdminShell = () => {
+  return (
+    <AdminLayout
+      footer={<AdminFooter />}
+      headerMiddleActions={<NotificationButton className="px-12px" />}
+      headerRightActions={<UserAvatar />}
+      logo={<SystemLogo className="text-32px text-primary" />}
+      logoTitle="Skyroc Admin"
+    />
+  );
+};
+
+export const Route = createFileRoute('/(admin)')({
+  component: AdminShell,
+  beforeLoad: async ({ context, location, matches }) => {
+    if (!context.isLoggedIn) {
+      throw redirect({ to: '/login', search: { redirect: location.href } });
+    }
+
+    const userInfo = context.isAuthInitialized ? context.userInfo : await context.initAuth();
+
+    if (!hasMatchedRoutePermission(matches, userInfo)) {
+      throw redirect({ to: '/403' });
+    }
+  }
+});
+```
+
+## 初始化顺序
+
+```text
+setupTheme()
+  设置主题初始值，供 AdminLayout 读取布局模式、尺寸、tab、footer 等配置。
+
+setupAdminLayouts()
+  注册 routeTree、菜单分类、动态路由加载器、storage 和 extra 组件。
+
+setupI18n()
+  完成多语言初始化。
+
+render(<App />)
+  TanStack Router 渲染后台 layout route，AdminLayout 开始读取菜单和状态。
+```
+
+## 业务侧保持薄层
+
+推荐把 app 侧保留为：
+
+- `bootstrap.tsx`：初始化主题、布局、i18n 和插件。
+- `pages/(admin)/layout.tsx`：路由守卫和布局插槽。
+- `features/menus`：菜单扩展组件和 `menuNodeCallback`。
+- `features/auth`：登录态、用户信息和权限来源。
+
+菜单生成、布局模式、tab 状态、菜单渲染和主题抽屉都留在 `@skyroc/web-admin-layouts` 内部。

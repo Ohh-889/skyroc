@@ -1,0 +1,100 @@
+---
+title: "Admin Layouts 概览"
+description: "@skyroc/web-admin-layouts 是管理后台应用壳，负责把布局材料、主题状态、菜单、页签、权限和业务插槽组合成可复用的后台框架"
+---
+
+`@skyroc/web-admin-layouts` 是 Skyroc 管理后台的应用级布局包。它不只是一个视觉布局组件，而是把路由菜单、权限、标签页、主题抽屉、响应式状态和业务插槽组合在一起的后台壳。
+
+如果 `@skyroc/materials` 是底层布局材料，那么 `@skyroc/web-admin-layouts` 就是面向应用的完整后台框架。
+
+## 适用场景
+
+- 新后台应用需要复用统一 Header、Sider、Tab、Content、Footer 布局。
+- TanStack Router 路由需要自动生成菜单和标签页。
+- 菜单需要支持静态路由、动态后端路由、权限过滤和额外节点插入。
+- 应用需要通过少量插槽接入 Logo、用户头像、通知、页脚和自定义头部操作。
+- 主题设置来自 `@skyroc/web-admin-theme`，布局包根据主题模式自动切换布局结构。
+
+## 分层关系
+
+```text
+apps/admin
+  只保留业务入口、路由守卫、Logo、用户头像、通知按钮和菜单扩展组件。
+
+@skyroc/web-admin-layouts
+  负责应用级后台壳：AdminLayout、菜单生成、菜单渲染、权限、tabs、状态和主题抽屉。
+
+@skyroc/materials
+  负责纯视觉布局材料：Header / Sider / Tab / Footer / Content 的区域排布和 CSS 变量。
+
+@skyroc/web-admin-theme
+  负责主题设置、Ant Design Provider、暗色模式、副作用和主题抽屉数据来源。
+```
+
+## 核心模块
+
+| 模块 | 责任 |
+| --- | --- |
+| `setupAdminLayouts` | 在应用启动时注入 routeTree、菜单模式、默认首页、动态路由加载器、缓存适配器和扩展组件。 |
+| `AdminLayout` | 渲染完整后台壳，并通过插槽接入 Logo、Header actions、Footer 和 Content。 |
+| `menu-generator` | 从 TanStack Router 静态路由或后端动态路由生成标准菜单树与快速索引。 |
+| `menu-renderer` | 把 `GeneratedMenu` 转成 Ant Design Menu 可消费的菜单项，处理 icon、title、badge 和 extra。 |
+| `useAdminMenus` | 根据当前路由、菜单分类和布局模式，计算一级、二级、子级菜单、选中项和展开项。 |
+| `useAdminTab` | 管理路由页签，支持首页 tab、固定 tab、缓存、关闭和切换。 |
+| `useAdminState` | 管理布局运行时状态，如移动端、侧边栏折叠、全屏内容和横向滚动。 |
+
+## 数据流
+
+```text
+setupAdminLayouts(...)
+  ├─ routeTree / backend routes
+  ├─ menuCategories
+  ├─ menuNodeCallback
+  ├─ extras
+  └─ storage
+
+initAuth / initMenus
+  └─ menuGenerator.generate(...)
+       ├─ allMenus
+       ├─ quickReferenceMenus
+       └─ home
+
+AdminLayout
+  ├─ useSettingsTheme()
+  ├─ useAdminState()
+  ├─ useAdminMenus()
+  ├─ AdminHeader
+  ├─ AdminSider / AdminMenu
+  ├─ AdminTab
+  ├─ AdminContent
+  └─ ThemeDrawer / AdminEffect
+```
+
+## 与 `@skyroc/materials` 的区别
+
+`@skyroc/materials` 的 `AdminLayout` 是纯插槽式布局容器，不知道路由、权限、菜单、tab、主题抽屉和业务状态。
+
+`@skyroc/web-admin-layouts` 在它之上提供应用语义：它知道当前路由在哪里、哪个菜单应该选中、哪个 tab 应该激活、当前主题模式应该使用哪种布局结构。
+
+## 阅读顺序
+
+<Cards>
+  <Card title="快速接入" href="/docs/admin-layouts/quick-start">
+    从应用入口、路由布局页和认证守卫开始接入后台壳。
+  </Card>
+  <Card title="菜单系统" href="/docs/admin-layouts/menus">
+    先理解菜单统一结构、权限、badge、extra 和 menuNodeCallback。
+  </Card>
+  <Card title="静态菜单生成" href="/docs/admin-layouts/static-menu-generation">
+    从 TanStack Router staticData 生成菜单树和快速索引。
+  </Card>
+  <Card title="动态菜单生成" href="/docs/admin-layouts/dynamic-menu-generation">
+    从后端路由树生成菜单树，并处理分类、首页和扩展节点。
+  </Card>
+  <Card title="布局插槽" href="/docs/admin-layouts/slots">
+    接入 Logo、Header actions、Footer、Content 和多菜单分类。
+  </Card>
+  <Card title="状态与页签" href="/docs/admin-layouts/state-tabs">
+    使用布局状态、菜单状态、tab 状态和动态 badge 值表。
+  </Card>
+</Cards>

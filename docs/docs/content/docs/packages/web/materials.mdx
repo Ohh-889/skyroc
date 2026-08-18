@@ -1,149 +1,451 @@
 ---
 title: "@skyroc/materials"
-description: 插槽式 AdminLayout 骨架与三种 PageTab 视觉风格
+description: "管理后台 UI 材料库 — 提供完整的布局框架 AdminLayout 与多风格标签页 PageTab，支持响应式、暗色模式与 CSS 变量驱动的动态主题"
 ---
 
-## 概览
+## 概述
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/materials` |
-| 目录 | `packages/web/materials` |
-| 版本 | 2.5.0 |
-| 依赖 | [`@skyroc/color`](/docs/core/color)、[`@skyroc/web-ui`](/docs/web/ui-shadcn)、[`@skyroc/utils`](/docs/core/utils)、`clsx` |
-| 测试 | ✅ `index.test.tsx` |
+`@skyroc/materials` 是专为管理后台设计的 React UI 材料库，提供两个核心组件：
 
-`@skyroc/materials` 提供**结构性 UI 材料**——不包含业务逻辑、不绑定状态管理，只负责"形"。它有两块内容：
+- **`AdminLayout`** — 完整的后台布局框架，通过插槽（`Header` / `Tab` / `Sider` / `Footer` / `children`）组合区域，内部用 CSS 变量驱动所有尺寸和层叠，支持两种布局模式、两种滚动模式与移动端适配
+- **`PageTab`** — 多风格标签页组件，支持 Button / Chrome / Slider 三种样式，配合路由标签系统使用
 
-- `AdminLayout`：Slot 式后台布局骨架
-- `PageTab`：三种风格的页面 Tab 组件
+## 架构
 
-## AdminLayout（Slot 骨架）
-
-```text
-┌────────────────────────────────────┐
-│            Header (slot)            │
-├──────┬─────────────────────────────┤
-│      │         Tab (slot)           │
-│      ├─────────────────────────────┤
-│Sider │                              │
-│(slot)│       Content (slot)         │
-│      │                              │
-│      ├─────────────────────────────┤
-│      │         Footer (slot)        │
-└──────┴─────────────────────────────┘
+```
+src/
+├── types/
+│   └── index.ts          AdminLayoutProps、PageTabProps 及所有子配置类型
+├── libs/
+│   ├── admin-layout/
+│   │   ├── index.tsx     AdminLayout 组件（布局逻辑 + 插槽渲染）
+│   │   ├── shared.ts     createLayoutCssVars、LAYOUT_SCROLL_EL_ID、LAYOUT_MAX_Z_INDEX
+│   │   └── index.module.css  布局 CSS 变量消费（--soy-* 变量）
+│   └── page-tab/
+│       ├── index.tsx     PageTab 入口（模式分发、memo 包装）
+│       ├── ButtonTab.tsx  按钮风格标签
+│       ├── ChromeTab.tsx  Chrome 风格标签
+│       ├── SliderTab.tsx  滑块下划线风格标签
+│       ├── SvgClose.tsx   关闭图标（支持触摸事件）
+│       ├── ChromeTabBg.tsx Chrome 弧形 SVG 背景
+│       ├── hook.ts        useTap（触摸事件处理）
+│       ├── shared.ts      createTabCssVars、ACTIVE_COLOR
+│       └── index.module.css  标签页 CSS 变量消费
+└── index.ts              公共导出
 ```
 
-通过 `AdminLayoutProps` 的 slot 属性传入各区域组件：
+## 安装
+
+```bash
+pnpm add @skyroc/materials
+```
+
+**依赖**：`@skyroc/color`，`clsx`
+
+## AdminLayout
+
+### 概念
+
+AdminLayout 是一个**插槽式布局容器**，不内置任何业务逻辑，只负责将传入的区域按照配置规则排列、确定层叠顺序和控制滚动行为。
+
+```
+┌─────────────────────────────────────┐
+│  Header（固定顶部，z-index: 97）      │
+├─────────────────────────────────────┤
+│  Tab（固定，top = header-height）     │
+├──────────┬──────────────────────────┤
+│          │                          │
+│  Sider   │  Main Content（children） │
+│（固定左侧）│                          │
+│          │                          │
+├──────────┴──────────────────────────┤
+│  Footer（可固定底部）                 │
+└─────────────────────────────────────┘
+```
+
+### 快速上手
 
 ```tsx
-import { AdminLayout, type AdminLayoutProps } from '@skyroc/materials';
+import { AdminLayout, LAYOUT_SCROLL_EL_ID } from '@skyroc/materials';
 
-<AdminLayout
-  mode="vertical"
-  scrollMode="content"
-  header={<MyHeader />}
-  sider={<MySider />}
-  tab={<MyTab />}
-  content={<RouterOutlet />}
-  footer={<MyFooter />}
-/>;
+const App = () => {
+  const [siderCollapse, setSiderCollapse] = useState(false);
+
+  return (
+    <AdminLayout
+      mode="vertical"
+      fixedTop
+      headerHeight={56}
+      tabHeight={44}
+      siderWidth={220}
+      siderCollapsedWidth={64}
+      siderCollapse={siderCollapse}
+      footerHeight={48}
+      isMobile={false}
+      scrollMode="content"
+      updateSiderCollapse={() => setSiderCollapse(v => !v)}
+      Header={<AppHeader />}
+      Tab={<AppTab />}
+      Sider={<AppSider />}
+      Footer={<AppFooter />}
+    >
+      <RouterOutlet />
+    </AdminLayout>
+  );
+};
 ```
 
-`LayoutMode` 支持：
+### Props 完整说明
 
-- `vertical`：经典侧栏 + 顶栏（默认）
-- `horizontal`：纯顶栏布局
-- `vertical-mix` / `horizontal-mix`：左侧只显一级菜单 + 顶部/侧栏二级
+#### 布局与滚动
 
-`LayoutScrollMode`：
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `mode` | `'vertical' \| 'horizontal'` | `'vertical'` | 布局方向，影响 Sider 位置和 Footer 行为 |
+| `scrollMode` | `'content' \| 'wrapper'` | `'content'` | 滚动区域位置，见下方说明 |
+| `scrollElId` | `string` | `'__SCROLL_EL_ID__'` | 滚动容器的 DOM id，用于编程式滚动 |
+| `scrollElClass` | `string` | — | 滚动元素额外 class |
+| `scrollWrapperClass` | `string` | — | 外层包裹 section 的 class |
+| `fixedTop` | `boolean` | `true` | Header 和 Tab 是否固定到顶部（`position: absolute`）|
+| `isMobile` | `boolean` | — | 移动端模式：桌面 Sider 隐藏，启用 Mobile Sider + 遮罩 |
+| `maxZIndex` | `number` | `100` | 所有区域层叠的上限基准值 |
+| `commonClass` | `string` | `'transition-all-300'` | 所有区域公共 class，用于控制过渡动画 |
+| `fullContent` | `boolean` | — | 全屏内容模式：Header、Sider、Footer 全部 `display: none` |
 
-- `content`：仅内容区滚动
-- `wrapper`：整个 wrapper 滚动
+#### Header
 
-## PageTab（三种视觉风格）
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `Header` | `ReactNode` | — | Header 插槽内容 |
+| `headerHeight` | `number` | `56` | Header 高度（px），同步写入 CSS 变量 |
+| `headerVisible` | `boolean` | `true` | 为 `false` 时不渲染 Header 区域 |
+| `headerClass` | `string` | — | Header 元素额外 class |
 
-| 模式 | 组件 | 风格 |
-| --- | --- | --- |
-| `button` | `ButtonTab` | 普通按钮式 |
-| `chrome` | `ChromeTab` + `ChromeTabBg` | Chrome 浏览器标签风格 |
-| `slider` | `SliderTab` | 滑块跟随式 |
+#### Tab
+
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `Tab` | `ReactNode` | — | 标签页插槽内容 |
+| `tabHeight` | `number` | `44` | Tab 高度（px） |
+| `tabVisible` | `boolean` | `true` | 为 `false` 时不渲染 Tab 区域 |
+| `tabClass` | `string` | — | Tab 元素额外 class |
+
+#### Sider
+
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `Sider` | `ReactNode` | — | 侧边栏插槽内容 |
+| `siderWidth` | `number` | `220` | 展开时宽度（px） |
+| `siderCollapsedWidth` | `number` | `64` | 折叠时宽度（px） |
+| `siderCollapse` | `boolean` | `false` | 是否处于折叠状态 |
+| `siderVisible` | `boolean` | `true` | 为 `false` 时不渲染 Sider |
+| `siderClass` | `string` | — | Sider 元素额外 class |
+| `mobileSiderClass` | `string` | — | 移动端 Sider 额外 class |
+| `updateSiderCollapse` | `() => void` | **必填** | 点击移动端遮罩时的折叠回调 |
+
+#### Footer
+
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `Footer` | `ReactNode` | — | Footer 插槽内容 |
+| `footerHeight` | `number` | `48` | Footer 高度（px） |
+| `footerVisible` | `boolean` | `true` | 为 `false` 时不渲染 Footer |
+| `fixedFooter` | `boolean` | — | Footer 固定到底部（`position: absolute`）|
+| `footerClass` | `string` | — | Footer 元素额外 class |
+| `rightFooter` | `boolean` | `false` | 垂直/水平布局中 Footer 是否跟随 Sider 右移 |
+
+### 两种布局模式
+
+**Vertical 模式**（默认）：
+- Sider 位于最左侧，覆盖 Header / Tab / Footer 的左侧空间（通过 `padding-left` 让出位置）
+- Header、Footer 在垂直模式下各自独立 `left-gap`，随 sider 展开/折叠动态调整
+- 适合大多数管理后台场景
+
+**Horizontal 模式**：
+- Sider 层叠关系降低（z-index = `maxZIndex - 4`），通常用作顶部菜单下的内容侧边
+- Footer 的 `rightFooter` 在此模式下影响是否跟随内容区对齐
+
+### 两种滚动模式
+
+**content 模式**（默认）：
+- `scrollElId` 挂在 `<main>` 元素上
+- 只有内容区域可滚动
+- Header / Tab / Sider / Footer 始终可见，不会随内容滚动消失
+
+**wrapper 模式**：
+- `scrollElId` 挂在外层 `<section>` 上
+- 整个布局作为一个滚动区
+- `fixedTop` 或水平布局的 wrapper 滚动模式下，Header/Tab 自动固定（`position: absolute`）
+
+### CSS 变量系统
+
+AdminLayout 将所有尺寸和层叠值写入 `style` inline CSS 变量，CSS 模块通过变量消费，无需硬编码：
+
+```
+--soy-header-height       Header 高度（如 "56px"）
+--soy-header-z-index      Header 层叠（maxZIndex - 3，默认 97）
+--soy-tab-height          Tab 高度
+--soy-tab-z-index         Tab 层叠（maxZIndex - 5，默认 95）
+--soy-sider-width         Sider 展开宽度
+--soy-sider-collapsed-width Sider 折叠宽度
+--soy-sider-z-index       Sider 层叠（垂直: maxZIndex - 1 = 99；水平: maxZIndex - 4 = 96）
+--soy-mobile-sider-z-index 移动端 Sider 层叠（移动端: maxZIndex - 2 = 98；否则 0）
+--soy-footer-height       Footer 高度
+--soy-footer-z-index      Footer 层叠（maxZIndex - 5，默认 95）
+```
+
+**Z-Index 计算规则**（`maxZIndex = 100`）：
+
+```
+Sider（垂直）  99  ← 最高，覆盖 Header/Footer 左边缘
+Header         97
+Mobile Sider   98  ← 移动端特有
+Tab            95
+Footer         95
+Mobile Mask    98  ← 移动端遮罩
+```
+
+### 移动端行为
+
+当 `isMobile = true`：
+- 桌面 Sider（`<aside>`）不渲染
+- 渲染 Mobile Sider + 半透明黑色遮罩（`rgba(0,0,0,0.2)`）
+- 点击遮罩触发 `updateSiderCollapse()`
+- `siderCollapse = true` 时 Mobile Sider `overflow: hidden`，遮罩 `display: none`
+
+### 编程式滚动
+
+```ts
+import { LAYOUT_SCROLL_EL_ID } from '@skyroc/materials';
+
+// 获取滚动容器并滚动到顶部
+const scrollEl = document.querySelector(`#${LAYOUT_SCROLL_EL_ID}`);
+scrollEl?.scrollTo({ top: 0, behavior: 'smooth' });
+```
+
+---
+
+## PageTab
+
+### 概念
+
+PageTab 是一个**单个标签页单元**，通常配合路由标签列表使用。它本身不管理列表状态，只负责渲染一个标签并处理点击与关闭。
+
+### 快速上手
 
 ```tsx
 import { PageTab } from '@skyroc/materials';
 
+// Chrome 风格（默认）
 <PageTab
   mode="chrome"
-  active="/home"
-  tabs={[{ key: '/home', label: '首页' }, ...]}
-  onChange={key => navigate({ to: key })}
-  onClose={key => closeTab(key)}
-/>;
+  active={currentRoute === '/dashboard'}
+  activeColor="#6366F1"
+  prefix={<DashboardIcon />}
+  darkMode={isDark}
+  closable
+  onClick={() => navigate('/dashboard')}
+  handleClose={() => closeTab('/dashboard')}
+>
+  仪表盘
+</PageTab>
+
+// 渲染一组标签
+{tabs.map(tab => (
+  <PageTab
+    key={tab.path}
+    mode="button"
+    active={tab.path === currentPath}
+    activeColor={themeColor}
+    prefix={tab.icon}
+    onClick={() => navigate(tab.path)}
+    handleClose={() => closeTab(tab.path)}
+  >
+    {tab.title}
+  </PageTab>
+))}
 ```
 
-## 关键常量与类型
+### Props
 
-| 导出 | 用途 |
-| --- | --- |
-| `LAYOUT_MAX_Z_INDEX` | 布局元素的最大 z-index（避免与业务组件冲突） |
-| `LAYOUT_SCROLL_EL_ID` | 滚动容器 DOM id（业务可通过 ID 滚动到顶部） |
-| `AdminLayoutProps` / `LayoutMode` / `LayoutScrollMode` | 布局类型 |
-| `PageTabProps` / `PageTabMode` | 标签页类型 |
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `mode` | `'chrome' \| 'button' \| 'slider'` | `'chrome'` | 标签外观风格 |
+| `active` | `boolean` | — | 是否为当前激活标签 |
+| `activeColor` | `string` | `'#1890ff'` | 激活色，用于生成 CSS 变量色彩系列 |
+| `prefix` | `ReactNode` | **必填** | 前缀内容（通常为图标）|
+| `suffix` | `ReactNode` | — | 自定义后缀（默认为关闭按钮）|
+| `children` | `ReactNode` | — | 标签文字 |
+| `closable` | `boolean` | `true` | 是否显示关闭按钮 |
+| `handleClose` | `() => void` | — | 关闭按钮回调，点击时阻止冒泡 |
+| `onClick` | `() => void` | **必填** | 标签点击回调 |
+| `darkMode` | `boolean` | — | 暗色模式开关 |
+| `commonClass` | `string` | `'transition-all-300'` | 过渡动画 class |
+| `className` | `string` | — | 外层额外 class |
+| `buttonClass` | `string` | — | Button 风格专用额外 class |
+| `chromeClass` | `string` | — | Chrome 风格专用额外 class |
+| `sliderClass` | `string` | — | Slider 风格专用额外 class |
+| `style` | `CSSProperties` | — | 内联样式（会与 CSS 变量合并）|
 
-## 目录结构
+### 三种风格详解
 
-```text
-src/
-├── index.ts
-├── types/index.ts
-└── libs/
-    ├── admin-layout/
-    │   ├── index.tsx
-    │   ├── shared.ts
-    │   └── index.module.css
-    └── page-tab/
-        ├── index.tsx          # PageTab 路由组件
-        ├── hook.ts
-        ├── shared.ts
-        ├── ButtonTab.tsx
-        ├── ChromeTab.tsx
-        ├── ChromeTabBg.tsx
-        ├── SliderTab.tsx
-        ├── SvgClose.tsx
-        └── index.module.css
+#### Chrome 模式
+
+仿浏览器标签栏风格，使用 SVG 弧形背景（`ChromeTabBg`）：
+
+```
+ ╭────────────────╮
+ │ ⬡  标签名   ✕  │  ← 激活（填充主色 10% 透明）
+─╯                ╰─
+   标签名   ✕           ← 未激活（透明背景）
 ```
 
-## 与 admin-layouts 的关系
+- 激活状态：`--soy-primary-color1`（主色 + 白底 10% 混合）为背景
+- 暗色激活：`--soy-primary-color2`（主色 + 黑底 30% 混合）为背景
+- 相邻标签间通过右侧分隔线分隔，激活标签的右侧分隔线隐藏
 
-`@skyroc/materials` **只是骨架**，没有业务、没有状态、没有菜单生成逻辑。
+#### Button 模式
 
-`@skyroc/web-admin-layouts` 才是"装上灵魂"的完整 admin 壳：
+按钮框线风格：
 
-```text
-@skyroc/materials (骨架 + Tab 样式)
-        ↑
-@skyroc/web-admin-layouts (header / sider / tab / menu / theme drawer / search)
-        ↑
-apps/admin (业务接入 + storage + routeTree)
+```
+┌─────────────┐   ← 激活（主色边框 + 主色 10% 透明背景）
+│ ⬡  标签名  ✕│
+└─────────────┘
+
+  ⬡  标签名  ✕    ← 未激活（灰色边框）
 ```
 
-这种「骨架 / 实现 / 装配」的分层让：
+- 激活状态：border 变为主色，背景 `--soy-primary-color-opacity1`（10% alpha）
+- 暗色模式下边框色适配深色背景
 
-- 同一套布局骨架可以被多个产品复用；
-- Tab 样式可以独立替换，不影响布局逻辑；
-- React Native 端将来可以共用 `LayoutMode` 类型但提供自己的实现。
+#### Slider 模式
 
-## CSS 变量驱动
+轻量下划线风格：
 
-布局的关键尺寸（侧栏宽度、Header 高度等）通过 CSS 变量驱动，业务可以覆盖：
+```
+⬡  标签名  ✕
+────────────    ← 激活（主色下划线 + 浅背景）
 
-```css
-.root {
-  --layout-sider-width: 240px;
-  --layout-header-height: 56px;
+⬡  标签名  ✕   ← 未激活（无下划线）
+```
+
+- 激活状态：底部 2px 主色边框 + `--soy-primary-color-opacity1` 背景
+- hover：文字变主色
+
+### CSS 变量系统
+
+`createTabCssVars(activeColor)` 根据一个颜色生成完整的色彩变量组，注入 PageTab 的 `style` 属性：
+
+| CSS 变量 | 生成方式 | 用途 |
+|---------|---------|------|
+| `--soy-primary-color` | 原色 | 文字激活色、分隔线色 |
+| `--soy-primary-color1` | 主色 + 白底 10% 混合 | Chrome 激活背景（亮色）|
+| `--soy-primary-color2` | 主色 + 黑底 30% 混合 | Chrome 激活背景（暗色）|
+| `--soy-primary-color-opacity1` | 主色 alpha 10% | Button/Slider 激活背景 |
+| `--soy-primary-color-opacity2` | 主色 alpha 15% | 关闭按钮 hover 背景 |
+| `--soy-primary-color-opacity3` | 主色 alpha 30% | 关闭按钮 hover 激活态 |
+
+颜色混合来自 `@skyroc/color` 的 `transformColorWithOpacity` 和 `addColorAlpha`。
+
+### 关闭按钮（SvgClose）
+
+未提供 `suffix` 且 `closable = true` 时，自动渲染内置 SVG 关闭图标：
+
+- 16×16 SVG，圆形 hover 区域
+- hover 时：背景变 `--soy-primary-color-opacity2`，图标变主色
+- 激活标签 hover 关闭时：背景变 `--soy-primary-color-opacity3`
+- 支持触摸事件（`onTouchStart` / `onTouchEnd`），与 `useTap` 配合防止误触
+
+### 触摸支持
+
+内置 `useTap` hook 区分滑动和点击，避免移动端滚动时误触发标签切换：
+
+```ts
+function useTap(onClick: () => void) {
+  // touchstart → 记录触摸状态
+  // touchmove  → 标记为滑动（取消点击）
+  // touchend   → 仅未发生滑动时执行 onClick
+  return { onTouchStart, onTouchMove, onTouchEnd }
 }
 ```
 
-## 测试
+---
 
-`__tests__/index.test.tsx` 验证三种 Tab 模式的渲染、布局 slot 的注入与切换。
+## 常量
+
+```ts
+import { LAYOUT_SCROLL_EL_ID, LAYOUT_MAX_Z_INDEX } from '@skyroc/materials';
+
+LAYOUT_SCROLL_EL_ID  // '__SCROLL_EL_ID__' — 滚动容器的默认 DOM id
+LAYOUT_MAX_Z_INDEX   // 100 — 布局层叠的默认最大值
+```
+
+## 类型参考
+
+### LayoutMode
+
+```ts
+type LayoutMode = 'horizontal' | 'vertical';
+```
+
+### LayoutScrollMode
+
+```ts
+type LayoutScrollMode = 'content' | 'wrapper';
+```
+
+### PageTabMode
+
+```ts
+type PageTabMode = 'button' | 'chrome' | 'slider';
+```
+
+### LayoutCssVars
+
+通过 TypeScript 模板字面量类型生成，键名前缀 `--soy-`，字段来自 `LayoutCssVarsProps`：
+
+```ts
+type LayoutCssVars = {
+  '--soy-footer-height': string | number;
+  '--soy-footer-z-index': string | number;
+  '--soy-header-height': string | number;
+  '--soy-header-z-index': string | number;
+  '--soy-mobile-sider-z-index': string | number;
+  '--soy-sider-collapsed-width': string | number;
+  '--soy-sider-width': string | number;
+  '--soy-sider-z-index': string | number;
+  '--soy-tab-height': string | number;
+  '--soy-tab-z-index': string | number;
+};
+```
+
+### PageTabCssVars
+
+```ts
+type PageTabCssVars = {
+  '--soy-primary-color': string | number;
+  '--soy-primary-color1': string | number;
+  '--soy-primary-color2': string | number;
+  '--soy-primary-color-opacity1': string | number;
+  '--soy-primary-color-opacity2': string | number;
+  '--soy-primary-color-opacity3': string | number;
+};
+```
+
+## 设计说明
+
+### 为什么用 CSS 变量而非内联 style
+
+所有尺寸（height / width / z-index）都写入 CSS 变量，CSS 模块通过 `var()` 引用。这样：
+- 组件内部样式改动不需要 JS 参与
+- 过渡动画（`transition: all 300ms`）能覆盖 CSS 变量驱动的属性变化
+- 调试时在浏览器 DevTools 修改 CSS 变量即可预览效果
+
+### 为什么 AdminLayout 不内置区域组件
+
+AdminLayout 是纯布局容器，不耦合任何业务组件（菜单树、标签列表、用户信息等）。应用通过插槽自由组合，便于在不同项目中复用布局骨架，替换插槽内容。
+
+### PageTab memo 包装
+
+`PageTab` 用 `React.memo` 包裹，标签列表中只有发生属性变化的标签会重新渲染。`ChromeTabBg` 和 `SvgClose` 同样 memo，避免父组件更新时的无效渲染。

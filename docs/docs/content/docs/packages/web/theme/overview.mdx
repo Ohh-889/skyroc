@@ -1,0 +1,79 @@
+---
+title: "Theme 系统概述"
+description: "基于 OKLCH + Ant Design 的三层主题架构 — 颜色算法、React 状态管理与应用级集成"
+---
+
+## 概述
+
+SoybeanAdmin 的主题系统由两个独立包组成，分工明确、层次清晰：
+
+- **`@skyroc/adapter-antd-theme`** — 纯算法层：用 OKLCH 感知均匀色彩空间替换 Ant Design 默认调色板生成器，输出符合 Ant Design token 规范的色彩 map
+- **`@skyroc/web-admin-theme`** — React 层：在算法层之上封装 Jotai 状态管理、组件、预设与副作用，面向应用消费
+
+应用层（`apps/admin`）只需引用 `@skyroc/web-admin-theme`，无需直接接触底层算法。
+
+## 架构
+
+```
+apps/admin（应用层）
+├── setupTheme()              在入口初始化：读缓存 + 合并默认值 + 写 Jotai atom
+├── <AntdProvider>            注入 ConfigProvider，整合 Watermark
+└── <ThemeEffect>             副作用收口：DOM 更新、localStorage 缓存、CSS 滤镜
+
+         ↓ 依赖
+
+@skyroc/web-admin-theme（React 层）
+├── themeSettingsAtom         Jotai atom：全局 theme 状态唯一数据源
+├── useTheme()                读 / 写 theme 的统一 hook
+├── getAntdTheme()            将 theme 状态转换为 Ant Design ConfigProvider 配置
+├── ThemeSchemaSwitch         light / dark / auto 切换按钮
+├── ThemeSchemaSegmented      分段选择控件
+└── presets/                  5 套开箱即用预设（JSON 文件）
+
+         ↓ 依赖
+
+@skyroc/adapter-antd-theme（算法层）
+├── derivative                亮色 theme algorithm（注入 ConfigProvider）
+├── derivativeDark            暗色 theme algorithm
+├── generateColorPalettes     给一个 hex，生成 11 档 OKLCH 色板
+├── genColorMapToken          将色板转为 Ant Design color token map
+├── genFontMapToken           生成字体 token
+├── genRadiusMapToken         生成圆角 token
+└── genSizeMapToken           生成间距 token
+
+         ↓ 依赖
+
+@skyroc/color（颜色基础库）
+└── OKLCH 色彩空间算法、格式转换、WCAG 对比度
+```
+
+## 数据流
+
+```
+用户点击「切换暗色」
+    │
+    ▼
+useTheme().setThemeScheme('dark')
+    │
+    ▼
+themeSettingsAtom 更新
+    │
+    ├──► AntdProvider 重渲染
+    │       └─ getAntdTheme(themeColors, darkMode, settings)
+    │               └─ algorithm: [derivativeDark]   ← 算法层
+    │               └─ Ant Design ConfigProvider 重新主题化
+    │
+    └──► ThemeEffect 检测 darkMode 变化
+            ├─ toggleCssDarkMode(true) → <html class="dark">
+            └─ setStorage('darkMode', true)
+```
+
+## 包关系一览
+
+| 包名 | 职责 | 核心依赖 |
+|------|------|----------|
+| `@skyroc/adapter-antd-theme` | OKLCH 算法 + Ant Design token 生成 | `@skyroc/color`, `antd` (peer) |
+| `@skyroc/web-admin-theme` | React 状态、组件、预设、副作用 | `adapter-antd-theme`, `jotai`, `antd` |
+| `apps/admin` | 应用消费层，业务 UI | `web-admin-theme`, `antd` |
+
+两个包独立版本控制，`adapter-antd-theme` 不依赖任何 React API，可在非 React 环境中单独使用。

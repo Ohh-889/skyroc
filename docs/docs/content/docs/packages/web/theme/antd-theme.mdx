@@ -1,0 +1,477 @@
+---
+title: "@skyroc/adapter-antd-theme"
+description: "Ant Design 主题算法适配器 — 用 OKLCH 感知均匀色彩空间替换默认调色板生成器，输出符合 Ant Design token 规范的完整色彩与样式 token"
+---
+
+## 概述
+
+`@skyroc/adapter-antd-theme` 是一个纯算法包，解决一个核心问题：
+
+**Ant Design 默认使用 HSV 色彩空间生成调色板，感知均匀性差，不同色相在同一档位上视觉亮度不一致。** 本包用 OKLCH 算法替换这一过程，同时保留 Ant Design `algorithm` 接口的完整兼容性。
+
+核心功能：
+
+- **OKLCH 调色板生成**：输入任意 hex 色，生成 11 档（50–950）感知均匀色板
+- **Ant Design 主题算法**：导出 `derivative` / `derivativeDark`，直接注入 `ConfigProvider.theme.algorithm`
+- **完整 token 生成**：颜色、字体、圆角、间距、控件高度的 token 生成器
+- **语义色映射**：将色板映射为 Ant Design 语义色（Bg / Hover / Border / Active / Text）
+
+## 架构
+
+```
+src/
+├── algorithm/
+│   ├── default/            亮色 theme algorithm
+│   │   ├── index.ts          derivative 导出
+│   │   └── colors.ts         generateColorPalettes（亮色）、generateNeutralColorPalettes
+│   └── dark/               暗色 theme algorithm
+│       ├── index.ts          derivativeDark 导出
+│       └── colors.ts         generateColorPalettes（暗色）、generateNeutralColorPalettes
+├── seed/                   种子 token（defaultPresetColors、seedToken）
+├── shared/
+│   ├── genColorMapToken.ts   色板 → Ant Design color token map
+│   ├── genFontMapToken.ts    字体 token
+│   ├── genRadiusMapToken.ts  圆角 token
+│   ├── genSizeMapToken.ts    间距 token
+│   ├── genCommonMapToken.ts  通用 token
+│   ├── genControlHeight.ts   控件高度 token
+│   └── colorAlgorithm.ts     adjustLightness / lightenColor / darkenColor / mixColor
+└── types/                  类型定义
+```
+
+## 安装
+
+```bash
+pnpm add @skyroc/adapter-antd-theme
+```
+
+**Peer dependencies**：`antd >= 5.0.0`
+
+## 快速上手
+
+### 1. 注入 Ant Design theme algorithm
+
+```ts
+import { derivative, derivativeDark } from '@skyroc/adapter-antd-theme';
+import { ConfigProvider } from 'antd';
+
+const isDark = true;
+
+<ConfigProvider
+  theme={{
+    algorithm: [isDark ? derivativeDark : derivative],
+    token: {
+      colorPrimary: '#6366F1',
+    }
+  }}
+>
+  {children}
+</ConfigProvider>
+```
+
+`derivative` / `derivativeDark` 是标准 Ant Design `ThemeConfig['algorithm']` 函数，替换内置的 `theme.defaultAlgorithm` / `theme.darkAlgorithm`，无需其他配置。
+
+### 2. 生成调色板
+
+```ts
+import { generateColorPalettes, generateDarkColorPalettes } from '@skyroc/adapter-antd-theme';
+
+// 亮色模式：生成 11 档色板（Map<Ant Design index 1-10, hex>）
+const palette = generateColorPalettes('#6366F1');
+
+// 暗色模式
+const darkPalette = generateDarkColorPalettes('#6366F1');
+```
+
+### 3. 生成完整 color token
+
+```ts
+import { genColorMapToken } from '@skyroc/adapter-antd-theme';
+
+const colorToken = genColorMapToken(
+  {
+    colorPrimary: '#6366F1',
+    colorSuccess: '#10B981',
+    colorWarning: '#F59E0B',
+    colorError: '#F43F5E',
+    colorInfo: '#0EA5E9',
+  },
+  { darkMode: false }
+);
+
+// colorToken 包含 Ant Design 所有 color 语义 token
+// colorPrimary, colorPrimaryBg, colorPrimaryHover, colorPrimaryActive...
+```
+
+## API
+
+### Theme Algorithm
+
+#### `derivative`
+
+亮色主题算法，注入 `ConfigProvider.theme.algorithm`。
+
+```ts
+import type { SeedToken } from 'antd/es/theme/interface';
+import type { DerivativeFunc } from '@ant-design/cssinjs';
+
+const derivative: DerivativeFunc<SeedToken, MapToken>
+```
+
+内部流程：
+
+```
+seedToken.colorPrimary
+    │
+    ▼
+generateColorPalettes(color)  ← OKLCH 生成 11 档色板
+    │
+    ▼
+色板映射到 Ant Design index 1–10：
+  50  → index 1   (最浅背景)
+  100 → index 2
+  200 → index 3   (边框)
+  300 → index 4
+  400 → index 5   (hover)
+  500 → index 6   (主色)
+  600 → index 7   (active)
+  700 → index 8
+  800 → index 9   (文字)
+  900 → index 10
+    │
+    ▼
+genColorMapToken → 语义色 (colorPrimaryBg, colorPrimaryHover...)
+genFontMapToken  → 字体 token
+genRadiusMapToken → 圆角 token
+genSizeMapToken   → 间距 token
+```
+
+---
+
+#### `derivativeDark`
+
+暗色主题算法，暗色模式下替换 `derivative`。
+
+暗色模式对色板的语义映射做了特殊处理：
+
+| 语义 token | 亮色来源 | 暗色来源 |
+|-----------|---------|---------|
+| `colorPrimaryBg` | palette[1]（最浅） | palette[3]（边框色）|
+| `colorPrimaryBgHover` | palette[2] | palette[4] |
+| `colorPrimaryBorder` | palette[3] | palette[5]（hover）|
+| `colorPrimaryHover` | palette[5] | palette[6]（主色）|
+| `colorPrimary` | palette[6] | palette[5] |
+
+这种反转映射确保暗色背景下的视觉层次感与亮色模式保持一致的交互反馈。
+
+---
+
+### 调色板生成
+
+#### `generateColorPalettes`
+
+亮色模式下，从单一 hex 色生成 Ant Design 1–10 索引的调色板：
+
+```ts
+function generateColorPalettes(color: string): Record<number, string>
+```
+
+```ts
+import { generateColorPalettes } from '@skyroc/adapter-antd-theme';
+
+const palette = generateColorPalettes('#6366F1');
+// palette[1]  → 最浅背景色
+// palette[6]  → 主色（接近原色）
+// palette[10] → 最深色
+```
+
+---
+
+#### `generateDarkColorPalettes`
+
+暗色模式调色板，明度曲线反转：
+
+```ts
+function generateDarkColorPalettes(color: string): Record<number, string>
+```
+
+---
+
+#### `generateNeutralColorPalettes`
+
+生成亮色模式中性色（文字、背景、边框）：
+
+```ts
+function generateNeutralColorPalettes(
+  bgBaseColor: string,
+  textBaseColor: string
+): NeutralColorPalette
+```
+
+---
+
+#### `generateDarkNeutralColorPalettes`
+
+暗色模式中性色：
+
+```ts
+function generateDarkNeutralColorPalettes(
+  bgBaseColor: string,
+  textBaseColor: string
+): NeutralColorPalette
+```
+
+---
+
+### Token 生成器
+
+#### `genColorMapToken`
+
+将主题色转为 Ant Design 完整 color token map，包含所有语义色变体：
+
+```ts
+function genColorMapToken(
+  seed: {
+    colorPrimary: string;
+    colorSuccess: string;
+    colorWarning: string;
+    colorError: string;
+    colorInfo: string;
+  },
+  options: { darkMode: boolean }
+): ColorMapToken
+```
+
+对每个功能色（primary / success / warning / error / info）生成完整语义链：
+
+```
+colorXxx          主色
+colorXxxBg        背景（最浅）
+colorXxxBgHover   背景 hover
+colorXxxBorder    边框
+colorXxxBorderHover 边框 hover
+colorXxxHover     hover
+colorXxxActive    active（按下）
+colorXxxText      文字
+colorXxxTextHover 文字 hover
+colorXxxTextActive 文字 active
+```
+
+---
+
+#### `genFontMapToken`
+
+生成字体相关 token，基于 `fontSize`（基准字号）推导出各级字号和行高：
+
+```ts
+function genFontMapToken(fontSize: number): FontMapToken
+```
+
+```ts
+import { genFontMapToken } from '@skyroc/adapter-antd-theme';
+
+const fontTokens = genFontMapToken(14);
+// fontSizeSM: 12, fontSize: 14, fontSizeLG: 16, fontSizeXL: 20...
+// lineHeight: 1.5714, lineHeightLG: 1.5, lineHeightSM: 1.6667
+```
+
+---
+
+#### `genRadiusMapToken`
+
+基于基准圆角（`borderRadius`）生成各级圆角 token：
+
+```ts
+function genRadiusMapToken(borderRadius: number): RadiusMapToken
+```
+
+```ts
+import { genRadiusMapToken } from '@skyroc/adapter-antd-theme';
+
+const radiusTokens = genRadiusMapToken(6);
+// borderRadiusXS: 2, borderRadiusSM: 4, borderRadius: 6, borderRadiusLG: 8, borderRadiusOuter: 4
+```
+
+---
+
+#### `genSizeMapToken`
+
+生成间距 / 尺寸 token：
+
+```ts
+function genSizeMapToken(seed: SeedToken): SizeMapToken
+```
+
+---
+
+#### `genCommonMapToken`
+
+生成通用 token（动画时长、线宽等）：
+
+```ts
+function genCommonMapToken(seed: SeedToken): CommonMapToken
+```
+
+---
+
+#### `genControlHeight`
+
+生成控件高度 token（controlHeight / controlHeightSM / controlHeightLG）：
+
+```ts
+function genControlHeight(seed: SeedToken): Pick<MapToken, 'controlHeight'>
+```
+
+---
+
+### 工具函数
+
+#### `genPaletteVars`
+
+生成 CSS 变量格式的调色板：
+
+```ts
+function genPaletteVars(
+  colorName: string,
+  palette: Record<number, string>
+): Record<string, string>
+```
+
+输出格式：
+- `primary-1` ... `primary-10`（Ant Design 风格）
+- `primary-50` ... `primary-950`（Tailwind 风格）
+
+---
+
+#### `genSemanticColors`
+
+从调色板生成语义色对象：
+
+```ts
+function genSemanticColors(
+  colorName: string,
+  palette: Record<number, string>,
+  config: SemanticColorConfig,
+  darkMode?: boolean
+): Record<string, string>
+```
+
+---
+
+#### 颜色工具（来自 `@skyroc/color`）
+
+```ts
+import { adjustLightness, darkenColor, lightenColor, mixColor } from '@skyroc/adapter-antd-theme';
+
+adjustLightness('#6366F1', 20);   // 调亮 20%
+adjustLightness('#6366F1', -20);  // 调暗 20%
+lightenColor('#6366F1', 20);
+darkenColor('#6366F1', 20);
+mixColor('#6366F1', '#ffffff', 0.3); // 混合
+```
+
+---
+
+### 种子 token
+
+#### `defaultPresetColors`
+
+内置 Tailwind 风格预设色（slate、gray、red、blue 等 22 个色族），作为 Ant Design seedToken 的扩展色补充，传入 `ConfigProvider.theme.token`：
+
+```ts
+import { defaultPresetColors } from '@skyroc/adapter-antd-theme';
+
+<ConfigProvider
+  theme={{
+    token: {
+      colorPrimary: '#6366F1',
+      ...defaultPresetColors  // 注入预设色变量
+    }
+  }}
+>
+```
+
+---
+
+#### `seedToken`
+
+基础种子 token 默认值，对齐 Tailwind 间距和字号体系。
+
+---
+
+### 常量
+
+#### `ANTD_INDEXES`
+
+Ant Design 色板索引（1-10）到 Tailwind 色阶（50-950）的映射表：
+
+```ts
+const ANTD_INDEXES: Record<number, ColorPaletteNumber>
+// { 1: 50, 2: 100, 3: 200, 4: 300, 5: 400, 6: 500, 7: 600, 8: 700, 9: 800, 10: 900 }
+```
+
+#### `TAILWIND_INDEXES`
+
+反向映射：
+
+```ts
+const TAILWIND_INDEXES: Record<ColorPaletteNumber, number>
+// { 50: 1, 100: 2, 200: 3, ... }
+```
+
+#### `LIGHT_BG_BASE` / `LIGHT_TEXT_BASE`
+
+亮色模式中性色基准（背景白、文字黑）。
+
+#### `DARK_BG_BASE` / `DARK_TEXT_BASE`
+
+暗色模式中性色基准（背景深灰、文字浅灰）。
+
+## 类型参考
+
+### `SemanticColorConfig`
+
+语义色映射配置，描述每个语义 token 使用哪个色板索引：
+
+```ts
+interface SemanticColorConfig {
+  /** token 名后缀 → 色板 index（1-10）*/
+  [suffix: string]: number | { dark: number; light: number };
+}
+```
+
+### `RadiusMapToken`
+
+```ts
+interface RadiusMapToken {
+  borderRadius: number;
+  borderRadiusLG: number;
+  borderRadiusOuter: number;
+  borderRadiusSM: number;
+  borderRadiusXS: number;
+}
+```
+
+### `FontSizeKey`
+
+```ts
+type FontSizeKey = 'fontSizeSM' | 'fontSize' | 'fontSizeLG' | 'fontSizeXL' | 'fontSizeHeading1' | ...
+```
+
+## 设计说明
+
+### 为什么选 OKLCH
+
+HSV / HSL 在感知上是不均匀的：黄色在 50% 亮度时视觉亮度接近 90%，蓝色接近 30%。同一色板索引下，不同色相的视觉重量差异很大，导致多主题切换时界面一致性差。
+
+OKLCH（Oklab 的柱坐标系）在相同 L 值下保证跨色相的感知亮度一致，是目前 CSS Color Level 4 推荐的感知均匀色彩空间。
+
+### 为什么不直接用 `@ant-design/colors`
+
+Ant Design 官方基于 HSV 的 `generate()` 函数主色固定在第 6 档，对色相的偏移量是硬编码的线性值，在暖色（橙、黄）上会产生明显的色相漂移，且没有 sRGB 色域夹紧，部分颜色超出显示范围会被截断。
+
+本包的 OKLCH 生成器使用二分法做 sRGB 色域映射，并基于 Tailwind 官方色板的 OKLCH 分析数据拟合明度曲线，保证生成结果在各主流显示设备上的可显示性。
+
+### 与 Ant Design 的兼容性
+
+`derivative` / `derivativeDark` 完全符合 `DerivativeFunc<SeedToken, MapToken>` 类型约束，接受标准 `SeedToken`，返回标准 `MapToken`，不需要修改任何 Ant Design 组件，直接替换 `algorithm` 即可生效。

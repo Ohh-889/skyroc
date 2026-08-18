@@ -1,0 +1,166 @@
+---
+title: "布局插槽"
+description: "AdminLayout 的业务插槽：Logo、Header actions、Footer、Content、categoryKey 与底层布局模式"
+---
+
+`AdminLayout` 面向业务应用暴露的是少量稳定插槽。应用只需要提供品牌、用户入口、通知、页脚等业务节点，Header、Sider、Tab、Content 和主题抽屉的组合由布局包内部完成。
+
+## 基础用法
+
+```tsx
+import { AdminLayout } from '@skyroc/web-admin-layouts';
+
+const AdminShell = () => {
+  return (
+    <AdminLayout
+      footer={<AdminFooter />}
+      headerLeftActions={<ProjectSwitcher />}
+      headerMiddleActions={<NotificationButton className="px-12px" />}
+      headerRightActions={<UserAvatar />}
+      logo={<SystemLogo className="text-32px text-primary" />}
+      logoTitle="Skyroc Admin"
+      logoTo="/home"
+    />
+  );
+};
+```
+
+## 插槽说明
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| `content` | `ReactNode` | 主内容区域。默认渲染 TanStack Router 的 `Outlet`。 |
+| `footer` | `ReactNode` | 页脚区域。是否展示还受主题设置 `footer.visible` 控制。 |
+| `headerLeftActions` | `ReactNode` | Header 左侧操作区，位于搜索和全屏按钮之间。 |
+| `headerMiddleActions` | `ReactNode` | Header 中间操作区，位于语言切换和主题按钮之间。 |
+| `headerRightActions` | `ReactNode` | Header 右侧操作区，位于所有内置操作之后。 |
+| `logo` | `ReactNode` | 默认 Logo 组件里的品牌图标。 |
+| `logoTitle` | `ReactNode` | 默认 Logo 组件里的品牌标题。 |
+| `logoTo` | `Router.RoutePath` | 点击 Logo 时跳转的路径，默认使用 `defaultHome`。 |
+| `logoComponent` | `ReactNode | ((style) => ReactNode)` | 完整替换默认 Logo 结构。 |
+| `categoryKey` | `string` | 当前布局读取哪个菜单分类，默认取 `menuCategories` 的第一个 key。 |
+
+## 自定义 Logo
+
+默认方式适合大多数后台应用：
+
+```tsx
+<AdminLayout
+  logo={<SystemLogo className="text-32px text-primary" />}
+  logoTitle={t('system.title')}
+/>
+```
+
+如果需要完全控制 Logo 结构，可以传 `logoComponent`：
+
+```tsx
+const CustomLogo = (style: CSSProperties) => {
+  return (
+    <div className="flex items-center gap-2" style={style}>
+      <SystemLogo className="text-28px text-primary" />
+      <span className="font-semibold">Operations</span>
+    </div>
+  );
+};
+
+<AdminLayout logoComponent={CustomLogo} />;
+```
+
+`logoComponent` 会收到布局位置传入的 `style`，这样同一个 Logo 能在 Header、Sider、vertical-mix 等位置保持高度和对齐一致。
+
+## Header Actions
+
+Header 内置搜索、全屏、语言、主题等通用入口。业务侧一般只需要补充通知、用户头像、项目切换或环境选择器。
+
+```tsx
+<AdminLayout
+  headerLeftActions={<TenantSwitcher />}
+  headerMiddleActions={<NotificationButton className="px-12px" />}
+  headerRightActions={<UserAvatar />}
+/>
+```
+
+为了避免 Header 变成业务容器，建议每个 action 都保持窄交互：按钮、下拉菜单、头像入口、状态开关，而不是放复杂页面内容。
+
+## Footer
+
+Footer 是否固定、是否显示、是否右侧贴边，都由 `@skyroc/web-admin-theme` 的主题设置控制。业务侧只传内容：
+
+```tsx
+const AdminFooter = () => {
+  return (
+    <DarkModeContainer className="h-full flex-center">
+      <a href="https://github.com/Ohh-889/skyroc-admin/blob/main/LICENSE" rel="noopener noreferrer" target="_blank">
+        Copyright MIT © 2021 Skyroc
+      </a>
+    </DarkModeContainer>
+  );
+};
+
+<AdminLayout footer={<AdminFooter />} />;
+```
+
+## Content
+
+默认内容区域是布局包内部的 `AdminContent`，它会渲染 TanStack Router `Outlet`。
+
+需要完全接管内容时传 `content`：
+
+```tsx
+<AdminLayout content={<CustomRouterOutlet />} />;
+```
+
+这个能力适合嵌入特殊容器、微前端宿主或自定义错误边界。普通后台应用不需要覆盖。
+
+## 菜单分类 categoryKey
+
+`categoryKey` 用于从 `menuCategories` 中选择当前布局读取哪一组菜单。
+
+```ts
+setupAdminLayouts({
+  menuCategories: {
+    admin: {
+      key: 'admin',
+      layout: '/(admin)'
+    },
+    workspace: {
+      key: 'workspace',
+      layout: '/(workspace)'
+    }
+  }
+});
+```
+
+```tsx
+<AdminLayout categoryKey="workspace" />;
+```
+
+单后台应用通常只需要一个 `admin` 分类；多后台入口或多工作台模式才需要手动传 `categoryKey`。
+
+## 布局模式来源
+
+`AdminLayout` 自身不接收 `mode`、`siderWidth`、`tabHeight` 这些底层布局参数。它从 `@skyroc/web-admin-theme` 读取主题设置：
+
+```text
+useSettingsTheme()
+  ├─ layout.mode
+  ├─ layout.scrollMode
+  ├─ fixedHeaderAndTab
+  ├─ header.height
+  ├─ sider.width / collapsedWidth / mixWidth
+  ├─ tab.visible / height
+  └─ footer.visible / fixed / height / right
+```
+
+支持的布局模式由布局包常量统一管理：
+
+| 模式 | 说明 |
+| --- | --- |
+| `vertical` | 左侧菜单 + 顶部 Header。 |
+| `horizontal` | 顶部菜单。 |
+| `vertical-mix` | 左侧一级菜单 + 混合子菜单。 |
+| `vertical-hybrid-header-first` | 顶部一级菜单 + 左侧子菜单。 |
+| `top-hybrid-sidebar-first` | 左侧一级菜单 + 顶部二级菜单。 |
+| `top-hybrid-header-first` | 顶部一级菜单 + 左侧子菜单。 |
+
+底层区域排布最终交给 `@skyroc/materials` 的 `AdminLayout` 完成。
