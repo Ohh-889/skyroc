@@ -1,6 +1,6 @@
 import { cn, isNumber } from '@skyroc/utils';
-import { useEffect } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
+import { useContainerSize } from '../../hooks/use-container-size';
 import { floatingButtonVariants } from './floating-button-variants';
 import type { FloatingButtonGap, FloatingButtonProps } from './types';
 
@@ -54,7 +55,7 @@ const PRESS_DURATION = 100;
 /** 禁用态的不透明度 */
 const DISABLED_OPACITY = 0.5;
 
-/** 默认距屏幕边缘的留白 */
+/** 默认距父容器边缘的留白 */
 const DEFAULT_GAP = 24;
 
 /** 默认直径 */
@@ -105,15 +106,17 @@ const FloatingButton = (props: FloatingButtonProps) => {
     visible = true
   } = props;
 
-  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  // 边界按父容器实测尺寸算，不再按窗口：渲染本就是相对父容器的 absolute，
+  // 用窗口尺寸只在「宿主铺满屏幕」时才碰巧对得上，宿主是手机框预览一类的定宽容器时按钮会被推到容器外
+  const { handleLayout, height: containerHeight, measured, width: containerWidth } = useContainerSize();
 
   // 几何量前置到 shared value 之前：位置初值要用到 maxX / maxY，属于「初值依赖上游数据」的例外。
-  // max 再兜一层 Math.max，避免窗口太窄或 gap 过大时区间反转，clamp 拿到 min > max 会给出错误结果
+  // max 再兜一层 Math.max，避免容器太窄或 gap 过大时区间反转，clamp 拿到 min > max 会给出错误结果
   const { x: gapX, y: gapY } = resolveGap(gap);
   const minX = gapX;
-  const maxX = Math.max(minX, windowWidth - size - gapX);
+  const maxX = Math.max(minX, containerWidth - size - gapX);
   const minY = gapY;
-  const maxY = Math.max(minY, windowHeight - size - gapY);
+  const maxY = Math.max(minY, containerHeight - size - gapY);
 
   // visible 的两种载体在这里拆开，但只是「读法」不同：下面统一由一个 useAnimatedReaction 消费，
   // 不存在 UI 线程与 JS 线程各一套显隐逻辑
@@ -133,6 +136,9 @@ const FloatingButton = (props: FloatingButtonProps) => {
   // 拆成标量再进依赖数组：offset 多半是调用方内联的字面量，按对象比会每次渲染都判定为变化
   const offsetX = offset?.x;
   const offsetY = offset?.y;
+
+  // 首次拿到实测尺寸之前，位置是按窗口尺寸估的；补正到真实边界属于「纠正估算」而不是位置变化，得跳过动画
+  const settledRef = useRef(false);
 
   function handleOffsetChange(x: number, y: number) {
     onOffsetChange?.({ x, y });
@@ -200,8 +206,12 @@ const FloatingButton = (props: FloatingButtonProps) => {
       opacity.value = withTiming(1, { duration: PRESS_DURATION });
     });
 
-  // Exclusive 让 Pan 优先：一旦手指移动就判定为拖拽，Tap 不再触发
-  const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
+  // Exclusive 让 Pan 优先：一旦手指移动就判定为拖拽，Tap 不再触发。
+  //
+  // axis 为 lock 时干脆不组合：Pan 这时已经 enabled(false)，但 RNGH 的 web 实现里，被禁用的成员
+  // 仍留在 Exclusive 的仲裁链上，Tap 要等一个永远不会失败的 Pan 让位，点击就此彻底失效
+  // （原生端不会，所以真机上一直是好的）。BackTop 正是 axis="lock"，web 上点不动就是这条。
+  const composedGesture = axis === 'lock' ? tapGesture : Gesture.Exclusive(panGesture, tapGesture);
 
   const animatedStyle = useAnimatedStyle(
     () => ({
@@ -234,22 +244,37 @@ const FloatingButton = (props: FloatingButtonProps) => {
     [scale, visibleFlag, visibleShared]
   );
 
-  // 受控位置同步 + 边界重夹。非受控（拖拽）时也必须跑：旋转或窗口尺寸变化后 max 会变小，
+  // 受控位置同步 + 边界重夹。非受控（拖拽）时也必须跑：旋转或容器尺寸变化后 max 会变小，
   // 而 clamp 只在拖拽过程中生效，按钮一旦停在可视区外就既点不到也拖不回来
   useEffect(() => {
-    translateX.value = withSpring(clamp(offsetX ?? translateX.value, minX, maxX), SPRING_CONFIG);
-    translateY.value = withSpring(clamp(offsetY ?? translateY.value, minY, maxY), SPRING_CONFIG);
-  }, [offsetX, offsetY, minX, maxX, minY, maxY, translateX, translateY]);
+    const animate = settledRef.current;
+
+    settledRef.current = measured;
+
+    const nextX = clamp(offsetX ?? translateX.value, minX, maxX);
+    const nextY = clamp(offsetY ?? translateY.value, minY, maxY);
+
+    translateX.value = animate ? withSpring(nextX, SPRING_CONFIG) : nextX;
+    translateY.value = animate ? withSpring(nextY, SPRING_CONFIG) : nextY;
+  }, [offsetX, offsetY, minX, maxX, minY, maxY, measured, translateX, translateY]);
 
   return (
-    <GestureDetector gesture={composedGesture}>
-      <Animated.View
-        className={cn(floatingButtonVariants(), className)}
-        style={[animatedStyle, style]}
-      >
-        {children}
-      </Animated.View>
-    </GestureDetector>
+    // 测量层：absolute inset-0 铺满父容器，onLayout 回来的就是按钮真正可用的可视区。
+    // box-none 让它只做尺寸探针，不接管任何触摸，底下的页面照常可点
+    <View
+      className="absolute inset-0"
+      pointerEvents="box-none"
+      onLayout={handleLayout}
+    >
+      <GestureDetector gesture={composedGesture}>
+        <Animated.View
+          className={cn(floatingButtonVariants(), className)}
+          style={[animatedStyle, style]}
+        >
+          {children}
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 };
 
