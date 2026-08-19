@@ -15,6 +15,10 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
+      // playground 的页面文件（app/components/*.tsx）里写的是 `@/src/demos/XxxDemo`，
+      // 那里的 `@/` 指 playground 根。docs 自己没有 src/ 目录，所以 `@/src/*` 无歧义，
+      // 可以单独指过去而不影响下面 docs 自己的 `@/`。更长的前缀优先匹配。
+      "@/src/*": ["../../apps/native-ui-playground/src/*"],
       "@/*": ["./*"],
       // pnpm 会按 peer 哈希给 react-native 生成多个物理实例，TS 把 `declare module 'react-native'`
       // 绑定到具体文件，实例不统一时 uniwind 的 className 增强就打不到 @skyroc/native-ui 源码上。

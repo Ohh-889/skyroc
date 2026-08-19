@@ -9,6 +9,8 @@ import {
 } from 'fumadocs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
+import { DemoStage, DemoStageProvider } from '@/components/demo/stage';
+import { resolvePlaygroundPage } from '@/lib/playground-demo';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { gitConfig } from '@/lib/shared';
@@ -21,8 +23,24 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = page.data.body;
   const markdownUrl = getPageMarkdownUrl(page).url;
 
+  // playground 里有对应整页路由的才分栏，纯文字页保持常规单栏 + 右侧目录
+  const playgroundPage = resolvePlaygroundPage(page.slugs);
+
+  const body = (
+    <MDX
+      components={getMDXComponents({
+        // this allows you to link to other pages with relative file paths
+        a: createRelativeLink(source, page),
+      })}
+    />
+  );
+
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc}
+      full={Boolean(playgroundPage) || page.data.full}
+      tableOfContent={{ enabled: !playgroundPage }}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
       <div className="flex flex-row gap-2 items-center border-b pb-6">
@@ -32,14 +50,19 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
         />
       </div>
-      <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            // this allows you to link to other pages with relative file paths
-            a: createRelativeLink(source, page),
-          })}
-        />
-      </DocsBody>
+      {playgroundPage ? (
+        <DemoStageProvider>
+          <div className="skyroc-split">
+            <DocsBody className="skyroc-split-doc">{body}</DocsBody>
+            <DemoStage
+              label={`${page.data.title} · 完整示例`}
+              slug={playgroundPage}
+            />
+          </div>
+        </DemoStageProvider>
+      ) : (
+        <DocsBody>{body}</DocsBody>
+      )}
     </DocsPage>
   );
 }

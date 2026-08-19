@@ -36,17 +36,8 @@ export const DemoPreview = (props: DemoPreviewProps) => {
     [name]
   );
 
-  return (
-    <div className="flex justify-center px-4 py-8">
-      {/* 机身：外圈是边框，内圈才是视口。高度跟随内容，单点 demo 不会撑出大片留白，
-          整屏 demo（ScrollView flex-1）则顶到 600 上限后内部滚动 */}
-      <div className="w-[375px] rounded-[2.5rem] border border-fd-border bg-fd-card p-3 shadow-xl">
-        <div className="flex max-h-[600px] min-h-[120px] w-full flex-col overflow-hidden rounded-[1.75rem] border border-fd-border/60">
-          <Demo />
-        </div>
-      </div>
-    </div>
-  );
+  // 只负责屏幕内容：机身由 PhoneFrame 提供，分栏时整页共用右侧那一台
+  return <Demo />;
 };
 
 interface DemoFallbackProps {

@@ -8,11 +8,26 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  CircleX,
   Download,
+  Eye,
+  EyeOff,
   Heart,
+  ImageOff,
+  Link,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Minus,
+  MoreHorizontal,
   Plus,
+  Search,
+  SlidersHorizontal,
   Smartphone,
-  Wifi
+  Star,
+  User,
+  Wifi,
+  X
 } from 'lucide-react';
 import type { CSSProperties } from 'react';
 
@@ -25,7 +40,9 @@ import type { CSSProperties } from 'react';
  * 于是 node 内建模块被塞进浏览器 chunk，Turbopack 直接 panic。
  *
  * 文档站只需要图标的视觉占位，所以统一用 lucide-react 渲染等价字形。
- * next.config.mjs 里把 Feather / AntDesign / Octicons 三个入口都 alias 到本文件。
+ * next.config.mjs 里把 AntDesign / Feather / FontAwesome / Ionicons / MaterialIcons / Octicons
+ * 六个入口都 alias 到本文件。少 alias 一个都会把真包拖回来：它的 createIconSet.js 在 node_modules
+ * 里直接发未编译的 JSX，next build 走到 chunk 拼装时会以 "Expected ';', got 'ident'" panic。
  *
  * 注意：这里只覆盖 @skyroc/native-ui 当前用到的图标名，新增图标要同步补 ICON_MAP。
  */
@@ -33,17 +50,39 @@ import type { CSSProperties } from 'react';
 const ICON_MAP = {
   'arrow-right': ArrowRight,
   bluetooth: Bluetooth,
+  'broken-image': ImageOff,
+  'caret-down': ChevronDown,
+  'caret-up': ChevronUp,
   check: Check,
+  checkmark: Check,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
+  'chevron-up': ChevronUp,
+  close: X,
+  'close-circle': CircleX,
   down: ChevronDown,
   download: Download,
+  'eye-off-outline': EyeOff,
+  'eye-outline': Eye,
   heart: Heart,
+  'heart-outline': Heart,
   left: ChevronLeft,
+  link: Link,
+  'map-pin': MapPin,
+  minus: Minus,
+  'more-horiz': MoreHorizontal,
+  'more-horizontal': MoreHorizontal,
+  person: User,
   plus: Plus,
+  'reorder-two': Menu,
   right: ChevronRight,
+  search: Search,
+  sliders: SlidersHorizontal,
   smartphone: Smartphone,
+  star: Star,
+  'star-outline': Star,
   up: ChevronUp,
+  wechat: MessageCircle,
   wifi: Wifi
 } as const;
 

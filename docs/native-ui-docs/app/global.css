@@ -22,3 +22,67 @@ html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+
+/*
+ * ─── Vant 式双栏：左文档流 / 右粘性整页预览 ───
+ * 只在 playground 里有对应整页 demo 的页面启用。断点必须和
+ * components/demo/stage.tsx 的 SPLIT_QUERY 一致，否则会出现
+ * 「CSS 已分栏但预览还内联」的错位。
+ */
+.skyroc-split-doc {
+  min-width: 0;
+}
+
+.skyroc-stage {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .skyroc-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .skyroc-stage {
+    display: block;
+    position: sticky;
+    top: calc(var(--fd-header-height, 3.5rem) + 24px);
+    align-self: start;
+  }
+}
+
+.skyroc-stage-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/*
+ * 机身高度跟随视口，收在真机比例附近：整页 demo 内容长，给足高度才不用
+ * 在一个小窗口里反复搓滚动条。上限按 iPhone 视口比例（375 × 812）收住。
+ */
+.skyroc-phone-screen-fill {
+  height: min(812px, calc(100dvh - var(--fd-header-height, 3.5rem) - 116px));
+  min-height: 520px;
+}
+
+/* 保留触控、滚轮和键盘滚动，仅隐藏 RN Web 滚动容器的原生滚动条。 */
+.skyroc-phone-screen,
+.skyroc-phone-screen * {
+  scrollbar-width: none;
+}
+
+.skyroc-phone-screen::-webkit-scrollbar,
+.skyroc-phone-screen *::-webkit-scrollbar {
+  display: none;
+}
+
+.skyroc-stage-caption {
+  margin: 0;
+  color: var(--color-fd-muted-foreground);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
