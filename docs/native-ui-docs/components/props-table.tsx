@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { typeToReactNode } from './type-anchor';
 
 interface PropItem {
   /** 默认值，缺省渲染为 "-" */
@@ -11,6 +12,14 @@ interface PropItem {
   required?: boolean;
   /** 类型签名 */
   type: ReactNode;
+}
+
+/** 字符串类型走类型锚点渲染，ReactNode 原样输出 */
+function renderType(type: ReactNode): ReactNode {
+  if (typeof type === 'string') {
+    return typeToReactNode(type);
+  }
+  return type;
 }
 
 interface PropsTableProps {
@@ -58,7 +67,7 @@ export const PropsTable = (props: PropsTableProps) => {
               </td>
               <td className="border-r py-3 pr-4 pl-3 align-top text-fd-foreground/75">{item.description}</td>
               <td className="break-all border-r py-3 pr-4 pl-3 align-top font-mono text-[13px] text-fd-foreground/65">
-                {item.type}
+                {renderType(item.type)}
               </td>
               <td className="py-3 pl-3 align-top font-mono text-[13px] text-fd-foreground/55">{item.default ?? '-'}</td>
             </tr>

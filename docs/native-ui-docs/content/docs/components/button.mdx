@@ -9,6 +9,12 @@ description: 触发即时操作的按钮组件
 import { Button } from '@skyroc/native-ui';
 ```
 
+## 基础用法
+
+不传任何变体属性时为 `solid` + `primary` + `md` + `rounded`，把文字直接作为 `children` 传入即可。
+
+<Demo src="@playground/button/ButtonBasic" />
+
 ## 何时使用
 
 - 需要一个即时操作的触发器时，使用按钮。
@@ -173,7 +179,7 @@ import { Button } from '@skyroc/native-ui';
   ]}
 />
 
-### 类型
+## 类型
 
 ```ts
 import type {
@@ -186,5 +192,52 @@ import type {
 } from '@skyroc/native-ui';
 ```
 
-`ButtonColor` / `ButtonVariant` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上表一一对应；
-`ButtonSlots` 是可覆盖的 slot 名称联合，供 `classNames` 使用。
+`ButtonVariant` / `ButtonColor` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上面的 Props 表一一对应。
+
+<UnionType
+  name="ButtonVariant"
+  description="按钮视觉样式，视觉强度从强到弱。"
+  type="'solid' | 'tonal' | 'outline' | 'ghost'"
+/>
+
+<UnionType
+  name="ButtonColor"
+  description="按钮语义颜色，muted 的文字色不随 variant 变化。"
+  type="'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info' | 'muted'"
+/>
+
+<UnionType
+  name="ButtonSize"
+  description="按钮尺寸，同时决定高度、字号、内边距与 hitSlop 热区补偿。"
+  type="'sm' | 'md' | 'lg' | 'icon'"
+/>
+
+<UnionType
+  name="ButtonShape"
+  description="按钮圆角形态，circle 在任意尺寸下都收成正圆。"
+  type="'rounded' | 'pill' | 'circle'"
+/>
+
+<UnionType
+  name="ButtonSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'indicator' | 'root' | 'text'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'SlotClassNames',
+      description: 'classNames 的取值形态，每个 slot 都可选，等价于 Partial<Record<Slots, string>>。',
+      fields: [
+        { name: 'root', type: 'string', description: '根容器 Pressable 的类名。' },
+        { name: 'text', type: 'string', description: '文字类名，通过 TextClassContext 下发给子 Text。' },
+        {
+          name: 'indicator',
+          type: 'string',
+          description: 'loading 指示器的 colorClassName，只接受 accent-* 颜色类。'
+        }
+      ]
+    }
+  ]}
+/>
