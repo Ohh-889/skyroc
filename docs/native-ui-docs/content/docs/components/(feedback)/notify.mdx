@@ -1,0 +1,220 @@
+---
+title: Notify
+description: 贴边横幅通知，命令式调用为主
+---
+
+通知（Notify）在屏幕顶部或底部贴边浮出一条整宽色带，用于系统级消息：断网、版本更新、后台任务结果。主用法是命令式的 `showNotify`，面板通过 `Portal` 挂载（`zIndex` 1100，高于 Toast —— 它贴边显示不会压住居中的 Toast，即便与 Toast 的遮罩同时存在也应保持可见可点）。
+
+```tsx
+import { showNotify, closeNotify } from '@skyroc/native-ui';
+```
+
+命令式调用依赖 `PortalHost`，请确保 App 内已经挂了它。
+
+## 基础用法
+
+`showNotify` 参数可以直接传字符串（等价于 `{ message }`），返回一个实例句柄；`closeNotify()` 关闭当前通知。
+
+<Demo src="@playground/notify/NotifyBasic" />
+
+同一时刻只显示一条，新的会顶掉旧的（旧的那条会触发 `onClose`）。
+
+## 何时使用
+
+- 系统级、需要横贯全屏宣告的消息。
+- 操作反馈用 `Toast`；需要用户确认用 `Dialog`。
+
+## 通知类型
+
+`type` 决定背景色与文字色，四种语义各取对应的 `-foreground` token（而不是写死白字：`warning` / `success` 的背景在浅色主题下并不深，固定白字对比度不达标，主题切换时也无从跟随）：
+
+| 类型      | 背景             |
+| --------- | ---------------- |
+| `danger`  | `bg-destructive`（默认） |
+| `primary` | `bg-primary`     |
+| `success` | `bg-success`     |
+| `warning` | `bg-warning`     |
+
+<Demo src="@playground/notify/NotifyTypes" />
+
+## 显示位置
+
+`position` 控制贴顶还是贴底，命令式路径下还会自动补对应一侧的安全区（补偿落在带背景色的容器上，色块因此一直铺到状态栏 / home indicator）。
+
+<Demo src="@playground/notify/NotifyPositions" />
+
+## 展示时长与关闭
+
+`duration` 默认 3000ms，`0` 表示常驻 —— 此时用返回实例的 `close()` 关闭。
+
+<Demo src="@playground/notify/NotifyDuration" />
+
+## 点击事件
+
+传了 `onClick` 后通知可响应点击；**不传时不拦截触摸**，下层内容照常可点。
+
+<Demo src="@playground/notify/NotifyInteraction" />
+
+## 原地更新
+
+实例的 `update(options)` 原地更新内容与配置，不重放进场动画，并按新的 `duration` 重新计时。
+
+<Demo src="@playground/notify/NotifyUpdate" />
+
+## 关闭回调
+
+`onClose` 在超时关闭、主动关闭、被新通知顶替三条路径下都会触发，且每条通知**只触发一次**。
+
+<Demo src="@playground/notify/NotifyLifecycle" />
+
+## 全局默认配置
+
+```ts
+import { setNotifyDefaultOptions, resetNotifyDefaultOptions } from '@skyroc/native-ui';
+
+setNotifyDefaultOptions({ duration: 5000, type: 'primary' });
+resetNotifyDefaultOptions();
+```
+
+`setNotifyDefaultOptions` 是**增量合并**（与已有默认值合并），`resetNotifyDefaultOptions` 清空全部。合并优先级是「全局默认 < 调用参数」。
+
+<Demo src="@playground/notify/NotifyDefaults" />
+
+## 自定义样式与内容
+
+`className` / `classNames` 优先使用主题类名；`background` / `color` 只在颜色来自主题之外（如服务端下发的品牌色）时使用。`message` 也可以传自定义节点。
+
+| slot      | 作用位置                             |
+| --------- | ------------------------------------ |
+| `root`    | 色带本体（背景色、安全区补偿）        |
+| `content` | 内容容器（内边距、居中）              |
+| `message` | 消息文字                             |
+
+<Demo src="@playground/notify/NotifyCustom" />
+
+## 声明式受控模式
+
+`<Notify>` 组件就地渲染：`show` 控制显隐，`onUpdateShow` 接收自动关闭请求（组件到点后只通知，真正的隐藏仍由调用方改 `show` 完成）。
+
+<Demo src="@playground/notify/NotifyDeclarative" />
+
+声明式不做贴边定位、也不补安全区 —— 内联在页面里它就是一条普通色块，贴边显示交给命令式路径的渲染器。两条路径共用同一份 `duration` 默认值规则，不会出现行为分叉。
+
+## API
+
+### 命令式函数
+
+```ts
+function showNotify(options: NotifyOptions | string): NotifyInstance;
+function closeNotify(): void;
+function setNotifyDefaultOptions(options: NotifyOptions): void;
+function resetNotifyDefaultOptions(): void;
+```
+
+### NotifyOptions
+
+<PropsTable
+  data={[
+    { name: 'message', description: '消息内容，字符串会自动包一层 Text', type: 'ReactNode' },
+    {
+      name: 'type',
+      description: '类型，决定背景色与文字色',
+      type: "'danger' | 'primary' | 'success' | 'warning'",
+      default: "'danger'"
+    },
+    { name: 'position', description: '显示位置', type: "'top' | 'bottom'", default: "'top'" },
+    {
+      name: 'duration',
+      description: '自动关闭延时（毫秒），0 表示常驻',
+      type: 'number',
+      default: '3000'
+    },
+    { name: 'onClick', description: '点击回调；不传时不拦截触摸，下层内容可点', type: '() => void' },
+    { name: 'onClose', description: '关闭时回调，三条关闭路径都只触发一次', type: '() => void' },
+    {
+      name: 'background',
+      description: '自定义背景色；仅用于主题外的颜色，能写成类名时优先用 className',
+      type: 'string'
+    },
+    {
+      name: 'color',
+      description: '自定义文字颜色；仅用于主题外的颜色，能写成类名时优先用 classNames.message',
+      type: 'string'
+    },
+    { name: 'className', description: '色带本体类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<NotifySlots>' }
+  ]}
+/>
+
+### Notify
+
+声明式组件，属性为 `NotifyOptions` 加上：
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示', type: 'boolean', default: 'false' },
+    { name: 'onUpdateShow', description: '显示状态变更回调（到点时触发）', type: '(show: boolean) => void' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  NotifyInstance,
+  NotifyOptions,
+  NotifyPosition,
+  NotifyProps,
+  NotifySlots,
+  NotifyType
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="NotifyType"
+  description="通知类型，决定背景色与文字色。"
+  type="'danger' | 'primary' | 'success' | 'warning'"
+/>
+
+<UnionType
+  name="NotifyPosition"
+  description="显示位置，命令式路径下还决定安全区补偿画在哪一侧。"
+  type="'bottom' | 'top'"
+/>
+
+<UnionType
+  name="NotifySlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'message' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 NotifySlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'NotifyInstance',
+      description: 'showNotify 的返回值。',
+      fields: [
+        {
+          name: 'close',
+          type: '() => void',
+          description: '关闭此条通知；已被后来的通知顶替时不做任何事。',
+          required: true
+        },
+        {
+          name: 'update',
+          type: '(options: NotifyOptions) => void',
+          description: '原地更新此条通知的内容，不重放动画，并按新的 duration 重新计时。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `notifyVariants`、`notifyPositionVariants` 与 `NotifyRenderer`（由命令式路径自动挂载，一般不需要直接使用）。

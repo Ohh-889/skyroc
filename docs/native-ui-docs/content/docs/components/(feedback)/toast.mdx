@@ -1,0 +1,192 @@
+---
+title: Toast
+description: 轻提示，命令式调用为主
+---
+
+轻提示（Toast）在屏幕中央或上下方浮出一条短反馈。主用法是命令式函数（`showToast` 等），面板通过 `Portal` 挂载（`zIndex` 1000），因此在任意位置调用都能盖在页面之上。
+
+```tsx
+import { showToast, showSuccessToast, showFailToast, showLoadingToast, closeToast } from '@skyroc/native-ui';
+```
+
+命令式调用依赖 `PortalHost`，请确保 App 内已经挂了它。
+
+## 类型
+
+`type` 决定内置图标：`text`（无图标）、`success`（勾）、`fail`（叉）、`loading`（转圈）。四个快捷函数分别对应这些类型，参数可以直接传字符串（等价于 `{ message }`）。
+
+<Demo src="@playground/toast/ToastTypes" />
+
+`loading` 默认**常驻**（`duration` 为 0），需要手动 `close()` 或 `update()` 成其他类型。这个常驻是从 `type` 推导出来的，而不是写死 `duration: 0` —— 所以 loading 被 update 成 success 后无需任何特判就会自然恢复成 2000ms 自动关闭。
+
+## 何时使用
+
+- 操作后的轻量反馈：保存成功、网络失败、加载中。
+- 需要用户确认或有操作按钮时用 `Dialog`；系统级、贴边显示的横幅用 `Notify`。
+
+## 位置
+
+`position` 支持 `top` / `middle`（默认）/ `bottom`。同一位置的多条 Toast 归入同一组纵向排列。
+
+<Demo src="@playground/toast/ToastPositions" />
+
+## 交互
+
+- `duration`：自动关闭延时（毫秒），`0` 表示常驻；不传时 `loading` 为 0、其余类型为 2000。
+- `closeOnClick`：点击 Toast 自身关闭。
+- `forbidClick`：在 Toast 下方铺一层透明遮罩拦截触摸，屏蔽背景交互。
+
+<Demo src="@playground/toast/ToastInteraction" />
+
+遮罩单独成一层铺满全屏，而不是复用定位容器 —— `top` / `bottom` 的定位容器只占一条，拿它拦触摸挡不住整屏。
+
+## 生命周期
+
+`showToast` 返回一个实例，带 `close()` 与 `update(options)`：`update` 原地更新同一实例，不重新创建。`onClose` 在超时关闭、点击关闭、命令式关闭三条路径下都**只触发一次**。
+
+<Demo src="@playground/toast/ToastLifecycle" />
+
+默认同一时刻只显示一条（新的会顶掉旧的）。需要并存时调用 `allowMultipleToast(true)`，用完记得关掉。
+
+## 自定义图标与样式
+
+`icon` 覆盖内置图标，`className` / `classNames` 覆盖样式：
+
+| slot      | 作用位置                          |
+| --------- | --------------------------------- |
+| `root`    | 提示卡片本体（底色、圆角、内边距） |
+| `icon`    | 图标容器                          |
+| `message` | 消息文字                          |
+
+<Demo src="@playground/toast/ToastCustom" />
+
+有图标时卡片是 `min-w-28 max-w-40` 的方块，无图标时是 `max-w-[85%]` 的单行条 —— 两者的内边距也不同。
+
+## 声明式用法
+
+`<Toast>` 组件就地渲染，由 `show` 控制显隐、`onUpdateShow` 通知外部（组件到点后只通知，真正的隐藏仍由调用方改 `show` 完成）。
+
+<Demo src="@playground/toast/ToastDeclarative" />
+
+声明式与命令式共用同一份 `duration` 默认值规则，不会出现「`showLoadingToast` 常驻、`<Toast type="loading" />` 却 2 秒消失」这类分叉。但 `position` 与 `forbidClick` 在声明式下不可用（类型上已排除）：它就地渲染在你写下它的位置，贴屏定位与遮罩由命令式路径的渲染器承担。
+
+## 全局默认配置
+
+```ts
+import { setToastDefaultOptions, resetToastDefaultOptions, allowMultipleToast } from '@skyroc/native-ui';
+
+setToastDefaultOptions({ position: 'top' }); // 全局默认
+setToastDefaultOptions('loading', { forbidClick: true }); // 按类型默认
+resetToastDefaultOptions('loading'); // 重置某个类型
+resetToastDefaultOptions(); // 全部重置
+```
+
+合并优先级是「全局默认 < 类型默认 < 调用参数」。
+
+## API
+
+### 命令式函数
+
+```ts
+function showToast(options: ToastOptions | string): ToastInstance;
+function showSuccessToast(options: ToastOptions | string): ToastInstance;
+function showFailToast(options: ToastOptions | string): ToastInstance;
+function showLoadingToast(options: ToastOptions | string): ToastInstance;
+function closeToast(): void;
+function allowMultipleToast(value?: boolean): void;
+function setToastDefaultOptions(options: ToastOptions): void;
+function setToastDefaultOptions(type: ToastType, options: ToastOptions): void;
+function resetToastDefaultOptions(type?: ToastType): void;
+```
+
+### ToastOptions
+
+<PropsTable
+  data={[
+    { name: 'message', description: '消息内容，字符串会自动包一层 Text', type: 'ReactNode' },
+    {
+      name: 'type',
+      description: '类型，决定内置图标',
+      type: "'text' | 'success' | 'fail' | 'loading'",
+      default: "'text'"
+    },
+    { name: 'position', description: '垂直位置', type: "'top' | 'middle' | 'bottom'", default: "'middle'" },
+    {
+      name: 'duration',
+      description: '自动关闭延时（毫秒），0 表示常驻；不传时 loading 为 0、其余为 2000',
+      type: 'number'
+    },
+    { name: 'icon', description: '自定义图标，覆盖内置图标', type: 'ReactNode' },
+    { name: 'closeOnClick', description: '是否允许点击 Toast 关闭', type: 'boolean', default: 'false' },
+    {
+      name: 'forbidClick',
+      description: '是否禁止背景点击（铺一层透明遮罩拦截触摸）',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'onClose', description: '关闭时回调，三条关闭路径都只触发一次', type: '() => void' },
+    { name: 'className', description: '卡片本体类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<ToastSlots>' }
+  ]}
+/>
+
+### Toast
+
+声明式组件，属性为 `ToastOptions` 去掉 `position` / `forbidClick`，另加：
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示', type: 'boolean', default: 'false' },
+    { name: 'onUpdateShow', description: '显示状态变更回调（到点或点击关闭时触发）', type: '(show: boolean) => void' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { ToastInstance, ToastOptions, ToastPosition, ToastProps, ToastSlots, ToastType } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="ToastType"
+  description="提示类型，决定内置图标；loading 默认常驻。"
+  type="'fail' | 'loading' | 'success' | 'text'"
+/>
+
+<UnionType
+  name="ToastPosition"
+  description="垂直位置。"
+  type="'bottom' | 'middle' | 'top'"
+/>
+
+<UnionType
+  name="ToastSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'icon' | 'message' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 ToastSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'ToastInstance',
+      description: 'showToast 系列函数的返回值。',
+      fields: [
+        { name: 'close', type: '() => void', description: '关闭当前 Toast。', required: true },
+        {
+          name: 'update',
+          type: '(options: ToastOptions) => void',
+          description: '原地更新当前 Toast 的内容，保持同一实例、不重新创建。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `toastVariants`、`toastPositionVariants` 与 `ToastRenderer`（由命令式路径自动挂载，一般不需要直接使用）。
