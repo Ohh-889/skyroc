@@ -1,0 +1,167 @@
+---
+title: TextEllipsis
+description: 多行文本折叠，展开 / 收起入口内联在末行
+---
+
+文本省略（TextEllipsis）把长文本折叠成指定行数，并把「展开 / 收起」入口内联在末行的省略号之后。它不是简单地加一个 `numberOfLines` —— 为了让操作文本真正跟在省略号后面而不是另起一行，组件会用一段隐藏文本量出真实行数，再用二分找出正文该截到第几个字符。
+
+```tsx
+import { TextEllipsis } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`content` 是文本内容，`rows` 是收起态最多显示的行数（默认 1）。不传 `expandText` 时不做任何测量，直接交给原生的尾部省略号。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisBasic" />
+
+## 何时使用
+
+- 商品描述、评论、公告这类长文本需要折叠，且要给用户展开入口。
+- 只需要单纯截断、不需要展开入口时，直接给 `Text` 传 `numberOfLines` 更轻。
+
+## 展开与收起
+
+`expandText` 是收起态尾部的操作文本，`collapseText` 是展开态尾部的操作文本（留空则展开后不提供收起入口）。两者都渲染在正文的同一个 `Text` 里，所以会紧跟在省略号后面。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisExpand" />
+
+之所以要自己测量：`numberOfLines` 会在原生侧先把文本裁掉，`onTextLayout` 拿到的行数因此永远不超过 `rows`，靠它只能判断「是否恰好占满」而不是「是否溢出」。组件因此额外渲染一段不带 `numberOfLines` 的隐藏文本（`opacity-0` + `pointerEvents="none"`）量出真实行数，再二分收敛出裁剪点，测完就卸载。
+
+## 默认展开
+
+`defaultExpanded` 设置非受控模式的初始展开状态。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisDefaultExpanded" />
+
+## 自定义省略号
+
+`dots` 默认是 `'...'`。它只在 `expandText` 非空、需要给内联操作文本裁剪出位置时生效；没有操作文本时不做裁剪，省略号由原生接管。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisDots" />
+
+## 无溢出边界
+
+文本没有超出 `rows` 时不显示展开入口，也不会多加省略号；空文本同理。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisNoOverflow" />
+
+## 动态行数
+
+`rows` 变化后重新测量，并回到收起态。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisRows" />
+
+## 动态内容
+
+`content` 变化同样触发重测；长文本换成短文本后展开入口会自动消失。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisContent" />
+
+除 `content` 与 `rows` 外，`dots`、`expandText`、`size`、`weight`、`classNames.text` 变化也会触发重测 —— 它们都会占掉正文的位置。运行时通过 `style` 改字号不在这个信号里，需要重测时请把变化一并反映到上述入参上。
+
+## 受控模式
+
+`expanded` + `onExpandedChange` 接管展开状态，文末操作与外部按钮共享同一份状态。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisControlled" />
+
+## 命令式控制
+
+`ref.toggle()` 取反，`ref.toggle(true / false)` 指定状态。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisImperative" />
+
+## 文字与样式
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖；`color` / `size` / `weight` 等 `Text` 属性照常生效，并且会同步到隐藏的测量文本上（否则量出来的行数与正文对不上）。
+
+| slot     | 作用位置                             |
+| -------- | ------------------------------------ |
+| `root`   | 承载正文与隐藏测量文本的容器          |
+| `text`   | 正文 `Text`                           |
+| `action` | 内联在末行的展开 / 收起文本           |
+
+<Demo src="@playground/text-ellipsis/TextEllipsisStyles" />
+
+## 表情文本边界
+
+裁剪按 Unicode 码点进行，二分不会把代理对（emoji）截成半个字符。
+
+<Demo src="@playground/text-ellipsis/TextEllipsisEmoji" />
+
+## API
+
+### TextEllipsis
+
+除下表外，`TextEllipsis` 透传 `Text` 的属性（`color` / `size` / `weight` / `selectable` / `style` 等），其中 `children`、`numberOfLines`、`onTextLayout`、`asChild` 由组件接管。
+
+<PropsTable
+  data={[
+    { name: 'content', description: '文本内容', type: 'string', required: true },
+    { name: 'rows', description: '收起态最多显示的行数', type: 'number', default: '1' },
+    {
+      name: 'expandText',
+      description: '收起态尾部的操作文本，留空则只做原生省略、不显示展开入口',
+      type: 'string',
+      default: "''"
+    },
+    {
+      name: 'collapseText',
+      description: '展开态尾部的操作文本，留空则展开后不提供收起入口',
+      type: 'string',
+      default: "''"
+    },
+    {
+      name: 'dots',
+      description: '截断处的省略号，仅在 expandText 非空时生效',
+      type: 'string',
+      default: "'...'"
+    },
+    { name: 'expanded', description: '是否展开（受控）', type: 'boolean' },
+    { name: 'defaultExpanded', description: '初始是否展开（非受控）', type: 'boolean', default: 'false' },
+    { name: 'onExpandedChange', description: '展开状态变化回调', type: '(expanded: boolean) => void' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「文字与样式」一节',
+      type: 'SlotClassNames<TextEllipsisSlots>'
+    },
+    { name: 'ref', description: '命令式控制的 ref，用于 toggle', type: 'Ref<TextEllipsisRef>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { TextEllipsisProps, TextEllipsisRef, TextEllipsisSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="TextEllipsisSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'action' | 'root' | 'text'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 TextEllipsisSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'TextEllipsisRef',
+      description: '组件实例暴露的命令式方法。',
+      fields: [
+        {
+          name: 'toggle',
+          type: '(expanded?: boolean) => void',
+          description: '切换展开 / 收起；传 true 展开、传 false 收起，不传则取反。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>

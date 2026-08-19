@@ -1,0 +1,176 @@
+---
+title: FloatingButton
+description: 可拖拽、可吸附边缘的悬浮操作按钮
+---
+
+悬浮按钮（FloatingButton）浮在页面之上提供一个常驻入口，支持拖拽、松手吸附边缘和显隐动画。位置完全由 Reanimated 的 `transform` 驱动，拖拽与吸附全程留在 UI 线程，滚动列表时也不会掉帧。
+
+```tsx
+import { FloatingButton } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+默认 `axis="y"`，按钮只能上下拖动；`onPress` 处理点击。手势是 `Gesture.Exclusive(pan, tap)`——手指一旦移动就判定为拖拽，`onPress` 不会再触发，因此拖完手不会误触发点击。
+
+<Demo src="@playground/floating-button/FloatingButtonBasic" />
+
+## 坐标系约定
+
+组件在内部铺一层 `absolute inset-0` 的测量层（`pointerEvents="box-none"`，只做尺寸探针，不接管任何触摸），把**父容器**的实测尺寸作为可视边界，原点是父容器左上角。
+
+因此：
+
+- 挂在整屏容器里就按屏幕算，挂在手机框预览、平板分栏这类定宽容器里就按那个容器算，两种场景都不会把按钮推到可视区外；
+- 想让按钮盖在所有内容之上，把它放在容器的最后一个子节点，或者像示例里那样用 `Portal` 送到全屏的 `PortalHost`；
+- 首帧 layout 还没回来时用窗口尺寸兜底，量到真实尺寸后按新边界把位置补正过去，这次补正不播放动画（属于纠正估算，不是位置变化）。
+
+不传 `offset` 时按钮默认停在右下角：横向贴右边界，纵向距下边界再留 100px——直接贴底会压住 TabBar 一类的常驻栏。
+
+## 拖拽方向
+
+`axis` 约束拖拽轴向。
+
+| 取值   | 行为                     |
+| ------ | ------------------------ |
+| `y`    | 只能上下拖（默认）       |
+| `x`    | 只能左右拖               |
+| `xy`   | 自由拖拽                 |
+| `lock` | 完全不可拖，只保留点击   |
+
+<Demo src="@playground/floating-button/FloatingButtonAxis" />
+
+## 受控位置与边距
+
+`offset` 让位置受控，`onOffsetChange` 在拖拽结束时回传落位坐标。`gap` 是距父容器边缘的最小留白，默认 `24`；给数字表示两轴相同，给对象可以分别指定，缺省的一边回落到默认值。
+
+拖拽与受控 `offset` 都会被夹进 `[gap, 容器尺寸 - size - gap]`，所以外部写一个越界坐标也不会把按钮推出可视区。需要贴边或自行管理边距时传 `0`。
+
+<Demo src="@playground/floating-button/FloatingButtonOffset" />
+
+边界重夹在非受控（纯拖拽）时也会跑：旋转屏幕或容器尺寸变小后上限会变，按钮一旦停在可视区外就既点不到也拖不回来。
+
+## 边缘吸附
+
+`magnetic` 让松手后自动吸附到该轴向最近的一侧边缘：`'x'` 吸左右、`'y'` 吸上下。回弹用的弹簧把阻尼比压到略大于临界值，保留减速手感但完全不过冲——位移一旦过冲，按钮会先冲出 `gap` 边界再退回来，等于视觉上违反了组件自己声明的边距。
+
+<Demo src="@playground/floating-button/FloatingButtonMagnetic" />
+
+开了 `magnetic` 时 `onOffsetChange` 给的是**吸附终点**，且在回弹动画刚开始时就触发，不是动画结束的回调。
+
+## 显隐
+
+`visible` 切换时走 180ms 的缩放缓动。两个方向都用 timing 而不是弹簧：缩放上的过冲没有一个方向说得通，收起时冲到负值会把视图镜像翻转，出现时冲过 1 也只是白晃一下。
+
+`visible` 还接受 `SharedValue<boolean>`——显隐判断全程留在 UI 线程，不必为每次滚动回到 JS 线程再触发一次渲染（`BackTop` 就是这么用的）。
+
+<Demo src="@playground/floating-button/FloatingButtonVisible" />
+
+缩放小于 0.5 时按钮不再接收触摸：隐藏动画跑完前按钮几乎看不见，此时还能点中就是误触；反过来显示动画过半即可点击，不必等缓动走完。
+
+传 `SharedValue` 时首帧在 UI 线程直接同步且不播放动画（React 渲染阶段读不了 `.value`）；传普通 `boolean` 时初值直接给到位，`visible={false}` 挂载不会先闪一下按钮。
+
+## 禁用
+
+`disabled` 同时关掉点击与拖拽手势，并把整体不透明度降到 50%。
+
+<Demo src="@playground/floating-button/FloatingButtonDisabled" />
+
+## 尺寸与自定义内容
+
+`size` 是按钮直径（像素，默认 48），`children` 放内容，`className` 覆盖默认的底色与圆角（默认是 `bg-primary` + 全圆角 + 阴影）。`style` 叠在动画样式之上，用于写类名表达不了的原生样式。
+
+<Demo src="@playground/floating-button/FloatingButtonSize" />
+
+按下时不透明度降到 0.8（100ms 过渡），抬起恢复；`disabled` 的 50% 优先于按下态。
+
+## 无障碍
+
+组件目前不设置 `accessibilityRole`，也不透传无障碍属性——读屏器只会读到 `children` 里的内容，不会播报「按钮」角色。对无障碍要求较高的场景，建议在 `children` 里放带明确文案的 `Text`，并保证同样的操作在页面里还有一个常规入口。
+
+## API
+
+### FloatingButton
+
+<PropsTable
+  data={[
+    {
+      name: 'axis',
+      description: '拖拽轴向约束，lock 表示完全不可拖、只保留点击',
+      type: "'lock' | 'x' | 'xy' | 'y'",
+      default: "'y'"
+    },
+    {
+      name: 'offset',
+      description: '受控位置，原点为父容器左上角；不传则内部自持位置，默认停在右下角',
+      type: 'FloatingButtonOffset'
+    },
+    {
+      name: 'onOffsetChange',
+      description: '拖拽结束时触发，参数是落位的目标坐标；开了 magnetic 时给的是吸附终点',
+      type: '(offset: FloatingButtonOffset) => void'
+    },
+    {
+      name: 'gap',
+      description: '距父容器边缘的最小留白，数字表示两轴相同，对象可分轴指定',
+      type: 'FloatingButtonGap',
+      default: '24'
+    },
+    { name: 'magnetic', description: '松手后自动吸附到该轴向最近的一侧边缘', type: "'x' | 'y'" },
+    {
+      name: 'visible',
+      description: '是否可见，切换时走 180ms 缩放缓动；传 SharedValue 可把显隐判断留在 UI 线程',
+      type: 'SharedValue<boolean> | boolean',
+      default: 'true'
+    },
+    { name: 'onPress', description: '点击回调，拖拽过程不会触发', type: '() => void' },
+    { name: 'disabled', description: '禁用点击与拖拽，并整体降低不透明度', type: 'boolean', default: 'false' },
+    { name: 'size', description: '按钮直径（像素）', type: 'number', default: '48' },
+    { name: 'children', description: '按钮内容', type: 'ReactNode' },
+    { name: 'className', description: '根节点类名，可覆盖默认的底色与圆角', type: 'string' },
+    { name: 'style', description: '根节点自定义样式，叠在动画样式之上', type: 'StyleProp<ViewStyle>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  FloatingButtonAxis,
+  FloatingButtonGap,
+  FloatingButtonMagnetic,
+  FloatingButtonOffset,
+  FloatingButtonProps
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="FloatingButtonAxis"
+  description="拖拽轴向约束：x 只能横向拖，y 只能纵向拖，xy 自由拖拽，lock 完全不可拖。"
+  type="'lock' | 'x' | 'xy' | 'y'"
+/>
+
+<UnionType
+  name="FloatingButtonMagnetic"
+  description="松手后自动吸附到最近边缘的轴向。"
+  type="'x' | 'y'"
+/>
+
+<UnionType
+  name="FloatingButtonGap"
+  description="距父容器边缘的最小留白：数字表示两轴相同，对象可分轴指定，缺省的一边回落到默认值 24。"
+  type="number | { x?: number; y?: number }"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'FloatingButtonOffset',
+      description: '按钮左上角坐标，原点为父容器左上角。',
+      fields: [
+        { name: 'x', type: 'number', required: true, description: '横向坐标。' },
+        { name: 'y', type: 'number', required: true, description: '纵向坐标。' }
+      ]
+    }
+  ]}
+/>

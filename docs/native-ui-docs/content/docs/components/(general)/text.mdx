@@ -1,0 +1,143 @@
+---
+title: Text
+description: 文本组件，支持语义色、字号、字重与上下文继承
+---
+
+文本（Text）是对 React Native `Text` 的封装，提供 `color` / `size` / `weight` 三组变体，并通过 `TextClassContext` 从父组件（如 `Button`、`Cell`）继承文字样式。库内所有需要文字的组件都用它，因此在这些组件里放 `@skyroc/native-ui` 的 `Text` 才能自动拿到正确的文字色。
+
+```tsx
+import { Text } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+不传任何变体时是前景色（`text-foreground`）、基础字号、`normal` 字重。
+
+<Demo src="@playground/text/TextBasic" />
+
+## 何时使用
+
+- 应用内的所有文本都用它，而不是直接用 RN 的 `Text` —— 否则拿不到主题色与上下文继承。
+- 需要「展开 / 收起」的多行折叠文本用 `TextEllipsis`。
+
+## 字号
+
+`size` 共十二档，其中 `md` 与 `base` 都映射到基础字号：
+
+| size  | 类名        | size   | 类名         |
+| ----- | ----------- | ------ | ------------ |
+| `4xs` | `text-4xs`  | `base` | `text-base`  |
+| `3xs` | `text-3xs`  | `md`   | `text-base`  |
+| `2xs` | `text-2xs`  | `lg`   | `text-lg`    |
+| `xs`  | `text-xs`   | `xl`   | `text-xl`    |
+| `sm`  | `text-sm`   | `2xl`  | `text-2xl`   |
+|       |             | `3xl`  | `text-3xl`   |
+|       |             | `4xl`  | `text-4xl`   |
+
+<Demo src="@playground/text/TextSize" />
+
+## 字重
+
+`weight` 支持 `normal` / `medium` / `semibold` / `bold`。
+
+<Demo src="@playground/text/TextWeight" />
+
+## 语义颜色
+
+`color` 提供 9 种语义色，全部取自主题 token，随浅色 / 深色模式自动切换：
+
+| 颜色          | 类名                     |
+| ------------- | ------------------------ |
+| `foreground`  | `text-foreground`        |
+| `muted`       | `text-muted-foreground`  |
+| `primary`     | `text-primary`           |
+| `secondary`   | `text-secondary`         |
+| `destructive` | `text-destructive`       |
+| `success`     | `text-success`           |
+| `warning`     | `text-warning`           |
+| `info`        | `text-info`              |
+| `accent`      | `text-accent`            |
+
+<Demo src="@playground/text/TextColor" />
+
+## 组合变体
+
+三组变体相互独立，可以任意组合。
+
+<Demo src="@playground/text/TextCombination" />
+
+## 上下文样式继承
+
+放在 `Button`、`Cell` 这类组件里的 `Text` 会通过 `TextClassContext` 继承父级下发的文字样式；显式传变体仍然能覆盖继承值。
+
+<Demo src="@playground/text/TextContext" />
+
+样式的合并优先级是：**兜底样式 < 父级继承（Context）< 显式变体 props < `className`**。
+
+兜底样式（`text-foreground text-base font-normal`）刻意与变体表分开写，没有放进 `defaultVariants` —— 否则不传任何变体时变体表也会吐出基础类，反过来盖掉从 Context 继承的父级样式。
+
+自定义组件想给子 `Text` 下发样式时，同样用这个 Context：
+
+```tsx
+import { Text, TextClassContext } from '@skyroc/native-ui';
+
+<TextClassContext value="text-sm text-muted-foreground">{children}</TextClassContext>;
+```
+
+## 自定义样式
+
+`className` 排在最后参与合并，优先级高于所有变体。
+
+<Demo src="@playground/text/TextStyles" />
+
+## 原生文字属性透传
+
+`numberOfLines`、`selectable`、`onPress`、`ellipsizeMode` 等 RN `Text` 属性都会透传到底层节点。
+
+<Demo src="@playground/text/TextNativeProps" />
+
+组件固定了 `allowFontScaling={false}` 与 `maxFontSizeMultiplier={1}`，文字不随系统字体缩放变化 —— 但这两项写在 `{...rest}` 之前，需要跟随系统字号时可以自行传回来覆盖。
+
+## API
+
+### Text
+
+除下表外，`Text` 透传 React Native `Text` 的全部属性（`numberOfLines`、`selectable`、`onPress`、`testID` 等）。
+
+<PropsTable
+  data={[
+    {
+      name: 'color',
+      description: '语义文字色',
+      type: "'foreground' | 'muted' | 'primary' | 'secondary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent'"
+    },
+    {
+      name: 'size',
+      description: '字号，md 与 base 等价',
+      type: "'4xs' | '3xs' | '2xs' | 'xs' | 'sm' | 'base' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'"
+    },
+    { name: 'weight', description: '字重', type: "'normal' | 'medium' | 'semibold' | 'bold'" },
+    {
+      name: 'asChild',
+      description: '作为插槽渲染，把样式与属性合并到唯一的子元素上（@rn-primitives 组合模式）',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'className', description: '文字类名，优先级高于全部变体', type: 'string' },
+    {
+      name: 'ref',
+      description: '底层 Text 的 ref；asChild 时转发到被插槽替换的子元素',
+      type: 'Ref<Text>'
+    }
+  ]}
+/>
+
+不传 `color` / `size` / `weight` 时组件不会输出对应的类名，从而让 `TextClassContext` 的继承值生效 —— 这也是它们没有默认值的原因。
+
+## 类型
+
+```ts
+import type { TextProps } from '@skyroc/native-ui';
+```
+
+`TextProps` 继承 RN 的 `TextProps` 并加上上表的变体属性。包内还导出了 `textVariants`、`textBaseClass` 与 `TextClassContext`。

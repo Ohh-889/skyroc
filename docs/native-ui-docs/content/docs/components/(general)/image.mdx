@@ -1,0 +1,258 @@
+---
+title: Image
+description: 基于 expo-image 的图片组件，内置加载中与加载失败占位
+---
+
+图片（Image）在 [`expo-image`](https://docs.expo.dev/versions/latest/sdk/image/) 之上包了一层：补上圆角档位、加载中占位、加载失败占位，并把 `src` 放宽到可以直接写字符串。除 `source` 换成了 `src` 之外，`expo-image` 的属性全部原样透传。
+
+```tsx
+import { Image } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`src` 传图片地址即可。**尺寸必须给在 `className`（或 `classNames.root`）上**：`expo-image` 不像 web 的 `<img>` 会按图片内在尺寸撑开，容器没有宽高时整个组件高度为 0，看上去就是没渲染。
+
+<Demo src="@playground/image/ImageBasic" />
+
+## 何时使用
+
+- 展示远程图片、本地静态资源、blurhash / thumbhash 占位图。
+- 需要「加载中转圈 → 加载完显示 → 失败显示破损图标」这一整套状态时，用它比裸的 `expo-image` 少写一堆 state。
+- 只是要一个纯色/渐变的装饰块，或者只想画一个图标：用 `View` 或图标组件，不要为此加载一张图。
+- 需要头像那种带兜底文字、带在线状态点的圆形图片时，用 `Avatar`，它内部已经处理了兜底逻辑。
+
+## 圆角
+
+`radius` 提供六档圆角，作用在 root 上；root 带 `overflow-hidden`，所以图片会被一起裁掉。
+
+| 取值    | 类名           |
+| ------- | -------------- |
+| `none`  | 不加圆角（默认） |
+| `sm`    | `rounded-sm`   |
+| `md`    | `rounded-md`   |
+| `lg`    | `rounded-lg`   |
+| `xl`    | `rounded-xl`   |
+| `full`  | `rounded-full` |
+
+<Demo src="@playground/image/ImageRadius" />
+
+`full` 想要正圆，root 得是正方形（`h-20 w-20`）。需要别的圆角值时不用 `radius`，直接在 `className` 里写 `rounded-[10px]` 即可。
+
+## 填充方式
+
+填充方式没有再包一层变体，直接用 `expo-image` 的 `contentFit`：`cover`（默认）、`contain`、`fill`、`none`、`scale-down`。配合 `contentPosition` 控制对齐位置。
+
+<Demo src="@playground/image/ImageContentFit" />
+
+图片本身是 `h-full w-full` 铺满 root 的，所以 `contentFit` 描述的是「图片内容如何摆进这块铺满的区域」，跟 root 的尺寸无关。
+
+## 加载状态
+
+`showLoading` 默认为 `true`，图片加载完成前在 root 上盖一层 `bg-muted` 的遮罩，中间是 `ActivityIndicator`。设为 `false` 则加载期间只有一个空容器。
+
+<Demo src="@playground/image/ImageLoading" />
+
+加载态由 `onLoad` / `onError` 驱动：只要两者都没触发就一直算「加载中」。同一个 URL 命中缓存时几乎瞬间完成，想观察加载态需要像示例里那样给 URL 挂上变化的 query。
+
+## 失败占位
+
+`showError` 默认为 `true`，加载失败时渲染内置的 `broken-image` 图标。**`src` 为空（`undefined` / `null` / `''`）与加载失败等价**，同样走失败占位，不会先转一圈圈。
+
+<Demo src="@playground/image/ImageError" />
+
+失败时内层图片会被整个卸载，所以 `showError={false}` + 坏图 = 什么都不渲染，只剩一个透明的 root。示例里第三张给 root 加了虚线边框，否则根本看不见它还在。
+
+## 自定义占位
+
+`loadingSlot` / `errorSlot` 整体替换占位层的内容，外层那个居中 + `bg-muted` 的容器仍然保留（要改它就用 `classNames.loading` / `classNames.error`）。
+
+<Demo src="@playground/image/ImageCustomSlots" />
+
+## 插槽样式
+
+`className` 追加到 root 上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                                       |
+| ----------- | -------------------------------------------------------------- |
+| `root`      | 最外层 `View`，`relative overflow-hidden`，**尺寸和圆角都在这里** |
+| `image`     | 内层 `expo-image`，默认 `h-full w-full`                          |
+| `loading`   | 加载中遮罩层，`absolute inset-0` + 居中 + `bg-muted`              |
+| `error`     | 失败遮罩层，同上                                                 |
+| `indicator` | 指示器与破损图标的取色类，**只认 `accent-*`**                     |
+
+<Demo src="@playground/image/ImageSlotClassNames" />
+
+`indicator` 之所以特殊，是因为 `ActivityIndicator` 和矢量图标的颜色只认 `color` prop，写 `text-*` 会落到 `style` 上不生效；组件用 `withUniwind` 把 `accent-*` 映射成了 `color`，所以这个 slot 只能写 `accent-destructive` 这类类名。
+
+合并顺序是「变体样式 → `classNames.root` → `className`」，冲突时以后者为准。
+
+## 动态换图与事件
+
+`src` 变化时加载态会重置回「加载中」，`onLoad` / `onError` 分别在成功和失败时触发（内部先更新自己的状态，再调你传的回调）。
+
+<Demo src="@playground/image/ImageSwitchSource" />
+
+判断「`src` 变没变」走的是序列化后的 key（字符串直接用、数字变成 `asset:N`、对象走 `JSON.stringify`），不是引用比较 —— 所以内联写 `src={{ uri }}` 也不会因为父组件重渲染就把加载态重置、让占位层闪一下。
+
+重置发生在渲染期而不是 `useEffect` 里，换图时不会先用旧状态渲染一帧，也就看不到上一张图的失败占位残留。
+
+## 完整图源
+
+`src` 是 `expo-image` `source` 的超集：数组形态（多分辨率）、`{ uri, headers }`（带鉴权的图）、`{ blurhash }`、`sf:` 开头的 SF Symbol、`require()` 进来的本地资源都能直接传，裸字符串只是 `{ uri }` 的语法糖。`placeholder` 与 `transition` 也原样透传。
+
+<Demo src="@playground/image/ImageRichSource" />
+
+`transition` 组件侧默认给了 `200`（`expo-image` 本身是不做过渡的），传 `0` 或 `null` 可以关掉。
+
+需要注意 `placeholder` 与 `showLoading` 会打架：blurhash / thumbhash 占位图画在内层图片上，而加载遮罩是盖在它上面的一层不透明 `bg-muted`。想让用户真的看见 blurhash，请显式传 `showLoading={false}`。
+
+## 无障碍
+
+- `alt` / `accessibilityLabel` 透传给 `expo-image`，读屏器读的是内层图片。
+- 加载中与加载失败的占位层是普通 `View`，没有任何无障碍语义；失败态下内层图片已被卸载，此时 `alt` 也一并消失。如果这张图承载信息，建议在 `errorSlot` 里放一段带文字的内容，而不是只留一个图标。
+- 纯装饰性的图片给 `accessibilityElementsHidden`（iOS）/ `importantForAccessibility="no-hide-descendants"`（Android），避免读屏器逐张念图。
+
+## API
+
+### Image
+
+除下表外，`Image` 透传 `expo-image` 的全部属性（`contentPosition`、`placeholderContentFit`、`blurRadius`、`priority`、`cachePolicy`、`recyclingKey`、`onLoadStart`、`onLoadEnd`、`onProgress`、`alt` 等）。
+
+注意 `style` 落在**内层图片**上而不是 root：容器的尺寸、圆角、边框请走 `className` / `classNames.root`。
+
+<PropsTable
+  data={[
+    {
+      name: 'src',
+      description: '图片源，裸字符串会被包装成 { uri }。为空时直接按加载失败处理',
+      type: 'ImageSource'
+    },
+    {
+      name: 'radius',
+      description: '圆角档位，作用在 root 上；root 带 overflow-hidden，图片会被一起裁切',
+      type: "'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'",
+      default: "'none'"
+    },
+    {
+      name: 'showLoading',
+      description: '是否在加载完成前显示加载遮罩层',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'showError',
+      description: '是否在加载失败（含 src 为空）时显示失败遮罩层',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'loadingSlot',
+      description: '替换加载中占位的内容，遮罩容器本身保留。不传则用内置 ActivityIndicator',
+      type: 'ReactNode'
+    },
+    {
+      name: 'errorSlot',
+      description: '替换加载失败占位的内容，遮罩容器本身保留。不传则用内置 broken-image 图标',
+      type: 'ReactNode'
+    },
+    {
+      name: 'contentFit',
+      description: '图片内容如何摆进铺满的区域，透传给 expo-image',
+      type: "'cover' | 'contain' | 'fill' | 'none' | 'scale-down'",
+      default: "'cover'"
+    },
+    {
+      name: 'placeholder',
+      description: '占位图源（blurhash / thumbhash / 低清图），透传给 expo-image。会被加载遮罩挡住，配合 showLoading={false} 使用',
+      type: 'ImageSource'
+    },
+    {
+      name: 'transition',
+      description: '换图过渡，单位毫秒或配置对象。组件把默认值改成了 200，传 0 / null 关闭',
+      type: 'ImageTransition | number | null',
+      default: '200'
+    },
+    {
+      name: 'onLoad',
+      description: '加载成功回调，在内部把加载态置为完成之后调用',
+      type: '(event: ImageLoadEventData) => void'
+    },
+    {
+      name: 'onError',
+      description: '加载失败回调，在内部把状态置为失败之后调用',
+      type: '(event: ImageErrorEventData) => void'
+    },
+    {
+      name: 'className',
+      description: 'root 的类名，尺寸必须给在这里，否则组件高度为 0',
+      type: 'string'
+    },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，indicator 只接受 accent-* 颜色类',
+      type: 'SlotClassNames<ImageSlots>'
+    },
+    {
+      name: 'style',
+      description: '透传给内层图片的行内样式，优先级高于 classNames.image；不作用于 root',
+      type: 'StyleProp<ImageStyle>'
+    }
+  ]}
+/>
+
+组件没有声明 `ref`，也没有挂 `expo-image` 的静态方法。需要 `Image.prefetch` / `clearMemoryCache` 这类命令式 API 时，直接 `import { Image } from 'expo-image'` 调用即可，缓存是共享的。
+
+## 类型
+
+```ts
+import type { ImageProps, ImageRadius, ImageSlots, ImageSource, ImageVariantProps } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="ImageRadius"
+  description="圆角档位，由 imageVariants 的 radius 变体推导。"
+  type="'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'"
+/>
+
+<UnionType
+  name="ImageSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'root' | 'image' | 'loading' | 'error' | 'indicator'"
+/>
+
+<UnionType
+  name="ImageSource"
+  description="src 的取值形态，等于 expo-image 的 source 全集再加上裸字符串。对象形态就是 expo-image 导出的 ImageSource，为了跟本组件的同名类型区分，下表记作 ImageSourceObject。"
+  type="string | number | ImageSourceObject | ImageSourceObject[] | string[] | `sf:${SFSymbol}` | SharedRefType<'image'>"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 ImageSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'ImageSourceObject',
+      description: 'expo-image 导出的 ImageSource 对象形态，字段全部可选，由 expo-image 定义。',
+      fields: [
+        { name: 'uri', type: 'string', description: '图片地址：HTTPS 地址、本地文件路径或静态资源名。' },
+        { name: 'headers', type: 'Record<string, string>', description: '请求远程图片时附带的 HTTP 头，用于鉴权。' },
+        { name: 'width', type: 'number | null', description: '构建期已知的宽度，用作默认尺寸；数组形态下参与分辨率挑选。' },
+        { name: 'height', type: 'number | null', description: '构建期已知的高度。' },
+        { name: 'blurhash', type: 'string', description: 'blurhash 字符串，一般给 placeholder 用；与 uri 同时出现时被忽略。' },
+        { name: 'thumbhash', type: 'string', description: 'thumbhash 字符串，用途同 blurhash。' },
+        { name: 'cacheKey', type: 'string', description: '缓存键，缺省时用 uri 当键。' },
+        { name: 'isAnimated', type: 'boolean', description: '是否是动图（GIF / 动态 WebP），仅 iOS / Android。' }
+      ]
+    },
+    {
+      name: 'ImageVariantProps',
+      description: 'imageVariants 的变体入参，与同名 props 一一对应，直接使用 imageVariants 时可以用它约束参数。',
+      fields: [{ name: 'radius', type: "'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'", description: '圆角档位。' }]
+    }
+  ]}
+/>
