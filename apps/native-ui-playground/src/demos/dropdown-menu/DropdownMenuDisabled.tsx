@@ -9,7 +9,8 @@ const DISABLED_ITEM: DropdownMenuItem = {
     { text: '默认', value: 'default' },
     { disabled: true, text: '已下架', value: 'offline' },
     { text: '热门', value: 'hot' }
-  ]
+  ],
+  title: '选项禁用'
 };
 
 /** 整列禁用：标题点不开 */
@@ -22,7 +23,7 @@ const LOCKED_ITEM: DropdownMenuItem = {
 
 const DropdownMenuDisabled = () => {
   return (
-    <View className="bg-muted">
+    <View className="bg-background">
       <DropdownMenu items={[DISABLED_ITEM, LOCKED_ITEM]} />
     </View>
   );

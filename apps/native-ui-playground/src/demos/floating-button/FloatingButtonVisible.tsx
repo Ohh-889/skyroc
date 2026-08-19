@@ -1,23 +1,32 @@
 import { Button, FloatingButton, Portal, Text } from '@skyroc/native-ui';
 import { useState } from 'react';
 import { View } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 
 const FloatingButtonVisible = () => {
-  const [visible, setVisible] = useState(true);
+  const [visibleFlag, setVisibleFlag] = useState(true);
+
+  const visible = useSharedValue(true);
+
+  function toggleVisible() {
+    const nextVisible = !visibleFlag;
+
+    setVisibleFlag(nextVisible);
+    visible.value = nextVisible;
+  }
 
   return (
-    <View className="bg-background px-4">
-      <View className="mb-6 gap-3">
+    <View className="bg-background p-4">
+      <View className="gap-3">
         <Text className="text-sm text-muted-foreground">
-          红色按钮进出都是 180ms 的缩放缓动，两个方向都不用弹簧，不会有回弹。 另外挂载时不会先闪一下再收回去，scale
-          的初值直接取自当前可见性。
+          本例直接传 SharedValue&lt;boolean&gt;，显隐更新留在 UI 线程。
         </Text>
         <Button
           color="primary"
           variant="solid"
-          onPress={() => setVisible(prev => !prev)}
+          onPress={toggleVisible}
         >
-          {visible ? '隐藏红色按钮' : '显示红色按钮'}
+          {visibleFlag ? '隐藏悬浮按钮' : '显示悬浮按钮'}
         </Button>
       </View>
 
@@ -25,7 +34,6 @@ const FloatingButtonVisible = () => {
       <Portal>
         <FloatingButton
           className="bg-destructive"
-          offset={{ x: 96, y: 180 }}
           visible={visible}
         >
           <Text className="text-xs font-bold text-destructive-foreground">HI</Text>

@@ -22,9 +22,8 @@ const FILTER_ITEM: DropdownMenuItem = {
 
 const DropdownMenuDirection = () => {
   return (
-    <View className="bg-muted">
-      {/* 留出上方空间，面板才有地方往上展开 */}
-      <View className="mt-40">
+    <View className="bg-background pt-20">
+      <View>
         <DropdownMenu
           direction="up"
           items={[SORT_ITEM, FILTER_ITEM]}

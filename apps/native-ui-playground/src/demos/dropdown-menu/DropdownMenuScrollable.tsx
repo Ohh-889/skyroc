@@ -23,7 +23,7 @@ const FILTER_ITEM: DropdownMenuItem = {
 
 const DropdownMenuScrollable = () => {
   return (
-    <View className="bg-muted">
+    <View className="bg-background">
       <DropdownMenu
         items={[CITY_ITEM, FILTER_ITEM]}
         maxHeight={240}

@@ -22,8 +22,11 @@ const FILTER_ITEM: DropdownMenuItem = {
 
 const DropdownMenuBasic = () => {
   return (
-    <View className="bg-muted">
-      <DropdownMenu items={[SORT_ITEM, FILTER_ITEM]} />
+    <View className="bg-background">
+      <DropdownMenu
+        defaultValues={['rating', 'all']}
+        items={[SORT_ITEM, FILTER_ITEM]}
+      />
     </View>
   );
 };

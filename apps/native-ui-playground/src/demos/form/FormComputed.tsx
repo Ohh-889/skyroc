@@ -14,12 +14,10 @@ const FormComputed = () => {
   const [orderForm] = useForm<OrderForm>();
 
   return (
-    <View className="bg-secondary py-4">
+    <View className="bg-background p-4">
       <Form<OrderForm>
-        inset
         form={orderForm}
         initialValues={{ price: '99', quantity: 1 }}
-        title="计算字段"
       >
         <FormItem<OrderForm>
           label="单价"

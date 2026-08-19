@@ -14,12 +14,8 @@ const FormLayout = () => {
   const [layoutForm] = useForm<LayoutForm>();
 
   return (
-    <View className="bg-secondary py-4">
-      <Form<LayoutForm>
-        inset
-        form={layoutForm}
-        title="标签位置与尺寸"
-      >
+    <View className="bg-background p-4">
+      <Form<LayoutForm> form={layoutForm}>
         {/* 长内容用 labelAlign="top"，标签压在输入区上方 */}
         <FormItem<LayoutForm>
           required

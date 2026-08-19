@@ -24,7 +24,7 @@ const FILTER_ITEM: DropdownMenuItem = {
 
 const DropdownMenuTitle = () => {
   return (
-    <View className="bg-muted">
+    <View className="bg-background">
       <DropdownMenu items={[SORT_ITEM, FILTER_ITEM]} />
     </View>
   );

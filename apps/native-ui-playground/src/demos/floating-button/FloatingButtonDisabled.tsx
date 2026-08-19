@@ -4,11 +4,16 @@ import { View } from 'react-native';
 
 const FloatingButtonDisabled = () => {
   const [disabled, setDisabled] = useState(false);
+  const [pressCount, setPressCount] = useState(0);
+
+  function handlePress() {
+    setPressCount(current => current + 1);
+  }
 
   return (
-    <View className="bg-background px-4">
-      <View className="mb-6 gap-3">
-        <Text className="text-sm text-muted-foreground">紫色按钮禁用后不响应点击与拖拽，并整体降低不透明度。</Text>
+    <View className="bg-background p-4">
+      <View className="gap-3">
+        <Text className="text-sm text-muted-foreground">已点击 {pressCount} 次；禁用后计数和位置都不会变化。</Text>
         <Button
           color="primary"
           variant="outline"
@@ -24,9 +29,9 @@ const FloatingButtonDisabled = () => {
           axis="xy"
           className="bg-info"
           disabled={disabled}
-          offset={{ x: 96, y: 260 }}
+          onPress={handlePress}
         >
-          <Text className="text-xs font-bold text-info-foreground">EN</Text>
+          <Text className="text-xs font-bold text-info-foreground">{disabled ? 'OFF' : 'ON'}</Text>
         </FloatingButton>
       </Portal>
     </View>

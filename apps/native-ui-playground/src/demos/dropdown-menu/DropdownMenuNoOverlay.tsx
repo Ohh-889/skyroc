@@ -22,10 +22,11 @@ const FILTER_ITEM: DropdownMenuItem = {
 
 const DropdownMenuNoOverlay = () => {
   return (
-    <View className="bg-muted">
+    <View className="bg-background">
       <DropdownMenu
         items={[SORT_ITEM, FILTER_ITEM]}
         overlay={false}
+        showDivider={false}
       />
     </View>
   );

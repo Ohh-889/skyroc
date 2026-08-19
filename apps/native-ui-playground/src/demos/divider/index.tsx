@@ -7,6 +7,8 @@ import { DividerDashed } from './DividerDashed';
 import { DividerHairline } from './DividerHairline';
 import { DividerText } from './DividerText';
 import { DividerVertical } from './DividerVertical';
+import { DividerVerticalDashed } from './DividerVerticalDashed';
+import { DividerVerticalHeight } from './DividerVerticalHeight';
 
 /** Divider 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/divider/DividerBasic" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const DividerDemo = () => {
@@ -49,6 +51,20 @@ const DividerDemo = () => {
         title="方向（orientation）"
       >
         <DividerVertical />
+      </Section>
+
+      <Section
+        description="竖向分割线用 self-stretch 跟随父级，父容器需要横向布局且高度确定。"
+        title="竖向分割线的高度"
+      >
+        <DividerVerticalHeight />
+      </Section>
+
+      <Section
+        description="线型与方向相互独立，竖向下 border 改用左边框绘制。"
+        title="竖向虚线（orientation / border）"
+      >
+        <DividerVerticalDashed />
       </Section>
 
       <Section
