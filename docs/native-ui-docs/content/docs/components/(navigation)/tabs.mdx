@@ -1,0 +1,165 @@
+---
+title: Tabs
+description: 标签页，支持手势翻页与面板懒加载
+---
+
+标签页（Tabs）用 `items` 一次描述标签与面板：上方是可横向滚动的标签栏（指示器随激活项平滑移动），下方是面板区。原生端默认用 `react-native-pager-view` 提供手势翻页，web 回退到只切 `display` 的实现。
+
+```tsx
+import { Tabs } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 的每一项由 `key` / `title` / `children` 组成，默认是 `line` 型（底部一条主题色指示器）。
+
+<Demo src="@playground/tabs/TabsBasic" />
+
+`Tabs` 根节点是 `flex-1`，需要父容器给出确定高度。
+
+## 何时使用
+
+- 同层级内容的分组切换，且分组数量固定。
+- 页面级的顶部标题栏用 `NavBar`；左侧竖排分类用 `Sidebar`。
+
+## Pill 型
+
+`type="pill"` 把指示器改成撑满 tab 高度的选中背景，标签栏本身是一块圆角灰底，标签平分宽度。
+
+<Demo src="@playground/tabs/TabsPill" />
+
+## 可滚动标签栏
+
+标签超出一屏时标签栏横向滚动，切换后会把激活项滚到视口中间。
+
+<Demo src="@playground/tabs/TabsScrollable" />
+
+指示器是先于标签渲染的，靠绘制顺序压在文字下层 —— 负 `zIndex` 在 Android 上不可靠。
+
+## 禁用项
+
+`items[i].disabled` 让该标签不可点，并降到 40% 不透明度。手势滑到禁用页时会沿滑动方向回弹到最近的可用页。
+
+<Demo src="@playground/tabs/TabsDisabled" />
+
+## 受控模式
+
+`activeIndex` + `onIndexChange` 把激活项交给外部状态；非受控用 `defaultActiveIndex`。
+
+<Demo src="@playground/tabs/TabsControlled" />
+
+## 懒加载
+
+`lazy` 开启后只渲染当前面板（以及 `lazyPreloadDistance` 指定的前后各 N 个），其余渲染 `renderLazyPlaceholder`（默认是一个居中的加载指示器）。
+
+<Demo src="@playground/tabs/TabsLazy" />
+
+已加载的面板**常驻不卸载**（keep-alive 语义）：切走只是被外层容器隐藏，面板内部的 state 与滚动位置都会保留。
+
+## 关闭手势翻页
+
+`swipeable={false}` 后只能点击标签切换，面板改用「全部挂载、靠 `display` 切换」的实现。
+
+<Demo src="@playground/tabs/TabsSwipeDisabled" />
+
+`swipeable` 会在两棵不同的树之间切换（`PagerView` ↔ 面板栈），导致面板整体重挂载 —— 请把它当作初始化配置，不要在运行时来回切。web 端没有手势翻页，这个属性在回退实现里是空操作。
+
+## 样式覆盖
+
+`className` 追加到根节点上，`classNames` 按 slot 细粒度覆盖：
+
+| slot            | 作用位置                                   |
+| --------------- | ------------------------------------------ |
+| `root`          | 根容器                                     |
+| `tabBar`        | 标签栏外层（`line` 型的下边框在这里）       |
+| `tabBarContent` | 标签的横向容器                             |
+| `tab`           | 单个标签                                   |
+| `tabText`       | 标签文字（激活态加粗变主题色）              |
+| `indicator`     | 指示器                                     |
+| `pager`         | 面板栈容器（仅非手势实现使用）              |
+| `content`       | 单个面板容器                               |
+
+<Demo src="@playground/tabs/TabsCustomSlots" />
+
+`title` 传节点时不会包 `Text`，`classNames.tabText` 也就不再生效，样式自行控制。
+
+## API
+
+### Tabs
+
+<PropsTable
+  data={[
+    { name: 'items', description: 'Tab 项数据', type: 'TabItem[]', required: true },
+    { name: 'type', description: '类型风格', type: "'line' | 'pill'", default: "'line'" },
+    { name: 'activeIndex', description: '受控当前激活索引', type: 'number' },
+    { name: 'defaultActiveIndex', description: '非受控初始激活索引', type: 'number', default: '0' },
+    { name: 'onIndexChange', description: '激活索引变化回调', type: '(index: number) => void' },
+    {
+      name: 'swipeable',
+      description: '是否开启手势滑动切换；仅原生生效，且应视为初始化配置',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'lazy',
+      description: '是否懒加载面板内容；面板一旦加载即常驻，切走不卸载',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'lazyPreloadDistance',
+      description: '开启 lazy 时预加载当前 tab 前后 N 个面板',
+      type: 'number',
+      default: '0'
+    },
+    {
+      name: 'renderLazyPlaceholder',
+      description: '未加载面板的占位内容，默认是居中的加载指示器',
+      type: '() => ReactNode'
+    },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<TabsSlots>' },
+    { name: 'ref', description: '根节点 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { TabItem, TabsProps, TabsSlots, TabsType } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="TabsType"
+  description="标签页风格：line 为底部指示线，pill 为选中背景块。"
+  type="'line' | 'pill'"
+/>
+
+<UnionType
+  name="TabsSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'indicator' | 'pager' | 'root' | 'tab' | 'tabBar' | 'tabBarContent' | 'tabText'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 TabsSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'TabItem',
+      description: '单个 tab 的配置。',
+      fields: [
+        { name: 'key', type: 'string', description: '唯一标识。', required: true },
+        { name: 'title', type: 'ReactNode', description: '标签标题；字符串会自动包裹为 Text。', required: true },
+        { name: 'children', type: 'ReactNode', description: '面板内容。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该 tab，手势滑过时会回弹。' }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `tabsVariants`。

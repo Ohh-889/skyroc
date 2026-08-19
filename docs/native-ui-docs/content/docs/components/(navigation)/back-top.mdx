@@ -36,15 +36,15 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
 
 ## 位置
 
-`right` / `bottom` 是按钮到**屏幕物理边缘**的距离，`size` 是按钮直径：
+`right` / `bottom` 是按钮到**父容器边缘**的距离，`size` 是按钮直径：
 
 | 属性     | 默认值 | 说明                             |
 | -------- | ------ | -------------------------------- |
-| `right`  | 30     | 距屏幕右边的距离                 |
-| `bottom` | 128    | 距屏幕底边的距离，已预留 TabBar  |
+| `right`  | 30     | 距父容器右边的距离               |
+| `bottom` | 128    | 距父容器底边的距离，已预留 TabBar |
 | `size`   | 40     | 按钮直径，比 `FloatingButton` 的默认 48 小一号 |
 
-位置按窗口尺寸计算，渲染却是相对父容器的绝对定位，因此 `BackTop` 必须挂在铺满屏幕、且左上角与屏幕左上角重合的容器里。页面上方还有 NavBar 之类的固定元素时，用 `Portal` 把它挂到页面根节点（示例里就是这么做的）。
+位置是相对父容器的绝对定位，边界取父容器的实测尺寸——挂在整屏容器里就贴屏幕边缘。页面上方还有 NavBar 之类的固定元素时，用 `Portal` 把它挂到页面根节点，避免按钮被这些元素挤下去（示例里就是这么做的）。
 
 `bottom` 不含安全区：位置最终落在 transform 上，取不到 `*-safe` 工具类背后的运行时 inset。需要避开 home indicator 或常驻 TabBar 时，把相应高度自己并进这个值。
 
@@ -102,10 +102,10 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
       type: 'number',
       default: '200'
     },
-    { name: 'right', description: '距屏幕右边的距离（像素）', type: 'number', default: '30' },
+    { name: 'right', description: '距父容器右边的距离（像素）', type: 'number', default: '30' },
     {
       name: 'bottom',
-      description: '距屏幕底边的距离（像素），不含安全区，需要避开 home indicator 或 TabBar 时自行并入',
+      description: '距父容器底边的距离（像素），不含安全区，需要避开 home indicator 或 TabBar 时自行并入',
       type: 'number',
       default: '128'
     },

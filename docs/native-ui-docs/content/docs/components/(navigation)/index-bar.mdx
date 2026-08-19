@@ -1,0 +1,188 @@
+---
+title: IndexBar
+description: 字母索引列表，右缘悬浮索引条
+---
+
+索引栏（IndexBar）是「分组列表 + 右缘悬浮字母条」的组合，典型场景是城市选择、通讯录。列表本体整套复用 `AnchorNav`（滚动定位的高度模型、点击侧栏时的程序化滚动抑制、触感策略都只在那边有一份），IndexBar 只负责把「下标」这层身份换成「字母」。
+
+```tsx
+import { IndexBar } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 的每一项是一个分组：`title` 既是分组标题也是侧栏上的那个字符，因此**必须在 `items` 内唯一**。滚动列表时右侧字母会联动高亮，点击字母则滚动到对应分组。
+
+<Demo src="@playground/index-bar/IndexBarBasic" />
+
+`onIndexChange` 的参数是分组的 `title`（而不是下标），点击侧栏与滚动联动都会触发。`onPressItem` 是子项点击回调。
+
+`IndexBar` 需要一个有确定高度的父容器（例如 `flex-1` 的 `View`），否则列表撑不开。
+
+## 何时使用
+
+- 长列表按首字母分组，需要快速跳转：城市、联系人、品牌。
+- 分组不需要字母索引条时用 `AnchorNav`；只有几个分类用 `Sidebar`。
+
+## 吸顶与触感
+
+`sticky`（默认 `true`）控制分组标题吸顶，`haptic`（默认 `true`）控制点击侧栏索引时的轻触反馈（仅原生端有效）。
+
+<Demo src="@playground/index-bar/IndexBarBehavior" />
+
+## 高度度量
+
+`itemHeight`（默认 40）与 `sectionHeaderHeight`（默认 32）**不只是样式**：滚动定位按这两个值累加算出目标偏移量，改了样式高度却不改它们，跳转就会偏。
+
+<Demo src="@playground/index-bar/IndexBarMetrics" />
+
+## 自定义子项
+
+`renderItem(item, section)` 自定义子项内容，外层仍然会被钉在 `itemHeight` 上，所以内容必须能在这个高度内显示完整（demo 里用 `h-full` 撑满）。
+
+<Demo src="@playground/index-bar/IndexBarCustomItem" />
+
+传了 `renderItem` 后 `onPressItem` 不再生效 —— 点击交互由自定义内容自行处理。
+
+## 命令式定位
+
+`ref.scrollToIndex(index)` 按字母定位，行为与点击侧栏一致（滚动 + 更新高亮）；字母不在 `items` 中时静默忽略。
+
+<Demo src="@playground/index-bar/IndexBarImperative" />
+
+## 样式覆盖
+
+`className` 作用于根节点，`classNames` 按 slot 细粒度覆盖：
+
+| slot                | 作用位置                                   |
+| ------------------- | ------------------------------------------ |
+| `root`              | 根节点                                     |
+| `content`           | 列表内容容器（右内边距给索引条让位）        |
+| `sectionHeader`     | 分组标题容器                               |
+| `sectionHeaderText` | 分组标题文字                               |
+| `item`              | 子项容器                                   |
+| `itemText`          | 子项文字                                   |
+| `separator`         | 子项之间的分隔线                           |
+| `sidebar`           | 右缘悬浮的索引条容器                       |
+| `sidebarItem`       | 单个索引字母的容器                         |
+| `sidebarItemText`   | 索引字母文字（激活态加粗变主题色）          |
+
+<Demo src="@playground/index-bar/IndexBarSlots" />
+
+三个容易踩的点：
+
+- 加宽 `sidebar` 时要同步加大 `content` 的右内边距，否则列表文字会钻到字母底下（两者默认都是 28）。
+- `separator` 只能改颜色 / 透明度，**不要改粗细或外边距** —— 它的占位是滚动定位的度量之一。
+- `sidebarItemText` 覆盖颜色会盖掉激活态，只改字号即可。
+
+索引条是绝对定位悬浮在列表之上的，激活态因此只改文字本身、不加底衬 —— 任何色块都会挡住底下的内容。索引项之间也刻意不留 `gap`：间隙既会漏出点不到的死区，也会让相邻项的 `hitSlop` 互相重叠，把点击判给隔壁字母。
+
+## 无障碍
+
+每个索引字母是 `accessibilityRole="button"`，带 `accessibilityLabel`（字母本身）与 `selected` 状态；索引项只有 20dp 宽，横向用 `hitSlop` 补到 44pt，纵向靠各项首尾相接兜住。
+
+## API
+
+### IndexBar
+
+除下表外，`IndexBar` 透传 `View` 的属性（`style`、`testID` 等，`children` 除外）。
+
+<PropsTable
+  data={[
+    { name: 'items', description: '分组数据，顺序即侧栏索引顺序', type: 'IndexBarSection[]', required: true },
+    {
+      name: 'onIndexChange',
+      description: '激活索引变化回调，参数是该分组的 title；点击侧栏与滚动联动都会触发',
+      type: '(index: string) => void'
+    },
+    {
+      name: 'onPressItem',
+      description: '子项点击回调；传了 renderItem 时不生效',
+      type: '(item: IndexBarChild) => void'
+    },
+    {
+      name: 'renderItem',
+      description: '自定义子项渲染，外层仍会套上 itemHeight 的固定高度',
+      type: '(item: IndexBarChild, section: IndexBarSection) => ReactNode'
+    },
+    {
+      name: 'itemHeight',
+      description: '子项高度；同时是滚动定位的度量，并被强制套在每个子项外层',
+      type: 'number',
+      default: '40'
+    },
+    {
+      name: 'sectionHeaderHeight',
+      description: '分组标题高度；同样参与滚动定位计算',
+      type: 'number',
+      default: '32'
+    },
+    { name: 'sticky', description: '是否开启分组标题吸顶', type: 'boolean', default: 'true' },
+    { name: 'haptic', description: '点击侧栏索引时是否触发轻触反馈（仅原生端）', type: 'boolean', default: 'true' },
+    { name: 'className', description: '根节点类名', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<IndexBarSlots>'
+    },
+    { name: 'ref', description: '组件 ref，用于命令式定位', type: 'Ref<IndexBarRef>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { IndexBarChild, IndexBarProps, IndexBarRef, IndexBarSection, IndexBarSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="IndexBarSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'item' | 'itemText' | 'root' | 'sectionHeader' | 'sectionHeaderText' | 'separator' | 'sidebar' | 'sidebarItem' | 'sidebarItemText'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 IndexBarSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'IndexBarSection',
+      description: '分组数据。',
+      fields: [
+        {
+          name: 'title',
+          type: 'string',
+          description: '索引字母，同时是分组标题与侧栏字符，必须在 items 内唯一。',
+          required: true
+        },
+        { name: 'children', type: 'IndexBarChild[]', description: '该分组的子项列表。', required: true }
+      ]
+    },
+    {
+      name: 'IndexBarChild',
+      description: '子项数据。',
+      fields: [
+        { name: 'key', type: 'string', description: '唯一标识。', required: true },
+        { name: 'text', type: 'string', description: '显示文本。', required: true }
+      ]
+    },
+    {
+      name: 'IndexBarRef',
+      description: '组件实例暴露的方法。',
+      fields: [
+        {
+          name: 'scrollToIndex',
+          type: '(index: string) => void',
+          description: '定位到指定索引，行为与点击侧栏一致；索引不存在时静默忽略。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `indexBarVariants`。

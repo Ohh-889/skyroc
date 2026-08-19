@@ -1,0 +1,125 @@
+---
+title: NavBar
+description: 页面顶部导航栏，左中右三区布局
+---
+
+导航栏（NavBar）是页面顶部的标题栏：左侧返回、中间标题、右侧操作。组件**不感知任何路由方案** —— 返回行为由使用方通过 `onLeftPress` 注入，它只负责布局与样式。
+
+```tsx
+import { NavBar } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+只给 `title` 即可。导航栏主体高度按平台惯例取值：iOS 44、Android 56，外层容器默认再加上顶部安全区内边距。
+
+<Demo src="@playground/navbar/NavBarBasic" />
+
+标题是绝对定位居中的（左右各留出 64 的按钮区），所以长标题不会把两侧内容挤走，而是单行截断。
+
+## 何时使用
+
+- 页面级的顶部标题栏。
+- 页内的分段切换请用 `Tabs`；悬浮在内容之上的操作条请自行用 `View` 拼。
+
+## 返回与操作
+
+`leftArrow` 显示返回箭头，`rightText` + `onRightPress` 提供右侧主操作。
+
+<Demo src="@playground/navbar/NavBarAction" />
+
+箭头是否可点由 `onLeftPress` 决定：只开 `leftArrow` 而不给回调会渲染成不可点状态。两侧按钮都带 `hitSlop={5}`。
+
+## 文字导航
+
+`leftText` 与 `rightText` 可以同时使用，两侧都是文字按钮（左侧文字可与箭头并存）。
+
+<Demo src="@playground/navbar/NavBarText" />
+
+## 禁用状态
+
+`leftDisabled` / `rightDisabled` 阻止对应区域点击并降到 50% 不透明度。
+
+<Demo src="@playground/navbar/NavBarDisabled" />
+
+## 自定义内容
+
+`left` / `right` / `title` 都接受任意节点：`left` 会覆盖 `leftArrow` 与 `leftText`，`right` 会覆盖 `rightText`。`onTitlePress` 让标题区域可点。
+
+<Demo src="@playground/navbar/NavBarCustomContent" />
+
+标题铺满整行，不可点时组件会给它 `pointerEvents="none"` 让出触摸 —— 否则它会盖掉两侧按钮。
+
+## 颜色与样式覆盖
+
+`backColor` 单独指定返回箭头颜色（缺省时箭头包在 `Text` 里，继承主题前景色、跟随明暗模式）。`className` 落在导航栏主体上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                        |
+| ----------- | ----------------------------------------------- |
+| `container` | 最外层容器，承载顶部安全区内边距                |
+| `root`      | 导航栏主体（高度、横向内边距、下边框）          |
+| `left`      | 左侧按钮区                                      |
+| `title`     | 标题区（绝对定位居中）                          |
+| `right`     | 右侧按钮区                                      |
+
+<Demo src="@playground/navbar/NavBarStyles" />
+
+注意 `className` 与 `classNames.root` 都作用在主体上，此处 `classNames.root` 排在更后面、优先级更高（与库内多数组件相反）。
+
+## 无分隔线
+
+`border={false}` 去掉底部分隔线，常用于导航栏与下方内容同色的场景。
+
+<Demo src="@playground/navbar/NavBarBorderless" />
+
+`safeAreaTop`（默认 `true`）控制顶部安全区内边距 —— 上面这些内嵌 demo 都关掉了它，实际页面里保持默认即可。安全区尺寸由应用根节点的 `Uniwind.updateInsets` 同步，不依赖 `SafeAreaProvider`。
+
+## API
+
+### NavBar
+
+<PropsTable
+  data={[
+    { name: 'title', description: '标题，字符串会单行截断；也接受任意节点', type: 'ReactNode' },
+    { name: 'onTitlePress', description: '标题点击回调；未提供时标题不拦截触摸', type: '() => void' },
+    { name: 'leftArrow', description: '是否显示左侧返回箭头', type: 'boolean', default: 'false' },
+    { name: 'leftText', description: '左侧文字', type: 'string' },
+    { name: 'left', description: '自定义左侧内容，会覆盖 leftArrow 与 leftText', type: 'ReactNode' },
+    { name: 'onLeftPress', description: '左侧点击回调；未提供时左侧不可点', type: '() => void' },
+    { name: 'leftDisabled', description: '禁用左侧按钮', type: 'boolean', default: 'false' },
+    { name: 'rightText', description: '右侧文字', type: 'string' },
+    { name: 'right', description: '自定义右侧内容，会覆盖 rightText', type: 'ReactNode' },
+    { name: 'onRightPress', description: '右侧点击回调；未提供时右侧不可点', type: '() => void' },
+    { name: 'rightDisabled', description: '禁用右侧按钮', type: 'boolean', default: 'false' },
+    { name: 'backColor', description: '返回箭头颜色，缺省时继承主题前景色', type: 'string' },
+    { name: 'border', description: '是否显示下边框', type: 'boolean', default: 'true' },
+    { name: 'safeAreaTop', description: '是否使用顶部安全区内边距', type: 'boolean', default: 'true' },
+    { name: 'className', description: '导航栏主体类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「颜色与样式覆盖」一节', type: 'SlotClassNames<NavBarSlots>' },
+    {
+      name: 'ref',
+      description: '最外层容器的 ref，可用于 measure 导航栏实际高度（含安全区）',
+      type: 'Ref<View>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { NavBarProps, NavBarSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="NavBarSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'container' | 'left' | 'right' | 'root' | 'title'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 NavBarSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `navBarVariants`。

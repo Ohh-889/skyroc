@@ -1,0 +1,164 @@
+---
+title: Pagination
+description: 分页器，支持页码折叠与简单模式
+---
+
+分页器（Pagination）把长列表切成若干页。总页数由 `totalItems / itemsPerPage` 推出，组件只持有「当前页」这一个状态；页码与上下页按钮都是 `size="sm"` 的 `Button`。
+
+```tsx
+import { Pagination } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+给出数据总条数与每页条数即可，默认显示当前页左右各 1 个兄弟页码。
+
+<Demo src="@playground/pagination/PaginationBasic" />
+
+空数据也保留一页，避免页码区在加载态里塌成空白。
+
+## 何时使用
+
+- 数据量大且用户需要跳到指定页；移动端更常见的是「加载更多 / 下拉刷新」，两者按场景选。
+- 空间紧张时用 `mode="simple"`。
+
+## 简单模式
+
+`mode="simple"` 只保留「当前页/总页数」文本，不再计算页码列表。
+
+<Demo src="@playground/pagination/PaginationSimple" />
+
+## 固定首尾页
+
+`showEdges` 始终显示首末页，中间用省略号折叠，布局是 `首页 + 省略号 + 兄弟窗口 + 省略号 + 尾页`。
+
+<Demo src="@playground/pagination/PaginationEdges" />
+
+两个阈值决定省略号什么时候出现：
+
+- 这套布局最多占 `2 × siblingCount + 5` 格，总页数没超过它就全铺开，一个省略号都不画。
+- 省略号自己也占一格，只折叠一两页等于白占位置（`1 … 4` 并不比 `1 2 3 4` 短），所以某一侧至少要藏起 2 页才画省略号。
+
+## 兄弟页码数量
+
+`siblingCount` 控制当前页左右各显示几个页码，`0` 表示只显示当前页。关掉 `showEdges` 时只渲染一个宽度为 `2 × siblingCount + 1` 的滑动窗口：页码数量恒定、不出现省略号，贴着首尾时窗口整体平移，可见页码数保持不变。
+
+<Demo src="@playground/pagination/PaginationSiblingCount" />
+
+## 自定义上下页
+
+`prev` / `next` 接受任意节点，传 `string` / `number` 会自动包一层 `Text`（默认是 `'Prev'` / `'Next'`）。
+
+<Demo src="@playground/pagination/PaginationNav" />
+
+## 禁用
+
+`disabled` 后所有页码与上下页按钮都不响应点击。
+
+<Demo src="@playground/pagination/PaginationDisabled" />
+
+## 受控
+
+`page` + `onPageChange` 由外部持有页码；父级不更新 `page` 时组件也不会自己走。
+
+<Demo src="@playground/pagination/PaginationControlled" />
+
+## 数据量变化
+
+改筛选条件让数据变少时，外部持有的页码可能越界。组件渲染前会把**显示值**夹回 `[1, pageCount]`，但**不回写状态** —— 受控用法里组件写回去、调用方又传回来，两边会来回打架。
+
+<Demo src="@playground/pagination/PaginationTotalChange" />
+
+## 列表联动
+
+分页器本身不管数据，页码变化后由你去切数据源。
+
+<Demo src="@playground/pagination/PaginationWithList" />
+
+## 自定义样式
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                       |
+| ----------- | ---------------------------------------------- |
+| `root`      | 根容器                                         |
+| `content`   | 页码与按钮的横向容器                           |
+| `navButton` | 上一页 / 下一页按钮                             |
+| `item`      | 单个页码按钮                                   |
+| `itemText`  | 页码文字（当前页加粗）                          |
+| `ellipsis`  | 省略号占位                                     |
+| `simple`    | `simple` 模式下「当前页/总页数」的容器          |
+| `desc`      | 省略号与「当前页/总页数」的文字                 |
+
+<Demo src="@playground/pagination/PaginationStyles" />
+
+页码格子用 `min-w-8` 而不是固定宽度：总页数上三位后固定宽度会把数字挤掉，让格子按内容横向生长即可。高度统一交给 `Button`（`sm` 为 32），它在该尺寸下已经补了 `hitSlop`，不要再加内边距撑高。
+
+## 无障碍
+
+当前页码按钮带 `accessibilityState={{ selected: true }}` —— `Button` 自身只给 `busy` / `disabled`，「第几页是当前页」这层身份要在这里补，否则读屏念不出来。
+
+## API
+
+### Pagination
+
+除下表外，`Pagination` 透传 `View` 的属性（`style`、`testID` 等，`children` 除外）。
+
+<PropsTable
+  data={[
+    { name: 'totalItems', description: '数据总条数', type: 'number', default: '0' },
+    { name: 'itemsPerPage', description: '每页条数', type: 'number', default: '10' },
+    { name: 'page', description: '受控当前页码', type: 'number' },
+    { name: 'defaultPage', description: '非受控初始页码', type: 'number', default: '1' },
+    { name: 'onPageChange', description: '页码变化回调', type: '(page: number) => void' },
+    {
+      name: 'mode',
+      description: '分页模式，simple 只显示「当前页/总页数」',
+      type: "'multi' | 'simple'",
+      default: "'multi'"
+    },
+    {
+      name: 'showEdges',
+      description: '是否始终显示首尾页码，中间用省略号折叠',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'siblingCount', description: '当前页左右各显示几个兄弟页码', type: 'number', default: '1' },
+    { name: 'prev', description: '上一页按钮内容，string / number 会被包裹为 Text', type: 'ReactNode', default: "'Prev'" },
+    { name: 'next', description: '下一页按钮内容，string / number 会被包裹为 Text', type: 'ReactNode', default: "'Next'" },
+    { name: 'disabled', description: '禁用所有页码与上下页按钮', type: 'boolean', default: 'false' },
+    { name: 'className', description: '根容器类名', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「自定义样式」一节',
+      type: 'SlotClassNames<PaginationSlots>'
+    },
+    { name: 'ref', description: '根节点 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { PaginationMode, PaginationProps, PaginationSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="PaginationMode"
+  description="分页模式，simple 只显示「当前页/总页数」。"
+  type="'multi' | 'simple'"
+/>
+
+<UnionType
+  name="PaginationSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'desc' | 'ellipsis' | 'item' | 'itemText' | 'navButton' | 'root' | 'simple'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 PaginationSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `paginationVariants`。

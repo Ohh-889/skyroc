@@ -1,0 +1,156 @@
+---
+title: Sidebar
+description: 竖排侧边导航，常与右侧内容区配合
+---
+
+侧边栏（Sidebar）是竖排的分类导航：激活项高亮并在左侧显示一条指示条。它是 `TreeSelect` 左栏的实现，也可以单独使用。
+
+```tsx
+import { Sidebar } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 声明分类，每项由 `key` / `title` 组成。`onIndexChange` 抛出当前下标，第二个参数直接给出该项配置。
+
+<Demo src="@playground/sidebar/SidebarBasic" />
+
+根节点默认 `self-start`（宽度由最长标题撑开）。放进定高的行容器时请自行给宽高，例如 `className="w-24 self-stretch"`。
+
+## 何时使用
+
+- 分类多、需要竖排展示的两栏布局（左分类、右内容）。
+- 横向的分段切换用 `Tabs`；两级联动的选择用 `TreeSelect`。
+
+## 不等高列表
+
+标题换行导致各项高度不一时，指示器仍然逐项对齐 —— 每项各自 `onLayout` 上报布局，而不是按首项高度推算；指示器自身的高度也是实测的，因此用 `classNames.indicator` 改高度不会让它错位。
+
+<Demo src="@playground/sidebar/SidebarUnevenItems" />
+
+## 角标
+
+`badge` 传内容、`dot` 传小红点，内部用 `Badge` 包裹标题。包裹层是 `items-center` 收缩到文字宽度的，角标因此贴着标题而不是飞到整项右边缘。
+
+<Demo src="@playground/sidebar/SidebarBadge" />
+
+## 自定义标题
+
+`title` 接受任意节点，可以组合主副文案。字符串标题会自动补上 `accessibilityLabel`。
+
+<Demo src="@playground/sidebar/SidebarCustomTitle" />
+
+## 禁用项
+
+`disabled` 让该项降到 50% 不透明度、文字转灰且不响应点击。
+
+<Demo src="@playground/sidebar/SidebarDisabled" />
+
+## 受控
+
+`activeIndex` + `onIndexChange` 接管激活项。回调的第二个参数是该项配置，可以按 `key` 持久化选中态，而不是存一个会串位的下标。
+
+<Demo src="@playground/sidebar/SidebarControlled" />
+
+`activeIndex` 是**位置**而非身份，`items` 增删或重排后需要调用方自行校正。
+
+## 可滚动
+
+`scrollable`（默认 `true`）时根节点是 `ScrollView`，项数超出容器高度可以纵向滚动，指示器跟着内容一起滚。
+
+<Demo src="@playground/sidebar/SidebarScrollable" />
+
+## 不滚动
+
+`scrollable={false}` 时根节点退化成普通 `View`，用于外层已经有滚动容器、不希望嵌套滚动的场景。
+
+<Demo src="@playground/sidebar/SidebarNotScrollable" />
+
+两种模式保持相同的节点层级（root 一层、content 一层），所以 `className` 与 `classNames.content` 落在哪个节点上不随 `scrollable` 变化。
+
+## 样式覆盖
+
+`className` 追加到根节点上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                       |
+| ----------- | ---------------------------------------------- |
+| `root`      | 根节点（`scrollable` 时即 `ScrollView` 本身）    |
+| `content`   | 内容容器（`scrollable` 时是 contentContainer）  |
+| `item`      | 单项（激活态换成 `bg-background`）              |
+| `itemText`  | 单项文字（激活态加粗）                          |
+| `indicator` | 激活项左侧的指示条                              |
+
+<Demo src="@playground/sidebar/SidebarCustomSlots" />
+
+指示器后于各项渲染，靠绘制顺序压在激活项之上 —— `zIndex` 在 Android 上不总可靠。
+
+## 无障碍
+
+根节点是 `accessibilityRole="tablist"`，每项是 `tab` 并带上 `selected` / `disabled` 状态；字符串标题会自动成为 `accessibilityLabel`。
+
+## API
+
+### Sidebar
+
+除下表外，`Sidebar` 透传 `View` 的属性（`style`、`testID` 等，`children` 除外）。
+
+<PropsTable
+  data={[
+    { name: 'items', description: '侧边栏项数据', type: 'SidebarItem[]', required: true },
+    {
+      name: 'activeIndex',
+      description: '受控当前激活索引；索引是位置而非身份，items 变动后需自行校正',
+      type: 'number'
+    },
+    { name: 'defaultActiveIndex', description: '非受控初始激活索引', type: 'number', default: '0' },
+    {
+      name: 'onIndexChange',
+      description: '激活项变化回调，同时给出该项配置，便于按 key 持久化选中态',
+      type: '(index: number, item: SidebarItem) => void'
+    },
+    {
+      name: 'scrollable',
+      description: '内容超出高度时是否可纵向滚动；false 时根节点退化成普通 View',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'className', description: '根节点类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<SidebarSlots>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SidebarItem, SidebarProps, SidebarSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SidebarSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'indicator' | 'item' | 'itemText' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SidebarSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'SidebarItem',
+      description: '侧边栏单项配置。',
+      fields: [
+        { name: 'key', type: 'string', description: '唯一标识。', required: true },
+        { name: 'title', type: 'ReactNode', description: '标题；字符串会自动包裹为 Text 并作为无障碍标签。', required: true },
+        { name: 'badge', type: 'ReactNode', description: '徽标内容。' },
+        { name: 'dot', type: 'boolean', description: '是否显示小红点。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该项。' }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `sidebarVariants`。

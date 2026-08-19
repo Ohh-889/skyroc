@@ -1,0 +1,259 @@
+---
+title: DropdownMenu
+description: 贴着标题栏展开的多列筛选菜单
+---
+
+下拉菜单（DropdownMenu）由一排标题和一个下拉面板组成，常见于列表页顶部的排序 / 筛选区。整块菜单只有一个面板，点哪一列就展示哪一列的选项；面板贴着标题栏展开，高度由内容实测后用 Reanimated 做动画，遮罩同步淡入。
+
+```tsx
+import { DropdownMenu } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 定义有几列、每列有哪些选项。每列的初始值来自 `defaultValues[index]`，没给的那项回退到该列的第一个选项——所以标题不会出现空白。标题默认显示当前选中项的文本。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuBasic" />
+
+## 何时使用
+
+- 列表页顶部的排序、筛选、分类切换，需要在不离开当前页的前提下改变列表条件时。
+- 每列都是**单选**，且选项数量适中（十几条以内，再多用 `maxHeight` 让面板内部滚动）。
+- 需要弹出层承载复杂表单或多选时，改用 `Popup` / `Sheet`；只是一次性的操作列表用 `ActionSheet`。
+
+## 展开方向
+
+`direction` 决定面板从标题栏的哪一侧铺开：`down` 贴在下沿（默认），`up` 贴在上沿，用于固定在屏幕底部的筛选栏。方向同时翻转三处——面板圆角只留在远离标题栏的那一侧、内容从贴栏的一侧开始堆叠、标题箭头改成 `caret-up`。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuDirection" />
+
+面板的定位容器会撑到一整屏高度（`useWindowDimensions().height`），这是为了兜住遮罩：Android 不会把点击派发给超出父容器范围的子节点，遮罩比容器大就点不动。容器本身是 `pointerEvents="box-none"`，关闭遮罩时整屏范围内的点击照常落到底下的页面上。
+
+## 自定义标题
+
+`item.title` 固定这一列的标题文本，不再跟随选中项；省略时标题显示当前选中项的 `text`。选中态下标题与箭头都会变成主题色并加粗。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuTitle" />
+
+## 禁用
+
+`item.disabled` 禁用整列，标题降到 50% 不透明度且点不开；`option.disabled` 只禁用单个选项，面板照常展开但该项不可选。命令式的 `ref.open(index)` 同样会跳过禁用列。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuDisabled" />
+
+## 面板高度
+
+面板内容挂在 `ScrollView` 上，`maxHeight` 限制它的最大高度，超出后在面板内部滚动，默认是屏幕高度的 80%。展开动画的目标高度取「内容自然高度」与 `maxHeight` 的较小值，因此设了 `maxHeight` 也不会出现先展开过头再回缩。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuScrollable" />
+
+面板已展开时增删选项，内容会重新触发测量并把高度平滑动画到新值，不需要手动关闭再打开。
+
+## 遮罩与分隔线
+
+`overlay` 控制背景遮罩（默认 `true`，`bg-black/40`，点击即关闭），`showDivider` 控制相邻选项之间的分隔线（默认 `true`）。关掉遮罩后面板外的内容仍可正常交互，适合嵌在卡片里的轻量筛选。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuNoOverlay" />
+
+关掉遮罩也就没有了「点击外部关闭」的入口，记得留一条别的关闭路径（再点一次标题，或者 `ref.close()`）。
+
+## 选择行为
+
+`closeOnSelect` 默认为 `true`，选中后自动收起面板；设为 `false` 可以让面板保持展开，适合连续调整多个条件。`onSelect` 拿到的是列索引和完整的选项对象（含 `value` / `text` / `disabled`），`onValuesChange` 拿到的是整个值数组。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuSelectBehavior" />
+
+## 受控模式
+
+传入 `values` 即进入受控模式，外部状态成为选中值的唯一来源，组件内部不再自行更新——必须在 `onValuesChange` 里把新值写回去。数组下标与 `items` 一一对应，某项为 `undefined` 表示该列未选中（标题会显示空字符串，建议配合 `item.title` 使用）。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuControlled" />
+
+## 命令式控制
+
+`ref` 暴露 `open(index)` / `close()`。`open` 在索引越界或该列 `disabled` 时静默忽略，`close` 在已关闭时不做任何事。`onOpenChange` 在展开时回调索引、收起时回调 `-1`，可以用来同步外部的高亮状态。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuImperative" />
+
+注意 `onOpenChange(-1)` 在收起动画**开始**时就触发，而面板节点要等动画播完才卸载。组件内部用序号校验收起回调，中途被新的展开打断时不会误卸载面板，所以快速连点不同标题也不会闪。
+
+## 动画与触感
+
+`duration` 同时控制面板高度、遮罩透明度和标题箭头旋转三条动画的时长（毫秒，默认 `200`）。`haptic` 控制点击标题与选项时的轻触反馈（`Haptics.selectionAsync()`，默认开启），在高频筛选的场景里可以关掉。
+
+<Demo src="@playground/dropdown-menu/DropdownMenuMotion" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖。
+
+| slot           | 作用位置                                                    |
+| -------------- | ----------------------------------------------------------- |
+| `root`         | 根容器 View（展开时会被加上 `z-[100]`）                      |
+| `bar`          | 标题栏容器                                                  |
+| `title`        | 单个标题的 Pressable                                        |
+| `titleText`    | 标题文字                                                    |
+| `arrow`        | 标题箭头的 `colorClassName`，只接受 `accent-*` 颜色类         |
+| `overlay`      | 背景遮罩                                                    |
+| `content`      | 面板内容的 ScrollView                                       |
+| `option`       | 单个选项的 Pressable                                        |
+| `optionText`   | 选项文字                                                    |
+| `selectedIcon` | 选中勾选图标的 `colorClassName`，只接受 `accent-*` 颜色类     |
+| `divider`      | 选项之间的分隔线                                            |
+
+<Demo src="@playground/dropdown-menu/DropdownMenuStyles" />
+
+动画容器（高度包裹层、内容测量层）不开放覆盖——它们承载的是定位与裁剪，改了会直接破坏展开动画。`arrow` / `selectedIcon` 走的是矢量图标，`text-*` 类对它们无效，必须写 `accent-*`。
+
+## API
+
+### DropdownMenu
+
+<PropsTable
+  data={[
+    {
+      name: 'items',
+      description: '菜单列表，每一项是一列标题及其选项',
+      type: 'DropdownMenuItem[]',
+      required: true
+    },
+    {
+      name: 'values',
+      description: '各列当前选中值（受控），下标与 items 对应',
+      type: '(DropdownMenuValue | undefined)[]'
+    },
+    {
+      name: 'defaultValues',
+      description: '各列默认选中值，某一列没给时回退到该列的第一个选项',
+      type: '(DropdownMenuValue | undefined)[]'
+    },
+    {
+      name: 'direction',
+      description: '展开方向，同时决定面板锚点、圆角与箭头朝向',
+      type: "'down' | 'up'",
+      default: "'down'"
+    },
+    {
+      name: 'closeOnSelect',
+      description: '选中后是否自动收起面板',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'overlay', description: '是否显示背景遮罩，点击遮罩收起面板', type: 'boolean', default: 'true' },
+    { name: 'showDivider', description: '是否显示相邻选项之间的分隔线', type: 'boolean', default: 'true' },
+    {
+      name: 'maxHeight',
+      description: '面板最大高度，超出后在面板内部滚动',
+      type: 'number',
+      default: '屏幕高度的 80%'
+    },
+    { name: 'duration', description: '展开 / 收起动画时长（毫秒）', type: 'number', default: '200' },
+    { name: 'haptic', description: '点击标题与选项时是否触发轻触反馈', type: 'boolean', default: 'true' },
+    {
+      name: 'onOpenChange',
+      description: '面板展开 / 收起回调，参数为展开列的索引，-1 表示已收起',
+      type: '(index: number) => void'
+    },
+    {
+      name: 'onSelect',
+      description: '选中选项回调，参数为列索引与完整选项对象',
+      type: '(itemIndex: number, option: DropdownMenuOption) => void'
+    },
+    {
+      name: 'onValuesChange',
+      description: '选中值变化回调，参数为整个值数组',
+      type: '(values: (DropdownMenuValue | undefined)[]) => void'
+    },
+    { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description:
+        '各 slot 的类名覆盖，arrow / selectedIcon 作用于矢量图标的 colorClassName，只接受 accent-* 颜色类',
+      type: 'SlotClassNames<DropdownMenuSlots>'
+    },
+    {
+      name: 'ref',
+      description: '命令式句柄，暴露 open / close',
+      type: 'Ref<DropdownMenuRef>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  DropdownMenuDirection,
+  DropdownMenuItem,
+  DropdownMenuOption,
+  DropdownMenuProps,
+  DropdownMenuRef,
+  DropdownMenuSlots,
+  DropdownMenuValue
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="DropdownMenuValue"
+  description="选项值，同时作为选项列表的 key。"
+  type="number | string"
+/>
+
+<UnionType
+  name="DropdownMenuDirection"
+  description="面板展开方向，决定锚在标题栏的上沿还是下沿。"
+  type="'down' | 'up'"
+/>
+
+<UnionType
+  name="DropdownMenuSlots"
+  description="可通过 classNames 覆盖的 slot 名称，动画容器不在其中。"
+  type="'arrow' | 'bar' | 'content' | 'divider' | 'option' | 'optionText' | 'overlay' | 'root' | 'selectedIcon' | 'title' | 'titleText'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 DropdownMenuSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'DropdownMenuItem',
+      description: '一列菜单：一个标题加一组可选值。',
+      fields: [
+        { name: 'options', type: 'DropdownMenuOption[]', required: true, description: '该列的可选值列表。' },
+        { name: 'title', type: 'string', description: '固定标题文本，不设置时显示当前选中项的 text。' },
+        {
+          name: 'key',
+          type: 'string',
+          description: '标题列表的 key，不传时回退到下标；items 会动态增删时建议传。'
+        },
+        { name: 'disabled', type: 'boolean', description: '禁用整列，标题降低不透明度且不可展开。' }
+      ]
+    },
+    {
+      name: 'DropdownMenuOption',
+      description: '面板中的单个选项。',
+      fields: [
+        { name: 'value', type: 'DropdownMenuValue', required: true, description: '选项值，同时作为渲染 key。' },
+        { name: 'text', type: 'string', required: true, description: '选项显示文本，也是标题的回退文本。' },
+        { name: 'disabled', type: 'boolean', description: '禁用该选项，不可点击并降低不透明度。' }
+      ]
+    },
+    {
+      name: 'DropdownMenuRef',
+      description: 'ref 暴露的命令式方法。',
+      fields: [
+        {
+          name: 'open',
+          type: '(index: number) => void',
+          required: true,
+          description: '展开指定索引的面板，索引越界或该列禁用时忽略。'
+        },
+        { name: 'close', type: '() => void', required: true, description: '收起当前面板，已关闭时不做任何事。' }
+      ]
+    }
+  ]}
+/>
