@@ -41,7 +41,7 @@ const NavBar = (props: NavBarProps) => {
       leftText: 'text-sm',
       right: cn(variantSlots.right(), classNames?.right),
       rightText: 'text-sm text-primary',
-      root: cn(variantSlots.root(), className),
+      root: cn(variantSlots.root(), className, classNames?.root),
       title: cn(variantSlots.title(), classNames?.title),
       titleText: 'font-semibold'
     };
