@@ -1,3 +1,4 @@
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import { createMDX } from 'fumadocs-mdx/next';
 import { withUniwind } from 'uniwind-turbo-plugin-next';
 
@@ -96,6 +97,9 @@ const nextConfig = {
     }
   }
 };
+
+// 让 next dev 也能拿到 Cloudflare 的 env / bindings（R2 增量缓存等），生产构建走 opennextjs-cloudflare build。
+initOpenNextCloudflareForDev();
 
 // withUniwind 是 async：它在 config 阶段要先 buildCSS / buildDtsFile，必须 await 后再交给 withMDX。
 // 否则 createMDX 展开的是一个 Promise，uniwind 的 resolveAlias 与 loaders 会被静默丢弃，

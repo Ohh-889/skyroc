@@ -7,7 +7,12 @@
     "dev": "next dev",
     "start": "next start",
     "types:check": "next typegen && tsc --noEmit",
-    "lint": "oxlint"
+    "lint": "oxlint",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "deploy": "pnpm run worker:build && opennextjs-cloudflare deploy",
+    "preview": "pnpm run worker:build && opennextjs-cloudflare preview",
+    "upload": "pnpm run worker:build && opennextjs-cloudflare upload",
+    "worker:build": "opennextjs-cloudflare build"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.65",
@@ -51,6 +56,8 @@
     "typescript": "^6.0.3",
     "oxlint": "^1.78.0",
     "uniwind-turbo-plugin-next": "0.1.0",
-    "@types/hast": "^3.0.5"
+    "@types/hast": "^3.0.5",
+    "@opennextjs/cloudflare": "1.20.2",
+    "wrangler": "4.123.0"
   }
 }
