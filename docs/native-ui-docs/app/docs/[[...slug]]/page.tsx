@@ -38,7 +38,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   return (
     <DocsPage
       toc={page.data.toc}
-      className=" max-w-[1300px]"
+      className="max-w-none"
       full={Boolean(playgroundPage) || page.data.full}
       tableOfContent={{ enabled: !playgroundPage }}
     >

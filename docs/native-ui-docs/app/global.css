@@ -40,7 +40,7 @@ html > body[data-scroll-locked] {
 @media (min-width: 1280px) {
   .skyroc-split {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 420px;
+    grid-template-columns: minmax(0, 1fr) 395px;
     gap: 40px;
     align-items: start;
   }
