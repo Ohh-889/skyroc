@@ -1,8 +1,11 @@
+import { cn } from '@skyroc/utils';
+import * as Haptics from 'expo-haptics';
 /* eslint-disable react-hooks/exhaustive-deps -- findValueIndex 每次渲染都是新函数，列进依赖会让同步 effect 每帧重跑；
    它的结果完全由 value / options 决定，所以只声明这两者。首次定位那个 effect 按语义就只该在挂载时跑一次。 */
 import { useEffect, useRef } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { View } from 'react-native';
+import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import type { SharedValue } from 'react-native-reanimated';
 import Animated, {
   createAnimatedComponent,
@@ -13,10 +16,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
-import { cn } from '@skyroc/utils';
 import { scheduleOnRN } from 'react-native-worklets';
-import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import type { SlotClassNames } from '../../types';
 import { Text } from '../text/Typography';
 import { pickerVariants } from './picker-variants';
@@ -117,6 +117,7 @@ const PickerColumn = (props: PickerColumnProps) => {
   const scrollY = useSharedValue(0);
   const scrollTarget = useSharedValue(0);
   const scrollAnimated = useSharedValue(true);
+  const layoutReady = useSharedValue(false);
   const prevScrollIndex = useSharedValue(-1);
   const isUserScrolling = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -145,27 +146,37 @@ const PickerColumn = (props: PickerColumnProps) => {
   }
 
   // 轻量滚动处理：UI 线程只跟踪 scrollY 与轻触反馈
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll(event) {
-      scrollY.value = event.contentOffset.y;
+  const scrollHandler = useAnimatedScrollHandler(
+    {
+      onScroll(event) {
+        scrollY.value = event.contentOffset.y;
 
-      if (!haptic) return;
+        if (!haptic) return;
 
-      // 回弹会把 offset 带到选项范围之外，不 clamp 的话拉到头还会一路震
-      const rawIndex = Math.round(event.contentOffset.y / itemHeight);
-      const currentIndex = Math.min(Math.max(rawIndex, 0), maxIndex);
+        // 回弹会把 offset 带到选项范围之外，不 clamp 的话拉到头还会一路震
+        const rawIndex = Math.round(event.contentOffset.y / itemHeight);
+        const currentIndex = Math.min(Math.max(rawIndex, 0), maxIndex);
 
-      if (currentIndex !== prevScrollIndex.value) {
-        prevScrollIndex.value = currentIndex;
-        scheduleOnRN(triggerHaptic);
+        if (currentIndex !== prevScrollIndex.value) {
+          prevScrollIndex.value = currentIndex;
+          scheduleOnRN(triggerHaptic);
+        }
       }
-    }
-  }, [haptic, itemHeight, maxIndex, prevScrollIndex, scrollY]);
+    },
+    [haptic, itemHeight, maxIndex, prevScrollIndex, scrollY]
+  );
 
   // 响应式滚动：scrollTarget 变化时在 UI 线程执行 scrollTo
   useDerivedValue(() => {
+    if (!layoutReady.value) return;
+
     scrollTo(scrollViewRef, 0, scrollTarget.value, scrollAnimated.value);
-  }, [scrollAnimated, scrollTarget, scrollViewRef]);
+  }, [layoutReady, scrollAnimated, scrollTarget, scrollViewRef]);
+
+  function handleLayout() {
+    // ref 挂载前调用 scrollTo 会静默失败；布局完成后再开放首次定位，确保初值真实落到滚轮上
+    layoutReady.value = true;
+  }
 
   /** 按当前偏移结算选中项，禁用项自动吸附到最近的可用项 */
   function commitSelection(offsetY: number) {
@@ -197,8 +208,8 @@ const PickerColumn = (props: PickerColumnProps) => {
   /**
    * 拖拽结束兜底。
    *
-   * Android 上 snapToInterval 已经吸附住时不会再产生 momentum，onMomentumScrollEnd 不触发， isUserScrolling 会永远卡在
-   * true，之后 value → 滚动位置的同步全部静默失效。 但飞滚时这个回调先于 momentum 触发，带着速度就提交会先落一个途中的错值，所以按速度分流。
+   * Android 上 snapToInterval 已经吸附住时不会再产生 momentum，onMomentumScrollEnd 不触发， isUserScrolling 会永远卡在 true，之后 value →
+   * 滚动位置的同步全部静默失效。 但飞滚时这个回调先于 momentum 触发，带着速度就提交会先落一个途中的错值，所以按速度分流。
    */
   function handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const velocityY = event.nativeEvent.velocity?.y ?? 0;
@@ -262,6 +273,7 @@ const PickerColumn = (props: PickerColumnProps) => {
         showsVerticalScrollIndicator={false}
         snapToInterval={itemHeight}
         style={{ flex: 1 }}
+        onLayout={handleLayout}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         onScroll={scrollHandler}
         onScrollBeginDrag={handleScrollBeginDrag}

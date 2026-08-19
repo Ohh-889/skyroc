@@ -1,10 +1,10 @@
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { cn } from '@skyroc/utils';
 import { useMemo } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { cn } from '@skyroc/utils';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { DEFAULT_ITEM_HEIGHT, DEFAULT_VISIBLE_COUNT, pickerVariants } from './picker-variants';
 import { PickerColumn } from './PickerColumn';
 import { PickerToolbar } from './PickerToolbar';
-import { DEFAULT_ITEM_HEIGHT, DEFAULT_VISIBLE_COUNT, pickerVariants } from './picker-variants';
 import type { PickerViewProps } from './types';
 import { assignDefaultFieldNames, resolveColumns } from './utils';
 
@@ -91,8 +91,7 @@ const PickerView = (props: PickerViewProps) => {
         {/* 选中指示线画在滚轮下方，pointerEvents 关掉，免得绝对定位层截走滚动手势 */}
         <View
           className={slotClassNames.selectedIndicator}
-          pointerEvents="none"
-          style={{ height: itemHeight, top: indicatorTop }}
+          style={{ height: itemHeight, pointerEvents: 'none', top: indicatorTop }}
         />
 
         {normalizedColumns.map((columnOptions, index) => (
