@@ -6,7 +6,7 @@ const NotifyDeclarative = () => {
   const [declarativeShow, setDeclarativeShow] = useState(false);
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="flex-row flex-wrap items-center gap-3">
         <Button
           variant="outline"

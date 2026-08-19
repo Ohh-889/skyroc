@@ -19,7 +19,7 @@ const NotifyLifecycle = () => {
   }
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-2 flex-row flex-wrap items-center gap-3">
         <Button
           variant="tonal"
