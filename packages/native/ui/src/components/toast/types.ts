@@ -43,8 +43,13 @@ export interface ToastOptions {
   type?: ToastType;
 }
 
-/** Toast 声明式组件属性 */
-export interface ToastProps extends ToastOptions {
+/**
+ * Toast 声明式组件属性。
+ *
+ * `forbidClick` 与 `position` 不在其中：声明式 Toast 就地渲染在它被写下的位置，
+ * 铺遮罩与贴屏定位都由命令式路径的 ToastRenderer 承担，接了也不会生效。
+ */
+export interface ToastProps extends Omit<ToastOptions, 'forbidClick' | 'position'> {
   /** 显示状态变更回调 */
   onUpdateShow?: (show: boolean) => void;
 

@@ -10,7 +10,10 @@ export type InputSlots = 'action' | 'control' | 'root';
 export type InputType = 'password' | 'text';
 
 /** Input 组件属性 */
-export interface InputProps extends Omit<TextInputProps, 'editable' | 'secureTextEntry'>, InputVariantProps {
+export interface InputProps
+  extends Omit<TextInputProps, 'editable' | 'secureTextEntry'>,
+    // focused 由组件内部依据真实聚焦状态推导，不作为外部可控属性暴露
+    Omit<InputVariantProps, 'focused'> {
   /** 覆盖根容器的 className，各 slot 的细粒度覆盖用 classNames */
   className?: string;
 
