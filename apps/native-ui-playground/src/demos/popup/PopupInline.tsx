@@ -4,10 +4,9 @@ import { View } from 'react-native';
 import { PopupPanel } from './shared';
 
 /**
- * 默认 coverScreen 会开一个原生窗口，Portal 渲染的 Toast 会被挡在后面。 传 coverScreen={false} 让弹层就地渲染即可共存，代价是盖不住原生导航栏，且
- * Android 返回键不再生效。
+ * 默认 coverScreen 会开一个原生窗口，Portal 渲染的 Toast 会被挡在后面。 传 coverScreen={false} 让弹层就地渲染即可共存，代价是盖不住原生导航栏，且 Android 返回键不再生效。
  *
- * coverScreen={false} 渲染的是一个 absolute inset-0 的 View，定位相对父容器， 所以这里的根容器要有确定高度，弹层才有地方铺开。
+ * CoverScreen={false} 渲染的是一个 absolute inset-0 的 View，定位相对父容器， 所以这里的根容器要有确定高度，弹层才有地方铺开。
  */
 const PopupInline = () => {
   const [show, setShow] = useState(false);

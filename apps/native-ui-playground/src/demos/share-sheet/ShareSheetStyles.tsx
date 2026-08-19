@@ -1,6 +1,6 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import type { ShareSheetOption } from '@skyroc/native-ui';
-import { Button, ShareSheet } from '@skyroc/native-ui';
+import { Button, ShareSheet, Text } from '@skyroc/native-ui';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
 import { View } from 'react-native';
@@ -11,6 +11,7 @@ const ICON_SIZE = 22;
 function renderIcon(name: ComponentProps<typeof AntDesign>['name']) {
   return (
     <AntDesign
+      color="var(--foreground)"
       name={name}
       size={ICON_SIZE}
     />
@@ -18,7 +19,13 @@ function renderIcon(name: ComponentProps<typeof AntDesign>['name']) {
 }
 
 const OPTIONS: ShareSheetOption[] = [
-  { icon: renderIcon('wechat'), name: '微信', value: 'wechat' },
+  {
+    className: 'rounded-xl bg-primary/5 py-2',
+    description: <Text className="text-xs text-success">常用</Text>,
+    icon: renderIcon('wechat'),
+    name: <Text className="mt-2 text-xs font-semibold text-primary">微信</Text>,
+    value: 'wechat'
+  },
   { icon: renderIcon('weibo'), name: '微博', value: 'weibo' },
   { icon: renderIcon('qq'), name: 'QQ', value: 'qq' },
   { icon: renderIcon('link'), name: '复制链接', value: 'link' }
@@ -39,12 +46,14 @@ const ShareSheetStyles = () => {
       <ShareSheet
         closeOnSelect
         cancelText="再想想"
+        className="bg-primary/5"
         classNames={{
           cancelName: 'text-primary',
           optionIcon: 'bg-primary/10',
           optionName: 'font-medium text-primary'
         }}
         options={OPTIONS}
+        sheetClassName="border border-primary/20"
         sheetClassNames={{ title: 'text-primary' }}
         show={show}
         title="自定义样式"

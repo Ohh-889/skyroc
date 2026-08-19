@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { PopupPanel } from './shared';
 
-/** closeOnBackdropPress 与 closeOnBackPress 相互独立：点遮罩关不掉时，Android 返回键仍然可以退出 */
+/** CloseOnBackdropPress 与 closeOnBackPress 相互独立：点遮罩关不掉时，Android 返回键仍然可以退出 */
 const PopupBackdrop = () => {
   const [lockedShow, setLockedShow] = useState(false);
+  const [backLockedShow, setBackLockedShow] = useState(false);
   const [backdropShow, setBackdropShow] = useState(false);
 
   return (
@@ -15,6 +16,12 @@ const PopupBackdrop = () => {
         onPress={() => setLockedShow(true)}
       >
         点遮罩不关闭
+      </Button>
+      <Button
+        variant="tonal"
+        onPress={() => setBackLockedShow(true)}
+      >
+        返回键不关闭
       </Button>
       <Button
         variant="tonal"
@@ -35,6 +42,21 @@ const PopupBackdrop = () => {
           onClose={() => setLockedShow(false)}
         >
           <Text color="muted">只能点下面的按钮，或按 Android 返回键</Text>
+        </PopupPanel>
+      </Popup>
+
+      <Popup
+        round
+        closeOnBackPress={false}
+        position="center"
+        show={backLockedShow}
+        onUpdateShow={setBackLockedShow}
+      >
+        <PopupPanel
+          title="Android 返回键不关闭"
+          onClose={() => setBackLockedShow(false)}
+        >
+          <Text color="muted">点击遮罩或面板按钮仍可关闭</Text>
         </PopupPanel>
       </Popup>
 

@@ -11,6 +11,7 @@ const ICON_SIZE = 22;
 function renderIcon(name: ComponentProps<typeof AntDesign>['name']) {
   return (
     <AntDesign
+      color="var(--foreground)"
       name={name}
       size={ICON_SIZE}
     />

@@ -10,10 +10,7 @@ import { PopupRound } from './PopupRound';
 import { PopupSafeArea } from './PopupSafeArea';
 import { PopupSurface } from './PopupSurface';
 
-/**
- * Popup 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/popup/PopupPositions" />），
- * 所以这里只负责串场，不要把示例代码写回本文件。
- */
+/** Popup 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/popup/PopupPositions" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const PopupDemo = () => {
   return (
     <ScrollView
@@ -50,15 +47,15 @@ const PopupDemo = () => {
       </Section>
 
       <Section
-        description="底部弹层开启 safeAreaInsetBottom，内容不会被 home indicator 压住。"
-        title="安全区避让（safeAreaInsetBottom）"
+        description="顶部与底部弹层可分别避让状态栏、刘海和 home indicator。"
+        title="安全区避让（safeAreaInsetTop / safeAreaInsetBottom）"
       >
         <PopupSafeArea />
       </Section>
 
       <Section
-        description="closeOnBackdropPress 与 closeOnBackPress 相互独立；backdropColor / backdropOpacity 可自定义遮罩。"
-        title="遮罩（closeOnBackdropPress / backdropColor）"
+        description="遮罩点击与 Android 返回键可独立控制；backdropColor / backdropOpacity 可自定义遮罩。"
+        title="关闭与遮罩（closeOnBackdropPress / closeOnBackPress）"
       >
         <PopupBackdrop />
       </Section>

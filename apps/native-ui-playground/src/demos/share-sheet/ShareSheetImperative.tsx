@@ -11,6 +11,7 @@ const ICON_SIZE = 22;
 function renderIcon(name: ComponentProps<typeof AntDesign>['name']) {
   return (
     <AntDesign
+      color="var(--foreground)"
       name={name}
       size={ICON_SIZE}
     />
@@ -41,10 +42,12 @@ const MULTI_ROW_OPTIONS: ShareSheetOption[][] = [
 
 const ShareSheetImperative = () => {
   const [lastResult, setLastResult] = useState('—');
+  const [lastCallback, setLastCallback] = useState('—');
 
   async function handleImperative() {
     const result = await showShareSheet({
       cancelText: '取消',
+      callback: value => setLastCallback(value ? value.option.value : 'null'),
       description: '选中或取消后 Promise 都会结算，取消时得到 null',
       options: MULTI_ROW_OPTIONS,
       title: '命令式调用'
@@ -63,6 +66,7 @@ const ShareSheetImperative = () => {
   return (
     <View className="gap-3 bg-background p-4">
       <Text color="muted">上次结果：{lastResult}</Text>
+      <Text color="muted">callback：{lastCallback}</Text>
 
       <View className="flex-row flex-wrap items-center gap-3">
         <Button

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { PopupPanel } from './shared';
 
-/** animation 只覆盖传入的那个方向，这里只指定了 in，out 仍走 bottom 的默认 slideOutDown */
+/** Animation 只覆盖传入的那个方向，这里只指定了 in，out 仍走 bottom 的默认 slideOutDown */
 const PopupAnimation = () => {
   const [show, setShow] = useState(false);
 
