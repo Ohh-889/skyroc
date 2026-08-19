@@ -39,7 +39,8 @@ const PortalHost = (props: PortalHostProps) => {
   return (
     <View
       className={slotClassNames.root}
-      style={[{ pointerEvents: 'box-none' }, style]}
+      pointerEvents="box-none"
+      style={style}
       {...rest}
     >
       {renderPortals()}

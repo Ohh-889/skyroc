@@ -119,11 +119,13 @@ const FloatingButton = (props: FloatingButtonProps) => {
   // 不存在 UI 线程与 JS 线程各一套显隐逻辑
   const visibleShared = isSharedVisible(visible) ? visible : null;
   const visibleFlag = isSharedVisible(visible) ? true : visible;
+  const initialScale = !visibleShared && visibleFlag ? 1 : 0;
 
   const translateX = useSharedValue(clamp(offset?.x ?? maxX, minX, maxX));
   const translateY = useSharedValue(clamp(offset?.y ?? maxY - DEFAULT_BOTTOM_INSET, minY, maxY));
-  // 初值直接取当前可见性，别一律给 1：否则挂载瞬间会先画出按钮再缩回去，看着像闪了一下
-  const scale = useSharedValue((visibleShared ? visibleShared.value : visibleFlag) ? 1 : 0);
+  // SharedValue 不能在 React render 阶段读 .value：先隐藏，交给下面的 UI 线程 reaction 在首轮无动画同步。
+  // 普通 boolean 则可直接作为初值，避免 visible=false 挂载时先闪出按钮。
+  const scale = useSharedValue(initialScale);
   const opacity = useSharedValue(1);
   const contextX = useSharedValue(0);
   const contextY = useSharedValue(0);
@@ -212,12 +214,20 @@ const FloatingButton = (props: FloatingButtonProps) => {
     [disabled, opacity, scale, size, translateX, translateY]
   );
 
-  // 首帧 previous 为 null，此时 scale 已由初值给到位，跳过即可避开挂载瞬间的闪现；
-  // 值没变也跳过——依赖变化会让 mapper 重启并立刻跑一次，不拦住就会凭空重放一遍动画
+  // SharedValue 模式不能在 render 阶段读取初值，首轮在 UI 线程直接同步且不播放动画；
+  // 普通 boolean 的 scale 已由初值给到位。后续值没变时跳过，避免 mapper 重启后凭空重放动画。
   useAnimatedReaction(
     () => (visibleShared ? visibleShared.value : visibleFlag),
     (current, previous) => {
-      if (previous === null || current === previous) return;
+      if (previous === null) {
+        if (visibleShared) {
+          scale.value = current ? 1 : 0;
+        }
+
+        return;
+      }
+
+      if (current === previous) return;
 
       scale.value = current ? withTiming(1, SHOW_TIMING) : withTiming(0, HIDE_TIMING);
     },
