@@ -3,10 +3,10 @@
   "version": "0.0.15",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "pnpm --filter @skyroc/ui-types --filter @skyroc/type-utils run build && next build",
     "dev": "next dev",
     "start": "next start",
-    "types:check": "next typegen && tsc --noEmit",
+    "types:check": "pnpm --filter @skyroc/ui-types --filter @skyroc/type-utils run build && next typegen && tsc --noEmit",
     "lint": "oxlint",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "deploy": "pnpm run worker:build && opennextjs-cloudflare deploy",

@@ -131,9 +131,14 @@ pnpm upload     # 只上传新版本，不切流量
 pnpm cf-typegen # 由 wrangler.jsonc 生成 CloudflareEnv 类型
 ```
 
-前三个命令都会先跑 `worker:build`（即 `opennextjs-cloudflare build`）。本站唯一的 workspace 依赖
-`@skyroc/native-ui` 的入口直接指向 `src/`，由 Next 自己编译，因此不像 `docs` / `web-ui-docs`
-那样需要在构建前先 `pnpm --filter` 构建依赖包的 dist 产物。
+前三个命令都会先跑 `worker:build`（即 `opennextjs-cloudflare build`），它内部再去调 `pnpm build`。
+
+`build` 脚本会先构建 `@skyroc/ui-types` 与 `@skyroc/type-utils`：这两个包的 `main` / `types` 指向
+`dist/`（其余 `@skyroc/*` 都指向 `src/`），而 `@skyroc/native-ui` 用到前者、`@skyroc/native-ui` →
+`@skyroc/form` 用到后者。CI 上 `pnpm install` 之后 dist 是空的，缺这一步类型检查会直接报
+`TS2307: Cannot find module '@skyroc/ui-types'`。放在 `build` 而不是 `worker:build` 里，是因为
+OpenNext 构建阶段不会触发 workspace 依赖的构建，却一定会调 `pnpm build`——这样无论 CI 跑的是
+`pnpm deploy`、`pnpm worker:build` 还是直接 `opennextjs-cloudflare build` 都能覆盖到。
 
 `/api/chat` 用到的 `OPENROUTER_API_KEY` 不会被打进产物，需要单独配置：
 
@@ -156,10 +161,10 @@ echo 'OPENROUTER_API_KEY=...' > .dev.vars    # pnpm preview 本地（.env.local 
 | 命令                | 作用                            |
 | ------------------- | ------------------------------- |
 | `pnpm dev`          | 启动开发服务器                  |
-| `pnpm build`        | Next.js 生产构建                |
+| `pnpm build`        | 构建依赖包 + Next.js 生产构建   |
 | `pnpm start`        | 以 Node 运行生产构建            |
 | `pnpm lint`         | oxlint                          |
-| `pnpm types:check`  | `next typegen` + `tsc --noEmit` |
+| `pnpm types:check`  | 构建依赖包 + `next typegen` + `tsc --noEmit` |
 | `pnpm worker:build` | 产出 `.open-next/`              |
 | `pnpm preview`      | 本地 workerd 预览               |
 | `pnpm deploy`       | 发布到 Cloudflare               |
