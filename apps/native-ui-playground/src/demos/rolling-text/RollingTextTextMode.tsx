@@ -10,7 +10,7 @@ const RollingTextTextMode = () => {
     <View className="bg-background items-center px-4 py-6">
       <RollingText
         ref={textRollingRef}
-        textList={['AAA', 'BBB', 'CCC', 'DDD', 'EEE']}
+        textList={['', '处理中', '已完成']}
       />
       <View className="mt-3 flex-row gap-2">
         <Button
@@ -18,7 +18,7 @@ const RollingTextTextMode = () => {
           variant="outline"
           onPress={() => textRollingRef.current?.reset()}
         >
-          Reset
+          重新播放
         </Button>
       </View>
     </View>

@@ -1,40 +1,22 @@
-import { Tag } from '@skyroc/native-ui';
-import { Alert, View } from 'react-native';
+import { Tag, Text } from '@skyroc/native-ui';
+import { View } from 'react-native';
 
 const TagCombined = () => {
   return (
     <View className="flex-row flex-wrap items-center gap-3 bg-background p-4">
       <Tag
-        color="primary"
-        shape="pill"
-        size="sm"
+        leading={<Text>★</Text>}
         variant="tonal"
       >
-        Small Pill
+        前置内容
       </Tag>
-      <Tag
-        closeable
-        color="destructive"
-        shape="pill"
-        variant="outline"
-        onClose={() => Alert.alert('Close')}
-      >
-        Closeable Pill
+      <Tag color="info">
+        <View className="flex-row items-center gap-1">
+          <Text>自定义节点</Text>
+          <Text className="opacity-70">2</Text>
+        </View>
       </Tag>
-      <Tag
-        color="success"
-        shape="mark"
-        size="lg"
-      >
-        Large Mark
-      </Tag>
-      <Tag
-        color="info"
-        shape="mark"
-        variant="tonal"
-      >
-        Tonal Mark
-      </Tag>
+      <Tag color="warning">2026</Tag>
     </View>
   );
 };

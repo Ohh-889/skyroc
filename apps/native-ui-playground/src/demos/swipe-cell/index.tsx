@@ -1,10 +1,12 @@
-import { Text } from '@skyroc/native-ui';
 import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { SwipeCellBasic } from './SwipeCellBasic';
 import { SwipeCellBeforeClose } from './SwipeCellBeforeClose';
 import { SwipeCellDisabled } from './SwipeCellDisabled';
 import { SwipeCellEvents } from './SwipeCellEvents';
+import { SwipeCellExclusive } from './SwipeCellExclusive';
 import { SwipeCellImperative } from './SwipeCellImperative';
+import { SwipeCellStyles } from './SwipeCellStyles';
 import { SwipeCellWidth } from './SwipeCellWidth';
 
 /**
@@ -14,37 +16,65 @@ import { SwipeCellWidth } from './SwipeCellWidth';
 const SwipeCellDemo = () => {
   return (
     <ScrollView
-      className="flex-1 bg-muted"
-      contentContainerClassName="pb-20"
+      className="flex-1 bg-background"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* Basic */}
-      <Text className="mb-3 mt-4 px-4 text-lg font-semibold">基础用法</Text>
-      <SwipeCellBasic />
+      <Section
+        description="leading 与 trailing 分别提供左右操作区，宽度默认从内容自动测量。"
+        title="基础用法（leading / trailing）"
+      >
+        <SwipeCellBasic />
+      </Section>
 
-      {/* Before Close */}
-      <Text className="mb-1 mt-6 px-4 text-lg font-semibold">关闭拦截</Text>
-      <Text className="mb-3 px-4 text-sm text-muted-foreground">
-        滑动收起、点击内容区、下方「关闭」按钮三条路径都会先弹确认。选「取消」时操作区一直停在展开位不动，不是先关掉再弹回来；选「确定」后才开始收起动画。
-        展开动作不受拦截。
-      </Text>
-      <SwipeCellBeforeClose />
+      <Section
+        description="beforeClose 可同步或异步决定是否收起，点击主体、滑动收起和实例 close 都会经过拦截。"
+        title="关闭拦截（beforeClose）"
+      >
+        <SwipeCellBeforeClose />
+      </Section>
 
-      {/* Custom Width */}
-      <Text className="mb-3 mt-6 px-4 text-lg font-semibold">自定义宽度</Text>
-      <SwipeCellWidth />
+      <Section
+        description="leadingWidth / trailingWidth 可跳过自动测量并指定两侧停靠距离。"
+        title="操作区宽度"
+      >
+        <SwipeCellWidth />
+      </Section>
 
-      {/* Disabled */}
-      <Text className="mb-3 mt-6 px-4 text-lg font-semibold">禁用滑动</Text>
-      <SwipeCellDisabled />
+      <Section
+        description="默认只允许一个实例展开；exclusive=false 时多个单元格可同时保持展开。"
+        title="互斥展开（exclusive）"
+      >
+        <SwipeCellExclusive />
+      </Section>
 
-      {/* Programmatic Control */}
-      <Text className="mb-3 mt-6 px-4 text-lg font-semibold">编程式控制</Text>
-      <SwipeCellImperative />
+      <Section
+        description="ref 暴露 open(left)、open(right) 与 close。"
+        title="命令式控制（ref）"
+      >
+        <SwipeCellImperative />
+      </Section>
 
-      {/* Events */}
-      <Text className="mb-3 mt-6 px-4 text-lg font-semibold">事件监听</Text>
-      <SwipeCellEvents />
+      <Section
+        description="name 会随 onOpen / onClose 返回，position 表示展开侧或关闭来源。"
+        title="事件监听（name / onOpen / onClose）"
+      >
+        <SwipeCellEvents />
+      </Section>
+
+      <Section
+        description="disabled 会禁止滑动，并立即收起已经展开的操作区。"
+        title="禁用（disabled）"
+      >
+        <SwipeCellDisabled />
+      </Section>
+
+      <Section
+        description="className 覆盖根容器，classNames 可调整 content、两侧操作区与展开遮罩。"
+        title="样式覆盖（className / classNames）"
+      >
+        <SwipeCellStyles />
+      </Section>
     </ScrollView>
   );
 };

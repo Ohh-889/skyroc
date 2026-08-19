@@ -1,7 +1,7 @@
 import { Tag } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
-const COLORS = ['primary', 'destructive', 'secondary', 'success', 'warning', 'info'] as const;
+const COLORS = ['primary', 'destructive', 'secondary', 'success', 'warning', 'info', 'muted'] as const;
 
 const TagColorTonal = () => {
   return (
