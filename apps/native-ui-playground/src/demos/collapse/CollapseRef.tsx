@@ -1,12 +1,12 @@
 import { Button, Collapse, CollapseItem } from '@skyroc/native-ui';
-import type { CollapseItemRef, CollapseRef } from '@skyroc/native-ui';
+import type { CollapseItemRef, CollapseRef as CollapseGroupRef } from '@skyroc/native-ui';
 import { useRef } from 'react';
 import { View } from 'react-native';
 
 const CONTENT = '代码是写给人看的，只是顺便能被机器执行。折叠面板用来收纳这类长文本，展开时高度会做过渡动画。';
 
 const CollapseRef = () => {
-  const groupRef = useRef<CollapseRef>(null);
+  const groupRef = useRef<CollapseGroupRef>(null);
   const firstItemRef = useRef<CollapseItemRef>(null);
 
   function handleToggleAll() {
