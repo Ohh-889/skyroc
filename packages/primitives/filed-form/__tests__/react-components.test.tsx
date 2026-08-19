@@ -394,6 +394,21 @@ describe('Form and Field integration', () => {
     });
   });
 
+  it('should transform values before passing them to child components', () => {
+    render(
+      <Form initialValues={{ name: 'ada' }}>
+        <Field
+          getValueProps={value => String(value).toUpperCase()}
+          name="name"
+        >
+          <input aria-label="Uppercase name" />
+        </Field>
+      </Form>
+    );
+
+    expect(screen.getByLabelText('Uppercase name')).toHaveValue('ADA');
+  });
+
   it('should skip unchanged extracted values and disabled validation triggers', () => {
     const onValuesChange = vi.fn();
     const validator = vi.fn(() => 'Name is invalid');

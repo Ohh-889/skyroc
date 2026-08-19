@@ -68,6 +68,7 @@ function Field<Values = any>(props: FieldProps<Values>) {
   const {
     children,
     getValueFromEvent,
+    getValueProps,
     initialValue,
     name,
     normalize,
@@ -140,8 +141,8 @@ function Field<Values = any>(props: FieldProps<Values>) {
   const value = getFieldValue(name) ?? initialValue;
 
   // Prepare value props based on control mode
-  // Controlled: use 'value' prop, Uncontrolled: use 'defaultValue' prop
-  const valueProps = { [valuePropName]: value ?? '' };
+  const childValue = getValueProps ? getValueProps(value) : value;
+  const valueProps = { [valuePropName]: childValue ?? '' };
 
   // Create controlled props with change handler
   const controlledProps = omitUndefined({
