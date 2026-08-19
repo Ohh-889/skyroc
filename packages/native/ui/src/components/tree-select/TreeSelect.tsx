@@ -160,6 +160,8 @@ const TreeSelect = (props: TreeSelectProps) => {
 
       setActiveId(exists ? current.filter(id => id !== item.id) : [...current, item.id]);
     } else {
+      if (activeId === item.id) return;
+
       setActiveId(item.id);
     }
 
