@@ -6,7 +6,9 @@ description: Skyroc Native UI — 基于 Uniwind 与 Tailwind CSS v4 的 React N
 `@skyroc/native-ui` 是面向 React Native / Expo 的移动端组件库，使用 [Uniwind](https://docs.uniwind.dev) 和 Tailwind CSS v4 编写。组件与 Web 端共用 `@skyroc/tailwind-plugin` 里的设计令牌，通过 `className`、语义色和统一的组件 API 保持一致的开发体验。
 
 <Callout type="warn">
-  当前版本 `0.1.0`，组件仍在持续补充和校准。仓库内的 [Native UI Playground](https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground) 是查看实际效果与交互行为的首选入口。
+  当前版本 `0.1.0`，组件仍在持续补充和校准。仓库内的 [Native UI
+  Playground](https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground)
+  是查看实际效果与交互行为的首选入口。
 </Callout>
 
 ## 核心特性
@@ -16,6 +18,36 @@ description: Skyroc Native UI — 基于 Uniwind 与 Tailwind CSS v4 的 React N
 - **无需 `dark:` 分支** — 主题由宿主应用切换，组件只写语义色，明暗自动跟随。
 - **50 个组件** — 覆盖通用、布局、输入、展示、导航、弹层与反馈七大类，表单部分接入 `@skyroc/form`。
 - **TypeScript** — 组件与类型均从包根路径导出，完整类型推导。
+
+## 站在巨人的肩膀上
+
+这个库不打算把所有轮子重造一遍。RN 生态里已经有一批打磨多年的库，手势、绘制、弹层这些底层能力交给它们，比自己写一个半成品更靠谱。`@skyroc/native-ui` 做的是在上面加一层：统一 API 与受控写法、接上设计令牌与暗色主题、把安全区 / 触摸热区 / 按下态这些默认行为补齐。
+
+| 能力           | 底层库                                                    | 涉及组件                                                          |
+| -------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
+| 底部面板与档位 | `@gorhom/bottom-sheet`                                    | Sheet、ActionSheet、ShareSheet、Picker 系、DatePicker、TimePicker |
+| 遮罩弹层       | `react-native-modal`                                      | Popup、Dialog                                                     |
+| 动画与手势     | `react-native-reanimated`、`react-native-gesture-handler` | Tabs、Slider、SwipeCell、IndexBar、FloatingButton 等 20+ 组件     |
+| 分格验证码输入 | `react-native-confirmation-code-field`                    | PasswordInput                                                     |
+| 月历面板       | `react-native-ui-datepicker`                              | Calendar                                                          |
+| 画布绘制       | `@shopify/react-native-skia`                              | Signature                                                         |
+| 图片加载       | `expo-image`                                              | Image、Avatar                                                     |
+| 分页容器       | `react-native-pager-view`                                 | Tabs                                                              |
+| 图标           | `@expo/vector-icons`                                      | 大部分带图标的组件                                                |
+
+这层封装的代价是透明的：碰到某个组件的行为边界，答案通常在对应上游库的文档里，而不是这里。完整的依赖与组件对照见 [依赖说明](/docs/overview/dependencies)。
+
+## 平台支持
+
+主力目标平台是 **Android 与 iOS**，组件都在真机与模拟器上验证过。
+
+React Native Web **不是**一等公民，能跑但不保证完整：
+
+- 依赖原生模块的组件（Signature 的 Skia、Picker 系的 bottom sheet 与手势、Image 的 expo-image）在 Web 上可能样式错位、交互降级，甚至直接报错。
+- 手势驱动的交互（SwipeCell、FloatingButton、IndexBar 的吸附）在鼠标环境下体验不完整，`expo-haptics` 的触感反馈在 Web 上是空实现。
+- 安全区工具类（`pt-safe` 等）依赖 `react-native-safe-area-context`，Web 下恒为 `0`。
+
+需要 Web 端界面时，推荐用同源的 [@skyroc/web-ui](https://web-ui-docs.skyroc.me/) —— 两边共用 `@skyroc/tailwind-plugin` 的设计令牌，色板和主题切换是同一套。
 
 ## 上手
 
@@ -36,10 +68,26 @@ const Panel = () => {
 组件库依赖 Uniwind 的构建期扫描和几个根节点 Provider，装完包还需要配置 Metro、CSS 入口和根布局才能跑起来：
 
 <Cards>
-  <Card title="快速开始" description="安装、Metro、CSS 入口与首个组件" href="/docs/overview/getting-started" />
-  <Card title="根布局配置" description="四个根节点部件的作用、顺序与症状对照" href="/docs/overview/setup-root" />
-  <Card title="主题与样式" description="语义色令牌、主题切换与样式编写约定" href="/docs/overview/theming" />
-  <Card title="依赖说明" description="组件与原生依赖的完整对照表" href="/docs/overview/dependencies" />
+  <Card
+    title="快速开始"
+    description="安装、Metro、CSS 入口与首个组件"
+    href="/docs/overview/getting-started"
+  />
+  <Card
+    title="根布局配置"
+    description="四个根节点部件的作用、顺序与症状对照"
+    href="/docs/overview/setup-root"
+  />
+  <Card
+    title="主题与样式"
+    description="语义色令牌、主题切换与样式编写约定"
+    href="/docs/overview/theming"
+  />
+  <Card
+    title="依赖说明"
+    description="组件与原生依赖的完整对照表"
+    href="/docs/overview/dependencies"
+  />
 </Cards>
 
 ## 组件总览
@@ -47,84 +95,284 @@ const Panel = () => {
 ### 通用
 
 <Cards>
-  <Card title="Button" description="触发即时操作的按钮组件" href="/docs/components/button" />
-  <Card title="FloatingButton" description="可拖拽、可吸附边缘的悬浮操作按钮" href="/docs/components/floating-button" />
-  <Card title="Text" description="支持语义色、字号、字重与上下文继承" href="/docs/components/text" />
-  <Card title="TextEllipsis" description="多行文本折叠，展开 / 收起入口内联在末行" href="/docs/components/text-ellipsis" />
-  <Card title="Divider" description="分隔内容的细线，支持文字、虚线与竖向" href="/docs/components/divider" />
-  <Card title="Image" description="基于 expo-image，内置加载中与失败占位" href="/docs/components/image" />
+  <Card
+    title="Button"
+    description="触发即时操作的按钮组件"
+    href="/docs/components/button"
+  />
+  <Card
+    title="FloatingButton"
+    description="可拖拽、可吸附边缘的悬浮操作按钮"
+    href="/docs/components/floating-button"
+  />
+  <Card
+    title="Text"
+    description="支持语义色、字号、字重与上下文继承"
+    href="/docs/components/text"
+  />
+  <Card
+    title="TextEllipsis"
+    description="多行文本折叠，展开 / 收起入口内联在末行"
+    href="/docs/components/text-ellipsis"
+  />
+  <Card
+    title="Divider"
+    description="分隔内容的细线，支持文字、虚线与竖向"
+    href="/docs/components/divider"
+  />
+  <Card
+    title="Image"
+    description="基于 expo-image，内置加载中与失败占位"
+    href="/docs/components/image"
+  />
 </Cards>
 
 ### 布局容器
 
 <Cards>
-  <Card title="Space" description="在一组子元素之间插入统一间距" href="/docs/components/space" />
-  <Card title="Grid" description="宫格容器，等宽格子铺排图标入口" href="/docs/components/grid" />
-  <Card title="Cell" description="列表项与分组容器，承载设置项与信息展示" href="/docs/components/cell" />
-  <Card title="Collapse" description="折叠收纳多组内容的手风琴面板" href="/docs/components/collapse" />
+  <Card
+    title="Space"
+    description="在一组子元素之间插入统一间距"
+    href="/docs/components/space"
+  />
+  <Card
+    title="Grid"
+    description="宫格容器，等宽格子铺排图标入口"
+    href="/docs/components/grid"
+  />
+  <Card
+    title="Cell"
+    description="列表项与分组容器，承载设置项与信息展示"
+    href="/docs/components/cell"
+  />
+  <Card
+    title="Collapse"
+    description="折叠收纳多组内容的手风琴面板"
+    href="/docs/components/collapse"
+  />
 </Cards>
 
 ### 输入
 
 <Cards>
-  <Card title="Form" description="列表式布局的表单容器与字段" href="/docs/components/form" />
-  <Card title="Field" description="纵向堆叠布局的表单字段" href="/docs/components/field" />
-  <Card title="Input" description="单行文本输入框，内置清除与密码可见性切换" href="/docs/components/input" />
-  <Card title="PasswordInput" description="分格密码 / 验证码输入框" href="/docs/components/password-input" />
-  <Card title="Search" description="搜索栏，内置放大镜、清除与取消操作" href="/docs/components/search" />
-  <Card title="Checkbox" description="在一组选项中选择任意多项" href="/docs/components/checkbox" />
-  <Card title="Radio" description="单选框，含分组、卡片与卡片组" href="/docs/components/radio" />
-  <Card title="Switch" description="立即生效的开关，支持加载态" href="/docs/components/switch" />
-  <Card title="Slider" description="单值 / 区间滑块，支持垂直方向" href="/docs/components/slider" />
-  <Card title="Stepper" description="数值步进器，支持长按连续触发" href="/docs/components/stepper" />
-  <Card title="Rate" description="星级评分，支持半星与只读小数" href="/docs/components/rate" />
-  <Card title="Signature" description="手写签名板，基于 Skia 绘制并导出 base64" href="/docs/components/signature" />
-  <Card title="Picker" description="滚轮选择器，支持单列、多列与级联" href="/docs/components/picker" />
-  <Card title="PickerGroup" description="分组选择器，多个滚轮共用一套工具栏" href="/docs/components/picker-group" />
-  <Card title="DatePicker" description="年月日滚轮选择器，列范围级联收窄" href="/docs/components/date-picker" />
-  <Card title="TimePicker" description="时间选择器，按 min / maxTime 逐级收窄" href="/docs/components/time-picker" />
-  <Card title="Calendar" description="支持单选、范围与多选的月历面板" href="/docs/components/calendar" />
-  <Card title="NumberKeyboard" description="自定义数字键盘，用于密码、金额场景" href="/docs/components/number-keyboard" />
-  <Card title="TreeSelect" description="分类选择，左侧分组导航 + 右侧子项列表" href="/docs/components/tree-select" />
+  <Card
+    title="Form"
+    description="列表式布局的表单容器与字段"
+    href="/docs/components/form"
+  />
+  <Card
+    title="Field"
+    description="纵向堆叠布局的表单字段"
+    href="/docs/components/field"
+  />
+  <Card
+    title="Input"
+    description="单行文本输入框，内置清除与密码可见性切换"
+    href="/docs/components/input"
+  />
+  <Card
+    title="PasswordInput"
+    description="分格密码 / 验证码输入框"
+    href="/docs/components/password-input"
+  />
+  <Card
+    title="Search"
+    description="搜索栏，内置放大镜、清除与取消操作"
+    href="/docs/components/search"
+  />
+  <Card
+    title="Checkbox"
+    description="在一组选项中选择任意多项"
+    href="/docs/components/checkbox"
+  />
+  <Card
+    title="Radio"
+    description="单选框，含分组、卡片与卡片组"
+    href="/docs/components/radio"
+  />
+  <Card
+    title="Switch"
+    description="立即生效的开关，支持加载态"
+    href="/docs/components/switch"
+  />
+  <Card
+    title="Slider"
+    description="单值 / 区间滑块，支持垂直方向"
+    href="/docs/components/slider"
+  />
+  <Card
+    title="Stepper"
+    description="数值步进器，支持长按连续触发"
+    href="/docs/components/stepper"
+  />
+  <Card
+    title="Rate"
+    description="星级评分，支持半星与只读小数"
+    href="/docs/components/rate"
+  />
+  <Card
+    title="Signature"
+    description="手写签名板，基于 Skia 绘制并导出 base64"
+    href="/docs/components/signature"
+  />
+  <Card
+    title="Picker"
+    description="滚轮选择器，支持单列、多列与级联"
+    href="/docs/components/picker"
+  />
+  <Card
+    title="PickerGroup"
+    description="分组选择器，多个滚轮共用一套工具栏"
+    href="/docs/components/picker-group"
+  />
+  <Card
+    title="DatePicker"
+    description="年月日滚轮选择器，列范围级联收窄"
+    href="/docs/components/date-picker"
+  />
+  <Card
+    title="TimePicker"
+    description="时间选择器，按 min / maxTime 逐级收窄"
+    href="/docs/components/time-picker"
+  />
+  <Card
+    title="Calendar"
+    description="支持单选、范围与多选的月历面板"
+    href="/docs/components/calendar"
+  />
+  <Card
+    title="NumberKeyboard"
+    description="自定义数字键盘，用于密码、金额场景"
+    href="/docs/components/number-keyboard"
+  />
+  <Card
+    title="TreeSelect"
+    description="分类选择，左侧分组导航 + 右侧子项列表"
+    href="/docs/components/tree-select"
+  />
 </Cards>
 
 ### 数据展示
 
 <Cards>
-  <Card title="Avatar" description="展示用户或实体头像的圆形图片组件" href="/docs/components/avatar" />
-  <Card title="Badge" description="标记数量或状态的角标组件" href="/docs/components/badge" />
-  <Card title="Tag" description="标签，用于状态标记与分类" href="/docs/components/tag" />
-  <Card title="CountDown" description="按格式展示剩余时间的倒计时" href="/docs/components/count-down" />
-  <Card title="RollingText" description="数字 / 文本翻滚动画" href="/docs/components/rolling-text" />
-  <Card title="SwipeCell" description="可左右滑动的单元格，露出两侧操作区" href="/docs/components/swipe-cell" />
+  <Card
+    title="Avatar"
+    description="展示用户或实体头像的圆形图片组件"
+    href="/docs/components/avatar"
+  />
+  <Card
+    title="Badge"
+    description="标记数量或状态的角标组件"
+    href="/docs/components/badge"
+  />
+  <Card
+    title="Tag"
+    description="标签，用于状态标记与分类"
+    href="/docs/components/tag"
+  />
+  <Card
+    title="CountDown"
+    description="按格式展示剩余时间的倒计时"
+    href="/docs/components/count-down"
+  />
+  <Card
+    title="RollingText"
+    description="数字 / 文本翻滚动画"
+    href="/docs/components/rolling-text"
+  />
+  <Card
+    title="SwipeCell"
+    description="可左右滑动的单元格，露出两侧操作区"
+    href="/docs/components/swipe-cell"
+  />
 </Cards>
 
 ### 导航
 
 <Cards>
-  <Card title="NavBar" description="页面顶部导航栏，左中右三区布局" href="/docs/components/navbar" />
-  <Card title="Tabs" description="标签页，支持手势翻页与面板懒加载" href="/docs/components/tabs" />
-  <Card title="Sidebar" description="竖排侧边导航，常与右侧内容区配合" href="/docs/components/sidebar" />
-  <Card title="AnchorNav" description="锚点导航，点击定位、滚动联动" href="/docs/components/anchor-nav" />
-  <Card title="IndexBar" description="字母索引列表，右缘悬浮索引条" href="/docs/components/index-bar" />
-  <Card title="BackTop" description="滚动一段距离后出现的回到顶部按钮" href="/docs/components/back-top" />
-  <Card title="Pagination" description="分页器，支持页码折叠与简单模式" href="/docs/components/pagination" />
-  <Card title="DropdownMenu" description="贴着标题栏展开的多列筛选菜单" href="/docs/components/dropdown-menu" />
+  <Card
+    title="NavBar"
+    description="页面顶部导航栏，左中右三区布局"
+    href="/docs/components/navbar"
+  />
+  <Card
+    title="Tabs"
+    description="标签页，支持手势翻页与面板懒加载"
+    href="/docs/components/tabs"
+  />
+  <Card
+    title="Sidebar"
+    description="竖排侧边导航，常与右侧内容区配合"
+    href="/docs/components/sidebar"
+  />
+  <Card
+    title="AnchorNav"
+    description="锚点导航，点击定位、滚动联动"
+    href="/docs/components/anchor-nav"
+  />
+  <Card
+    title="IndexBar"
+    description="字母索引列表，右缘悬浮索引条"
+    href="/docs/components/index-bar"
+  />
+  <Card
+    title="BackTop"
+    description="滚动一段距离后出现的回到顶部按钮"
+    href="/docs/components/back-top"
+  />
+  <Card
+    title="Pagination"
+    description="分页器，支持页码折叠与简单模式"
+    href="/docs/components/pagination"
+  />
+  <Card
+    title="DropdownMenu"
+    description="贴着标题栏展开的多列筛选菜单"
+    href="/docs/components/dropdown-menu"
+  />
 </Cards>
 
 ### 弹层覆盖
 
 <Cards>
-  <Card title="Popup" description="通用弹出层，五个方向 + 遮罩" href="/docs/components/popup" />
-  <Card title="Dialog" description="居中对话框，用于提示、二次确认与轻量输入" href="/docs/components/dialog" />
-  <Card title="Sheet" description="底部面板，支持吸附档位与动态高度" href="/docs/components/sheet" />
-  <Card title="ActionSheet" description="从底部弹出的操作面板" href="/docs/components/action-sheet" />
-  <Card title="ShareSheet" description="分享面板，图标网格 + 取消按钮" href="/docs/components/share-sheet" />
+  <Card
+    title="Popup"
+    description="通用弹出层，五个方向 + 遮罩"
+    href="/docs/components/popup"
+  />
+  <Card
+    title="Dialog"
+    description="居中对话框，用于提示、二次确认与轻量输入"
+    href="/docs/components/dialog"
+  />
+  <Card
+    title="Sheet"
+    description="底部面板，支持吸附档位与动态高度"
+    href="/docs/components/sheet"
+  />
+  <Card
+    title="ActionSheet"
+    description="从底部弹出的操作面板"
+    href="/docs/components/action-sheet"
+  />
+  <Card
+    title="ShareSheet"
+    description="分享面板，图标网格 + 取消按钮"
+    href="/docs/components/share-sheet"
+  />
 </Cards>
 
 ### 反馈
 
 <Cards>
-  <Card title="Toast" description="轻提示，命令式调用为主" href="/docs/components/toast" />
-  <Card title="Notify" description="贴边横幅通知，命令式调用为主" href="/docs/components/notify" />
+  <Card
+    title="Toast"
+    description="轻提示，命令式调用为主"
+    href="/docs/components/toast"
+  />
+  <Card
+    title="Notify"
+    description="贴边横幅通知，命令式调用为主"
+    href="/docs/components/notify"
+  />
 </Cards>
