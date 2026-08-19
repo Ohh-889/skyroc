@@ -8,8 +8,8 @@ import { tv } from 'tailwind-variants';
  *
  * `sidebar` 两件事缺一不可：
  *
- * - `w-20 shrink-0 grow-0`：Sidebar 的根节点是 ScrollView，而 RN 给竖向 ScrollView 的基础样式里写死了 `flexGrow: 1, flexShrink: 1`。两侧都是
- *   ScrollView 时会按内容基准瓜分宽度，侧栏被撑肥、内容区被挤窄， 所以这里必须显式关掉伸缩并给出固定宽度；需要别的宽度由调用方通过 `classNames.sidebar` 覆盖。
+ * - `w-20 shrink-0 grow-0`：约束落在 Sidebar 外层的普通 View 上，隔离 RN Web 给竖向 ScrollView 注入的 `flexGrow: 1, flexShrink: 1`。否则两侧都是
+ *   ScrollView 时会按内容基准瓜分宽度，侧栏被撑肥、内容区被挤窄；需要别的宽度由调用方通过 `classNames.sidebar` 覆盖。
  * - `self-stretch`：Sidebar 自己的根节点是 `self-start`（独立使用时贴合内容高度），落到 AnchorNav 的横向布局里 必须撑满，否则短侧栏铺不满底色、长侧栏也滚不动。
  */
 export const anchorNavVariants = tv({

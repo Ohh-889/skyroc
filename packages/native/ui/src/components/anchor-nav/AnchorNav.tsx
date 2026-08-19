@@ -217,13 +217,15 @@ const AnchorNav = (props: AnchorNavProps) => {
       {...restProps}
     >
       {!renderSidebar && (
-        <Sidebar
-          activeIndex={activeIndex}
-          className={slotClassNames.sidebar}
-          classNames={sidebarClassNames}
-          items={sidebarItems}
-          onIndexChange={handleSidebarPress}
-        />
+        <View className={slotClassNames.sidebar}>
+          <Sidebar
+            activeIndex={activeIndex}
+            className="h-full w-full"
+            classNames={sidebarClassNames}
+            items={sidebarItems}
+            onIndexChange={handleSidebarPress}
+          />
+        </View>
       )}
 
       <SectionList
