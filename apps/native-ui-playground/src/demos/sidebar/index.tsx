@@ -4,6 +4,7 @@ import { SidebarBadge } from './SidebarBadge';
 import { SidebarBasic } from './SidebarBasic';
 import { SidebarControlled } from './SidebarControlled';
 import { SidebarCustomSlots } from './SidebarCustomSlots';
+import { SidebarCustomTitle } from './SidebarCustomTitle';
 import { SidebarDisabled } from './SidebarDisabled';
 import { SidebarNotScrollable } from './SidebarNotScrollable';
 import { SidebarScrollable } from './SidebarScrollable';
@@ -39,6 +40,13 @@ const SidebarDemo = () => {
       </Section>
 
       <Section
+        description="title 接受 ReactNode，可组合主副文案等自定义内容；字符串标题会自动补充无障碍标签。"
+        title="自定义标题（title）"
+      >
+        <SidebarCustomTitle />
+      </Section>
+
+      <Section
         description="disabled 让该项整体降透明度且不响应点击。"
         title="禁用项（disabled）"
       >
@@ -54,7 +62,7 @@ const SidebarDemo = () => {
 
       <Section
         description="项数超出容器高度时侧边栏自身可纵向滚动，指示器跟着内容一起滚。"
-        title="可滚动"
+        title="可滚动（scrollable）"
       >
         <SidebarScrollable />
       </Section>
@@ -67,8 +75,8 @@ const SidebarDemo = () => {
       </Section>
 
       <Section
-        description="改指示器高度不会让它错位——居中偏移取自实测高度，不是写死的常量。"
-        title="插槽样式（classNames）"
+        description="className 覆盖根节点，classNames 可细分 root、content、indicator、item 与 itemText。"
+        title="样式覆盖（className / classNames）"
       >
         <SidebarCustomSlots />
       </Section>

@@ -10,7 +10,6 @@ const PaginationTotalChange = () => {
   return (
     <View className="gap-3 bg-background p-4">
       <Pagination
-        showEdges
         itemsPerPage={10}
         page={page}
         totalItems={total}

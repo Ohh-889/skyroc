@@ -1,7 +1,7 @@
 import { Pagination } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
-/** className 覆盖根容器，classNames 细粒度覆盖各 slot */
+/** ClassName 覆盖根容器，classNames 细粒度覆盖各 slot */
 const PaginationStyles = () => {
   return (
     <View className="gap-3 bg-background p-4">
@@ -15,12 +15,15 @@ const PaginationStyles = () => {
         classNames={{
           content: 'gap-2',
           desc: 'text-primary',
+          ellipsis: 'rounded-full bg-primary-50',
           item: 'rounded-full bg-primary-50',
           itemText: 'text-primary',
-          navButton: 'rounded-full bg-primary-50'
+          navButton: 'rounded-full bg-primary-50',
+          root: 'rounded-xl border border-primary-200 py-2'
         }}
         defaultPage={5}
         itemsPerPage={10}
+        siblingCount={0}
         totalItems={200}
       />
       <Pagination

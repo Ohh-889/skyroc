@@ -2,14 +2,13 @@ import { Button, Pagination, Text } from '@skyroc/native-ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-/** page + onPageChange 由外部持有页码；父级不更新 page 时组件也不会自己走 */
+/** Page + onPageChange 由外部持有页码；父级不更新 page 时组件也不会自己走 */
 const PaginationControlled = () => {
   const [controlled, setControlled] = useState(3);
 
   return (
     <View className="gap-3 bg-background p-4">
       <Pagination
-        showEdges
         itemsPerPage={10}
         page={controlled}
         totalItems={200}

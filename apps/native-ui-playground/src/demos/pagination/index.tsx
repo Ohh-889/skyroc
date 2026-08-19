@@ -37,14 +37,14 @@ const PaginationDemo = () => {
       </Section>
 
       <Section
-        description="始终显示首末页，中间用省略号折叠；折叠不足 2 页时不画省略号。"
+        description="始终显示首末页，中间用省略号折叠；这里用 siblingCount=0 聚焦首尾规则并适配窄屏。"
         title="固定首尾页（showEdges）"
       >
         <PaginationEdges />
       </Section>
 
       <Section
-        description="控制当前页左右各显示几个页码，0 表示只显示当前页。"
+        description="控制当前页左右各显示几个页码，0 表示只显示当前页；示例使用紧凑箭头以适配窄屏。"
         title="兄弟页码数量（siblingCount）"
       >
         <PaginationSiblingCount />
@@ -79,8 +79,8 @@ const PaginationDemo = () => {
       </Section>
 
       <Section
-        description="每页 5 条共 23 条，末页不足一页也照常显示。"
-        title="配合列表"
+        description="每页 5 条共 23 条，点击页码会更新列表，末页不足一页也照常显示。"
+        title="列表联动与末页不满"
       >
         <PaginationWithList />
       </Section>

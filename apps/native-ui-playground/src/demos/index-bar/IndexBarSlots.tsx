@@ -16,11 +16,8 @@ const IndexBarSlots = () => {
 
       <View className="flex-1">
         <IndexBar
-          haptic={false}
-          itemHeight={52}
+          className="border-y border-border"
           items={CITY_ITEMS}
-          sectionHeaderHeight={40}
-          sticky={false}
           classNames={{
             // 索引条加宽了，列表的右内边距要跟着加宽，否则文字会钻到字母底下
             content: 'bg-secondary pr-10',

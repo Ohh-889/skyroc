@@ -1,4 +1,5 @@
 import { Button, Sidebar, Text } from '@skyroc/native-ui';
+import type { SidebarItem } from '@skyroc/native-ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -28,6 +29,17 @@ const SidebarControlled = () => {
   const [step, setStep] = useState(0);
   const [stepKey, setStepKey] = useState(CONTROLLED_ITEMS[0].key);
 
+  function changeStep(offset: number) {
+    const nextStep = Math.min(CONTROLLED_ITEMS.length - 1, Math.max(0, step + offset));
+    setStep(nextStep);
+    setStepKey(CONTROLLED_ITEMS[nextStep].key);
+  }
+
+  function handleIndexChange(index: number, item: SidebarItem) {
+    setStep(index);
+    setStepKey(item.key);
+  }
+
   return (
     <View className="bg-background p-4">
       <View className="mb-4 h-56 flex-row overflow-hidden rounded-xl border border-border/60">
@@ -35,10 +47,7 @@ const SidebarControlled = () => {
           activeIndex={step}
           className="self-stretch"
           items={CONTROLLED_ITEMS}
-          onIndexChange={(index, item) => {
-            setStep(index);
-            setStepKey(item.key);
-          }}
+          onIndexChange={handleIndexChange}
         />
         <Panel
           description="激活索引完全由外部 state 决定"
@@ -49,14 +58,14 @@ const SidebarControlled = () => {
         <Button
           color="secondary"
           variant="outline"
-          onPress={() => setStep(value => Math.max(0, value - 1))}
+          onPress={() => changeStep(-1)}
         >
           上一项
         </Button>
         <Button
           color="primary"
           variant="tonal"
-          onPress={() => setStep(value => Math.min(CONTROLLED_ITEMS.length - 1, value + 1))}
+          onPress={() => changeStep(1)}
         >
           下一项
         </Button>

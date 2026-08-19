@@ -30,14 +30,16 @@ const SidebarCustomSlots = () => {
         <Sidebar
           className="self-stretch bg-muted/40"
           classNames={{
+            content: 'py-2',
             indicator: 'h-10 w-1.5 rounded-sm bg-destructive',
             item: 'px-6 py-6',
-            itemText: 'text-base'
+            itemText: 'text-base',
+            root: 'border-r border-destructive/20'
           }}
           items={CUSTOM_ITEMS}
         />
         <Panel
-          description="indicator / item / itemText 各插槽都可以覆写"
+          description="root / content / indicator / item / itemText 均可独立覆写"
           title="自定义插槽"
         />
       </View>
