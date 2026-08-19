@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpRight, BookOpenText, GitBranch, Smartphone } from 'lucide-react';
+import { ArrowUpRight, GitBranch } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -8,10 +8,7 @@ import { useEffect, useState } from 'react';
 const NAVIGATION_LINK_CLASS_NAME =
   'inline-flex items-center gap-1 rounded-[9px] px-2.5 py-1.75 text-xs font-semibold text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground';
 
-/**
- * `external` 的走原生 <a> 而不是 <Link>：跨站不需要 Next.js 预取，也要带 target/rel，
- * 并在文字后跟一个箭头图标，让「会离开本站」这件事在点击前就看得出来。
- */
+/** `external` 的走原生 <a> 而不是 <Link>：跨站不需要 Next.js 预取，也要带 target/rel， 并在文字后跟一个箭头图标，让「会离开本站」这件事在点击前就看得出来。 */
 const NAVIGATION = [
   { external: false, href: '/docs/components/button', label: '组件' },
   { external: false, href: '/docs/overview/getting-started', label: '快速开始' },
@@ -89,28 +86,6 @@ export const HomeHeader = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <Link
-            className="inline-flex h-[34px] items-center gap-1.5 rounded-[10px] border border-primary/28 bg-primary/10 px-3 text-xs font-semibold text-primary transition-colors hover:border-primary/45 hover:bg-primary/18 max-[520px]:w-[34px] max-[520px]:justify-center max-[520px]:px-0"
-            href="/docs/components/button"
-          >
-            <BookOpenText
-              aria-hidden="true"
-              size={15}
-            />
-            <span className="max-[520px]:hidden">浏览组件</span>
-          </Link>
-          <a
-            aria-label="打开 Native Playground"
-            className="inline-flex size-[34px] items-center justify-center rounded-[10px] border border-border/65 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground max-[420px]:hidden"
-            href="https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground"
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Smartphone
-              aria-hidden="true"
-              size={16}
-            />
-          </a>
           <a
             aria-label="打开 GitHub 仓库"
             className="inline-flex size-[34px] items-center justify-center rounded-[10px] text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"

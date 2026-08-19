@@ -5,7 +5,7 @@ import {
   Boxes,
   Code2,
   Component,
-  MonitorSmartphone,
+  Rocket,
   Route,
   Sparkles
 } from 'lucide-react';
@@ -31,11 +31,11 @@ const HERO_ENTRIES = [
     title: '按任务查找'
   },
   {
-    description: '沿 Expo 示例理解组件在真实页面中的行为',
-    href: 'https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground',
-    icon: MonitorSmartphone,
-    label: 'Playground',
-    title: '查看运行示例'
+    description: '安装依赖、配置根布局，跑通第一个界面',
+    href: '/docs/overview/getting-started',
+    icon: Rocket,
+    label: 'Getting started',
+    title: '接入项目'
   }
 ] as const;
 
@@ -55,7 +55,7 @@ const READING_PATHS = [
     title: '沿移动端任务选择组件'
   },
   {
-    description: '从文档 Demo 继续追到 Playground 页面、组件源码和 TypeScript 类型。',
+    description: '从文档 Demo 继续追到组件源码与 TypeScript 类型定义。',
     eyebrow: '03 · 深入源码',
     href: 'https://github.com/Ohh-889/skyroc/tree/master/packages/native/ui/src',
     icon: Code2,
@@ -95,8 +95,8 @@ const HomePage = () => {
                   </h1>
 
                   <p className="mt-6 max-w-165 text-[16px] leading-7.5 text-muted-foreground max-md:text-[15px]">
-                    从基础操作、表单输入、数据展示，到移动导航、原生弹层与状态反馈；每篇文档连接真实 Playground
-                    Demo、公共类型和组件实现，帮助你从选型直接走到可运行界面。
+                    从基础操作、表单输入、数据展示，到移动导航、原生弹层与状态反馈；每篇文档都带可运行 Demo、公共类型
+                    和组件实现，帮助你从选型直接走到可运行界面。
                   </p>
 
                   <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -110,14 +110,12 @@ const HomePage = () => {
                         size={17}
                       />
                     </Link>
-                    <a
+                    <Link
                       className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-primary bg-background/65 px-4 text-sm font-semibold text-primary transition-transform hover:-translate-y-0.5"
-                      href="https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground"
-                      rel="noreferrer"
-                      target="_blank"
+                      href="/docs/overview/getting-started"
                     >
-                      打开 Playground
-                    </a>
+                      快速开始
+                    </Link>
                   </div>
                 </div>
 
