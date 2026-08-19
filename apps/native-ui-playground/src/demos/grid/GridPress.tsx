@@ -1,31 +1,41 @@
-import { Grid } from '@skyroc/native-ui';
+import { Grid, Text } from '@skyroc/native-ui';
 import type { GridItemData } from '@skyroc/native-ui';
-import { Alert, View } from 'react-native';
-import { BASIC_ITEMS, GRID_ITEMS } from './shared';
-
-function handlePress(label: string) {
-  Alert.alert(label, '宫格项已点击');
-}
+import { useState } from 'react';
+import { View } from 'react-native';
+import { BASIC_ITEMS } from './shared';
 
 const GridPress = () => {
-  const clickableItems: GridItemData[] = BASIC_ITEMS.map(item => ({
-    ...item,
-    onPress: () => handlePress(String(item.text))
-  }));
+  const [message, setMessage] = useState('尚未触发');
+
+  function handlePress() {
+    setMessage('触发 onPress');
+  }
+
+  function handleLongPress() {
+    setMessage('触发 onLongPress');
+  }
+
+  function handleDisabledPress() {
+    setMessage('禁用项不应触发');
+  }
+
+  function getItems(): GridItemData[] {
+    return [
+      { ...BASIC_ITEMS[0], onPress: handlePress },
+      { ...BASIC_ITEMS[1], onLongPress: handleLongPress },
+      BASIC_ITEMS[2],
+      { ...BASIC_ITEMS[3], disabled: true, onPress: handleDisabledPress }
+    ];
+  }
 
   return (
-    <View className="bg-muted px-6">
-      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
+    <View className="bg-background p-4">
+      <Text className="mb-3 text-sm text-muted-foreground">最近交互：{message}</Text>
+      <View className="overflow-hidden rounded-xl border border-border">
         <Grid
           border
-          items={[
-            ...clickableItems,
-            {
-              ...GRID_ITEMS[4],
-              disabled: true,
-              onPress: () => handlePress('日程')
-            }
-          ]}
+          clickable
+          items={getItems()}
         />
       </View>
     </View>

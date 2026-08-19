@@ -4,8 +4,8 @@ import { GRID_ITEMS } from './shared';
 
 const GridGutterBorder = () => {
   return (
-    <View className="bg-muted px-6">
-      <View className="mb-8 rounded-2xl bg-background p-2">
+    <View className="bg-background p-4">
+      <View className="rounded-xl bg-muted p-2">
         <Grid
           border
           gutter={16}

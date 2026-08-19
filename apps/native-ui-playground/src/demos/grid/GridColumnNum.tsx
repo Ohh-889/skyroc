@@ -4,8 +4,8 @@ import { GRID_ITEMS } from './shared';
 
 const GridColumnNum = () => {
   return (
-    <View className="bg-muted px-6">
-      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
+    <View className="bg-background p-4">
+      <View className="overflow-hidden rounded-xl border border-border">
         <Grid
           columnNum={3}
           items={GRID_ITEMS}
