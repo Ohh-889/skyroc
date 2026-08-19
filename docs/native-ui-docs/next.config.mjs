@@ -5,7 +5,14 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // 必须关掉：react-native-web 的 Modal 不是 StrictMode 安全的。它的 ModalPortal 在 render 阶段
+  // document.createElement 出容器节点、却在 effect 的 cleanup 里把它移除并把 ref 置空
+  // （dist/exports/Modal/ModalPortal.js）。dev 下 StrictMode 会 mount → unmount → remount 一遍 effect，
+  // 容器就此被摘掉，而重建只发生在 render 阶段，除非组件再渲染一次，否则永远回不来。
+  // 于是「挂载时就可见」的 Modal（showDialog 这类命令式弹窗，第一次渲染 show 就是 true）
+  // 在预览里完全不显示；而声明式 <Dialog show={false} /> 因为后续 show 变化触发了重渲染，反而正常。
+  // 生产构建不受影响（StrictMode 不会重复执行 effect），这里只影响 dev 预览。
+  reactStrictMode: false,
   // 这里必须列全 @skyroc/native-ui 会拉到的整套 RN 依赖，原因有三条，缺一条都会炸：
   //
   // 1. node_modules 默认按外部模块处理、不做 JSX / TS 转换。@rn-primitives/slot 的 dist/index.mjs
@@ -79,7 +86,13 @@ const nextConfig = {
     ],
     rules: {
       // RN 生态里字体是 asset，Metro 默认支持，Turbopack 需要显式声明模块类型。
-      '*.ttf': { type: 'asset' }
+      '*.ttf': { type: 'asset' },
+      // CanvasKit（Skia 的 web 运行时）整套都按 asset 走，只取 URL，不进模块图：
+      // canvaskit.js 是 emscripten 胶水层，里面有 node 分支（require('fs')），
+      // 打包器静态解析时必然报 Module not found；而 canvaskit.wasm 也不需要 wasm
+      // 模块实例化，它由 canvaskit.js 自己 fetch。详见 lib/skia-web.ts
+      '*.wasm': { type: 'asset' },
+      '**/canvaskit-wasm/bin/full/canvaskit.js': { type: 'asset' }
     }
   }
 };

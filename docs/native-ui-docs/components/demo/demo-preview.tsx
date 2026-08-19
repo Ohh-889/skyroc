@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import { ensureSkiaWeb, needsSkiaWeb } from '@/lib/skia-web';
 
 interface DemoPreviewProps {
   /** demos 目录下的模块路径（不含扩展名），如 "ButtonDemo"、"button/ButtonVariant" */
@@ -25,6 +26,10 @@ export const DemoPreview = (props: DemoPreviewProps) => {
     () =>
       dynamic(
         async () => {
+          // Skia 系组件必须先把 CanvasKit wasm 挂上去，再 import demo：晚一步 Skia 就已经
+          // 带着 undefined 的 CanvasKit 求值完了。详见 lib/skia-web.ts
+          if (needsSkiaWeb(name)) await ensureSkiaWeb();
+
           // PreviewRuntime 也在这里动态引入：它会拉进 gesture-handler / safe-area-context，
           // 写成顶层 import 就等于把这些 RN 包塞回服务端 bundle，ssr: false 也就白设了
           const [{ PreviewRuntime }, mod] = await Promise.all([

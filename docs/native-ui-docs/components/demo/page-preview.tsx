@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import { ensureSkiaWeb, needsSkiaWeb } from '@/lib/skia-web';
 
 interface PagePreviewProps {
   /** playground 里 app/components 下的路由名，如 "button" */
@@ -22,6 +23,9 @@ export const PagePreview = (props: PagePreviewProps) => {
     () =>
       dynamic(
         async () => {
+          // Skia 系组件必须先把 CanvasKit wasm 挂上去，再 import 页面。详见 lib/skia-web.ts
+          if (needsSkiaWeb(slug)) await ensureSkiaWeb();
+
           // 动态引入 PreviewRuntime 的理由同 demo-preview.tsx：别把 RN provider 拖进服务端 bundle
           const [{ PreviewRuntime }, mod] = await Promise.all([
             import('./preview-runtime'),

@@ -54,7 +54,7 @@ export const PreviewRuntime = (props: PreviewRuntimeProps) => {
       >
         <BottomSheetModalProvider>
           {/* PortalHost 是 absolute inset-0，需要一个把内容包住的定位父级才铺得对 */}
-          <View className={'flex-1'}>
+          <View className={fill ? 'flex-1' : undefined}>
             {children}
 
             <PortalHost />
