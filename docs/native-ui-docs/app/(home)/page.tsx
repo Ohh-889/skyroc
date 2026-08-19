@@ -32,7 +32,7 @@ const HERO_ENTRIES = [
   },
   {
     description: '沿 Expo 示例理解组件在真实页面中的行为',
-    href: 'https://github.com/Ohh-889/skyroc/tree/main/apps/native-ui-playground',
+    href: 'https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground',
     icon: MonitorSmartphone,
     label: 'Playground',
     title: '查看运行示例'
@@ -57,7 +57,7 @@ const READING_PATHS = [
   {
     description: '从文档 Demo 继续追到 Playground 页面、组件源码和 TypeScript 类型。',
     eyebrow: '03 · 深入源码',
-    href: 'https://github.com/Ohh-889/skyroc/tree/main/packages/native/ui/src',
+    href: 'https://github.com/Ohh-889/skyroc/tree/master/packages/native/ui/src',
     icon: Code2,
     title: '追到实现与公共契约'
   }
@@ -112,7 +112,7 @@ const HomePage = () => {
                     </Link>
                     <a
                       className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-primary bg-background/65 px-4 text-sm font-semibold text-primary transition-transform hover:-translate-y-0.5"
-                      href="https://github.com/Ohh-889/skyroc/tree/main/apps/native-ui-playground"
+                      href="https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground"
                       rel="noreferrer"
                       target="_blank"
                     >

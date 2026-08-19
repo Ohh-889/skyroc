@@ -1,15 +1,22 @@
 'use client';
 
-import { BookOpenText, GitBranch, Smartphone } from 'lucide-react';
+import { ArrowUpRight, BookOpenText, GitBranch, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+const NAVIGATION_LINK_CLASS_NAME =
+  'inline-flex items-center gap-1 rounded-[9px] px-2.5 py-1.75 text-xs font-semibold text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground';
+
+/**
+ * `external` 的走原生 <a> 而不是 <Link>：跨站不需要 Next.js 预取，也要带 target/rel，
+ * 并在文字后跟一个箭头图标，让「会离开本站」这件事在点击前就看得出来。
+ */
 const NAVIGATION = [
-  { href: '/docs/components/button', label: '组件' },
-  { href: '/#reading-paths', label: '开始使用' },
-  { href: '/#capabilities', label: '原生能力' },
-  { href: '/#component-map', label: '组件地图' }
+  { external: false, href: '/docs/components/button', label: '组件' },
+  { external: false, href: '/docs/overview/getting-started', label: '快速开始' },
+  { external: true, href: 'https://web-ui-docs.skyroc.me/', label: 'Web Ui' },
+  { external: true, href: 'https://admin.skyroc.me/', label: 'Admin 模板' }
 ] as const;
 
 export const HomeHeader = () => {
@@ -53,15 +60,32 @@ export const HomeHeader = () => {
           className="flex flex-1 items-center justify-center gap-0.5 max-[920px]:hidden"
           aria-label="主导航"
         >
-          {NAVIGATION.map(item => (
-            <Link
-              className="rounded-[9px] px-2.5 py-1.75 text-xs font-semibold text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {NAVIGATION.map(item =>
+            item.external ? (
+              <a
+                className={NAVIGATION_LINK_CLASS_NAME}
+                href={item.href}
+                key={item.href}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {item.label}
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="text-muted-foreground/70"
+                  size={12}
+                />
+              </a>
+            ) : (
+              <Link
+                className={NAVIGATION_LINK_CLASS_NAME}
+                href={item.href}
+                key={item.href}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5">
@@ -78,7 +102,7 @@ export const HomeHeader = () => {
           <a
             aria-label="打开 Native Playground"
             className="inline-flex size-[34px] items-center justify-center rounded-[10px] border border-border/65 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground max-[420px]:hidden"
-            href="https://github.com/Ohh-889/skyroc/tree/main/apps/native-ui-playground"
+            href="https://github.com/Ohh-889/skyroc/tree/master/apps/native-ui-playground"
             rel="noreferrer"
             target="_blank"
           >
