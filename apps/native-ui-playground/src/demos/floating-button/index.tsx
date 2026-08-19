@@ -55,7 +55,7 @@ const FloatingButtonDemo = () => {
       showsVerticalScrollIndicator={false}
     >
       <Section
-        description="组件按窗口尺寸计算边界，必须挂在与屏幕同尺寸、同原点的容器中；本页通过 Portal 放到全屏 PortalHost。"
+        description="组件以父容器的实测尺寸为可视边界，原点是父容器左上角；本页通过 Portal 放到全屏 PortalHost，让按钮浮在整页之上。"
         title="坐标系约定"
       >
         <Text className="p-4 text-sm leading-5 text-muted-foreground">

@@ -6,7 +6,7 @@ const EMOJI_TEXT =
 
 const TextEllipsisEmoji = () => {
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <TextEllipsis
         collapseText=" 收起"
         content={EMOJI_TEXT}

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const TextColor = () => {
   return (
-    <View className="gap-3 rounded-2xl border border-border/70 bg-background p-4">
+    <View className="gap-3 bg-background p-4">
       <Text color="foreground">Foreground · 默认前景色</Text>
       <Text color="muted">Muted · 次要信息</Text>
       <Text color="primary">Primary · 品牌强调</Text>

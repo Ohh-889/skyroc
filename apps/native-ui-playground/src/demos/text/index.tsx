@@ -1,8 +1,9 @@
-import { Text } from '@skyroc/native-ui';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { TextBasic } from './TextBasic';
 import { TextColor } from './TextColor';
 import { TextCombination } from './TextCombination';
+import { TextContext } from './TextContext';
 import { TextNativeProps } from './TextNativeProps';
 import { TextSize } from './TextSize';
 import { TextStyles } from './TextStyles';
@@ -12,56 +13,65 @@ import { TextWeight } from './TextWeight';
 const TextDemo = () => {
   return (
     <ScrollView
-      className="flex-1 bg-muted"
-      contentContainerClassName="p-6 pb-20"
+      className="flex-1 bg-background"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* 基础用法 */}
-      <Text className="mb-4 text-lg font-semibold">基础用法</Text>
-      <View className="mb-8">
+      <Section
+        description="未传变体时使用前景色、base 字号与 normal 字重。"
+        title="基础用法"
+      >
         <TextBasic />
-      </View>
+      </Section>
 
-      {/* 字号 */}
-      <Text className="mb-4 text-lg font-semibold">字号</Text>
-      <Text className="mb-3 text-sm text-muted-foreground">从 4xs 到 4xl 共十二档字号</Text>
-      <View className="mb-8">
+      <Section
+        description="size 从 4xs 到 4xl 共十二个公开值，其中 md 与 base 都映射为基础字号。"
+        title="字号（size）"
+      >
         <TextSize />
-      </View>
+      </Section>
 
-      {/* 字重 */}
-      <Text className="mb-4 text-lg font-semibold">字重</Text>
-      <View className="mb-8">
+      <Section
+        description="weight 支持 normal、medium、semibold 与 bold。"
+        title="字重（weight）"
+      >
         <TextWeight />
-      </View>
+      </Section>
 
-      {/* 语义色 */}
-      <Text className="mb-4 text-lg font-semibold">语义色</Text>
-      <Text className="mb-3 text-sm text-muted-foreground">颜色随当前主题自动切换</Text>
-      <View className="mb-8">
+      <Section
+        description="color 提供九种语义色，并随当前主题自动切换。"
+        title="语义颜色（color）"
+      >
         <TextColor />
-      </View>
+      </Section>
 
-      {/* 组合变体 */}
-      <Text className="mb-4 text-lg font-semibold">组合变体</Text>
-      <Text className="mb-3 text-sm text-muted-foreground">size、weight 与 color 可以组合使用</Text>
-      <View className="mb-8">
+      <Section
+        description="size、weight 与 color 相互独立，可以自由组合。"
+        title="组合变体"
+      >
         <TextCombination />
-      </View>
+      </Section>
 
-      {/* className 覆盖 */}
-      <Text className="mb-4 text-lg font-semibold">自定义样式</Text>
-      <Text className="mb-3 text-sm text-muted-foreground">className 的优先级高于变体属性</Text>
-      <View className="mb-8">
+      <Section
+        description="Text 在 Button 等组件内会继承 TextClassContext；显式变体仍可覆盖继承值。"
+        title="上下文样式继承（TextClassContext）"
+      >
+        <TextContext />
+      </Section>
+
+      <Section
+        description="className 优先级高于 color、size 与 weight 变体。"
+        title="自定义样式（className）"
+      >
         <TextStyles />
-      </View>
+      </Section>
 
-      {/* React Native Text 属性 */}
-      <Text className="mb-4 text-lg font-semibold">原生文字属性</Text>
-      <Text className="mb-3 text-sm text-muted-foreground">支持 numberOfLines 等 React Native Text 属性</Text>
-      <View className="mb-8">
+      <Section
+        description="numberOfLines、selectable、onPress 等 React Native Text 属性会透传到底层节点。"
+        title="原生文字属性透传"
+      >
         <TextNativeProps />
-      </View>
+      </Section>
     </ScrollView>
   );
 };

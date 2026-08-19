@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const TextSize = () => {
   return (
-    <View className="gap-2 rounded-2xl border border-border/70 bg-background p-4">
+    <View className="gap-2 bg-background p-4">
       <Text size="4xs">4xs · 辅助标记</Text>
       <Text size="3xs">3xs · 微型文字</Text>
       <Text size="2xs">2xs · 紧凑说明</Text>

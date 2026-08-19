@@ -15,6 +15,20 @@ const GALLERY = [
 
 const ImageSwitchSource = () => {
   const [index, setIndex] = useState(0);
+  const [status, setStatus] = useState('等待加载');
+
+  function handleLoad() {
+    setStatus('onLoad：加载成功');
+  }
+
+  function handleError() {
+    setStatus('onError：加载失败');
+  }
+
+  function handleNext() {
+    setStatus('等待加载');
+    setIndex(previous => (previous + 1) % GALLERY.length);
+  }
 
   return (
     <View className="items-start gap-3 bg-background p-4">
@@ -22,15 +36,18 @@ const ImageSwitchSource = () => {
         className="h-32 w-32"
         radius="lg"
         src={GALLERY[index]}
+        onError={handleError}
+        onLoad={handleLoad}
       />
       <Text className="text-xs text-muted-foreground">
         {index + 1} / {GALLERY.length}
         {GALLERY[index] === BROKEN ? '（这张是坏图）' : ''}
       </Text>
+      <Text className="text-sm text-foreground">{status}</Text>
       <Button
         color="primary"
         variant="solid"
-        onPress={() => setIndex(prev => (prev + 1) % GALLERY.length)}
+        onPress={handleNext}
       >
         下一张
       </Button>

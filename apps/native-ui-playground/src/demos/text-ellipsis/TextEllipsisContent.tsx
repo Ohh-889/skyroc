@@ -11,7 +11,7 @@ const TextEllipsisContent = () => {
   const [content, setContent] = useState(LONG_TEXT);
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <TextEllipsis
           collapseText=" 收起"

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const TextStyles = () => {
   return (
-    <View className="gap-3 rounded-2xl border border-border/70 bg-background p-4">
+    <View className="gap-3 bg-background p-4">
       <Text
         className="text-warning"
         color="primary"

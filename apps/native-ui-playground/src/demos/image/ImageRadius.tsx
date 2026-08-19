@@ -1,4 +1,4 @@
-import { Image } from '@skyroc/native-ui';
+import { Image, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
 const RADIUSES = ['none', 'sm', 'md', 'lg', 'xl', 'full'] as const;
@@ -9,12 +9,17 @@ const ImageRadius = () => {
   return (
     <View className="flex-row flex-wrap items-center gap-4 bg-background p-4">
       {RADIUSES.map(radius => (
-        <Image
-          className="h-16 w-16"
+        <View
+          className="items-center gap-1.5"
           key={radius}
-          radius={radius}
-          src={SQUARE}
-        />
+        >
+          <Image
+            className="h-16 w-16"
+            radius={radius}
+            src={SQUARE}
+          />
+          <Text className="text-xs text-muted-foreground">{radius}</Text>
+        </View>
       ))}
     </View>
   );

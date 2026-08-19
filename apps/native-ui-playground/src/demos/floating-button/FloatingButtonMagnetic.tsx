@@ -34,7 +34,7 @@ const FloatingButtonMagnetic = () => {
         {magneticOffset ? ` x=${Math.round(magneticOffset.x)}, y=${Math.round(magneticOffset.y)}` : ' —'}
       </Text>
 
-      {/* 边界按窗口尺寸算，渲染却是相对父容器的 absolute：套一层铺满屏幕的 PortalHost，位置才对得上 */}
+      {/* 边界按父容器实测尺寸算；这里套一层铺满屏幕的 PortalHost，让按钮浮在整页之上而不是被示例卡片框住 */}
       <Portal>
         <FloatingButton
           key={magnetic}

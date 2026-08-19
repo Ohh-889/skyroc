@@ -9,7 +9,7 @@ const TextEllipsisControlled = () => {
   const [controlledExpanded, setControlledExpanded] = useState(false);
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <TextEllipsis
           collapseText=" 收起"

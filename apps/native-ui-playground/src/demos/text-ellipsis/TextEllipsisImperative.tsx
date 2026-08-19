@@ -10,7 +10,7 @@ const TextEllipsisImperative = () => {
   const manualRef = useRef<TextEllipsisRef>(null);
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <TextEllipsis
           collapseText=" 收起"

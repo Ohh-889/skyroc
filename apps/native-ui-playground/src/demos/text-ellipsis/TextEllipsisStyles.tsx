@@ -6,7 +6,7 @@ const LONG_TEXT =
 
 const TextEllipsisStyles = () => {
   return (
-    <View className="gap-4 bg-background px-6 py-4">
+    <View className="gap-4 bg-background p-4">
       <TextEllipsis
         className="rounded-lg bg-secondary p-3"
         collapseText=" 收起"
@@ -27,6 +27,7 @@ const TextEllipsisStyles = () => {
       />
       {/* 字号变化会重新测量 */}
       <TextEllipsis
+        color="info"
         collapseText=" 收起"
         content={LONG_TEXT}
         expandText=" 展开"

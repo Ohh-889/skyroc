@@ -1,8 +1,9 @@
-import { Text } from '@skyroc/native-ui';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { TextEllipsisBasic } from './TextEllipsisBasic';
 import { TextEllipsisContent } from './TextEllipsisContent';
 import { TextEllipsisControlled } from './TextEllipsisControlled';
+import { TextEllipsisDefaultExpanded } from './TextEllipsisDefaultExpanded';
 import { TextEllipsisDots } from './TextEllipsisDots';
 import { TextEllipsisEmoji } from './TextEllipsisEmoji';
 import { TextEllipsisExpand } from './TextEllipsisExpand';
@@ -16,128 +17,85 @@ const TextEllipsisDemo = () => {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="py-6 pb-20"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* 基础用法 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">基础用法</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="不传 expandText 时由原生尾部省略号裁剪，rows 控制最多显示行数。"
+        title="基础用法（content / rows）"
       >
-        不给操作文本时不做裁剪，直接用原生尾部省略号
-      </Text>
-      <View className="mb-4">
         <TextEllipsisBasic />
-      </View>
+      </Section>
 
-      {/* 展开与收起 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">展开与收起</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="expandText 与 collapseText 提供内联的展开、收起入口；省略号不会另起一行。"
+        title="展开与收起（expandText / collapseText）"
       >
-        省略号与操作文本内联在末行尾部，不会另起一行
-      </Text>
-      <View className="mb-4">
         <TextEllipsisExpand />
-      </View>
+      </Section>
 
-      {/* 自定义省略号 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">自定义省略号</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="defaultExpanded 设置非受控模式的初始展开状态。"
+        title="默认展开（defaultExpanded）"
       >
-        dots 只在有操作文本、需要内联渲染时生效
-      </Text>
-      <View className="mb-4">
+        <TextEllipsisDefaultExpanded />
+      </Section>
+
+      <Section
+        description="dots 仅在存在 expandText、需要为内联操作文字预留位置时生效。"
+        title="自定义省略号（dots）"
+      >
         <TextEllipsisDots />
-      </View>
+      </Section>
 
-      {/* 不该出现操作入口的情况 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">不该出现操作入口</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="短文本与空文本没有溢出时，不显示展开入口，也不额外添加省略号。"
+        title="无溢出边界"
       >
-        文本没有溢出时不显示「展开」，也不该多出省略号
-      </Text>
-      <View className="mb-4">
         <TextEllipsisNoOverflow />
-      </View>
+      </Section>
 
-      {/* 动态行数 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">动态行数</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="rows 变化后重新测量文本，并回到收起状态。"
+        title="动态行数（rows）"
       >
-        改 rows 之后应重新测量并回到收起态
-      </Text>
-      <View className="mb-4">
         <TextEllipsisRows />
-      </View>
+      </Section>
 
-      {/* 动态内容 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">动态内容</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="content 变化会重新测量；长文本切换为短文本后，展开入口自动消失。"
+        title="动态内容（content）"
       >
-        长文本换成短文本后，「展开」与省略号都应该消失
-      </Text>
-      <View className="mb-4">
         <TextEllipsisContent />
-      </View>
+      </Section>
 
-      {/* 受控用法 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">受控用法</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="expanded 与 onExpandedChange 接管状态，文末操作和外部按钮会同步更新。"
+        title="受控模式（expanded / onExpandedChange）"
       >
-        expanded 受控时，点击文末操作与外部按钮结果一致
-      </Text>
-      <View className="mb-4">
         <TextEllipsisControlled />
-      </View>
+      </Section>
 
-      {/* 命令式控制 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">命令式控制</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="ref.toggle(true / false) 指定状态，不传参数时切换当前状态。"
+        title="命令式控制（ref.toggle）"
       >
-        ref.toggle 传 true / false 指定状态，不传则取反
-      </Text>
-      <View className="mb-4">
         <TextEllipsisImperative />
-      </View>
+      </Section>
 
-      {/* 自定义样式 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">自定义样式</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="className 覆盖根容器，classNames 覆盖正文和操作文字；color、size、weight 等 Text 属性继续生效。"
+        title="文字与样式（className / classNames）"
       >
-        className 覆盖根容器，classNames 细粒度覆盖各 slot
-      </Text>
-      <View className="mb-4">
         <TextEllipsisStyles />
-      </View>
+      </Section>
 
-      {/* 表情文本 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">表情文本</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="内容按 Unicode 码点裁剪，连续表情不会被截成半个代理字符。"
+        title="表情文本边界"
       >
-        二分按码点切分，不该出现半个表情或方块字符
-      </Text>
-      <View className="mb-4">
         <TextEllipsisEmoji />
-      </View>
+      </Section>
     </ScrollView>
   );
 };

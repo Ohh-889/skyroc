@@ -4,6 +4,7 @@ import { ImageBasic } from './ImageBasic';
 import { ImageContentFit } from './ImageContentFit';
 import { ImageCustomSlots } from './ImageCustomSlots';
 import { ImageError } from './ImageError';
+import { ImageLoading } from './ImageLoading';
 import { ImageRadius } from './ImageRadius';
 import { ImageRichSource } from './ImageRichSource';
 import { ImageSlotClassNames } from './ImageSlotClassNames';
@@ -39,6 +40,13 @@ const ImageDemo = () => {
       </Section>
 
       <Section
+        description="showLoading 默认展示加载指示器；设为 false 后加载期间仅保留图片容器。"
+        title="加载状态（showLoading）"
+      >
+        <ImageLoading />
+      </Section>
+
+      <Section
         description="加载失败默认渲染内置破损图标，showError={false} 可关闭。"
         title="失败占位（showError）"
       >
@@ -60,15 +68,15 @@ const ImageDemo = () => {
       </Section>
 
       <Section
-        description="src 变化时加载态重置，不会残留上一张的失败占位。"
-        title="动态换图（src）"
+        description="src 变化时加载态会重置；onLoad 与 onError 可分别感知成功和失败。"
+        title="动态换图与事件（src / onLoad / onError）"
       >
         <ImageSwitchSource />
       </Section>
 
       <Section
-        description="src 透传 expo-image 的完整 source 能力：多分辨率数组、blurhash 占位等。"
-        title="完整图源（src / placeholder）"
+        description="src 支持多分辨率 source；placeholder 与 transition 直接透传给 expo-image。"
+        title="完整图源（src / placeholder / transition）"
       >
         <ImageRichSource />
       </Section>

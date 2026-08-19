@@ -6,7 +6,7 @@ const LONG_TEXT =
 
 const TextEllipsisBasic = () => {
   return (
-    <View className="gap-3 bg-background px-6 py-4">
+    <View className="gap-3 bg-background p-4">
       <TextEllipsis content={LONG_TEXT} />
       <TextEllipsis
         content={LONG_TEXT}

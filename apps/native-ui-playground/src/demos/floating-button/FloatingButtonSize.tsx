@@ -6,7 +6,7 @@ const FloatingButtonSize = () => {
     <View className="bg-background p-4">
       <Text className="text-sm text-muted-foreground">size=64，className 覆盖底色，children 使用自定义文字。</Text>
 
-      {/* 边界按窗口尺寸算，渲染却是相对父容器的 absolute：套一层铺满屏幕的 PortalHost，位置才对得上 */}
+      {/* 边界按父容器实测尺寸算；这里套一层铺满屏幕的 PortalHost，让按钮浮在整页之上而不是被示例卡片框住 */}
       <Portal>
         <FloatingButton
           axis="xy"
