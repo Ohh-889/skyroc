@@ -1,6 +1,14 @@
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions } from '@/lib/layout.shared';
+import type { ReactNode } from 'react';
 
-export default function Layout({ children }: LayoutProps<'/'>) {
-  return <HomeLayout {...baseOptions()}>{children}</HomeLayout>;
+interface HomeLayoutProps {
+  /** 首页内容 */
+  children: ReactNode;
 }
+
+const HomeLayout = (props: HomeLayoutProps) => {
+  const { children } = props;
+
+  return children;
+};
+
+export default HomeLayout;

@@ -14,13 +14,95 @@
 /* 文档里的 <Demo /> 直接渲染 playground 的 demo 源码，类名要一起进扫描范围 */
 @source '../../../apps/native-ui-playground/src/demos';
 
+:root,
+.dark {
+  --fd-layout-width: 1480px;
+  --color-fd-background: var(--background);
+  --color-fd-foreground: var(--foreground);
+  --color-fd-muted: var(--muted);
+  --color-fd-muted-foreground: var(--muted-foreground);
+  --color-fd-popover: var(--popover);
+  --color-fd-popover-foreground: var(--popover-foreground);
+  --color-fd-card: color-mix(in srgb, var(--card) 30%, transparent);
+  --color-fd-card-foreground: var(--card-foreground);
+  --color-fd-border: color-mix(in srgb, var(--border) 58%, transparent);
+  --color-fd-primary: var(--primary);
+  --color-fd-primary-foreground: var(--primary-foreground);
+  --color-fd-secondary: color-mix(in srgb, var(--secondary) 44%, transparent);
+  --color-fd-secondary-foreground: var(--secondary-foreground);
+  --color-fd-accent: color-mix(in srgb, var(--primary) 10%, transparent);
+  --color-fd-accent-foreground: var(--foreground);
+  --color-fd-ring: var(--ring);
+}
+
 html {
   scrollbar-gutter: stable;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
 }
 
 html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.skyroc-docs-layout {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 46% 0%, color-mix(in srgb, var(--primary) 9%, transparent), transparent 30rem),
+    linear-gradient(color-mix(in srgb, var(--border) 30%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border) 30%, transparent) 1px, transparent 1px);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px;
+}
+
+#nd-sidebar {
+  --color-fd-muted: var(--muted);
+  --color-fd-muted-foreground: var(--muted-foreground);
+  --color-fd-secondary: color-mix(in srgb, var(--secondary) 38%, transparent);
+  --color-fd-secondary-foreground: var(--secondary-foreground);
+  --color-fd-accent: color-mix(in srgb, var(--primary) 10%, transparent);
+  --color-fd-accent-foreground: var(--foreground);
+  --color-fd-primary: var(--primary);
+  --color-fd-primary-foreground: var(--primary-foreground);
+  --color-fd-ring: var(--ring);
+
+  background-color: color-mix(in srgb, var(--background) 68%, transparent);
+  border-color: color-mix(in srgb, var(--border) 55%, transparent);
+  backdrop-filter: saturate(1.1) blur(16px);
+}
+
+#nd-sidebar > div {
+  background-color: color-mix(in srgb, var(--background) 70%, transparent);
+  border-color: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+/* 首页只消费插件生成的语义令牌，不在文档站维护第二套颜色。 */
+.native-home-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--border) 32%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--border) 32%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* 与主文档首页一致：滚动后才开启玻璃模糊。 */
+.native-home-header-glass {
+  backdrop-filter: saturate(1.2) blur(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /*

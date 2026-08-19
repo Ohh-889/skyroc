@@ -1,12 +1,7 @@
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './global.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { ReactNativeWebStyleSheet } from './ReactNativeWebStyleSheet';
-
-const inter = Inter({
-  subsets: ['latin']
-});
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -17,24 +12,35 @@ Object.assign(globalThis, { __DEV__: isDev });
 
 export const metadata: Metadata = {
   // 缺省时 Next 会退化到 localhost，导致线上 OG / Twitter 卡片图指向本机
+  icons: {
+    icon: [{ type: 'image/svg+xml', url: '/favicon.svg' }]
+  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3001')
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface RootLayoutProps {
+  /** 应用内容 */
+  children: React.ReactNode;
+}
+
+const RootLayout = (props: RootLayoutProps) => {
+  const { children } = props;
+
   return (
     <html
-      lang="en"
-      className={inter.className}
+      lang="zh-CN"
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: `globalThis.__DEV__=${isDev};` }} />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex min-h-screen flex-col bg-background font-sans text-foreground">
         <ReactNativeWebStyleSheet />
 
         <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

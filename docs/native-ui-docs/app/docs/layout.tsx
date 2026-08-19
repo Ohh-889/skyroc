@@ -10,7 +10,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (
     <DocsLayout
       tree={source.getPageTree()}
-      containerProps={{ className: '[--fd-layout-width:100vw]' }}
+      containerProps={{ className: 'skyroc-docs-layout [--fd-layout-width:100vw]' }}
       {...baseOptions()}
     >
       <AISearch>
@@ -28,8 +28,6 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
           Ask AI
         </AISearchTrigger>
       </AISearch>
-
-
       {children}
     </DocsLayout>
   );
