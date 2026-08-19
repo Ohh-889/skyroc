@@ -1,5 +1,8 @@
 {
   "title": "概览",
+  "description": "安装、主题、设计体系与迁移指南",
+  "icon": "Compass",
+  "root": true,
   "defaultOpen": true,
   "collapsible": false,
   "pages": [

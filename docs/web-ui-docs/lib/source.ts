@@ -2,7 +2,8 @@ import { docs } from 'collections/server';
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
 import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
-import type { Folder, Node, Root } from 'fumadocs-core/page-tree';
+import type { Folder } from 'fumadocs-core/page-tree';
+import type { LayoutTab } from 'fumadocs-ui/layouts/shared';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
@@ -11,43 +12,49 @@ export const source = loader({
   plugins: [lucideIconsPlugin()],
 });
 
-export type DocsSection = 'components' | 'overview';
+/**
+ * 取文件夹里第一个能跳转的页面。
+ *
+ * fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page，
+ * 而 `components/` 的直接子级全是 `(general)` 这类分组文件夹，会被判成「没有落地页」而整项丢弃。
+ * 这里往下递归一层层找，让没有 index.mdx 的模块也能出现在切换器里。
+ *
+ * 一旦哪天给 `components/` 补了 index.mdx，这个文件里的两个函数就可以整体删掉，
+ * 直接用 fumadocs 默认的 tabs（layout 里不传 `tabs` 即可）。
+ */
+function findFirstPageUrl(folder: Folder): string | undefined {
+  if (folder.index) return folder.index.url;
 
-function hasSectionPage(node: Node, section: DocsSection): boolean {
-  const prefix = `/${section}/`;
+  for (const child of folder.children) {
+    if (child.type === 'page') return child.url;
 
-  if (node.type === 'page') {
-    return node.url === `/${section}` || node.url.startsWith(prefix);
+    if (child.type === 'folder') {
+      const url = findFirstPageUrl(child);
+      if (url) return url;
+    }
   }
 
-  if (node.type === 'folder') {
-    const indexMatches = node.index
-      ? node.index.url === `/${section}` || node.index.url.startsWith(prefix)
-      : false;
-
-    return indexMatches || node.children.some(child => hasSectionPage(child, section));
-  }
-
-  return false;
+  return undefined;
 }
 
-function findSectionFolder(root: Root, section: DocsSection): Folder | undefined {
-  return root.children.find(
-    (node): node is Folder => node.type === 'folder' && hasSectionPage(node, section),
-  );
-}
+/** 侧栏顶部的模块切换器数据源：每个 `root: true` 的顶层文件夹一项 */
+export function getRootTabs(): LayoutTab[] {
+  return source.getPageTree().children.flatMap<LayoutTab>(node => {
+    if (node.type !== 'folder' || !node.root) return [];
 
-export function getSectionPageTree(section: DocsSection): Root {
-  const root = source.getPageTree();
-  const folder = findSectionFolder(root, section);
+    const url = findFirstPageUrl(node);
+    if (!url) return [];
 
-  if (!folder) return root;
-
-  return {
-    ...root,
-    name: folder.name,
-    children: folder.children,
-  };
+    return [
+      {
+        $folder: node,
+        description: node.description,
+        icon: node.icon,
+        title: node.name,
+        url,
+      },
+    ];
+  });
 }
 
 export function getPageImage(page: (typeof source)['$inferPage']) {

@@ -4,13 +4,10 @@ import { MessageCircleIcon } from 'lucide-react';
 import { AISearch, AISearchPanel, AISearchTrigger } from '@/components/ai/search';
 import { cn } from '@/lib/cn';
 import { baseOptions } from '@/lib/layout.shared';
-import { type DocsSection, getSectionPageTree } from '@/lib/source';
+import { getRootTabs, source } from '@/lib/source';
 
-const Layout = async (props: LayoutProps<'/[...slug]'>) => {
-  const { children, params } = props;
-  const { slug = [] } = await params;
-  const [section] = slug;
-  const docsSection: DocsSection = section === 'components' ? 'components' : 'overview';
+const Layout = (props: LayoutProps<'/[...slug]'>) => {
+  const { children } = props;
 
   return (
     <DocsLayout
@@ -19,8 +16,8 @@ const Layout = async (props: LayoutProps<'/[...slug]'>) => {
         defaultOpenLevel: 10
       }}
       containerProps={{ className: 'skyroc-docs-layout' }}
-      tabs={false}
-      tree={getSectionPageTree(docsSection)}
+      tabs={getRootTabs()}
+      tree={source.getPageTree()}
       {...baseOptions()}
     >
       <AISearch>
