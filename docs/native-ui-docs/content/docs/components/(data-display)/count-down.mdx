@@ -165,6 +165,12 @@ import type { CountDownProps, CountDownRef, CountDownSlots, CurrentTime } from '
   type="'root' | 'text'"
 />
 
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 CountDownSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
 <TypeTable
   data={[
     {

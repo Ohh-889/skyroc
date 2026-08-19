@@ -1,19 +1,19 @@
-import { getPageImageUrl, getPageMarkdownUrl, source } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
   MarkdownCopyButton,
-  ViewOptionsPopover,
+  ViewOptionsPopover
 } from 'fumadocs-ui/layouts/docs/page';
-import { notFound } from 'next/navigation';
-import { getMDXComponents } from '@/components/mdx';
-import { DemoStage, DemoStageProvider } from '@/components/demo/stage';
-import { resolvePlaygroundPage } from '@/lib/playground-demo';
-import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { DemoStage, DemoStageProvider } from '@/components/demo/stage';
+import { getMDXComponents } from '@/components/mdx';
+import { resolvePlaygroundPage } from '@/lib/playground-demo';
 import { gitConfig } from '@/lib/shared';
+import { getPageImageUrl, getPageMarkdownUrl, source } from '@/lib/source';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -30,7 +30,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
     <MDX
       components={getMDXComponents({
         // this allows you to link to other pages with relative file paths
-        a: createRelativeLink(source, page),
+        a: createRelativeLink(source, page)
       })}
     />
   );
@@ -38,6 +38,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   return (
     <DocsPage
       toc={page.data.toc}
+      className=" max-w-[1300px]"
       full={Boolean(playgroundPage) || page.data.full}
       tableOfContent={{ enabled: !playgroundPage }}
     >
@@ -54,6 +55,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         <DemoStageProvider>
           <div className="skyroc-split">
             <DocsBody className="skyroc-split-doc">{body}</DocsBody>
+
             <DemoStage
               label={`${page.data.title} · 完整示例`}
               slug={playgroundPage}
@@ -80,7 +82,7 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
     title: page.data.title,
     description: page.data.description,
     openGraph: {
-      images: getPageImageUrl(page).url,
-    },
+      images: getPageImageUrl(page).url
+    }
   };
 }

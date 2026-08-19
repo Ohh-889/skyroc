@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { source } from '@/lib/source';
+import { TypeLink } from './type-link';
 import { TYPE_REGISTRY } from './type-registry';
 
 export function toTypeAnchorId(typeName: string) {
@@ -54,6 +56,7 @@ const BUILTIN_TYPE_NAMES = new Set([
   'Required',
   'ScrollView',
   'Set',
+  'Slots',
   'StyleProp',
   'TextStyle',
   'View',
@@ -90,11 +93,21 @@ function splitTypeParts(typeText: string): TypePart[] {
   return parts.length ? parts : [{ text: typeText }];
 }
 
-function resolveTypeHref(typeName: string): string {
-  if (typeName in TYPE_REGISTRY) {
-    return TYPE_REGISTRY[typeName];
-  }
-  return `#${toTypeAnchorId(typeName)}`;
+/**
+ * 注册表里的跨页地址，只有目标页面真的存在时才返回。
+ *
+ * 类型先在注册表登记、对应组件文档还没写的情况很常见（如 ImageProps / InputProps），
+ * 这时候链过去就是 404，不如不链。
+ */
+function resolveRegistryHref(typeName: string): string | undefined {
+  const target = TYPE_REGISTRY[typeName];
+
+  if (!target) return undefined;
+
+  const [pathname] = target.split('#');
+  const exists = source.getPages().some(page => page.url === pathname);
+
+  return exists ? target : undefined;
 }
 
 export function typeToReactNode(type?: string): ReactNode {
@@ -104,13 +117,12 @@ export function typeToReactNode(type?: string): ReactNode {
     <>
       {splitTypeParts(type).map((part, idx) =>
         part.isLink ? (
-          <a
+          <TypeLink
             key={idx}
-            className="cursor-pointer border-b-2 border-dashed border-fd-primary/30 text-fd-primary no-underline duration-200 hover:border-fd-primary"
-            href={resolveTypeHref(part.text)}
-          >
-            {part.text}
-          </a>
+            anchorId={toTypeAnchorId(part.text)}
+            name={part.text}
+            registryHref={resolveRegistryHref(part.text)}
+          />
         ) : (
           <span key={idx}>{part.text}</span>
         )

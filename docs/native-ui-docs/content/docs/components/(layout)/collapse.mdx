@@ -192,6 +192,12 @@ import type {
   type="'arrow' | 'content' | 'contentText' | 'root' | 'wrapper'"
 />
 
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 CollapseItemSlots；cellClassNames 用的是 Cell 页的 CellSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
 <TypeTable
   data={[
     {

@@ -224,3 +224,9 @@ import type { CellGroupProps, CellGroupSlots, CellProps, CellSize, CellSlots } f
   description="CellGroup 可通过 classNames 覆盖的 slot 名称。"
   type="'divider' | 'root' | 'title'"
 />
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 CellSlots / CellGroupSlots。"
+  type="Partial<Record<Slots, string>>"
+/>

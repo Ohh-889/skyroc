@@ -1,0 +1,209 @@
+---
+title: Divider
+description: 分隔内容的细线，支持文字、虚线与竖向
+---
+
+分割线（Divider）用一条细线切开相邻内容，也可以在线中间放一段文字或任意节点。组件基于 React Native 的 `View` 封装，默认渲染 1 物理像素的细线（`StyleSheet.hairlineWidth`），根节点带 `role="separator"`。
+
+```tsx
+import { Divider } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+不传任何属性时为横向、实线、1 物理像素，上下带 `my-2` 的外边距。
+
+<Demo src="@playground/divider/DividerBasic" />
+
+## 何时使用
+
+- 列表项之间、卡片内部分区、表单分组之间需要一条视觉分隔时。
+- 需要「一段说明文字被两条线夹住」的分节标题时，把文字作为 `children` 传入。
+- 横向排列的操作按钮之间需要竖线分隔时，用 `orientation="vertical"`。
+- 只是想拉开间距、并不需要一条线时，用 `Space` 或直接给容器加 `gap`，不要用透明的分割线代替。
+
+## 带文字与对齐
+
+`children` 为字符串时自动包一层 `Text`（`text-sm text-muted-foreground`），线条被切成前后两截。`align` 控制文字的位置：
+
+| 取值     | 表现                                          |
+| -------- | --------------------------------------------- |
+| `center` | 两侧线条等分（默认）                          |
+| `start`  | 前侧线条压到 10%，文字靠近起始端              |
+| `end`    | 后侧线条压到 10%，文字靠近结束端              |
+
+<Demo src="@playground/divider/DividerText" />
+
+`align` 只在有内容时才起作用：没有 `children` 时渲染的是一条完整的线，不会被 10% 的限制压扁。需要别的比例（比如 25%）时覆盖 `classNames.lineLeading` / `classNames.lineTrailing`。
+
+判断「有没有内容」走的是 `Children.toArray`，它会过滤掉 `null` / `undefined` / 布尔值 —— 所以 `{flag && '文字'}` 在 `flag` 为 `false` 时是一条完整的线，而不是中间空着的两截。
+
+## 自定义内容
+
+`children` 也可以是任意 React 节点。此时不做任何包裹，`classNames.text` 也不会生效（它只作用于字符串自动包裹出来的 `Text`），节点的字号与颜色需要自己给。
+
+<Demo src="@playground/divider/DividerCustomContent" />
+
+## 线型
+
+`border` 提供三种线型：
+
+| 取值     | 绘制方式                                | 粗细                       |
+| -------- | --------------------------------------- | -------------------------- |
+| `solid`  | 背景色（`bg-border`）                   | 受 `hairline` 控制（默认） |
+| `dashed` | 单边虚线边框（`border-t` / `border-l`） | 固定 1dp                   |
+| `dotted` | 单边点线边框                            | 固定 1dp                   |
+
+<Demo src="@playground/divider/DividerDashed" />
+
+虚线和点线没法用背景色画出来，组件改成用单边边框绘制，并把实线用的 `h-px` / `w-px` 清零。iOS 上 1dp 以下的 dashed border 画不出来，因此这两种线型不受 `hairline` 影响，固定 1dp。
+
+## 线宽
+
+`hairline` 默认为 `true`，通过 `StyleSheet.hairlineWidth` 渲染 1 物理像素（0.5 / 0.33dp）的细线；设为 `false` 回落到类名里的 1dp。
+
+<Demo src="@playground/divider/DividerHairline" />
+
+`hairline` 是通过 `style` 生效的，行内样式优先级高于类名，会盖掉你在 `classNames.line` 里写的 `h-*` / `w-*`。要自定义粗细就同时传 `hairline={false}`。另外它只对 `solid` 生效，虚线 / 点线传了也不会变细。
+
+## 方向
+
+`orientation` 支持 `horizontal`（默认）与 `vertical`。横向线的外边距是 `my-2`，竖向线是 `mx-2`。
+
+<Demo src="@playground/divider/DividerVertical" />
+
+## 竖向分割线的高度
+
+竖向分割线用 `self-stretch` 跟随父级高度，所以**父容器必须是横向布局（`flex-row`）且高度确定**，否则线条高度为 0，看上去就是没渲染。
+
+<Demo src="@playground/divider/DividerVerticalHeight" />
+
+高度可以来自父容器的固定高度（`h-12`）、也可以来自兄弟节点把行撑开。如果两者都没有，就给分割线自己一个高度：`classNames={{ line: 'h-4' }}`。
+
+## 竖向虚线
+
+线型与方向是两个独立维度，`border` 在竖向下同样生效，只是边框从 `border-t` 换成了 `border-l`。
+
+<Demo src="@playground/divider/DividerVerticalDashed" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot           | 作用位置                                                                     |
+| -------------- | ---------------------------------------------------------------------------- |
+| `root`         | 根容器 `View`，带 `role="separator"`；横向时为 `flex-row`                     |
+| `line`         | 线条本身。无内容时作用于那条完整的线，有内容时两截线条也都会先并上它          |
+| `lineLeading`  | 内容前的那半截线，合并在 `line` 之后                                          |
+| `lineTrailing` | 内容后的那半截线，合并在 `line` 之后                                          |
+| `text`         | 字符串 `children` 自动包裹出来的 `Text`                                       |
+
+<Demo src="@playground/divider/DividerCustomStyle" />
+
+合并顺序是「变体样式 → `classNames` → `className`」，冲突时以后者为准；`lineLeading` / `lineTrailing` 还会先并上 `classNames.line`，所以「两截线一起改 + 只改其中一截」可以叠着写。
+
+## 无障碍
+
+根节点默认带 `role="separator"`，读屏器会把它当作分隔元素而不是可交互内容。分割线里的文字只是视觉分节，如果它承担了小标题的语义，建议在外层自己补一个带 `accessibilityRole="header"` 的节点，而不是依赖分割线本身。
+
+## API
+
+### Divider
+
+除下表外，`Divider` 透传 `View` 的全部属性（`style`、`testID`、`accessibilityLabel` 等）。
+
+<PropsTable
+  data={[
+    {
+      name: 'orientation',
+      description: '分割线方向，vertical 依赖父级为横向布局且有确定高度',
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'"
+    },
+    {
+      name: 'border',
+      description: '线型，dashed / dotted 改用单边边框绘制，粗细固定 1dp',
+      type: "'solid' | 'dashed' | 'dotted'",
+      default: "'solid'"
+    },
+    {
+      name: 'align',
+      description: '内容在分割线上的位置，start / end 会把该侧线条压到 10%，仅在有 children 时生效',
+      type: "'start' | 'center' | 'end'",
+      default: "'center'"
+    },
+    {
+      name: 'hairline',
+      description: '是否使用 1 物理像素细线（0.5 / 0.33dp），关掉为 1dp。仅对 solid 生效，通过 style 注入会盖掉 classNames 里的粗细类',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'children',
+      description: '分割线中间的内容，string 会自动包一层 Text，横向纵向都支持',
+      type: 'ReactNode'
+    },
+    { name: 'className', description: '根容器类名，合并到变体样式与 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，lineLeading / lineTrailing 会先并上 classNames.line',
+      type: 'SlotClassNames<DividerSlots>'
+    },
+    {
+      name: 'ref',
+      description: '底层 View 的 ref，用于 measure / 滚动定位等命令式操作',
+      type: 'Ref<View>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  DividerAlign,
+  DividerBorder,
+  DividerOrientation,
+  DividerProps,
+  DividerSlots,
+  DividerVariantProps
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="DividerOrientation"
+  description="分割线方向，等价于通用类型 ThemeOrientation。"
+  type="'horizontal' | 'vertical'"
+/>
+
+<UnionType
+  name="DividerBorder"
+  description="线型，由 dividerVariants 的 border 变体推导。"
+  type="'solid' | 'dashed' | 'dotted'"
+/>
+
+<UnionType
+  name="DividerAlign"
+  description="内容在分割线上的位置，等价于通用类型 ThemeAlign。"
+  type="'start' | 'center' | 'end'"
+/>
+
+<UnionType
+  name="DividerSlots"
+  description="可通过 classNames 覆盖的 slot 名称，leading / trailing 分别指内容前后的那半截线条。"
+  type="'root' | 'line' | 'lineLeading' | 'lineTrailing' | 'text'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'DividerVariantProps',
+      description: 'dividerVariants 的变体入参，与同名 props 一一对应，直接使用 dividerVariants 时可以用它约束参数。',
+      fields: [
+        { name: 'orientation', type: "'horizontal' | 'vertical'", description: '分割线方向。' },
+        { name: 'border', type: "'solid' | 'dashed' | 'dotted'", description: '线型。' },
+        { name: 'align', type: "'start' | 'center' | 'end'", description: '内容位置。' }
+      ]
+    }
+  ]}
+/>

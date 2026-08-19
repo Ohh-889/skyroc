@@ -8,14 +8,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { Metrics } from 'react-native-safe-area-context';
 
 /**
- * playground 的 app/_layout.tsx 在手机框里的等价物。
+ * Playground 的 app/_layout.tsx 在手机框里的等价物。
  *
- * 文档站直接渲染 demo 与 app/components/*.tsx，唯独不会渲染 playground 的根布局，
- * 于是那一层 provider 全部缺席：Sheet / ActionSheet / Dialog 会抛
- * 「'BottomSheetModalInternalContext' cannot be null!」，SwipeCell / Slider / FloatingButton
- * 的手势收不到事件，Toast / Notify 与命令式面板挂上 portalStore 后没有宿主、静默不显示。
+ * 文档站直接渲染 demo 与 app/components/*.tsx，唯独不会渲染 playground 的根布局， 于是那一层 provider 全部缺席：Sheet / ActionSheet / Dialog 会抛
+ * 「'BottomSheetModalInternalContext' cannot be null!」，SwipeCell / Slider / FloatingButton 的手势收不到事件，Toast / Notify
+ * 与命令式面板挂上 portalStore 后没有宿主、静默不显示。
  *
  * 三个 provider 都从「组件真正用的那一份」拿：BottomSheetModalProvider 走
+ *
  * @skyroc/native-ui 的再导出，gesture-handler / safe-area-context 由本包按 catalog:native
  * 直接依赖——版本与 playground、native-ui 对齐，pnpm 解析到同一个 .pnpm 目录，
  * 不会出现「provider 是 A 实例、消费者是 B 实例」的 context 落空。
@@ -24,8 +24,7 @@ import type { Metrics } from 'react-native-safe-area-context';
 /**
  * 手机框没有刘海，安全区一律为 0。
  *
- * 显式给初值而不是让 SafeAreaProvider 自己量：它在拿到 insets 之前不渲染 children，
- * 不给初值预览会先闪一帧空白。frame 宽度对齐 phone-frame.tsx 的 w-[375px]。
+ * 显式给初值而不是让 SafeAreaProvider 自己量：它在拿到 insets 之前不渲染 children， 不给初值预览会先闪一帧空白。frame 宽度对齐 phone-frame.tsx 的 w-[375px]。
  */
 const PREVIEW_METRICS: Metrics = {
   frame: { height: 812, width: 375, x: 0, y: 0 },
@@ -38,9 +37,7 @@ interface PreviewRuntimeProps {
   /**
    * 是否撑满手机屏幕。
    *
-   * 对齐 PhoneFrame 的同名属性：整页预览是固定高度的一屏（撑满），
-   * 单点 demo 的手机框按内容高度自适应，此时这几层容器绝不能带 flex-1，
-   * 否则 flex-basis: 0 会让整框塌到 min-h。
+   * 对齐 PhoneFrame 的同名属性：整页预览是固定高度的一屏（撑满）， 单点 demo 的手机框按内容高度自适应，此时这几层容器绝不能带 flex-1， 否则 flex-basis: 0 会让整框塌到 min-h。
    */
   fill?: boolean;
 }
@@ -57,14 +54,9 @@ export const PreviewRuntime = (props: PreviewRuntimeProps) => {
       >
         <BottomSheetModalProvider>
           {/* PortalHost 是 absolute inset-0，需要一个把内容包住的定位父级才铺得对 */}
-          <View className={fill ? 'flex-1' : undefined}>
+          <View className={'flex-1'}>
             {children}
 
-            {/* 每台手机各挂一个 host，overlay 才会落在触发它的那一框里。
-                portalStore 是模块单例，窄屏（无分栏）同时存在多个 host 时，
-                命令式 Toast / ActionSheet 会在每一框里各渲染一份，并触发一条
-                「检测到多个 PortalHost」的开发期告警——这是多根预览同页的固有代价。
-                ≥1280px 的分栏模式下整页只有一台手机，不受影响。 */}
             <PortalHost />
           </View>
         </BottomSheetModalProvider>

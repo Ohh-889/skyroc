@@ -10,7 +10,7 @@ interface DemoShellProps {
   code: ReactNode;
   /** 预览下方的补充说明 */
   description?: string;
-  /** playground 中同一 demo 的地址，未配置时不渲染入口 */
+  /** Playground 中同一 demo 的地址，未配置时不渲染入口 */
   playgroundUrl?: string | null;
   /** 手机屏幕里的真实 demo，仅窄屏内联时用得上 */
   preview: ReactNode;

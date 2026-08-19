@@ -1,0 +1,236 @@
+---
+title: DatePicker
+description: 年月日滚轮选择器，列范围随可选区间与已选值级联
+---
+
+日期选择器（DatePicker）用滚轮选择年、月、日。列的选项不是写死的：它由 `columnsType` 与 `minDate` / `maxDate` 推导，并随已选值级联收窄 —— 选到 2 月时日列只有 28 / 29 天，选到区间的首尾年份时月列也会跟着裁掉越界的月份。
+
+组件分内联与弹层两种形态：`DatePickerView` 直接把滚轮渲染在当前布局里（底层是 `PickerView`）；`DatePicker` 把它装进底部面板（底层是 `Sheet` / `@gorhom/bottom-sheet`），并额外管理「滚动只改临时值、确定才写回」的提交语义。
+
+```tsx
+import { DatePicker, DatePickerView } from '@skyroc/native-ui';
+```
+
+使用 `DatePicker` 时应用根节点需要包一层 `GestureHandlerRootView` 与 `BottomSheetModalProvider`，缺了面板不会出现；`DatePickerView` 没有这个要求。
+
+## 基础用法
+
+不传任何属性时显示年、月、日三列，选中值落在今天，可选区间是今天往前后各 10 年。
+
+<Demo src="@playground/date-picker/DatePickerBasic" />
+
+选中值是一个字符串数组，顺序与 `columnsType` 一一对应，数字都补零：`['2026', '08', '19']`。它不是 `Date` 对象 —— 需要日期实例时自己拼，例如 `new Date(Number(y), Number(m) - 1, Number(d))`。
+
+## 何时使用
+
+- 需要选择一个具体日期，且不需要看到「这一天是星期几」「这个月的排布」时，用滚轮比日历更省空间、更快。
+- 需要在月视图上圈选区间、标注状态时用 `Calendar`。
+- 只选时间（时 / 分 / 秒）用 `TimePicker`；选的不是日期而是普通选项列表用 `Picker`。
+- 表单里的日期字段推荐用 `DatePicker` + 自定义触发元素（见下方「自定义触发元素」），而不是把滚轮常驻在表单中间。
+
+## 受控模式
+
+`value` + `onChange` 组成受控模式，`defaultValue` 用于非受控。`DatePickerView` 的 `onChange` 在每一次滚动停下后触发。
+
+<Demo src="@playground/date-picker/DatePickerControlled" />
+
+受控值会被组件钳回可选范围内，并且**修正结果会回流成一次 `onChange`**：如果你传进来的 `value` 越界（比如 `maxDate` 在过去），组件不会一边显示钳位后的值、一边让你手里留着那个越界的原值。父组件不接这次修正时值不变，也不会来回震荡。
+
+## 可选区间
+
+`minDate` / `maxDate` 界定可选范围，缺省是今天往前后各 10 年。收窄是分级发生的：年列直接由区间决定，月列只在停在首尾年份上时才被裁，日列还要再看是否落在首尾月份上。
+
+<Demo src="@playground/date-picker/DatePickerRange" />
+
+选中值落在区间之外时会被钳到**数值上最接近的可选项**，而不是简单取第一项或最后一项 —— 2000 年在 2016–2036 的区间里会变成 2016，被 `filter` 挖空的中间值则取左右最近的那个。钳位是迭代到不动点的：年被钳住之后月列才知道自己该怎么收窄，日列还要再跟一轮。
+
+## 列组合
+
+`columnsType` 决定显示哪几列以及它们的顺序，默认 `['year', 'month', 'day']`。可以只保留其中的一部分，比如做「每年的纪念日」只需要月、日两列。
+
+<Demo src="@playground/date-picker/DatePickerColumns" />
+
+缺少年列时，月列的上下界没法从选中值里读出来，组件用今天的年份补位。所以 `['month', 'day']` 搭配跨年的 `minDate` / `maxDate` 时，实际可选范围以今年为准。
+
+## 格式化与过滤
+
+`formatter(type, option)` 只改显示文本，返回的 `value` 应保持不变（它是选中值的载体）；`filter(columnType, options, values)` 剔除的是候选项本身。
+
+<Demo src="@playground/date-picker/DatePickerFormatter" />
+
+两者的调用时机不同：`formatter` 先对生成的选项逐个加工，`filter` 再对整列做筛选。`filter` 的第三个参数是当前各列选中值，可以据此做联动过滤（比如只在某个月里跳过周末）。被 `filter` 挖空的当前值会被钳到最近的可选项，所以不必担心筛完之后选中值悬空。
+
+两个函数都建议提到组件外或用 `useCallback` 包住：它们是重算列数据的 memo 依赖，每次渲染都换一个新函数会让缓存整体失效。
+
+## 滚轮外观与反馈
+
+`itemHeight`（默认 `48`）与 `visibleCount`（默认 `5`）决定滚轮密度，列区域的高度就是两者相乘；`haptic` 打开后每滚过一格触发一次轻触反馈。
+
+<Demo src="@playground/date-picker/DatePickerWheel" />
+
+`visibleCount` 要取奇数 —— 偶数时中间的选中指示线落不到正中。指示线是绝对定位在滚轮之上的一层，已经关掉了 `pointerEvents`，不会截走滚动手势。
+
+## 加载状态
+
+`loading` 在滚轮区域盖一层加载遮罩，组件尺寸保持不变，不会因为数据没来就把布局撑塌。
+
+<Demo src="@playground/date-picker/DatePickerLoading" />
+
+## 工具栏与回调
+
+`showToolbar`（`DatePickerView` 默认 `true`）显示顶部工具栏，`title` / `cancelText` / `confirmText` 定制文案，`onCancel` / `onConfirm` 回传当前选中值。
+
+<Demo src="@playground/date-picker/DatePickerToolbar" />
+
+内联形态下工具栏按钮只是回调，不会改变任何状态：值早在滚动时就通过 `onChange` 提交过了，`onCancel` 要不要回滚由你自己决定。
+
+## 弹层提交与关闭
+
+`DatePicker` 用 `show` + `onUpdateShow` 控制面板显示。面板里的滚动只改临时值，**只有点「确定」才会写回已确认值并触发 `onChange`**；取消或关闭面板会丢弃这次滚动，下次打开重新从已确认值开始。
+
+<Demo src="@playground/date-picker/DatePickerPopup" />
+
+这是 `DatePicker` 与 `DatePickerView` 语义上最大的差别：内联形态的 `onChange` 是「滚到哪了」，弹层形态的 `onChange` 是「用户确认了什么」。
+
+关闭路径上有一个约束：滚轮要独占垂直手势，所以面板的内容拖拽（`enableContentPanningGesture`）是关掉的，下拉通道只剩顶部的 handle，而 handle 默认不显示。`enablePanDownToClose` 要和 `showHandle` 一起传，否则开了也无处可拖。
+
+## 自定义触发元素
+
+`children` 传节点时会自动包一层 `Pressable`，点击即打开面板；传函数则由你自己画触发元素，参数里带着 `open` 与当前**已确认**的值。
+
+<Demo src="@playground/date-picker/DatePickerTrigger" />
+
+面板还没被打开过时，`children` 拿到的就是初值 —— 它同样过了一遍钳位，不会把越界日期显示在触发元素上。
+
+## API
+
+### DatePickerView
+
+内联滚轮，继承 `PickerView` 的属性（`columns` 与 `fieldNames` 除外 —— 列由 `columnsType` 与日期区间推导，不对外开放）。
+
+<PropsTable
+  data={[
+    {
+      name: 'columnsType',
+      description: '显示哪几列及其顺序',
+      type: 'DatePickerColumnType[]',
+      default: "['year', 'month', 'day']"
+    },
+    { name: 'minDate', description: '可选的最小日期', type: 'Date', default: '今天往前 10 年' },
+    { name: 'maxDate', description: '可选的最大日期', type: 'Date', default: '今天往后 10 年' },
+    { name: 'value', description: '选中值（受控），顺序与 columnsType 对应，数字补零', type: 'string[]' },
+    { name: 'defaultValue', description: '默认选中值（非受控），缺省为今天', type: 'string[]' },
+    { name: 'onChange', description: '选中值变化回调，滚动停下即触发', type: '(values: string[]) => void' },
+    { name: 'formatter', description: '定制选项显示文本，不应改动 value', type: 'DatePickerFormatter' },
+    { name: 'filter', description: '剔除某一列中的部分选项', type: 'DatePickerFilter' },
+    { name: 'itemHeight', description: '每个选项的高度（px）', type: 'number', default: '48' },
+    { name: 'visibleCount', description: '每列可见的选项数，取奇数', type: 'number', default: '5' },
+    { name: 'haptic', description: '滚过一格时是否触发轻触反馈', type: 'boolean', default: 'false' },
+    { name: 'loading', description: '是否显示加载遮罩', type: 'boolean', default: 'false' },
+    { name: 'showToolbar', description: '是否显示顶部工具栏', type: 'boolean', default: 'true' },
+    { name: 'title', description: '工具栏标题', type: 'string' },
+    { name: 'cancelText', description: '取消按钮文字', type: 'string', default: "'取消'" },
+    { name: 'confirmText', description: '确定按钮文字', type: 'string', default: "'确定'" },
+    { name: 'onCancel', description: '点击取消的回调，回传当前选中值', type: '(values: string[]) => void' },
+    { name: 'onConfirm', description: '点击确定的回调，回传当前选中值', type: '(values: string[]) => void' },
+    { name: 'className', description: '滚轮根节点的类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<PickerSlots>' }
+  ]}
+/>
+
+### DatePicker
+
+弹层形态，除下表外拥有 `DatePickerView` 的全部属性（`onChange` 的语义不同，见下）。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示弹层', type: 'boolean', required: true },
+    { name: 'onUpdateShow', description: '显示状态变化回调', type: '(show: boolean) => void' },
+    {
+      name: 'onChange',
+      description: '已确认值变化的回调，只有点击确定才触发（与内联形态不同）',
+      type: '(values: string[]) => void'
+    },
+    {
+      name: 'children',
+      description: '触发元素。节点会被包一层 Pressable；传函数则由回调参数中的 open 自行控制',
+      type: 'ReactNode | ((params: { open: () => void; value: string[] }) => ReactNode)'
+    },
+    { name: 'closeOnBackdropPress', description: '点击遮罩是否关闭', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示面板顶部的拖拽指示条', type: 'boolean', default: 'false' },
+    {
+      name: 'enablePanDownToClose',
+      description: '是否允许下拉关闭，需同时开启 showHandle 才有拖拽入口',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'sheetClassName', description: '内部 Sheet 面板本体的类名；className 给的是滚轮那块', type: 'string' },
+    { name: 'sheetClassNames', description: '内部 Sheet 各 slot 的类名覆盖', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 snapToIndex / expand / collapse 等命令式操作',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  DatePickerColumnType,
+  DatePickerFilter,
+  DatePickerFormatter,
+  DatePickerProps,
+  DatePickerViewProps
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="DatePickerColumnType"
+  description="日期列的类型标识，columnsType 数组里的成员。"
+  type="'year' | 'month' | 'day'"
+/>
+
+<UnionType
+  name="DatePickerFormatter"
+  description="定制选项显示文本，逐个选项调用；返回的 value 应保持不变，它是选中值的载体。"
+  type="(type: DatePickerColumnType, option: PickerOption) => PickerOption"
+/>
+
+<UnionType
+  name="DatePickerFilter"
+  description="剔除某一列中的部分选项，在 formatter 之后、按列调用；第三个参数是当前各列选中值，可用于联动过滤。"
+  type="(columnType: DatePickerColumnType, options: PickerOption[], values: string[]) => PickerOption[]"
+/>
+
+<UnionType
+  name="PickerSlots"
+  description="滚轮部分可通过 classNames 覆盖的 slot 名称，来自底层的 PickerView。"
+  type="'root' | 'toolbar' | 'title' | 'cancel' | 'cancelText' | 'confirm' | 'confirmText' | 'columns' | 'column' | 'item' | 'itemText' | 'selectedIndicator' | 'loading'"
+/>
+
+<UnionType
+  name="SheetSlots"
+  description="内部 Sheet 可通过 sheetClassNames 覆盖的 slot 名称，仅 DatePicker 用得到。"
+  type="'background' | 'chrome' | 'close' | 'closeIcon' | 'description' | 'handle' | 'handleBar' | 'header' | 'title'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'PickerOption',
+      description: 'formatter / filter 拿到与返回的选项对象，日期列的 label 与 value 都是补零后的数字字符串。',
+      fields: [
+        { name: 'label', type: 'string', description: '显示文本，formatter 改的就是它。' },
+        { name: 'value', type: 'string', description: '选项值，进入 value / onChange 的就是它。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该选项。' },
+        {
+          name: 'children',
+          type: 'PickerOption[]',
+          description: '级联模式下的子选项，日期列不会用到。'
+        }
+      ]
+    }
+  ]}
+/>
