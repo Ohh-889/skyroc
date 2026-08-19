@@ -1,0 +1,190 @@
+---
+title: RollingText
+description: 数字 / 文本翻滚动画
+---
+
+翻滚文本（RollingText）把数字或文本按列逐字符滚动到目标值，常用于计数、榜单名次、抽奖开奖。每一列是一条独立的字符序列，各列只错开起跑时间、不改变时长，因此看上去是依次落定。
+
+```tsx
+import { RollingText } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+数字模式下 `targetNum` 是目标值，列数由它的位数决定；`startNum` 是**首次播放**的起点。默认挂载后自动播放。
+
+<Demo src="@playground/rolling-text/RollingTextBasic" />
+
+`targetNum` 的异常值会被归一化：负数取绝对值、小数向零取整、非有限值退化为 0、超过 `Number.MAX_SAFE_INTEGER` 按上限处理 —— `1e21` 这类值 `String` 出来是 `"1e+21"`，逐位拆开会滚出一列乱码。
+
+## 何时使用
+
+- 数值变化需要被看见：积分、金额、在线人数。
+- 开奖、抽签这类「逐位落定」的仪式感场景（用 `textList` 文本模式）。
+- 纯展示的静态数字请直接用 `Text`。
+
+## 滚动方向
+
+`direction` 控制字符向下（默认）或向上滚入，两种方向的目标值计算完全一致。
+
+<Demo src="@playground/rolling-text/RollingTextDirection" />
+
+## 停止顺序
+
+`stopOrder` 决定哪一列先停：`ltr` 左列先起跑也先停（默认），`rtl` 反之。`delayStep` 是相邻两列的启动间隔（默认 200ms），两者共同决定错落效果。
+
+<Demo src="@playground/rolling-text/RollingTextStopOrder" />
+
+`onFinish` 只由**最后落定的那一列**触发一次，不会每列各报一次。
+
+## 动画节奏
+
+| 属性       | 含义                                                     | 默认值 |
+| ---------- | -------------------------------------------------------- | ------ |
+| `circles`  | 数字模式下每列额外空转的圈数，夹在 0 ~ 10                 | 2      |
+| `duration` | 单列滚动时长（毫秒），不含 `delayStep` 的错峰耗时          | 2000   |
+| `height`   | 每个字符所占的行高，字符的 `lineHeight` 跟随此值           | 40     |
+
+<Demo src="@playground/rolling-text/RollingTextDuration" />
+
+各列共用同一个 `duration`，因此序列更长的列滚得更快 —— 这样它们才会按 `stopOrder` 的节奏依次停下，而不是长的那列拖到最后。
+
+## 文本模式
+
+传 `textList` 即进入文本模式：首项是起始态、末项是最终态，依次滚过中间各项。列数取最长一项，短项在多出的列上留空。文本模式下 `targetNum` / `startNum` / `circles` 不可用（类型上就是 `never`）。
+
+<Demo src="@playground/rolling-text/RollingTextTextMode" />
+
+## 手动控制与完成事件
+
+`autoStart={false}` 时挂载后停在起始位置，由 `ref` 驱动：
+
+| 方法      | 说明                                                             |
+| --------- | ---------------------------------------------------------------- |
+| `start()` | 从起始位置播放一次；播放中调用会立即重播                          |
+| `reset()` | 回到起始位置；`autoStart` 为 `true` 时立即重播，否则停在起点      |
+
+<Demo src="@playground/rolling-text/RollingTextManual" />
+
+`onFinish` 在最后一列落定时触发一次；被下一轮播放打断则不触发。
+
+## 动态目标值
+
+`targetNum` 变化后从**上一轮的终点**继续往下滚，而不是闪回 `startNum` 再来一遍。位数增加或减少时整排列会重建（`key` 带上列数），不会复用按旧行高定位的动画值；列数只看目标值，所以数值变短不会留下一排前导零。
+
+<Demo src="@playground/rolling-text/RollingTextDynamic" />
+
+还没播过时（`autoStart={false}` 且没手动 `start`）改 `targetNum` 只换终点、不起跑。
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot   | 作用位置                             |
+| ------ | ------------------------------------ |
+| `root` | 根容器（横向排布）                   |
+| `text` | 每个滚动字符的文字类名               |
+
+<Demo src="@playground/rolling-text/RollingTextStyles" />
+
+改字号时记得同步调 `height`：行高由 `height` 决定，字号和行高对不上会看到字符被裁切。
+
+## API
+
+### RollingText
+
+`RollingTextProps` 是数字模式与文本模式的联合：传了 `textList` 即文本模式，此时 `targetNum` / `startNum` / `circles` 不可用。
+
+<PropsTable
+  data={[
+    {
+      name: 'targetNum',
+      description: '目标数字（数字模式必填），列数由位数决定；负数取绝对值、小数向零取整',
+      type: 'number'
+    },
+    { name: 'startNum', description: '首次播放的起点；之后以上一轮终点为起点', type: 'number', default: '0' },
+    { name: 'circles', description: '每列额外空转的圈数，夹在 0 ~ 10', type: 'number', default: '2' },
+    {
+      name: 'textList',
+      description: '文本模式的文本序列，首项为起始态、末项为最终态；列数取最长一项',
+      type: 'string[]'
+    },
+    { name: 'direction', description: '滚动方向', type: "'down' | 'up'", default: "'down'" },
+    { name: 'stopOrder', description: '停止顺序，ltr 为左列先停', type: "'ltr' | 'rtl'", default: "'ltr'" },
+    { name: 'delayStep', description: '相邻两列的启动间隔（毫秒）', type: 'number', default: '200' },
+    { name: 'duration', description: '单列滚动时长（毫秒）', type: 'number', default: '2000' },
+    { name: 'height', description: '每个字符所占的行高', type: 'number', default: '40' },
+    {
+      name: 'autoStart',
+      description: '挂载后是否立即播放，同时决定 reset() 之后是否自动重新开始',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'onFinish', description: '最后一列落定时触发一次；被下一轮打断则不触发', type: '() => void' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<RollingTextSlots>'
+    },
+    { name: 'ref', description: '命令式控制的 ref，用于 start / reset', type: 'Ref<RollingTextRef>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  RollingTextDirection,
+  RollingTextNumberProps,
+  RollingTextProps,
+  RollingTextRef,
+  RollingTextSlots,
+  RollingTextStopOrder,
+  RollingTextTextProps
+} from '@skyroc/native-ui';
+```
+
+`RollingTextProps` 是 `RollingTextNumberProps | RollingTextTextProps` 的联合，两种模式的互斥字段在类型上标成了 `never`。
+
+<UnionType
+  name="RollingTextDirection"
+  description="滚动方向。"
+  type="'down' | 'up'"
+/>
+
+<UnionType
+  name="RollingTextStopOrder"
+  description="停止顺序，ltr 为左列先停。"
+  type="'ltr' | 'rtl'"
+/>
+
+<UnionType
+  name="RollingTextSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'root' | 'text'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 RollingTextSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'RollingTextRef',
+      description: '组件实例暴露的命令式方法。',
+      fields: [
+        { name: 'start', type: '() => void', description: '从起始位置播放一次，播放中调用会立即重播。', required: true },
+        {
+          name: 'reset',
+          type: '() => void',
+          description: '回到起始位置；autoStart 为 true 时立即重播，否则停在起点。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>

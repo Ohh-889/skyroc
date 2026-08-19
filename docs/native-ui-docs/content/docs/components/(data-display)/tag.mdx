@@ -1,0 +1,188 @@
+---
+title: Tag
+description: 标签，用于状态标记与分类
+---
+
+标签（Tag）用于给内容打上状态、分类或属性标记。文字色通过 `TextClassContext` 下发，所以任意 `children`（图标、自定义 `Text`）都能继承标签的前景色。
+
+```tsx
+import { Tag } from '@skyroc/native-ui';
+```
+
+## 视觉变体
+
+`variant` 控制视觉强度，从高到低：
+
+| 变体      | 表现                       | 适用场景             |
+| --------- | -------------------------- | -------------------- |
+| `solid`   | 语义底色 + 前景色文字      | 强调状态（默认）     |
+| `tonal`   | 15% 低饱和底色 + 同语义文字 | 常规标记             |
+| `outline` | 语义描边，背景透明         | 与内容并列的分类     |
+| `ghost`   | 仅文字，无底色无描边       | 最弱的辅助信息       |
+
+<Demo src="@playground/tag/TagVariant" />
+
+## 语义颜色
+
+`color` 提供 7 种语义色，各变体下的表现不同，逐一列出：
+
+### solid
+
+底色为 `bg-{color}`，文字取对应的 `{color}-foreground`；`muted` 只有底色，文字统一是 `text-muted-foreground`。
+
+<Demo src="@playground/tag/TagColorSolid" />
+
+### tonal
+
+底色为 `bg-{color}/15`（`muted` 是 `bg-muted/50`），文字是语义色本身。
+
+<Demo src="@playground/tag/TagColorTonal" />
+
+### outline
+
+描边为 `border-{color}`，背景透明；`secondary` 与 `muted` 都取中性的 `border-border`。
+
+<Demo src="@playground/tag/TagColorOutline" />
+
+### ghost
+
+只保留语义文字色，没有底色和描边。
+
+<Demo src="@playground/tag/TagColorGhost" />
+
+`secondary` 在 `tonal` / `outline` / `ghost` 下的文字取 `text-foreground` —— 次级色本身太浅，直接当文字色读不清。
+
+## 尺寸
+
+| 尺寸 | 高度 | 字号 | 水平内边距 | 关闭图标 |
+| ---- | ---- | ---- | ---------- | -------- |
+| `sm` | 20   | 10   | 6          | 10       |
+| `md` | 24   | 12   | 8          | 12       |
+| `lg` | 28   | 14   | 10         | 14       |
+
+<Demo src="@playground/tag/TagSize" />
+
+## 形状
+
+| 形状      | 圆角                       |
+| --------- | -------------------------- |
+| `rounded` | `rounded-md`（默认）        |
+| `pill`    | 全圆角，药丸形              |
+| `mark`    | 只有右侧全圆角，标记形      |
+
+<Demo src="@playground/tag/TagShape" />
+
+## 可关闭
+
+`closeable` 在标签末尾渲染关闭按钮，点击触发 `onClose`。组件**不会自己消失** —— 是否从列表里移除由你的状态决定。
+
+<Demo src="@playground/tag/TagCloseable" />
+
+关闭按钮的热区按尺寸补到约 30pt（`sm` 补 10、`md` 补 9、`lg` 补 8）：标签本身只有 20–28pt 高，补到 44pt 会大幅越过标签边界、与相邻标签互抢点击。按钮带 `role="button"` 与 `accessibilityLabel`（默认「关闭」，可用 `closeAccessibilityLabel` 改写）。
+
+## 自定义内容
+
+`leading` 放置前置图标，`children` 传 `string` / `number` 时自动包一层 `Text`，传节点时原样渲染并继承标签的文字色。
+
+<Demo src="@playground/tag/TagCombined" />
+
+矢量图标不认 `className`，取色请用 `withUniwind` 把 `accent-*` 映射到 `color`。
+
+## 样式覆盖
+
+`className` 追加到根节点上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                                    |
+| ----------- | ----------------------------------------------------------- |
+| `root`      | 根容器（底色、描边、圆角、尺寸）                            |
+| `text`      | 文字类名，通过 `TextClassContext` 下发给子 `Text`             |
+| `close`     | 关闭按钮容器                                                |
+| `closeIcon` | 关闭图标的 `colorClassName`，只接受 `accent-*` 颜色类         |
+
+<Demo src="@playground/tag/TagStyles" />
+
+## API
+
+### Tag
+
+除下表外，`Tag` 透传 `View` 的属性（`style`、`testID` 等）。
+
+<PropsTable
+  data={[
+    {
+      name: 'variant',
+      description: '视觉变体',
+      type: "'solid' | 'tonal' | 'outline' | 'ghost'",
+      default: "'solid'"
+    },
+    {
+      name: 'color',
+      description: '语义颜色',
+      type: "'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info' | 'muted'",
+      default: "'primary'"
+    },
+    { name: 'size', description: '尺寸，同时控制高度、字号与内边距', type: "'sm' | 'md' | 'lg'", default: "'md'" },
+    { name: 'shape', description: '形状', type: "'rounded' | 'pill' | 'mark'", default: "'rounded'" },
+    {
+      name: 'children',
+      description: '标签内容，string / number 会被自动包裹为 Text',
+      type: 'ReactNode'
+    },
+    { name: 'leading', description: '前置内容，显示在文字之前', type: 'ReactNode' },
+    { name: 'closeable', description: '是否显示关闭按钮', type: 'boolean', default: 'false' },
+    { name: 'onClose', description: '关闭按钮点击回调；组件不会自行移除', type: '() => void' },
+    {
+      name: 'closeAccessibilityLabel',
+      description: '关闭按钮的无障碍标签',
+      type: 'string',
+      default: "'关闭'"
+    },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<TagSlots>' },
+    { name: 'ref', description: '底层 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { TagColor, TagProps, TagShape, TagSize, TagSlots, TagVariant } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="TagVariant"
+  description="标签视觉变体，强度从强到弱。"
+  type="'solid' | 'tonal' | 'outline' | 'ghost'"
+/>
+
+<UnionType
+  name="TagColor"
+  description="标签语义颜色。"
+  type="'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info' | 'muted'"
+/>
+
+<UnionType
+  name="TagSize"
+  description="标签尺寸，同时控制高度、字号、内边距与关闭图标大小。"
+  type="'sm' | 'md' | 'lg'"
+/>
+
+<UnionType
+  name="TagShape"
+  description="标签形状。"
+  type="'rounded' | 'pill' | 'mark'"
+/>
+
+<UnionType
+  name="TagSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'close' | 'closeIcon' | 'root' | 'text'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 TagSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `tagVariants` 与三个常量：`DEFAULT_TAG_SIZE`、`CLOSE_ICON_SIZE_MAP`（关闭图标像素大小）、`CLOSE_HIT_SLOP_MAP`（关闭按钮热区补偿）。

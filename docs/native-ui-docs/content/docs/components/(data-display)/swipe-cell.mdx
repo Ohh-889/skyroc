@@ -1,0 +1,216 @@
+---
+title: SwipeCell
+description: 可左右滑动的单元格，露出两侧操作区
+---
+
+滑动单元格（SwipeCell）横向滑动主体内容，露出左右两侧的操作区（常见于列表项的「删除 / 置顶」）。手势基于 `react-native-gesture-handler`，位移由 `react-native-reanimated` 的弹簧动画驱动，两侧操作区固定在底层，内容区盖在上面平移。
+
+```tsx
+import { SwipeCell } from '@skyroc/native-ui';
+```
+
+组件内部用到了 `GestureDetector`，请确保 App 根节点已经包了 `GestureHandlerRootView`。
+
+## 基础用法
+
+`leading` / `trailing` 分别是左右操作区，宽度默认由内容 `onLayout` 自动测量。展开态点击主体内容即可收起。
+
+<Demo src="@playground/swipe-cell/SwipeCellBasic" />
+
+松手时的停靠由**速度优先于位移**决定：滑动速度超过 500 时按方向停靠，否则看位移是否超过该侧宽度的 30%。速度优先是必要的 —— 从左侧展开态快速左划时位移仍是正的，只看位移会误判成「继续展开」。拖出边界后按 0.25 的阻尼衰减，不会硬撞墙。
+
+## 何时使用
+
+- 列表项的次要操作（删除、标记、置顶），不值得常驻一个按钮。
+- 主体本身可点时慎用：展开态下主体会盖一层透明遮罩，点击只会收起而不会触发原有的点击。
+
+## 关闭拦截
+
+`beforeClose` 返回 `false`（或 resolve 为 `false`）可以阻止收起，常用于删除前弹确认框。点击主体、手势回弹、实例 `close()` 三条路径都会经过它。
+
+<Demo src="@playground/swipe-cell/SwipeCellBeforeClose" />
+
+挂了拦截后，操作区在拿到结果之前**不会移动**：确认才收起，拒绝则保持展开，不存在「先关掉又弹回来」的中间态 —— 那读起来像动画 bug，而不是一次被拒绝的关闭。代价是异步确认期间关闭动画会推迟到 Promise resolve 之后。
+
+被其他 SwipeCell 挤掉、以及 `disabled` 强制收起这两条路径**不经过** `beforeClose`：那不是用户对本实例的主动操作，此时弹确认框只会打断手势。
+
+## 操作区宽度
+
+`leadingWidth` / `trailingWidth` 跳过自动测量、直接指定停靠距离。
+
+<Demo src="@playground/swipe-cell/SwipeCellWidth" />
+
+某一侧宽度为 0（没有内容或尚未测量）时，`open(side)` 会被忽略 —— 否则会进入「视觉没展开、状态却是展开」的死区。
+
+## 互斥展开
+
+默认同一时刻只有一个 SwipeCell 处于展开态：新的展开会挤掉旧的。列表里同时展开多个几乎总是误操作。需要并存时传 `exclusive={false}` —— 退出互斥的实例既不会挤掉别人，也不会被别人挤掉。
+
+<Demo src="@playground/swipe-cell/SwipeCellExclusive" />
+
+## 命令式控制
+
+`ref` 暴露两个方法：
+
+| 方法          | 说明                                                     |
+| ------------- | -------------------------------------------------------- |
+| `open(side)`  | 展开指定一侧；该侧宽度为 0 时不生效                       |
+| `close()`     | 收起，会经过 `beforeClose`                                |
+
+<Demo src="@playground/swipe-cell/SwipeCellImperative" />
+
+## 事件监听
+
+`name` 会随回调参数返回，用于在列表里区分实例。`onOpen` 的 `position` 是展开的一侧（`left` / `right`），`onClose` 的 `position` 还多一个 `cell`，表示是点击主体收起的。
+
+<Demo src="@playground/swipe-cell/SwipeCellEvents" />
+
+## 禁用
+
+`disabled` 关闭手势，并立即收起已展开的操作区 —— 否则会卡在展开态且手势已经关掉，再也收不回来。
+
+<Demo src="@playground/swipe-cell/SwipeCellDisabled" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot       | 作用位置                                             |
+| ---------- | ---------------------------------------------------- |
+| `root`     | 根容器（`overflow-hidden`，裁掉两侧操作区）           |
+| `content`  | 主体内容容器（默认 `bg-card`，必须有底色才盖得住下层） |
+| `leading`  | 左侧操作区容器                                       |
+| `trailing` | 右侧操作区容器                                       |
+| `overlay`  | 展开态盖在主体上的透明遮罩，点击即收起                |
+
+<Demo src="@playground/swipe-cell/SwipeCellStyles" />
+
+## 放进滚动列表
+
+手势设了纵向失败判定（`failOffsetY([-12, 12])`），斜向滑动不会把外层 `ScrollView` 的滚动手势抢走；横向则要划过 10pt 才激活。
+
+## API
+
+### SwipeCell
+
+<PropsTable
+  data={[
+    { name: 'children', description: '主体内容', type: 'ReactNode' },
+    { name: 'leading', description: '左侧操作区内容', type: 'ReactNode' },
+    { name: 'trailing', description: '右侧操作区内容', type: 'ReactNode' },
+    { name: 'leadingWidth', description: '左侧操作区宽度，不传则自动测量', type: 'number' },
+    { name: 'trailingWidth', description: '右侧操作区宽度，不传则自动测量', type: 'number' },
+    {
+      name: 'beforeClose',
+      description: '关闭前的拦截，返回 false 阻止关闭；互斥收起与 disabled 强制收起不经过',
+      type: '(params: SwipeCellCloseParams) => boolean | Promise<boolean>'
+    },
+    {
+      name: 'exclusive',
+      description: '展开时是否自动收起其他 SwipeCell',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'disabled',
+      description: '禁用滑动，并立即收起已展开的操作区',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'name', description: '组件标识，会随事件回调返回', type: 'number | string', default: "''" },
+    { name: 'onOpen', description: '展开时触发', type: '(params: SwipeCellOpenParams) => void' },
+    { name: 'onClose', description: '收起时触发', type: '(params: SwipeCellCloseParams) => void' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<SwipeCellSlots>'
+    },
+    { name: 'style', description: '根容器的原生样式', type: 'StyleProp<ViewStyle>' },
+    { name: 'ref', description: '组件实例引用，用于 open / close', type: 'Ref<SwipeCellInstance>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  SwipeCellBeforeCloseParams,
+  SwipeCellCloseParams,
+  SwipeCellInstance,
+  SwipeCellOpenParams,
+  SwipeCellPosition,
+  SwipeCellProps,
+  SwipeCellSide,
+  SwipeCellSlots,
+  SwipeCellWidths
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SwipeCellSide"
+  description="滑动展开的一侧。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="SwipeCellPosition"
+  description="触发关闭的来源：cell 为点击主体收起，left / right 为从对应一侧的展开态收起。"
+  type="'cell' | 'left' | 'right'"
+/>
+
+<UnionType
+  name="SwipeCellSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'leading' | 'overlay' | 'root' | 'trailing'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SwipeCellSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'SwipeCellCloseParams',
+      description: 'beforeClose 与 onClose 的参数；SwipeCellBeforeCloseParams 是它的别名。',
+      fields: [
+        { name: 'name', type: 'number | string', description: '组件标识。', required: true },
+        { name: 'position', type: 'SwipeCellPosition', description: '触发关闭的来源。', required: true }
+      ]
+    },
+    {
+      name: 'SwipeCellOpenParams',
+      description: 'onOpen 的参数。',
+      fields: [
+        { name: 'name', type: 'number | string', description: '组件标识。', required: true },
+        { name: 'position', type: 'SwipeCellSide', description: '展开的一侧。', required: true }
+      ]
+    },
+    {
+      name: 'SwipeCellWidths',
+      description: '两侧操作区的实际宽度，由 props 指定或 onLayout 测量得到。',
+      fields: [
+        { name: 'leading', type: 'number', description: '左侧操作区宽度。', required: true },
+        { name: 'trailing', type: 'number', description: '右侧操作区宽度。', required: true }
+      ]
+    },
+    {
+      name: 'SwipeCellInstance',
+      description: '组件实例暴露的方法。',
+      fields: [
+        {
+          name: 'open',
+          type: '(side: SwipeCellSide) => void',
+          description: '展开指定一侧；该侧宽度为 0 时不生效。',
+          required: true
+        },
+        { name: 'close', type: '() => void', description: '收起，会经过 beforeClose。', required: true }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `swipeCellVariants`。
