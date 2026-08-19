@@ -1,0 +1,237 @@
+---
+title: Grid
+description: 宫格容器，用等宽格子铺排图标入口与快捷功能
+---
+
+宫格（Grid）把一组入口按固定列数平铺开来，是首页九宫格、工具箱、快捷菜单这类界面的基础容器。组件由 `View` + `Pressable` 封装：`items` 里某项传了 `onPress` / `onLongPress`，或整体开启 `clickable`，该格子才渲染成 `Pressable`，否则退化为纯展示的 `View` —— 静态宫格不会凭空多出可聚焦节点。
+
+列宽由 `flexBasis: 100 / columnNum + '%'` 计算，不依赖测量，首帧就是最终布局。
+
+```tsx
+import { Grid } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 是一个数组，每项至少要有 `key`，再按需给 `icon` 与 `text`。默认每行四列、内容纵向排列并居中。
+
+<Demo src="@playground/grid/GridBasic" />
+
+`text` 传 `string` 或 `number` 时自动包一层 `Text` 承接主题字号与颜色；传自定义节点则原样渲染。数字 `0` 也会被正确包裹 —— 组件用 `isNil` 判空而不是真值判断，不会出现 RN 的 `Text strings must be rendered within a <Text>` 报错。
+
+## 何时使用
+
+- 首页金刚区、工具箱、支付类应用的功能入口这类「图标 + 文字」的等宽平铺。
+- 需要每格可点击时给单项传 `onPress`，不要在 `children` 里再套一层 `Pressable`。
+- 纯展示的图表图例、数据看板也可以用，不传任何回调即可。
+- 只有一行、宽度不需要等分时用 `Space`；「标签 + 值」的纵向列表用 `Cell`。
+
+## 列数
+
+`columnNum` 决定每行格数，默认 `4`。每格宽度是 `100 / columnNum` 的百分比，因此 `items` 数量不是列数整数倍时，末行左对齐排列、右侧留空。
+
+<Demo src="@playground/grid/GridColumnNum" />
+
+## 分隔线
+
+`border` 在格子之间画 `StyleSheet.hairlineWidth` 粗细的分隔线，颜色取自 `item` slot 的 `border-border`，跟随主题 token。画线规则：
+
+| 位置                       | 右侧竖线 | 底部横线 |
+| -------------------------- | -------- | -------- |
+| 每行最后一格               | 不画     | 按行判断 |
+| 整体最后一格（末行不满时） | 不画     | 不画     |
+| 末行                       | 按列判断 | 不画     |
+| 其余                       | 画       | 画       |
+
+<Demo src="@playground/grid/GridBorder" />
+
+示例里放了 7 项、每行 4 列，末行只有 3 个格子 —— 第 7 格右侧不会留一条悬在空白区的竖线。
+
+`Grid` 自身不带外框，需要一圈边框和圆角时在外层容器上加 `overflow-hidden rounded-xl border border-border`。
+
+## 间距
+
+`gutter` 以 dp 为单位设置格间距离。实现方式是「每格四周内边距 `gutter / 2` + 根节点四周负外边距 `gutter / 2`」，而不是给格子加 `paddingRight`：
+
+- 负外边距抵消最外圈留白，宫格边缘仍与相邻内容贴边对齐，不会整体内缩半个间距。
+- 间距是格子的内边距而非外边距，末列不会多出一条空白、内容也不会被挤向左侧。
+
+<Demo src="@playground/grid/GridGutter" />
+
+有间距时格子的可视区域是 `content` 而不是 `item`，所以背景、圆角、描边要通过 `classNames.content` 传（示例里就是这么做的）；写在 `classNames.item` 上会把间距一起圈进去。
+
+`gutter > 0` 时根节点的 `style` 会变成 `[{ margin: -gutter / 2 }, style]`，外部传入的 `style` 排在后面，仍可以覆盖这个负外边距。
+
+## 间距与分隔线
+
+`border` 与 `gutter` 可以同时使用。分隔线画在格子外框上、边框位于内边距之外，因此线正好落在相邻格子间距的中线，而不是贴着内容。
+
+<Demo src="@playground/grid/GridGutterBorder" />
+
+## 正方形
+
+`square` 给内容区加 `aspect-square`，让每格的可视区域保持 1:1。
+
+<Demo src="@playground/grid/GridSquare" />
+
+注意正方形约束落在 `content` 而不是 `item` 上：`gutter` 是外框的内边距，若把 `aspect-square` 画在外框上，间距会被算进正方形里，视觉上格子被压扁。
+
+## 排列方向
+
+`direction` 控制格子内图标与文字的排布方向，默认 `'vertical'`（图标在上、文字在下，间距 8dp）。传 `'horizontal'` 改为左右排列，图标的间距同步从 `mb-2` 换成 `mr-2`。
+
+<Demo src="@playground/grid/GridHorizontal" />
+
+`direction` 只影响格子内部，不影响格子本身的铺排方向 —— 宫格永远是从左到右、逐行换行。
+
+## 反向排列
+
+`reverse` 翻转图标与文字的顺序：纵向变成文字在上、图标在下，横向变成文字在左、图标在右。图标的外边距会跟着换边（`mb-2` → `mt-2`、`mr-2` → `ml-2`），不会把空隙留在文字的另一侧。
+
+<Demo src="@playground/grid/GridReverse" />
+
+## 内容对齐
+
+`center` 默认为 `true`，格子内容水平垂直都居中。传 `false` 时内容按起始位置对齐（`items-start justify-start`），适合文字长度不一、希望左对齐的场景。
+
+<Demo src="@playground/grid/GridAlign" />
+
+## 交互与禁用
+
+格子在下面任一条件成立时渲染为 `Pressable`：
+
+- `Grid` 传了 `clickable`
+- 该项自己传了 `onPress` 或 `onLongPress`
+
+可点击的格子带 `active:opacity-70` 的按压反馈。`disabled` 让该项降到 40% 不透明度，同时给 `Pressable` 传 `disabled` 阻断回调 —— 并且会撤掉按压反馈类，不会出现「按下去有反应但回调不触发」的错觉。
+
+<Demo src="@playground/grid/GridPress" />
+
+不可点击的格子传 `disabled` 只有视觉降透明度的效果。
+
+## 自定义内容
+
+`children` 优先于 `icon` 与 `text`：传了 `children` 时后两者被完全忽略，格子内容由你自己决定。`children` 仍然渲染在 `content` 容器内，因此 `center`、`square`、`direction` 这些排布类依旧生效。
+
+<Demo src="@playground/grid/GridCustomContent" />
+
+## 样式覆盖
+
+`Grid` 的 `className` 作用于根节点，其余部位走 `classNames`；单项还可以用 `item.classNames` 再覆盖一层。
+
+| slot      | 作用位置                                             |
+| --------- | ---------------------------------------------------- |
+| `root`    | 根节点（`className` 与 `classNames.root` 都落在这里） |
+| `item`    | 格子外框，负责列宽、间距与分隔线                     |
+| `content` | 格子内的可视区域，负责内边距与图标文字排布           |
+| `icon`    | 图标容器（仅传了 `icon` 时渲染）                     |
+| `text`    | 文字（仅 `text` 为 `string` / `number` 时生效）      |
+
+合并顺序为「变体类 → `Grid.classNames` → `item.classNames`」，后者优先。`item.classNames` 的可选 slot 是 `GridItemSlots`，比 `GridSlots` 少一个 `root` —— 根节点是整个宫格共有的，不该由某一项覆盖。
+
+<Demo src="@playground/grid/GridStyles" />
+
+列宽、`gutter` 内边距、分隔线粗细依赖运行时的 `columnNum` / `gutter`，无法用类名表达，因此写在 `item` 的 `style` 上。用 `classNames.item` 传 `p-*`、`w-*`、`border-*` 会被这些内联样式覆盖，改间距请用 `gutter`。
+
+## 无障碍
+
+可点击的格子设置 `accessibilityRole="button"`，并把 `disabled` 映射到 `accessibilityState.disabled`；不可点击时不设置 role，读屏器按普通内容播报。
+
+每项都可以传 `accessibilityLabel`，未提供时读屏器朗读格子内的文本。图标是纯装饰节点、或用 `children` 自定义内容且里面没有文字时，建议显式传 `accessibilityLabel`。
+
+组件没有为格子额外扩大热区：可点击区域就是整个格子外框（含 `gutter` 的内边距），在默认 `p-4` 内边距下已远超 44dp 的推荐尺寸。
+
+## API
+
+### Grid
+
+除下表外，`Grid` 透传 `ViewProps` 的其余属性（`children` 除外）到根节点。
+
+<PropsTable
+  data={[
+    { name: 'items', description: '宫格数据项', type: 'GridItemData[]', required: true },
+    { name: 'columnNum', description: '每行列数，格宽为 100 / columnNum 的百分比', type: 'number', default: '4' },
+    {
+      name: 'border',
+      description: '是否在格子之间显示分隔线；有 gutter 时落在间距中线',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'gutter',
+      description: '格子之间的间距（dp），由格子内边距 + 容器负外边距实现',
+      type: 'number',
+      default: '0'
+    },
+    {
+      name: 'direction',
+      description: '格子内图标与文字的排列方向',
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'"
+    },
+    { name: 'reverse', description: '是否翻转图标与文字的顺序，并同步换边图标间距', type: 'boolean', default: 'false' },
+    { name: 'center', description: '内容是否在格子内居中，false 时按起始位置对齐', type: 'boolean', default: 'true' },
+    { name: 'square', description: '是否将格子内容区固定为正方形（不含 gutter）', type: 'boolean', default: 'false' },
+    {
+      name: 'clickable',
+      description: '是否让所有格子可点击并带按压反馈；单项有回调时无需开启',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'className', description: 'Uniwind className，作用于根节点', type: 'string' },
+    { name: 'classNames', description: '覆盖各 slot 的类名', type: 'SlotClassNames<GridSlots>' },
+    { name: 'style', description: '根节点内联样式；gutter > 0 时排在负外边距之后，可覆盖它', type: 'StyleProp<ViewStyle>' },
+    { name: 'ref', description: '根节点的 ref，用于 measure / 滚动定位等命令式操作', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { GridDirection, GridItemData, GridItemSlots, GridProps, GridSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="GridDirection"
+  description="格子内图标与文字的排列方向。"
+  type="'horizontal' | 'vertical'"
+/>
+
+<UnionType
+  name="GridSlots"
+  description="Grid 可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'icon' | 'item' | 'root' | 'text'"
+/>
+
+<UnionType
+  name="GridItemSlots"
+  description="单项可通过 item.classNames 覆盖的 slot 名称，根节点只能由 Grid 自身的 classNames 覆盖。"
+  type="Exclude<GridSlots, 'root'>"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 GridSlots / GridItemSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'GridItemData',
+      description: '单个宫格项的数据结构。',
+      fields: [
+        { name: 'key', type: 'string', description: '唯一标识，用作列表 key；增删重排时靠它保持节点身份', required: true },
+        { name: 'icon', type: 'ReactNode', description: '图标区域内容' },
+        { name: 'text', type: 'ReactNode', description: '文字内容，string / number 自动包裹 Text' },
+        { name: 'children', type: 'ReactNode', description: '自定义子元素，提供后忽略 icon 与 text' },
+        { name: 'onPress', type: '() => void', description: '点击回调，传入后该格子渲染为 Pressable' },
+        { name: 'onLongPress', type: '() => void', description: '长按回调，同样会让该格子变成可点击的 Pressable' },
+        { name: 'disabled', type: 'boolean', description: '禁用交互并整体降低透明度；可点击时同时阻断回调' },
+        { name: 'classNames', type: 'SlotClassNames<GridItemSlots>', description: '覆盖该项各 slot 的类名' },
+        { name: 'accessibilityLabel', type: 'string', description: '无障碍标签，未提供时读屏朗读子节点文本' },
+        { name: 'testID', type: 'string', description: '测试标识' }
+      ]
+    }
+  ]}
+/>

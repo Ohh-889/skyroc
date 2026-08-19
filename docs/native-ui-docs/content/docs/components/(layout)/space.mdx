@@ -1,0 +1,133 @@
+---
+title: Space
+description: 在一组子元素之间插入统一间距
+---
+
+间距（Space）是一个只管排布的容器：把子元素横向或纵向排开，并在它们之间插入统一的 `gap`。相比手写 `flex-row gap-3`，它多了预设档位、自定义数值、分隔符与换行控制。
+
+```tsx
+import { Space } from '@skyroc/native-ui';
+```
+
+## 水平方向
+
+默认横向排列，间距为 `md`。
+
+<Demo src="@playground/space/SpaceHorizontal" />
+
+## 何时使用
+
+- 一排按钮、一列表单项这类需要统一间距的场景。
+- 需要按列宽等分或多行栅格时用 `Grid`；只是一条分隔线用 `Divider`。
+
+## 垂直方向
+
+`direction="vertical"` 让子元素纵向排列。
+
+<Demo src="@playground/space/SpaceVertical" />
+
+## 预设间距
+
+| size  | 间距 | size  | 间距 |
+| ----- | ---- | ----- | ---- |
+| `xs`  | 4    | `lg`  | 16   |
+| `sm`  | 8    | `xl`  | 24   |
+| `md`  | 12   | `2xl` | 32   |
+
+<Demo src="@playground/space/SpaceSize" />
+
+## 自定义间距
+
+`size` 传数值（单位 dp）时走内联 `style` 的 `gap`。此时组件不会再输出 `gap-*` 类名 —— RN 中 style 优先于类名，两套并存会互相竞争。
+
+<Demo src="@playground/space/SpaceCustomSize" />
+
+## 对齐方式
+
+`align` 控制交叉轴对齐：`start` / `center` / `end` / `baseline`。
+
+<Demo src="@playground/space/SpaceAlign" />
+
+## 自动换行
+
+`wrap` 仅在 `direction="horizontal"` 时生效 —— 纵向排列换行没有意义，组件不会输出任何类名。
+
+<Demo src="@playground/space/SpaceWrap" />
+
+## 分隔符
+
+`split` 在相邻子元素之间插入节点，例如一条竖向 `Divider`。
+
+<Demo src="@playground/space/SpaceSplit" />
+
+分隔符本身也是 flex 子项，两侧各占一份 `gap` —— 相邻子元素的实际间距是 `2 × size + 分隔符尺寸`，而不是 `size`。
+
+## 撑满容器
+
+`fill` 让 Space 占满父元素**宽度**（两个方向都是 `w-full`）。纵向 Space 要的也是列本身占满宽度；用 `h-full` 会让百分比高度去解析 auto 高度的父容器，布局直接塌掉。
+
+<Demo src="@playground/space/SpaceFill" />
+
+## API
+
+### Space
+
+除下表外，`Space` 透传 `View` 的属性（`style`、`testID` 等）。
+
+<PropsTable
+  data={[
+    { name: 'children', description: '子元素', type: 'ReactNode', required: true },
+    {
+      name: 'direction',
+      description: '间距方向',
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'"
+    },
+    {
+      name: 'size',
+      description: '间距大小，预设档位或自定义数值（dp）；传数值时走内联 style',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | number",
+      default: "'md'"
+    },
+    {
+      name: 'align',
+      description: '子元素在交叉轴上的对齐方式',
+      type: "'start' | 'center' | 'end' | 'baseline'"
+    },
+    { name: 'wrap', description: '是否自动换行，仅 direction="horizontal" 时生效', type: 'boolean' },
+    {
+      name: 'split',
+      description: '子元素之间的分隔符；它也占 gap，实际间距为 2 × size + 分隔符尺寸',
+      type: 'ReactNode'
+    },
+    { name: 'fill', description: '是否撑满父元素宽度', type: 'boolean' },
+    { name: 'className', description: '容器类名，合并到变体样式之后', type: 'string' },
+    { name: 'ref', description: '底层 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SpaceAlign, SpaceDirection, SpaceProps, SpaceSize } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SpaceDirection"
+  description="间距方向。"
+  type="'horizontal' | 'vertical'"
+/>
+
+<UnionType
+  name="SpaceSize"
+  description="间距大小的预设档位；size 还接受任意数值（dp）。"
+  type="'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'"
+/>
+
+<UnionType
+  name="SpaceAlign"
+  description="交叉轴对齐方式。"
+  type="'start' | 'center' | 'end' | 'baseline'"
+/>
+
+包内还导出了 `spaceVariants`。注意它的 `size` 没有默认值：直接调用不会得到任何 `gap-*`，默认档位由 `Space` 组件传入 —— 自定义数值间距要走内联 style，变体里若有默认类名会与之竞争。
