@@ -30,8 +30,8 @@ export const source = loader({
  * 取文件夹里第一个能跳转的页面。
  *
  * fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page，
- * 而 `components/` 的直接子级全是 `(general)` 这类分组文件夹，会被判成「没有落地页」而整项丢弃。
- * 这里往下递归一层层找，让没有 index.mdx 的模块也能出现在切换器里。
+ * 遇到只有分组文件夹、没有 index.mdx 的模块会被判成「没有落地页」而整项丢弃。
+ * 这里往下递归一层层找，让这类模块也能出现在切换器里。
  */
 function findFirstPageUrl(folder: Folder): string | undefined {
   if (folder.index) return folder.index.url;
