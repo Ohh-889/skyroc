@@ -1,0 +1,142 @@
+---
+title: Popup
+description: 通用弹出层，五个方向 + 遮罩
+---
+
+弹出层（Popup）是最基础的覆盖层组件，基于 `react-native-modal` 封装：五个弹出方向各自带默认进出场动画，容器负责遮罩、安全区、圆角与背景。`Dialog`、`ActionSheet` 等组件都建立在它之上。
+
+```tsx
+import { Popup } from '@skyroc/native-ui';
+```
+
+## 弹出位置
+
+`position` 支持 `center`（默认）、`top`、`bottom`、`left`、`right`，每个方向都有对应的默认动画：
+
+| 位置     | 进场          | 出场           | 容器尺寸           |
+| -------- | ------------- | -------------- | ------------------ |
+| `center` | `fadeIn`      | `fadeOut`      | 由内容撑开         |
+| `top`    | `slideInDown` | `slideOutUp`   | 满宽               |
+| `bottom` | `slideInUp`   | `slideOutDown` | 满宽               |
+| `left`   | `slideInLeft` | `slideOutLeft` | 满高、宽 75%       |
+| `right`  | `slideInRight`| `slideOutRight`| 满高、宽 75%       |
+
+<Demo src="@playground/popup/PopupPositions" />
+
+## 何时使用
+
+- 需要自己完全掌控弹层内容时用它。
+- 标准的确认框用 `Dialog`，动作面板用 `ActionSheet`，可拖拽的底部面板用 `Sheet`。
+
+## 圆角
+
+`round` 统一控制五个方向的圆角，方向由 `position` 决定 —— 贴边的那一侧不加圆角（`bottom` 只有上方两角，`center` 是四角全圆）。
+
+<Demo src="@playground/popup/PopupRound" />
+
+## 容器背景
+
+`surface`（默认 `true`）决定容器自身是否绘制背景。内容自带卡片时**必须传 `surface={false}`**：容器的不透明底铺满整个矩形，会盖在子节点圆角的外侧，把圆角原样填成直角，而且改子节点的 `className` 怎么都没用。
+
+<Demo src="@playground/popup/PopupSurface" />
+
+## 抽屉宽度
+
+`left` / `right` 默认 `w-3/4`（不给宽度会被内容撑成任意宽）。`cn` 底层是 tailwind-merge，直接传 `className="w-1/2"` 即可覆盖。
+
+<Demo src="@playground/popup/PopupDrawer" />
+
+## 安全区避让
+
+`safeAreaInsetTop` / `safeAreaInsetBottom` 分别避让状态栏（刘海）与 home indicator。
+
+<Demo src="@playground/popup/PopupSafeArea" />
+
+两者走的是 uniwind 的 `pt-safe` / `pb-safe`，而不是读 `SafeAreaInsetsContext`：安全区尺寸由应用根节点的 `Uniwind.updateInsets` 同步进运行时，不依赖弹层所在的 React 树里有没有 `SafeAreaProvider` —— 弹层挂在原生 Modal 里，context 本来就未必接得上。
+
+## 关闭与遮罩
+
+`closeOnBackdropPress` 与 `closeOnBackPress`（Android 硬件返回键）是**独立**的两个开关：无遮罩可点时不至于无路可退。两者都通过 `onUpdateShow(false)` 通知外部 —— 组件本身不持有显隐状态。
+
+<Demo src="@playground/popup/PopupBackdrop" />
+
+`backdropColor`（默认 `'#000'`）与 `backdropOpacity`（默认 0.4）自定义遮罩。
+
+## 动画
+
+`animation` 覆盖该位置的默认动画，只传一个方向时另一个方向仍走默认值；`duration` 是进出场时长（默认 300ms）。动画名取自 `react-native-animatable`。
+
+<Demo src="@playground/popup/PopupAnimation" />
+
+## 生命周期
+
+`onOpened` / `onClosed` 都在对应动画结束后触发。
+
+<Demo src="@playground/popup/PopupLifecycle" />
+
+## 与 Toast 共存
+
+原生 Modal 会盖住一切，包括 `Portal` 渲染的 `Toast`。需要两者共存时传 `coverScreen={false}` 让弹层就地渲染（该属性透传给 `react-native-modal`）。
+
+<Demo src="@playground/popup/PopupInline" />
+
+## API
+
+### Popup
+
+除下表外，`Popup` 透传 `react-native-modal` 的属性（`avoidKeyboard`、`coverScreen`、`statusBarTranslucent`、`style` 等），但下列属性由组件接管：`isVisible`、`animationIn/Out`、`animationIn/OutTiming`、`backdropColor`、`backdropOpacity`、`onBackdropPress`、`onBackButtonPress`、`onModalShow`、`onModalHide`、`useNativeDriver`。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示弹出层', type: 'boolean', required: true },
+    { name: 'onUpdateShow', description: '显示状态变化回调（遮罩点击、返回键触发）', type: '(show: boolean) => void' },
+    { name: 'children', description: '弹出层内容', type: 'ReactNode' },
+    {
+      name: 'position',
+      description: '弹出位置，同时决定默认动画与容器尺寸',
+      type: "'center' | 'top' | 'bottom' | 'left' | 'right'",
+      default: "'center'"
+    },
+    { name: 'round', description: '是否显示圆角，方向由 position 决定', type: 'boolean', default: 'false' },
+    {
+      name: 'surface',
+      description: '容器自身是否绘制背景；内容自带卡片时必须传 false',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'closeOnBackdropPress', description: '点击遮罩是否关闭', type: 'boolean', default: 'true' },
+    {
+      name: 'closeOnBackPress',
+      description: 'Android 硬件返回键是否关闭，与遮罩点击独立',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'backdropColor', description: '遮罩颜色', type: 'string', default: "'#000'" },
+    { name: 'backdropOpacity', description: '遮罩不透明度', type: 'number', default: '0.4' },
+    {
+      name: 'animation',
+      description: '覆盖默认进出场动画，只传一个方向时另一个仍走默认值',
+      type: '{ in?: string; out?: string }'
+    },
+    { name: 'duration', description: '动画时长（毫秒）', type: 'number', default: '300' },
+    { name: 'onOpened', description: '打开动画完成后触发', type: '() => void' },
+    { name: 'onClosed', description: '关闭动画完成后触发', type: '() => void' },
+    { name: 'safeAreaInsetTop', description: '顶部是否避让安全区', type: 'boolean', default: 'false' },
+    { name: 'safeAreaInsetBottom', description: '底部是否避让安全区', type: 'boolean', default: 'false' },
+    { name: 'className', description: '内容区域容器的类名', type: 'string' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { PopupPosition, PopupProps } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="PopupPosition"
+  description="弹出位置，同时决定默认动画、容器尺寸与圆角方向。"
+  type="'bottom' | 'center' | 'left' | 'right' | 'top'"
+/>
+
+包内还导出了 `popupVariants` 与 `popupAnimationMap`（position → 默认进出场动画的映射）。

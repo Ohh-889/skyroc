@@ -1,0 +1,153 @@
+---
+title: Sheet
+description: 底部面板，支持吸附档位与动态高度
+---
+
+底部面板（Sheet）基于 `@gorhom/bottom-sheet` 封装：支持下拉关闭、吸附档位、按内容动态撑高，标题栏是固定不滚的顶部区。`Picker`、`PickerGroup`、`TimePicker` 的弹层形态都建立在它之上。
+
+```tsx
+import { Sheet, BottomSheetView } from '@skyroc/native-ui';
+```
+
+使用前需要在 App 根节点挂上 `GestureHandlerRootView` 与 `BottomSheetModalProvider`（后者由本包再导出）。
+
+## 基础用法
+
+`show` 控制显隐，`onUpdateShow` 是**必填**的 —— 下拉或点遮罩关闭后没人把 `show` 置为 `false`，面板会卡死。不传 `snapPoints` 时走动态尺寸，高度由内容撑开。
+
+<Demo src="@playground/sheet/SheetBasic" />
+
+**内容必须自带 gorhom 的容器组件**：普通内容用 `BottomSheetView`，长列表用 `BottomSheetFlatList` / `BottomSheetScrollView` / `BottomSheetSectionList`。Sheet 不代为包裹 —— 外层若再套一层 `BottomSheetView`，它的 effect 会在子组件之后把 scrollable 注册覆盖成 VIEW 类型，内层列表的滚动手势就被吞掉了。
+
+这些容器都由本包再导出：
+
+```tsx
+import {
+  BottomSheetFlatList,
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+  BottomSheetSectionList,
+  BottomSheetTextInput,
+  BottomSheetView
+} from '@skyroc/native-ui';
+```
+
+## 何时使用
+
+- 需要在当前页面之上补充操作或信息，且内容较多、可能需要滚动。
+- 一句话确认用 `Dialog`；一列动作选项用 `ActionSheet`；完全自定义的覆盖层用 `Popup`。
+
+## 标题与描述
+
+`title` / `description` 组成顶部固定区，`closeable`（默认开启）在右上角渲染关闭按钮。
+
+<Demo src="@playground/sheet/SheetHeader" />
+
+顶部区走的是 gorhom 的 `handleComponent` 而不是塞进内容里：gorhom 会单独量它的高度并计入动态档位，又从内容区高度里扣掉，这样内容区完全留给你的容器，标题也不会跟着列表滚。
+
+## 吸附高度
+
+传 `snapPoints`（如 `['25%', '50%']`）后高度固定下来，可以在几档之间拖动；此时动态尺寸自动关闭。
+
+<Demo src="@playground/sheet/SheetSnapPoints" />
+
+需要在档位间程序化切换时用 `ref`，它指向底层的 `BottomSheetModal`，可调 `snapToIndex` / `expand` / `collapse` 这类 `show` 表达不了的操作。
+
+## 列表内容
+
+长列表直接用 `BottomSheetFlatList` 当内容。底部安全区留白要写进 `contentContainerStyle` 才会跟着滚动 —— 写在外层容器上只会压缩滚动视口。
+
+<Demo src="@playground/sheet/SheetList" />
+
+## 关闭行为
+
+`closeOnBackdropPress`（默认 `true`）与 `enablePanDownToClose`（默认 `true`）分别控制点遮罩与下拉关闭。都关掉后就只剩右上角的关闭按钮这一条出口。
+
+<Demo src="@playground/sheet/SheetCloseBehavior" />
+
+Android 硬件返回键在面板打开时先关闭面板，不返回上一页。
+
+## 动态尺寸 + 滚动
+
+不传 `snapPoints` 也能滚：列表自己上报内容高度，长到屏幕上限后就在面板内部滚动。
+
+<Demo src="@playground/sheet/SheetDynamicHeight" />
+
+## 样式覆盖
+
+`className` 与 `classNames.background` 都作用于面板本体（背景 + 圆角），`classNames` 覆盖顶部区的各 slot：
+
+| slot          | 作用位置                                             |
+| ------------- | ---------------------------------------------------- |
+| `background`  | 面板本体的底色与圆角                                 |
+| `chrome`      | 顶部固定区整体（handle + header + description）       |
+| `handle`      | 拖拽指示条的容器                                     |
+| `handleBar`   | 拖拽指示条本身                                       |
+| `header`      | 标题行容器                                           |
+| `title`       | 标题文字                                             |
+| `description` | 描述文字                                             |
+| `close`       | 关闭按钮容器                                         |
+| `closeIcon`   | 关闭图标的 `colorClassName`，只接受 `accent-*` 颜色类  |
+
+面板底色与圆角走 gorhom 自带的 `backgroundStyle`（组件用 `useResolveClassNames` 把类名解析成 style），而不是自定义 `backgroundComponent` —— 自定义组件每次渲染都是新类型，背景层会跟着卸载重挂，还会丢掉默认背景自带的无障碍属性。`background` 的类名里 `rounded-b-none` 是必须的：gorhom 默认背景自带 `borderRadius: 15`，只覆盖上圆角的话，贴着屏幕底边的两个下角会留出缺口透出遮罩。
+
+## API
+
+### Sheet
+
+除下表外，`Sheet` 透传 `BottomSheetModal` 的属性（`index`、`enableContentPanningGesture`、`keyboardBehavior`、`stackBehavior` 等）。以下属性由组件接管，不可透传：`snapPoints`（用同名属性）、`enableDynamicSizing`、`handleComponent`、`backdropComponent`、`backgroundComponent`、`backgroundStyle`、`onDismiss`、`children`、`ref`。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示面板', type: 'boolean', required: true },
+    {
+      name: 'onUpdateShow',
+      description: '显示状态变化回调；必填，否则关闭后 show 无人置为 false，面板会卡死',
+      type: '(show: boolean) => void',
+      required: true
+    },
+    {
+      name: 'children',
+      description: '面板内容，必须自带 BottomSheetView / BottomSheetFlatList 等容器',
+      type: 'ReactNode'
+    },
+    { name: 'title', description: '面板标题，string / number 会被包裹为 Text', type: 'ReactNode' },
+    { name: 'description', description: '描述信息，显示在标题下方', type: 'ReactNode' },
+    { name: 'closeable', description: '是否显示右上角关闭按钮', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示拖拽指示条', type: 'boolean', default: 'true' },
+    {
+      name: 'snapPoints',
+      description: "吸附点，如 ['25%', '50%']；不传则按内容高度动态撑开",
+      type: 'BottomSheetModalProps["snapPoints"]'
+    },
+    { name: 'enablePanDownToClose', description: '是否允许下拉关闭', type: 'boolean', default: 'true' },
+    { name: 'closeOnBackdropPress', description: '是否允许点击遮罩关闭', type: 'boolean', default: 'true' },
+    { name: 'className', description: '面板本体（背景 + 圆角）的类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 snapToIndex / expand / collapse',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SheetProps, SheetSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SheetSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'background' | 'chrome' | 'close' | 'closeIcon' | 'description' | 'handle' | 'handleBar' | 'header' | 'title'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SheetSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `sheetVariants`，以及从 `@gorhom/bottom-sheet` 再导出的 `BottomSheetModal`、`BottomSheetModalProvider`、`BottomSheetView`、`BottomSheetScrollView`、`BottomSheetFlatList`、`BottomSheetSectionList`、`BottomSheetTextInput` 与调试用的 `enableLogging`。

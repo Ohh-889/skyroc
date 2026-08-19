@@ -1,0 +1,219 @@
+---
+title: ShareSheet
+description: 分享面板，图标网格 + 取消按钮
+---
+
+分享面板（ShareSheet）在底部弹出一组图标选项，典型场景是分享到各平台。它基于 `Sheet` 封装，除组件式用法外还提供 `showShareSheet` 命令式调用（返回 Promise）。
+
+```tsx
+import { ShareSheet, showShareSheet, closeShareSheet } from '@skyroc/native-ui';
+```
+
+依赖 `@gorhom/bottom-sheet`，请确保 App 根节点已经包了 `GestureHandlerRootView` 与 `BottomSheetModalProvider`；命令式调用还需要挂 `PortalHost`。
+
+## 基础用法
+
+`options` 传一维数组即为单行。每个选项必须有唯一的 `value`（`name` 可能是节点，不能兼作 key）。选项超出宽度时可以横向滚动。
+
+<Demo src="@playground/share-sheet/ShareSheetBasic" />
+
+## 何时使用
+
+- 分享到第三方平台，或一组以图标为主的并列操作。
+- 纯文字的动作列表用 `ActionSheet`；自定义内容的底部面板用 `Sheet`。
+
+## 非受控显示
+
+`defaultShow` 设置初始显示状态，后续显隐由组件内部维护（仍会通过 `onUpdateShow` 通知）。
+
+<Demo src="@playground/share-sheet/ShareSheetUncontrolled" />
+
+## 多行展示
+
+`options` 传二维数组即按行渲染，行与行之间用分割线隔开。`onSelect` 的第二个参数是选项在**所在行内**的下标，第三个参数是行下标；单行写法等价于只有一行，`rowIndex` 恒为 0。要跨行唯一标识一项，直接用 `option.value`。
+
+<Demo src="@playground/share-sheet/ShareSheetMultiRow" />
+
+## 描述信息
+
+面板整体的 `description` 显示在标题下方，单个选项的 `description` 显示在名称下方。
+
+<Demo src="@playground/share-sheet/ShareSheetDescription" />
+
+## 事件
+
+`onSelect` 与 `onCancel` 记录用户动作，`onUpdateShow` 是显隐变化，`onClosed` 在退场动画播完、面板真正卸载后触发。
+
+<Demo src="@playground/share-sheet/ShareSheetEvents" />
+
+`onUpdateShow(false)` 是「请求关闭」，此时动画才刚开始；命令式场景要等 `onClosed` 才能安全移除节点，否则面板会硬闪消失。
+
+`closeOnSelect` 默认 `false`（组件式用法里通常由外部状态决定何时关），命令式调用则默认打开 —— 那边没有外部状态承接，不自动关面板会一直挂着。
+
+## 关闭行为与 ref
+
+`closeable`（右上角关闭按钮）、`closeOnBackdropPress`、`enablePanDownToClose`、`showHandle` 可分别关闭。`ref` 原样透传给底层的 `BottomSheetModal`。
+
+<Demo src="@playground/share-sheet/ShareSheetCloseBehavior" />
+
+## 自定义内容与样式
+
+`className` / `classNames` 定制内容与选项，`sheetClassName` / `sheetClassNames` 定制外层面板；`name` 与 `description` 都支持节点。
+
+| slot                | 作用位置                                       |
+| ------------------- | ---------------------------------------------- |
+| `root`              | 交给 Sheet 的内容容器（底部安全区留白在这里）   |
+| `row`               | 单行容器                                       |
+| `options`           | 选项横向滚动区的 contentContainer               |
+| `option`            | 单个选项容器                                   |
+| `optionIcon`        | 选项图标的圆形底衬                             |
+| `optionName`        | 选项名称                                       |
+| `optionDescription` | 选项描述                                       |
+| `cancelGap`         | 取消按钮上方的灰色间隔条                        |
+| `cancel`            | 取消按钮容器                                   |
+| `cancelName`        | 取消按钮文字                                   |
+
+<Demo src="@playground/share-sheet/ShareSheetStyles" />
+
+`options` 的类名落在横向 `ScrollView` 的 contentContainer 上而不是 `ScrollView` 本身 —— 左右留白写在容器上会被算进滚动视口，首尾两项就贴边了。单个选项还可以用 `ShareSheetOption.className` 单独覆盖；注意 RN 的文字颜色不从父节点继承，改字色请用 `classNames.optionName`。
+
+## 命令式调用
+
+`showShareSheet(options)` 返回 Promise：选中 resolve 结果对象，取消 / 遮罩关闭 resolve `null`；`callback` 与 Promise 一同结算，且恰好触发一次。`closeShareSheet()` 从外部关闭，按取消结算 —— 等待中的 Promise 会 resolve 成 `null` 而不是永远挂起。
+
+<Demo src="@playground/share-sheet/ShareSheetImperative" />
+
+```tsx
+const result = await showShareSheet({
+  options: [
+    { icon: <WeChatIcon />, name: '微信', value: 'wechat' },
+    { icon: <WeiboIcon />, name: '微博', value: 'weibo' }
+  ],
+  title: '分享到'
+});
+
+if (result) {
+  console.log(result.option.value, result.index, result.rowIndex);
+}
+```
+
+同一时刻只显示一个命令式面板（单例）；`show` / `defaultShow` / `onUpdateShow` / `onClosed` 在这条路径上不开放，显隐由内部的 Renderer 托管。
+
+## API
+
+### ShareSheet
+
+<PropsTable
+  data={[
+    { name: 'options', description: '分享选项列表，一维为单行、二维为多行', type: 'ShareSheetOptions', default: '[]' },
+    { name: 'show', description: '是否显示面板（受控）', type: 'boolean' },
+    { name: 'defaultShow', description: '非受控初始显示状态', type: 'boolean', default: 'false' },
+    { name: 'onUpdateShow', description: '显示状态变化回调', type: '(show: boolean) => void' },
+    {
+      name: 'onSelect',
+      description: '选项点击回调；index 是所在行内的下标，rowIndex 是行下标',
+      type: '(option: ShareSheetOption, index: number, rowIndex: number) => void'
+    },
+    { name: 'onCancel', description: '取消按钮点击回调', type: '() => void' },
+    { name: 'onClosed', description: '退场动画播完、面板真正卸载后触发', type: '() => void' },
+    { name: 'closeOnSelect', description: '点击选项后是否自动关闭', type: 'boolean', default: 'false' },
+    { name: 'title', description: '面板标题', type: 'ReactNode' },
+    { name: 'description', description: '描述信息，显示在标题下方', type: 'ReactNode' },
+    { name: 'cancelText', description: '取消按钮文字，不设置则不显示取消按钮', type: 'string' },
+    { name: 'closeable', description: '是否显示右上角关闭按钮', type: 'boolean', default: 'true' },
+    { name: 'closeOnBackdropPress', description: '是否允许点击遮罩关闭', type: 'boolean', default: 'true' },
+    { name: 'enablePanDownToClose', description: '是否允许下拉关闭', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示顶部拖拽指示条', type: 'boolean', default: 'true' },
+    { name: 'className', description: '内容容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「自定义内容与样式」一节',
+      type: 'SlotClassNames<ShareSheetSlots>'
+    },
+    { name: 'sheetClassName', description: '内部 Sheet 面板本体（背景 + 圆角）的类名', type: 'string' },
+    { name: 'sheetClassNames', description: '内部 Sheet 各 slot 的类名覆盖', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 snapToIndex / expand / collapse',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+### showShareSheet
+
+```ts
+function showShareSheet(options: ShareSheetCallOptions): Promise<ShareSheetResult | null>;
+function closeShareSheet(): void;
+```
+
+`ShareSheetCallOptions` 即 `ShareSheetProps` 去掉 `show` / `defaultShow` / `onUpdateShow` / `onClosed`，另加一个 `callback`：
+
+<PropsTable
+  data={[
+    {
+      name: 'callback',
+      description: '选中或取消后的通用回调，与 Promise 一同结算，且恰好触发一次',
+      type: '(result: ShareSheetResult | null) => void'
+    },
+    { name: 'closeOnSelect', description: '点击选项后是否自动关闭；命令式调用下默认为 true', type: 'boolean', default: 'true' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  ShareSheetCallOptions,
+  ShareSheetOption,
+  ShareSheetOptions,
+  ShareSheetProps,
+  ShareSheetResult,
+  ShareSheetSlots
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="ShareSheetOptions"
+  description="选项列表：一维数组为单行，二维数组为多行，行与行之间用分割线隔开。"
+  type="ShareSheetOption[] | ShareSheetOption[][]"
+/>
+
+<UnionType
+  name="ShareSheetSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'cancel' | 'cancelGap' | 'cancelName' | 'option' | 'optionDescription' | 'optionIcon' | 'optionName' | 'options' | 'root' | 'row'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 ShareSheetSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'ShareSheetOption',
+      description: '单个分享选项。',
+      fields: [
+        { name: 'value', type: 'string', description: '选项值，同时作为列表 key（必传，因为 name 可能是节点）。', required: true },
+        { name: 'name', type: 'ReactNode', description: '选项名称。', required: true },
+        { name: 'icon', type: 'ReactNode', description: '图标节点。' },
+        { name: 'description', type: 'ReactNode', description: '选项描述。' },
+        { name: 'className', type: 'string', description: '该选项根节点的类名；改字色请用 classNames.optionName。' }
+      ]
+    },
+    {
+      name: 'ShareSheetResult',
+      description: 'showShareSheet 的结算结果。',
+      fields: [
+        { name: 'option', type: 'ShareSheetOption', description: '选中的选项。', required: true },
+        { name: 'index', type: 'number', description: '选中项在所在行内的下标。', required: true },
+        { name: 'rowIndex', type: 'number', description: '选中项所在行的下标，单行写法恒为 0。', required: true }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `shareSheetVariants`、`ShareSheetRenderer` 与状态管理器 `shareSheetManager`（及其类型 `ShareSheetEntry` / `ShareSheetEntryOptions` / `ShareSheetSettle`），一般不需要直接使用。
