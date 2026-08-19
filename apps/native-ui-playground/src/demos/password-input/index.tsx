@@ -78,8 +78,8 @@ const PasswordInputDemo = () => {
       </Section>
 
       <Section
-        description="组件默认数字键盘且不自动大写，两者都可以被逐项覆盖。"
-        title="原生属性透传"
+        description="组件默认数字键盘且不自动大写；键盘、大小写与 editable 等原生属性均可透传。"
+        title="原生属性透传（keyboardType / editable）"
       >
         <PasswordInputNativeProps />
       </Section>

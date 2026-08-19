@@ -4,9 +4,11 @@ import { Section } from '@/src/components/Section';
 import { SignatureBasic } from './SignatureBasic';
 import { SignatureColor } from './SignatureColor';
 import { SignatureDisabled } from './SignatureDisabled';
+import { SignatureEvents } from './SignatureEvents';
 import { SignatureImperative } from './SignatureImperative';
 import { SignatureJpeg } from './SignatureJpeg';
 import { SignatureSize } from './SignatureSize';
+import { SignatureStyles } from './SignatureStyles';
 
 /**
  * Signature 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/signature/SignatureColor" />），
@@ -25,43 +27,57 @@ const SignatureDemo = () => {
       showsVerticalScrollIndicator={false}
     >
       <Section
-        description="onSubmit 回传 base64 图片与是否为空，可直接拿去预览"
-        title="基础用法"
+        description="tips 提示落笔区域；确认后 onSubmit 回传 base64 图片与 isEmpty，可直接预览。"
+        title="基础用法（tips / onSubmit）"
       >
         <SignatureBasic onSigningChange={setSigning} />
       </Section>
 
       <Section
-        description="默认 carbon —— 浅色主题近黑、深色主题近白，跟着主题走"
-        title="笔色"
+        description="color 提供八种语义色；默认 carbon 会随深浅主题切换墨色。"
+        title="语义笔色（color）"
       >
         <SignatureColor onSigningChange={setSigning} />
       </Section>
 
       <Section
-        description="size 控制画布高度，lineWidth 控制笔画粗细"
-        title="尺寸与线宽"
+        description="size 控制画布高度，lineWidth 控制笔画粗细。"
+        title="尺寸与线宽（size / lineWidth）"
       >
         <SignatureSize onSigningChange={setSigning} />
       </Section>
 
       <Section
-        description="ref 暴露 undo / clear / submit，可以自己画底部操作区"
-        title="命令式调用"
+        description="ref 暴露 undo、clear、submit 与 toDataURL，可在 showFooter=false 时自定义操作区。"
+        title="命令式调用（ref / showFooter）"
       >
         <SignatureImperative onSigningChange={setSigning} />
       </Section>
 
       <Section
-        description="JPEG 没有 alpha 通道，透明底会被压成纯黑，所以会自动回落到画布底色"
-        title="导出 JPEG"
+        description="type 选择 png 或 jpeg，quality 控制编码质量；JPEG 透明底会自动回落到画布底色。"
+        title="导出格式（type / quality）"
       >
         <SignatureJpeg onSigningChange={setSigning} />
       </Section>
 
       <Section
-        description="disabled 连按钮一起禁用，readonly 只锁画布"
-        title="禁用与只读"
+        description="onStart / onSigning / onEnd 描述一次笔画周期；清空时触发 onClear。"
+        title="书写事件"
+      >
+        <SignatureEvents onSigningChange={setSigning} />
+      </Section>
+
+      <Section
+        description="backgroundColor / penColor 可传运行时颜色；className / classNames 覆盖容器和各 slot。"
+        title="自定义颜色与样式"
+      >
+        <SignatureStyles onSigningChange={setSigning} />
+      </Section>
+
+      <Section
+        description="disabled 连按钮一起禁用并降低透明度，readonly 只锁定画布。"
+        title="禁用与只读（disabled / readonly）"
       >
         <SignatureDisabled />
       </Section>

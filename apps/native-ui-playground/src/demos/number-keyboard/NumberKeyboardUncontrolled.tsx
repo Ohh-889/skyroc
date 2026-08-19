@@ -5,9 +5,11 @@ import { View } from 'react-native';
 const NumberKeyboardUncontrolled = () => {
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState('');
+  const [session, setSession] = useState(0);
 
   function openKeyboard() {
     setValue('');
+    setSession(current => current + 1);
     setVisible(true);
   }
 
@@ -27,6 +29,7 @@ const NumberKeyboardUncontrolled = () => {
 
       {/* 刻意不传 value：键盘自己记输入值，这里只负责把 onChange 的结果显示出来 */}
       <NumberKeyboard
+        key={session}
         maxLength={4}
         title="非受控"
         visible={visible}

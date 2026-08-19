@@ -1,12 +1,14 @@
 import { ScrollView } from 'react-native';
 import { Section } from '@/src/components/Section';
 import { SearchBasic } from './SearchBasic';
+import { SearchClearable } from './SearchClearable';
 import { SearchControlled } from './SearchControlled';
 import { SearchCustom } from './SearchCustom';
 import { SearchDisabled } from './SearchDisabled';
 import { SearchLabelAction } from './SearchLabelAction';
 import { SearchShape } from './SearchShape';
 import { SearchSize } from './SearchSize';
+import { SearchStyles } from './SearchStyles';
 import { SearchUncontrolled } from './SearchUncontrolled';
 
 /** Search 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/search/SearchShape" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
@@ -46,6 +48,13 @@ const SearchDemo = () => {
       </Section>
 
       <Section
+        description="默认有值时显示清除按钮；clearable=false 可关闭，onClear 用于监听清空动作。"
+        title="清除按钮（clearable / onClear）"
+      >
+        <SearchClearable />
+      </Section>
+
+      <Section
         description="value 与 onChangeText 组成受控用法，onSearch 在键盘搜索键触发。"
         title="受控（value / onChangeText）"
       >
@@ -60,10 +69,17 @@ const SearchDemo = () => {
       </Section>
 
       <Section
-        description="leading 替换默认放大镜，classNames 逐槽覆盖 label 与操作文字。"
-        title="自定义（leading / classNames）"
+        description="leading 传入节点后会完全替换默认放大镜。"
+        title="自定义前置内容（leading）"
       >
         <SearchCustom />
+      </Section>
+
+      <Section
+        description="className / classNames 控制搜索栏布局，inputClassNames 下钻到内部 Input 的 control 与 action。"
+        title="样式覆盖（className / classNames / inputClassNames）"
+      >
+        <SearchStyles />
       </Section>
 
       <Section

@@ -19,14 +19,12 @@ const DAYS: PickerOption[] = Array.from({ length: 31 }, (_, i) => ({
 
 const PickerMultiColumn = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
-        <PickerView
-          columns={[YEARS, MONTHS, DAYS]}
-          defaultValue={['2026', '2', '21']}
-          title="选择日期"
-        />
-      </View>
+    <View className="bg-background p-4">
+      <PickerView
+        columns={[YEARS, MONTHS, DAYS]}
+        defaultValue={['2026', '2', '21']}
+        title="选择日期"
+      />
     </View>
   );
 };

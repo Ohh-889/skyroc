@@ -1,6 +1,7 @@
-import { Text } from '@skyroc/native-ui';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { SliderBasic } from './SliderBasic';
+import { SliderBoundary } from './SliderBoundary';
 import { SliderChangeAfterDrag } from './SliderChangeAfterDrag';
 import { SliderColor } from './SliderColor';
 import { SliderControlled } from './SliderControlled';
@@ -17,122 +18,92 @@ const SliderDemo = () => {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="py-6 pb-20"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* 基础用法 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">基础用法</Text>
-      <View className="mb-4">
+      <Section
+        description="value 与 onChange 组成单值受控滑块。"
+        title="基础用法（value / onChange）"
+      >
         <SliderBasic />
-      </View>
+      </Section>
 
-      {/* 步长与取值范围 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">步长与取值范围</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="min、max 限定范围，取值会对齐到 min + n × step。"
+        title="步长与范围（min / max / step）"
       >
-        取值对齐到 min + n * step，点击轨道同样按 step 吸附
-      </Text>
-      <View className="mb-4">
         <SliderStep />
-      </View>
+      </Section>
 
-      {/* 区间选择 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">区间选择</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="越界值会夹回 min / max，非正 step 按 1 处理，区间缺省值为 [min, min]。"
+        title="边界值"
       >
-        两端互为边界，拖到相遇即停，不会互相穿越
-      </Text>
-      <View className="mb-4">
+        <SliderBoundary />
+      </Section>
+
+      <Section
+        description="range 切换为双滑块区间，两端互为边界且不会穿越。"
+        title="区间选择（range）"
+      >
         <SliderRange />
-      </View>
+      </Section>
 
-      {/* 拖拽结束回调 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">拖拽结束回调</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="onChange 拖动中实时触发，onChangeAfterDrag 在值稳定后触发一次。"
+        title="拖动结束事件（onChangeAfterDrag）"
       >
-        onChange 拖拽中实时触发，onChangeAfterDrag 只在值稳定后触发一次，适合拿来发请求
-      </Text>
-      <View className="mb-4">
         <SliderChangeAfterDrag />
-      </View>
+      </Section>
 
-      {/* 主题色 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">主题色</Text>
-      <View className="mb-4">
+      <Section
+        description="color 提供与操作语义对应的主题色。"
+        title="语义颜色（color）"
+      >
         <SliderColor />
-      </View>
+      </Section>
 
-      {/* 尺寸 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">尺寸</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="barSize 控制轨道粗细，thumbSize 控制滑块直径；命中区仍不小于 44pt。"
+        title="尺寸（barSize / thumbSize）"
       >
-        barSize 控制轨道粗细，thumbSize 控制圆钮直径；命中区始终不小于 44pt
-      </Text>
-      <View className="mb-4">
         <SliderSize />
-      </View>
+      </Section>
 
-      {/* 垂直方向 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">垂直方向</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="vertical 改为垂直方向，父容器需要提供确定高度，单值和区间均适用。"
+        title="垂直方向（vertical）"
       >
-        vertical 模式下父级必须有确定高度
-      </Text>
-      <View className="mb-4">
         <SliderVertical />
-      </View>
+      </Section>
 
-      {/* 自定义滑块 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">自定义滑块</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="单值使用 thumb，区间使用 startThumb 与 endThumb 替换默认滑块。"
+        title="自定义滑块（thumb / startThumb / endThumb）"
       >
-        单值模式用 thumb，区间模式用 startThumb / endThumb，内容需自行控制在 thumbSize 内
-      </Text>
-      <View className="mb-4">
         <SliderCustomThumb />
-      </View>
+      </Section>
 
-      {/* 禁用与只读 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">禁用与只读</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="disabled 阻止手势并置灰；readonly 只阻止手势，不改变视觉状态。"
+        title="禁用与只读（disabled / readonly）"
       >
-        disabled 整体置灰且不响应手势，readonly 只是不响应手势
-      </Text>
-      <View className="mb-4">
         <SliderDisabled />
-      </View>
+      </Section>
 
-      {/* 自定义样式 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">自定义样式</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="className 覆盖根容器，classNames 可覆盖轨道、激活段和滑块等 slot。"
+        title="样式覆盖（className / classNames）"
       >
-        className 覆盖根容器，classNames 细粒度覆盖各 slot
-      </Text>
-      <View className="mb-4">
         <SliderStyles />
-      </View>
+      </Section>
 
-      {/* 受控 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">受控</Text>
-      <View className="mb-4">
+      <Section
+        description="外部按钮与 Slider 共享 value，展示受控值可以从组件外更新。"
+        title="外部控制（value）"
+      >
         <SliderControlled />
-      </View>
+      </Section>
     </ScrollView>
   );
 };

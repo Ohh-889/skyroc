@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const SliderVertical = () => {
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="h-56 flex-row gap-8">
         <Slider
           vertical

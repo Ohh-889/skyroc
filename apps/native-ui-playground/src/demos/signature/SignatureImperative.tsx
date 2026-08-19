@@ -28,6 +28,19 @@ const SignatureImperative = (props: SignatureImperativeProps) => {
     setPreview(data.image);
   }
 
+  async function handleToDataURL() {
+    const image = await signatureRef.current?.toDataURL();
+
+    if (!image) {
+      setTip('画布为空，toDataURL 返回空字符串');
+      setPreview('');
+      return;
+    }
+
+    setTip(`toDataURL 已生成，base64 长度 ${image.length}`);
+    setPreview(image);
+  }
+
   return (
     <View className="bg-background p-4">
       <Signature
@@ -38,26 +51,33 @@ const SignatureImperative = (props: SignatureImperativeProps) => {
         onStart={() => onSigningChange?.(true)}
         onSubmit={handleSubmit}
       />
-      <View className="mt-3 flex-row gap-2">
+      <View className="mt-3 flex-row flex-wrap gap-2">
         <Button
-          className="flex-1"
+          className="min-w-[45%] flex-1"
           variant="outline"
           onPress={() => signatureRef.current?.undo()}
         >
           撤销
         </Button>
         <Button
-          className="flex-1"
+          className="min-w-[45%] flex-1"
           variant="outline"
           onPress={() => signatureRef.current?.clear()}
         >
           清除
         </Button>
         <Button
-          className="flex-1"
+          className="min-w-[45%] flex-1"
           onPress={() => signatureRef.current?.submit()}
         >
           提交
+        </Button>
+        <Button
+          className="min-w-[45%] flex-1"
+          variant="outline"
+          onPress={handleToDataURL}
+        >
+          导出 Data URL
         </Button>
       </View>
       {tip ? (

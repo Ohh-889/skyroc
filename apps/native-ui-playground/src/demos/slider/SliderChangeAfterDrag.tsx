@@ -6,7 +6,7 @@ const SliderChangeAfterDrag = () => {
   const [settled, setSettled] = useState(30);
 
   return (
-    <View className="gap-2 bg-background px-6 py-4">
+    <View className="gap-2 bg-background p-4">
       <Slider
         defaultValue={30}
         onChangeAfterDrag={setSettled}

@@ -14,15 +14,12 @@ const FRUITS: PickerOption[] = [
 
 const PickerBasic = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
-        <PickerView
-          haptic
-          columns={FRUITS}
-          defaultValue={['orange']}
-          showToolbar={false}
-        />
-      </View>
+    <View className="bg-background p-4">
+      <PickerView
+        columns={FRUITS}
+        defaultValue={['orange']}
+        title="选择水果"
+      />
     </View>
   );
 };

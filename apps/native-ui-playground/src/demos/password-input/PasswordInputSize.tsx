@@ -3,16 +3,21 @@ import { View } from 'react-native';
 
 const SIZES = ['sm', 'md', 'lg'] as const;
 
-/** size 同时驱动格子高度、掩码圆点尺寸与明文字号 */
+/** Size 同时驱动格子高度、掩码圆点尺寸与明文字号 */
 const PasswordInputSize = () => {
   return (
     <View className="gap-3 bg-background p-4">
       {SIZES.map(s => (
-        <PasswordInput
-          defaultValue="1234"
+        <View
           key={s}
-          size={s}
-        />
+          className="gap-2"
+        >
+          <Text className="text-sm font-medium text-foreground">size=&quot;{s}&quot;</Text>
+          <PasswordInput
+            defaultValue="1234"
+            size={s}
+          />
+        </View>
       ))}
       <Text className="text-sm text-muted-foreground">圆点大小随 size 变化，不只是格子变高</Text>
     </View>

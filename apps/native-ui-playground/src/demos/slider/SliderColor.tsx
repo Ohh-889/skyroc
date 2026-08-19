@@ -6,7 +6,7 @@ const COLORS: ThemeColor[] = ['primary', 'success', 'warning', 'destructive', 'i
 
 const SliderColor = () => {
   return (
-    <View className="gap-4 bg-background px-6 py-4">
+    <View className="gap-4 bg-background p-4">
       {COLORS.map(color => (
         <View
           key={color}

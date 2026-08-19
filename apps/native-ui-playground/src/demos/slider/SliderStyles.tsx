@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const SliderStyles = () => {
   return (
-    <View className="gap-4 bg-background px-6 py-4">
+    <View className="gap-4 bg-background p-4">
       <Slider
         className="rounded-xl bg-secondary px-4"
         defaultValue={45}

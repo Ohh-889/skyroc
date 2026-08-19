@@ -8,42 +8,42 @@ const RadioCardBasic = () => {
       <RadioCard
         color="primary"
         defaultChecked
-        description="Fast and reliable"
+        description="稳定且速度快"
         icon={
           <Feather
-            color="#3b82f6"
+            color="var(--primary)"
             name="wifi"
             size={20}
           />
         }
-        label="Wi-Fi"
+        label="无线网络"
       />
       <RadioCard
         color="warning"
-        description="Mobile data connection"
+        description="使用移动数据"
         icon={
           <Feather
-            color="#22c55e"
+            color="var(--success)"
             name="smartphone"
             size={20}
           />
         }
-        label="Cellular"
+        label="蜂窝网络"
         radioPosition="right"
         shape="square"
       />
       <RadioCard
         color="success"
-        description="Direct device connection"
+        description="设备连接不可用"
         disabled
         icon={
           <Feather
-            color="#8b5cf6"
+            color="var(--muted-foreground)"
             name="bluetooth"
             size={20}
           />
         }
-        label="Bluetooth"
+        label="蓝牙"
       />
     </View>
   );

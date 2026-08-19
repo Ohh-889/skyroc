@@ -1,4 +1,4 @@
-import { Radio } from '@skyroc/native-ui';
+import { Radio, RadioGroup } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
 const RadioDisabled = () => {
@@ -11,6 +11,13 @@ const RadioDisabled = () => {
       >
         Disabled & Checked
       </Radio>
+      <RadioGroup
+        disabled
+        defaultValue="a"
+      >
+        <Radio name="a">整组禁用：已选</Radio>
+        <Radio name="b">整组禁用：未选</Radio>
+      </RadioGroup>
     </View>
   );
 };

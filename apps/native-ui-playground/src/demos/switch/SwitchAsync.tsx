@@ -17,16 +17,14 @@ const SwitchAsync = () => {
   }
 
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8 flex-row items-center gap-3">
-        <Switch
-          checked={pending}
-          loading={submitting}
-          size="lg"
-          onCheckedChange={handlePendingChange}
-        />
-        <Text color="muted">{submitting ? '保存中…' : `已保存：${pending ? '开' : '关'}`}</Text>
-      </View>
+    <View className="flex-row items-center gap-3 bg-background p-4">
+      <Switch
+        checked={pending}
+        loading={submitting}
+        size="lg"
+        onCheckedChange={handlePendingChange}
+      />
+      <Text color="muted">{submitting ? '保存中…' : `已保存：${pending ? '开' : '关'}`}</Text>
     </View>
   );
 };

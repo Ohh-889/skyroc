@@ -26,6 +26,7 @@ const NumberKeyboardStyles = () => {
       </Button>
 
       <NumberKeyboard
+        className="border-t border-primary/30"
         classNames={{
           confirmKey: 'bg-success',
           keyText: 'text-3xl font-semibold',

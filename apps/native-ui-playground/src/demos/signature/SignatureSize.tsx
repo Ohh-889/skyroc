@@ -21,6 +21,14 @@ const SignatureSize = (props: SignatureSizeProps) => {
         onStart={() => onSigningChange?.(true)}
       />
       <Signature
+        lineWidth={3}
+        showFooter={false}
+        size="md"
+        tips="md + 默认线宽"
+        onEnd={() => onSigningChange?.(false)}
+        onStart={() => onSigningChange?.(true)}
+      />
+      <Signature
         color="destructive"
         lineWidth={6}
         showFooter={false}

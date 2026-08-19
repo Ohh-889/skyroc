@@ -6,7 +6,7 @@ const SliderControlled = () => {
   const [controlled, setControlled] = useState(50);
 
   return (
-    <View className="gap-3 bg-background px-6 py-4">
+    <View className="gap-3 bg-background p-4">
       <Slider
         step={5}
         value={controlled}

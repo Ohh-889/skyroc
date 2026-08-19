@@ -6,7 +6,7 @@ const SliderRange = () => {
   const [rangeValue, setRangeValue] = useState<[number, number]>([20, 70]);
 
   return (
-    <View className="gap-2 bg-background px-6 py-4">
+    <View className="gap-2 bg-background p-4">
       <Slider
         range
         value={rangeValue}

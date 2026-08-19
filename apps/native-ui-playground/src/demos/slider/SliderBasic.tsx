@@ -6,7 +6,7 @@ const SliderBasic = () => {
   const [basic, setBasic] = useState(30);
 
   return (
-    <View className="gap-2 bg-background px-6 py-4">
+    <View className="gap-2 bg-background p-4">
       <Slider
         value={basic}
         onChange={setBasic}

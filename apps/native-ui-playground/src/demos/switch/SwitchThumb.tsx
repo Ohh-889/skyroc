@@ -8,22 +8,20 @@ const ThumbIcon = withUniwind(Ionicons);
 
 const SwitchThumb = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8 flex-row items-center gap-3">
-        <Switch
-          defaultChecked
-          size="2xl"
-        >
-          <ThumbIcon
-            colorClassName="accent-primary"
-            name="checkmark"
-            size={14}
-          />
-        </Switch>
-        <Switch size="2xl">
-          <Text className="text-[10px] text-muted-foreground">off</Text>
-        </Switch>
-      </View>
+    <View className="flex-row items-center gap-3 bg-background p-4">
+      <Switch
+        defaultChecked
+        size="2xl"
+      >
+        <ThumbIcon
+          colorClassName="accent-primary"
+          name="checkmark"
+          size={14}
+        />
+      </Switch>
+      <Switch size="2xl">
+        <Text className="text-[10px] text-muted-foreground">off</Text>
+      </Switch>
     </View>
   );
 };

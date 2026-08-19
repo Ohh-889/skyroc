@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 const FRUIT_ITEMS = [
-  { label: 'Apple', value: 'apple' },
-  { label: 'Orange', value: 'orange' },
-  { label: 'Banana', value: 'banana' },
-  { label: 'Grape', value: 'grape' }
+  { label: '未指定（空字符串）', value: '' },
+  { label: '苹果', value: 'apple' },
+  { label: '橙子', value: 'orange' },
+  { label: '香蕉', value: 'banana' }
 ];
 
 const RadioGroupBasic = () => {
@@ -27,7 +27,7 @@ const RadioGroupBasic = () => {
           </Radio>
         ))}
       </RadioGroup>
-      <Text className="text-sm text-muted-foreground">Selected: {groupValue}</Text>
+      <Text className="text-sm text-muted-foreground">当前值：{groupValue || "''"}</Text>
     </View>
   );
 };

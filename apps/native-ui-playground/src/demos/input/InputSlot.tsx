@@ -1,16 +1,20 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Input, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
+import { withUniwind } from 'uniwind';
+
+/** Feather 不认 className，用 withUniwind 将语义色映射到 color */
+const Icon = withUniwind(Feather);
 
 const SearchIcon = (
-  <Feather
-    color="#94a3b8"
+  <Icon
+    colorClassName="accent-primary"
     name="search"
     size={18}
   />
 );
 
-/** trailing 与密码按钮共存且排在其后 */
+/** Trailing 与密码按钮共存且排在其后 */
 const InputSlot = () => {
   return (
     <View className="gap-3 bg-background p-4">

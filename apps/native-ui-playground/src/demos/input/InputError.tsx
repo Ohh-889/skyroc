@@ -1,21 +1,30 @@
 import { Input, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
-const VARIANTS = ['outline', 'filled', 'underline', 'none'] as const;
+const BORDER_VARIANTS = ['outline', 'filled', 'underline'] as const;
 
-/** error 在未聚焦时同样是红框：边框色走 compoundVariants，不会被 variant 的边框覆盖 */
+/** Error 只覆盖有边框的变体；none 没有自身边框，需要由外层布局呈现错误反馈 */
 const InputError = () => {
   return (
     <View className="gap-3 bg-background p-4">
-      {VARIANTS.map(v => (
+      {BORDER_VARIANTS.map(variant => (
         <Input
           error
-          key={v}
-          placeholder={`${v} + error`}
-          variant={v}
+          key={variant}
+          placeholder={`${variant} + error`}
+          variant={variant}
         />
       ))}
-      <Text className="text-sm text-muted-foreground">聚焦后仍保持红色，错误态优先级高于聚焦色</Text>
+      <View className="rounded-lg border border-destructive px-3 py-2">
+        <Input
+          error
+          placeholder="none 由父容器呈现错误边界"
+          variant="none"
+        />
+      </View>
+      <Text className="text-sm text-muted-foreground">
+        outline、filled、underline 聚焦后仍保持红框；none 始终无自身边框
+      </Text>
     </View>
   );
 };

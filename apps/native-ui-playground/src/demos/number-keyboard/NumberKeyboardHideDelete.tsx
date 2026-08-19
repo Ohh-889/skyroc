@@ -5,9 +5,11 @@ import { View } from 'react-native';
 const NumberKeyboardHideDelete = () => {
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState('');
+  const [showDeleteKey, setShowDeleteKey] = useState(true);
 
-  function openKeyboard() {
+  function openKeyboard(showDelete: boolean) {
     setValue('');
+    setShowDeleteKey(showDelete);
     setVisible(true);
   }
 
@@ -16,18 +18,27 @@ const NumberKeyboardHideDelete = () => {
   }
 
   return (
-    <View className="items-start gap-3 bg-background p-4">
+    <View className="gap-3 bg-background p-4">
       <Text color="muted">当前输入：{value || '—'}</Text>
-      <Button
-        variant="outline"
-        onPress={openKeyboard}
-      >
-        打开
-      </Button>
+      <View className="flex-row flex-wrap gap-2">
+        <Button
+          variant="outline"
+          onPress={() => openKeyboard(true)}
+        >
+          文字删除键
+        </Button>
+        <Button
+          variant="outline"
+          onPress={() => openKeyboard(false)}
+        >
+          隐藏删除键
+        </Button>
+      </View>
 
       <NumberKeyboard
-        showDeleteKey={false}
-        title="无删除键"
+        deleteButtonText="删除"
+        showDeleteKey={showDeleteKey}
+        title={showDeleteKey ? '文字删除键' : '无删除键'}
         value={value}
         visible={visible}
         onBlur={closeKeyboard}

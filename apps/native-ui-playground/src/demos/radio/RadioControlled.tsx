@@ -11,13 +11,13 @@ const RadioControlled = () => {
         checked={controlled}
         onCheckedChange={setControlled}
       >
-        {controlled ? 'Checked' : 'Unchecked'}
+        {controlled ? '已选中' : '未选中'}
       </Radio>
       <Button
         size="sm"
         onPress={() => setControlled(v => !v)}
       >
-        Toggle
+        切换选中状态
       </Button>
     </View>
   );

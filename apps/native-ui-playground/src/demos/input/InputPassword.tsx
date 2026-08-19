@@ -8,7 +8,8 @@ const InputPassword = () => {
   return (
     <View className="gap-3 bg-background p-4">
       <Input
-        placeholder="非受控可见性"
+        defaultPasswordVisible
+        defaultValue="默认显示内容"
         type="password"
       />
       <Input

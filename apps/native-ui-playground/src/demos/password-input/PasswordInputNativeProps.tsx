@@ -12,6 +12,11 @@ const PasswordInputNativeProps = () => {
         variant="separated"
       />
       <Text className="text-sm text-muted-foreground">覆盖默认值后可输入字母并自动大写</Text>
+      <PasswordInput
+        defaultValue="123"
+        editable={false}
+      />
+      <Text className="text-sm text-muted-foreground">editable=false 时保留展示，但不可编辑</Text>
     </View>
   );
 };

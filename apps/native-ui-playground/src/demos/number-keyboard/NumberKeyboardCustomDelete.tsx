@@ -26,7 +26,7 @@ const NumberKeyboardCustomDelete = () => {
       </Button>
 
       <NumberKeyboard
-        renderDelete={() => <Text>清空</Text>}
+        renderDelete={() => <Text className="text-base font-medium text-primary">退一位</Text>}
         title="自定义删除键"
         value={value}
         visible={visible}

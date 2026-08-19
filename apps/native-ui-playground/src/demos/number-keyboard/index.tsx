@@ -3,11 +3,13 @@ import { Section } from '@/src/components/Section';
 import { NumberKeyboardBasic } from './NumberKeyboardBasic';
 import { NumberKeyboardCustomDelete } from './NumberKeyboardCustomDelete';
 import { NumberKeyboardCustomTheme } from './NumberKeyboardCustomTheme';
+import { NumberKeyboardEvents } from './NumberKeyboardEvents';
 import { NumberKeyboardExtraKey } from './NumberKeyboardExtraKey';
 import { NumberKeyboardHideDelete } from './NumberKeyboardHideDelete';
 import { NumberKeyboardMaxLength } from './NumberKeyboardMaxLength';
 import { NumberKeyboardNonModal } from './NumberKeyboardNonModal';
 import { NumberKeyboardRandomOrder } from './NumberKeyboardRandomOrder';
+import { NumberKeyboardSafeArea } from './NumberKeyboardSafeArea';
 import { NumberKeyboardStyles } from './NumberKeyboardStyles';
 import { NumberKeyboardTitle } from './NumberKeyboardTitle';
 import { NumberKeyboardTwoExtraKeys } from './NumberKeyboardTwoExtraKeys';
@@ -74,36 +76,50 @@ const NumberKeyboardDemo = () => {
       </Section>
 
       <Section
-        description="删除键位置留一个占位格，网格不塌。"
-        title="隐藏删除键（showDeleteKey）"
+        description="deleteButtonText 替换默认退格符号；隐藏后仍保留占位格，网格不会塌陷。"
+        title="删除键（deleteButtonText / showDeleteKey）"
       >
         <NumberKeyboardHideDelete />
       </Section>
 
       <Section
-        description="renderDelete 覆盖退格符号。"
+        description="renderDelete 覆盖默认退格符号；按下后仍遵循组件的单字符删除行为。"
         title="自定义删除内容（renderDelete）"
       >
         <NumberKeyboardCustomDelete />
       </Section>
 
       <Section
-        description="键盘不做模态遮挡，此时下方列表仍可直接滚动和点击。"
+        description="分别观察按键输入、删除、点击外部与点击关闭按钮时触发的事件。"
+        title="事件回调（onInput / onDelete / onBlur / onClose）"
+      >
+        <NumberKeyboardEvents />
+      </Section>
+
+      <Section
+        description="键盘不做模态遮挡，打开后页面上的测试按钮仍可直接点击。"
         title="外部保持可点（hideOnClickOutside）"
       >
         <NumberKeyboardNonModal />
       </Section>
 
       <Section
-        description="不传 value，输入值由键盘自己持有，onChange 照常抛出完整新值。"
-        title="非受控用法"
+        description="不传 value，输入值由键盘自己持有；每次打开用新的 key 创建独立输入会话。"
+        title="非受控用法（value / onChange）"
       >
         <NumberKeyboardUncontrolled />
       </Section>
 
       <Section
-        description="classNames 逐槽覆盖：加深面板底色、放大数字、换掉完成键配色。"
-        title="插槽样式覆盖（classNames）"
+        description="默认避让设备底部安全区；关闭后只保留键盘自身的基础内边距。"
+        title="底部安全区（safeAreaInsetBottom）"
+      >
+        <NumberKeyboardSafeArea />
+      </Section>
+
+      <Section
+        description="className 覆盖根节点边框，classNames 逐槽调整面板、数字和完成键。"
+        title="样式覆盖（className / classNames）"
       >
         <NumberKeyboardStyles />
       </Section>

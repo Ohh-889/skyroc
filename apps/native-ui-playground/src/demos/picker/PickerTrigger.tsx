@@ -61,14 +61,15 @@ const PickerTrigger = () => {
 
   const regionLabel = regionValue.length > 0 ? regionValue.join(' / ') : '请选择';
 
-  /** Show 只能表达开/关，snapToIndex / expand 这类操作要靠 ref 拿到底层实例 */
-  function handleDismissByRef() {
-    sheetRef.current?.dismiss();
+  /** 先用 show 打开，再通过底层实例执行命令式关闭 */
+  function handleOpenAndDismissByRef() {
+    setRegionShow(true);
+    setTimeout(() => sheetRef.current?.dismiss(), 2500);
   }
 
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
+    <View className="bg-background p-4">
+      <View className="overflow-hidden rounded-xl border border-border">
         <Picker
           ref={sheetRef}
           columns={REGIONS}
@@ -87,15 +88,14 @@ const PickerTrigger = () => {
             />
           )}
         </Picker>
-
-        <Button
-          className="mt-3"
-          variant="outline"
-          onPress={handleDismissByRef}
-        >
-          用 ref 关掉面板
-        </Button>
       </View>
+      <Button
+        className="mt-3"
+        variant="outline"
+        onPress={handleOpenAndDismissByRef}
+      >
+        打开后用 ref 关闭
+      </Button>
     </View>
   );
 };

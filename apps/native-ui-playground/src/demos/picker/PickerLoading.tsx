@@ -32,7 +32,7 @@ const PickerLoading = () => {
   }, []);
 
   return (
-    <View className="bg-background px-6">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <Button
           variant="tonal"
@@ -41,14 +41,12 @@ const PickerLoading = () => {
           重新加载
         </Button>
       </View>
-      <View className="mb-8">
-        <PickerView
-          columns={loading ? [] : FRUITS}
-          defaultValue={['apple']}
-          loading={loading}
-          showToolbar={false}
-        />
-      </View>
+      <PickerView
+        columns={loading ? [] : FRUITS}
+        defaultValue={['apple']}
+        loading={loading}
+        showToolbar={false}
+      />
     </View>
   );
 };

@@ -40,7 +40,7 @@ const TreeSelectDynamicItems = () => {
         <Button
           color="secondary"
           variant="outline"
-          onPress={() => setGroupCount(count => Math.max(1, count - 1))}
+          onPress={() => setGroupCount(count => Math.max(0, count - 1))}
         >
           删掉最后一组
         </Button>

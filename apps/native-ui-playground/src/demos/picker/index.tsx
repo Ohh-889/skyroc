@@ -1,101 +1,109 @@
-import { Text } from '@skyroc/native-ui';
 import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { PickerBasic } from './PickerBasic';
 import { PickerCascade } from './PickerCascade';
+import { PickerControlled } from './PickerControlled';
 import { PickerDisabled } from './PickerDisabled';
 import { PickerFieldNames } from './PickerFieldNames';
 import { PickerLoading } from './PickerLoading';
 import { PickerMultiColumn } from './PickerMultiColumn';
 import { PickerPopup } from './PickerPopup';
+import { PickerStyles } from './PickerStyles';
+import { PickerToolbar } from './PickerToolbar';
 import { PickerTrigger } from './PickerTrigger';
+import { PickerWheel } from './PickerWheel';
 
 /** Picker 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/picker/PickerCascade" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const PickerDemo = () => {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="pt-6 pb-20"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* 基础用法 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">基础用法</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="columns 传入一维数组时显示单列滚轮，defaultValue 设置初始选中值。"
+        title="基础用法（columns / defaultValue）"
       >
-        单列内联选择器，haptic 打开后每滚过一格会有一次轻触反馈
-      </Text>
-      <PickerBasic />
+        <PickerBasic />
+      </Section>
 
-      {/* 多列 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">多列</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="value 与 onChange 组成受控模式，外部修改会同步滚轮位置。"
+        title="受控模式（value / onChange）"
       >
-        columns 传二维数组时各列相互独立，改一列不影响其它列
-      </Text>
-      <PickerMultiColumn />
+        <PickerControlled />
+      </Section>
 
-      {/* 级联 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">级联</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="columns 传入二维数组时各列相互独立。"
+        title="多列选择"
       >
-        选项带 children 即为级联；这里刻意不传 defaultValue，三列应当在首屏就全部展开
-      </Text>
-      <PickerCascade />
+        <PickerMultiColumn />
+      </Section>
 
-      {/* 自定义字段名 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">自定义字段名</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="选项带 children 时按当前选中值级联展开；不传初值也会自动补齐各级。"
+        title="级联选择（children）"
       >
-        数据用的是 id / name / sub，靠 fieldNames 映射，显示文字与选中值都要跟着走
-      </Text>
-      <PickerFieldNames />
+        <PickerCascade />
+      </Section>
 
-      {/* 禁用项 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">禁用项</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="fieldNames 把自定义数据中的 id、name 和 sub 映射为值、文字和子选项。"
+        title="自定义字段（fieldNames）"
       >
-        停在禁用项上会自动吸附到最近的可选项，连着几个禁用也能跨过去
-      </Text>
-      <PickerDisabled />
+        <PickerFieldNames />
+      </Section>
 
-      {/* 加载中 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">加载中</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="disabled 选项不可选，滚轮停下时会吸附到最近的可用项。"
+        title="禁用选项（disabled）"
       >
-        loading 只盖住滚轮区域，工具栏仍然可点
-      </Text>
-      <PickerLoading />
+        <PickerDisabled />
+      </Section>
 
-      {/* 弹层用法 */}
-      <Text className="mb-2 px-6 text-lg font-semibold">弹层用法</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="itemHeight 与 visibleCount 控制滚轮密度，haptic 开启逐格触感。"
+        title="滚轮尺寸与反馈（itemHeight / visibleCount / haptic）"
       >
-        滚动过程中的值是临时的，点「确定」才会写回 value，点「取消」直接丢弃
-      </Text>
-      <PickerPopup />
+        <PickerWheel />
+      </Section>
 
-      {/* 触发元素与 ref */}
-      <Text className="mb-2 px-6 text-lg font-semibold">触发元素与 ref</Text>
-      <Text
-        className="mb-4 px-6"
-        color="muted"
+      <Section
+        description="loading 在滚轮区域显示加载遮罩，工具栏仍保持可见。"
+        title="加载状态（loading）"
       >
-        children 传函数就能自己画触发元素；ref 拿到的是底层 BottomSheetModal，show 表达不了的命令式操作走它
-      </Text>
-      <PickerTrigger />
+        <PickerLoading />
+      </Section>
+
+      <Section
+        description="title、cancelText 与 confirmText 定制工具栏；onCancel / onConfirm 返回当前选中值。"
+        title="工具栏与回调"
+      >
+        <PickerToolbar />
+      </Section>
+
+      <Section
+        description="className 覆盖根容器，classNames 可分别定制公开 slot。"
+        title="样式覆盖（className / classNames）"
+      >
+        <PickerStyles />
+      </Section>
+
+      <Section
+        description="弹层中的滚动值只在确定后提交；showHandle 与 enablePanDownToClose 开启下拉关闭，sheetClassNames 定制面板。"
+        title="弹层提交与关闭（Picker）"
+      >
+        <PickerPopup />
+      </Section>
+
+      <Section
+        description="children 渲染函数提供 open 与已确认 value；ref 透传底层 BottomSheetModal 实例。"
+        title="自定义触发元素与 ref"
+      >
+        <PickerTrigger />
+      </Section>
     </ScrollView>
   );
 };

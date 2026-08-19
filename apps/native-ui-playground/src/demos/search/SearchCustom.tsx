@@ -19,12 +19,6 @@ const SearchCustom = () => {
         }
         placeholder="替换默认放大镜"
       />
-      <Search
-        showAction
-        classNames={{ actionText: 'text-destructive', label: 'text-primary font-semibold' }}
-        label="标签"
-        placeholder="classNames 覆盖 label / actionText"
-      />
     </View>
   );
 };

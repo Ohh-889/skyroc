@@ -7,6 +7,7 @@ import { TreeSelectCustomContent } from './TreeSelectCustomContent';
 import { TreeSelectCustomSlots } from './TreeSelectCustomSlots';
 import { TreeSelectDisabled } from './TreeSelectDisabled';
 import { TreeSelectDynamicItems } from './TreeSelectDynamicItems';
+import { TreeSelectEvents } from './TreeSelectEvents';
 import { TreeSelectMultiple } from './TreeSelectMultiple';
 
 /**
@@ -21,57 +22,64 @@ const TreeSelectDemo = () => {
       showsVerticalScrollIndicator={false}
     >
       <Section
-        description="左侧切换分组，右侧单选，选中项打勾并高亮"
-        title="Basic"
+        description="items 提供左侧分组和右侧子项；defaultActiveId 设置非受控初始选中项。"
+        title="基础用法（items / defaultActiveId）"
       >
         <TreeSelectBasic />
       </Section>
 
       <Section
-        description="multiple 开启多选，达到 max 后再点未选中项不会有任何反应，已选中项仍可取消"
-        title="Multiple"
+        description="multiple 开启多选；达到 max 后不能新增，但已选中项仍可取消。"
+        title="多选与上限（multiple / max）"
       >
         <TreeSelectMultiple />
       </Section>
 
       <Section
-        description="分组支持 badge 与 dot，透传给左侧导航"
-        title="Badge"
+        description="分组的 badge 与 dot 会透传给左侧 Sidebar；defaultMainActiveIndex 设置初始分组。"
+        title="分组角标（badge / dot）"
       >
         <TreeSelectBadge />
       </Section>
 
       <Section
-        description="分组与子项都能单独禁用，禁用项降透明度且不响应点击"
-        title="Disabled"
+        description="分组与子项可以分别 disabled，禁用项降透明度且不响应点击。"
+        title="禁用项（disabled）"
       >
         <TreeSelectDisabled />
       </Section>
 
       <Section
-        description="分组索引与选中值都由外部 state 决定"
-        title="Controlled"
+        description="mainActiveIndex 与 activeId 分别控制当前分组和选中值，变化通过对应回调写回。"
+        title="受控模式"
       >
         <TreeSelectControlled />
       </Section>
 
       <Section
-        description="renderContent 接收当前分组与下标，右侧内容完全自定义"
-        title="Custom Content"
+        description="renderContent 接收当前分组与下标，可完全替换右侧默认子项列表。"
+        title="自定义右侧内容（renderContent）"
       >
         <TreeSelectCustomContent />
       </Section>
 
       <Section
-        description="先选中靠后的分组再删掉它，激活索引会收敛到最后一组，而不是留下空白右栏"
-        title="Dynamic Items"
+        description="onClickNav 返回分组下标；onClickItem 只在选中值确实变化时返回子项。"
+        title="点击事件（onClickNav / onClickItem）"
+      >
+        <TreeSelectEvents />
+      </Section>
+
+      <Section
+        description="items 变短时激活索引会自动收敛；删到空数组时左右区域保持稳定空态。"
+        title="动态数据与空值（items）"
       >
         <TreeSelectDynamicItems />
       </Section>
 
       <Section
-        description="classNames 覆写自身各插槽，左侧导航内部的插槽走 sidebarClassNames"
-        title="Custom Slots"
+        description="className / classNames 覆盖 TreeSelect，左侧 Sidebar 的内部 slot 通过 sidebarClassNames 透传。"
+        title="样式覆盖（className / classNames / sidebarClassNames）"
       >
         <TreeSelectCustomSlots />
       </Section>

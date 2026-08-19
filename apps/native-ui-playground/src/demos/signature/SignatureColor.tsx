@@ -1,5 +1,17 @@
-import { Signature } from '@skyroc/native-ui';
+import type { SignatureVariantProps } from '@skyroc/native-ui';
+import { Signature, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
+
+const COLORS: NonNullable<SignatureVariantProps['color']>[] = [
+  'carbon',
+  'primary',
+  'secondary',
+  'accent',
+  'success',
+  'warning',
+  'destructive',
+  'info'
+];
 
 /** SignatureColor 组件属性 */
 interface SignatureColorProps {
@@ -11,14 +23,24 @@ const SignatureColor = (props: SignatureColorProps) => {
   const { onSigningChange } = props;
 
   return (
-    <View className="bg-background p-4">
-      <Signature
-        color="primary"
-        showFooter={false}
-        tips="primary 笔色"
-        onEnd={() => onSigningChange?.(false)}
-        onStart={() => onSigningChange?.(true)}
-      />
+    <View className="gap-4 bg-background p-4">
+      {COLORS.map(color => (
+        <View
+          key={color}
+          className="gap-2"
+        >
+          <Text className="text-sm font-medium text-foreground">color={color}</Text>
+          <Signature
+            classNames={{ canvas: 'h-24' }}
+            color={color}
+            showFooter={false}
+            size="sm"
+            tips={`${color} 笔色`}
+            onEnd={() => onSigningChange?.(false)}
+            onStart={() => onSigningChange?.(true)}
+          />
+        </View>
+      ))}
     </View>
   );
 };

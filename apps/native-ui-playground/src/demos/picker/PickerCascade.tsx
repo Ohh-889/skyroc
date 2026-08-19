@@ -53,13 +53,11 @@ const REGIONS: PickerOption[] = [
 
 const PickerCascade = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
-        <PickerView
-          columns={REGIONS}
-          title="选择地区"
-        />
-      </View>
+    <View className="bg-background p-4">
+      <PickerView
+        columns={REGIONS}
+        title="选择地区"
+      />
     </View>
   );
 };

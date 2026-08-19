@@ -7,7 +7,7 @@ const ThumbIcon = withUniwind(Ionicons);
 
 const SliderCustomThumb = () => {
   return (
-    <View className="gap-6 bg-background px-6 py-4">
+    <View className="gap-6 bg-background p-4">
       <Slider
         defaultValue={50}
         thumbSize={28}

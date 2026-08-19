@@ -14,13 +14,11 @@ const SEATS: PickerOption[] = [
 
 const PickerDisabled = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
-        <PickerView
-          columns={SEATS}
-          showToolbar={false}
-        />
-      </View>
+    <View className="bg-background p-4">
+      <PickerView
+        columns={SEATS}
+        showToolbar={false}
+      />
     </View>
   );
 };

@@ -13,10 +13,7 @@ import { InputSlot } from './InputSlot';
 import { InputStyles } from './InputStyles';
 import { InputVariant } from './InputVariant';
 
-/**
- * Input 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/input/InputBasic" />），
- * 所以这里只负责串场，不要把示例代码写回本文件。
- */
+/** Input 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/input/InputBasic" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const InputDemo = () => {
   return (
     <ScrollView
@@ -46,7 +43,7 @@ const InputDemo = () => {
       </Section>
 
       <Section
-        description="error 在未聚焦时同样是红框，且优先级高于聚焦色。"
+        description="error 覆盖有边框变体且优先级高于聚焦色；none 需要由父容器呈现错误边界。"
         title="错误态（error）"
       >
         <InputError />
@@ -67,7 +64,7 @@ const InputDemo = () => {
       </Section>
 
       <Section
-        description="type=password 自带可见性切换，也可以用 passwordVisible 接管。"
+        description="type=password 自带切换按钮；defaultPasswordVisible 与 passwordVisible 分别对应非受控和受控模式。"
         title="密码框（type / passwordVisible）"
       >
         <InputPassword />
@@ -89,7 +86,7 @@ const InputDemo = () => {
 
       <Section
         description="variant=none 去掉自身边框，需要靠右时由调用方传 textAlign。"
-        title="Cell 内联（variant=none）"
+        title="无边框内联（variant=none）"
       >
         <InputInline />
       </Section>

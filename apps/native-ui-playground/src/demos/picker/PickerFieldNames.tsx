@@ -24,14 +24,12 @@ const DEPARTMENTS: PickerOption[] = [
 
 const PickerFieldNames = () => {
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8">
-        <PickerView
-          columns={DEPARTMENTS}
-          fieldNames={{ children: 'sub', label: 'name', value: 'id' }}
-          title="选择部门"
-        />
-      </View>
+    <View className="bg-background p-4">
+      <PickerView
+        columns={DEPARTMENTS}
+        fieldNames={{ children: 'sub', label: 'name', value: 'id' }}
+        title="选择部门"
+      />
     </View>
   );
 };

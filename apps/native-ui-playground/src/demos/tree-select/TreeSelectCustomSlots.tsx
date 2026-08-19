@@ -25,16 +25,19 @@ const TreeSelectCustomSlots = () => {
     <View className="bg-background p-4">
       <View className="overflow-hidden rounded-xl border border-border/60">
         <TreeSelect
+          className="rounded-xl border border-primary-200"
           classNames={{
             content: 'bg-primary-50',
             contentItem: 'px-5 py-4',
+            contentItemText: 'tracking-wide',
+            root: 'bg-primary-50',
             selectedIcon: 'accent-success',
             sidebar: 'w-28 self-stretch bg-primary-100'
           }}
           defaultActiveId="0-1"
           height={220}
           items={CITY_ITEMS}
-          sidebarClassNames={{ indicator: 'h-6 bg-success' }}
+          sidebarClassNames={{ indicator: 'h-6 bg-success', itemText: 'font-medium' }}
         />
       </View>
     </View>

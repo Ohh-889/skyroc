@@ -5,13 +5,16 @@ import { RadioCardBasic } from './RadioCardBasic';
 import { RadioCardGroup } from './RadioCardGroup';
 import { RadioColor } from './RadioColor';
 import { RadioControlled } from './RadioControlled';
+import { RadioCustomContent } from './RadioCustomContent';
 import { RadioDisabled } from './RadioDisabled';
 import { RadioGroupBasic } from './RadioGroupBasic';
 import { RadioHorizontalGroup } from './RadioHorizontalGroup';
+import { RadioIndicator } from './RadioIndicator';
 import { RadioLabelPosition } from './RadioLabelPosition';
 import { RadioShape } from './RadioShape';
 import { RadioSize } from './RadioSize';
 import { RadioSquareGroup } from './RadioSquareGroup';
+import { RadioStyles } from './RadioStyles';
 
 /** Radio 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/radio/RadioColor" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const RadioDemo = () => {
@@ -50,15 +53,22 @@ const RadioDemo = () => {
       </Section>
 
       <Section
-        description="disabled 阻止交互并降低整体透明度。"
+        description="iconSize 直接指定指示器尺寸；checkedIcon 可替换默认选中标记。"
+        title="指示器（iconSize / checkedIcon）"
+      >
+        <RadioIndicator />
+      </Section>
+
+      <Section
+        description="disabled 可用于单项或 RadioGroup，阻止交互并降低整体透明度。"
         title="禁用状态（disabled）"
       >
         <RadioDisabled />
       </Section>
 
       <Section
-        description="labelPosition 决定标签在左还是在右。"
-        title="标签位置（labelPosition）"
+        description="labelPosition 决定标签位置；labelDisabled 让标签不响应点击。"
+        title="标签交互（labelPosition / labelDisabled）"
       >
         <RadioLabelPosition />
       </Section>
@@ -71,7 +81,7 @@ const RadioDemo = () => {
       </Section>
 
       <Section
-        description="RadioGroup 统一维护单选值，子项用 name 声明自己的取值。"
+        description="RadioGroup 统一维护单选值，子项用 name 声明取值；空字符串也是合法 value。"
         title="分组（RadioGroup）"
       >
         <RadioGroupBasic />
@@ -89,6 +99,20 @@ const RadioDemo = () => {
         title="分组样式（color / shape）"
       >
         <RadioSquareGroup />
+      </Section>
+
+      <Section
+        description="className 覆盖容器，classNames 与 itemClassNames 分别覆盖单项和卡片组 slot。"
+        title="样式覆盖（className / classNames）"
+      >
+        <RadioStyles />
+      </Section>
+
+      <Section
+        description="Radio children 以及 RadioCard 的 label / description 都可传入自定义节点。"
+        title="自定义内容"
+      >
+        <RadioCustomContent />
       </Section>
 
       <Section

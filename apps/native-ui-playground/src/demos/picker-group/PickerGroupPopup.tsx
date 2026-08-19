@@ -40,8 +40,12 @@ const PickerGroupPopup = () => {
         <Text color="muted">当前：{tripLabel}</Text>
 
         <PickerGroup
+          enablePanDownToClose
           pickers={TRIP_PICKERS}
+          sheetClassName="bg-secondary"
+          sheetClassNames={{ handleBar: 'bg-primary' }}
           show={tripShow}
+          showHandle
           values={tripValues}
           onConfirm={setTripValues}
           onUpdateShow={setTripShow}

@@ -1,5 +1,5 @@
-import { Text } from '@skyroc/native-ui';
 import { ScrollView } from 'react-native';
+import { Section } from '@/src/components/Section';
 import { StepperBasic } from './StepperBasic';
 import { StepperBeforeChange } from './StepperBeforeChange';
 import { StepperControlled } from './StepperControlled';
@@ -7,6 +7,7 @@ import { StepperDecimal } from './StepperDecimal';
 import { StepperDisabled } from './StepperDisabled';
 import { StepperEmpty } from './StepperEmpty';
 import { StepperEvents } from './StepperEvents';
+import { StepperInputEvents } from './StepperInputEvents';
 import { StepperLongPress } from './StepperLongPress';
 import { StepperRange } from './StepperRange';
 import { StepperSize } from './StepperSize';
@@ -19,102 +20,106 @@ const StepperDemo = () => {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="pt-6 pb-20"
+      contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}
     >
-      {/* 基础用法 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">基础用法</Text>
-      <StepperBasic />
-
-      {/* 尺寸 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">尺寸</Text>
-      <StepperSize />
-
-      {/* 主题 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">主题</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="value 与 onChange 组成受控步进器；默认范围从 1 到安全整数上限。"
+        title="基础用法（value / onChange）"
       >
-        default 是连体式，round 是两枚圆钮 + 无底色输入框
-      </Text>
-      <StepperTheme />
+        <StepperBasic />
+      </Section>
 
-      {/* 步长与范围 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">步长与范围</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="size 提供 sm、md、lg 三档，按钮、输入框和字号同步变化。"
+        title="尺寸（size）"
       >
-        min 2 / max 10 / step 2，超出范围的输入失焦后被夹回边界
-      </Text>
-      <StepperRange />
+        <StepperSize />
+      </Section>
 
-      {/* 小数与整数 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">小数与整数</Text>
-      <StepperDecimal />
-
-      {/* 事件 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">事件</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="default 是连体式，round 是两枚圆形按钮与无底色输入框。"
+        title="外观主题（theme）"
       >
-        已在边界仍点击时只发 onOverlimit，不会再发 onMinus / onPlus
-      </Text>
-      <StepperEvents />
+        <StepperTheme />
+      </Section>
 
-      {/* 禁用 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">禁用</Text>
-      <StepperDisabled />
-
-      {/* 按需显示 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">按需显示</Text>
-      <StepperVisibility />
-
-      {/* 长按连续触发 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">长按连续触发</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="min / max 限定边界，step 决定每次加减的数值；输入失焦后同样会夹回范围。"
+        title="步长与范围（min / max / step）"
       >
-        按住 600ms 后每 150ms 触发一次，到边界自动停；长按结束时不会多跳一步
-      </Text>
-      <StepperLongPress />
+        <StepperRange />
+      </Section>
 
-      {/* 异步拦截 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">异步拦截</Text>
-      <StepperBeforeChange />
-
-      {/* 空值与自动修正 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">空值与自动修正</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="decimalLength 固定小数位，integer 强制整数；浮点步长会消除累加尾数。"
+        title="数值精度（decimalLength / integer）"
       >
-        allowEmpty 允许清空后保留空串；autoFixed=false 时失焦保留原始输入，既不修正也不提交
-      </Text>
-      <StepperEmpty />
+        <StepperDecimal />
+      </Section>
 
-      {/* 自定义样式 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">自定义样式</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="已在边界仍点击时只触发 onOverlimit，不再触发 onMinus / onPlus。"
+        title="按钮事件（onMinus / onPlus / onOverlimit）"
       >
-        className 覆盖根容器，classNames 细粒度覆盖各 slot
-      </Text>
-      <StepperStyles />
+        <StepperEvents />
+      </Section>
 
-      {/* 受控 */}
-      <Text className="mb-4 px-6 text-lg font-semibold">受控</Text>
-      <Text
-        className="mb-2 px-6"
-        color="muted"
+      <Section
+        description="ref 透传到底层 TextInput；onChangeText 反馈编辑文本，onBlur 提交并归一化数值。"
+        title="输入框事件与 ref"
       >
-        外部改值后输入框同步刷新；父级不更新 value 时界面也不会自己走
-      </Text>
-      <StepperControlled />
+        <StepperInputEvents />
+      </Section>
+
+      <Section
+        description="disabled 禁用整体，也可分别禁用输入框、减少按钮或增加按钮。"
+        title="禁用状态（disabled / disableInput / disableMinus / disablePlus）"
+      >
+        <StepperDisabled />
+      </Section>
+
+      <Section
+        description="showInput、showMinus、showPlus 分别控制三个组成部分是否渲染。"
+        title="按需显示"
+      >
+        <StepperVisibility />
+      </Section>
+
+      <Section
+        description="默认按住 600ms 后连续触发，到边界自动停止；longPress=false 只响应单击。"
+        title="长按连续触发（longPress）"
+      >
+        <StepperLongPress />
+      </Section>
+
+      <Section
+        description="beforeChange 支持同步或异步返回 false 拒绝新值，异步等待期间不会重复步进。"
+        title="变化前拦截（beforeChange）"
+      >
+        <StepperBeforeChange />
+      </Section>
+
+      <Section
+        description="allowEmpty 保留空输入；autoFixed=false 时失焦保留原文，既不修正也不提交。"
+        title="空值与自动修正"
+      >
+        <StepperEmpty />
+      </Section>
+
+      <Section
+        description="className 覆盖根容器，classNames 可覆盖输入框、按钮和加减图标。"
+        title="样式覆盖（className / classNames）"
+      >
+        <StepperStyles />
+      </Section>
+
+      <Section
+        description="外部按钮与 Stepper 共享 value，父级拒绝更新时组件不会自行改变显示值。"
+        title="外部控制（value）"
+      >
+        <StepperControlled />
+      </Section>
     </ScrollView>
   );
 };

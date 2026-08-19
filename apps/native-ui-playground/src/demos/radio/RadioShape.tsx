@@ -8,13 +8,13 @@ const RadioShape = () => {
         defaultChecked
         shape="round"
       >
-        Round (default)
+        圆形（默认）
       </Radio>
       <Radio
         defaultChecked
         shape="square"
       >
-        Square
+        方形
       </Radio>
     </View>
   );

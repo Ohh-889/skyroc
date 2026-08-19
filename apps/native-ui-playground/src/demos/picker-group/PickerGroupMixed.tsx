@@ -13,30 +13,38 @@ const MINUTES: PickerOption[] = Array.from({ length: 60 }, (_, i) => ({
   value: `${i}`
 }));
 
-/** 级联示例：省 → 市 */
+/** 使用 id / name / sub 字段的级联数据 */
 const REGIONS: PickerOption[] = [
   {
-    label: '浙江',
-    value: 'zhejiang',
-    children: [
-      { label: '杭州', value: 'hangzhou' },
-      { label: '宁波', value: 'ningbo' }
+    id: 'zhejiang',
+    name: '浙江',
+    sub: [
+      { id: 'hangzhou', name: '杭州' },
+      { id: 'ningbo', name: '宁波' }
     ]
   },
   {
-    label: '江苏',
-    value: 'jiangsu',
-    children: [
-      { label: '南京', value: 'nanjing' },
-      { label: '苏州', value: 'suzhou' }
+    id: 'jiangsu',
+    name: '江苏',
+    sub: [
+      { id: 'nanjing', name: '南京' },
+      { id: 'suzhou', name: '苏州' }
     ]
   }
 ];
 
 /** 混合形态：第一个 tab 是级联，第二个 tab 是多列 */
 const APPOINTMENT_PICKERS: PickerGroupItem[] = [
-  { columns: REGIONS, key: 'region', title: '地区' },
-  { columns: [HOURS, MINUTES], defaultValue: ['9', '30'], key: 'time', title: '时间' }
+  {
+    classNames: { itemText: 'text-primary' },
+    columns: REGIONS,
+    fieldNames: { children: 'sub', label: 'name', value: 'id' },
+    haptic: true,
+    key: 'region',
+    title: '地区',
+    visibleCount: 5
+  },
+  { columns: [HOURS, MINUTES], defaultValue: ['9', '30'], itemHeight: 52, key: 'time', title: '时间' }
 ];
 
 const PickerGroupMixed = () => {
