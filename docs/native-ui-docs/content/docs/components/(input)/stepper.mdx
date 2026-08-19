@@ -1,0 +1,241 @@
+---
+title: Stepper
+description: 数值步进器，支持长按连续触发与变更拦截
+---
+
+步进器（Stepper）由「减 + 输入框 + 加」三段组成，用于小幅度调整数量。加减按钮复用 `Button`（`size="icon"` + `variant="ghost"`），中间是一个受组件托管的 `TextInput`。值走 `useControllableState`，受控与非受控共用一条路径。
+
+```tsx
+import { Stepper } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+默认值为 1、最小值为 1、最大值为 `Number.MAX_SAFE_INTEGER`、步长为 1。传 `value` + `onChange` 即为受控。
+
+<Demo src="@playground/stepper/StepperBasic" />
+
+注意默认 `min` 是 **1** 而不是 0 —— 组件按「购物车数量」这个最常见场景取的默认值，需要归零请显式传 `min={0}`。
+
+## 何时使用
+
+- 数量、份数这类小范围整数调整（购物车、点单、打印份数）。
+- 范围大或不要求精确时用 `Slider`；需要任意数值输入时用 `Input` 配 `keyboardType`。
+
+## 尺寸
+
+`size` 同时决定按钮边长、输入框宽高与字号：
+
+| 尺寸 | 按钮    | 输入框（宽 × 高） | 数字字号        | 加减符号    |
+| ---- | ------- | ----------------- | --------------- | ----------- |
+| `sm` | 28 × 28 | 40 × 28           | `--text-xs`     | `text-base` |
+| `md` | 32 × 32 | 56 × 32           | `--text-sm`     | `text-lg`   |
+| `lg` | 40 × 40 | 64 × 40           | `--text-base`   | `text-xl`   |
+
+<Demo src="@playground/stepper/StepperSize" />
+
+数字字号用 `text-(length:--text-*)` 而不是 `text-sm` 简写：简写会连带输出 `line-height`，Uniwind 换算成绝对行高传给 RN 后，iOS 会把多出的空间全加在文字上方，表现为输入框里的数字偏下。
+
+## 外观主题
+
+| 主题      | 表现                                                   |
+| --------- | ------------------------------------------------------ |
+| `default` | 连体式：三段贴合成一条，两端圆角，整体 `bg-muted`      |
+| `round`   | 分离式：两枚圆钮（加号为 `bg-primary`）+ 无底色输入框  |
+
+<Demo src="@playground/stepper/StepperTheme" />
+
+## 步长与范围
+
+`min` / `max` 限定边界，`step` 决定每次加减的量。输入框失焦时同样会把值夹回范围。到达边界后对应按钮降到 50% 不透明度，但仍然可点 —— 点击时触发 `onOverlimit` 而不是继续步进。
+
+<Demo src="@playground/stepper/StepperRange" />
+
+## 数值精度
+
+`decimalLength` 固定小数位（`0` 表示强制取整到个位），`integer` 只允许整数。未指定 `decimalLength` 时按数值自身的小数位收敛，既能抹掉浮点累加的尾数（`0.1 + 0.2`），又不会截掉用户输入的精度。归一化顺序是**先定精度、再夹边界**，保证 `min` / `max` 始终成立。
+
+<Demo src="@playground/stepper/StepperDecimal" />
+
+`integer` 还会把键盘类型从 `decimal-pad` 换成 `number-pad`。
+
+## 按钮事件
+
+`onMinus` / `onPlus` 在点击对应按钮且值真的会变化时触发；已经在边界上还继续点，只触发 `onOverlimit(type)`。
+
+<Demo src="@playground/stepper/StepperEvents" />
+
+## 输入框事件与 ref
+
+`ref` 指向底层 `TextInput`，可以 `focus` / `blur` / `measure`（`showInput={false}` 时它始终是 `null`）。编辑过程中 `onChangeText` 反馈的是原始文本，值只在失焦时提交并归一化 —— 这样用户输到一半的 `1.` 不会被立刻改写。
+
+<Demo src="@playground/stepper/StepperInputEvents" />
+
+## 禁用
+
+`disabled` 禁用整体；也可以用 `disableInput` / `disableMinus` / `disablePlus` 分别禁用三个部分。
+
+<Demo src="@playground/stepper/StepperDisabled" />
+
+## 按需显示
+
+`showInput` / `showMinus` / `showPlus` 控制三个部分是否渲染，可以拼出「只读数量 + 加号」这类形态。
+
+<Demo src="@playground/stepper/StepperVisibility" />
+
+## 长按连续触发
+
+`longPress` 默认开启：按住 600ms 后进入连续触发，之后每 150ms 步进一次，到边界自动停止。长按结束时系统仍会补发一次 `press`，组件会把这一次吞掉，不会多走一步。
+
+<Demo src="@playground/stepper/StepperLongPress" />
+
+## 变化前拦截
+
+`beforeChange` 在值提交前调用，返回 `false`（或 resolve 为 `false`）即拒绝本次变化。它可以是异步的：长按期间如果上一次校验还没落定，本次触发会被跳过，避免读到同一个基准值连跳。
+
+<Demo src="@playground/stepper/StepperBeforeChange" />
+
+## 空值与自动修正
+
+- `allowEmpty`：失焦时允许输入框保持为空，否则空串会回滚成当前值。
+- `autoFixed`（默认 `true`）：失焦时把超范围的值修正回边界；设为 `false` 则保留用户输入的原始文本，既不修正也不提交。
+
+非法输入（`NaN`）在任何配置下都会回滚。
+
+<Demo src="@playground/stepper/StepperEmpty" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot        | 作用位置                                     |
+| ----------- | -------------------------------------------- |
+| `root`      | 根容器 `View`（横向排布与三段之间的间距）    |
+| `minus`     | 减少按钮容器                                 |
+| `minusIcon` | 减号文字（通过 Button 的 `classNames.text`）  |
+| `plus`      | 增加按钮容器                                 |
+| `plusIcon`  | 加号文字                                     |
+| `input`     | 中间的 `TextInput`                            |
+
+<Demo src="@playground/stepper/StepperStyles" />
+
+`className` 排在 `classNames.root` 之后参与合并，冲突时 `className` 优先。
+
+## 外部控制
+
+受控模式下父级拒绝更新时，组件不会自行改变显示值 —— 提交只写 `value`，显示态等 `value` 回流后才派生，界面与值不会脱节。
+
+<Demo src="@playground/stepper/StepperControlled" />
+
+## API
+
+### Stepper
+
+除下表外，`Stepper` 透传 `TextInput` 的属性（`accessibilityLabel`、`placeholder`、`maxLength`、`testID` 等），其中 `defaultValue`、`value`、`onChange`、`editable`、`style` 已被移除或由组件接管。透传属性展开在组件预置值之后，因此 `keyboardType`、`textAlign`、`selectTextOnFocus`、`allowFontScaling` 是可以覆盖的。
+
+<PropsTable
+  data={[
+    { name: 'value', description: '当前值（受控）', type: 'number' },
+    { name: 'defaultValue', description: '非受控初始值', type: 'number', default: '1' },
+    { name: 'onChange', description: '值变化回调', type: '(value: number) => void' },
+    { name: 'min', description: '最小值', type: 'number', default: '1' },
+    { name: 'max', description: '最大值', type: 'number', default: 'Number.MAX_SAFE_INTEGER' },
+    { name: 'step', description: '每次加减的数值', type: 'number', default: '1' },
+    {
+      name: 'size',
+      description: '尺寸，决定按钮边长、输入框宽高与字号',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    {
+      name: 'theme',
+      description: '外观主题，default 为连体式，round 为分离圆钮',
+      type: "'default' | 'round'",
+      default: "'default'"
+    },
+    { name: 'integer', description: '只允许整数，同时把键盘换成 number-pad', type: 'boolean', default: 'false' },
+    { name: 'decimalLength', description: '固定小数位数，0 表示取整到个位', type: 'number' },
+    {
+      name: 'longPress',
+      description: '长按连续触发：600ms 后每 150ms 步进一次',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'beforeChange',
+      description: '值变化前的拦截器，返回 false 阻止变化；长按期间上一次未结束时跳过本次',
+      type: '(value: number) => boolean | Promise<boolean>'
+    },
+    {
+      name: 'allowEmpty',
+      description: '允许输入框失焦后保持为空',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'autoFixed',
+      description: '失焦时自动修正超范围的值；关闭后保留原始文本，既不修正也不提交',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'disabled', description: '禁用整个组件', type: 'boolean', default: 'false' },
+    { name: 'disableInput', description: '仅禁用输入框', type: 'boolean', default: 'false' },
+    { name: 'disableMinus', description: '仅禁用减少按钮', type: 'boolean', default: 'false' },
+    { name: 'disablePlus', description: '仅禁用增加按钮', type: 'boolean', default: 'false' },
+    { name: 'showInput', description: '是否渲染输入框', type: 'boolean', default: 'true' },
+    { name: 'showMinus', description: '是否渲染减少按钮', type: 'boolean', default: 'true' },
+    { name: 'showPlus', description: '是否渲染增加按钮', type: 'boolean', default: 'true' },
+    { name: 'onMinus', description: '点击减少按钮且值会变化时触发', type: '() => void' },
+    { name: 'onPlus', description: '点击增加按钮且值会变化时触发', type: '() => void' },
+    {
+      name: 'onOverlimit',
+      description: '已在边界仍点击（或长按越界）时触发，此时不触发 onMinus / onPlus',
+      type: "(type: 'minus' | 'plus') => void"
+    },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<StepperSlots>' },
+    {
+      name: 'ref',
+      description: '底层 TextInput 的 ref；showInput 为 false 时始终为 null',
+      type: 'Ref<TextInput>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { StepperProps, StepperSize, StepperSlots, StepperStepType, StepperTheme } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="StepperTheme"
+  description="外观主题，default 为连体式，round 为分离圆钮。"
+  type="'default' | 'round'"
+/>
+
+<UnionType
+  name="StepperSize"
+  description="尺寸预设，决定按钮边长、输入框宽高与字号。"
+  type="'sm' | 'md' | 'lg'"
+/>
+
+<UnionType
+  name="StepperStepType"
+  description="步进方向，onOverlimit 用它区分是哪一侧越界。"
+  type="'minus' | 'plus'"
+/>
+
+<UnionType
+  name="StepperSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'input' | 'minus' | 'minusIcon' | 'plus' | 'plusIcon' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 StepperSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `stepperVariants` 与 `StepperVariantProps`。

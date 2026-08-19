@@ -1,0 +1,227 @@
+---
+title: NumberKeyboard
+description: 自定义数字键盘，用于密码、金额等场景
+---
+
+数字键盘（NumberKeyboard）在页面底部弹出一块自绘键盘，替代系统键盘用于密码、金额、验证码这类只需数字的输入。面板挂在 `Portal` 上（`zIndex` 900，低于 Toast 与 Notify），进出场用 Reanimated 的布局动画从自身高度之下滑入滑出。
+
+```tsx
+import { NumberKeyboard } from '@skyroc/native-ui';
+```
+
+面板通过 `Portal` 渲染，请确保 App 内已经挂了 `PortalHost`。
+
+## 基础用法
+
+`visible` 控制显隐，`value` + `onChange` 组成受控输入。键盘只负责算出**完整的新值**并抛出来，增删逻辑不用你自己拼。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardBasic" />
+
+## 何时使用
+
+- 支付密码、短信验证码、金额输入等只需数字、且不希望弹出系统键盘的场景。
+- 配合 `PasswordInput` 使用时，把 `PasswordInput` 的输入交给这块键盘驱动。
+- 普通文本输入请用 `Input`，不要用它替代系统键盘。
+
+## 标题与关闭按钮
+
+`title` 显示在标题栏中间，标题栏左右两侧是等宽区域，所以标题始终绝对居中。`closeButtonText` 在 `default` 主题下才会渲染标题栏右侧的关闭按钮（不传就没有）。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardTitle" />
+
+## 额外按键
+
+`extraKey` 传字符串时是一个额外键，`default` 主题把它放在左下角（`0` 的左侧）。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardExtraKey" />
+
+不传额外键时该位置留一个占位格，网格仍然是完整的 4×3，不会塌陷。
+
+## custom 主题
+
+`theme="custom"` 在右侧加一列竖排功能区：删除键占 1 份高度、完成键占 3 份，按键网格让出 1/4 宽度。此时关闭按钮在侧边栏（文案取 `closeButtonText`，缺省为「完成」），标题栏不再出现关闭按钮。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardCustomTheme" />
+
+## 两个额外按键
+
+`extraKey` 传长度为 2 的数组时是两个额外键，分别落在 `0` 的两侧 —— 这只在 `custom` 主题下成立，`default` 主题只取数组的第一项。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardTwoExtraKeys" />
+
+## 随机键序
+
+`randomKeyOrder` 让 1–9 每次**打开时**重新洗牌（Fisher-Yates），常用于密码输入防窥屏。关闭时不重排：退场动画还在播，此刻换顺序会让数字当场跳变。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardRandomOrder" />
+
+## 限制长度
+
+`maxLength` 达到后继续按数字键不再有反应（`onInput` 也不触发），删除键不受影响。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardMaxLength" />
+
+## 删除键
+
+`deleteButtonText` 替换默认的退格符号 `⌫`；`showDeleteKey={false}` 隐藏删除键，位置同样留占位格保持网格对齐（`custom` 主题下则是侧边栏少一个键）。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardHideDelete" />
+
+## 自定义删除内容
+
+`renderDelete` 返回任意节点作为删除键内容，优先级高于 `deleteButtonText`。按下后仍然走组件的单字符删除逻辑。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardCustomDelete" />
+
+## 事件回调
+
+| 回调       | 时机                                             |
+| ---------- | ------------------------------------------------ |
+| `onInput`  | 按下数字键或额外键（受 `maxLength` 限制）         |
+| `onDelete` | 按下删除键                                       |
+| `onChange` | 值变化，参数是算好的完整新值                     |
+| `onClose`  | 点击关闭 / 完成按钮                              |
+| `onBlur`   | 点击键盘外部，或点击关闭按钮（在 `onClose` 之后） |
+
+<Demo src="@playground/number-keyboard/NumberKeyboardEvents" />
+
+组件不会自己收起键盘 —— `visible` 始终由你控制，通常在 `onBlur` 里置为 `false`。
+
+## 外部保持可点
+
+`hideOnClickOutside={false}` 时不铺透明遮罩，键盘不做模态遮挡，下层内容照常可点，也就不再触发 `onBlur`。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardNonModal" />
+
+遮罩随 `visible` 立即消失而不等退场动画播完，这样收起途中的点击会落到下层内容上 —— 那正是此刻用户想点的东西。
+
+## 非受控用法
+
+不传 `value` 时输入值由键盘自己持有，`onChange` 照常抛出完整新值。注意受控传空串与不传 `value` 是两种语义，组件按 `value !== undefined` 判断。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardUncontrolled" />
+
+## 底部安全区
+
+`safeAreaInsetBottom` 默认开启，用 `pb-safe-or-1` 避让设备底部安全区（不依赖 `useSafeAreaInsets`，缺少 `SafeAreaProvider` 时也不会整个挂掉；安全区尺寸由应用根节点的 `Uniwind.updateInsets` 同步）。
+
+<Demo src="@playground/number-keyboard/NumberKeyboardSafeArea" />
+
+## 样式覆盖
+
+`className` 追加到面板根节点上，`classNames` 按 slot 细粒度覆盖，`style` 提供原生样式兜底：
+
+| slot              | 作用位置                                        |
+| ----------------- | ----------------------------------------------- |
+| `root`            | 面板根节点（底部圆角、背景、内边距）            |
+| `header`          | 标题栏                                          |
+| `headerSide`      | 标题栏左右等宽区域                              |
+| `title`           | 标题文字                                        |
+| `closeBtn`        | 标题栏关闭按钮文字                              |
+| `body`            | 按键区与侧边栏的横向容器                        |
+| `keys`            | 按键网格容器                                    |
+| `keyWrapper`      | 单个按键的外包层（只负责占格与沟槽）            |
+| `key`             | 单个按键本体（圆角、背景、按下态）              |
+| `keyText`         | 数字键文字                                      |
+| `sidebar`         | `custom` 主题的右侧功能区                        |
+| `deleteKey`       | 侧边栏删除键                                    |
+| `confirmKey`      | 侧边栏完成键                                    |
+| `functionKeyText` | 删除 / 完成等功能键的文字                        |
+
+<Demo src="@playground/number-keyboard/NumberKeyboardStyles" />
+
+间距体系是三处联动的：每个按键外包一层 `keyWrapper`（`p-1`），相邻按键之间自然形成 8px 沟槽，`root` 与 `sidebar` 的内边距同样取 1 —— 改刻度请三处一起改，否则键盘边缘会忽宽忽窄。
+
+## API
+
+### NumberKeyboard
+
+<PropsTable
+  data={[
+    { name: 'visible', description: '是否显示键盘', type: 'boolean', default: 'false' },
+    {
+      name: 'value',
+      description: '当前输入值；传了即为受控，长度限制与增删都以它为准',
+      type: 'string'
+    },
+    { name: 'onChange', description: '值变化回调，参数为算好的完整新值', type: '(value: string) => void' },
+    { name: 'onInput', description: '按下数字键或额外键时触发', type: '(key: string) => void' },
+    { name: 'onDelete', description: '按下删除键时触发', type: '() => void' },
+    { name: 'onClose', description: '点击关闭 / 完成按钮时触发', type: '() => void' },
+    { name: 'onBlur', description: '点击键盘外部或关闭按钮时触发', type: '() => void' },
+    { name: 'maxLength', description: '最大输入长度', type: 'number', default: 'Infinity' },
+    {
+      name: 'theme',
+      description: '键盘主题，custom 带右侧竖排功能区',
+      type: "'default' | 'custom'",
+      default: "'default'"
+    },
+    { name: 'title', description: '键盘标题', type: 'string' },
+    {
+      name: 'closeButtonText',
+      description: '关闭按钮文字；default 主题传了才显示标题栏关闭按钮，custom 主题缺省为「完成」',
+      type: 'string'
+    },
+    {
+      name: 'extraKey',
+      description: '额外按键，字符串为一个，长度为 2 的数组为两个（仅 custom 主题支持两个）',
+      type: 'string | [string, string]',
+      default: "''"
+    },
+    { name: 'showDeleteKey', description: '是否显示删除键', type: 'boolean', default: 'true' },
+    { name: 'deleteButtonText', description: '删除键文字，不传则显示退格符号 ⌫', type: 'string' },
+    { name: 'renderDelete', description: '自定义删除键内容，优先级高于 deleteButtonText', type: '() => ReactNode' },
+    {
+      name: 'randomKeyOrder',
+      description: '是否随机排列数字键，每次打开重新洗牌',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'hideOnClickOutside',
+      description: '点击外部是否触发 onBlur；为 false 时不做模态遮挡，下层内容保持可点',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'safeAreaInsetBottom', description: '是否适配底部安全区域', type: 'boolean', default: 'true' },
+    { name: 'className', description: '面板根节点类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<NumberKeyboardSlots>'
+    },
+    { name: 'style', description: '面板根节点的原生样式覆盖', type: 'StyleProp<ViewStyle>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { KeyType, NumberKeyboardProps, NumberKeyboardSlots, NumberKeyboardTheme } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="NumberKeyboardTheme"
+  description="键盘主题，custom 带右侧竖排功能区（删除 + 完成）。"
+  type="'custom' | 'default'"
+/>
+
+<UnionType
+  name="KeyType"
+  description="按键类型；placeholder 只占格不渲染按钮，用于把网格撑成完整的 4×3。"
+  type="'delete' | 'extra' | 'normal' | 'placeholder'"
+/>
+
+<UnionType
+  name="NumberKeyboardSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'body' | 'closeBtn' | 'confirmKey' | 'deleteKey' | 'functionKeyText' | 'header' | 'headerSide' | 'key' | 'keys' | 'keyText' | 'keyWrapper' | 'root' | 'sidebar' | 'title'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 NumberKeyboardSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `numberKeyboardVariants`。

@@ -1,0 +1,173 @@
+---
+title: Switch
+description: 立即生效的开关，支持加载态与自定义滑块内容
+---
+
+开关（Switch）用于在两个互斥状态之间即时切换。轨道是一个 `Pressable`，未选中底色直接挂在轨道上，选中色是叠在上面的一层 `Animated.View`，通过透明度淡入 —— 两层都用语义色 token，主题与暗色模式自动跟随，不需要在动画 worklet 里插值色值。滑块位移与选中色淡入共用 200ms 的 `withTiming`。
+
+```tsx
+import { Switch } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+传 `checked` + `onCheckedChange` 即为受控用法，这也是开关最常见的写法。
+
+<Demo src="@playground/switch/SwitchBasic" />
+
+## 何时使用
+
+- 设置项、开关型偏好这类「改完立刻生效」的场景。
+- 需要用户确认后才生效的选择请用 `Checkbox`；一组互斥选项请用 `Radio`。
+- 切换要走网络请求时，配合 `loading` 使用（见下文「异步切换」），不要让 UI 先翻转再回滚。
+
+## 非受控
+
+只传 `defaultChecked` 时选中态由组件内部维护，适合表单里由 `Form` 统一收集值的场景。
+
+<Demo src="@playground/switch/SwitchUncontrolled" />
+
+## 尺寸
+
+`size` 同时决定轨道宽高与滑块直径，滑块四周留白固定为 2：
+
+| 尺寸  | 轨道（宽 × 高） | 滑块 | 滑块位移 |
+| ----- | --------------- | ---- | -------- |
+| `xs`  | 28 × 16         | 12   | 12       |
+| `sm`  | 32 × 18         | 14   | 14       |
+| `md`  | 36 × 20         | 16   | 16       |
+| `lg`  | 40 × 22         | 18   | 18       |
+| `xl`  | 44 × 24         | 20   | 20       |
+| `2xl` | 52 × 28         | 24   | 24       |
+
+<Demo src="@playground/switch/SwitchSize" />
+
+尺寸不做成样式变体：轨道与滑块是像素级联动（内边距和位移距离都由两者算出），走尺寸映射表比拆成类名更直接。
+
+## 语义颜色
+
+`color` 决定开启状态的轨道颜色，同时决定 `loading` 指示器的颜色：
+
+| 颜色          | 开启轨道         | 语义                 |
+| ------------- | ---------------- | -------------------- |
+| `primary`     | `bg-primary`     | 常规开关（默认）     |
+| `success`     | `bg-success`     | 启用、已生效         |
+| `warning`     | `bg-warning`     | 需要注意的开关       |
+| `destructive` | `bg-destructive` | 危险开关，如关闭保护 |
+| `info`        | `bg-info`        | 信息性开关           |
+| `accent`      | `bg-accent`      | 强调色               |
+| `carbon`      | `bg-carbon`      | 中性深色             |
+| `secondary`   | `bg-secondary`   | 次级、弱化开关       |
+
+<Demo src="@playground/switch/SwitchColor" />
+
+关闭态与 `color` 无关，统一是 `bg-muted-foreground/30`。指示器颜色取 `accent-{color}`，只有 `secondary` 取 `accent-secondary-foreground` —— 浅色轨道上用同色指示器会看不见。
+
+## 禁用
+
+`disabled` 阻止切换并把整体降到 50% 不透明度，开启与关闭态都适用。
+
+<Demo src="@playground/switch/SwitchDisabled" />
+
+## 加载
+
+`loading` 在滑块内渲染一个 `ActivityIndicator`，同时阻止点击（与 `disabled` 等价）。指示器按滑块尺寸缩放：iOS 的 `ActivityIndicator` 会忽略数字 `size`（只撑大外框、指示器本身仍是固有尺寸），所以统一用 `size="small"` 再做 `scale`，两端表现才一致。
+
+<Demo src="@playground/switch/SwitchLoading" />
+
+## 异步切换
+
+受控 + `loading` 的组合可以做到「请求成功后再翻转」：`onCheckedChange` 只发起请求并打开 `loading`，`checked` 等落库成功后才更新。
+
+<Demo src="@playground/switch/SwitchAsync" />
+
+## 自定义滑块内容
+
+`children` 渲染在滑块内部，`string` / `number` 会自动包一层 `Text`。`loading` 时指示器优先，`children` 被临时隐藏。滑块空间很小，内容尺寸请自行控制（`2xl` 也只有 24px）。
+
+<Demo src="@playground/switch/SwitchThumb" />
+
+## 样式覆盖
+
+`className` 追加到轨道容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot             | 作用位置                                                       |
+| ---------------- | -------------------------------------------------------------- |
+| `root`           | 轨道容器 `Pressable`，同时承载关闭态底色                       |
+| `checkedOverlay` | 叠在轨道上的选中色层，透明度由动画驱动                         |
+| `thumb`          | 滑块（背景、阴影、圆角）                                       |
+| `indicator`      | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 颜色类   |
+
+<Demo src="@playground/switch/SwitchStyles" />
+
+`className` 排在 `classNames.root` 之后参与合并，冲突时 `className` 优先。轨道宽高与滑块尺寸走的是内联 `style`，类名改不动，需要非标准尺寸时请用 `size`。
+
+## 外部控制
+
+受控状态可以从组件外任意更新 —— 开关只是这份状态的一个视图。
+
+<Demo src="@playground/switch/SwitchControlled" />
+
+## 热区与无障碍
+
+轨道带 `hitSlop={4}`，`xs` / `sm` 这类小尺寸也有足够的点击区域。组件目前没有设置 `accessibilityRole` / `accessibilityState`，读屏器不会播报开关状态；需要完整读屏语义时，暂时只能在外层自行包裹带 `accessibilityRole="switch"` 的容器。
+
+## API
+
+### Switch
+
+<PropsTable
+  data={[
+    { name: 'checked', description: '受控选中态', type: 'boolean' },
+    { name: 'defaultChecked', description: '非受控初始选中态', type: 'boolean', default: 'false' },
+    { name: 'onCheckedChange', description: '选中态变化回调', type: '(checked: boolean) => void' },
+    {
+      name: 'color',
+      description: '开启状态的语义色，同时决定 loading 指示器颜色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸预设，决定轨道宽高与滑块直径',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'disabled', description: '禁用，阻止切换并降低不透明度', type: 'boolean', default: 'false' },
+    {
+      name: 'loading',
+      description: '加载态，滑块内显示指示器并阻止点击',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'children',
+      description: '滑块内容，string / number 会被自动包裹为 Text；loading 时由指示器替代',
+      type: 'ReactNode'
+    },
+    { name: 'className', description: '轨道容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<SwitchSlots>' },
+    { name: 'testID', description: '测试标识，挂在轨道容器上', type: 'string' },
+    { name: 'ref', description: '轨道容器（Pressable）的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SwitchProps, SwitchSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SwitchSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'checkedOverlay' | 'indicator' | 'root' | 'thumb'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SwitchSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `switchVariants` 与两张尺寸映射表 `SWITCH_SIZE_TRACK_MAP`（轨道宽高）、`SWITCH_SIZE_THUMB_MAP`（滑块直径）。

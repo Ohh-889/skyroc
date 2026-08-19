@@ -1,0 +1,240 @@
+---
+title: Signature
+description: 手写签名板，基于 Skia 绘制并导出 base64 图片
+---
+
+签名板（Signature）提供一块可手写的画布，并把笔迹导出为 base64 图片。绘制基于 `@shopify/react-native-skia`，手势基于 `react-native-gesture-handler`：整个书写过程跑在 UI 线程 —— 手势直接改写 shared value 里的 `SkPath`，Skia 自行重绘，一帧都不经过 React，只在落笔与抬笔时各跨回 JS 线程一次，用于维护撤销历史和触发回调。
+
+```tsx
+import { Signature } from '@skyroc/native-ui';
+```
+
+组件内部用到了 `GestureDetector`，请确保 App 根节点已经包了 `GestureHandlerRootView`。
+
+## 基础用法
+
+默认带一个底部按钮栏（清除 + 确认）。点确认触发 `onSubmit`，回调参数里 `image` 是 base64 data URI，`isEmpty` 表示画布是否为空。
+
+<Demo src="@playground/signature/SignatureBasic" />
+
+`tips` 是画布为空时显示的占位文字，落笔后自动消失，且不拦截触摸（`pointerEvents="none"`）。
+
+## 何时使用
+
+- 需要用户手写签名并留存图片：合同确认、签收单、回执。
+- 只是画个草图或涂鸦，也可以用它，但组件没有画笔粗细切换与橡皮擦。
+
+## 语义笔色
+
+`color` 决定笔迹颜色，默认 `carbon` —— 它在浅色主题下是近黑、深色主题下是近白，正好是「墨」该有的行为。写死 `#000` 会在深色模式下和深色画布糊成一片。
+
+<Demo src="@playground/signature/SignatureColor" />
+
+`secondary` 是浅底色，直接当笔色几乎不可见，因此内部取前景色代替。需要完全脱离主题时用 `penColor` 传具体色值。
+
+## 尺寸与线宽
+
+`size` 只决定画布高度（宽度撑满父容器），`lineWidth` 决定笔画粗细：
+
+| 尺寸 | 画布高度 |
+| ---- | -------- |
+| `sm` | 140      |
+| `md` | 200      |
+| `lg` | 280      |
+
+<Demo src="@playground/signature/SignatureSize" />
+
+## 命令式调用
+
+`ref` 暴露四个方法，配合 `showFooter={false}` 可以完全用自己的按钮驱动：
+
+| 方法          | 说明                                                   |
+| ------------- | ------------------------------------------------------ |
+| `clear()`     | 清空画布，并触发 `onClear`                              |
+| `undo()`      | 撤销最后一笔                                            |
+| `submit()`    | 等价于点确认按钮，结果走 `onSubmit`                     |
+| `toDataURL()` | 返回 `Promise<string>`，画布为空或快照失败时是空字符串  |
+
+<Demo src="@playground/signature/SignatureImperative" />
+
+撤销的实现是把每一笔以 SVG 字符串存进历史，撤销时用剩余笔画重建整条已完成路径 —— 存字符串而不是 `SkPath`，跨线程时不涉及宿主对象的生命周期。
+
+## 导出格式
+
+`type` 选择 `png`（默认）或 `jpeg`，`quality` 取值 0–100，缺省时 png 用 100、jpeg 用 80（签名是大片纯色，再高只是白白撑大 base64）。
+
+<Demo src="@playground/signature/SignatureJpeg" />
+
+JPEG 没有 alpha 通道，透明底会被压成纯黑。所以导出格式为 `jpeg` 且未指定 `backgroundColor`（或显式传了 `'transparent'`）时，组件会自动回落到画布的 `bg-background` 作为填充色。
+
+## 书写事件
+
+| 回调        | 时机                                       |
+| ----------- | ------------------------------------------ |
+| `onStart`   | 手指按下画布                               |
+| `onSigning` | 书写过程中每个采样点                       |
+| `onEnd`     | 手指抬起                                   |
+| `onClear`   | 清除时                                     |
+| `onSubmit`  | 每次提交，无论画布是否为空都恰好回调一次   |
+
+<Demo src="@playground/signature/SignatureEvents" />
+
+`onSigning` 要谨慎使用：绘制本身不经过 React，传了这个回调就意味着每个采样点都要跨回 JS 线程。只在确实需要「正在书写」指示（比如临时锁掉外层 `ScrollView`）时才传。
+
+采样本身也做了节流：两点间距小于 1.5px 的移动事件直接丢弃 —— 触摸流每秒能吐上百个几乎重合的点，全都入 path 既让曲线抖动，又把点数推高一个量级。笔迹用二次贝塞尔连接（以上一个采样点为控制点、两点中位数为终点），所以是圆滑曲线而不是折线；单点点按会补一段 0.01px 的极短线段，配合圆端帽正好落成一个圆点。
+
+## 自定义颜色与样式
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot         | 作用位置                                                  |
+| ------------ | --------------------------------------------------------- |
+| `root`       | 最外层 `View`（画布 + 按钮栏）                            |
+| `canvas`     | 画布容器（高度、边框、圆角、裁剪）                        |
+| `tips`       | 占位文字的定位容器                                        |
+| `tipsText`   | 占位文字本身                                              |
+| `footer`     | 底部按钮栏容器                                            |
+| `pen`        | **色源**：用 `text-*` 类给笔迹取色，不对应任何渲染节点     |
+| `background` | **色源**：用 `bg-*` 类给画布填充取色，不对应任何渲染节点   |
+
+<Demo src="@playground/signature/SignatureStyles" />
+
+`pen` / `background` 之所以是「色源」而不是普通 slot：Skia 的 `Canvas` 不吃 className，组件用 `useResolveClassNames` 把这两个槽解析成真实色值再喂给 `<Path>` / `<Fill>`，笔色和底色因此仍然跟随主题 token 与深浅模式。直接传 `penColor` / `backgroundColor` 会覆盖解析结果。
+
+## 禁用与只读
+
+`disabled` 阻止书写、把整体降到 50% 不透明度，并禁用底部两个按钮；`readonly` 只阻止书写，按钮仍可用（还能提交已有内容）。
+
+<Demo src="@playground/signature/SignatureDisabled" />
+
+## API
+
+### Signature
+
+<PropsTable
+  data={[
+    {
+      name: 'size',
+      description: '画布高度预设，宽度撑满父容器',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    {
+      name: 'color',
+      description: '笔迹的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'carbon'"
+    },
+    { name: 'lineWidth', description: '画笔线宽（px）', type: 'number', default: '3' },
+    {
+      name: 'penColor',
+      description: '画笔颜色，传入后覆盖 color 解析出的主题色；仅在需要脱离主题时使用',
+      type: 'string'
+    },
+    {
+      name: 'backgroundColor',
+      description: '画布填充色，会一并烘进导出图片；缺省为透明，jpeg 下自动回落到画布底色',
+      type: 'string'
+    },
+    { name: 'type', description: '导出图片格式', type: "'png' | 'jpeg'", default: "'png'" },
+    {
+      name: 'quality',
+      description: '导出图片质量，取值 0–100；缺省时 png 用 100、jpeg 用 80',
+      type: 'number'
+    },
+    { name: 'tips', description: '画布为空时显示的提示文字', type: 'string' },
+    { name: 'showFooter', description: '是否显示底部按钮栏（清除 + 确认）', type: 'boolean', default: 'true' },
+    { name: 'clearButtonText', description: '清除按钮文字', type: 'string', default: "'清除'" },
+    { name: 'confirmButtonText', description: '确认按钮文字', type: 'string', default: "'确认'" },
+    { name: 'disabled', description: '禁用，画布与底部按钮均不响应并整体置灰', type: 'boolean', default: 'false' },
+    {
+      name: 'readonly',
+      description: '只读，画布不接受输入但仍可提交已有内容',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'onStart', description: '开始签名（手指触摸画布）时触发', type: '() => void' },
+    {
+      name: 'onSigning',
+      description: '签名过程中持续触发；每次都要跨回 JS 线程，按需使用',
+      type: '() => void'
+    },
+    { name: 'onEnd', description: '签名结束（手指抬起）时触发', type: '() => void' },
+    { name: 'onClear', description: '清除签名时触发', type: '() => void' },
+    {
+      name: 'onSubmit',
+      description: '提交签名时触发，每次提交恰好回调一次',
+      type: '(data: SignatureSubmitData) => void'
+    },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「自定义颜色与样式」一节',
+      type: 'SlotClassNames<SignatureSlots>'
+    },
+    {
+      name: 'ref',
+      description: '组件实例引用，用于命令式调用 clear / undo / submit / toDataURL',
+      type: 'Ref<SignatureRef>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SignatureImageType, SignatureProps, SignatureRef, SignatureSubmitData } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SignatureImageType"
+  description="签名图片的导出格式。"
+  type="'jpeg' | 'png'"
+/>
+
+<UnionType
+  name="SignatureSlots"
+  description="可通过 classNames 覆盖的 slot 名称，其中 pen / background 是色源而非渲染节点。"
+  type="'background' | 'canvas' | 'footer' | 'pen' | 'root' | 'tips' | 'tipsText'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SignatureSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'SignatureSubmitData',
+      description: 'onSubmit 的回调参数。',
+      fields: [
+        {
+          name: 'image',
+          type: 'string',
+          description: 'Base64 编码的 data URI；画布为空时是空字符串，isEmpty 为 false 却拿到空串说明快照生成失败。',
+          required: true
+        },
+        { name: 'isEmpty', type: 'boolean', description: '画布是否为空。', required: true }
+      ]
+    },
+    {
+      name: 'SignatureRef',
+      description: '组件实例暴露的命令式方法。',
+      fields: [
+        { name: 'clear', type: '() => void', description: '清除画布上的所有内容。', required: true },
+        { name: 'undo', type: '() => void', description: '撤销最后一笔。', required: true },
+        { name: 'submit', type: '() => void', description: '触发提交，结果通过 onSubmit 返回。', required: true },
+        {
+          name: 'toDataURL',
+          type: '() => Promise<string>',
+          description: '生成签名图片的 data URI，画布为空或快照失败时返回空字符串。',
+          required: true
+        }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `signatureVariants` 与四个常量：`DEFAULT_SIGNATURE_LINE_WIDTH`（3）、`SIGNATURE_QUALITY_MAP`（png 100 / jpeg 80）、`SIGNATURE_MIN_SAMPLE_DISTANCE`（1.5）、`SIGNATURE_DOT_LENGTH`（0.01）。

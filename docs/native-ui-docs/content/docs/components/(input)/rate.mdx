@@ -1,0 +1,171 @@
+---
+title: Rate
+description: 星级评分，支持半星、只读小数与自定义图标
+---
+
+评分（Rate）用一排星星表达分值。每颗星由三层构成：空心星打底、实心星按填充比例裁剪覆盖、命中区平铺在最上层。两种星形取自同一字体族，字形轮廓完全对齐，半星裁剪时不会错位。
+
+```tsx
+import { Rate } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+默认 5 颗星、初始 0 分。传 `value` + `onChange` 即为受控，非受控用 `defaultValue`。
+
+<Demo src="@playground/rate/RateBasic" />
+
+## 何时使用
+
+- 让用户给内容打分，或展示已有的平均分（配 `readonly`）。
+- 只需要「赞 / 不赞」这类二元反馈时不要用评分。
+
+## 半星
+
+`allowHalf` 开启后，单颗星被切成左右两个命中区：点左半得 `.5` 分，点右半得整分。
+
+<Demo src="@playground/rate/RateHalf" />
+
+可交互时分值一律量化到 0.5，保证「点出来的分值」与「看到的星」始终一致。
+
+## 可清除
+
+`clearable` 允许再次点中当前分值时归零。关闭时重复点击同一分值不会触发 `onChange`。
+
+<Demo src="@playground/rate/RateClearable" />
+
+## 数量与尺寸
+
+| 属性     | 含义                                 | 默认值 |
+| -------- | ------------------------------------ | ------ |
+| `count`  | 星星总数，非整数向下取整、负数按 0    | 5      |
+| `size`   | 图标边长（px），同时是半星裁剪基准    | 24     |
+| `gutter` | 星星间距（px）                        | 4      |
+
+<Demo src="@playground/rate/RateSize" />
+
+分值会被裁进 `[0, count]`，越界入参不至于渲染出半截星或多余的空星。
+
+## 主题色
+
+`color` 决定点亮星的颜色，默认是 `warning`（金色星）。未点亮的星统一用 `accent-muted-foreground`。
+
+<Demo src="@playground/rate/RateColor" />
+
+`secondary` 是浅底色，直接当星色几乎不可见，因此内部取前景色代替。
+
+## 只读小数
+
+`readonly` 时不响应点击；与 `allowHalf` 一起使用会放开填充精度，可以渲染 3.7 星这类统计值 —— 这是唯一允许任意小数的组合，其余情况都会量化。
+
+<Demo src="@playground/rate/RateReadonly" />
+
+## 禁用
+
+`disabled` 阻止点击、把整体降到 50% 不透明度，并把点亮星的颜色改为灰色（与 `readonly` 的区别：只读保留原色）。
+
+<Demo src="@playground/rate/RateDisabled" />
+
+## 自定义图标
+
+`icon` / `voidIcon` 接受一个节点，或 `(index, active) => 节点` 的函数（函数式写法可以按星索引给出不同图标，例如笑脸评分）。
+
+<Demo src="@playground/rate/RateIcon" />
+
+自定义图标的实际宽度必须与 `size` 一致，否则半星遮罩按 `size` 裁剪会与图标错位。矢量图标不认 `className`，取色请用 `withUniwind` 把 `accent-*` 映射到 `color`，或直接在图标上写死颜色。
+
+## 自定义样式
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot       | 作用位置                                                     |
+| ---------- | ------------------------------------------------------------ |
+| `root`     | 根容器 `View`（横向排布，间距由 `gutter` 决定）               |
+| `item`     | 单颗星的容器                                                 |
+| `icon`     | 点亮星的 `colorClassName`，只接受 `accent-*` 颜色类           |
+| `voidIcon` | 未点亮星的 `colorClassName`，只接受 `accent-*` 颜色类         |
+
+<Demo src="@playground/rate/RateStyles" />
+
+`icon` / `voidIcon` 两个 slot 只在使用内置星星时生效；传了自定义图标后取色由你自己负责。
+
+## 受控
+
+分值完全由外部 state 决定，其它控件也可以改写它。
+
+<Demo src="@playground/rate/RateControlled" />
+
+## 热区
+
+单颗星默认只有 24pt，半星模式下横向命中区更是只剩一半。横向补偿会与相邻星互抢点击，因此组件只补纵向：`hitSlop={{ top: 10, bottom: 10 }}`，把可点高度抬到 44pt 附近。命中区不嵌套 `Pressable`，左右两半是平级的兄弟节点，避免内外层互抢触摸响应。
+
+## API
+
+### Rate
+
+<PropsTable
+  data={[
+    { name: 'value', description: '当前分值（受控）', type: 'number' },
+    { name: 'defaultValue', description: '非受控初始分值', type: 'number', default: '0' },
+    { name: 'onChange', description: '分值变化回调', type: '(value: number) => void' },
+    { name: 'count', description: '星星总数，非整数向下取整', type: 'number', default: '5' },
+    { name: 'size', description: '图标边长（px），同时是半星遮罩的裁剪基准', type: 'number', default: '24' },
+    { name: 'gutter', description: '星星间距（px）', type: 'number', default: '4' },
+    {
+      name: 'color',
+      description: '点亮星的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'warning'"
+    },
+    {
+      name: 'allowHalf',
+      description: '允许半星：左半区选半星、右半区选满星',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'clearable',
+      description: '再次点中当前分值时清零',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'readonly',
+      description: '只读，不响应点击；配合 allowHalf 可渲染任意小数',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'disabled', description: '禁用，不响应点击并整体置灰', type: 'boolean', default: 'false' },
+    { name: 'icon', description: '点亮态图标，缺省为实心星', type: 'RateIcon' },
+    { name: 'voidIcon', description: '未点亮态图标，缺省为空心星', type: 'RateIcon' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「自定义样式」一节', type: 'SlotClassNames<RateSlots>' },
+    { name: 'ref', description: '根容器 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { RateIcon, RateProps, RateSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="RateIcon"
+  description="星星图标：直接给节点，或按星索引与点亮态动态返回节点。自定义图标的宽度必须与 size 一致。"
+  type="ReactNode | ((index: number, active: boolean) => ReactNode)"
+/>
+
+<UnionType
+  name="RateSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'icon' | 'item' | 'root' | 'voidIcon'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 RateSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `rateVariants` 与四个常量：`DEFAULT_RATE_COUNT`（5）、`DEFAULT_RATE_SIZE`（24）、`DEFAULT_RATE_GUTTER`（4）、`RATE_HIT_SLOP`（纵向 10）。

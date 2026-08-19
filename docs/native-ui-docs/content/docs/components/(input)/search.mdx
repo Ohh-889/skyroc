@@ -1,0 +1,203 @@
+---
+title: Search
+description: 搜索栏，内置放大镜、清除按钮与取消操作
+---
+
+搜索栏（Search）是 `Input` 的场景化封装：输入框本体完全委托给 `Input`（固定 `variant="filled"`、默认开启 `clearable`），本组件只负责外层布局、左侧标签、默认放大镜图标和右侧操作按钮。值同样由 `Input` 托管，受控传 `value` + `onChangeText`，非受控传 `defaultValue`。
+
+```tsx
+import { Search } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+只给 `placeholder` 就能得到一个完整搜索框：左侧放大镜、灰底输入区、有值时出现清除按钮，键盘右下角是「搜索」键。
+
+<Demo src="@playground/search/SearchBasic" />
+
+## 何时使用
+
+- 列表页、商品页顶部的关键词检索入口。
+- 需要「标签 + 搜索框 + 取消」这类组合的搜索页头部，用 `label` 与 `showAction` 拼装。
+- 只是一个普通文本输入（不含搜索语义）时用 `Input`，不要用 `Search`。
+
+## 形状
+
+`shape` 控制输入区圆角：
+
+| 形状     | 圆角                                       |
+| -------- | ------------------------------------------ |
+| `square` | 跟随 `size`（`sm` 小、`lg` 大），默认      |
+| `round`  | 恒为胶囊形（`rounded-full`）               |
+
+<Demo src="@playground/search/SearchShape" />
+
+`square` 本身不输出任何圆角类，把圆角交回 `Input` 按 `size` 决定 —— 否则统一写死一档圆角会把三种尺寸拍平成同一个视觉比例。
+
+## 尺寸
+
+`size` 同时作用于外层留白、搜索图标像素大小，并直接透传给内部 `Input`（决定高度与字号）：
+
+| 尺寸 | 外层内边距            | 图标 | 输入框高度 |
+| ---- | --------------------- | ---- | ---------- |
+| `sm` | `px-2 py-1.5`（8 / 6）  | 14   | 40         |
+| `md` | `px-3 py-2`（12 / 8）   | 16   | 48         |
+| `lg` | `px-4 py-2.5`（16 / 10）| 18   | 64         |
+
+<Demo src="@playground/search/SearchSize" />
+
+## 标签与操作
+
+`label` 渲染在输入框左侧，`showAction` 打开右侧操作按钮，按钮内容由 `action` 决定（默认文本「取消」），点击触发 `onCancel`。两者都接受 `string` / `number`（自动包一层 `Text`）或任意节点（原样渲染）。
+
+<Demo src="@playground/search/SearchLabelAction" />
+
+操作按钮只是一个带 `role="button"` 的 `Pressable`，组件不会替你收起键盘或清空输入 —— 取消的语义由 `onCancel` 自行实现。
+
+## 清除按钮
+
+`clearable` 默认为 `true`（这点与 `Input` 相反），有值且未禁用时在输入区尾部显示清除按钮。清空动作由 `Input` 完成，`onClear` 只是通知。
+
+<Demo src="@playground/search/SearchClearable" />
+
+## 受控用法
+
+传 `value` + `onChangeText` 即为受控。`onSearch` 在键盘搜索键按下时触发，参数是提交那一刻输入框里的文本。
+
+<Demo src="@playground/search/SearchControlled" />
+
+## 非受控用法
+
+不传 `value` 时输入值由内部 `Input` 托管。`onSearch` 的参数取自提交事件的 `nativeEvent.text`，因此非受控下同样拿得到完整文本，不必自己再存一份 state。
+
+<Demo src="@playground/search/SearchUncontrolled" />
+
+`onSubmitEditing` 也照常触发（在 `onSearch` 之后），需要原始事件对象时用它。
+
+## 自定义前置内容
+
+`leading` 传入后完全取代默认放大镜图标，可用于「定位图标 + 城市搜索」这类变体。
+
+<Demo src="@playground/search/SearchCustom" />
+
+图标不会自动继承主题色：`@expo/vector-icons` 的组件不认 `className`，demo 里用 `withUniwind` 把 `accent-*` 工具类映射到 `color`。
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 覆盖搜索栏自身的 slot，`inputClassNames` 继续下钻到内部 `Input` 的 slot：
+
+| slot         | 归属               | 作用位置                              |
+| ------------ | ------------------ | ------------------------------------- |
+| `root`       | `classNames`       | 最外层 `View`（横向排布、内边距）     |
+| `label`      | `classNames`       | 左侧标签文字                          |
+| `input`      | `classNames`       | 内部 `Input` 的根节点（背景、圆角）   |
+| `action`     | `classNames`       | 右侧操作按钮容器 `Pressable`          |
+| `actionText` | `classNames`       | 右侧操作按钮的文字                    |
+| `control`    | `inputClassNames`  | 内部 `Input` 的 `TextInput`           |
+| `action`     | `inputClassNames`  | 内部 `Input` 的清除按钮容器           |
+
+<Demo src="@playground/search/SearchStyles" />
+
+输入框根节点用 `classNames.input` 即可，`inputClassNames.root` 也会被合并进去，但不必两处都写。搜索图标的颜色由内部的 `accent-muted-foreground` 决定，不在可覆盖的 slot 内；需要换色请用 `leading` 自己传图标。
+
+## 禁用
+
+`disabled` 透传给内部 `Input`：输入不可编辑、整体降到 50% 不透明度、清除按钮消失。右侧操作按钮不受影响，需要一并禁用时自行处理 `onCancel`。
+
+<Demo src="@playground/search/SearchDisabled" />
+
+## API
+
+### Search
+
+`Search` 继承 `Input` 的属性（`placeholder`、`value`、`defaultValue`、`onChangeText`、`disabled`、`error`、`type`、`trailing` 以及 `TextInput` 的原生属性），其中 `variant` 被固定为 `filled` 而不对外开放，`className` / `classNames` / `leading` 的语义见下表。
+
+<PropsTable
+  data={[
+    {
+      name: 'shape',
+      description: '输入区圆角形状，square 跟随 size，round 恒为胶囊',
+      type: "'square' | 'round'",
+      default: "'square'"
+    },
+    {
+      name: 'size',
+      description: '尺寸，决定外层留白、图标大小，并透传给内部 Input',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    { name: 'label', description: '左侧标签内容，string / number 自动包裹 Text', type: 'ReactNode' },
+    {
+      name: 'leading',
+      description: '左侧内容，传入后完全取代默认放大镜图标',
+      type: 'ReactNode'
+    },
+    { name: 'showAction', description: '是否显示右侧操作按钮', type: 'boolean', default: 'false' },
+    {
+      name: 'action',
+      description: '右侧操作按钮内容，string / number 自动包裹 Text',
+      type: 'ReactNode',
+      default: "'取消'"
+    },
+    { name: 'onCancel', description: '点击右侧操作按钮的回调', type: '() => void' },
+    {
+      name: 'onSearch',
+      description: '键盘搜索键触发，参数为提交时输入框内的文本',
+      type: '(value: string) => void'
+    },
+    {
+      name: 'clearable',
+      description: '是否可清除，有值且未禁用时显示清除按钮',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'returnKeyType',
+      description: '键盘右下角按键类型，透传给底层 TextInput',
+      type: 'TextInputProps["returnKeyType"]',
+      default: "'search'"
+    },
+    { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '搜索栏各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<SearchSlots>'
+    },
+    {
+      name: 'inputClassNames',
+      description: '内部 Input 各 slot 的类名覆盖，主要用于 control 与 action',
+      type: 'SlotClassNames<InputSlots>'
+    },
+    {
+      name: 'ref',
+      description: '内部 TextInput 的 ref，可调用 focus / blur / clear 等原生方法',
+      type: 'Ref<TextInput>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { SearchProps, SearchSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="SearchSlots"
+  description="可通过 classNames 覆盖的 slot 名称，input 落在内部 Input 的根节点上。"
+  type="'action' | 'actionText' | 'input' | 'label' | 'root'"
+/>
+
+<UnionType
+  name="InputSlots"
+  description="内部 Input 的 slot 名称，供 inputClassNames 使用。"
+  type="'action' | 'control' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `searchVariants`、`SearchVariantProps` 与 `SEARCH_ICON_SIZE_MAP`（各尺寸下搜索图标的像素大小）。

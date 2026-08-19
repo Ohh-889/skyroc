@@ -1,0 +1,202 @@
+---
+title: PickerGroup
+description: 分组选择器，多个滚轮共用一套工具栏按 tab 逐个填
+---
+
+分组选择器（PickerGroup）把多个 `PickerView` 组织成 tab，共用一套工具栏，主按钮在非末尾 tab 上是「下一步」、走到最后一个才是「确定」。典型场景是「起始时间 / 结束时间」这类需要分步填写的组合。包含两个组件：`PickerGroupView` 内联，`PickerGroup` 装进底部弹层。
+
+```tsx
+import { PickerGroup, PickerGroupView } from '@skyroc/native-ui';
+```
+
+`PickerGroup` 依赖 `@gorhom/bottom-sheet`，请确保 App 根节点已经包了 `GestureHandlerRootView` 与 `BottomSheetModalProvider`。
+
+## 基础用法与事件
+
+`pickers` 声明每个 tab 的标题与列数据，选中值是 `string[][]`（外层按 tab、内层按列）。
+
+<Demo src="@playground/picker-group/PickerGroupBasic" />
+
+四个回调各司其职：`onChange` 在滚动过程中实时触发并回传变化的 tab 下标，`onTabChange` 在切 tab 时触发，`onCancel` 与 `onConfirm` 分别对应工具栏的两个按钮。
+
+## 受控模式
+
+`activeTab` + `onTabChange` 控制当前 tab，`values` + `onChange` 控制所有选中值。两者都可以只用非受控（`defaultActiveTab` / `defaultValues`）。
+
+<Demo src="@playground/picker-group/PickerGroupControlled" />
+
+`defaultValues` 缺省时逐个取 `pickers[i].defaultValue`。
+
+## 显示控制与文案
+
+`showTabBar` / `showToolbar` 控制两条栏是否渲染，`cancelText` / `nextStepText` / `confirmText` 分别定制取消、下一步与确定的文案。
+
+<Demo src="@playground/picker-group/PickerGroupDisplay" />
+
+## 弹层用法
+
+`PickerGroup` 在 `PickerGroupView` 之上加了一层「确定才提交」：面板打开期间的滚动与切 tab 都只写内部临时值，在最后一个 tab 点确定才写进 `values` 并触发 `onConfirm`。每次打开都会把临时值重置回已确认值、tab 拨回第一个。
+
+<Demo src="@playground/picker-group/PickerGroupPopup" />
+
+因为面板每次打开都要回到第一个 tab，`activeTab` / `defaultActiveTab` 在 `PickerGroup` 上不开放 —— 受控的 tab 与这条规则冲突，接了也会被立刻覆盖。
+
+滚轮需要独占垂直手势，所以内部关掉了面板的内容拖拽，下拉关闭只剩顶部 handle：`enablePanDownToClose` 要配合 `showHandle` 一起传。
+
+## 选择器配置
+
+`pickers` 里的每一项都是独立的 `PickerGroupItem`，可以各自配置 `columns`（单列 / 多列 / 级联）、`fieldNames`、`haptic`、`itemHeight`、`visibleCount`、`loading` 以及该滚轮的 `classNames`。
+
+<Demo src="@playground/picker-group/PickerGroupMixed" />
+
+切 tab 时对应的滚轮会整块重建（`key` 随 tab 变化）：两个 tab 的列数与级联结构可能完全不同，复用同一棵滚轮反而要多做一轮修正。给每项传稳定的 `key` 可以让这个身份更明确。
+
+## 单个选择器
+
+`pickers` 只有一项时 tab 栏自动隐藏（`showTabBar` 也管不着），主按钮直接显示「确定」。
+
+<Demo src="@playground/picker-group/PickerGroupSingle" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot              | 作用位置                       |
+| ----------------- | ------------------------------ |
+| `root`            | 根容器                         |
+| `toolbar`         | 顶部工具栏容器                 |
+| `cancel`          | 取消按钮容器                   |
+| `cancelText`      | 取消按钮文字                   |
+| `confirm`         | 确定 / 下一步按钮容器          |
+| `confirmText`     | 确定 / 下一步按钮文字          |
+| `tabBar`          | tab 栏容器                     |
+| `tab`             | 单个 tab                       |
+| `tabText`         | tab 文字（激活态会加粗变主题色）|
+| `activeIndicator` | 激活 tab 底部的指示条          |
+
+<Demo src="@playground/picker-group/PickerGroupStyles" />
+
+滚轮本身的 slot 不在这里，走 `pickers[i].classNames`（取值为 `PickerSlots`）。
+
+## API
+
+### PickerGroupView
+
+<PropsTable
+  data={[
+    { name: 'pickers', description: '各个选择器的配置', type: 'PickerGroupItem[]', required: true },
+    { name: 'values', description: '所有选择器的选中值（受控），外层按 tab、内层按列', type: 'string[][]' },
+    {
+      name: 'defaultValues',
+      description: '所有选择器的非受控初始值；缺省时逐个取 pickers[i].defaultValue',
+      type: 'string[][]'
+    },
+    {
+      name: 'onChange',
+      description: '任意选择器滚动时实时触发，回传全部值与变化的 tab 下标',
+      type: '(values: string[][], pickerIndex: number) => void'
+    },
+    { name: 'activeTab', description: '当前激活的 tab 下标（受控）', type: 'number' },
+    { name: 'defaultActiveTab', description: '非受控初始 tab 下标', type: 'number', default: '0' },
+    { name: 'onTabChange', description: '激活 tab 变化的回调', type: '(index: number) => void' },
+    {
+      name: 'onConfirm',
+      description: '在最后一个 tab 点击确定时触发，回传所有选中值',
+      type: '(values: string[][]) => void'
+    },
+    { name: 'onCancel', description: '点击取消的回调，回传所有选中值', type: '(values: string[][]) => void' },
+    { name: 'showToolbar', description: '是否显示顶部工具栏', type: 'boolean', default: 'true' },
+    {
+      name: 'showTabBar',
+      description: '是否显示 tab 栏；只有一个选择器时始终不显示',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'cancelText', description: '取消按钮文字', type: 'string', default: "'取消'" },
+    { name: 'confirmText', description: '最后一个 tab 上主按钮的文字', type: 'string', default: "'确定'" },
+    { name: 'nextStepText', description: '非末尾 tab 上主按钮的文字', type: 'string', default: "'下一步'" },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<PickerGroupSlots>'
+    }
+  ]}
+/>
+
+### PickerGroup
+
+`PickerGroup` 继承 `PickerGroupView` 的属性，但不含 `activeTab` / `defaultActiveTab`；`values` 表示**已确认值**，面板内的滚动不会写它。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示弹层', type: 'boolean', required: true },
+    { name: 'onUpdateShow', description: '显示状态变化回调', type: '(show: boolean) => void' },
+    {
+      name: 'children',
+      description: '触发元素：节点会被包一层 Pressable，渲染函数可拿到 open 与已确认 values',
+      type: 'ReactNode | ((params: { open: () => void; values: string[][] }) => ReactNode)'
+    },
+    { name: 'closeOnBackdropPress', description: '点击遮罩是否关闭', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示面板顶部的拖拽指示条', type: 'boolean', default: 'false' },
+    {
+      name: 'enablePanDownToClose',
+      description: '是否允许下拉关闭，需要同时开启 showHandle 才有可拖之处',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'sheetClassName', description: '内部 Sheet 面板本体的类名（className 给的是选择器那块）', type: 'string' },
+    { name: 'sheetClassNames', description: '内部 Sheet 各 slot 的类名覆盖', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 dismiss / snapToIndex / expand 等命令式操作',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { PickerGroupItem, PickerGroupProps, PickerGroupSlots, PickerGroupViewProps } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="PickerGroupSlots"
+  description="可通过 classNames 覆盖的 slot 名称；滚轮本身的 slot 走 pickers[i].classNames。"
+  type="'activeIndicator' | 'cancel' | 'cancelText' | 'confirm' | 'confirmText' | 'root' | 'tab' | 'tabBar' | 'tabText' | 'toolbar'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 PickerGroupSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'PickerGroupItem',
+      description: '组内单个选择器的配置，字段语义与 PickerView 的同名属性一致。',
+      fields: [
+        { name: 'title', type: 'string', description: 'tab 标签文字。', required: true },
+        {
+          name: 'columns',
+          type: 'PickerOption[] | PickerOption[][]',
+          description: '列数据：单列、多列或带 children 的级联。',
+          required: true
+        },
+        { name: 'key', type: 'string', description: '该 tab 的唯一标识，缺省时退回下标。' },
+        { name: 'defaultValue', type: 'string[]', description: '该选择器的默认选中值。' },
+        { name: 'fieldNames', type: 'PickerFieldNames', description: '自定义字段名映射。' },
+        { name: 'itemHeight', type: 'number', description: '每个选项的高度（px）。' },
+        { name: 'visibleCount', type: 'number', description: '每列可见的选项数，必须取奇数。' },
+        { name: 'haptic', type: 'boolean', description: '滚过一格时是否触发轻触反馈。' },
+        { name: 'loading', type: 'boolean', description: '是否显示加载遮罩。' },
+        { name: 'classNames', type: 'SlotClassNames<PickerSlots>', description: '覆盖该滚轮各 slot 的类名。' }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `pickerGroupVariants`。

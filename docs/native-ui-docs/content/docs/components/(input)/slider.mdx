@@ -1,0 +1,234 @@
+---
+title: Slider
+description: 单值 / 区间滑块，支持垂直方向与自定义滑块
+---
+
+滑块（Slider）在连续或分档的取值范围内选择一个值或一段区间。手势基于 `react-native-gesture-handler`，位移与激活段由 `react-native-reanimated` 的 shared value 在 UI 线程驱动 —— 拖拽期间的权威值全在 UI 线程上，React 状态只是它的渲染镜像，重渲染跟不跟得上都不影响跟手性。
+
+```tsx
+import { Slider } from '@skyroc/native-ui';
+```
+
+组件内部用到了 `GestureDetector`，请确保 App 根节点已经包了 `GestureHandlerRootView`。
+
+## 基础用法
+
+默认取值范围 `0 ~ 100`、步长 1。传 `value` + `onChange` 即为受控，`onChange` 在拖拽过程中实时触发。
+
+<Demo src="@playground/slider/SliderBasic" />
+
+## 何时使用
+
+- 连续量的粗略调节：音量、亮度、透明度、价格区间。
+- 需要精确输入数值时用 `Stepper` 或 `Input`，滑块不适合要求精度的场景。
+- 分档很少（3 ~ 5 档）时考虑 `Radio`，比让用户对准刻度更省事。
+
+## 步长与范围
+
+`min` / `max` 限定范围，`step` 决定取值粒度：所有取值都会对齐到 `min + n × step`，再夹回边界。
+
+<Demo src="@playground/slider/SliderStep" />
+
+## 边界值
+
+组件对异常入参做了兜底，不会把 `NaN` 或倒置的区间传进布局：
+
+| 情况              | 行为                                    |
+| ----------------- | --------------------------------------- |
+| 值越界            | 夹回 `min` / `max`                       |
+| `step` ≤ 0        | 按 1 处理                                |
+| `min === max`     | 比例退化为 0，滑块停在起点              |
+| 区间未传初值      | 两端都停在 `min`，而不是 `[min, 0]`      |
+| 区间初值首尾倒置  | 后一个值夹到不小于前一个                |
+
+<Demo src="@playground/slider/SliderBoundary" />
+
+## 区间选择
+
+`range` 设为 `true` 后渲染两个滑块，值类型随之变成 `[number, number]` —— 这是一个判别联合，TypeScript 会替你把值形状对上。两端互为边界，不允许穿越：允许穿越会让松手后「手上这个滑块」变成另一个，比夹住更难用。
+
+<Demo src="@playground/slider/SliderRange" />
+
+## 拖动结束事件
+
+`onChange` 在拖拽过程中每帧触发，`onChangeAfterDrag` 只在值稳定后触发一次 —— 松手、点击轨道、辅助技术步进各一次。需要发请求或落库时用后者。
+
+<Demo src="@playground/slider/SliderChangeAfterDrag" />
+
+## 语义颜色
+
+`color` 同时决定激活段的填充色与默认圆钮的描边色（圆钮内部始终是 `bg-background`）。
+
+<Demo src="@playground/slider/SliderColor" />
+
+未激活的底轨与 `color` 无关，统一是 `bg-muted-foreground/20`。
+
+## 尺寸
+
+尺寸不做成枚举档位，直接给两个像素值：
+
+| 属性        | 含义                                             | 默认值 |
+| ----------- | ------------------------------------------------ | ------ |
+| `barSize`   | 轨道粗细，水平模式是高、垂直模式是宽             | 2      |
+| `thumbSize` | 滑块直径，同时决定轨道两端各自内缩的量（半径）   | 24     |
+
+<Demo src="@playground/slider/SliderSize" />
+
+轨道只有 2px，直接挂手势等于没有命中区，所以外面套了一层透明命中层，交叉轴跨度取 `max(thumbSize, 44)` —— 视觉上仍然只看得到那条细轨，可点面积却不低于系统建议的 44pt。轨道两端各内缩半个滑块，圆钮因此永远落在命中层内，不会溢出到相邻内容上。
+
+## 垂直方向
+
+`vertical` 把主轴换成纵向，值从下往上增大。垂直模式下根容器是 `h-full`，**父级必须有确定高度**，否则轨道长度为 0。
+
+<Demo src="@playground/slider/SliderVertical" />
+
+## 自定义滑块
+
+单值模式用 `thumb`，区间模式用 `startThumb` / `endThumb`（垂直模式下 start 在下、end 在上）。传入后不再渲染默认圆钮，`classNames.thumbInner` 也随之失效。
+
+<Demo src="@playground/slider/SliderCustomThumb" />
+
+自定义内容不会自动缩放：定位框的边长仍是 `thumbSize`，请把 `thumbSize` 一并调成你的内容尺寸，否则命中区与视觉会对不齐。
+
+## 禁用与只读
+
+`disabled` 阻止手势并把整体降到 50% 不透明度；`readonly` 只阻止手势，视觉保持正常，适合纯展示的进度条。两者都会摘掉滑块的无障碍调节能力。
+
+<Demo src="@playground/slider/SliderDisabled" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot         | 作用位置                                                     |
+| ------------ | ------------------------------------------------------------ |
+| `root`       | 最外层 `View`                                                |
+| `hitArea`    | 包住轨道的透明命中层（交叉轴跨度 ≥ 44）                       |
+| `track`      | 底轨                                                         |
+| `activeBar`  | 激活段（从起点或区间左端到当前值）                            |
+| `thumb`      | 滑块定位框，位移由动画驱动                                   |
+| `thumbInner` | 缺省圆钮本体，传了自定义滑块时不渲染                          |
+
+<Demo src="@playground/slider/SliderStyles" />
+
+轨道与滑块的尺寸、定位走的是内联 `style`，类名改不动，需要调整时请用 `barSize` / `thumbSize`。
+
+## 外部控制
+
+受控 `value` 可以从组件外任意更新，组件会把新值推回 UI 线程；拖拽期间 UI 线程先写、React 后到，回写的是同一个数，两边不会打架。
+
+<Demo src="@playground/slider/SliderControlled" />
+
+## 无障碍
+
+每个滑块都带 `accessibilityRole="adjustable"`、`accessibilityValue={{ min, max, now }}` 以及 `increment` / `decrement` 两个无障碍动作，辅助技术可以按 `step` 逐档调节（区间模式下同样受两端不穿越的约束），每次调节都会触发一次 `onChangeAfterDrag`。`disabled` / `readonly` 时 `accessible` 关闭，滑块不再被辅助技术聚焦。
+
+## API
+
+### Slider
+
+`SliderProps` 是由 `range` 区分的判别联合：`range` 缺省或为 `false` 时值是 `number`，为 `true` 时值是 `[number, number]`。下表是两种形态共用的属性。
+
+<PropsTable
+  data={[
+    { name: 'min', description: '最小值', type: 'number', default: '0' },
+    { name: 'max', description: '最大值', type: 'number', default: '100' },
+    {
+      name: 'step',
+      description: '步长，取值会对齐到 min + n × step；非正数按 1 处理',
+      type: 'number',
+      default: '1'
+    },
+    {
+      name: 'color',
+      description: '激活段填充色与默认圆钮描边色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'barSize',
+      description: '轨道粗细（px），水平模式是高、垂直模式是宽',
+      type: 'number',
+      default: '2'
+    },
+    {
+      name: 'thumbSize',
+      description: '滑块直径（px），同时决定轨道两端的内缩量',
+      type: 'number',
+      default: '24'
+    },
+    {
+      name: 'vertical',
+      description: '是否垂直方向，值从下往上增大；父级必须有确定高度',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'disabled', description: '禁用，不响应手势并整体置灰', type: 'boolean', default: 'false' },
+    { name: 'readonly', description: '只读，不响应手势但不置灰', type: 'boolean', default: 'false' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<SliderSlots>' },
+    { name: 'testID', description: '测试标识，挂在根节点上', type: 'string' },
+    { name: 'ref', description: '根容器 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+#### 单值模式（`range` 缺省或 `false`）
+
+<PropsTable
+  data={[
+    { name: 'value', description: '当前值（受控）', type: 'number' },
+    { name: 'defaultValue', description: '非受控初始值，缺省为 min', type: 'number' },
+    { name: 'onChange', description: '值变化回调，拖拽过程中实时触发', type: '(value: number) => void' },
+    {
+      name: 'onChangeAfterDrag',
+      description: '值稳定后触发：松手、点击轨道、无障碍步进各一次',
+      type: '(value: number) => void'
+    },
+    { name: 'thumb', description: '自定义滑块内容，缺省渲染主题色描边的圆钮', type: 'ReactNode' },
+    { name: 'range', description: '单值模式标记', type: 'false', default: 'false' }
+  ]}
+/>
+
+#### 区间模式（`range` 为 `true`）
+
+<PropsTable
+  data={[
+    { name: 'range', description: '开启区间模式，两端互为边界、不允许穿越', type: 'true', required: true },
+    { name: 'value', description: '当前区间（受控）', type: '[number, number]' },
+    { name: 'defaultValue', description: '非受控初始区间，缺省为 [min, min]', type: '[number, number]' },
+    {
+      name: 'onChange',
+      description: '区间变化回调，拖拽过程中实时触发',
+      type: '(value: [number, number]) => void'
+    },
+    {
+      name: 'onChangeAfterDrag',
+      description: '区间稳定后触发：松手、点击轨道、无障碍步进各一次',
+      type: '(value: [number, number]) => void'
+    },
+    { name: 'startThumb', description: '自定义左侧（垂直模式为下侧）滑块内容', type: 'ReactNode' },
+    { name: 'endThumb', description: '自定义右侧（垂直模式为上侧）滑块内容', type: 'ReactNode' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { RangeSliderProps, SingleSliderProps, SliderProps, SliderSlots } from '@skyroc/native-ui';
+```
+
+`SliderProps` 是 `SingleSliderProps | RangeSliderProps` 的判别联合，判别键为 `range`。
+
+<UnionType
+  name="SliderSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'activeBar' | 'hitArea' | 'root' | 'thumb' | 'thumbInner' | 'track'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 SliderSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+包内还导出了 `sliderVariants` 与三个常量：`DEFAULT_SLIDER_BAR_SIZE`（2）、`DEFAULT_SLIDER_THUMB_SIZE`（24）、`SLIDER_MIN_HIT_SIZE`（44）。

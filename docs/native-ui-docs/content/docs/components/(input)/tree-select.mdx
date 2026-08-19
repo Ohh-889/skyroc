@@ -1,0 +1,223 @@
+---
+title: TreeSelect
+description: 分类选择，左侧分组导航 + 右侧子项列表
+---
+
+分类选择（TreeSelect）是「左栏分组 + 右栏子项」的两级选择器，常见于商品分类、地区筛选。左栏由内部的 `Sidebar` 渲染，右栏是可滚动的子项列表，支持单选与多选。
+
+```tsx
+import { TreeSelect } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`items` 一次声明左右两栏：每个分组的 `text` 是左栏标题，`children` 是右栏子项。单选模式下 `activeId` 是单个子项 id，未选中时为 `null`。
+
+<Demo src="@playground/tree-select/TreeSelectBasic" />
+
+组件高度默认 300，可用 `height` 调整 —— 左右两栏都靠它撑开，不给高度右栏就没有滚动空间。
+
+## 何时使用
+
+- 两级分类的筛选或选择，且一级数量不多、二级需要滚动。
+- 层级只有一级用 `Sidebar`；三级及以上、或需要滚轮交互用 `Picker` 的级联模式。
+
+## 多选与上限
+
+`multiple` 开启多选，此时 `activeId` 是 id 数组。`max` 限制最多可选数量：达到上限后点击**未选中**项不产生任何效果，也不会触发 `onClickItem` —— 调用方不会收到「点了却没变」的假信号；已选中项仍可取消。
+
+<Demo src="@playground/tree-select/TreeSelectMultiple" />
+
+空值用 `null` 而不是 `undefined` 表示，否则受控模式会被判定成非受控。
+
+## 分组角标
+
+分组上的 `badge` 与 `dot` 会透传给左侧 `Sidebar`。`defaultMainActiveIndex` 设置初始激活的分组。
+
+<Demo src="@playground/tree-select/TreeSelectBadge" />
+
+## 禁用项
+
+分组与子项都可以单独 `disabled`：禁用的子项降到 50% 不透明度、文字转灰且不响应点击。
+
+<Demo src="@playground/tree-select/TreeSelectDisabled" />
+
+## 受控模式
+
+`mainActiveIndex` + `onMainActiveIndexChange` 控制当前分组，`activeId` + `onActiveIdChange` 控制选中值，两者可以分别受控。
+
+<Demo src="@playground/tree-select/TreeSelectControlled" />
+
+注意 `mainActiveIndex` 是**位置**而不是身份：`items` 增删或重排后需要调用方自行校正。
+
+## 自定义右侧内容
+
+`renderContent(item, index)` 完全替换右栏，参数是当前分组及其下标。`items` 为空时不会调用。
+
+<Demo src="@playground/tree-select/TreeSelectCustomContent" />
+
+## 点击事件
+
+- `onClickNav(index)`：点击左栏分组。
+- `onClickItem(item)`：点击右栏子项，**仅在选中值确实变化时**触发（单选重复点同一项、多选越过 `max` 都不触发）。
+
+<Demo src="@playground/tree-select/TreeSelectEvents" />
+
+## 动态数据与空值
+
+`items` 变短或受控索引越界时，激活索引会自动收敛到合法范围，不会出现「右侧一片空白、左侧也没有激活项」；`items` 为空数组时左右两栏保持稳定空态。
+
+<Demo src="@playground/tree-select/TreeSelectDynamicItems" />
+
+分组的 `id` 默认取它在 `items` 中的下标，因此**分组会动态增删或重排时必须显式传 `id`**，否则下标会串位。
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 覆盖本组件的 slot，左栏内部的 slot 走 `sidebarClassNames`：
+
+| slot              | 归属                 | 作用位置                                               |
+| ----------------- | -------------------- | ------------------------------------------------------ |
+| `root`            | `classNames`         | 根容器（横向排布、高度）                               |
+| `sidebar`         | `classNames`         | 左侧导航的根节点（默认 `w-24`，调宽窄从这里改）         |
+| `content`         | `classNames`         | 右侧滚动区                                             |
+| `contentItem`     | `classNames`         | 单个子项容器                                           |
+| `contentItemText` | `classNames`         | 子项文字（选中态加粗变主题色）                          |
+| `selectedIcon`    | `classNames`         | 选中勾的 `colorClassName`，只接受 `accent-*` 颜色类      |
+| —                 | `sidebarClassNames`  | 左侧 `Sidebar` 的各内部 slot                            |
+
+<Demo src="@playground/tree-select/TreeSelectCustomSlots" />
+
+左栏固定了宽度并拉满高度（`w-24 self-stretch`）：`Sidebar` 根节点默认 `self-start` 且宽度由最长标题撑开，放进定高的行容器里高度只到内容高、宽度还会随分组数据跳动。
+
+## 无障碍
+
+右栏子项按模式给出不同语义：多选时是 `accessibilityRole="checkbox"` 配 `checked`，单选时是 `menuitem` 配 `selected`，禁用态一并写进 `accessibilityState`，`accessibilityLabel` 取子项文本。
+
+## API
+
+### TreeSelect
+
+除下表外，`TreeSelect` 透传 `View` 的属性（`testID`、`style` 等，`children` 除外）。
+
+<PropsTable
+  data={[
+    { name: 'items', description: '分组数据', type: 'TreeSelectItem[]', default: '[]' },
+    { name: 'height', description: '组件高度', type: 'number', default: '300' },
+    { name: 'multiple', description: '是否多选', type: 'boolean', default: 'false' },
+    {
+      name: 'max',
+      description: '多选时最大可选数量，达到上限后点击未选中项无效且不触发 onClickItem',
+      type: 'number',
+      default: 'Infinity'
+    },
+    {
+      name: 'activeId',
+      description: '受控选中值，多选传数组、单选传单个 id，空值用 null',
+      type: 'TreeSelectActiveId'
+    },
+    {
+      name: 'defaultActiveId',
+      description: '非受控初始选中值，缺省时单选为 null、多选为空数组',
+      type: 'TreeSelectActiveId'
+    },
+    { name: 'onActiveIdChange', description: '选中值变化回调', type: '(activeId: TreeSelectActiveId) => void' },
+    {
+      name: 'mainActiveIndex',
+      description: '受控的左侧导航索引；索引是位置而非身份，items 变动后需自行校正',
+      type: 'number'
+    },
+    { name: 'defaultMainActiveIndex', description: '非受控初始导航索引', type: 'number', default: '0' },
+    { name: 'onMainActiveIndexChange', description: '导航激活索引变化回调', type: '(index: number) => void' },
+    { name: 'onClickNav', description: '点击左侧导航回调', type: '(index: number) => void' },
+    {
+      name: 'onClickItem',
+      description: '点击子项回调，仅在选中值确实变化时触发',
+      type: '(item: TreeSelectChild) => void'
+    },
+    {
+      name: 'renderContent',
+      description: '自定义右侧内容，接收当前分组及其下标；items 为空时不调用',
+      type: '(item: TreeSelectItem, index: number) => ReactNode'
+    },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<TreeSelectSlots>'
+    },
+    {
+      name: 'sidebarClassNames',
+      description: '左侧 Sidebar 各 slot 的类名，左栏由内部渲染，只能从这里透传',
+      type: 'SlotClassNames<SidebarSlots>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  TreeSelectActiveId,
+  TreeSelectChild,
+  TreeSelectChildId,
+  TreeSelectItem,
+  TreeSelectProps,
+  TreeSelectSlots
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="TreeSelectChildId"
+  description="子项唯一标识。"
+  type="number | string"
+/>
+
+<UnionType
+  name="TreeSelectActiveId"
+  description="选中值：多选是子项 id 数组，单选是单个 id，null 表示未选中（不能用 undefined，否则会被判定成非受控）。"
+  type="TreeSelectChildId | TreeSelectChildId[] | null"
+/>
+
+<UnionType
+  name="TreeSelectSlots"
+  description="可通过 classNames 覆盖的 slot 名称；左栏内部的 slot 走 sidebarClassNames。"
+  type="'content' | 'contentItem' | 'contentItemText' | 'root' | 'selectedIcon' | 'sidebar'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 TreeSelectSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'TreeSelectItem',
+      description: '左侧分组数据。',
+      fields: [
+        { name: 'text', type: 'string', description: '分组标题。', required: true },
+        {
+          name: 'id',
+          type: 'TreeSelectChildId',
+          description: '唯一标识，默认取分组下标；分组会动态增删或重排时必须显式传值。'
+        },
+        { name: 'children', type: 'TreeSelectChild[]', description: '该分组下的子项列表。' },
+        { name: 'badge', type: 'ReactNode', description: '左栏徽标内容。' },
+        { name: 'dot', type: 'boolean', description: '是否显示小红点。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该分组。' }
+      ]
+    },
+    {
+      name: 'TreeSelectChild',
+      description: '右侧子项数据。',
+      fields: [
+        { name: 'id', type: 'TreeSelectChildId', description: '唯一标识，也是选中值。', required: true },
+        { name: 'text', type: 'string', description: '显示文本。', required: true },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该子项。' }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `treeSelectVariants`。

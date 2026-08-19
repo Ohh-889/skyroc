@@ -1,0 +1,246 @@
+---
+title: Picker
+description: 滚轮选择器，支持单列、多列与级联
+---
+
+选择器（Picker）用滚轮从若干选项里选值。包含两个组件：`PickerView` 是内联滚轮，`Picker` 把它装进底部弹层并额外管理「确定才提交」的语义。滚动跑在 `react-native-reanimated` 的 UI 线程上，选项的透明度与缩放随距中心的距离衰减。
+
+```tsx
+import { Picker, PickerView } from '@skyroc/native-ui';
+```
+
+`Picker` 依赖 `@gorhom/bottom-sheet`，请确保 App 根节点已经包了 `GestureHandlerRootView` 与 `BottomSheetModalProvider`。
+
+## 基础用法
+
+`columns` 传一维数组即为单列。选中值统一是 `string[]`（单列也是长度为 1 的数组），`defaultValue` 设置初始值。
+
+<Demo src="@playground/picker/PickerBasic" />
+
+## 何时使用
+
+- 从一组互斥选项里选值，且选项多到不适合平铺（城市、日期、规格）。
+- 选项少于 5 个、又要一眼看全时用 `Radio` 或 `ActionSheet`。
+- 选日期 / 时间请直接用 `DatePicker` / `TimePicker`，它们在 Picker 之上补了范围与格式化。
+
+## 受控模式
+
+传 `value` + `onChange` 即为受控。外部改值时滚轮会同步滚过去 —— 但用户正在滚动时不抢，避免和手指打架。
+
+<Demo src="@playground/picker/PickerControlled" />
+
+## 多列选择
+
+`columns` 传二维数组（`PickerOption[][]`）时各列相互独立，互不联动。
+
+<Demo src="@playground/picker/PickerMultiColumn" />
+
+## 级联选择
+
+选项带 `children` 时自动进入级联模式，按当前选中值逐级展开。不传初值也会自动补齐各级 —— 列的展开深度取决于选中值，而选中值合不合法又取决于列，组件会迭代到不动点，因此三级联动首屏就是三列，而不是滚一下才冒出下一列。
+
+<Demo src="@playground/picker/PickerCascade" />
+
+改上一级会换掉下一级的整份数据，此时下级会重新落到第一个可用项。
+
+## 自定义字段
+
+数据里没有 `label` / `value` / `children` 时，用 `fieldNames` 映射：
+
+| 字段       | 默认值       | 含义         |
+| ---------- | ------------ | ------------ |
+| `label`    | `'label'`    | 显示文本     |
+| `value`    | `'value'`    | 选项值       |
+| `children` | `'children'` | 级联子选项   |
+
+<Demo src="@playground/picker/PickerFieldNames" />
+
+## 禁用选项
+
+选项上的 `disabled` 让它不可选：滚轮停下时会自动吸附到最近的可用项（先往后找、再往前找），初始值落在禁用项上时同样会被修正。禁用项在距离衰减之上再打 0.4 的透明度折扣。
+
+<Demo src="@playground/picker/PickerDisabled" />
+
+## 滚轮尺寸与反馈
+
+| 属性           | 含义                                            | 默认值 |
+| -------------- | ----------------------------------------------- | ------ |
+| `itemHeight`   | 每个选项的高度（px）                            | 48     |
+| `visibleCount` | 每列可见的选项数，**必须是奇数**                 | 5      |
+| `haptic`       | 滚过一格时触发一次轻触反馈                       | false  |
+
+<Demo src="@playground/picker/PickerWheel" />
+
+`visibleCount` 取偶数时中心格落在两格之间，选中指示线会对不齐。滚轮总高度是 `visibleCount × itemHeight`，指示线的位置由两者算出。
+
+## 加载状态
+
+`loading` 在滚轮区域盖一层半透明遮罩和指示器，工具栏仍然可见可点。
+
+<Demo src="@playground/picker/PickerLoading" />
+
+## 工具栏与回调
+
+`showToolbar`（默认 `true`）控制顶部工具栏，`title` / `cancelText` / `confirmText` 定制文案。`onCancel` 与 `onConfirm` 都会回传当前选中值。
+
+<Demo src="@playground/picker/PickerToolbar" />
+
+在 `PickerView` 里这两个回调只是通知，值早已随滚动提交；真正区分「滚动值」与「已确认值」的是 `Picker`（见下文）。
+
+## 样式覆盖
+
+`className` 追加到滚轮块的根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot                | 作用位置                                     |
+| ------------------- | -------------------------------------------- |
+| `root`              | 滚轮块根容器（圆角、背景）                   |
+| `toolbar`           | 顶部工具栏容器                               |
+| `cancel`            | 取消按钮容器                                 |
+| `cancelText`        | 取消按钮文字                                 |
+| `title`             | 工具栏标题                                   |
+| `confirm`           | 确定按钮容器                                 |
+| `confirmText`       | 确定按钮文字                                 |
+| `columns`           | 所有列的横向容器                             |
+| `column`            | 单列容器                                     |
+| `item`              | 单个选项容器                                 |
+| `itemText`          | 选项文字                                     |
+| `selectedIndicator` | 中间的选中指示线                             |
+| `loading`           | 加载遮罩                                     |
+
+<Demo src="@playground/picker/PickerStyles" />
+
+## 弹层提交与关闭
+
+`Picker` 在 `PickerView` 之上加了一层「确定才提交」：面板打开期间的滚动只写内部临时值，点确定才写进 `value` 并触发 `onConfirm`，取消则整份丢弃。每次打开都会把临时值重置回已确认值，上一次取消掉的滚动不会残留。
+
+<Demo src="@playground/picker/PickerPopup" />
+
+滚轮需要独占垂直手势，所以 `Picker` 关掉了面板的内容拖拽（`enableContentPanningGesture`）—— 否则在列上下拉会拖动整个面板而不是滚动滚轮。下拉关闭的通道因此只剩顶部 handle：`enablePanDownToClose` 要配合 `showHandle` 一起传，否则开了也无处可拖。
+
+## 自定义触发元素与 ref
+
+`children` 可以是节点（自动包一层 `Pressable` 打开面板），也可以是渲染函数，参数为 `{ open, value }` —— `value` 是**已确认值**，适合直接显示在触发行上。`ref` 原样透传给底层的 `BottomSheetModal`，可以调 `dismiss` / `snapToIndex` / `expand` 这类 `show` 表达不了的命令式操作。
+
+<Demo src="@playground/picker/PickerTrigger" />
+
+## API
+
+### PickerView
+
+<PropsTable
+  data={[
+    {
+      name: 'columns',
+      description: '列数据：一维数组为单列，二维数组为多列，带 children 的一维数组为级联',
+      type: 'PickerOption[] | PickerOption[][]',
+      required: true
+    },
+    { name: 'value', description: '选中值（受控），每列一个', type: 'string[]' },
+    { name: 'defaultValue', description: '非受控初始选中值', type: 'string[]', default: '[]' },
+    { name: 'onChange', description: '任意一列选中值变化时触发', type: '(values: string[]) => void' },
+    { name: 'fieldNames', description: '自定义字段名映射', type: 'PickerFieldNames' },
+    { name: 'itemHeight', description: '每个选项的高度（px）', type: 'number', default: '48' },
+    {
+      name: 'visibleCount',
+      description: '每列可见的选项数，必须取奇数',
+      type: 'number',
+      default: '5'
+    },
+    { name: 'haptic', description: '滚过一格时触发轻触反馈', type: 'boolean', default: 'false' },
+    { name: 'loading', description: '在滚轮区域显示加载遮罩', type: 'boolean', default: 'false' },
+    { name: 'showToolbar', description: '是否显示顶部工具栏', type: 'boolean', default: 'true' },
+    { name: 'title', description: '工具栏标题', type: 'string' },
+    { name: 'cancelText', description: '取消按钮文字', type: 'string', default: "'取消'" },
+    { name: 'confirmText', description: '确定按钮文字', type: 'string', default: "'确定'" },
+    { name: 'onCancel', description: '点击取消的回调，回传当前选中值', type: '(values: string[]) => void' },
+    { name: 'onConfirm', description: '点击确定的回调，回传当前选中值', type: '(values: string[]) => void' },
+    { name: 'className', description: '滚轮块根容器类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<PickerSlots>' }
+  ]}
+/>
+
+### Picker
+
+`Picker` 继承 `PickerView` 的全部属性（`columns` / `value` / `fieldNames` / `itemHeight` 等），其中 `value` 表示**已确认值**：面板内的滚动不会写它，点确定才提交。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示弹层', type: 'boolean', required: true },
+    { name: 'onUpdateShow', description: '显示状态变化回调', type: '(show: boolean) => void' },
+    {
+      name: 'children',
+      description: '触发元素：节点会被包一层 Pressable，渲染函数可拿到 open 与已确认 value',
+      type: 'ReactNode | ((params: { open: () => void; value: string[] }) => ReactNode)'
+    },
+    {
+      name: 'closeOnBackdropPress',
+      description: '点击遮罩是否关闭',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'showHandle', description: '是否显示面板顶部的拖拽指示条', type: 'boolean', default: 'false' },
+    {
+      name: 'enablePanDownToClose',
+      description: '是否允许下拉关闭，需要同时开启 showHandle 才有可拖之处',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'sheetClassName', description: '内部 Sheet 面板本体的类名（className 给的是滚轮那块）', type: 'string' },
+    { name: 'sheetClassNames', description: '内部 Sheet 各 slot 的类名覆盖', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 dismiss / snapToIndex / expand 等命令式操作',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { PickerColumnType, PickerFieldNames, PickerOption, PickerProps, PickerSlots, PickerViewProps } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="PickerColumnType"
+  description="列数据形态，由 columns 的结构自动推断。"
+  type="'cascade' | 'multiple' | 'single'"
+/>
+
+<UnionType
+  name="PickerSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'cancel' | 'cancelText' | 'column' | 'columns' | 'confirm' | 'confirmText' | 'item' | 'itemText' | 'loading' | 'root' | 'selectedIndicator' | 'title' | 'toolbar'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 PickerSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'PickerOption',
+      description: '单个选项。字段名可通过 fieldNames 改写，因此 label / value 都是可选的，且允许携带任意额外字段。',
+      fields: [
+        { name: 'label', type: 'string', description: '显示文本，字段名可由 fieldNames.label 改写。' },
+        { name: 'value', type: 'string', description: '选项值，字段名可由 fieldNames.value 改写。' },
+        { name: 'children', type: 'PickerOption[]', description: '级联子选项，字段名可由 fieldNames.children 改写。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该选项，滚轮会吸附到最近的可用项。' }
+      ]
+    },
+    {
+      name: 'PickerFieldNames',
+      description: '选项对象的字段名映射。',
+      fields: [
+        { name: 'label', type: 'string', description: "显示文本字段名，默认 'label'。" },
+        { name: 'value', type: 'string', description: "选项值字段名，默认 'value'。" },
+        { name: 'children', type: 'string', description: "子选项字段名，默认 'children'。" }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `pickerVariants`。

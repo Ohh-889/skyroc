@@ -1,0 +1,480 @@
+---
+title: Radio
+description: 单选框，含分组、卡片与卡片组四个组件
+---
+
+单选框（Radio）用于在一组互斥选项中选择一个。包含四个组件：`Radio` 单项、`RadioGroup` 分组容器、`RadioCard` 卡片式单项、`RadioGroupCard` 数据驱动的卡片组。分组内的选中态由 `RadioGroup` 通过 context 统一持有，子项只声明 `name`。
+
+```tsx
+import { Radio, RadioCard, RadioGroup, RadioGroupCard } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+单独使用时 `Radio` 自己维护选中态：非受控传 `defaultChecked`，受控传 `checked` + `onCheckedChange`。
+
+<Demo src="@playground/radio/RadioBasic" />
+
+单选语义下，已选中的项再次点击不会取消，取消只能由外部改 `value` / `checked`。
+
+## 何时使用
+
+- 一组互斥选项，且选项数量少到可以全部平铺时使用；选项多请用 `Picker`。
+- 需要「图标 + 标题 + 描述」的富选项（套餐、支付方式、网络类型）时用 `RadioCard`。
+- 选项来自数据数组、不想手写 JSX 时用 `RadioGroupCard`。
+- 可多选的场景请用 `Checkbox`，它与 `Radio` 的属性命名保持一致。
+
+## 语义颜色
+
+`color` 提供 8 种主题色，取值与全局 `ThemeColor` 一致。`round` 选中时是「同色描边 + 同色圆点」，`square` 选中时是「填充背景 + `{color}-foreground` 色的勾」。
+
+| 颜色          | 选中表现（round / square）             | 语义               |
+| ------------- | -------------------------------------- | ------------------ |
+| `primary`     | `border-primary` / `bg-primary`         | 常规选择（默认）   |
+| `destructive` | `border-destructive` / `bg-destructive` | 危险项             |
+| `success`     | `border-success` / `bg-success`         | 成功、推荐项       |
+| `warning`     | `border-warning` / `bg-warning`         | 需要注意的选项     |
+| `info`        | `border-info` / `bg-info`               | 信息性选项         |
+| `accent`      | `border-accent` / `bg-accent`           | 强调色             |
+| `carbon`      | `border-carbon` / `bg-carbon`           | 中性深色           |
+| `secondary`   | `border-secondary` / `bg-secondary`     | 次级、弱化选项     |
+
+<Demo src="@playground/radio/RadioColor" />
+
+未选中态与颜色无关，统一是 `border-muted-foreground/50` 的空心描边。
+
+## 尺寸
+
+`size` 同时决定外圈边长、内部指示器大小、标签字号与两者的间距：
+
+| 尺寸  | 外圈 | 圆点（round） | 勾（square） | 标签字号    | 间距 |
+| ----- | ---- | ------------- | ------------ | ----------- | ---- |
+| `xs`  | 14   | 6             | 9            | `text-xs`   | 4    |
+| `sm`  | 16   | 8             | 11           | `text-sm`   | 6    |
+| `md`  | 20   | 10            | 14           | `text-base` | 8    |
+| `lg`  | 24   | 12            | 16           | `text-base` | 10   |
+| `xl`  | 28   | 14            | 18           | `text-base` | 12   |
+| `2xl` | 32   | 16            | 20           | `text-lg`   | 14   |
+
+<Demo src="@playground/radio/RadioSize" />
+
+## 形状
+
+`shape` 控制指示器形状：`round` 是圆形（默认），`square` 是圆角方形，选中态渲染成实心背景加一个勾 —— 与 `Checkbox` 的观感一致。
+
+<Demo src="@playground/radio/RadioShape" />
+
+## 指示器
+
+`iconSize` 直接指定外圈边长（px），内部指示器按固定比例一起缩放：圆点为 `iconSize × 0.5`，勾为 `iconSize × 0.7`（四舍五入）。这样放大后比例不会失衡。`checkedIcon` 则完全替换选中态的默认圆点 / 勾，外圈仍保留。
+
+<Demo src="@playground/radio/RadioIndicator" />
+
+`checkedIcon` 的颜色不随 `color` 变化，需要自己在图标上指定。
+
+## 禁用
+
+`disabled` 可用于单项，也可用于 `RadioGroup` 整组。两者取并集 —— 组禁用时子项无法把自己反选为可用。禁用后整行降到 50% 不透明度，标签文字转为 `text-muted-foreground`。
+
+<Demo src="@playground/radio/RadioDisabled" />
+
+## 标签交互
+
+`labelPosition` 决定标签在指示器的哪一侧（`right` 默认，`left` 时容器变为 `flex-row-reverse`）。标签本身是一块独立的可点区域，`labelDisabled` 可以把它关掉，只留指示器可点。
+
+<Demo src="@playground/radio/RadioLabelPosition" />
+
+## 受控
+
+单独使用时传 `checked` + `onCheckedChange` 即为受控。注意：位于 `RadioGroup` 内且传了 `name` 时 `checked` 会被忽略，选中态一律由组的 `value` 决定。
+
+<Demo src="@playground/radio/RadioControlled" />
+
+## 分组
+
+`RadioGroup` 持有整组的选中值，子项用 `name` 声明自己的取值。受控传 `value` + `onChange`，非受控传 `defaultValue`。
+
+<Demo src="@playground/radio/RadioGroupBasic" />
+
+未选中用 `undefined` 表示，空字符串是合法取值，可以作为「未指定」这类选项。子项在组内缺 `name` 会在开发环境告警，并退化成不参与互斥的独立单选框。
+
+## 横向分组
+
+`direction="horizontal"` 让子项横向排列并自动换行（`flex-wrap`）。间距同样跟随 `size`：横向 8 ~ 18，纵向 4 ~ 14。
+
+<Demo src="@playground/radio/RadioHorizontalGroup" />
+
+## 分组样式下发
+
+`color`、`shape`、`size`、`iconSize`、`labelPosition`、`checkedIcon`、`disabled` 都可以在 `RadioGroup` 上统一设置，子项按「自身 prop > 组配置 > 默认值」的优先级取用。
+
+<Demo src="@playground/radio/RadioSquareGroup" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖；`RadioGroupCard` 的卡片由组件内部渲染，只能通过 `itemClassNames` 统一透传。
+
+| slot            | 归属                       | 作用位置                                              |
+| --------------- | -------------------------- | ----------------------------------------------------- |
+| `root`          | `Radio` / `RadioCard`      | 根容器（`Radio` 是 `View`，`RadioCard` 是 `Pressable`） |
+| `control`       | `Radio`                    | 包住指示器的可点区域                                  |
+| `labelWrapper`  | `Radio`                    | 包住标签的可点区域                                    |
+| `label`         | `Radio` / `RadioCard`      | 标签文字                                              |
+| `indicator`     | `Radio` / `RadioCard`      | 指示器外圈（边框、背景、形状）                        |
+| `dot`           | `Radio` / `RadioCard`      | `round` 选中态的内圆点                                |
+| `indicatorIcon` | `Radio` / `RadioCard`      | `square` 内置勾的 `colorClassName`，只接受 `accent-*`  |
+| `content`       | `RadioCard`                | 图标 + 文本的横向容器                                 |
+| `icon`          | `RadioCard`                | 卡片图标的容器                                        |
+| `texts`         | `RadioCard`                | 标题 + 描述的纵向容器                                 |
+| `description`   | `RadioCard`                | 描述文字                                              |
+
+<Demo src="@playground/radio/RadioStyles" />
+
+`className` 排在 `classNames.root` 之后参与合并，冲突时 `className` 优先。
+
+## 自定义内容
+
+`Radio` 的 `children` 与 `RadioCard` 的 `label` / `description` 都接受任意节点：传 `string` / `number` 时自动包一层 `Text`，传节点时原样渲染（此时 `classNames.label` 不再生效，样式自己控制）。
+
+<Demo src="@playground/radio/RadioCustomContent" />
+
+## 卡片
+
+`RadioCard` 把图标、标题、描述组成一整块可点区域，`radioPosition` 决定指示器排在内容左侧还是右侧。它和 `Radio` 共用同一套指示器与选中逻辑，因此 `color` / `shape` / `iconSize` / `checkedIcon` 行为完全一致。
+
+<Demo src="@playground/radio/RadioCardBasic" />
+
+`RadioCard` 的标题与描述字号是固定的（`text-sm` / `text-xs`），`size` 在卡片上只影响指示器大小。
+
+## 卡片组
+
+`RadioGroupCard` 是 `RadioGroup` + `RadioCard` 的数据驱动封装：用 `items` 一次声明整组卡片，选中态与互斥逻辑完全复用 `RadioGroupContext`。
+
+<Demo src="@playground/radio/RadioCardGroup" />
+
+## 热区与无障碍
+
+- `Radio` 的指示器带 `hitSlop={4}`，标签是第二块独立热区，小尺寸下不需要业务侧再包一层 `Pressable`。
+- `RadioCard` 整张卡片即热区，按下时整体降到 90% 不透明度。
+- 组件目前没有设置 `accessibilityRole` / `accessibilityState`，也不透传 RN 的无障碍属性，读屏器只会朗读标签文本、不播报选中状态。需要完整读屏语义时，暂时只能在外层自行包裹带 `accessibilityRole="radio"` 的容器。
+
+## API
+
+### Radio
+
+<PropsTable
+  data={[
+    {
+      name: 'checked',
+      description: '受控选中态；位于 RadioGroup 内且传了 name 时被忽略',
+      type: 'boolean'
+    },
+    { name: 'defaultChecked', description: '非受控初始选中态', type: 'boolean', default: 'false' },
+    {
+      name: 'onCheckedChange',
+      description: '选中回调，分组内同样触发；已选中项再次点击不触发',
+      type: '(checked: boolean) => void'
+    },
+    {
+      name: 'name',
+      description: '分组内的唯一标识，位于 RadioGroup 内时必填，缺失会在开发环境告警',
+      type: 'string | number'
+    },
+    {
+      name: 'color',
+      description: '主题色，缺省时取组配置，再缺省为 primary',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸预设，同时决定外圈边长、内部指示器、标签字号与间距；缺省时取组配置',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    {
+      name: 'shape',
+      description: '指示器形状，缺省时取组配置',
+      type: "'round' | 'square'",
+      default: "'round'"
+    },
+    {
+      name: 'iconSize',
+      description: '外圈边长（px），内部圆点按 0.5 倍、勾按 0.7 倍等比缩放；缺省时取组配置',
+      type: 'number'
+    },
+    {
+      name: 'labelPosition',
+      description: '标签相对指示器的位置，缺省时取组配置',
+      type: "'left' | 'right'",
+      default: "'right'"
+    },
+    { name: 'labelDisabled', description: '只有指示器可点，标签点击不触发选中', type: 'boolean', default: 'false' },
+    { name: 'disabled', description: '禁用，与组级 disabled 取并集', type: 'boolean', default: 'false' },
+    { name: 'children', description: '标签内容，string / number 会被自动包裹为 Text', type: 'ReactNode' },
+    { name: 'checkedIcon', description: '选中态自定义图标，替换默认的圆点 / 勾', type: 'ReactNode' },
+    { name: 'className', description: '根容器类名，合并在 classNames.root 之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖，见「样式覆盖」一节', type: 'SlotClassNames<RadioSlots>' },
+    { name: 'ref', description: '根容器 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+### RadioGroup
+
+<PropsTable
+  data={[
+    { name: 'children', description: '子项，通常为 Radio 或 RadioCard', type: 'ReactNode', required: true },
+    { name: 'value', description: '受控选中值', type: 'string | number' },
+    { name: 'defaultValue', description: '非受控初始选中值，缺省表示未选中', type: 'string | number' },
+    { name: 'onChange', description: '选中值变化回调', type: '(value: string | number) => void' },
+    {
+      name: 'direction',
+      description: '排列方向，horizontal 会自动换行',
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'"
+    },
+    { name: 'disabled', description: '禁用整组，子项无法反选为可用', type: 'boolean', default: 'false' },
+    {
+      name: 'color',
+      description: '下发给所有子项的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'"
+    },
+    {
+      name: 'size',
+      description: '下发给所有子项的尺寸，同时决定子项之间的间距',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '下发给所有子项的指示器形状', type: "'round' | 'square'" },
+    { name: 'iconSize', description: '下发给所有子项的外圈边长（px）', type: 'number' },
+    { name: 'labelPosition', description: '下发给所有子项的标签位置', type: "'left' | 'right'" },
+    { name: 'checkedIcon', description: '下发给所有子项的选中态自定义图标', type: 'ReactNode' },
+    { name: 'className', description: '分组容器类名', type: 'string' },
+    { name: 'ref', description: '分组容器 View 的 ref', type: 'Ref<View>' }
+  ]}
+/>
+
+### RadioCard
+
+<PropsTable
+  data={[
+    { name: 'label', description: '标题，string / number 会被自动包裹为 Text', type: 'ReactNode' },
+    { name: 'description', description: '描述文字，显示在标题下方', type: 'ReactNode' },
+    { name: 'icon', description: '卡片图标，显示在文本之前', type: 'ReactNode' },
+    {
+      name: 'radioPosition',
+      description: '指示器相对卡片内容的位置',
+      type: "'left' | 'right'",
+      default: "'left'"
+    },
+    {
+      name: 'checked',
+      description: '受控选中态；位于 RadioGroup 内且传了 name 时被忽略',
+      type: 'boolean'
+    },
+    { name: 'defaultChecked', description: '非受控初始选中态', type: 'boolean', default: 'false' },
+    { name: 'onCheckedChange', description: '选中回调', type: '(checked: boolean) => void' },
+    {
+      name: 'name',
+      description: '分组内的唯一标识，位于 RadioGroup 内时必填',
+      type: 'string | number'
+    },
+    {
+      name: 'color',
+      description: '主题色，缺省时取组配置，再缺省为 primary',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸预设，在卡片上只影响指示器大小；缺省时取组配置',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '指示器形状，缺省时取组配置', type: "'round' | 'square'", default: "'round'" },
+    { name: 'iconSize', description: '外圈边长（px），内部指示器等比缩放', type: 'number' },
+    { name: 'checkedIcon', description: '选中态自定义图标', type: 'ReactNode' },
+    { name: 'disabled', description: '禁用，与组级 disabled 取并集', type: 'boolean', default: 'false' },
+    { name: 'className', description: '卡片容器类名，合并在 classNames.root 之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: 'SlotClassNames<RadioCardSlots>'
+    },
+    { name: 'ref', description: '卡片根容器（Pressable）的 ref', type: 'Ref<View>' }
+  ]}
+/>
+
+### RadioGroupCard
+
+<PropsTable
+  data={[
+    { name: 'items', description: '卡片数据源', type: 'RadioGroupCardItem[]', required: true },
+    { name: 'value', description: '受控选中值', type: 'string | number' },
+    { name: 'defaultValue', description: '非受控初始选中值', type: 'string | number' },
+    { name: 'onChange', description: '选中值变化回调', type: '(value: string | number) => void' },
+    {
+      name: 'radioPosition',
+      description: '指示器相对卡片内容的位置，应用于所有卡片',
+      type: "'left' | 'right'",
+      default: "'left'"
+    },
+    {
+      name: 'direction',
+      description: '排列方向，horizontal 会自动换行',
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'"
+    },
+    { name: 'disabled', description: '禁用整组', type: 'boolean', default: 'false' },
+    {
+      name: 'color',
+      description: '下发给所有卡片的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'"
+    },
+    {
+      name: 'size',
+      description: '下发给所有卡片的尺寸，同时决定卡片之间的间距',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '下发给所有卡片的指示器形状', type: "'round' | 'square'" },
+    { name: 'iconSize', description: '下发给所有卡片的外圈边长（px）', type: 'number' },
+    { name: 'checkedIcon', description: '下发给所有卡片的选中态自定义图标', type: 'ReactNode' },
+    { name: 'className', description: '分组容器类名', type: 'string' },
+    {
+      name: 'itemClassNames',
+      description: '统一覆盖每张卡片的 slot 类名，卡片由组件内部渲染，只能从这里透传',
+      type: 'SlotClassNames<RadioCardSlots>'
+    },
+    { name: 'ref', description: '分组容器 View 的 ref', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  RadioCardProps,
+  RadioCardSlots,
+  RadioGroupCardItem,
+  RadioGroupCardProps,
+  RadioGroupContextValue,
+  RadioGroupDirection,
+  RadioGroupProps,
+  RadioIndicatorSlots,
+  RadioLabelPosition,
+  RadioPosition,
+  RadioProps,
+  RadioShape,
+  RadioSide,
+  RadioSizes,
+  RadioSlots,
+  RadioValue
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="RadioValue"
+  description="分组内 name / value 的取值范围，RadioGroup 对它做泛型化以配合 useState<string> 的写法。"
+  type="string | number"
+/>
+
+<UnionType
+  name="RadioShape"
+  description="指示器形状，round 为圆形，square 为圆角方形。"
+  type="'round' | 'square'"
+/>
+
+<UnionType
+  name="RadioSide"
+  description="横向位置，RadioLabelPosition 与 RadioPosition 都是它的别名。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="RadioLabelPosition"
+  description="标签相对指示器的位置，等价于 RadioSide。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="RadioPosition"
+  description="卡片中指示器相对内容的位置，等价于 RadioSide。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="RadioGroupDirection"
+  description="RadioGroup 的排列方向，horizontal 会自动换行。"
+  type="'horizontal' | 'vertical'"
+/>
+
+<UnionType
+  name="RadioSlots"
+  description="Radio 可通过 classNames 覆盖的 slot 名称。"
+  type="'control' | 'dot' | 'indicator' | 'indicatorIcon' | 'label' | 'labelWrapper' | 'root'"
+/>
+
+<UnionType
+  name="RadioCardSlots"
+  description="RadioCard 可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'description' | 'dot' | 'icon' | 'indicator' | 'indicatorIcon' | 'label' | 'root' | 'texts'"
+/>
+
+<UnionType
+  name="RadioIndicatorSlots"
+  description="指示器相关的 slot 名称，Radio 与 RadioCard 共用这三个键。"
+  type="'dot' | 'indicator' | 'indicatorIcon'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 RadioSlots / RadioCardSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'RadioGroupCardItem',
+      description: 'RadioGroupCard 的单条数据。',
+      fields: [
+        { name: 'value', type: 'string | number', description: '唯一标识，对应组的选中值。', required: true },
+        { name: 'label', type: 'ReactNode', description: '标题。', required: true },
+        { name: 'description', type: 'ReactNode', description: '描述文本。' },
+        { name: 'icon', type: 'ReactNode', description: '卡片图标。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该项。' }
+      ]
+    },
+    {
+      name: 'RadioSizes',
+      description: '解析后的像素尺寸，由 size 预设或 iconSize 推导。',
+      fields: [
+        { name: 'control', type: 'number', description: '外圈容器边长（px）。', required: true },
+        { name: 'dot', type: 'number', description: 'round 选中态圆点边长（px）。', required: true },
+        { name: 'innerIcon', type: 'number', description: 'square 选中态勾选图标边长（px）。', required: true }
+      ]
+    },
+    {
+      name: 'RadioGroupContextValue',
+      description: 'RadioGroup 通过 context 下发给子项的配置与选中态操作，一般不需要直接使用。',
+      fields: [
+        { name: 'isChecked', type: '(name: string | number) => boolean', description: '判断某个 name 是否被选中。', required: true },
+        { name: 'select', type: '(name: string | number) => void', description: '选中某个 name。', required: true },
+        {
+          name: 'color',
+          type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+          description: '组级主题色。'
+        },
+        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '组级尺寸预设。' },
+        { name: 'shape', type: 'RadioShape', description: '组级指示器形状。' },
+        { name: 'iconSize', type: 'number', description: '组级外圈边长（px）。' },
+        { name: 'labelPosition', type: 'RadioLabelPosition', description: '组级标签位置。' },
+        { name: 'checkedIcon', type: 'ReactNode', description: '组级选中态自定义图标。' },
+        { name: 'disabled', type: 'boolean', description: '整组是否禁用。' }
+      ]
+    }
+  ]}
+/>
+
+包内还导出了 `radioVariants` / `radioGroupVariants` / `radioCardVariants`、`resolveRadioSizes`，以及三张尺寸映射表 `RADIO_SIZE_CONTROL_MAP` / `RADIO_SIZE_DOT_MAP` / `RADIO_SIZE_INNER_ICON_MAP`。

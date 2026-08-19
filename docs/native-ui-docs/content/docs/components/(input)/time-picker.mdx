@@ -1,0 +1,176 @@
+---
+title: TimePicker
+description: 时间选择器，按 min / maxTime 逐级收窄时分秒
+---
+
+时间选择器（TimePicker）在 `Picker` 之上把时、分、秒三列的级联范围算好。`TimePickerView` 是内联滚轮，`TimePicker` 把它装进底部弹层并采用「确定才提交」的语义。列由 `columnsType` 与 `minTime` / `maxTime` 推导，因此 `columns` 与 `fieldNames` 不再对外开放。
+
+```tsx
+import { TimePicker, TimePickerView } from '@skyroc/native-ui';
+```
+
+`TimePicker` 依赖 `@gorhom/bottom-sheet`，请确保 App 根节点已经包了 `GestureHandlerRootView` 与 `BottomSheetModalProvider`。
+
+## 基础用法
+
+默认只显示时、分两列。不传 `defaultValue` 时滚轮停在**当前时刻**（而不是区间开头），并且初值同样会过一遍钳位 —— `minTime` / `maxTime` 把此刻排除在外时，开局就不会拿一个越界值去渲染。
+
+<Demo src="@playground/time-picker/TimePickerBasic" />
+
+选中值沿用 `Picker` 的 `string[]`，每一项是补零后的两位数字（如 `['09', '30']`），顺序与 `columnsType` 一致。
+
+## 何时使用
+
+- 只选时间点（闹钟、营业时间、预约时段）。
+- 选日期或日期 + 时间请用 `DatePicker`；两者都要且要分步填，用 `PickerGroup` 把它们放进不同 tab。
+
+## 限制可选区间
+
+`minTime` / `maxTime` 的格式是 `"HH:mm:ss"`，默认 `"00:00:00"` ~ `"23:59:59"`。缺省的段按 0 补（`"09"` 等于 `09:00:00`），非法段也落回 0 而不是抛错 —— 这两个值通常是手写字符串，一个笔误不该把整个滚轮打空。上界早于下界时会退化成下界那一个时刻。
+
+<Demo src="@playground/time-picker/TimePickerLimit" />
+
+收窄是**逐级**的：分列只有停在首尾小时上时才受限（`minTime` 是 `09:30` 时，停在 09 点分列从 30 起，停在中间的整点仍是 00–59）。
+
+## 时分秒三列
+
+`columnsType` 决定显示哪几列及其顺序，默认 `['hour', 'minute']`。
+
+<Demo src="@playground/time-picker/TimePickerColumns" />
+
+秒列只有时、分同时停在首尾上时才会被收窄。`columnsType` 允许不含 `hour`（只显示分秒），这时缺的那一段用挂载时快照的当前时刻补位。
+
+列与选中值互相牵制，组件会迭代到不动点：时被钳到首尾小时上之后，分列的上下界才跟着收窄，秒列还要再跟一轮。只算一轮的话，`maxTime` 是 `10:30` 而传进来 `11:45` 时，会得到一个越界的 `10:45`。
+
+## 格式化与过滤
+
+- `formatter(type, option)`：只改显示文本，不改值（例如给数字补上「时」「分」「秒」）。
+- `filter(type, options, values)`：挖掉候选项本身（例如分钟只留整五分）。
+
+<Demo src="@playground/time-picker/TimePickerFormatter" />
+
+被 `filter` 挖空的选中值会落到**最接近的可选项**，而不是被弹到列尾。
+
+## 弹层用法
+
+`TimePicker` 与 `Picker` 的提交语义一致：滚动中的值是临时的，点确定才写回 `value` 并触发 `onConfirm`，取消直接丢弃。注意 `onChange` 在这里挂的是**已确认值**（与内联的 `TimePickerView` 不同，后者滚动即触发）。
+
+<Demo src="@playground/time-picker/TimePickerPopup" />
+
+同样地，滚轮独占垂直手势，面板的内容拖拽是关掉的，`enablePanDownToClose` 需要配合 `showHandle`。
+
+## 自定义触发元素
+
+`children` 传渲染函数即可自己画触发元素，参数为 `{ open, value }`，`value` 是已确认值。
+
+<Demo src="@playground/time-picker/TimePickerTrigger" />
+
+## API
+
+### TimePickerView
+
+除下表外，`TimePickerView` 继承 `PickerView` 的属性（`value` / `defaultValue` / `itemHeight` / `visibleCount` / `haptic` / `loading` / `showToolbar` / `title` / `cancelText` / `confirmText` / `onCancel` / `onConfirm` / `className` / `classNames`），其中 `columns` 与 `fieldNames` 被移除。
+
+<PropsTable
+  data={[
+    {
+      name: 'columnsType',
+      description: '显示哪几列及其顺序',
+      type: "('hour' | 'minute' | 'second')[]",
+      default: "['hour', 'minute']"
+    },
+    {
+      name: 'minTime',
+      description: '可选的最小时刻，格式 "HH:mm:ss"，缺省的段按 0 补',
+      type: 'string',
+      default: "'00:00:00'"
+    },
+    {
+      name: 'maxTime',
+      description: '可选的最大时刻，格式 "HH:mm:ss"；早于 minTime 时退化成 minTime 那一刻',
+      type: 'string',
+      default: "'23:59:59'"
+    },
+    { name: 'formatter', description: '定制选项的显示文本，不改变值', type: 'TimePickerFormatter' },
+    { name: 'filter', description: '从某一列里剔除选项', type: 'TimePickerFilter' },
+    {
+      name: 'defaultValue',
+      description: '非受控初始值，缺省时取当前时刻并按区间钳位',
+      type: 'string[]'
+    },
+    { name: 'value', description: '选中值（受控），每列一个补零后的两位数字', type: 'string[]' },
+    { name: 'onChange', description: '选中值变化时触发，滚动过程中即触发', type: '(values: string[]) => void' }
+  ]}
+/>
+
+### TimePicker
+
+`TimePicker` 继承 `TimePickerView` 的属性；`value` 表示**已确认值**，`onChange` 只在提交后触发。
+
+<PropsTable
+  data={[
+    { name: 'show', description: '是否显示弹层', type: 'boolean', required: true },
+    { name: 'onUpdateShow', description: '显示状态变化回调', type: '(show: boolean) => void' },
+    {
+      name: 'onChange',
+      description: '已确认值变化的回调；面板内滚动不触发',
+      type: '(values: string[]) => void'
+    },
+    {
+      name: 'children',
+      description: '触发元素：节点会被包一层 Pressable，渲染函数可拿到 open 与已确认 value',
+      type: 'ReactNode | ((params: { open: () => void; value: string[] }) => ReactNode)'
+    },
+    { name: 'closeOnBackdropPress', description: '点击遮罩是否关闭', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示面板顶部的拖拽指示条', type: 'boolean', default: 'false' },
+    {
+      name: 'enablePanDownToClose',
+      description: '是否允许下拉关闭，需要同时开启 showHandle 才有可拖之处',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'sheetClassName', description: '内部 Sheet 面板本体的类名（className 给的是滚轮那块）', type: 'string' },
+    { name: 'sheetClassNames', description: '内部 Sheet 各 slot 的类名覆盖', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 dismiss / snapToIndex / expand 等命令式操作',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  TimePickerColumnType,
+  TimePickerFilter,
+  TimePickerFormatter,
+  TimePickerProps,
+  TimePickerViewProps
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="TimePickerColumnType"
+  description="时间列的类型标识，同时决定 columnsType 的取值。"
+  type="'hour' | 'minute' | 'second'"
+/>
+
+<UnionType
+  name="TimePickerFormatter"
+  description="定制某一列选项的显示文本，返回新的选项对象；只改 label，不改 value。"
+  type="(type: TimePickerColumnType, option: PickerOption) => PickerOption"
+/>
+
+<UnionType
+  name="TimePickerFilter"
+  description="从某一列里剔除选项，第三个参数是当前各列的选中值。"
+  type="(columnType: TimePickerColumnType, options: PickerOption[], values: string[]) => PickerOption[]"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本组件的 slot 沿用 PickerSlots。"
+  type="Partial<Record<Slots, string>>"
+/>

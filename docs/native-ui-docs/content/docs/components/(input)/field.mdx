@@ -1,0 +1,266 @@
+---
+title: Field
+description: 纵向堆叠布局的表单字段
+---
+
+`FieldGroup` + `FieldItem` 是自由布局的一套表单组件：`FieldGroup` 承载表单状态（基于 `@skyroc/form`），`FieldItem` 把标签、控件、错误与描述纵向堆叠成一个字段。与 `Form` / `FormItem` 的 Cell 行布局平行，两者共用同一套字段配置和校验体系。
+
+```tsx
+import { FieldGroup, FieldItem, useForm } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`FieldGroup` 提供表单上下文，`FieldItem` 用 `name` 声明字段路径并把子组件接到表单上。`required` 只写一次，星号与 required 校验规则同源；校验失败时组件会向子组件注入 `error`，`Input` 这类支持 error 变体的控件因此自动变红。
+
+<Demo src="@playground/field/FieldBasic" />
+
+## 何时使用
+
+- 独立的编辑页、登录 / 注册页这类**自由布局**的表单：标签压在控件上方，字段之间靠 `gap` 拉开距离。
+- 需要列表式（一行一个字段、带分隔线和分组标题）的表单时，改用 [`Form` / `FormItem`](/docs/components/form)。
+- 只是要一个受控输入框、不需要表单状态时，直接用 `Input` 等控件即可，不必套 `FieldItem`。
+
+## 必填与校验
+
+`rules` 与 `required` 共用一份事实：
+
+- 只写 `rules={[{ required: true }]}` → 自动显示星号；
+- 只写 `required` → 自动补一条 `{ required: true }` 规则；
+- 显式写 `required={false}` → 只隐藏星号，不动已有规则。
+
+`validateTrigger` 控制什么时候校验，缺省跟随 `FieldGroup` 的 `validateTrigger`（默认 `'onChange'`）；传 `false` 则只在 `form.submit()` / `validateFields()` 时校验。
+
+<Demo src="@playground/field/FieldValidation" />
+
+多条规则同时失败时提示位只显示第一条，改完再暴露下一条——提示区固定一行，避免字段高度随错误数量跳动。星号无论必填与否都占位，只在必填时可见，因此同一组表单里各行标签的左边缘始终对齐；非必填时星号对读屏器隐藏。
+
+## 尺寸
+
+`size` 只影响标签 / 错误 / 描述的排版，**不会透传给子组件**——控件自身的尺寸要单独传（例如 `<Input size="sm" />`）。
+
+| 尺寸 | 标签字号 | 提示字号 | 标签与控件间距 |
+| ---- | -------- | -------- | -------------- |
+| `sm` | `text-sm`   | `text-2xs` | `mt-1`   |
+| `md` | `text-base` | `text-xs`  | `mt-1.5` |
+| `lg` | `text-lg`   | `text-sm`  | `mt-2`   |
+
+<Demo src="@playground/field/FieldSize" />
+
+默认是 `lg`（与 `FormItem` 的 `md` 不同，堆叠布局里标签需要更强的层级）。没有 `label` 时控件不加上间距，字段整体贴着上一行。
+
+## 非文本控件
+
+缺省的取值逻辑取回调的第一个参数，同时把 `TextInput` 的原生事件抹平成 `nativeEvent.text`。所以 `Input` 与走 `onChange(value)` 约定的控件（`Rate` / `Stepper` / `RadioGroup` / `CheckboxGroup`）都不需要额外配置。
+
+<Demo src="@playground/field/FieldControls" />
+
+## 自定义值绑定
+
+不走 `value` / `onChange` 约定的控件，用 `valuePropName` 改值属性名、`trigger` 改变更回调名。例如 `Switch` 是 `checked` / `onCheckedChange`。
+
+<Demo src="@playground/field/FieldBinding" />
+
+字段没有值时子组件收到的是空字符串而不是 `undefined`，因此接管这类控件时建议用 `initialValues` 或 `initialValue` 给一个明确的初值。
+
+## 值转换
+
+- `normalize`：变更后、写入表单前的归一化，改的是**存下来的值**；
+- `getValueProps`：取值后、传给子组件前的转换，只改**显示值**，不影响表单里的值。
+
+<Demo src="@playground/field/FieldTransform" />
+
+需要改「从回调参数里怎么取值」时用 `getValueFromEvent`，它比 `normalize` 更靠前，拿到的是子组件回调的原始参数。
+
+## 字段间距
+
+`gap` 统一控制 `FieldGroup` 子项之间的距离，取 Tailwind 的标准档位（`0`、`1`—`6`、`8`、`10`、`12`），默认 `6`（24px）。间距挂在内容容器上而不是根节点——`component` 传 `ScrollView` 时根节点的样式作用于滚动视图本身，`gap` 落不到子项上。
+
+<Demo src="@playground/field/FieldGap" />
+
+## 容器组件
+
+`component` 决定 `FieldGroup` 渲染成什么，默认 `View`。传什么组件就能继续传它的属性：
+
+```tsx
+<FieldGroup
+  component={ScrollView}
+  contentContainerClassName="p-6"
+  form={form}
+  keyboardShouldPersistTaps="handled"
+>
+  ...
+</FieldGroup>
+```
+
+`ref` 拿到的是容器组件实例，因此 `component={ScrollView}` 时可以直接 `ref.current?.scrollTo(...)`，配合 `onFinishFailed` 的 `firstErrorName` 做「滚动到第一个出错字段」。
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖。
+
+| 组件        | slot          | 作用位置                                     |
+| ----------- | ------------- | -------------------------------------------- |
+| `FieldGroup` | `root`        | 容器组件（`component`）本身                  |
+| `FieldGroup` | `content`     | 子项包裹层，`gap` 就挂在这里                 |
+| `FieldItem`  | `root`        | 字段根容器 View                              |
+| `FieldItem`  | `label`       | 标签文字                                     |
+| `FieldItem`  | `required`    | 必填星号                                     |
+| `FieldItem`  | `control`     | 控件外层容器（有标签时带上间距）             |
+| `FieldItem`  | `extra`       | 错误与描述的外层容器                         |
+| `FieldItem`  | `message`     | 错误文案                                     |
+| `FieldItem`  | `description` | 描述文本                                     |
+
+<Demo src="@playground/field/FieldStyles" />
+
+星号与标签的排列容器（`labelRow`）是纯结构类，不开放覆盖。
+
+## API
+
+### FieldGroup
+
+<PropsTable
+  data={[
+    { name: 'form', description: 'useForm 创建的表单实例，不传时内部自建一个', type: 'FormInstance<Values>' },
+    { name: 'initialValues', description: '表单初始值，只在首次挂载时生效', type: 'DeepPartial<Values>' },
+    {
+      name: 'component',
+      description: '容器组件，可传 ScrollView / KeyboardAwareScrollView 等，其自身属性照常透传',
+      type: 'ElementType',
+      default: 'View'
+    },
+    {
+      name: 'gap',
+      description: '子项间距档位，对应 Uniwind 的 gap-*',
+      type: 'FieldGroupGap',
+      default: '6'
+    },
+    {
+      name: 'validateTrigger',
+      description: '字段默认的校验触发时机，可被 FieldItem 覆盖',
+      type: 'string | string[]',
+      default: "'onChange'"
+    },
+    { name: 'validateMessages', description: '默认错误文案模板，支持 ${min} 这类占位符', type: 'ValidateMessages' },
+    { name: 'schema', description: '表单级 schema 校验（zod / valibot 等 Standard Schema 实现）', type: 'FormSchema<Values>' },
+    { name: 'preserve', description: '字段卸载后是否保留值', type: 'boolean', default: 'true' },
+    { name: 'clearOnDestroy', description: '表单卸载时是否清空数据', type: 'boolean', default: 'false' },
+    { name: 'onFinish', description: '提交且校验通过的回调', type: '(values: Values) => void' },
+    {
+      name: 'onFinishFailed',
+      description: '提交但校验失败的回调，参数含 errorFields / firstErrorName',
+      type: '(errorInfo: ValidateErrorEntity<Values>) => void'
+    },
+    {
+      name: 'onValuesChange',
+      description: '任一字段值变化的回调',
+      type: '(changedValues: Partial<Values>, values: Values) => void'
+    },
+    {
+      name: 'onFieldsChange',
+      description: '字段元信息（错误、校验状态等）变化的回调',
+      type: '(changedFields: Meta[], allFields: Meta[]) => void'
+    },
+    { name: 'className', description: '根容器类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: "SlotClassNames<'content' | 'root'>" },
+    { name: 'ref', description: '容器组件实例的 ref，用于 scrollTo / measure 等命令式操作', type: 'Ref<ElementType>' }
+  ]}
+/>
+
+### FieldItem
+
+<PropsTable
+  data={[
+    { name: 'name', description: '字段名，支持 a.b[0] 这样的路径', type: 'AllPathsKeys<Values>', required: true },
+    { name: 'children', description: '子组件，接收注入的 value / onChange / error / disabled', type: 'ReactElement', required: true },
+    { name: 'label', description: '标签文本，为空时整行不渲染', type: 'string' },
+    {
+      name: 'required',
+      description: '是否显示必填星号；缺省由 rules 推导，显式传 true 会自动补一条 required 规则',
+      type: 'boolean'
+    },
+    { name: 'rules', description: '校验规则', type: 'Rule[]' },
+    { name: 'description', description: '描述文本，显示在控件下方、错误文案之后', type: 'string' },
+    {
+      name: 'size',
+      description: '尺寸，只影响标签 / 错误 / 描述的排版，不会透传给子组件',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'lg'"
+    },
+    { name: 'initialValue', description: '字段初始值，优先级低于 FieldGroup 的 initialValues', type: 'any' },
+    { name: 'valuePropName', description: '值属性名', type: 'string', default: "'value'" },
+    { name: 'trigger', description: '触发取值的回调名', type: 'string', default: "'onChange'" },
+    {
+      name: 'validateTrigger',
+      description: '触发校验的回调名，传 false 则只在提交时校验；缺省跟随 FieldGroup',
+      type: 'string | string[] | false'
+    },
+    {
+      name: 'getValueFromEvent',
+      description: '从子组件回调参数里取值，缺省取第一个参数并抹平 TextInput 的原生事件',
+      type: '(...args: any[]) => any'
+    },
+    { name: 'getValueProps', description: '值传给子组件前的转换，只改显示值', type: '(value: any) => any' },
+    {
+      name: 'normalize',
+      description: '值写入表单前的归一化，改的是存下来的值',
+      type: '(value: any, prevValue: any, allValues: Values) => any'
+    },
+    { name: 'preserve', description: '子组件卸载后是否保留字段值', type: 'boolean', default: 'true' },
+    { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'FieldItemClassNames' },
+    { name: 'ref', description: '根节点的 ref，用于 measure / 滚动定位等命令式操作', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  FieldGroupGap,
+  FieldGroupOwnProps,
+  FieldGroupProps,
+  FieldGroupSlots,
+  FieldItemClassNames,
+  FieldItemProps,
+  FieldItemSlots
+} from '@skyroc/native-ui';
+```
+
+表单实例与校验相关的类型（`FormInstance` / `Rule` / `ValidateErrorEntity` / `Meta` / `ValidateMessages`）由 form 模块统一出口，定义见 [Form 文档的类型区](/docs/components/form)。
+
+<UnionType
+  name="FieldGroupGap"
+  description="FieldGroup 子项间距档位，对应 Uniwind 的 gap-* 标准档位。"
+  type="0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12"
+/>
+
+<UnionType
+  name="FieldGroupSlots"
+  description="FieldGroup 可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'root'"
+/>
+
+<UnionType
+  name="FieldItemSlots"
+  description="FieldItem 可通过 classNames 覆盖的 slot 名称；纯结构的 labelRow 不在其中。"
+  type="'control' | 'description' | 'extra' | 'label' | 'message' | 'required' | 'root'"
+/>
+
+<UnionType
+  name="FieldItemClassNames"
+  description="FieldItem 的 classNames 取值形态，等价于 SlotClassNames<FieldItemSlots>。"
+  type="Partial<Record<FieldItemSlots, string>>"
+/>
+
+<UnionType
+  name="AllPathsKeys"
+  description="表单值对象里所有可用的字段路径，形如 'user' | 'user.name' | 'list[0].id'。"
+  type="string"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 FieldGroupSlots / FieldItemSlots。"
+  type="Partial<Record<Slots, string>>"
+/>

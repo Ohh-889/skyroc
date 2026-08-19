@@ -1,0 +1,255 @@
+---
+title: Input
+description: 单行文本输入框，内置清除与密码可见性切换
+---
+
+输入框（Input）基于 React Native 的 `TextInput` 封装，在外层套一个 `View` 作为可见边框容器，把 `leading` / 清除按钮 / 密码切换按钮 / `trailing` 排在同一行里。值由组件托管（`useControllableState`），受控与非受控共用一条路径，因此清除按钮在两种用法下都能真正清空。
+
+```tsx
+import { Input } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+不传任何变体属性时为 `outline` + `md`。`placeholder`、`defaultValue` 等原生属性直接传即可。
+
+<Demo src="@playground/input/InputBasic" />
+
+## 何时使用
+
+- 需要单行文本录入时使用；多行文本传 `multiline` 并自行给一个高度（见「原生属性透传」）。
+- 表单场景推荐配合 `FormItem` / `FieldItem` 使用，由它们负责标签、错误文案与校验，`Input` 只负责输入区。
+- 表单行内的「标签 + 输入」布局用 `variant="none"`，把边框交给外层容器，避免出现双层边框。
+
+## 外观变体
+
+`variant` 控制容器外观：
+
+| 变体        | 表现                                   | 适用场景                     |
+| ----------- | -------------------------------------- | ---------------------------- |
+| `outline`   | 四边描边（`border-input`）             | 独立输入框（默认）           |
+| `filled`    | 灰底（`bg-muted`）+ 透明描边           | 弱化边框的表单、搜索条       |
+| `underline` | 仅底部描边、无圆角                     | 紧凑列表、内联编辑           |
+| `none`      | 无边框无背景、无内边距、高度自适应     | 嵌在自定义容器里当纯输入区   |
+
+<Demo src="@playground/input/InputVariant" />
+
+`none` 同时清掉了 `height` / `padding` / `gap` / `border-radius`，所以尺寸完全由父容器决定；它也不会随 `focused` / `error` 变色。
+
+## 尺寸
+
+`size` 同时决定容器高度、圆角、水平内边距、元素间距与输入字号，功能图标（清除、密码切换）的像素尺寸也随之变化：
+
+| 尺寸 | 高度 | 圆角     | 水平内边距 | 间距 | 字号                | 图标 |
+| ---- | ---- | -------- | ---------- | ---- | ------------------- | ---- |
+| `sm` | 40   | `rounded-md`  | 8    | 6    | `--text-sm`   | 18   |
+| `md` | 48   | `rounded-lg`  | 12   | 8    | `--text-base` | 20   |
+| `lg` | 64   | `rounded-xl`  | 16   | 10   | `--text-lg`   | 22   |
+
+<Demo src="@playground/input/InputSize" />
+
+字号一律用 `text-(length:--text-*)` 而不是 `text-sm` / `text-base` 简写：简写会连带输出 `line-height`，Uniwind 会把它换算成绝对行高传给 RN，iOS 在强制行高时会把多出的空间全部加在文字上方，表现为「输入框里的文字偏下、不居中」。单行输入不需要行高，只给 `fontSize`，让 iOS 按控件高度自然居中。
+
+## 错误态
+
+`error` 为 `true` 时边框变为 `border-destructive`。它的优先级高于聚焦色 —— 出错的输入框即使处于聚焦状态也保持红框。
+
+<Demo src="@playground/input/InputError" />
+
+`error` 只影响有边框的三种变体（`outline` / `filled` / `underline`）。`none` 没有自己的边框，错误反馈需要由父容器呈现。
+
+## 禁用
+
+`disabled` 会把底层 `TextInput` 的 `editable` 置为 `false` 并整体降到 50% 不透明度，同时清除按钮不再出现、密码切换按钮不响应点击。
+
+<Demo src="@playground/input/InputDisabled" />
+
+## 清除按钮
+
+`clearable` 在有值且未禁用时，于尾部渲染清除按钮。清空动作由组件自己完成（受控模式下走 `onChangeText`），`onClear` 只是额外通知。
+
+<Demo src="@playground/input/InputClearable" />
+
+点击清除后组件会把焦点还给输入框 —— 否则按钮会抢走焦点导致键盘收起，用户还得再点一次才能继续输入。
+
+## 密码框
+
+`type="password"` 时自动开启 `secureTextEntry` 并在尾部渲染眼睛图标。可见性支持两种模式：非受控用 `defaultPasswordVisible`，受控用 `passwordVisible` + `onPasswordVisibleChange`。
+
+<Demo src="@playground/input/InputPassword" />
+
+`secureTextEntry` 从 `InputProps` 里被移除了，请通过 `type` 控制。清除按钮与密码按钮可以共存，顺序为「清除 → 眼睛 → `trailing`」。
+
+## 前后插槽
+
+`leading` 与 `trailing` 分别放在输入区两侧，用于图标、单位、快捷按钮等。
+
+<Demo src="@playground/input/InputSlot" />
+
+插槽内容不会自动继承输入区的文字颜色：`@expo/vector-icons` 之类的图标组件需要自己取色（demo 里用 `withUniwind` 把 `accent-*` 映射到 `color`）。
+
+## 受控用法
+
+传 `value` + `onChangeText` 即为受控。组件内部仍用同一套状态托管，所以 `clearable` 在受控下同样生效。
+
+<Demo src="@playground/input/InputControlled" />
+
+## 无边框内联
+
+`variant="none"` 常用于「标签 + 输入」的行内布局：边框、圆角、内边距都交给外层容器，`Input` 自己只占一个 `flex-1` 的输入区。组件不会替你右对齐，需要靠右时自行传 `textAlign="right"`。
+
+<Demo src="@playground/input/InputInline" />
+
+## 样式覆盖
+
+`className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
+
+| slot      | 作用位置                                       |
+| --------- | ---------------------------------------------- |
+| `root`    | 根容器 `View`（边框、背景、高度、内边距）      |
+| `control` | 底层 `TextInput`（字号、文字色、placeholder）  |
+| `action`  | 清除 / 密码切换按钮的容器 `Pressable`          |
+
+<Demo src="@playground/input/InputStyles" />
+
+`className` 与 `classNames.root` 同时存在时，`className` 排在更后面参与合并，优先级更高。功能图标的颜色由内部的 `accent-muted-foreground` 决定，不在可覆盖的 slot 内。
+
+## 原生属性透传
+
+除下表列出的属性外，其余属性原样透传给底层输入组件，`keyboardType`、`maxLength`、`multiline`、`returnKeyType`、`testID` 等都可直接使用。
+
+<Demo src="@playground/input/InputNativeProps" />
+
+几个例外：
+
+- `editable` 与 `secureTextEntry` 已从 `InputProps` 中移除，分别由 `disabled` 和 `type` 控制。
+- `value` / `onChangeText` / `onFocus` / `onBlur` / `className` 由组件接管后再回调，透传属性覆盖不到它们。
+- 组件固定了 `allowFontScaling={false}` 与 `maxFontSizeMultiplier={1}`，输入文字不随系统字体缩放变化，以免撑破固定高度的容器。
+- `multiline` 只是透传，容器高度仍由 `size` 决定，需要自行用 `className` 调整高度与对齐（如 `h-24 items-start py-2`）。
+
+在 `Sheet` / `BottomSheet` 内使用时，把 `component` 换成 `BottomSheetTextInput`，键盘与手势才能正确协作：
+
+```tsx
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+
+<Input component={BottomSheetTextInput} placeholder="在 Sheet 里输入" />;
+```
+
+## 无障碍
+
+- 清除与密码切换按钮带 `hitSlop={8}`，小尺寸下也有足够的点击热区。
+- `disabled` 会同时禁用两个功能按钮，避免禁用态仍能清空内容或切换密码可见性。
+- 传入 `testID` 时，两个功能按钮会自动派生出 `${testID}-clear` 与 `${testID}-eye`，便于端到端测试定位。
+
+## API
+
+### Input
+
+除下表外，`Input` 透传 `TextInput` 的全部属性（`placeholder`、`keyboardType`、`maxLength`、`testID` 等），其中 `editable` 与 `secureTextEntry` 已被移除。
+
+<PropsTable
+  data={[
+    {
+      name: 'variant',
+      description: '容器外观，none 无边框且尺寸由父容器决定',
+      type: "'outline' | 'filled' | 'underline' | 'none'",
+      default: "'outline'"
+    },
+    {
+      name: 'size',
+      description: '尺寸，同时决定高度、圆角、内边距、字号与功能图标大小',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    {
+      name: 'type',
+      description: '输入框类型，password 时开启 secureTextEntry 并显示可见性切换按钮',
+      type: "'text' | 'password'",
+      default: "'text'"
+    },
+    {
+      name: 'error',
+      description: '错误态，边框变为 destructive，优先级高于聚焦色',
+      type: 'boolean'
+    },
+    {
+      name: 'disabled',
+      description: '禁用状态，输入不可编辑且功能按钮不响应点击',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'clearable',
+      description: '是否可清除，有值且未禁用时在尾部显示清除按钮',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'onClear', description: '清除回调，清空动作由组件完成，此处只做额外通知', type: '() => void' },
+    {
+      name: 'passwordVisible',
+      description: '密码是否可见（受控）',
+      type: 'boolean'
+    },
+    {
+      name: 'defaultPasswordVisible',
+      description: '密码是否可见的非受控默认值',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'onPasswordVisibleChange',
+      description: '密码可见性变化回调',
+      type: '(visible: boolean) => void'
+    },
+    { name: 'value', description: '输入值（受控）', type: 'string' },
+    { name: 'defaultValue', description: '输入值的非受控默认值', type: 'string' },
+    { name: 'onChangeText', description: '输入值变化回调', type: '(value: string) => void' },
+    { name: 'leading', description: '左侧内容，排在输入区之前', type: 'ReactNode' },
+    {
+      name: 'trailing',
+      description: '右侧内容，排在清除、密码按钮之后',
+      type: 'ReactNode'
+    },
+    {
+      name: 'component',
+      description: '自定义底层输入组件，在 Sheet 内使用时传 BottomSheetTextInput',
+      type: 'ComponentType<TextInputProps & RefAttributes<TextInput>>',
+      default: 'TextInput'
+    },
+    { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「样式覆盖」一节',
+      type: "SlotClassNames<'action' | 'control' | 'root'>"
+    },
+    {
+      name: 'ref',
+      description: '底层 TextInput 的 ref，可调用 focus / blur / clear / measure 等原生方法',
+      type: 'Ref<TextInput>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { InputProps, InputSlots, InputType } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="InputType"
+  description="输入框类型，password 时自动开启 secureTextEntry 并显示可见性切换按钮。"
+  type="'password' | 'text'"
+/>
+
+<UnionType
+  name="InputSlots"
+  description="可通过 classNames 覆盖的 slot 名称，action 为清除与密码切换按钮共用的槽。"
+  type="'action' | 'control' | 'root'"
+/>
+
+<UnionType
+  name="SlotClassNames"
+  description="classNames 的取值形态：把 slot 名映射到类名，每个 slot 都可选。本页用到的 slot 见 InputSlots。"
+  type="Partial<Record<Slots, string>>"
+/>
