@@ -1,21 +1,16 @@
-import { Button } from '@skyroc/native-ui';
-import Feather from '@expo/vector-icons/Feather';
+import { Button, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
 const ButtonShape = () => {
   return (
-    <View className="flex-row flex-wrap items-center gap-3 bg-background p-6">
-      <Button shape="rounded">Rounded</Button>
-      <Button shape="pill">Pill</Button>
+    <View className="flex-row flex-wrap items-center gap-3 bg-background p-4">
+      <Button shape="rounded">rounded</Button>
+      <Button shape="pill">pill</Button>
       <Button
         shape="circle"
         size="icon"
       >
-        <Feather
-          color="#ffffff"
-          name="plus"
-          size={18}
-        />
+        <Text className="text-xl">+</Text>
       </Button>
     </View>
   );

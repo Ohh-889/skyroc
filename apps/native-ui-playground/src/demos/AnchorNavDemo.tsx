@@ -1,124 +1,172 @@
 import { AnchorNav, Button, Divider, Text } from '@skyroc/native-ui';
-import type { AnchorNavChild, AnchorNavRef, AnchorNavSection } from '@skyroc/native-ui';
+import type { AnchorNavChild, AnchorNavRef, AnchorNavSection, AnchorNavSidebarContext } from '@skyroc/native-ui';
 import { useRef, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
-/** 演示变体 */
-type DemoVariant = 'basic' | 'controlled' | 'custom' | 'slots';
+type DemoVariant = 'basic' | 'controlled' | 'custom-item' | 'custom-sidebar' | 'slots';
 
-const VARIANTS: { label: string; value: DemoVariant }[] = [
-  { label: '基础', value: 'basic' },
-  { label: '受控 / 命令式', value: 'controlled' },
-  { label: '自定义子项', value: 'custom' },
-  { label: '插槽定制', value: 'slots' }
-];
+interface DemoVariantOption {
+  /** 当前模式重点展示的公开能力 */
+  description: string;
 
-const MENU_DATA: AnchorNavSection[] = [
+  /** 模式切换按钮文字 */
+  label: string;
+
+  /** 模式标识 */
+  value: DemoVariant;
+}
+
+const VARIANTS: DemoVariantOption[] = [
+  { description: '点击侧栏定位分组，滚动内容同步高亮。', label: '基础联动', value: 'basic' },
   {
-    children: [
-      { key: 'h1', text: '招牌烤鱼' },
-      { key: 'h2', text: '麻辣小龙虾' },
-      { key: 'h3', text: '酸菜鱼' },
-      { key: 'h4', text: '水煮牛肉' },
-      { key: 'h5', text: '剁椒鱼头' }
-    ],
-    key: 'hot',
-    title: '热销推荐'
+    description: 'activeIndex 受控，高亮跳转通过 ref.scrollToSection 完成。',
+    label: '受控 / 命令式',
+    value: 'controlled'
   },
   {
-    children: [
-      { key: 'l1', text: '口水鸡' },
-      { key: 'l2', text: '凉拌黄瓜' },
-      { key: 'l3', text: '皮蛋豆腐' },
-      { key: 'l4', text: '拍黄瓜' },
-      { key: 'l5', text: '凉拌木耳' },
-      { key: 'l6', text: '夫妻肺片' }
-    ],
-    key: 'cold',
-    title: '凉菜小吃'
+    description: 'renderItem 自定义子项，itemHeight 同时作为滚动度量。',
+    label: '自定义子项',
+    value: 'custom-item'
   },
   {
-    children: [
-      { key: 'c1', text: '麻婆豆腐' },
-      { key: 'c2', text: '回锅肉' },
-      { key: 'c3', text: '宫保鸡丁' },
-      { key: 'c4', text: '辣子鸡' },
-      { key: 'c5', text: '鱼香肉丝' },
-      { key: 'c6', text: '毛血旺' },
-      { key: 'c7', text: '水煮鱼片' }
-    ],
-    key: 'sichuan',
-    title: '川湘菜系'
+    description: 'renderSidebar 完全替换默认 Sidebar，并复用统一的定位逻辑。',
+    label: '自定义侧栏',
+    value: 'custom-sidebar'
   },
   {
-    children: [
-      { key: 'y1', text: '虾饺皇' },
-      { key: 'y2', text: '烧麦' },
-      { key: 'y3', text: '叉烧包' },
-      { key: 'y4', text: '肠粉' },
-      { key: 'y5', text: '凤爪' }
-    ],
-    key: 'dimsum',
-    title: '粤式点心'
-  },
-  {
-    children: [
-      { key: 'z1', text: '扬州炒饭' },
-      { key: 'z2', text: '担担面' },
-      { key: 'z3', text: '重庆小面' },
-      { key: 'z4', text: '葱油拌面' },
-      { key: 'z5', text: '炸酱面' },
-      { key: 'z6', text: '酸辣粉' }
-    ],
-    key: 'staple',
-    title: '主食面点'
-  },
-  {
-    children: [
-      { key: 't1', text: '番茄蛋汤' },
-      { key: 't2', text: '紫菜蛋花汤' },
-      { key: 't3', text: '酸辣汤' },
-      { key: 't4', text: '老火靓汤' },
-      { key: 't5', text: '冬瓜排骨汤' }
-    ],
-    key: 'soup',
-    title: '汤品煲仔'
-  },
-  {
-    children: [
-      { key: 'd1', text: '酸梅汤' },
-      { key: 'd2', text: '冰粉' },
-      { key: 'd3', text: '椰汁西米露' },
-      { key: 'd4', text: '杨枝甘露' },
-      { key: 'd5', text: '芒果布丁' }
-    ],
-    key: 'dessert',
-    title: '饮品甜品'
-  },
-  {
-    badge: '新',
-    children: [
-      { key: 'j1', text: '青岛啤酒' },
-      { key: 'j2', text: '百威啤酒' },
-      { key: 'j3', text: '可乐' },
-      { key: 'j4', text: '雪碧' },
-      { key: 'j5', text: '矿泉水' },
-      { key: 'j6', text: '王老吉' }
-    ],
-    dot: true,
-    key: 'drink',
-    title: '酒水'
+    description: '调整高度、吸顶、触感及内容区和默认侧栏的样式槽。',
+    label: '插槽定制',
+    value: 'slots'
   }
 ];
 
-/** 自定义子项的高度，同时是 AnchorNav 的滚动定位度量，所以只在这里写一次 */
-const CUSTOM_ITEM_HEIGHT = 76;
+const LIBRARY_DATA: AnchorNavSection[] = [
+  {
+    badge: 6,
+    children: [
+      { key: 'button', text: 'Button 按钮' },
+      { key: 'text', text: 'Text 文字' },
+      { key: 'avatar', text: 'Avatar 头像' },
+      { key: 'badge', text: 'Badge 徽标' }
+    ],
+    key: 'basic',
+    title: '基础组件'
+  },
+  {
+    children: [
+      { key: 'input', text: 'Input 输入框' },
+      { key: 'field', text: 'Field 字段' },
+      { key: 'checkbox', text: 'Checkbox 复选框' },
+      { key: 'radio', text: 'Radio 单选框' }
+    ],
+    dot: true,
+    key: 'form',
+    title: '表单输入'
+  },
+  {
+    children: [
+      { key: 'toast', text: 'Toast 轻提示' },
+      { key: 'notify', text: 'Notify 通知' },
+      { key: 'dialog', text: 'Dialog 对话框' },
+      { key: 'action-sheet', text: 'ActionSheet 操作面板' }
+    ],
+    key: 'feedback',
+    title: '反馈展示'
+  },
+  {
+    children: [
+      { key: 'tabs', text: 'Tabs 标签页' },
+      { key: 'sidebar', text: 'Sidebar 侧边导航' },
+      { key: 'anchor-nav', text: 'AnchorNav 锚点导航' },
+      { key: 'pagination', text: 'Pagination 分页' }
+    ],
+    key: 'navigation',
+    title: '导航布局'
+  },
+  {
+    children: [
+      { key: 'cell', text: 'Cell 单元格' },
+      { key: 'collapse', text: 'Collapse 折叠面板' },
+      { key: 'grid', text: 'Grid 宫格' },
+      { key: 'tree-select', text: 'TreeSelect 分类选择' }
+    ],
+    key: 'display',
+    title: '数据展示'
+  },
+  {
+    children: [
+      { key: 'popup', text: 'Popup 弹出层' },
+      { key: 'sheet', text: 'Sheet 底部面板' },
+      { key: 'picker', text: 'Picker 选择器' },
+      { key: 'calendar', text: 'Calendar 日历' }
+    ],
+    key: 'overlay',
+    title: '弹层选择'
+  },
+  {
+    children: [
+      { key: 'signature', text: 'Signature 签名' },
+      { key: 'rolling-text', text: 'RollingText 滚动文字' },
+      { key: 'back-top', text: 'BackTop 返回顶部' }
+    ],
+    disabled: true,
+    key: 'experimental',
+    title: '实验组件'
+  },
+  {
+    children: [
+      { key: 'divider', text: 'Divider 分隔线' },
+      { key: 'space', text: 'Space 间距' },
+      { key: 'image', text: 'Image 图片' },
+      { key: 'tag', text: 'Tag 标签' }
+    ],
+    key: 'utility',
+    title: '通用工具'
+  }
+];
 
-/** Demo 占位价格：按 key 稳定散列，免得为几十道菜维护一张价格表 */
-function toPrice(key: string) {
-  const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+const CUSTOM_ITEM_HEIGHT = 72;
 
-  return 18 + (seed % 12) * 5;
+function getExampleCount(key: string) {
+  const seed = [...key].reduce((sum, character) => sum + character.charCodeAt(0), 0);
+
+  return 2 + (seed % 7);
+}
+
+function renderCustomSidebar(context: AnchorNavSidebarContext) {
+  const { activeIndex, items, onPressIndex } = context;
+
+  return (
+    <ScrollView
+      className="w-20 shrink-0 grow-0 bg-muted/50"
+      contentContainerClassName="gap-1 py-2"
+      showsVerticalScrollIndicator={false}
+    >
+      {items.map((item, index) => (
+        <Pressable
+          accessibilityRole="button"
+          className={
+            activeIndex === index
+              ? 'mx-2 min-h-12 justify-center rounded-xl bg-primary/10 px-2'
+              : 'mx-2 min-h-12 justify-center rounded-xl px-2'
+          }
+          disabled={item.disabled}
+          key={item.key ?? index}
+          onPress={() => onPressIndex(index)}
+        >
+          <Text
+            className={
+              activeIndex === index
+                ? 'text-center text-xs font-semibold text-primary'
+                : 'text-center text-xs text-muted-foreground'
+            }
+          >
+            {item.title}
+          </Text>
+        </Pressable>
+      ))}
+    </ScrollView>
+  );
 }
 
 const AnchorNavDemo = () => {
@@ -128,39 +176,37 @@ const AnchorNavDemo = () => {
 
   const anchorRef = useRef<AnchorNavRef>(null);
 
+  const currentVariant = VARIANTS.find(item => item.value === variant) ?? VARIANTS[0];
   const isFirstSection = activeIndex === 0;
-  const isLastSection = activeIndex === MENU_DATA.length - 1;
+  const isLastSection = activeIndex === LIBRARY_DATA.length - 1;
 
   function handlePressItem(item: AnchorNavChild) {
     setPressedItem(item);
   }
 
-  /** 切换变体会换掉一棵子树，高亮从头开始，外部镜像的状态也要跟着归零 */
   function handleSelectVariant(value: DemoVariant) {
     setVariant(value);
     setActiveIndex(0);
     setPressedItem(null);
   }
 
-  /** 自定义子项：外层已经被钉在 CUSTOM_ITEM_HEIGHT 上，这里只负责把内容撑满并垂直居中 */
-  function renderMenuItem(item: AnchorNavChild, section: AnchorNavSection) {
+  function renderLibraryItem(item: AnchorNavChild, section: AnchorNavSection) {
     return (
       <Pressable
+        accessibilityRole="button"
         className="h-full flex-row items-center gap-3 px-3 active:opacity-80"
         onPress={() => handlePressItem(item)}
       >
-        <View className="h-12 w-12 items-center justify-center rounded-lg bg-muted">
-          <Text className="text-base text-muted-foreground">{section.title.slice(0, 1)}</Text>
+        <View className="size-10 items-center justify-center rounded-xl bg-primary/10">
+          <Text className="text-sm font-semibold text-primary">{section.title.slice(0, 1)}</Text>
         </View>
-
         <View className="flex-1 gap-1">
           <Text className="text-sm font-medium text-foreground">{item.text}</Text>
           <Text className="text-xs text-muted-foreground">
-            {section.title} · 月售 {toPrice(item.key) * 3} 份
+            {section.title} · {getExampleCount(item.key)} 个示例
           </Text>
         </View>
-
-        <Text className="text-sm font-semibold text-destructive">¥{toPrice(item.key)}</Text>
+        <Text className="text-xs font-medium text-primary">查看</Text>
       </Pressable>
     );
   }
@@ -171,21 +217,35 @@ const AnchorNavDemo = () => {
         <AnchorNav
           ref={anchorRef}
           activeIndex={activeIndex}
-          items={MENU_DATA}
+          items={LIBRARY_DATA}
+          key={variant}
           onIndexChange={setActiveIndex}
           onPressItem={handlePressItem}
         />
       );
     }
 
-    if (variant === 'custom') {
+    if (variant === 'custom-item') {
       return (
         <AnchorNav
           itemHeight={CUSTOM_ITEM_HEIGHT}
-          items={MENU_DATA}
-          renderItem={renderMenuItem}
+          items={LIBRARY_DATA}
+          key={variant}
+          renderItem={renderLibraryItem}
           sectionHeaderHeight={28}
           onIndexChange={setActiveIndex}
+        />
+      );
+    }
+
+    if (variant === 'custom-sidebar') {
+      return (
+        <AnchorNav
+          items={LIBRARY_DATA}
+          key={variant}
+          renderSidebar={renderCustomSidebar}
+          onIndexChange={setActiveIndex}
+          onPressItem={handlePressItem}
         />
       );
     }
@@ -195,7 +255,8 @@ const AnchorNavDemo = () => {
         <AnchorNav
           haptic={false}
           itemHeight={52}
-          items={MENU_DATA}
+          items={LIBRARY_DATA}
+          key={variant}
           sectionHeaderHeight={40}
           sticky={false}
           classNames={{
@@ -204,7 +265,6 @@ const AnchorNavDemo = () => {
             itemText: 'text-sm font-medium text-primary',
             sectionHeader: 'bg-primary/10 px-4',
             sectionHeaderText: 'text-sm font-semibold text-primary',
-            // 只把线藏起来，不动高度：分隔线的占位是滚动定位的度量之一
             separator: 'mx-0 my-0 opacity-0',
             sidebar: 'w-24 bg-primary/5'
           }}
@@ -219,7 +279,8 @@ const AnchorNavDemo = () => {
 
     return (
       <AnchorNav
-        items={MENU_DATA}
+        items={LIBRARY_DATA}
+        key={variant}
         onIndexChange={setActiveIndex}
         onPressItem={handlePressItem}
       />
@@ -228,32 +289,35 @@ const AnchorNavDemo = () => {
 
   return (
     <View className="flex-1 bg-background">
-      {/* 变体切换：AnchorNav 自己要占满剩余高度并独占纵向滚动，所以不套在竖向 ScrollView 里逐段罗列 */}
-      <ScrollView
-        horizontal
-        className="grow-0"
-        contentContainerClassName="gap-2 px-4 py-3"
-        showsHorizontalScrollIndicator={false}
-      >
-        {VARIANTS.map(item => (
-          <Button
-            key={item.value}
-            color="primary"
-            shape="pill"
-            size="sm"
-            variant={variant === item.value ? 'solid' : 'outline'}
-            onPress={() => handleSelectVariant(item.value)}
-          >
-            {item.label}
-          </Button>
-        ))}
-      </ScrollView>
+      <View className="h-14 shrink-0">
+        <ScrollView
+          horizontal
+          className="flex-1"
+          contentContainerClassName="gap-2 px-4 py-3"
+          showsHorizontalScrollIndicator={false}
+        >
+          {VARIANTS.map(item => (
+            <Button
+              key={item.value}
+              shape="pill"
+              size="sm"
+              variant={variant === item.value ? 'solid' : 'outline'}
+              onPress={() => handleSelectVariant(item.value)}
+            >
+              {item.label}
+            </Button>
+          ))}
+        </ScrollView>
+      </View>
 
-      {/* 受控示例的跳转按钮：activeIndex 只是高亮镜像，跳转必须走命令式方法 */}
+      <View className="gap-1 px-4 pb-3">
+        <Text className="text-sm font-medium text-foreground">{currentVariant.label}</Text>
+        <Text className="text-xs leading-5 text-muted-foreground">{currentVariant.description}</Text>
+      </View>
+
       {variant === 'controlled' ? (
         <View className="flex-row items-center gap-3 px-4 pb-3">
           <Button
-            color="secondary"
             disabled={isFirstSection}
             size="sm"
             variant="outline"
@@ -262,7 +326,6 @@ const AnchorNavDemo = () => {
             上一组
           </Button>
           <Button
-            color="primary"
             disabled={isLastSection}
             size="sm"
             variant="tonal"
@@ -275,10 +338,10 @@ const AnchorNavDemo = () => {
 
       <View className="flex-row items-center gap-2 px-4 pb-3">
         <Text className="text-xs text-muted-foreground">
-          当前分组：{activeIndex} · {MENU_DATA[activeIndex].title}
+          当前分组：{activeIndex} · {LIBRARY_DATA[activeIndex].title}
         </Text>
         <Text className="flex-1 text-right text-xs text-muted-foreground">
-          {pressedItem ? `点击了 ${pressedItem.text}` : '试着滚动列表看高亮联动'}
+          {pressedItem ? `点击了 ${pressedItem.text}` : '滚动列表可观察高亮联动'}
         </Text>
       </View>
 

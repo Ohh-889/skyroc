@@ -1,16 +1,20 @@
 import { Button } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
+const COLORS = ['primary', 'destructive', 'secondary', 'success', 'warning', 'info', 'muted'] as const;
+
 const ButtonColor = () => {
   return (
-    <View className="gap-3 bg-background p-6">
-      <Button color="primary">Primary</Button>
-      <Button color="destructive">Destructive</Button>
-      <Button color="secondary">Secondary</Button>
-      <Button color="success">Success</Button>
-      <Button color="warning">Warning</Button>
-      <Button color="info">Info</Button>
-      <Button color="muted">Muted</Button>
+    <View className="flex-row flex-wrap gap-3 bg-background p-4">
+      {COLORS.map(color => (
+        <Button
+          className="min-w-32 flex-1"
+          color={color}
+          key={color}
+        >
+          {color}
+        </Button>
+      ))}
     </View>
   );
 };

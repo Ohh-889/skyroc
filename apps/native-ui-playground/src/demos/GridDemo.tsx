@@ -2,154 +2,278 @@ import { Grid, Text } from '@skyroc/native-ui';
 import type { GridItemData } from '@skyroc/native-ui';
 import { Alert, ScrollView, View } from 'react-native';
 
-/** 图标占位，用色块代替真实图标，避免 demo 依赖图标库 */
-const DemoIcon = (props: { label: string }) => {
-  const { label } = props;
+interface DemoIconProps {
+  /** 图标中展示的简短标识 */
+  label: string;
+  /** 用于区分不同入口的语义色 */
+  tone: 'info' | 'primary' | 'success' | 'warning';
+}
+
+const DemoIcon = (props: DemoIconProps) => {
+  const { label, tone } = props;
+
+  if (tone === 'success') {
+    return (
+      <View className="size-10 items-center justify-center rounded-2xl bg-success/10">
+        <Text className="text-sm font-semibold text-success">{label}</Text>
+      </View>
+    );
+  }
+  if (tone === 'info') {
+    return (
+      <View className="size-10 items-center justify-center rounded-2xl bg-info/10">
+        <Text className="text-sm font-semibold text-info">{label}</Text>
+      </View>
+    );
+  }
+  if (tone === 'warning') {
+    return (
+      <View className="size-10 items-center justify-center rounded-2xl bg-warning/10">
+        <Text className="text-sm font-semibold text-warning">{label}</Text>
+      </View>
+    );
+  }
 
   return (
-    <View className="size-8 items-center justify-center rounded-lg bg-primary">
-      <Text className="text-sm text-primary-foreground">{label}</Text>
+    <View className="size-10 items-center justify-center rounded-2xl bg-primary/10">
+      <Text className="text-sm font-semibold text-primary">{label}</Text>
     </View>
   );
 };
 
-const BASE_ITEMS: GridItemData[] = [
-  { icon: <DemoIcon label="A" />, key: 'a', text: '文字' },
-  { icon: <DemoIcon label="B" />, key: 'b', text: '文字' },
-  { icon: <DemoIcon label="C" />, key: 'c', text: '文字' },
-  { icon: <DemoIcon label="D" />, key: 'd', text: '文字' }
+const GRID_ITEMS: GridItemData[] = [
+  {
+    icon: (
+      <DemoIcon
+        label="扫"
+        tone="primary"
+      />
+    ),
+    key: 'scan',
+    text: '扫一扫'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="付"
+        tone="success"
+      />
+    ),
+    key: 'payment',
+    text: '付款码'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="转"
+        tone="info"
+      />
+    ),
+    key: 'transfer',
+    text: '转账'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="票"
+        tone="warning"
+      />
+    ),
+    key: 'invoice',
+    text: '发票'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="程"
+        tone="info"
+      />
+    ),
+    key: 'schedule',
+    text: '日程'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="旅"
+        tone="warning"
+      />
+    ),
+    key: 'travel',
+    text: '差旅'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="讯"
+        tone="success"
+      />
+    ),
+    key: 'contacts',
+    text: '通讯录'
+  },
+  {
+    icon: (
+      <DemoIcon
+        label="全"
+        tone="primary"
+      />
+    ),
+    key: 'all',
+    text: '全部'
+  }
 ];
 
-const EIGHT_ITEMS: GridItemData[] = Array.from({ length: 8 }, (_, index) => ({
-  icon: <DemoIcon label={String(index + 1)} />,
-  key: `item-${index}`,
-  text: `选项 ${index + 1}`
-}));
+const BASIC_ITEMS = GRID_ITEMS.slice(0, 4);
 
 /** 末行不满，用来验证悬空竖线已经被裁掉 */
-const SEVEN_ITEMS = EIGHT_ITEMS.slice(0, 7);
+const SEVEN_ITEMS = GRID_ITEMS.slice(0, 7);
+
+function handlePress(label: string) {
+  Alert.alert(label, '宫格项已点击');
+}
 
 const GridDemo = () => {
-  function handlePress(key: string) {
-    Alert.alert('Grid Pressed', key);
-  }
-
-  const clickableItems: GridItemData[] = EIGHT_ITEMS.slice(0, 4).map(item => ({
+  const clickableItems: GridItemData[] = BASIC_ITEMS.map(item => ({
     ...item,
-    onPress: () => handlePress(item.key)
+    onPress: () => handlePress(String(item.text))
   }));
 
   return (
-    <ScrollView className="flex-1 bg-muted p-6">
-      {/* Basic */}
-      <Text className="mb-4 text-lg font-semibold">Basic</Text>
-      <View className="mb-8 bg-background">
-        <Grid items={BASE_ITEMS} />
+    <ScrollView
+      className="flex-1 bg-muted"
+      contentContainerClassName="p-6 pb-20"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 基础用法 */}
+      <Text className="mb-4 text-lg font-semibold">基础用法</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
+        <Grid items={BASIC_ITEMS} />
       </View>
 
-      {/* Column Num */}
-      <Text className="mb-4 text-lg font-semibold">Column Num</Text>
-      <View className="mb-8 bg-background">
+      {/* 列数 */}
+      <Text className="mb-4 text-lg font-semibold">列数</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">通过 columnNum 调整每行显示的宫格数量</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           columnNum={3}
-          items={EIGHT_ITEMS}
+          items={GRID_ITEMS}
         />
       </View>
 
-      {/* Border */}
-      <Text className="mb-4 text-lg font-semibold">Border</Text>
-      <View className="mb-8 bg-background">
+      {/* 分隔线 */}
+      <Text className="mb-4 text-lg font-semibold">分隔线</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">末行不满时不会留下悬空的竖线</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           border
           items={SEVEN_ITEMS}
         />
       </View>
 
-      {/* Gutter */}
-      <Text className="mb-4 text-lg font-semibold">Gutter</Text>
+      {/* 间距 */}
+      <Text className="mb-4 text-lg font-semibold">间距</Text>
       <View className="mb-8">
         <Grid
           gutter={12}
-          items={EIGHT_ITEMS}
-          classNames={{ item: 'rounded-xl bg-background' }}
+          items={GRID_ITEMS}
+          classNames={{ content: 'rounded-2xl border border-border/70 bg-background' }}
         />
       </View>
 
-      {/* Gutter + Border */}
-      <Text className="mb-4 text-lg font-semibold">Gutter + Border</Text>
-      <View className="mb-8 bg-background">
+      {/* 间距与分隔线 */}
+      <Text className="mb-4 text-lg font-semibold">间距与分隔线</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">分隔线位于相邻宫格间距的中线</Text>
+      <View className="mb-8 rounded-2xl bg-background p-2">
         <Grid
           border
           gutter={16}
-          items={EIGHT_ITEMS}
+          items={GRID_ITEMS}
         />
       </View>
 
-      {/* Square */}
-      <Text className="mb-4 text-lg font-semibold">Square</Text>
-      <View className="mb-8 bg-background">
+      {/* 正方形 */}
+      <Text className="mb-4 text-lg font-semibold">正方形</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           border
           square
-          items={BASE_ITEMS}
+          items={BASIC_ITEMS}
         />
       </View>
 
-      {/* Horizontal */}
-      <Text className="mb-4 text-lg font-semibold">Horizontal</Text>
-      <View className="mb-8 bg-background">
+      {/* 横向排列 */}
+      <Text className="mb-4 text-lg font-semibold">横向排列</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           border
           columnNum={2}
           direction="horizontal"
-          items={BASE_ITEMS}
+          items={BASIC_ITEMS}
         />
       </View>
 
-      {/* Reverse */}
-      <Text className="mb-4 text-lg font-semibold">Reverse</Text>
-      <View className="mb-8 bg-background">
+      {/* 反向排列 */}
+      <Text className="mb-4 text-lg font-semibold">反向排列</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           reverse
-          items={BASE_ITEMS}
+          items={BASIC_ITEMS}
         />
       </View>
 
-      {/* Align Start */}
-      <Text className="mb-4 text-lg font-semibold">Align Start</Text>
-      <View className="mb-8 bg-background">
+      {/* 左对齐 */}
+      <Text className="mb-4 text-lg font-semibold">左对齐</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           border
           center={false}
-          items={BASE_ITEMS}
+          items={BASIC_ITEMS}
         />
       </View>
 
-      {/* Clickable + Disabled */}
-      <Text className="mb-4 text-lg font-semibold">Clickable + Disabled</Text>
-      <View className="mb-8 bg-background">
+      {/* 点击与禁用 */}
+      <Text className="mb-4 text-lg font-semibold">点击与禁用</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           border
-          items={[...clickableItems, { ...EIGHT_ITEMS[4], disabled: true, onPress: () => handlePress('disabled') }]}
+          items={[
+            ...clickableItems,
+            {
+              ...GRID_ITEMS[4],
+              disabled: true,
+              onPress: () => handlePress('日程')
+            }
+          ]}
         />
       </View>
 
-      {/* Custom Children */}
-      <Text className="mb-4 text-lg font-semibold">Custom Children</Text>
-      <View className="mb-8 bg-background">
+      {/* 自定义内容 */}
+      <Text className="mb-4 text-lg font-semibold">自定义内容</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">children 会优先于 icon 和 text 渲染</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Grid
           columnNum={2}
           items={[
             {
               children: (
-                <View className="w-full rounded-lg bg-primary/10 p-3">
+                <View className="w-full rounded-xl bg-primary/10 p-3">
                   <Text className="text-sm font-semibold text-primary">自定义内容</Text>
-                  <Text className="mt-1 text-xs text-muted-foreground">children 优先于 icon / text</Text>
+                  <Text className="mt-1 text-xs text-muted-foreground">可承载任意 ReactNode</Text>
                 </View>
               ),
               key: 'custom'
             },
-            { icon: <DemoIcon label="0" />, key: 'zero', text: 0 }
+            {
+              icon: (
+                <DemoIcon
+                  label="0"
+                  tone="success"
+                />
+              ),
+              key: 'zero',
+              text: 0
+            }
           ]}
         />
       </View>

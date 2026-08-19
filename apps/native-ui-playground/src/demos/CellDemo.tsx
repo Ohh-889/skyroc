@@ -1,162 +1,173 @@
 import { Cell, CellGroup, Text } from '@skyroc/native-ui';
 import { Alert, ScrollView, View } from 'react-native';
 
+function handlePress(label: string) {
+  Alert.alert(label, '列表项已点击');
+}
+
 const CellDemo = () => {
-  function handlePress() {
-    Alert.alert('Cell Pressed');
-  }
-
   return (
-    <ScrollView className="flex-1 bg-muted p-6">
-      {/* Basic */}
-      <Text className="mb-4 text-lg font-semibold">Basic</Text>
-      <View className="mb-8">
-        <Cell title="Cell Title" />
+    <ScrollView
+      className="flex-1 bg-muted"
+      contentContainerClassName="p-6 pb-20"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 基础用法 */}
+      <Text className="mb-4 text-lg font-semibold">基础用法</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
+        <Cell title="单行标题" />
         <Cell
-          subtitle="Description text"
-          title="Cell Title"
+          subtitle="用于补充说明当前内容"
+          title="带描述信息"
         />
         <Cell
-          subtitle="Description text"
-          title="Cell Title"
-          trailing="Value"
+          subtitle="标题、描述与右侧内容可以同时使用"
+          title="完整信息"
+          trailing="详情"
         />
       </View>
 
-      {/* Clickable */}
-      <Text className="mb-4 text-lg font-semibold">Clickable</Text>
-      <View className="mb-8">
+      {/* 点击与箭头 */}
+      <Text className="mb-4 text-lg font-semibold">点击与箭头</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">传入点击事件后默认显示右箭头</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Cell
-          title="Clickable Cell"
-          onPress={handlePress}
+          title="可点击列表项"
+          onPress={() => handlePress('可点击列表项')}
         />
         <Cell
           showArrow
-          subtitle="With subtitle"
-          title="With Arrow"
-          onPress={handlePress}
+          subtitle="也可以通过 showArrow 显式控制"
+          title="显式显示箭头"
+          onPress={() => handlePress('显式显示箭头')}
         />
       </View>
 
-      {/* Leading */}
-      <Text className="mb-4 text-lg font-semibold">Leading</Text>
-      <View className="mb-8">
+      {/* 左侧内容 */}
+      <Text className="mb-4 text-lg font-semibold">左侧内容</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Cell
           leading={
-            <View className="size-8 items-center justify-center rounded-md bg-primary">
-              <Text className="text-sm text-primary-foreground">A</Text>
+            <View className="size-9 items-center justify-center rounded-xl bg-primary/10">
+              <Text className="text-sm font-semibold text-primary">A</Text>
             </View>
           }
-          subtitle="Description"
-          title="With Icon"
+          subtitle="leading 可以承载图标"
+          title="图标入口"
         />
         <Cell
           leading={
-            <View className="size-8 items-center justify-center rounded-full bg-secondary">
-              <Text className="text-sm text-secondary-foreground">B</Text>
+            <View className="size-9 items-center justify-center rounded-full bg-success/10">
+              <Text className="text-sm font-semibold text-success">林</Text>
             </View>
           }
-          title="With Avatar"
-          trailing="Detail"
+          title="头像入口"
+          trailing="在线"
         />
       </View>
 
-      {/* Trailing + Arrow */}
-      <Text className="mb-4 text-lg font-semibold">Trailing + Arrow</Text>
-      <View className="mb-8">
+      {/* 右侧内容与箭头方向 */}
+      <Text className="mb-4 text-lg font-semibold">右侧内容与箭头方向</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Cell
           showArrow
-          title="Show Arrow"
-          onPress={handlePress}
+          title="右箭头"
+          onPress={() => handlePress('右箭头')}
         />
         <Cell
           showArrow
           arrowDirection="down"
-          title="Arrow Down"
-          trailing="Expand"
-          onPress={handlePress}
+          title="下箭头"
+          trailing="展开"
+          onPress={() => handlePress('下箭头')}
         />
         <Cell
           showArrow
           arrowDirection="up"
-          title="Arrow Up"
-          onPress={handlePress}
+          title="上箭头"
+          trailing="收起"
+          onPress={() => handlePress('上箭头')}
         />
       </View>
 
-      {/* CellGroup */}
-      <Text className="mb-4 text-lg font-semibold">CellGroup</Text>
-      <View className="mb-8">
-        <CellGroup title="Group Title">
-          <Cell
-            title="Cell 1"
-            trailing="Value"
-          />
-          <Cell
-            title="Cell 2"
-            trailing="Value"
-          />
-          <Cell
-            showArrow
-            title="Cell 3"
-            onPress={handlePress}
-          />
-        </CellGroup>
-      </View>
-
-      {/* Inset */}
-      <Text className="mb-4 text-lg font-semibold">Inset</Text>
+      {/* 分组 */}
+      <Text className="mb-4 text-lg font-semibold">分组</Text>
       <View className="mb-8">
         <CellGroup
-          inset
-          title="Inset Group"
+          classNames={{ root: 'border border-border/70 bg-background' }}
+          title="账户设置"
         >
           <Cell
-            title="Cell 1"
-            trailing="Value"
+            title="个人资料"
+            trailing="已完善"
           />
           <Cell
-            title="Cell 2"
-            trailing="Value"
+            title="安全设置"
+            trailing="正常"
           />
           <Cell
             showArrow
-            title="Cell 3"
-            trailing="Value"
-            onPress={handlePress}
+            title="更多设置"
+            onPress={() => handlePress('更多设置')}
           />
         </CellGroup>
       </View>
 
-      {/* Sizes */}
-      <Text className="mb-4 text-lg font-semibold">Sizes</Text>
-      <View className="mb-8">
+      {/* 内嵌分组 */}
+      <Text className="mb-4 text-lg font-semibold">内嵌分组</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">inset 会为分组内容增加左右留白</Text>
+      <View className="-mx-6 mb-8">
+        <CellGroup
+          inset
+          classNames={{ root: 'border border-border/70 bg-background' }}
+          title="通知设置"
+        >
+          <Cell
+            title="系统通知"
+            trailing="已开启"
+          />
+          <Cell
+            title="活动提醒"
+            trailing="仅重要"
+          />
+          <Cell
+            showArrow
+            title="通知偏好"
+            onPress={() => handlePress('通知偏好')}
+          />
+        </CellGroup>
+      </View>
+
+      {/* 尺寸 */}
+      <Text className="mb-4 text-lg font-semibold">尺寸</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Cell
           size="sm"
-          subtitle="Small size"
-          title="Small"
+          subtitle="Small"
+          title="紧凑尺寸"
         />
         <Cell
           size="md"
-          subtitle="Medium size"
-          title="Medium"
+          subtitle="Medium"
+          title="默认尺寸"
         />
         <Cell
           size="lg"
-          subtitle="Large size"
-          title="Large"
+          subtitle="Large"
+          title="宽松尺寸"
         />
       </View>
 
-      {/* Disabled */}
-      <Text className="mb-4 text-lg font-semibold">Disabled</Text>
-      <View className="mb-8">
+      {/* 禁用 */}
+      <Text className="mb-4 text-lg font-semibold">禁用</Text>
+      <View className="mb-8 overflow-hidden rounded-2xl border border-border/70 bg-background">
         <Cell
           disabled
           showArrow
-          title="Disabled Cell"
-          trailing="Cannot Press"
-          onPress={handlePress}
+          subtitle="禁用后不会触发点击事件"
+          title="暂不可用"
+          trailing="Disabled"
+          onPress={() => handlePress('暂不可用')}
         />
       </View>
     </ScrollView>

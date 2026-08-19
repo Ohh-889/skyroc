@@ -3,25 +3,33 @@ import { View } from 'react-native';
 
 const ButtonDisabled = () => {
   return (
-    <View className="gap-3 bg-background p-6">
-      <Button disabled>Solid</Button>
+    <View className="flex-row flex-wrap gap-3 bg-background p-4">
       <Button
+        className="min-w-32 flex-1"
+        disabled
+      >
+        solid
+      </Button>
+      <Button
+        className="min-w-32 flex-1"
         disabled
         variant="tonal"
       >
-        Tonal
+        tonal
       </Button>
       <Button
+        className="min-w-32 flex-1"
         disabled
         variant="outline"
       >
-        Outline
+        outline
       </Button>
       <Button
+        className="min-w-32 flex-1"
         disabled
         variant="ghost"
       >
-        Ghost
+        ghost
       </Button>
     </View>
   );

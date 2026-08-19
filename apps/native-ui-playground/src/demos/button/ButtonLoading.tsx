@@ -11,12 +11,13 @@ const ButtonLoading = () => {
   }
 
   return (
-    <View className="gap-3 bg-background p-6">
+    <View className="gap-3 bg-background p-4">
       <Button
         loading={loading}
+        variant="tonal"
         onPress={handlePress}
       >
-        {loading ? 'Submitting…' : 'Tap to Submit'}
+        {loading ? '提交中…' : '点击提交'}
       </Button>
 
       {/* 指示器颜色跟随 variant / color，与文字色保持一致 */}
@@ -24,14 +25,13 @@ const ButtonLoading = () => {
         loading
         variant="tonal"
       >
-        Tonal
+        tonal 加载
       </Button>
       <Button
         loading
-        color="destructive"
         variant="outline"
       >
-        Outline
+        outline 加载
       </Button>
     </View>
   );

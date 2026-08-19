@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 const ButtonBlock = () => {
   return (
-    <View className="gap-3 bg-background p-6">
-      <Button block>Block Button</Button>
+    <View className="gap-3 bg-background p-4">
+      <Button block>通栏按钮</Button>
       <Button
         block
         variant="outline"
       >
-        Block Outline
+        通栏描边按钮
       </Button>
     </View>
   );
