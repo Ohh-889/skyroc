@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { RadioDemo } from '@/src/demos/RadioDemo';
+import { RadioDemo } from '@/src/demos/radio';
 
 const RadioPage = () => {
   const router = useRouter();

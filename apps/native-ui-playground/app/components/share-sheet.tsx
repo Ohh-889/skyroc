@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ShareSheetDemo } from '@/src/demos/ShareSheetDemo';
+import { ShareSheetDemo } from '@/src/demos/share-sheet';
 
 const ShareSheetPage = () => {
   const router = useRouter();

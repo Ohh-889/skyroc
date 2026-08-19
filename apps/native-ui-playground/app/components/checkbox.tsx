@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { CheckboxDemo } from '@/src/demos/CheckboxDemo';
+import { CheckboxDemo } from '@/src/demos/checkbox';
 
 const CheckboxPage = () => {
   const router = useRouter();

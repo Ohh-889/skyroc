@@ -1,0 +1,23 @@
+import { Switch } from '@skyroc/native-ui';
+import { View } from 'react-native';
+
+const SwitchLoading = () => {
+  return (
+    <View className="bg-background px-6">
+      <View className="mb-8 flex-row items-center gap-3">
+        <Switch loading />
+        <Switch
+          defaultChecked
+          loading
+        />
+        <Switch
+          defaultChecked
+          loading
+          size="2xl"
+        />
+      </View>
+    </View>
+  );
+};
+
+export { SwitchLoading };

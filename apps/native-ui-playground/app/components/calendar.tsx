@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { CalendarDemo } from '@/src/demos/CalendarDemo';
+import { CalendarDemo } from '@/src/demos/calendar';
 
 const CalendarPage = () => {
   const router = useRouter();

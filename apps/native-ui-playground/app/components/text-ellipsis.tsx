@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { TextEllipsisDemo } from '@/src/demos/TextEllipsisDemo';
+import { TextEllipsisDemo } from '@/src/demos/text-ellipsis';
 
 const TextEllipsisPage = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { StepperDemo } from '@/src/demos/StepperDemo';
+import { StepperDemo } from '@/src/demos/stepper';
 
 const StepperPage = () => {
   const router = useRouter();

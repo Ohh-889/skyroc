@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { SwipeCellDemo } from '@/src/demos/SwipeCellDemo';
+import { SwipeCellDemo } from '@/src/demos/swipe-cell';
 
 const SwipeCellPage = () => {
   const router = useRouter();

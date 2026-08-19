@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { PasswordInputDemo } from '@/src/demos/PasswordInputDemo';
+import { PasswordInputDemo } from '@/src/demos/password-input';
 
 const PasswordInputPage = () => {
   const router = useRouter();

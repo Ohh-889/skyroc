@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { FieldDemo } from '@/src/demos/FieldDemo';
+import { FieldDemo } from '@/src/demos/field';
 
 const FieldPage = () => {
   const router = useRouter();

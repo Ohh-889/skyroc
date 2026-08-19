@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ButtonDemo } from '@/src/demos/ButtonDemo';
+import { ButtonDemo } from '@/src/demos/button';
 
 const ButtonPage = () => {
   const router = useRouter();

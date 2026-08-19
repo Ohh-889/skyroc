@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { PaginationDemo } from '@/src/demos/PaginationDemo';
+import { PaginationDemo } from '@/src/demos/pagination';
 
 const PaginationPage = () => {
   const router = useRouter();

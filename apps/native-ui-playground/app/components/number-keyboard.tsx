@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { NumberKeyboardDemo } from '@/src/demos/NumberKeyboardDemo';
+import { NumberKeyboardDemo } from '@/src/demos/number-keyboard';
 
 const NumberKeyboardPage = () => {
   const router = useRouter();

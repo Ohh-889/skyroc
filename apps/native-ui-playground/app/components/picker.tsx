@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { PickerDemo } from '@/src/demos/PickerDemo';
+import { PickerDemo } from '@/src/demos/picker';
 
 const PickerPage = () => {
   const router = useRouter();

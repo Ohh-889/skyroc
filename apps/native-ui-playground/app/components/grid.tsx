@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { GridDemo } from '@/src/demos/GridDemo';
+import { GridDemo } from '@/src/demos/grid';
 
 const GridPage = () => {
   const router = useRouter();

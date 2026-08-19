@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { DialogDemo } from '@/src/demos/DialogDemo';
+import { DialogDemo } from '@/src/demos/dialog';
 
 const DialogPage = () => {
   const router = useRouter();

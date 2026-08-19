@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { CollapseDemo } from '@/src/demos/CollapseDemo';
+import { CollapseDemo } from '@/src/demos/collapse';
 
 const CollapsePage = () => {
   const router = useRouter();

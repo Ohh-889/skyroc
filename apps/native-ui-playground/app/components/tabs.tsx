@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { TabsDemo } from '@/src/demos/TabsDemo';
+import { TabsDemo } from '@/src/demos/tabs';
 
 const TabsPage = () => {
   const router = useRouter();

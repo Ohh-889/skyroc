@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { SearchDemo } from '@/src/demos/SearchDemo';
+import { SearchDemo } from '@/src/demos/search';
 
 const SearchPage = () => {
   const router = useRouter();

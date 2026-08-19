@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { DividerDemo } from '@/src/demos/DividerDemo';
+import { DividerDemo } from '@/src/demos/divider';
 
 const DividerPage = () => {
   const router = useRouter();

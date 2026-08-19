@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { DropdownMenuDemo } from '@/src/demos/DropdownMenuDemo';
+import { DropdownMenuDemo } from '@/src/demos/dropdown-menu';
 
 const DropdownMenuPage = () => {
   const router = useRouter();

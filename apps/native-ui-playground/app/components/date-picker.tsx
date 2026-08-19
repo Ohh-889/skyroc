@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { DatePickerDemo } from '@/src/demos/DatePickerDemo';
+import { DatePickerDemo } from '@/src/demos/date-picker';
 
 const DatePickerPage = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { BackTopDemo } from '@/src/demos/BackTopDemo';
+import { BackTopDemo } from '@/src/demos/back-top';
 
 const BackTopPage = () => {
   const router = useRouter();

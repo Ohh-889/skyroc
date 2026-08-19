@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { SignatureDemo } from '@/src/demos/SignatureDemo';
+import { SignatureDemo } from '@/src/demos/signature';
 
 const SignaturePage = () => {
   const router = useRouter();

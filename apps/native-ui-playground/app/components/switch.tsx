@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { SwitchDemo } from '@/src/demos/SwitchDemo';
+import { SwitchDemo } from '@/src/demos/switch';
 
 const SwitchPage = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { TimePickerDemo } from '@/src/demos/TimePickerDemo';
+import { TimePickerDemo } from '@/src/demos/time-picker';
 
 const TimePickerPage = () => {
   const router = useRouter();

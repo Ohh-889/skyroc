@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { AvatarDemo } from '@/src/demos/AvatarDemo';
+import { AvatarDemo } from '@/src/demos/avatar';
 
 const AvatarPage = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ToastDemo } from '@/src/demos/ToastDemo';
+import { ToastDemo } from '@/src/demos/toast';
 
 const ToastPage = () => {
   const router = useRouter();

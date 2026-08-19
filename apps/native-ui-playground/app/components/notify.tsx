@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { NotifyDemo } from '@/src/demos/NotifyDemo';
+import { NotifyDemo } from '@/src/demos/notify';
 
 const NotifyPage = () => {
   const router = useRouter();

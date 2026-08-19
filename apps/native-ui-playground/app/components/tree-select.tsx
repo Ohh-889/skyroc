@@ -1,7 +1,7 @@
 import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { TreeSelectDemo } from '@/src/demos/TreeSelectDemo';
+import { TreeSelectDemo } from '@/src/demos/tree-select';
 
 const TreeSelectPage = () => {
   const router = useRouter();
