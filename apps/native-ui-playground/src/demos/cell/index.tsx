@@ -2,6 +2,7 @@ import { ScrollView } from 'react-native';
 import { Section } from '@/src/components/Section';
 import { CellArrow } from './CellArrow';
 import { CellBasic } from './CellBasic';
+import { CellCenter } from './CellCenter';
 import { CellDisabled } from './CellDisabled';
 import { CellGroupBasic } from './CellGroupBasic';
 import { CellGroupInset } from './CellGroupInset';
@@ -67,6 +68,13 @@ const CellDemo = () => {
         title="尺寸（size）"
       >
         <CellSize />
+      </Section>
+
+      <Section
+        description="center 控制内容垂直居中，多行内容想顶部对齐时传 false。"
+        title="对齐方式（center）"
+      >
+        <CellCenter />
       </Section>
 
       <Section

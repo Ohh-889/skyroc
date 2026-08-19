@@ -1,20 +1,33 @@
-import { CountDown } from '@skyroc/native-ui';
+import { CountDown, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
 const CountDownMillisecond = () => {
   return (
-    <View className="gap-2 bg-background px-6 py-4">
-      <CountDown
-        millisecond
-        format="ss:SS"
-        time={10 * 1000}
-      />
-      {/* 缺失的高位单位会并入低位：只有 SSS 时，10 秒显示为 10000 起的总毫秒数 */}
-      <CountDown
-        millisecond
-        format="SSS 毫秒"
-        time={10 * 1000}
-      />
+    <View className="gap-4 bg-background p-4">
+      <View className="gap-1">
+        <Text className="text-sm text-muted-foreground">十分秒（S）</Text>
+        <CountDown
+          millisecond
+          format="ss:S"
+          time={10 * 1000}
+        />
+      </View>
+      <View className="gap-1">
+        <Text className="text-sm text-muted-foreground">百分秒（SS）</Text>
+        <CountDown
+          millisecond
+          format="ss:SS"
+          time={10 * 1000}
+        />
+      </View>
+      <View className="gap-1">
+        <Text className="text-sm text-muted-foreground">总毫秒数（SSS）</Text>
+        <CountDown
+          millisecond
+          format="SSS 毫秒"
+          time={10 * 1000}
+        />
+      </View>
     </View>
   );
 };

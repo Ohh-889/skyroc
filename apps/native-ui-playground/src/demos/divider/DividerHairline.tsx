@@ -4,9 +4,9 @@ import { View } from 'react-native';
 const DividerHairline = () => {
   return (
     <View className="bg-background p-4">
-      <Text className="mb-1 text-xs text-muted-foreground">hairline (default)</Text>
+      <Text className="text-xs text-muted-foreground">hairline=true（默认，1 物理像素）</Text>
       <Divider />
-      <Text className="mb-1 text-xs text-muted-foreground">1px (hairline=false)</Text>
+      <Text className="text-xs text-muted-foreground">hairline=false（1dp）</Text>
       <Divider hairline={false} />
     </View>
   );

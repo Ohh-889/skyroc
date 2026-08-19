@@ -15,12 +15,11 @@ const CountDownManual = () => {
   }
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <CountDown
           autoStart={false}
-          format="mm:ss:SSS"
-          millisecond
+          format="mm:ss"
           ref={manualRef}
           time={20 * 1000}
         />

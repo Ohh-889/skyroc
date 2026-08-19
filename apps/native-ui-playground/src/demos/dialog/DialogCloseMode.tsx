@@ -24,8 +24,8 @@ const DialogCloseMode = () => {
   }
 
   return (
-    <View className="bg-background px-6">
-      <View className="mb-2 flex-row flex-wrap items-center gap-3">
+    <View className="gap-3 bg-background p-4">
+      <View className="flex-row flex-wrap items-center gap-3">
         <Button
           variant="tonal"
           onPress={handleBackdrop}
@@ -38,13 +38,21 @@ const DialogCloseMode = () => {
         >
           代码关闭
         </Button>
+        <Button
+          variant="tonal"
+          onPress={() =>
+            showDialog({
+              closeOnBackdropPress: false,
+              closeOnBackPress: false,
+              message: '遮罩点击和 Android 返回键都不会关闭，只能点击确认按钮。',
+              title: '禁止外部关闭'
+            })
+          }
+        >
+          禁止外部关闭
+        </Button>
       </View>
-      <Text
-        className="mb-8"
-        color="muted"
-      >
-        最近一次操作：{lastAction}
-      </Text>
+      <Text color="muted">最近一次操作：{lastAction}</Text>
     </View>
   );
 };

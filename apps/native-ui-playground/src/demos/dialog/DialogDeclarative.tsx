@@ -1,26 +1,24 @@
-import { Button, Dialog, Portal } from '@skyroc/native-ui';
+import { Button, Dialog, Portal, Text } from '@skyroc/native-ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 const DialogDeclarative = () => {
-  const [declarativeShow, setDeclarativeShow] = useState(false);
-  const [inputShow, setInputShow] = useState(false);
+  const [show, setShow] = useState(false);
+  const [openedCount, setOpenedCount] = useState(0);
+  const [closedCount, setClosedCount] = useState(0);
 
   return (
-    <View className="bg-background px-6">
-      <View className="mb-8 flex-row flex-wrap items-center gap-3">
-        <Button
-          variant="outline"
-          onPress={() => setDeclarativeShow(true)}
-        >
-          受控 Dialog
-        </Button>
-        <Button
-          variant="outline"
-          onPress={() => setInputShow(true)}
-        >
-          受控 + 输入框
-        </Button>
+    <View className="gap-3 bg-background p-4">
+      <Button
+        variant="tonal"
+        onPress={() => setShow(true)}
+      >
+        打开声明式 Dialog
+      </Button>
+      <View className="rounded-xl bg-muted p-3">
+        <Text className="text-sm text-muted-foreground">
+          已打开 {openedCount} 次，已关闭 {closedCount} 次
+        </Text>
       </View>
 
       {/* 声明式 Dialog 不能落在 ScrollView 里面：JS 触摸响应链走的是 React 树，
@@ -29,21 +27,13 @@ const DialogDeclarative = () => {
           总览页把本 demo 放进 ScrollView 时也不受影响 */}
       <Portal>
         <Dialog
-          message="受控用法下 show 由外部状态驱动"
-          show={declarativeShow}
+          message="show 与 onUpdateShow 由外部状态控制。"
+          show={show}
           showCancelButton
           title="受控 Dialog"
-          onUpdateShow={setDeclarativeShow}
-        />
-
-        <Dialog
-          inputPlaceholder="随便输点什么"
-          message="确定后能拿到输入值"
-          show={inputShow}
-          showCancelButton
-          showInput
-          title="受控输入"
-          onUpdateShow={setInputShow}
+          onClosed={() => setClosedCount(count => count + 1)}
+          onOpened={() => setOpenedCount(count => count + 1)}
+          onUpdateShow={setShow}
         />
       </Portal>
     </View>

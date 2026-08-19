@@ -8,7 +8,7 @@ const CountDownDynamicTime = () => {
   const [duration, setDuration] = useState(30);
 
   return (
-    <View className="bg-background px-6 py-4">
+    <View className="bg-background p-4">
       <View className="mb-4">
         <CountDown
           format="mm:ss"

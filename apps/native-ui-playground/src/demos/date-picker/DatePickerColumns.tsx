@@ -5,9 +5,9 @@ const DatePickerColumns = () => {
   return (
     <View className="bg-background p-4">
       <DatePickerView
-        columnsType={['year', 'month']}
+        columnsType={['month', 'day']}
+        defaultValue={['08', '19']}
         showToolbar={false}
-        title="选择月份"
       />
     </View>
   );

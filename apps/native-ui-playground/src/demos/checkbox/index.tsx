@@ -17,6 +17,7 @@ import { CheckboxMultilineLabel } from './CheckboxMultilineLabel';
 import { CheckboxShape } from './CheckboxShape';
 import { CheckboxSize } from './CheckboxSize';
 import { CheckboxSquareGroup } from './CheckboxSquareGroup';
+import { CheckboxStyles } from './CheckboxStyles';
 
 /**
  * Checkbox 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/checkbox/CheckboxColor" />），
@@ -125,6 +126,13 @@ const CheckboxDemo = () => {
         title="自定义图标（checkedIcon / indeterminateIcon）"
       >
         <CheckboxCustomIcon />
+      </Section>
+
+      <Section
+        description="className 覆盖根容器，classNames 按 slot 细粒度覆盖。"
+        title="样式覆盖（className / classNames）"
+      >
+        <CheckboxStyles />
       </Section>
 
       <Section

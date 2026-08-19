@@ -4,9 +4,9 @@ import { View } from 'react-native';
 const DividerText = () => {
   return (
     <View className="bg-background p-4">
-      <Divider>Center Text</Divider>
-      <Divider align="start">Left Text</Divider>
-      <Divider align="end">Right Text</Divider>
+      <Divider align="start">起始位置</Divider>
+      <Divider align="center">居中位置</Divider>
+      <Divider align="end">结束位置</Divider>
     </View>
   );
 };

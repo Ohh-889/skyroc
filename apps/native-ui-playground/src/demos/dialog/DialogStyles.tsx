@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const DialogStyles = () => {
   return (
-    <View className="mb-8 flex-row flex-wrap items-center gap-3 bg-background px-6">
+    <View className="flex-row flex-wrap items-center gap-3 bg-background p-4">
       <Button
         variant="tonal"
         onPress={() =>

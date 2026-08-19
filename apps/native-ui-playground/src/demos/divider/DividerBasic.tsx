@@ -4,9 +4,9 @@ import { View } from 'react-native';
 const DividerBasic = () => {
   return (
     <View className="bg-background p-4">
-      <Text className="text-sm">Some content above</Text>
+      <Text className="text-sm text-foreground">上方内容</Text>
       <Divider />
-      <Text className="text-sm">Some content below</Text>
+      <Text className="text-sm text-foreground">下方内容</Text>
     </View>
   );
 };

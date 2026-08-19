@@ -12,7 +12,13 @@ const DialogTheme = () => {
   }
 
   return (
-    <View className="mb-8 flex-row flex-wrap items-center gap-3 bg-background px-6">
+    <View className="flex-row flex-wrap items-center gap-3 bg-background p-4">
+      <Button
+        variant="tonal"
+        onPress={() => showConfirmDialog({ message: '默认主题使用通栏文字按钮。', title: '默认主题' })}
+      >
+        默认主题
+      </Button>
       <Button
         variant="tonal"
         onPress={() => handleRound('vertical')}
