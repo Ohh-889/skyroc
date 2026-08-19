@@ -18,7 +18,7 @@ export const Route = createFileRoute(ROUTE_PATH)({
     i18nKey: 'route.document_web-ui-docs',
     menu: {
       icon: 'mdi:palette-swatch-outline',
-      order: 3
+      order: 1
     },
     title: 'web-ui-docs',
     url: PROJECT_DOC_URLS.webUiDocs

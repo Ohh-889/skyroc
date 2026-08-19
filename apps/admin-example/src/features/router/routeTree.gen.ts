@@ -61,16 +61,14 @@ import { Route as adminException500RouteImport } from './../../pages/(admin)/exc
 import { Route as adminException404RouteImport } from './../../pages/(admin)/exception/404'
 import { Route as adminException403RouteImport } from './../../pages/(admin)/exception/403'
 import { Route as adminDocumentWebUiDocsRouteImport } from './../../pages/(admin)/document/web-ui-docs'
-import { Route as adminDocumentWebKitDocsRouteImport } from './../../pages/(admin)/document/web-kit-docs'
 import { Route as adminDocumentViteRouteImport } from './../../pages/(admin)/document/vite'
 import { Route as adminDocumentUnocssRouteImport } from './../../pages/(admin)/document/unocss'
 import { Route as adminDocumentTanstackRouterRouteImport } from './../../pages/(admin)/document/tanstack-router'
 import { Route as adminDocumentTanstackQueryRouteImport } from './../../pages/(admin)/document/tanstack-query'
 import { Route as adminDocumentRepositoryRouteImport } from './../../pages/(admin)/document/repository'
 import { Route as adminDocumentReactRouteImport } from './../../pages/(admin)/document/react'
-import { Route as adminDocumentProjectDocsRouteImport } from './../../pages/(admin)/document/project-docs'
+import { Route as adminDocumentNativeUiDocsRouteImport } from './../../pages/(admin)/document/native-ui-docs'
 import { Route as adminDocumentJotaiRouteImport } from './../../pages/(admin)/document/jotai'
-import { Route as adminDocumentCoreDocsRouteImport } from './../../pages/(admin)/document/core-docs'
 import { Route as adminDocumentAntDesignRouteImport } from './../../pages/(admin)/document/ant-design'
 import { Route as adminDocumentAdminDocsRouteImport } from './../../pages/(admin)/document/admin-docs'
 import { Route as adminPluginTablesLayoutRouteImport } from './../../pages/(admin)/plugin/tables/layout'
@@ -371,11 +369,6 @@ const adminDocumentWebUiDocsRoute = adminDocumentWebUiDocsRouteImport.update({
   path: '/web-ui-docs',
   getParentRoute: () => adminDocumentLayoutRoute,
 } as any)
-const adminDocumentWebKitDocsRoute = adminDocumentWebKitDocsRouteImport.update({
-  id: '/web-kit-docs',
-  path: '/web-kit-docs',
-  getParentRoute: () => adminDocumentLayoutRoute,
-} as any)
 const adminDocumentViteRoute = adminDocumentViteRouteImport.update({
   id: '/vite',
   path: '/vite',
@@ -408,20 +401,15 @@ const adminDocumentReactRoute = adminDocumentReactRouteImport.update({
   path: '/react',
   getParentRoute: () => adminDocumentLayoutRoute,
 } as any)
-const adminDocumentProjectDocsRoute =
-  adminDocumentProjectDocsRouteImport.update({
-    id: '/project-docs',
-    path: '/project-docs',
+const adminDocumentNativeUiDocsRoute =
+  adminDocumentNativeUiDocsRouteImport.update({
+    id: '/native-ui-docs',
+    path: '/native-ui-docs',
     getParentRoute: () => adminDocumentLayoutRoute,
   } as any)
 const adminDocumentJotaiRoute = adminDocumentJotaiRouteImport.update({
   id: '/jotai',
   path: '/jotai',
-  getParentRoute: () => adminDocumentLayoutRoute,
-} as any)
-const adminDocumentCoreDocsRoute = adminDocumentCoreDocsRouteImport.update({
-  id: '/core-docs',
-  path: '/core-docs',
   getParentRoute: () => adminDocumentLayoutRoute,
 } as any)
 const adminDocumentAntDesignRoute = adminDocumentAntDesignRouteImport.update({
@@ -671,16 +659,14 @@ export interface FileRoutesByFullPath {
   '/plugin/tables': typeof adminPluginTablesLayoutRouteWithChildren
   '/document/admin-docs': typeof adminDocumentAdminDocsRoute
   '/document/ant-design': typeof adminDocumentAntDesignRoute
-  '/document/core-docs': typeof adminDocumentCoreDocsRoute
   '/document/jotai': typeof adminDocumentJotaiRoute
-  '/document/project-docs': typeof adminDocumentProjectDocsRoute
+  '/document/native-ui-docs': typeof adminDocumentNativeUiDocsRoute
   '/document/react': typeof adminDocumentReactRoute
   '/document/repository': typeof adminDocumentRepositoryRoute
   '/document/tanstack-query': typeof adminDocumentTanstackQueryRoute
   '/document/tanstack-router': typeof adminDocumentTanstackRouterRoute
   '/document/unocss': typeof adminDocumentUnocssRoute
   '/document/vite': typeof adminDocumentViteRoute
-  '/document/web-kit-docs': typeof adminDocumentWebKitDocsRoute
   '/document/web-ui-docs': typeof adminDocumentWebUiDocsRoute
   '/exception/403': typeof adminException403Route
   '/exception/404': typeof adminException404Route
@@ -758,16 +744,14 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/document/admin-docs': typeof adminDocumentAdminDocsRoute
   '/document/ant-design': typeof adminDocumentAntDesignRoute
-  '/document/core-docs': typeof adminDocumentCoreDocsRoute
   '/document/jotai': typeof adminDocumentJotaiRoute
-  '/document/project-docs': typeof adminDocumentProjectDocsRoute
+  '/document/native-ui-docs': typeof adminDocumentNativeUiDocsRoute
   '/document/react': typeof adminDocumentReactRoute
   '/document/repository': typeof adminDocumentRepositoryRoute
   '/document/tanstack-query': typeof adminDocumentTanstackQueryRoute
   '/document/tanstack-router': typeof adminDocumentTanstackRouterRoute
   '/document/unocss': typeof adminDocumentUnocssRoute
   '/document/vite': typeof adminDocumentViteRoute
-  '/document/web-kit-docs': typeof adminDocumentWebKitDocsRoute
   '/document/web-ui-docs': typeof adminDocumentWebUiDocsRoute
   '/exception/403': typeof adminException403Route
   '/exception/404': typeof adminException404Route
@@ -862,16 +846,14 @@ export interface FileRoutesById {
   '/(admin)/plugin/tables': typeof adminPluginTablesLayoutRouteWithChildren
   '/(admin)/document/admin-docs': typeof adminDocumentAdminDocsRoute
   '/(admin)/document/ant-design': typeof adminDocumentAntDesignRoute
-  '/(admin)/document/core-docs': typeof adminDocumentCoreDocsRoute
   '/(admin)/document/jotai': typeof adminDocumentJotaiRoute
-  '/(admin)/document/project-docs': typeof adminDocumentProjectDocsRoute
+  '/(admin)/document/native-ui-docs': typeof adminDocumentNativeUiDocsRoute
   '/(admin)/document/react': typeof adminDocumentReactRoute
   '/(admin)/document/repository': typeof adminDocumentRepositoryRoute
   '/(admin)/document/tanstack-query': typeof adminDocumentTanstackQueryRoute
   '/(admin)/document/tanstack-router': typeof adminDocumentTanstackRouterRoute
   '/(admin)/document/unocss': typeof adminDocumentUnocssRoute
   '/(admin)/document/vite': typeof adminDocumentViteRoute
-  '/(admin)/document/web-kit-docs': typeof adminDocumentWebKitDocsRoute
   '/(admin)/document/web-ui-docs': typeof adminDocumentWebUiDocsRoute
   '/(admin)/exception/403': typeof adminException403Route
   '/(admin)/exception/404': typeof adminException404Route
@@ -967,16 +949,14 @@ export interface FileRouteTypes {
     | '/plugin/tables'
     | '/document/admin-docs'
     | '/document/ant-design'
-    | '/document/core-docs'
     | '/document/jotai'
-    | '/document/project-docs'
+    | '/document/native-ui-docs'
     | '/document/react'
     | '/document/repository'
     | '/document/tanstack-query'
     | '/document/tanstack-router'
     | '/document/unocss'
     | '/document/vite'
-    | '/document/web-kit-docs'
     | '/document/web-ui-docs'
     | '/exception/403'
     | '/exception/404'
@@ -1054,16 +1034,14 @@ export interface FileRouteTypes {
     | '/500'
     | '/document/admin-docs'
     | '/document/ant-design'
-    | '/document/core-docs'
     | '/document/jotai'
-    | '/document/project-docs'
+    | '/document/native-ui-docs'
     | '/document/react'
     | '/document/repository'
     | '/document/tanstack-query'
     | '/document/tanstack-router'
     | '/document/unocss'
     | '/document/vite'
-    | '/document/web-kit-docs'
     | '/document/web-ui-docs'
     | '/exception/403'
     | '/exception/404'
@@ -1157,16 +1135,14 @@ export interface FileRouteTypes {
     | '/(admin)/plugin/tables'
     | '/(admin)/document/admin-docs'
     | '/(admin)/document/ant-design'
-    | '/(admin)/document/core-docs'
     | '/(admin)/document/jotai'
-    | '/(admin)/document/project-docs'
+    | '/(admin)/document/native-ui-docs'
     | '/(admin)/document/react'
     | '/(admin)/document/repository'
     | '/(admin)/document/tanstack-query'
     | '/(admin)/document/tanstack-router'
     | '/(admin)/document/unocss'
     | '/(admin)/document/vite'
-    | '/(admin)/document/web-kit-docs'
     | '/(admin)/document/web-ui-docs'
     | '/(admin)/exception/403'
     | '/(admin)/exception/404'
@@ -1611,13 +1587,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminDocumentWebUiDocsRouteImport
       parentRoute: typeof adminDocumentLayoutRoute
     }
-    '/(admin)/document/web-kit-docs': {
-      id: '/(admin)/document/web-kit-docs'
-      path: '/web-kit-docs'
-      fullPath: '/document/web-kit-docs'
-      preLoaderRoute: typeof adminDocumentWebKitDocsRouteImport
-      parentRoute: typeof adminDocumentLayoutRoute
-    }
     '/(admin)/document/vite': {
       id: '/(admin)/document/vite'
       path: '/vite'
@@ -1660,11 +1629,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminDocumentReactRouteImport
       parentRoute: typeof adminDocumentLayoutRoute
     }
-    '/(admin)/document/project-docs': {
-      id: '/(admin)/document/project-docs'
-      path: '/project-docs'
-      fullPath: '/document/project-docs'
-      preLoaderRoute: typeof adminDocumentProjectDocsRouteImport
+    '/(admin)/document/native-ui-docs': {
+      id: '/(admin)/document/native-ui-docs'
+      path: '/native-ui-docs'
+      fullPath: '/document/native-ui-docs'
+      preLoaderRoute: typeof adminDocumentNativeUiDocsRouteImport
       parentRoute: typeof adminDocumentLayoutRoute
     }
     '/(admin)/document/jotai': {
@@ -1672,13 +1641,6 @@ declare module '@tanstack/react-router' {
       path: '/jotai'
       fullPath: '/document/jotai'
       preLoaderRoute: typeof adminDocumentJotaiRouteImport
-      parentRoute: typeof adminDocumentLayoutRoute
-    }
-    '/(admin)/document/core-docs': {
-      id: '/(admin)/document/core-docs'
-      path: '/core-docs'
-      fullPath: '/document/core-docs'
-      preLoaderRoute: typeof adminDocumentCoreDocsRouteImport
       parentRoute: typeof adminDocumentLayoutRoute
     }
     '/(admin)/document/ant-design': {
@@ -1967,16 +1929,14 @@ declare module '@tanstack/react-router' {
 interface adminDocumentLayoutRouteChildren {
   adminDocumentAdminDocsRoute: typeof adminDocumentAdminDocsRoute
   adminDocumentAntDesignRoute: typeof adminDocumentAntDesignRoute
-  adminDocumentCoreDocsRoute: typeof adminDocumentCoreDocsRoute
   adminDocumentJotaiRoute: typeof adminDocumentJotaiRoute
-  adminDocumentProjectDocsRoute: typeof adminDocumentProjectDocsRoute
+  adminDocumentNativeUiDocsRoute: typeof adminDocumentNativeUiDocsRoute
   adminDocumentReactRoute: typeof adminDocumentReactRoute
   adminDocumentRepositoryRoute: typeof adminDocumentRepositoryRoute
   adminDocumentTanstackQueryRoute: typeof adminDocumentTanstackQueryRoute
   adminDocumentTanstackRouterRoute: typeof adminDocumentTanstackRouterRoute
   adminDocumentUnocssRoute: typeof adminDocumentUnocssRoute
   adminDocumentViteRoute: typeof adminDocumentViteRoute
-  adminDocumentWebKitDocsRoute: typeof adminDocumentWebKitDocsRoute
   adminDocumentWebUiDocsRoute: typeof adminDocumentWebUiDocsRoute
   adminDocumentIndexRoute: typeof adminDocumentIndexRoute
 }
@@ -1984,16 +1944,14 @@ interface adminDocumentLayoutRouteChildren {
 const adminDocumentLayoutRouteChildren: adminDocumentLayoutRouteChildren = {
   adminDocumentAdminDocsRoute: adminDocumentAdminDocsRoute,
   adminDocumentAntDesignRoute: adminDocumentAntDesignRoute,
-  adminDocumentCoreDocsRoute: adminDocumentCoreDocsRoute,
   adminDocumentJotaiRoute: adminDocumentJotaiRoute,
-  adminDocumentProjectDocsRoute: adminDocumentProjectDocsRoute,
+  adminDocumentNativeUiDocsRoute: adminDocumentNativeUiDocsRoute,
   adminDocumentReactRoute: adminDocumentReactRoute,
   adminDocumentRepositoryRoute: adminDocumentRepositoryRoute,
   adminDocumentTanstackQueryRoute: adminDocumentTanstackQueryRoute,
   adminDocumentTanstackRouterRoute: adminDocumentTanstackRouterRoute,
   adminDocumentUnocssRoute: adminDocumentUnocssRoute,
   adminDocumentViteRoute: adminDocumentViteRoute,
-  adminDocumentWebKitDocsRoute: adminDocumentWebKitDocsRoute,
   adminDocumentWebUiDocsRoute: adminDocumentWebUiDocsRoute,
   adminDocumentIndexRoute: adminDocumentIndexRoute,
 }

@@ -18,7 +18,7 @@ export const Route = createFileRoute(ROUTE_PATH)({
     i18nKey: 'route.document_admin-docs',
     menu: {
       icon: 'mdi:book-open-page-variant',
-      order: 1
+      order: 0
     },
     title: 'admin-docs',
     url: PROJECT_DOC_URLS.adminDocs

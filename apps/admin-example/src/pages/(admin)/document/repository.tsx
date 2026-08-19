@@ -13,7 +13,7 @@ export const Route = createFileRoute('/(admin)/document/repository')({
     i18nKey: 'route.document_repository',
     menu: {
       icon: 'mdi:github',
-      order: 5
+      order: 3
     },
     title: 'repository'
   }

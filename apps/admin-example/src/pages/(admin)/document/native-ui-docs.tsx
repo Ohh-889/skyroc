@@ -4,23 +4,23 @@ import { IframePage } from '@/features/router/components/IframePage';
 
 import { PROJECT_DOC_URLS } from './modules/shared';
 
-const ROUTE_PATH = '/(admin)/document/web-kit-docs';
+const ROUTE_PATH = '/(admin)/document/native-ui-docs';
 
-const DocumentWebKitDocs = () => {
+const DocumentNativeUiDocs = () => {
   const { staticData } = useMatch({ from: ROUTE_PATH });
 
   return <IframePage title={staticData.title} url={staticData.url} />;
 };
 
 export const Route = createFileRoute(ROUTE_PATH)({
-  component: DocumentWebKitDocs,
+  component: DocumentNativeUiDocs,
   staticData: {
-    i18nKey: 'route.document_web-kit-docs',
+    i18nKey: 'route.document_native-ui-docs',
     menu: {
-      icon: 'carbon:tool-kit',
+      icon: 'mdi:cellphone-cog',
       order: 2
     },
-    title: 'web-kit-docs',
-    url: PROJECT_DOC_URLS.webKitDocs
+    title: 'native-ui-docs',
+    url: PROJECT_DOC_URLS.nativeUiDocs
   }
 });
