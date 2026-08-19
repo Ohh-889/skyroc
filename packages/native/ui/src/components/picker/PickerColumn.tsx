@@ -91,7 +91,7 @@ const PickerColumnItem = (props: PickerColumnItemProps) => {
       opacity: option.disabled ? opacity * DISABLED_OPACITY_RATIO : opacity,
       transform: [{ scale }]
     };
-  });
+  }, [centerOffset, index, itemHeight, option.disabled, scrollY, spacerHeight]);
 
   return (
     <Animated.View
@@ -160,12 +160,12 @@ const PickerColumn = (props: PickerColumnProps) => {
         scheduleOnRN(triggerHaptic);
       }
     }
-  });
+  }, [haptic, itemHeight, maxIndex, prevScrollIndex, scrollY]);
 
   // 响应式滚动：scrollTarget 变化时在 UI 线程执行 scrollTo
   useDerivedValue(() => {
     scrollTo(scrollViewRef, 0, scrollTarget.value, scrollAnimated.value);
-  });
+  }, [scrollAnimated, scrollTarget, scrollViewRef]);
 
   /** 按当前偏移结算选中项，禁用项自动吸附到最近的可用项 */
   function commitSelection(offsetY: number) {

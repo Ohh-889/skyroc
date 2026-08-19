@@ -131,7 +131,7 @@ const Sidebar = (props: SidebarProps) => {
 
   const variantSlots = sidebarVariants();
 
-  const indicatorAnimStyle = useAnimatedStyle(() => ({ transform: [{ translateY: indicatorY.value }] }));
+  const indicatorAnimStyle = useAnimatedStyle(() => ({ transform: [{ translateY: indicatorY.value }] }), [indicatorY]);
 
   /** 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {

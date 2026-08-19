@@ -44,7 +44,7 @@ const RollingTextItem = (props: RollingTextItemProps) => {
   /** 没拿到回调的列不必跨线程通知，省掉一次 runOnJS */
   const shouldNotify = Boolean(onFinish);
 
-  const animStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }));
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ translateY: translateY.value }] }), [translateY]);
 
   function notifyFinish() {
     onFinishRef.current?.();

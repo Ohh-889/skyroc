@@ -44,13 +44,19 @@ const DropdownMenuPanel = (props: DropdownMenuPanelProps) => {
 
   const variantSlots = dropdownMenuVariants({ direction });
 
-  const wrapperStyle = useAnimatedStyle(() => ({
-    height: contentHeight.value
-  }));
+  const wrapperStyle = useAnimatedStyle(
+    () => ({
+      height: contentHeight.value
+    }),
+    [contentHeight]
+  );
 
-  const overlayStyle = useAnimatedStyle(() => ({
-    opacity: overlayOpacity.value
-  }));
+  const overlayStyle = useAnimatedStyle(
+    () => ({
+      opacity: overlayOpacity.value
+    }),
+    [overlayOpacity]
+  );
 
   /**
    * 面板锚在标题栏的哪一侧，并铺满剩下的一屏。

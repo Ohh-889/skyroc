@@ -49,8 +49,11 @@ const Switch = (props: SwitchProps) => {
   const translateXEnd = trackSize.width - thumbSize - padding * 2;
 
   // 只有透明度和位移在动，尺寸/定位交给 className 与静态 style，避免每帧重算不变量
-  const overlayAnimStyle = useAnimatedStyle(() => ({ opacity: progress.value }));
-  const thumbAnimStyle = useAnimatedStyle(() => ({ transform: [{ translateX: progress.value * translateXEnd }] }));
+  const overlayAnimStyle = useAnimatedStyle(() => ({ opacity: progress.value }), [progress]);
+  const thumbAnimStyle = useAnimatedStyle(
+    () => ({ transform: [{ translateX: progress.value * translateXEnd }] }),
+    [progress, translateXEnd]
+  );
 
   const variantSlots = switchVariants({ color, disabled: isDisabled });
 

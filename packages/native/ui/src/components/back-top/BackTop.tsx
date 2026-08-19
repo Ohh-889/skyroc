@@ -54,7 +54,7 @@ const BackTop = <TRef extends BackTopScrollable>(props: BackTopProps<TRef>) => {
   const scrollTrigger = useSharedValue(0);
 
   // 可见性全程留在 UI 线程：滚动每一帧都要判定，走 state 会把整棵子树重渲染一遍
-  const visible = useDerivedValue(() => scrollOffset.value >= offset);
+  const visible = useDerivedValue(() => scrollOffset.value >= offset, [offset, scrollOffset]);
 
   const variantSlots = backTopVariants();
 
@@ -79,7 +79,8 @@ const BackTop = <TRef extends BackTopScrollable>(props: BackTopProps<TRef>) => {
       if (previous === null || current === previous) return;
 
       scrollTo(target, 0, 0, !immediate);
-    }
+    },
+    [immediate, scrollTrigger, target]
   );
 
   return (

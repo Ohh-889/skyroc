@@ -83,7 +83,8 @@ const SliderThumb = (props: SliderThumbProps) => {
     const offset = valueToRatio(valueSV.value, bounds) * trackSizeSV.value;
 
     return { transform: vertical ? [{ translateY: -offset }] : [{ translateX: offset }] };
-  });
+    // bounds 每次渲染都是新对象，依赖里只取被 worklet 读到的两个边界值
+  }, [bounds.max, bounds.min, trackSizeSV, valueSV, vertical]);
 
   // 交叉轴居中：命中层与圆钮同心，轨道也是同心的，三者中心线因此严格重合
   const crossOffset = (hitSize - size) / 2;

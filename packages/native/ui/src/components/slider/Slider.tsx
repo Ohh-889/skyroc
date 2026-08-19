@@ -111,7 +111,8 @@ const Slider = (props: SliderProps) => {
     return vertical
       ? { bottom: startRatio * trackSize, height: (endRatio - startRatio) * trackSize }
       : { left: startRatio * trackSize, width: (endRatio - startRatio) * trackSize };
-  });
+    // bounds 每次渲染都是新对象，依赖里只取被 worklet 读到的两个边界值
+  }, [bounds.max, bounds.min, endValueSV, range, startValueSV, trackSizeSV, vertical]);
 
   const variantSlots = sliderVariants({ color, disabled, vertical });
 

@@ -258,9 +258,12 @@ const SwipeCell = (props: SwipeCellProps) => {
       scheduleOnRN(commit, side);
     });
 
-  const contentAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }]
-  }));
+  const contentAnimatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ translateX: translateX.value }]
+    }),
+    [translateX]
+  );
 
   useImperativeHandle(ref, () => ({
     close: handleClose,

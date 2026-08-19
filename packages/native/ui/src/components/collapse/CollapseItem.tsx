@@ -62,13 +62,19 @@ const CollapseItem = (props: CollapseItemProps) => {
   }));
 
   // useAnimatedStyle 必须每次返回相同的属性集合，否则被移除的属性会在原生侧残留
-  const wrapperStyle = useAnimatedStyle(() => ({
-    height: animatedHeight.value
-  }));
+  const wrapperStyle = useAnimatedStyle(
+    () => ({
+      height: animatedHeight.value
+    }),
+    [animatedHeight]
+  );
 
-  const arrowStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${arrowRotation.value * 90}deg` }]
-  }));
+  const arrowStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ rotate: `${arrowRotation.value * 90}deg` }]
+    }),
+    [arrowRotation]
+  );
 
   const shouldRender = !lazyRender || expanded || hasExpanded;
   const showArrow = isLink && !readonly;

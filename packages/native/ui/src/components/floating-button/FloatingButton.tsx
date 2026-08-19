@@ -201,13 +201,16 @@ const FloatingButton = (props: FloatingButtonProps) => {
   // Exclusive 让 Pan 优先：一旦手指移动就判定为拖拽，Tap 不再触发
   const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    height: size,
-    opacity: disabled ? DISABLED_OPACITY : opacity.value,
-    pointerEvents: scale.value < INTERACTIVE_SCALE ? 'none' : 'auto',
-    transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { scale: scale.value }],
-    width: size
-  }));
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: size,
+      opacity: disabled ? DISABLED_OPACITY : opacity.value,
+      pointerEvents: scale.value < INTERACTIVE_SCALE ? 'none' : 'auto',
+      transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { scale: scale.value }],
+      width: size
+    }),
+    [disabled, opacity, scale, size, translateX, translateY]
+  );
 
   // 首帧 previous 为 null，此时 scale 已由初值给到位，跳过即可避开挂载瞬间的闪现；
   // 值没变也跳过——依赖变化会让 mapper 重启并立刻跑一次，不拦住就会凭空重放一遍动画
@@ -217,7 +220,8 @@ const FloatingButton = (props: FloatingButtonProps) => {
       if (previous === null || current === previous) return;
 
       scale.value = current ? withTiming(1, SHOW_TIMING) : withTiming(0, HIDE_TIMING);
-    }
+    },
+    [scale, visibleFlag, visibleShared]
   );
 
   // 受控位置同步 + 边界重夹。非受控（拖拽）时也必须跑：旋转或窗口尺寸变化后 max 会变小，

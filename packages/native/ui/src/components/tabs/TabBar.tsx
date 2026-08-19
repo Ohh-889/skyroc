@@ -74,10 +74,13 @@ const TabBar = (props: TabBarProps) => {
 
   const variantSlots = tabsVariants({ type });
 
-  const indicatorAnimStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: indicatorX.value }],
-    width: indicatorWidth.value
-  }));
+  const indicatorAnimStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ translateX: indicatorX.value }],
+      width: indicatorWidth.value
+    }),
+    [indicatorWidth, indicatorX]
+  );
 
   /** 指示器定位：line 型贴底作描边，pill 型撑满高度作选中背景 */
   const indicatorLayoutStyle: ViewStyle =

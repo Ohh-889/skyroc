@@ -35,9 +35,12 @@ const AnimatedArrow = (props: AnimatedArrowProps) => {
 
   const rotation = useSharedValue(active ? 180 : 0);
 
-  const arrowStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }]
-  }));
+  const arrowStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ rotate: `${rotation.value}deg` }]
+    }),
+    [rotation]
+  );
 
   useEffect(() => {
     rotation.value = withTiming(active ? 180 : 0, { duration });
