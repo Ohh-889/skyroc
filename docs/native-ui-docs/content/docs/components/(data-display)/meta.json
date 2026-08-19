@@ -1,0 +1,5 @@
+{
+  "title": "数据展示",
+  "defaultOpen": true,
+  "pages": ["avatar", "badge", "tag", "count-down", "rolling-text", "swipe-cell"]
+}

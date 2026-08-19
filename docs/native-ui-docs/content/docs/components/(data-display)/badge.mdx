@@ -1,0 +1,200 @@
+---
+title: Badge
+description: 标记数量或状态的角标组件
+---
+
+角标（Badge）用于在图标、头像等内容的角落标记未读数量或状态。传 `children` 时角标绝对定位在内容的某个角落，省略 `children` 则独立成块渲染。角标外圈带一圈与页面底色同色的描边，压在内容上时有一圈"挖空"效果。
+
+```tsx
+import { Badge } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`content` 传数字或文字，`dot` 切换为不带内容的小圆点。
+
+<Demo src="@playground/badge/BadgeBasic" />
+
+## 何时使用
+
+- 标记未读消息数、待处理数量等可数信息，用 `content`。
+- 只需要提示"有更新"而不关心具体数量时，用 `dot`——它比一个数字更轻，也不会因为位数变化撑宽布局。
+- 需要一枚可点击、带文字语义的标签（分类、状态标签）时用 `Tag`，`Badge` 不响应交互。
+
+## 数字封顶
+
+`content` 为数字且大于 `max` 时显示 `{max}+`，默认 `max` 为 99。封顶只对数字生效，字符串 `content` 原样展示。
+
+<Demo src="@playground/badge/BadgeMax" />
+
+## 空值与零值
+
+`content` 为 `undefined`、`null` 或空字符串时角标不渲染；为 `0` 时默认也不渲染，需要保留一个"0"时传 `showZero`。`dot` 优先级最高，开启后忽略 `content` 与 `showZero`，始终显示。
+
+<Demo src="@playground/badge/BadgeShowZero" />
+
+## 语义颜色
+
+`color` 提供 6 种语义色，文字角标与圆点角标共用同一份取色，切到 `dot` 不会丢掉颜色语义：
+
+| 颜色          | 语义     | 适用场景                 |
+| ------------- | -------- | ------------------------ |
+| `destructive` | 强提醒   | 未读消息、错误数（默认） |
+| `primary`     | 主题     | 与主色一致的常规标记     |
+| `secondary`   | 次级     | 弱化的辅助标记           |
+| `success`     | 成功     | 已完成、在线             |
+| `warning`     | 警告     | 需要注意的数量           |
+| `info`        | 信息     | 中性的信息提示           |
+
+<Demo src="@playground/badge/BadgeColor" />
+
+## 尺寸
+
+`size` 同时决定角标高度、最小宽度、字号与圆点直径：
+
+| 尺寸 | 高度 / 最小宽度 | 横向内边距 | 字号 / 行高 | 圆点直径 |
+| ---- | --------------- | ---------- | ----------- | -------- |
+| `sm` | 16              | 2          | 10 / 12     | 6        |
+| `md` | 20（默认）      | 4          | 12 / 14     | 8        |
+| `lg` | 24              | 6          | 14 / 16     | 10       |
+
+<Demo src="@playground/badge/BadgeSize" />
+
+`min-w` 与高度相等，保证单字符角标是正圆；行高小于高度减去描边，文字才能被垂直居中。自定义 `classNames.content` 的字号时，注意别让行高超过角标高度，否则文字会把角标撑高。
+
+## 挂载位置
+
+`position` 决定角标挂在 `children` 的哪个角落，默认 `top-right`。角标会按自身尺寸的 50% 向外推，骑在内容边角上。
+
+<Demo src="@playground/badge/BadgePosition" />
+
+## 位置偏移
+
+`offset` 在 `position` 的默认位置上叠加像素微调 `[x, y]`，x 向右为正、y 向下为正。它是在 50% 外推之上再叠一层位移，不会替换默认定位。
+
+<Demo src="@playground/badge/BadgeOffset" />
+
+## 独立使用
+
+省略 `children` 后角标独立成块渲染。此时角标本身就是根节点：`className`、`style` 以及其余 `View` 属性都直接作用于角标（或圆点），`position` / `offset` 不再生效——没有被标记的内容，也就无所谓角落。
+
+<Demo src="@playground/badge/BadgeStandalone" />
+
+独立使用时那圈 `border-background` 通常是多余的，可以用 `className="border-0"` 去掉。
+
+## 自定义内容与样式
+
+`content` 传 `ReactElement` 时原样渲染，不再包裹 `Text`，也不参与 `max` 封顶——此时字号、颜色都由你自己的节点决定。`classNames` 按 slot 细粒度覆盖：
+
+| slot      | 作用位置                                       |
+| --------- | ---------------------------------------------- |
+| `root`    | 包裹 `children` 的相对定位容器（独立模式不存在） |
+| `badge`   | 文字角标的圆角容器                             |
+| `content` | 角标内自动包裹的 `Text`                        |
+| `dot`     | 圆点角标                                       |
+
+<Demo src="@playground/badge/BadgeStyles" />
+
+包裹模式下 `className` 合并到 `root`；独立模式下没有 `root`，`className` 改为合并到角标自身。
+
+## 文字子节点
+
+`children` 为 `string` / `number` 时自动用组件库的 `Text` 包裹，其他节点保持原样，不做额外包装。
+
+<Demo src="@playground/badge/BadgeTextChildren" />
+
+## 无障碍
+
+角标文字关掉了 Android 的 `includeFontPadding`（该属性在 iOS 上被忽略），避免字形上下的额外空白把数字顶偏。角标本身没有默认的 `accessibilityRole`：读屏场景下建议在被标记的内容（按钮、Tab）上写完整的 `accessibilityLabel`，例如"消息，3 条未读"，而不是让读屏器单独播报一个数字。
+
+## API
+
+### Badge
+
+除下表外，`Badge` 透传 `View` 的全部属性（`style`、`testID` 等）。包裹模式下它们落在外层容器上，独立模式下直接落在角标上。
+
+<PropsTable
+  data={[
+    {
+      name: 'content',
+      description: '角标内容，number / string 自动包裹 Text，ReactElement 原样渲染',
+      type: 'ReactNode'
+    },
+    { name: 'dot', description: '只渲染一个小圆点，忽略 content 与 showZero', type: 'boolean', default: 'false' },
+    {
+      name: 'children',
+      description: '被角标标记的内容，省略时角标独立成块渲染；string / number 会被自动包裹为 Text',
+      type: 'ReactNode'
+    },
+    {
+      name: 'color',
+      description: '语义颜色，同时作用于文字角标与圆点',
+      type: "'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info'",
+      default: "'destructive'"
+    },
+    {
+      name: 'size',
+      description: '尺寸，同时决定角标高度、最小宽度、字号与圆点直径',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    { name: 'max', description: '数字封顶值，content 为数字且超过时显示 {max}+', type: 'number', default: '99' },
+    { name: 'showZero', description: 'content 为 0 时是否仍然展示角标', type: 'boolean', default: 'false' },
+    {
+      name: 'position',
+      description: '包裹 children 时角标挂载的角落，独立模式下不生效',
+      type: "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'",
+      default: "'top-right'"
+    },
+    {
+      name: 'offset',
+      description: '在默认角落位置上做像素微调 [x, y]，x 向右为正、y 向下为正，独立模式下不生效',
+      type: '[number, number]'
+    },
+    {
+      name: 'className',
+      description: '包裹模式合并到 root slot，独立模式合并到角标自身',
+      type: 'string'
+    },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖',
+      type: "SlotClassNames<'badge' | 'content' | 'dot' | 'root'>"
+    },
+    {
+      name: 'ref',
+      description: '底层 View 的 ref，用于 measure / 滚动定位等命令式操作',
+      type: 'Ref<View>'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { BadgeColor, BadgePosition, BadgeProps, BadgeSize, BadgeSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="BadgeColor"
+  description="角标语义颜色，文字角标与圆点共用同一份取色。"
+  type="'primary' | 'destructive' | 'secondary' | 'success' | 'warning' | 'info'"
+/>
+
+<UnionType
+  name="BadgeSize"
+  description="角标尺寸，同时决定高度、最小宽度、字号与圆点直径。"
+  type="'sm' | 'md' | 'lg'"
+/>
+
+<UnionType
+  name="BadgePosition"
+  description="角标相对 children 的挂载角落，独立模式下不生效。"
+  type="'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'"
+/>
+
+<UnionType
+  name="BadgeSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'badge' | 'content' | 'dot' | 'root'"
+/>

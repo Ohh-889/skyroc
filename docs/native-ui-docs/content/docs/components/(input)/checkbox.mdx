@@ -1,0 +1,531 @@
+---
+title: Checkbox
+description: 在一组选项中选择任意多项的复选框组件
+---
+
+复选框（Checkbox）用于在一组选项中选择任意多项。组件基于 `Pressable` + `View` 封装，指示器和标签是两个独立的可点区域：指示器带 `hitSlop={4}` 的热区补偿，标签可以用 `labelDisabled` 单独关掉。多行标签时指示器贴首行对齐，而不是整块垂直居中。
+
+`CheckboxGroup` 统一维护整组选中值并下发 `color` / `size` / `shape` 等配置；`CheckboxCard` 是同一份选中逻辑的卡片形态，能直接放进 `CheckboxGroup`。
+
+```tsx
+import { Checkbox, CheckboxCard, CheckboxGroup, CheckboxGroupCard } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+默认非受控，用 `defaultChecked` 给初始值。`checked` 除了 `true` / `false` 还接受 `'indeterminate'` 半选态。
+
+<Demo src="@playground/checkbox/CheckboxBasic" />
+
+半选是纯展示态：内部按未选中处理，点击后直接进入全选，不会在半选 → 全选 → 未选之间循环。
+
+## 何时使用
+
+- 一组选项中可以选择任意多项（含零项）时用 `Checkbox`；互斥单选用 `Radio`。
+- 单个开关型设置（立即生效、不需要提交）优先用 `Switch`，复选框更适合表单里需要一起提交的多选。
+- 选项带图标、描述，或需要整块大热区时用 `CheckboxCard`；数据驱动、一次声明整组时用 `CheckboxGroupCard`。
+- 需要「全选 / 半选」的父级控制项时，用一个独立的 `Checkbox` + `checked="indeterminate"` 驱动，`CheckboxGroup` 自身不提供全选开关。
+
+## 语义颜色
+
+`color` 提供 8 种主题色，取值与全局 `ThemeColor` 一致。选中态填充 `bg-{color}`，内部勾用 `accent-{color}-foreground` 取色，因此跟随主题 token 而不是硬编码白色。
+
+| 颜色          | 选中背景          | 语义                   |
+| ------------- | ----------------- | ---------------------- |
+| `primary`     | `bg-primary`      | 常规选择（默认）       |
+| `destructive` | `bg-destructive`  | 危险项，如批量删除     |
+| `success`     | `bg-success`      | 成功、已完成           |
+| `warning`     | `bg-warning`      | 需要注意的选项         |
+| `info`        | `bg-info`         | 信息性选项             |
+| `accent`      | `bg-accent`       | 强调色                 |
+| `carbon`      | `bg-carbon`       | 中性深色               |
+| `secondary`   | `bg-secondary`    | 次级、弱化选项         |
+
+<Demo src="@playground/checkbox/CheckboxColor" />
+
+未选中态与颜色无关，统一是 `border-muted-foreground/50` 的空心描边。
+
+## 尺寸
+
+`size` 同时决定指示器边长、内部勾的大小、标签字号与指示器到标签的间距：
+
+| 尺寸   | 指示器 | 内部图标 | 控件行高 | 标签字号     | 指示器与标签间距 |
+| ------ | ------ | -------- | -------- | ------------ | ---------------- |
+| `xs`   | 14     | 9        | 16       | `text-xs`    | 4                |
+| `sm`   | 16     | 11       | 20       | `text-sm`    | 6                |
+| `md`   | 20     | 14       | 24       | `text-base`  | 8                |
+| `lg`   | 24     | 16       | 24       | `text-base`  | 10               |
+| `xl`   | 28     | 18       | 24       | `text-base`  | 12               |
+| `2xl`  | 32     | 20       | 28       | `text-lg`    | 14               |
+
+<Demo src="@playground/checkbox/CheckboxSize" />
+
+「控件行高」取指示器边长与标签首行行高的较大值：标签比指示器高时把指示器撑到首行中线，指示器更高时以自身为准，避免被裁切。
+
+## 形状
+
+`shape` 控制指示器形状，`round` 是圆形（默认），`square` 是圆角方形（`rounded`）。
+
+<Demo src="@playground/checkbox/CheckboxShape" />
+
+## 图标尺寸
+
+`iconSize` 直接指定指示器边长（px），绕开 `size` 预设。此时内部勾按 **0.7 倍**等比缩放，避免只放大外框、内部图标还是预设尺寸导致的比例失衡。标签字号仍由 `size` 决定。
+
+<Demo src="@playground/checkbox/CheckboxIconSize" />
+
+## 禁用
+
+`disabled` 阻止交互并把整行降到 50% 不透明度，标签同时变为 `text-muted-foreground`。组级 `disabled` 与子项 `disabled` 取并集——组禁用后子项无法把自己反选为可用。
+
+<Demo src="@playground/checkbox/CheckboxDisabled" />
+
+## 标签位置
+
+`labelPosition` 决定标签在指示器右侧（默认）还是左侧，实现上是给根容器加 `flex-row-reverse`，间距不变。`labelDisabled` 只关掉标签的点击，指示器照常可点。
+
+<Demo src="@playground/checkbox/CheckboxLabelPosition" />
+
+`children` 为 `string` / `number` 时会自动包一层 `Text` 并套用 `label` slot 的样式；传自定义节点时不做包裹，样式需要自己写。`children` 为 `null` / `undefined` / 布尔值时整个标签区不渲染，也不会留下一个撑开 gap 的空节点。
+
+## 多行标签
+
+标签换行时指示器保持贴首行，不会随文本块整体垂直居中。
+
+<Demo src="@playground/checkbox/CheckboxMultilineLabel" />
+
+## 受控
+
+`checked` + `onCheckedChange` 组成受控用法。分组内的子项由 `CheckboxGroup` 持有选中态，此时子项自己的 `checked` / `defaultChecked` 被忽略，但 `onCheckedChange` 依旧会触发。
+
+<Demo src="@playground/checkbox/CheckboxControlled" />
+
+## 分组
+
+`CheckboxGroup` 用 `value` / `defaultValue` 维护整组选中值，子项通过 `name` 参与分组——**组内的子项必须传 `name`**，否则开发环境会打印告警，该项会退化成不受组控制的独立复选框（仍继承组的 `color` / `disabled` 等配置）。
+
+<Demo src="@playground/checkbox/CheckboxGroupBasic" />
+
+「全选 / 半选」不是内置能力：上面的示例用一个独立 `Checkbox` 承担父级角色，选中态由子集数量推导成 `true` / `false` / `'indeterminate'`。
+
+## 数量上限
+
+`max` 限制最多可选数量，达到上限后未选中项点击无效——不仅是视觉上的阻止，`onCheckedChange` 也不会触发，外部不会收到一个并未发生的变更。`max` 为 `undefined` 或小于等于 0 时视为不限制。
+
+<Demo src="@playground/checkbox/CheckboxMax" />
+
+## 横向分组
+
+`direction="horizontal"` 让分组横向排列并自动换行（`flex-row flex-wrap`），横纵间距随 `size` 变化。
+
+<Demo src="@playground/checkbox/CheckboxHorizontalGroup" />
+
+## 分组样式下发
+
+`color` / `size` / `shape` / `labelPosition` / `iconSize` / `checkedIcon` / `indeterminateIcon` 都可以在组上统一设置，优先级是 **子项 prop > 组配置 > 默认值**。
+
+<Demo src="@playground/checkbox/CheckboxSquareGroup" />
+
+## 自定义图标
+
+`checkedIcon` 替换选中态的勾，`indeterminateIcon` 替换半选态的横线。两者都是完整替换控件内部的节点，外框（背景、边框、圆角）仍由 `shape` 与 `color` 决定，图标颜色需要自己传。
+
+<Demo src="@playground/checkbox/CheckboxCustomIcon" />
+
+半选态在分组内不存在，因此 `indeterminateIcon` 只在独立使用的 `Checkbox` / `CheckboxCard` 上生效。
+
+## 样式覆盖
+
+`className` 追加到根容器，`classNames` 按 slot 细粒度覆盖，两者都与内置变体合并，冲突时以传入的类名为准（`className` 排在最后，优先级最高）。
+
+`Checkbox` 的 slot：
+
+| slot            | 作用位置                                                      |
+| --------------- | ------------------------------------------------------------- |
+| `root`          | 根容器 View，控制排列方向与间距                               |
+| `control`       | 指示器外层的可点 Pressable（含热区与 `active:opacity-70`）    |
+| `indicator`     | 指示器本体，背景 / 边框 / 圆角所在的节点                      |
+| `indicatorIcon` | 内置勾 / 横线图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
+| `labelWrapper`  | 标签外层的可点 Pressable                                      |
+| `label`         | 标签文字，仅在 `children` 为字符串 / 数字时生效               |
+
+`CheckboxCard` 的 slot：
+
+| slot            | 作用位置                                                      |
+| --------------- | ------------------------------------------------------------- |
+| `root`          | 卡片容器 Pressable                                            |
+| `indicator`     | 指示器本体                                                    |
+| `indicatorIcon` | 内置勾 / 横线图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
+| `content`       | 指示器之外的内容区（图标 + 文字块）                           |
+| `icon`          | `icon` 的包裹节点                                             |
+| `texts`         | 标题与描述的文字块                                            |
+| `label`         | 标题文字，仅在 `label` 为字符串 / 数字时生效                  |
+| `description`   | 描述文字，仅在 `description` 为字符串 / 数字时生效            |
+
+<Demo src="@playground/checkbox/CheckboxStyles" />
+
+## 卡片
+
+`CheckboxCard` 把图标、标题、描述组成一整块可点区域，整张卡片都是热区。`checkboxPosition` 决定指示器在内容左侧（默认）还是右侧。
+
+<Demo src="@playground/checkbox/CheckboxCardBasic" />
+
+卡片没有 `labelPosition`——文字块的排列由 `checkboxPosition` 决定；`label` 与 `description` 为字符串时自动包 `Text`，传节点则原样渲染。
+
+## 卡片入组
+
+`CheckboxCard` 与 `Checkbox` 共用同一套选中逻辑，可以直接放进 `CheckboxGroup`，`max`、去重、禁用下发全部照常生效。
+
+<Demo src="@playground/checkbox/CheckboxCardInGroup" />
+
+## 卡片组
+
+`CheckboxGroupCard` 是 `CheckboxGroup` + `CheckboxCard` 的数据驱动封装：用 `items` 一次声明整组，内部渲染卡片，因此卡片的 slot 覆盖只能走 `itemClassNames`。
+
+<Demo src="@playground/checkbox/CheckboxCardGroup" />
+
+## 热区与无障碍
+
+指示器的可点区域按 `size` 撑到「控件行高 × 指示器边长」，再叠加 `hitSlop={4}`；标签整块是第二个可点区域，小尺寸下不需要业务侧再包一层 `Pressable`。`CheckboxCard` 整张卡片即热区。
+
+组件目前没有设置 `accessibilityRole` / `accessibilityState`，也不透传 RN 的无障碍属性，读屏器只会朗读标签文本、不播报选中状态。需要完整读屏语义时，暂时只能在外层自行包裹带 `accessibilityRole="checkbox"` 的容器。
+
+## API
+
+### Checkbox
+
+<PropsTable
+  data={[
+    {
+      name: 'checked',
+      description: "受控选中态，'indeterminate' 为半选；位于 CheckboxGroup 内且传了 name 时被忽略",
+      type: "boolean | 'indeterminate'"
+    },
+    { name: 'defaultChecked', description: '非受控初始选中态', type: 'boolean', default: 'false' },
+    {
+      name: 'onCheckedChange',
+      description: '选中态变化回调，分组内同样触发；命中组 max 上限而未生效时不触发',
+      type: '(checked: boolean) => void'
+    },
+    {
+      name: 'name',
+      description: '分组内的唯一标识，位于 CheckboxGroup 内时必填，缺失会在开发环境告警',
+      type: 'string | number'
+    },
+    {
+      name: 'color',
+      description: '主题色，缺省时取组配置，再缺省为 primary',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸预设，同时决定指示器边长、内部图标、标签字号与间距；缺省时取组配置',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    {
+      name: 'shape',
+      description: '指示器形状，缺省时取组配置',
+      type: "'round' | 'square'",
+      default: "'round'"
+    },
+    {
+      name: 'iconSize',
+      description: '指示器边长（px），传入后内部图标按 0.7 倍等比缩放；缺省时取组配置',
+      type: 'number'
+    },
+    {
+      name: 'labelPosition',
+      description: '标签相对指示器的位置，缺省时取组配置',
+      type: "'left' | 'right'",
+      default: "'right'"
+    },
+    { name: 'labelDisabled', description: '只有指示器可点，标签点击不触发切换', type: 'boolean', default: 'false' },
+    { name: 'disabled', description: '禁用，与组级 disabled 取并集', type: 'boolean', default: 'false' },
+    { name: 'children', description: '标签内容，string / number 会被自动包裹为 Text', type: 'ReactNode' },
+    { name: 'checkedIcon', description: '选中态自定义图标，替换控件内的默认勾', type: 'ReactNode' },
+    {
+      name: 'indeterminateIcon',
+      description: '半选态自定义图标，替换控件内的默认横线；分组内无效',
+      type: 'ReactNode'
+    },
+    { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<CheckboxSlots>' },
+    { name: 'testID', description: '测试标识，挂在根容器上', type: 'string' },
+    { name: 'ref', description: '根容器 View 的 ref，用于 measure / 滚动定位', type: 'Ref<View>' }
+  ]}
+/>
+
+### CheckboxGroup
+
+<PropsTable
+  data={[
+    { name: 'children', description: '子项，通常为 Checkbox 或 CheckboxCard', type: 'ReactNode', required: true },
+    { name: 'value', description: '受控选中值数组', type: '(string | number)[]' },
+    { name: 'defaultValue', description: '非受控初始选中值数组', type: '(string | number)[]', default: '[]' },
+    { name: 'onChange', description: '选中值变化回调', type: '(value: (string | number)[]) => void' },
+    { name: 'max', description: '最多可选数量，undefined 或 ≤ 0 表示不限制', type: 'number' },
+    {
+      name: 'direction',
+      description: '排列方向，horizontal 会自动换行',
+      type: "'vertical' | 'horizontal'",
+      default: "'vertical'"
+    },
+    { name: 'disabled', description: '禁用整组，子项无法反选为可用', type: 'boolean', default: 'false' },
+    {
+      name: 'color',
+      description: '下发给所有子项的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'"
+    },
+    {
+      name: 'size',
+      description: '下发给所有子项的尺寸，同时决定分组的横纵间距',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '下发给所有子项的指示器形状', type: "'round' | 'square'" },
+    { name: 'iconSize', description: '下发给所有子项的指示器边长（px）', type: 'number' },
+    { name: 'labelPosition', description: '下发给所有子项的标签位置', type: "'left' | 'right'" },
+    { name: 'checkedIcon', description: '下发给所有子项的选中态图标', type: 'ReactNode' },
+    { name: 'indeterminateIcon', description: '下发给所有子项的半选态图标', type: 'ReactNode' },
+    { name: 'className', description: '分组容器类名', type: 'string' },
+    { name: 'testID', description: '测试标识，挂在分组容器上', type: 'string' },
+    { name: 'ref', description: '分组容器 View 的 ref', type: 'Ref<View>' }
+  ]}
+/>
+
+### CheckboxCard
+
+<PropsTable
+  data={[
+    { name: 'label', description: '标题，string / number 会被自动包裹为 Text', type: 'ReactNode' },
+    { name: 'description', description: '描述，显示在标题下方', type: 'ReactNode' },
+    { name: 'icon', description: '卡片图标，显示在文字块之前', type: 'ReactNode' },
+    {
+      name: 'checkboxPosition',
+      description: '指示器相对内容的位置',
+      type: "'left' | 'right'",
+      default: "'left'"
+    },
+    {
+      name: 'checked',
+      description: "受控选中态，'indeterminate' 为半选；位于 CheckboxGroup 内且传了 name 时被忽略",
+      type: "boolean | 'indeterminate'"
+    },
+    { name: 'defaultChecked', description: '非受控初始选中态', type: 'boolean', default: 'false' },
+    {
+      name: 'onCheckedChange',
+      description: '选中态变化回调，分组内同样触发；命中组 max 上限而未生效时不触发',
+      type: '(checked: boolean) => void'
+    },
+    {
+      name: 'name',
+      description: '分组内的唯一标识，位于 CheckboxGroup 内时必填，缺失会在开发环境告警',
+      type: 'string | number'
+    },
+    {
+      name: 'color',
+      description: '主题色，缺省时取组配置，再缺省为 primary',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+      default: "'primary'"
+    },
+    {
+      name: 'size',
+      description: '尺寸预设，决定指示器边长与内部图标；卡片文字字号固定，不随 size 变化',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '指示器形状，缺省时取组配置', type: "'round' | 'square'", default: "'round'" },
+    { name: 'iconSize', description: '指示器边长（px），内部图标按 0.7 倍等比缩放', type: 'number' },
+    { name: 'checkedIcon', description: '选中态自定义图标', type: 'ReactNode' },
+    { name: 'indeterminateIcon', description: '半选态自定义图标，分组内无效', type: 'ReactNode' },
+    { name: 'disabled', description: '禁用，与组级 disabled 取并集', type: 'boolean', default: 'false' },
+    { name: 'className', description: '卡片容器类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<CheckboxCardSlots>' },
+    { name: 'testID', description: '测试标识，挂在卡片容器上', type: 'string' },
+    { name: 'ref', description: '卡片根节点的 ref，根节点是 Pressable，实例类型同为 View', type: 'Ref<View>' }
+  ]}
+/>
+
+### CheckboxGroupCard
+
+<PropsTable
+  data={[
+    { name: 'items', description: '卡片数据源', type: 'CheckboxGroupCardItem[]', required: true },
+    { name: 'value', description: '受控选中值数组', type: '(string | number)[]' },
+    { name: 'defaultValue', description: '非受控初始选中值数组', type: '(string | number)[]' },
+    { name: 'onChange', description: '选中值变化回调', type: '(value: (string | number)[]) => void' },
+    { name: 'max', description: '最多可选数量，undefined 或 ≤ 0 表示不限制', type: 'number' },
+    {
+      name: 'checkboxPosition',
+      description: '指示器相对内容的位置，下发给所有卡片',
+      type: "'left' | 'right'",
+      default: "'left'"
+    },
+    {
+      name: 'direction',
+      description: '排列方向',
+      type: "'vertical' | 'horizontal'",
+      default: "'vertical'"
+    },
+    { name: 'disabled', description: '禁用整组', type: 'boolean', default: 'false' },
+    {
+      name: 'color',
+      description: '下发给所有卡片的主题色',
+      type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'"
+    },
+    {
+      name: 'size',
+      description: '下发给所有卡片的尺寸预设，同时决定分组的横纵间距',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'shape', description: '下发给所有卡片的指示器形状', type: "'round' | 'square'" },
+    { name: 'iconSize', description: '下发给所有卡片的指示器边长（px）', type: 'number' },
+    { name: 'checkedIcon', description: '下发给所有卡片的选中态图标', type: 'ReactNode' },
+    { name: 'indeterminateIcon', description: '下发给所有卡片的半选态图标', type: 'ReactNode' },
+    {
+      name: 'itemClassNames',
+      description: '覆盖每张卡片各 slot 的类名；卡片由组件内部渲染，只能从这里透传',
+      type: 'SlotClassNames<CheckboxCardSlots>'
+    },
+    { name: 'className', description: '分组容器类名', type: 'string' },
+    { name: 'testID', description: '测试标识，挂在分组容器上', type: 'string' },
+    { name: 'ref', description: '分组容器 View 的 ref', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  CheckboxCardProps,
+  CheckboxCardSlots,
+  CheckboxGroupCardItem,
+  CheckboxGroupCardProps,
+  CheckboxGroupContextValue,
+  CheckboxGroupDirection,
+  CheckboxGroupProps,
+  CheckboxIndicatorSlots,
+  CheckboxLabelPosition,
+  CheckboxPosition,
+  CheckboxProps,
+  CheckboxShape,
+  CheckboxSide,
+  CheckboxSizes,
+  CheckboxSlots,
+  CheckboxValue,
+  CheckedState
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="CheckedState"
+  description="选中态取值，'indeterminate' 为半选（纯展示态，点击后进入全选）。"
+  type="boolean | 'indeterminate'"
+/>
+
+<UnionType
+  name="CheckboxValue"
+  description="分组内 name / value 的取值范围，CheckboxGroup 对它做泛型化以配合 useState<string[]> 的写法。"
+  type="string | number"
+/>
+
+<UnionType
+  name="CheckboxShape"
+  description="指示器形状，round 为圆形，square 为圆角方形。"
+  type="'round' | 'square'"
+/>
+
+<UnionType
+  name="CheckboxSide"
+  description="横向位置，CheckboxLabelPosition 与 CheckboxPosition 都是它的别名。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="CheckboxLabelPosition"
+  description="标签相对指示器的位置，等价于 CheckboxSide。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="CheckboxPosition"
+  description="卡片中指示器相对内容的位置，等价于 CheckboxSide。"
+  type="'left' | 'right'"
+/>
+
+<UnionType
+  name="CheckboxGroupDirection"
+  description="CheckboxGroup 的排列方向，horizontal 会自动换行。"
+  type="'horizontal' | 'vertical'"
+/>
+
+<UnionType
+  name="CheckboxSlots"
+  description="Checkbox 可通过 classNames 覆盖的 slot 名称。"
+  type="'control' | 'indicator' | 'indicatorIcon' | 'label' | 'labelWrapper' | 'root'"
+/>
+
+<UnionType
+  name="CheckboxCardSlots"
+  description="CheckboxCard 可通过 classNames 覆盖的 slot 名称。"
+  type="'content' | 'description' | 'icon' | 'indicator' | 'indicatorIcon' | 'label' | 'root' | 'texts'"
+/>
+
+<UnionType
+  name="CheckboxIndicatorSlots"
+  description="指示器相关的 slot 名称，Checkbox 与 CheckboxCard 共用这两个键。"
+  type="'indicator' | 'indicatorIcon'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CheckboxGroupCardItem',
+      description: 'CheckboxGroupCard 的单条数据。',
+      fields: [
+        { name: 'value', type: 'string | number', description: '唯一标识，对应选中值数组里的元素。', required: true },
+        { name: 'label', type: 'ReactNode', description: '标题。', required: true },
+        { name: 'description', type: 'ReactNode', description: '描述文本。' },
+        { name: 'icon', type: 'ReactNode', description: '卡片图标。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用该项。' }
+      ]
+    },
+    {
+      name: 'CheckboxSizes',
+      description: '由 size / iconSize 解析出的像素尺寸，resolveCheckboxSizes 的返回值。',
+      fields: [
+        { name: 'control', type: 'number', description: '指示器边长（px）。' },
+        { name: 'controlRow', type: 'number', description: '控件所在行的高度（px），用于与标签首行对齐。' },
+        { name: 'innerIcon', type: 'number', description: '内部勾 / 横线图标的边长（px）。' }
+      ]
+    },
+    {
+      name: 'CheckboxGroupContextValue',
+      description: 'CheckboxGroup 下发给子项的上下文，自定义子项复用分组选中逻辑时才需要关心。',
+      fields: [
+        { name: 'isChecked', type: '(name: string | number) => boolean', description: '判断某个 name 是否选中。' },
+        {
+          name: 'toggle',
+          type: '(name: string | number, checked: boolean) => boolean',
+          description: '切换某项，返回变更是否生效（命中 max 时返回 false）。'
+        },
+        { name: 'isMaxReached', type: '() => boolean', description: '是否已达选中上限。' },
+        { name: 'disabled', type: 'boolean', description: '整组是否禁用。' },
+        {
+          name: 'color',
+          type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'accent' | 'carbon' | 'secondary'",
+          description: '组级主题色。'
+        },
+        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '组级尺寸预设。' },
+        { name: 'shape', type: "'round' | 'square'", description: '组级指示器形状。' },
+        { name: 'iconSize', type: 'number', description: '组级指示器边长（px）。' },
+        { name: 'labelPosition', type: "'left' | 'right'", description: '组级标签位置。' },
+        { name: 'checkedIcon', type: 'ReactNode', description: '组级选中态图标。' },
+        { name: 'indeterminateIcon', type: 'ReactNode', description: '组级半选态图标。' }
+      ]
+    }
+  ]}
+/>

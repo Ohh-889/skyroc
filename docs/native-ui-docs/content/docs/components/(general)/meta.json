@@ -1,0 +1,5 @@
+{
+  "title": "通用",
+  "defaultOpen": true,
+  "pages": ["button", "floating-button", "text", "text-ellipsis", "divider", "image"]
+}

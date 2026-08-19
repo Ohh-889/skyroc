@@ -1,0 +1,196 @@
+---
+title: CountDown
+description: 按格式展示剩余时间的倒计时组件
+---
+
+倒计时（CountDown）把一段毫秒时长渲染成可读的剩余时间。内部用 `requestAnimationFrame` 驱动，秒级模式下只在跨秒的那一帧才更新状态，空转的帧不会触发渲染；同时监听 `AppState`，从后台回到前台时按真实时钟校正剩余时间，而不是把挂起期间的时间"补跑"一遍。
+
+```tsx
+import { CountDown } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`time` 是总时长（毫秒），默认 `format` 为 `HH:mm:ss`，挂载后自动开始。
+
+<Demo src="@playground/count-down/CountDownBasic" />
+
+## 何时使用
+
+- 展示距某个时刻还剩多久：秒杀、限时优惠、订单支付倒计时。
+- 短时冷却：验证码重发、按钮防重复点击（见下方验证码场景）。
+- 只需要一个静态时长文本、不随时间变化时，直接用 `Text` 自己格式化即可。
+- 需要显示"已过去多久"的正计时，本组件不支持——它只向 0 递减，到 0 自动停止。
+
+## 自定义格式
+
+`format` 支持以下占位符，其余字符原样输出：
+
+| 占位符 | 含义         | 补零     |
+| ------ | ------------ | -------- |
+| `DD`   | 天           | 2 位     |
+| `HH`   | 小时         | 2 位     |
+| `mm`   | 分钟         | 2 位     |
+| `ss`   | 秒           | 2 位     |
+| `SSS`  | 毫秒         | 3 位     |
+| `SS`   | 百分秒       | 2 位     |
+| `S`    | 十分秒       | 1 位     |
+
+<Demo src="@playground/count-down/CountDownFormat" />
+
+**缺失的高位单位会累加到相邻的低位单位上**：`format` 为 `mm:ss` 时天和小时都并入分钟，`format` 为 `ss` 时整段时长都用秒表示。这样任何单一单位的格式都能表示完整时长而不丢时间，代价是数值可能超出常规范围（`90` 秒不会显示成 `01:30`，就是 `90`）。
+
+## 毫秒级
+
+`millisecond` 打开后每帧都会更新状态（约 60 次/秒），只在确实需要毫秒精度时开启。不开启时 `S` / `SS` / `SSS` 仍能渲染，但只会在跨秒时刷新，看起来像是卡住。
+
+<Demo src="@playground/count-down/CountDownMillisecond" />
+
+## 自定义样式
+
+`className` 覆盖根容器，`classNames` 按 slot 细粒度覆盖，冲突时 `className` 优先级更高。
+
+| slot   | 作用位置                                        |
+| ------ | ----------------------------------------------- |
+| `root` | 根容器 View                                     |
+| `text` | 默认渲染的时间文本，被 `children` 接管后不生效  |
+
+<Demo src="@playground/count-down/CountDownStyles" />
+
+## 自定义渲染
+
+`children` 是一个接收 `CurrentTime` 的渲染函数，用于把时间拆成独立的数字块。它只替换文本内容，**根容器照常渲染**，因此 `className` / `classNames.root` 依旧生效。
+
+<Demo src="@playground/count-down/CountDownCustomRender" />
+
+`children` 接管后 `format` 与 `classNames.text` 都不再参与渲染，格式化完全由你自己决定。
+
+## 手动控制
+
+`autoStart={false}` 时挂载后不自动开始，交给 ref 驱动：
+
+| 方法                  | 说明                                                             |
+| --------------------- | ---------------------------------------------------------------- |
+| `start()`             | 开始或从暂停处继续；已在计时时是空操作                           |
+| `pause()`             | 暂停，保留当前剩余时间                                           |
+| `reset()`             | 回到 `time` 的时长                                               |
+| `reset(totalTime)`    | 重置为指定时长（毫秒）                                           |
+
+<Demo src="@playground/count-down/CountDownManual" />
+
+`reset` 之后是否自动重新开始由 `autoStart` 决定：`autoStart` 为 `true` 时重置即重新跑，为 `false` 时停在起点等 `start()`。
+
+## 动态时长
+
+计时过程中改变 `time` 会按新时长重新开始；改变时如果处于暂停状态，则停在新时长的起点。
+
+<Demo src="@playground/count-down/CountDownDynamicTime" />
+
+## 结束回调
+
+剩余时间归零时先停止计时再触发 `onFinish`，每轮只触发一次；前后台切换时会取消旧的动画帧链再重启，不会因为补发的回调而重复触发。`onChange` 则在每次更新时触发——毫秒模式下这意味着每帧一次，回调里不要做重活。
+
+<Demo src="@playground/count-down/CountDownFinish" />
+
+## 验证码场景
+
+倒计时结束前禁用按钮，`onFinish` 里恢复可点，是最常见的用法。
+
+<Demo src="@playground/count-down/CountDownSms" />
+
+## API
+
+### CountDown
+
+<PropsTable
+  data={[
+    { name: 'time', description: '倒计时总时长（毫秒），计时过程中改变会按新时长重新开始', type: 'number', default: '0' },
+    { name: 'format', description: '时间格式，支持 DD / HH / mm / ss / S / SS / SSS', type: 'string', default: "'HH:mm:ss'" },
+    {
+      name: 'autoStart',
+      description: '是否挂载后自动开始，同时决定 reset() 之后是否自动重新开始',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'millisecond',
+      description: '毫秒级渲染，开启后每帧更新（约 60 次/秒）',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'children',
+      description: '自定义渲染函数，接收当前时间对象；根容器仍照常渲染',
+      type: '(current: CurrentTime) => ReactNode'
+    },
+    { name: 'onChange', description: '每次更新时触发', type: '(current: CurrentTime) => void' },
+    { name: 'onFinish', description: '倒计时归零时触发，每轮只触发一次', type: '() => void' },
+    { name: 'className', description: '根容器类名', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖；children 接管渲染时 text slot 不再生效',
+      type: 'SlotClassNames<CountDownSlots>'
+    },
+    { name: 'ref', description: '命令式控制，暴露 start / pause / reset', type: 'Ref<CountDownRef>' }
+  ]}
+/>
+
+### useCountDown
+
+组件内部的计时逻辑同样对外导出，用于完全自定义渲染容器的场景：
+
+```tsx
+import { useCountDown } from '@skyroc/native-ui';
+
+const { current, pause, reset, start } = useCountDown({
+  autoStart: true,
+  millisecond: false,
+  onChange: current => {},
+  onFinish: () => {},
+  time: 60 * 1000
+});
+```
+
+入参与同名的组件属性含义一致（`time` 必填），返回值中的 `current` 是 `CurrentTime`，`start` / `pause` / `reset` 与 `CountDownRef` 的三个方法完全相同。
+
+## 类型
+
+```ts
+import type { CountDownProps, CountDownRef, CountDownSlots, CurrentTime } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="CountDownSlots"
+  description="可通过 classNames 覆盖的 slot 名称。"
+  type="'root' | 'text'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CurrentTime',
+      description: '剩余时间对象，传给 children 与 onChange。各单位已按天/时/分/秒拆分，不随 format 变化。',
+      fields: [
+        { name: 'days', type: 'number', description: '天数。' },
+        { name: 'hours', type: 'number', description: '小时（0-23）。' },
+        { name: 'minutes', type: 'number', description: '分钟（0-59）。' },
+        { name: 'seconds', type: 'number', description: '秒（0-59）。' },
+        { name: 'milliseconds', type: 'number', description: '毫秒（0-999）。' },
+        { name: 'total', type: 'number', description: '总剩余毫秒数。' }
+      ]
+    },
+    {
+      name: 'CountDownRef',
+      description: 'CountDown 暴露的命令式方法。',
+      fields: [
+        { name: 'start', type: '() => void', description: '开始或继续计时，已在计时时为空操作。' },
+        { name: 'pause', type: '() => void', description: '暂停并保留当前剩余时间。' },
+        {
+          name: 'reset',
+          type: '(totalTime?: number) => void',
+          description: '重置为指定时长，缺省回到 time；autoStart 为 true 时自动重新开始。'
+        }
+      ]
+    }
+  ]}
+/>

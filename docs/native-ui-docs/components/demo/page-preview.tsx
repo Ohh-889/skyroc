@@ -22,9 +22,21 @@ export const PagePreview = (props: PagePreviewProps) => {
     () =>
       dynamic(
         async () => {
-          const mod = await import(`../../../../apps/native-ui-playground/app/components/${slug}`);
+          // 动态引入 PreviewRuntime 的理由同 demo-preview.tsx：别把 RN provider 拖进服务端 bundle
+          const [{ PreviewRuntime }, mod] = await Promise.all([
+            import('./preview-runtime'),
+            import(`../../../../apps/native-ui-playground/app/components/${slug}`)
+          ]);
+          const Component = mod.default;
 
-          return mod.default;
+          // 整页预览撑满一屏，provider 链要跟着 flex-1，否则页面内的 ScrollView 滚不动
+          return function PageWithRuntime() {
+            return (
+              <PreviewRuntime fill>
+                <Component />
+              </PreviewRuntime>
+            );
+          };
         },
         { loading: () => <PageFallback />, ssr: false }
       ),

@@ -1,0 +1,139 @@
+---
+title: BackTop
+description: 滚动一段距离后出现的回到顶部按钮
+---
+
+回到顶部（BackTop）在页面滚过一定距离后浮现在右下角，点击把目标容器滚回顶部。组件基于 `FloatingButton` 封装，显隐判定与滚动指令全程留在 UI 线程：滚动的每一帧都要判断按钮是否该出现，走 React state 会把整棵子树重渲染一遍。
+
+```tsx
+import { BackTop } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+把滚动容器换成 `Animated.ScrollView`（或 `Animated.FlatList`），用 `useAnimatedRef` 拿到 ref 传给 `target` 即可。往下滚超过 200px 按钮出现，点击滚回顶部。
+
+<Demo src="@playground/back-top/BackTopBasic" />
+
+## 何时使用
+
+- 长列表、长文详情页等一屏放不下、用户需要往回翻的场景。
+- 内容不足两屏时不必加：默认阈值是 200px，短页面刚滚一下按钮就弹出来反而是干扰。
+- 需要的是一个常驻的主操作入口（发布、客服）时用 `FloatingButton`，它可拖拽、可吸附边缘；`BackTop` 是固定位置的次要动作。
+
+## 目标容器
+
+`target` 接收 `useAnimatedRef` 返回的 `AnimatedRef`，读滚动距离和执行 `scrollTo` 都靠它。`Animated.ScrollView` 与 `Animated.FlatList` 一视同仁，列表不必为了回顶退回 `ScrollView`；其它滚动组件经 `Animated.createAnimatedComponent` 包装后同样适用。
+
+```tsx
+const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
+
+<Animated.FlatList ref={scrollRef} data={data} renderItem={renderItem} />
+<BackTop target={scrollRef} />
+```
+
+`target` 是必填的，且必须是 Reanimated 的 `AnimatedRef`——普通 `useRef` 拿不到 UI 线程可读的滚动偏移。
+
+## 位置
+
+`right` / `bottom` 是按钮到**屏幕物理边缘**的距离，`size` 是按钮直径：
+
+| 属性     | 默认值 | 说明                             |
+| -------- | ------ | -------------------------------- |
+| `right`  | 30     | 距屏幕右边的距离                 |
+| `bottom` | 128    | 距屏幕底边的距离，已预留 TabBar  |
+| `size`   | 40     | 按钮直径，比 `FloatingButton` 的默认 48 小一号 |
+
+位置按窗口尺寸计算，渲染却是相对父容器的绝对定位，因此 `BackTop` 必须挂在铺满屏幕、且左上角与屏幕左上角重合的容器里。页面上方还有 NavBar 之类的固定元素时，用 `Portal` 把它挂到页面根节点（示例里就是这么做的）。
+
+`bottom` 不含安全区：位置最终落在 transform 上，取不到 `*-safe` 工具类背后的运行时 inset。需要避开 home indicator 或常驻 TabBar 时，把相应高度自己并进这个值。
+
+## 显示阈值
+
+`offset` 是按钮出现所需的滚动距离（像素），默认 200——大约滚过一屏。注意它和 `FloatingButton` 表示坐标的 `offset` 不是一回事。
+
+```tsx
+<BackTop offset={400} target={scrollRef} />
+```
+
+阈值判定是 `scrollOffset >= offset`，结果保存在一个 Reanimated 共享值里，直接交给 `FloatingButton` 的 `visible`，滚动过程中不触发任何 JS 端渲染。显隐动画是 180ms 的缩放缓动。
+
+## 滚动行为
+
+`immediate` 为 `false`（默认）时走滚动动画，为 `true` 时瞬间跳到顶部。超长列表上瞬间跳顶更利落，也省掉动画期间的连续布局。
+
+```tsx
+<BackTop immediate target={scrollRef} />
+```
+
+`onPress` 在滚动开始前触发，可用于埋点；它不代表滚动已经结束。
+
+## 自定义内容
+
+不传 `children` 时渲染默认的向上箭头（Octicons 的 `chevron-up`，20px，颜色跟随 `accent-primary-foreground`）。传 `children` 可整体替换，比如换成文字或自定义图标。
+
+```tsx
+<BackTop target={scrollRef}>
+  <Text className="text-xs text-primary-foreground">顶部</Text>
+</BackTop>
+```
+
+按钮底色由 `FloatingButton` 的 `bg-primary` 提供，改底色用 `className`；自定义图标的颜色要自己指定，`@expo/vector-icons` 不认 `className`。
+
+## 禁用
+
+`disabled` 后按钮不响应点击并整体降低不透明度，但显隐仍然跟随滚动——按钮还在，只是点不动。
+
+## API
+
+### BackTop
+
+<PropsTable
+  data={[
+    {
+      name: 'target',
+      description: '目标滚动容器的 AnimatedRef，用于读取滚动距离与执行 scrollTo',
+      type: 'AnimatedRef<BackTopScrollable>',
+      required: true
+    },
+    {
+      name: 'offset',
+      description: '显示阈值（像素），滚动距离超过该值按钮才出现',
+      type: 'number',
+      default: '200'
+    },
+    { name: 'right', description: '距屏幕右边的距离（像素）', type: 'number', default: '30' },
+    {
+      name: 'bottom',
+      description: '距屏幕底边的距离（像素），不含安全区，需要避开 home indicator 或 TabBar 时自行并入',
+      type: 'number',
+      default: '128'
+    },
+    { name: 'size', description: '按钮直径（像素）', type: 'number', default: '40' },
+    { name: 'immediate', description: '为 true 时瞬间跳到顶部，为 false 时走滚动动画', type: 'boolean', default: 'false' },
+    { name: 'children', description: '自定义内容，替换默认的向上箭头', type: 'ReactNode' },
+    {
+      name: 'disabled',
+      description: '禁用后不响应点击并整体降低不透明度，显隐仍然跟随滚动',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'onPress', description: '点击回调，在滚动开始前触发', type: '() => void' },
+    { name: 'className', description: 'Uniwind 类名，透传给 FloatingButton 的根节点', type: 'string' },
+    { name: 'style', description: '根节点自定义样式，叠在动画样式之上', type: 'StyleProp<ViewStyle>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { BackTopProps, BackTopScrollable } from '@skyroc/native-ui';
+```
+
+`BackTopProps` 带一个泛型参数 `TRef extends BackTopScrollable`，默认 `Animated.ScrollView`，用于约束 `target` 的类型。
+
+<UnionType
+  name="BackTopScrollable"
+  description="可回顶的滚动容器；其它滚动组件经 createAnimatedComponent 包装后同样适用，这里只列出 Reanimated 内置的两个。"
+  type="Animated.FlatList | Animated.ScrollView"
+/>

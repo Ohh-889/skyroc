@@ -1,0 +1,25 @@
+{
+  "title": "输入",
+  "defaultOpen": true,
+  "pages": [
+    "form",
+    "field",
+    "input",
+    "password-input",
+    "search",
+    "checkbox",
+    "radio",
+    "switch",
+    "slider",
+    "stepper",
+    "rate",
+    "signature",
+    "picker",
+    "picker-group",
+    "date-picker",
+    "time-picker",
+    "calendar",
+    "number-keyboard",
+    "tree-select"
+  ]
+}

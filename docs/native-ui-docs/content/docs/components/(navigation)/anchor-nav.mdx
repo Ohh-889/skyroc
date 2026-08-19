@@ -1,0 +1,229 @@
+---
+title: AnchorNav
+description: 左侧分组侧栏 + 右侧分组列表的锚点导航，点击定位、滚动联动
+---
+
+锚点导航（AnchorNav）把左侧的分组侧栏和右侧的分组列表绑在一起：点侧栏滚动到对应分组，滚动列表反过来高亮对应的侧栏项。右侧列表是 React Native 的 `SectionList`（分组标题默认吸顶），左侧默认复用 `Sidebar`，也可以整个换成自定义节点。
+
+```tsx
+import { AnchorNav } from '@skyroc/native-ui';
+```
+
+`AnchorNav` 的根节点是 `flex-1 flex-row`，必须放在一个有确定高度的容器里才能滚动。
+
+## 基础用法
+
+`items` 是分组数据，每组含 `title` 与 `children`；子项的 `key` 必填，`text` 为显示文本。侧栏项的 `badge` / `dot` / `disabled` 也写在分组上。
+
+<Demo src="@playground/anchor-nav/AnchorNavBasic" />
+
+## 何时使用
+
+- 商品分类、组件索引这类「左分类、右内容」的二级列表。
+- 分组数量在十个上下、每组条目不多，需要在分组之间快速跳转。
+- 只需要一列可选分类、右侧内容自行渲染时用 `Sidebar`；按首字母索引长列表时用 `IndexBar`。
+
+## 高度模型
+
+这是使用 `AnchorNav` 最需要注意的一点：**滚动定位是按固定高度算出来的，不是量出来的**。
+
+组件用 `itemHeight`（默认 64）与 `sectionHeaderHeight`（默认 32）累加出每个分组头的纵向起点，点击侧栏的定位和滚动联动的反查共用这张表。为了让计算成立，组件会把这两个值以 `style` 强制套在子项与分组头的外层节点上 —— 自定义渲染的内容必须能在这个高度内显示完整。
+
+因此：
+
+- 改了子项或分组头的视觉高度，必须同步改 `itemHeight` / `sectionHeaderHeight`。
+- `classNames.separator` 不要改分隔线的粗细（默认是 `StyleSheet.hairlineWidth`），它同样计入偏移量；改了会让定位随分组数线性漂移。
+- 子项高度不能随内容变化，`AnchorNav` 不支持不等高列表。
+
+## 受控与命令式定位
+
+`activeIndex` / `onIndexChange` 控制高亮（非受控时用 `defaultActiveIndex`）。注意 **`activeIndex` 只负责高亮，不驱动滚动** —— 外部要跳转请用 `ref.scrollToSection(index)`，它和点击侧栏走同一条路径（滚动 + 更新索引），免得「改 prop」和「滚动联动改 prop」互相打架。
+
+<Demo src="@playground/anchor-nav/AnchorNavControlled" />
+
+索引是位置而非身份：`items` 增删或重排后，调用方需要自行校正 `activeIndex`。
+
+## 自定义子项
+
+`renderItem` 接收 `(item, section)` 返回自定义节点，外层仍会套上 `itemHeight` 的固定高度。传了 `renderItem` 时 `onPressItem` 不再触发，点击交互由自定义内容自己处理，`accessibilityRole` / `accessibilityLabel` 也需要自己补。
+
+<Demo src="@playground/anchor-nav/AnchorNavCustomItem" />
+
+## 自定义侧栏
+
+`renderSidebar` 完全取代默认的 `Sidebar`，此时 `sidebarClassNames` 与 `classNames.sidebar` 一并失效，自定义节点自己管样式。滚动定位、高亮联动与触感反馈仍由 `AnchorNav` 负责，通过入参 `{ activeIndex, items, onPressIndex }` 拿。
+
+<Demo src="@playground/anchor-nav/AnchorNavCustomSidebar" />
+
+自定义侧栏的节点排在列表**之后**渲染：常规流里就是列表右侧的一列，绝对定位则悬浮在列表之上 —— 靠的是绘制顺序而不是 `zIndex`（后者在 Android 上不总可靠）。
+
+## 插槽与行为定制
+
+`classNames` 覆盖 `AnchorNav` 自己的插槽，`sidebarClassNames` 透传给默认 `Sidebar` 的插槽，两者分层清晰：
+
+| slot                | 作用位置                                    |
+| ------------------- | ------------------------------------------- |
+| `root`              | 根容器（横向布局）                          |
+| `sidebar`           | 默认侧栏的外层容器（宽度约束写在这里）      |
+| `content`           | 右侧 `SectionList`                          |
+| `sectionHeader`     | 分组标题容器                                |
+| `sectionHeaderText` | 分组标题文字                                |
+| `item`              | 默认子项的 `Pressable`                      |
+| `itemText`          | 默认子项文字                                |
+| `separator`         | 子项之间的分隔线（不要改粗细）              |
+
+`sticky` 关闭分组标题吸顶，`haptic` 关闭点击侧栏时的轻触反馈（基于 `expo-haptics` 的 `selectionAsync`）。
+
+<Demo src="@playground/anchor-nav/AnchorNavSlots" />
+
+侧栏宽度默认是 `w-20`，通过 `classNames.sidebar` 覆盖；这个约束落在 Sidebar 外层的普通 `View` 上，用来隔离 RN Web 给竖向 `ScrollView` 注入的 `flexGrow: 1`，直接改 `sidebarClassNames.root` 达不到同样效果。
+
+## 联动细节
+
+- 点击侧栏后会抑制滚动联动，直到程序化滚动落幕（`onMomentumScrollEnd`）或用户上手拖动（`onScrollBeginDrag`），否则高亮会沿途逐格跳过去。
+- 分组的 `disabled` 只作用于侧栏该项 —— 禁用后无法点击跳转，但滚动到该组时仍会高亮。
+- 触感反馈按「每次点击」触发，不按索引是否变化去重：点击是一次明确的用户动作。
+
+## 无障碍
+
+默认渲染下，分组标题是 `accessibilityRole="header"`，子项是 `accessibilityRole="button"` 且以 `item.text` 作为 `accessibilityLabel`。使用 `renderItem` / `renderSidebar` 时这些语义需要在自定义节点里自行补齐。
+
+## API
+
+### AnchorNav
+
+除下表外，`AnchorNav` 透传 `View` 的全部属性（`style`、`testID` 等）到根节点，`children` 除外。
+
+<PropsTable
+  data={[
+    { name: 'items', description: '分组数据', type: 'AnchorNavSection[]', required: true },
+    { name: 'activeIndex', description: '受控激活分组索引；只负责高亮，不驱动滚动', type: 'number' },
+    { name: 'defaultActiveIndex', description: '非受控默认激活分组索引', type: 'number', default: '0' },
+    {
+      name: 'onIndexChange',
+      description: '激活分组变化回调，点击侧栏与滚动联动都会触发',
+      type: '(index: number) => void'
+    },
+    {
+      name: 'onPressItem',
+      description: '点击子项回调；传了 renderItem 时不生效',
+      type: '(item: AnchorNavChild) => void'
+    },
+    {
+      name: 'itemHeight',
+      description: '子项高度，同时是滚动定位的度量，会强制套在每个子项外层',
+      type: 'number',
+      default: '64'
+    },
+    {
+      name: 'sectionHeaderHeight',
+      description: '分组标题高度，同样参与滚动定位的计算',
+      type: 'number',
+      default: '32'
+    },
+    { name: 'sticky', description: '是否开启分组标题吸顶', type: 'boolean', default: 'true' },
+    { name: 'haptic', description: '点击侧栏时是否触发轻触反馈', type: 'boolean', default: 'true' },
+    {
+      name: 'renderItem',
+      description: '自定义子项渲染，外层仍会套上 itemHeight 的固定高度',
+      type: '(item: AnchorNavChild, section: AnchorNavSection) => ReactNode'
+    },
+    {
+      name: 'renderSidebar',
+      description: '自定义侧栏渲染，传了就完全取代默认 Sidebar',
+      type: '(context: AnchorNavSidebarContext) => ReactNode'
+    },
+    { name: 'className', description: '根节点类名', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各插槽类名；separator 不要改线条粗细，传了 renderSidebar 时 sidebar 不生效',
+      type: 'SlotClassNames<AnchorNavSlots>'
+    },
+    {
+      name: 'sidebarClassNames',
+      description: '默认 Sidebar 内部各插槽的类名；传了 renderSidebar 时不生效',
+      type: 'SlotClassNames<SidebarSlots>'
+    },
+    { name: 'ref', description: '组件 ref，用于命令式定位', type: 'Ref<AnchorNavRef>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  AnchorNavChild,
+  AnchorNavProps,
+  AnchorNavRef,
+  AnchorNavSection,
+  AnchorNavSidebarContext,
+  AnchorNavSlots
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="AnchorNavSlots"
+  description="AnchorNav 可通过 classNames 覆盖的插槽名称。"
+  type="'content' | 'item' | 'itemText' | 'root' | 'sectionHeader' | 'sectionHeaderText' | 'separator' | 'sidebar'"
+/>
+
+<UnionType
+  name="SidebarSlots"
+  description="默认 Sidebar 可通过 sidebarClassNames 覆盖的插槽名称。"
+  type="'content' | 'indicator' | 'item' | 'itemText' | 'root'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'AnchorNavSection',
+      description: '分组数据。',
+      fields: [
+        { name: 'title', type: 'string', required: true, description: '分组标题，同时作为侧栏项的文字。' },
+        { name: 'children', type: 'AnchorNavChild[]', required: true, description: '子项列表。' },
+        { name: 'key', type: 'string', description: '唯一标识，只用于侧栏列表的 key；不传时回退到下标。' },
+        { name: 'badge', type: 'ReactNode', description: '徽标内容，显示在侧栏对应项上。' },
+        { name: 'dot', type: 'boolean', description: '是否在侧栏对应项显示小红点。' },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          description: '是否禁用，只作用于侧栏该项——禁用后无法点击跳转，滚动联动仍会高亮。'
+        }
+      ]
+    },
+    {
+      name: 'AnchorNavChild',
+      description: '分组内的子项数据。',
+      fields: [
+        { name: 'key', type: 'string', required: true, description: '唯一标识，作为列表 key。' },
+        { name: 'text', type: 'string', required: true, description: '显示文本，同时作为默认渲染的无障碍标签。' }
+      ]
+    },
+    {
+      name: 'AnchorNavSidebarContext',
+      description: 'renderSidebar 拿到的上下文。',
+      fields: [
+        { name: 'activeIndex', type: 'number', required: true, description: '当前激活分组索引。' },
+        { name: 'items', type: 'AnchorNavSection[]', required: true, description: '分组数据，与传入的 items 是同一份引用。' },
+        {
+          name: 'onPressIndex',
+          type: '(index: number) => void',
+          required: true,
+          description: '定位到指定分组，与点击默认侧栏走同一条路径（滚动 + 高亮 + 触感）。'
+        }
+      ]
+    },
+    {
+      name: 'AnchorNavRef',
+      description: 'ref 暴露的方法。',
+      fields: [
+        {
+          name: 'scrollToSection',
+          type: '(index: number) => void',
+          required: true,
+          description: '定位到指定分组，行为与点击侧栏一致（滚动 + 更新激活索引）；索引越界时不做任何事。'
+        }
+      ]
+    }
+  ]}
+/>

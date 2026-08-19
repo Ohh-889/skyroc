@@ -24,13 +24,19 @@ interface TypePart {
 /** 内置 / 三方类型（React、TS 工具类型、React Native 原语），不生成锚点链接 */
 const BUILTIN_TYPE_NAMES = new Set([
   'AccessibilityRole',
+  'Animated',
+  'AnimatedRef',
   'Array',
+  'BottomSheetModal',
   'Component',
   'Date',
+  'Dayjs',
   'ElementType',
   'Exclude',
   'Extract',
+  'FlatList',
   'GestureResponderEvent',
+  'ImageStyle',
   'Map',
   'NonNullable',
   'Omit',
@@ -46,10 +52,12 @@ const BUILTIN_TYPE_NAMES = new Set([
   'RefObject',
   'RegExp',
   'Required',
+  'ScrollView',
   'Set',
   'StyleProp',
   'TextStyle',
   'View',
+  'ViewProps',
   'ViewStyle'
 ]);
 

@@ -1,4 +1,13 @@
 {
   "title": "组件",
-  "defaultOpen": true
+  "defaultOpen": true,
+  "pages": [
+    "(general)",
+    "(layout)",
+    "(input)",
+    "(data-display)",
+    "(navigation)",
+    "(overlay)",
+    "(feedback)"
+  ]
 }

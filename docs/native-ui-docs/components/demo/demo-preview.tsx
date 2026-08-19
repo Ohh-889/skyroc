@@ -25,11 +25,24 @@ export const DemoPreview = (props: DemoPreviewProps) => {
     () =>
       dynamic(
         async () => {
-          const mod = await import(`../../../../apps/native-ui-playground/src/demos/${name}`);
+          // PreviewRuntime 也在这里动态引入：它会拉进 gesture-handler / safe-area-context，
+          // 写成顶层 import 就等于把这些 RN 包塞回服务端 bundle，ssr: false 也就白设了
+          const [{ PreviewRuntime }, mod] = await Promise.all([
+            import('./preview-runtime'),
+            import(`../../../../apps/native-ui-playground/src/demos/${name}`)
+          ]);
           // 具名导出用文件名，嵌套路径（button/ButtonVariant）要取最后一段
           const exportName = name.slice(name.lastIndexOf('/') + 1);
+          const Component = mod[exportName] ?? mod.default;
 
-          return mod[exportName] ?? mod.default;
+          // 手机框里补齐 playground 根布局的那几层 provider，缺了 Sheet / 手势 / Portal 都跑不起来
+          return function DemoWithRuntime() {
+            return (
+              <PreviewRuntime>
+                <Component />
+              </PreviewRuntime>
+            );
+          };
         },
         { loading: () => <DemoFallback text="Loading…" />, ssr: false }
       ),

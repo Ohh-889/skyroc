@@ -27,6 +27,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.0",
+    "react-native-gesture-handler": "catalog:native",
+    "react-native-safe-area-context": "catalog:native",
     "react-native-web": "^0.21.0",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",

@@ -1,0 +1,503 @@
+---
+title: Calendar
+description: 支持单选、范围与多选的月历面板
+---
+
+日历（Calendar）以月为单位展示日期网格，支持单选、日期范围与多选三种模式，可选带时间选择。组件基于 `react-native-ui-datepicker` 封装，本层只做两件事：套上面板容器样式（圆角、底色、内边距），以及把 `classNames` 按 slot 逐个合并而不是整段替换。
+
+第三方默认类名用的就是 `bg-primary` / `text-primary-foreground` / `text-muted-foreground` / `bg-accent` 这套语义 token，与本仓库 tailwind-plugin 生成的变量同名，所以配色天然跟随主题，不需要额外翻译一遍。
+
+```tsx
+import { Calendar } from '@skyroc/native-ui';
+import type { DateType } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`mode` 是必填的，它决定用哪一组数据属性。`single` 模式下用 `date` + `onChange` 受控，回调参数是 `{ date }`。
+
+<Demo src="@playground/calendar/CalendarBasic" />
+
+组件本身不持有选中值：不接 `onChange` 回写 state，点击不会有任何视觉变化。
+
+## 何时使用
+
+- 需要在一整屏日期网格里挑日子——请假、预订、日程——用 `Calendar`。
+- 只是在表单里填一个日期，且不需要看到整月上下文时，用滚轮式的 `DatePicker`，它更省空间也更符合移动端输入习惯。
+- 需要连续区间（入住 / 退房）时用 `mode="range"`，不要用两个独立的单选日历——范围模式内置了跨度约束与区间高亮。
+
+## 日期范围
+
+`mode="range"` 用 `startDate` / `endDate` 两个值受控，回调参数是 `{ startDate, endDate }`。`min` / `max` 限制区间跨度，按**夜数**（起止相差的天数）计算：`max={7}` 允许最长跨 8 个自然日的区间。
+
+<Demo src="@playground/calendar/CalendarRange" />
+
+几个容易踩的点：
+
+- 越界时不会报错，而是把刚点的日期当成新的起点重新开始选。
+- 点击区间起点那一天：设了 `min` / `max` 时会把区间整个清空（回调收到两个 `undefined`），否则是把终点收回到起点、变成单日区间；单日区间上再点同一天同样清空。
+- 默认情况下区间选满之后再点日期会调整端点；加上 `allowRangeReset` 则任意一次点击都直接开始新区间。
+
+## 多选与数量限制
+
+`mode="multiple"` 用 `dates` 数组受控，回调参数是 `{ dates, datePressed, change }`，`change` 为 `'added'` / `'removed'` / `'updated'`。`max` 限制最多选几天，到上限后继续点击**直接被忽略**——不会触发 `onChange`，也不会替换掉最早选中的那天。
+
+<Demo src="@playground/calendar/CalendarMultiple" />
+
+回调给的 `dates` 是排好序的完整结果，直接整份写回 state 即可；点已选中的日期即取消选择。`min` 在多选模式下不生效。多选时如果希望连续几天渲染成一条连续的区间条，打开 `multiRangeMode`。
+
+## 禁用日期
+
+`disabledDates` 接受日期数组或判断函数（返回 `true` 表示禁用）。反过来也可以用 `enabledDates` 走白名单，它的优先级高于 `disabledDates`。
+
+<Demo src="@playground/calendar/CalendarDisabledDates" />
+
+判断函数每渲染一格日期就会被调用一次，别在里面做重活；示例里的"周末不可选"就是最典型的用法。
+
+## 可选区间
+
+`minDate` / `maxDate` 约束整体可选边界，超出的日期直接置灰。它和 `disabledDates` 可以叠加使用。
+
+<Demo src="@playground/calendar/CalendarMinMax" />
+
+边界判断带时分秒，`minDate` 传 `new Date()` 会让"今天"因为已过零点而不可选。示例里统一用 `new Date(new Date().setHours(0, 0, 0, 0))` 归零到当天零点。
+
+## 周与导航布局
+
+| 属性                 | 说明                                                       |
+| -------------------- | ---------------------------------------------------------- |
+| `firstDayOfWeek`     | 一周从周几开始，0（周日，默认）到 6（周六）                |
+| `showOutsideDays`    | 是否补齐上下月的日期格，默认 `false`                       |
+| `navigationPosition` | 上/下月按钮的位置：`around`（默认）、`left`、`right`       |
+| `weekdaysFormat`     | 星期名格式：`min`（默认）、`short`、`full`                 |
+| `hideWeekdays`       | 隐藏星期行                                                 |
+| `hideHeader`         | 隐藏内置头部（月份、年份、翻页按钮整块）                   |
+
+<Demo src="@playground/calendar/CalendarLayout" />
+
+`firstDayOfWeek` 只接受 1–6，传 0 或非法值都回落到周日开头。
+
+## 日期与时间
+
+`timePicker` 在头部加一个时间入口，点进去切到时分选择视图；`use12Hours` 换成 12 小时制（AM / PM）。想一进来就停在时间视图，配合 `initialView="time"`。
+
+<Demo src="@playground/calendar/CalendarTimePicker" />
+
+时间是选中日期的一部分，仍然从同一个 `date` 里读写，不会多给一个字段。
+
+## 外部控制月份
+
+`month` / `year` 让外部决定当前显示哪个月，配合 `onMonthChange` / `onYearChange` 同步内部翻页。它们控制的是"显示到哪一屏"，与选中值无关。
+
+<Demo src="@playground/calendar/CalendarControlledMonth" />
+
+自己在外面做翻页按钮时，通常配 `hideHeader` 把内置头部关掉，避免出现两套导航。注意 `month` 是 0 起算的（0 表示一月）。
+
+## 自定义内容与样式
+
+`components` 可以替换日期格、月份格、年份格、星期名与翻页图标；`components.Day` 拿到的 `CalendarDay` 携带 `isSelected` / `isToday` / `isDisabled` / `inRange` 等状态，接管之后这些状态样式全部由你自己表达——包括选中态，第三方不会再补一层。
+
+`classNames` 按 slot 覆盖，值会和默认类名合并（冲突的工具类由 tailwind-merge 决定胜负），只想改圆角不必把排版重抄一遍。`className` 追加在面板容器上，可用来覆盖本层的 `rounded-2xl bg-background p-4`。
+
+<Demo src="@playground/calendar/CalendarCustom" />
+
+自定义日期格时，类名要写成完整字符串而不是拼接出来的——Uniwind 是静态扫描的，`` `bg-${color}` `` 这类动态类名扫不到。常用 slot：
+
+| slot            | 作用位置             |
+| --------------- | -------------------- |
+| `header`        | 头部整块             |
+| `weekday_label` | 星期名文字           |
+| `day`           | 日期格容器           |
+| `day_label`     | 日期文字             |
+| `selected`      | 选中态的日期格       |
+| `today_label`   | 今天的日期文字       |
+| `range_fill`    | 区间中间段的填充背景 |
+
+全部 50 个 slot 名见下方 [`CalendarClassNames`](#type-calendar-class-names)。
+
+## 本地化
+
+`locale` 接受 dayjs 的 locale 名（`'zh'`、`'en'`、`'fa'` 等），包内已预置 45 种语言包，不需要额外 import。另外三个相关属性：
+
+```tsx
+<Calendar
+  calendar="jalali" // 历法：'gregory'（默认）| 'jalali'
+  locale="fa" // 语言：月份名、星期名
+  mode="single"
+  numerals="arabext" // 数字系统：'latn'（默认）、'arab'、'deva' 等 12 种
+  timeZone="Asia/Shanghai" // 时区，走 dayjs.tz
+/>
+```
+
+## 面板尺寸
+
+日期网格区域是**固定高度**的：`containerHeight` 默认 300，星期行 `weekdaysHeight` 默认 25。不同月份的行数不同（4–6 行），固定高度是为了避免翻月时面板高度跳动。需要更紧凑或更宽松的面板就改 `containerHeight`，只改外层 padding 不会改变网格区高度。
+
+## 未实现的透传属性
+
+`CalendarProps` 直接取自第三方的 props 类型，其中 `startYear` / `endYear` 在 3.3.0 版本里**声明了但没有接线**（源码中被注释掉），传了不会有任何效果。年份视图的可选范围目前无法配置。
+
+## API
+
+### Calendar
+
+`Calendar` 透传 `react-native-ui-datepicker` 的全部属性，下表按用途分组列出。`className` 与 `classNames` 由本层接管：前者追加到面板容器，后者与默认类名逐 slot 合并。
+
+#### 模式与选中值
+
+`mode` 决定其余数据属性的形态，三组不能混用。
+
+<PropsTable
+  data={[
+    {
+      name: 'mode',
+      description: '选择模式，决定用哪一组数据属性与回调签名；类型上必填，运行时缺省按 single 处理',
+      type: "'single' | 'range' | 'multiple'",
+      required: true
+    },
+    { name: 'date', description: 'single：当前选中日期', type: 'DateType' },
+    { name: 'startDate', description: 'range：区间起点', type: 'DateType' },
+    { name: 'endDate', description: 'range：区间终点', type: 'DateType' },
+    { name: 'dates', description: 'multiple：已选中的全部日期', type: 'DateType[]' },
+    {
+      name: 'onChange',
+      description:
+        '选中值变化。single 收到 { date }；range 收到 { startDate, endDate }；multiple 收到 { dates, datePressed, change }，change 为 added / removed / updated',
+      type: '(params) => void'
+    },
+    {
+      name: 'min',
+      description: 'range：区间最短夜数（起止相差的天数），其它模式不生效',
+      type: 'number'
+    },
+    {
+      name: 'max',
+      description: 'range：区间最长夜数；multiple：最多可选天数，达到上限后点击被忽略',
+      type: 'number'
+    },
+    {
+      name: 'allowRangeReset',
+      description: 'range：区间选满后，任意一次点击都直接以该日期开始新区间',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'multiRangeMode',
+      description: 'multiple：连续选中的日期渲染成一条连续的区间条',
+      type: 'boolean'
+    }
+  ]}
+/>
+
+#### 可选范围
+
+<PropsTable
+  data={[
+    { name: 'minDate', description: '最早可选日期，边界判断带时分秒', type: 'DateType' },
+    { name: 'maxDate', description: '最晚可选日期，边界判断带时分秒', type: 'DateType' },
+    {
+      name: 'disabledDates',
+      description: '禁用的日期数组，或返回 true 表示禁用的判断函数',
+      type: 'DateType[] | ((date: DateType) => boolean)'
+    },
+    {
+      name: 'enabledDates',
+      description: '允许选择的日期白名单，优先级高于 disabledDates',
+      type: 'DateType[] | ((date: DateType) => boolean)'
+    }
+  ]}
+/>
+
+#### 显示与布局
+
+<PropsTable
+  data={[
+    {
+      name: 'firstDayOfWeek',
+      description: '一周的起始日，1–6 生效，其余值回落到周日',
+      type: 'number',
+      default: '0'
+    },
+    { name: 'showOutsideDays', description: '是否补齐上下月的日期格', type: 'boolean', default: 'false' },
+    {
+      name: 'navigationPosition',
+      description: '上/下月翻页按钮的位置',
+      type: "'around' | 'right' | 'left'",
+      default: "'around'"
+    },
+    {
+      name: 'weekdaysFormat',
+      description: '星期名格式',
+      type: "'min' | 'short' | 'full'",
+      default: "'min'"
+    },
+    { name: 'monthsFormat', description: '月份选择视图里的月份名格式', type: "'short' | 'full'", default: "'full'" },
+    { name: 'monthCaptionFormat', description: '头部月份标题的格式', type: "'short' | 'full'", default: "'full'" },
+    { name: 'hideHeader', description: '隐藏内置头部', type: 'boolean' },
+    { name: 'hideWeekdays', description: '隐藏星期行', type: 'boolean' },
+    {
+      name: 'showMonthSelector',
+      description: 'true 时年份视图里也显示月份选择器，false 时始终隐藏；不传则除年份视图外都显示',
+      type: 'boolean'
+    },
+    { name: 'disableMonthPicker', description: '禁用月份选择视图', type: 'boolean' },
+    { name: 'disableYearPicker', description: '禁用年份选择视图', type: 'boolean' },
+    {
+      name: 'initialView',
+      description: '初始视图，time 需要同时开启 timePicker',
+      type: "'day' | 'month' | 'year' | 'time'",
+      default: "'day'"
+    },
+    { name: 'containerHeight', description: '日期网格区域的固定高度', type: 'number', default: '300' },
+    { name: 'weekdaysHeight', description: '星期行高度', type: 'number', default: '25' }
+  ]}
+/>
+
+#### 时间与本地化
+
+<PropsTable
+  data={[
+    { name: 'timePicker', description: '开启时间选择视图', type: 'boolean', default: 'false' },
+    { name: 'use12Hours', description: '时间选择使用 12 小时制（AM / PM）', type: 'boolean' },
+    { name: 'locale', description: 'dayjs locale 名，包内已预置 45 种语言包', type: 'string', default: "'en'" },
+    { name: 'calendar', description: '历法', type: "'gregory' | 'jalali'", default: "'gregory'" },
+    {
+      name: 'numerals',
+      description: '数字系统，如 latn（阿拉伯数字）、arab、arabext、deva 等 12 种',
+      type: 'string',
+      default: "'latn'"
+    },
+    { name: 'timeZone', description: '时区名，走 dayjs.tz', type: 'string' }
+  ]}
+/>
+
+#### 显示月份控制
+
+<PropsTable
+  data={[
+    { name: 'month', description: '当前显示的月份，0 起算（0 表示一月）', type: 'number' },
+    { name: 'year', description: '当前显示的年份', type: 'number' },
+    { name: 'onMonthChange', description: '内部翻月时触发', type: '(month: number) => void' },
+    { name: 'onYearChange', description: '内部翻年时触发', type: '(year: number) => void' },
+    {
+      name: 'startYear',
+      description: '年份视图的起始年份；3.3.0 中声明了但未接线，传了无效',
+      type: 'number'
+    },
+    { name: 'endYear', description: '年份视图的结束年份；3.3.0 中声明了但未接线，传了无效', type: 'number' }
+  ]}
+/>
+
+#### 自定义与样式
+
+<PropsTable
+  data={[
+    { name: 'components', description: '替换日期格、月份格、年份格、星期名与翻页图标', type: 'CalendarComponents' },
+    {
+      name: 'classNames',
+      description: '按 slot 覆盖类名，与第三方默认类名逐 slot 合并而非整段替换',
+      type: 'CalendarClassNames'
+    },
+    {
+      name: 'className',
+      description: '面板容器类名，追加在本层的 rounded-2xl bg-background p-4 之后',
+      type: 'string'
+    },
+    {
+      name: 'styles',
+      description: '按 slot 覆盖 RN 样式对象，slot 名与 classNames 相同；该类型未从 @skyroc/native-ui 导出',
+      type: '{ [slot]: ViewStyle | TextStyle | ImageStyle }'
+    },
+    { name: 'style', description: '面板容器（头部 + 主体）的样式', type: 'ViewStyle' },
+    {
+      name: 'containerStyle',
+      description: '日期/月份/年份/时间视图主体的样式，不会覆盖 containerHeight',
+      type: 'ViewStyle'
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  CalendarClassNames,
+  CalendarComponents,
+  CalendarDay,
+  CalendarMode,
+  CalendarMonth,
+  CalendarProps,
+  CalendarSlots,
+  CalendarWeek,
+  CalendarYear,
+  DateType
+} from '@skyroc/native-ui';
+```
+
+`CalendarProps` 是三种模式各自 props 的联合（`mode: 'single'` / `'range'` / `'multiple'`），所以 TypeScript 能按 `mode` 收窄出对应的 `onChange` 签名；写公共封装时需要自己分支处理，不能只声明一个宽泛的回调。
+
+<UnionType
+  name="CalendarMode"
+  description="选择模式，决定数据属性与回调签名。"
+  type="'single' | 'range' | 'multiple'"
+/>
+
+<UnionType
+  name="DateType"
+  description="日期值，可以是 Date、时间戳、可解析的字符串或 dayjs 对象；回调回传的一律是 Date。"
+  type="string | number | Dayjs | Date | null | undefined"
+/>
+
+<UnionType
+  name="CalendarSlots"
+  description="本层面板容器变体的 slot 名，只有一个 root；它与 classNames 用的第三方 slot 名（见 CalendarClassNames）不是一回事。"
+  type="'root'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CalendarComponents',
+      description: '自定义渲染函数，全部可选；接管之后选中、今天、禁用等状态样式需要自行表达。',
+      fields: [
+        { name: 'Day', type: '(day: CalendarDay) => ReactNode', description: '日期格内容。' },
+        { name: 'Month', type: '(month: CalendarMonth) => ReactNode', description: '月份选择视图里的月份格。' },
+        { name: 'Year', type: '(year: CalendarYear) => ReactNode', description: '年份选择视图里的年份格。' },
+        { name: 'Weekday', type: '(weekday: CalendarWeek) => ReactNode', description: '头部的星期名。' },
+        { name: 'IconPrev', type: 'ReactNode', description: '上一月 / 上一年按钮的图标。' },
+        { name: 'IconNext', type: 'ReactNode', description: '下一月 / 下一年按钮的图标。' },
+        {
+          name: 'MonthSelector',
+          type: '(props: { text: string; isOpen: boolean; onPress: () => void }) => ReactNode',
+          description: '整体替换头部的月份选择按钮。'
+        },
+        {
+          name: 'YearSelector',
+          type: '(props: { year: string; yearRange: string; isOpen: boolean; onPress: () => void }) => ReactNode',
+          description: '整体替换头部的年份选择按钮。'
+        }
+      ]
+    }
+  ]}
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CalendarDay',
+      description: 'components.Day 收到的日期格数据。',
+      fields: [
+        { name: 'number', type: 'number', description: '日期数字，如 15。' },
+        { name: 'text', type: 'string', description: '按 locale 与 numerals 格式化后的日期文本。' },
+        { name: 'date', type: 'string', description: '该格对应的日期字符串。' },
+        { name: 'isCurrentMonth', type: 'boolean', description: '是否属于当前显示的月份。' },
+        { name: 'isToday', type: 'boolean', description: '是否是今天。' },
+        { name: 'isSelected', type: 'boolean', description: '是否被选中。' },
+        { name: 'isDisabled', type: 'boolean', description: '是否不可选。' },
+        { name: 'inRange', type: 'boolean', description: '是否落在已选区间内（range 模式）。' },
+        { name: 'rangeStart', type: 'boolean', description: '是否是区间起点。' },
+        { name: 'rangeEnd', type: 'boolean', description: '是否是区间终点。' },
+        { name: 'inMiddle', type: 'boolean', description: '是否是区间的中间段（两侧都不裁切）。' },
+        { name: 'leftCrop', type: 'boolean', description: '区间背景在左侧收口。' },
+        { name: 'rightCrop', type: 'boolean', description: '区间背景在右侧收口。' },
+        { name: 'isCrop', type: 'boolean', description: '区间背景只在单侧收口。' },
+        { name: 'isStartOfWeek', type: 'boolean', description: '是否是一周的第一天。' },
+        { name: 'isEndOfWeek', type: 'boolean', description: '是否是一周的最后一天。' },
+        { name: 'dayOfMonth', type: 'number', description: '该格在本月中的序号，可选。' }
+      ]
+    },
+    {
+      name: 'CalendarWeek',
+      description: 'components.Weekday 收到的星期数据。',
+      fields: [
+        { name: 'index', type: 'number', description: '星期序号，0 为周日。' },
+        {
+          name: 'name',
+          type: '{ full: string; short: string; min: string }',
+          description: '三种长度的星期名，与 weekdaysFormat 的取值对应。'
+        }
+      ]
+    },
+    {
+      name: 'CalendarMonth',
+      description: 'components.Month 收到的月份数据。',
+      fields: [
+        { name: 'index', type: 'number', description: '月份序号，0 表示一月。' },
+        { name: 'name', type: '{ full: string; short: string }', description: '两种长度的月份名。' },
+        { name: 'isSelected', type: 'boolean', description: '是否是当前月份。' }
+      ]
+    },
+    {
+      name: 'CalendarYear',
+      description: 'components.Year 收到的年份数据。',
+      fields: [
+        { name: 'number', type: 'number', description: '年份数字。' },
+        { name: 'text', type: 'string', description: '格式化后的年份文本。' },
+        { name: 'isSelected', type: 'boolean', description: '是否是选中值所在的年份。' },
+        { name: 'isActivated', type: 'boolean', description: '是否是当前显示的年份（未选中但处于激活态）。' }
+      ]
+    }
+  ]}
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CalendarClassNames',
+      description:
+        '全部 slot 的类名映射，每一项都可选（等价于 Partial<Record<Slot, string>>）。传入的值会与第三方默认类名合并，冲突的工具类由 tailwind-merge 决定胜负。',
+      fields: [
+        { name: 'header', type: 'string', description: '头部整块。' },
+        { name: 'button_prev', type: 'string', description: '上一月/上一年按钮。' },
+        { name: 'button_next', type: 'string', description: '下一月/下一年按钮。' },
+        { name: 'button_prev_image', type: 'string', description: '上一月/上一年按钮的图标。' },
+        { name: 'button_next_image', type: 'string', description: '下一月/下一年按钮的图标。' },
+        { name: 'month_selector', type: 'string', description: '头部的月份选择按钮。' },
+        { name: 'month_selector_label', type: 'string', description: '头部月份选择按钮的文字。' },
+        { name: 'year_selector', type: 'string', description: '头部的年份选择按钮。' },
+        { name: 'year_selector_label', type: 'string', description: '头部年份选择按钮的文字。' },
+        { name: 'time_selector', type: 'string', description: '头部的时间选择按钮。' },
+        { name: 'time_selector_label', type: 'string', description: '头部时间选择按钮的文字。' },
+        { name: 'weekdays', type: 'string', description: '星期行。' },
+        { name: 'weekday', type: 'string', description: '单个星期格。' },
+        { name: 'weekday_label', type: 'string', description: '星期名文字。' },
+        { name: 'days', type: 'string', description: '日期网格容器。' },
+        { name: 'day_cell', type: 'string', description: '日期格的外层包装。' },
+        { name: 'day', type: 'string', description: '日期格。' },
+        { name: 'day_label', type: 'string', description: '日期文字。' },
+        { name: 'today', type: 'string', description: '今天的日期格。' },
+        { name: 'today_label', type: 'string', description: '今天的日期文字。' },
+        { name: 'outside', type: 'string', description: '非当前月份的日期格。' },
+        { name: 'outside_label', type: 'string', description: '非当前月份的日期文字。' },
+        { name: 'hidden', type: 'string', description: '被隐藏的日期格。' },
+        { name: 'selected', type: 'string', description: '选中的日期格。' },
+        { name: 'selected_label', type: 'string', description: '选中的日期文字。' },
+        { name: 'range_start', type: 'string', description: '区间起点的日期格。' },
+        { name: 'range_start_label', type: 'string', description: '区间起点的日期文字。' },
+        { name: 'range_middle', type: 'string', description: '区间中间段的日期格。' },
+        { name: 'range_middle_label', type: 'string', description: '区间中间段的日期文字。' },
+        { name: 'range_end', type: 'string', description: '区间终点的日期格。' },
+        { name: 'range_end_label', type: 'string', description: '区间终点的日期文字。' },
+        { name: 'range_fill', type: 'string', description: '区间的填充背景。' },
+        { name: 'range_fill_weekstart', type: 'string', description: '区间中每周第一天的填充背景。' },
+        { name: 'range_fill_weekend', type: 'string', description: '区间中每周最后一天的填充背景。' },
+        { name: 'months', type: 'string', description: '月份选择视图的容器。' },
+        { name: 'month', type: 'string', description: '月份格。' },
+        { name: 'month_label', type: 'string', description: '月份文字。' },
+        { name: 'selected_month', type: 'string', description: '选中的月份格。' },
+        { name: 'selected_month_label', type: 'string', description: '选中的月份文字。' },
+        { name: 'years', type: 'string', description: '年份选择视图的容器。' },
+        { name: 'year', type: 'string', description: '年份格。' },
+        { name: 'year_label', type: 'string', description: '年份文字。' },
+        { name: 'selected_year', type: 'string', description: '选中的年份格。' },
+        { name: 'selected_year_label', type: 'string', description: '选中的年份文字。' },
+        { name: 'active_year', type: 'string', description: '当前显示但未选中的年份格。' },
+        { name: 'active_year_label', type: 'string', description: '当前显示但未选中的年份文字。' },
+        { name: 'disabled', type: 'string', description: '禁用的日期/月份/年份格。' },
+        { name: 'disabled_label', type: 'string', description: '禁用项的文字。' },
+        { name: 'time_label', type: 'string', description: '时间选择视图里的时分文字。' },
+        { name: 'time_selected_indicator', type: 'string', description: '时间选择视图里选中项的指示条。' }
+      ]
+    }
+  ]}
+/>

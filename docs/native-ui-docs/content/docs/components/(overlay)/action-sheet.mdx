@@ -1,0 +1,277 @@
+---
+title: ActionSheet
+description: 从底部弹出的操作面板，展示一组与当前上下文相关的操作
+---
+
+操作面板（ActionSheet）从屏幕底部升起，列出若干与当前上下文相关的操作。组件基于 `Sheet` 封装（底层是 `@gorhom/bottom-sheet` 的 `BottomSheetModal`），负责操作列表、选中态与取消按钮，面板本体的标题栏、遮罩、拖拽条仍由 `Sheet` 提供。
+
+除了声明式的 `<ActionSheet />`，还提供命令式的 `showActionSheet()`，返回一个在选中或取消时结算的 Promise。
+
+```tsx
+import { ActionSheet, closeActionSheet, showActionSheet } from '@skyroc/native-ui';
+```
+
+面板挂在 `BottomSheetModal` 上，应用根节点需要包一层 `GestureHandlerRootView` 与 `BottomSheetModalProvider`；命令式调用还会把渲染器挂到 `PortalHost` 上，两者缺一面板都不会出现。
+
+## 基础用法
+
+`actions` 定义操作项，每项必须有唯一的 `value`（它同时是列表 key，因为 `name` 允许是任意节点）。`show` + `onUpdateShow` 控制显示，`cancelText` 有值时才渲染底部取消按钮。
+
+<Demo src="@playground/action-sheet/ActionSheetBasic" />
+
+`onUpdateShow(false)` 表示「请求关闭」，此时退场动画才刚开始；要等面板真正卸载再做清理（移除节点、释放资源），监听 `onClosed`。
+
+## 何时使用
+
+- 针对某个对象的一组操作（分享、删除、举报），操作数量在 2–6 个之间。
+- 需要「危险操作 + 取消」这类需要用户二次确认的场景，把危险项用 `color` 标红。
+- 只需要提示信息、不含操作时用 `Dialog`；面板内容是表单或长列表时直接用 `Sheet`；仅用于分享渠道时用 `ShareSheet`。
+
+## 选项状态
+
+单个 `ActionSheetAction` 支持 `subname`（描述）、`disabled`、`loading` 和 `color`：
+
+| 字段       | 表现                                                            |
+| ---------- | --------------------------------------------------------------- |
+| `subname`  | 在名称下方追加一行弱化描述                                        |
+| `disabled` | 降到 50% 不透明度并阻断点击                                       |
+| `loading`  | 降到 70% 不透明度、阻断点击，**并用指示器替换掉名称与描述**       |
+| `color`    | 直接写进 `style.color`，优先级高于选中态的主题色                   |
+
+<Demo src="@playground/action-sheet/ActionSheetStatus" />
+
+`loading` 的操作项在加载期间不显示文字，只有一个 `ActivityIndicator`，指示器颜色取自 `indicator` slot 的 `accent-*` 类。
+
+## 按钮变体
+
+`variant="button"` 把操作项换成带间距的卡片：列表容器加上 `gap-3 px-4`，每项变成圆角按钮并渲染 `action.icon`，取消按钮也变成同样的卡片。
+
+<Demo src="@playground/action-sheet/ActionSheetButton" />
+
+两个变体的差异：
+
+| 维度       | `default`                          | `button`                          |
+| ---------- | ---------------------------------- | --------------------------------- |
+| 操作项外观 | 通栏文字行，行间用 `Divider` 分隔  | 圆角卡片，靠容器 `gap-3` 分隔     |
+| `icon`     | 不渲染                             | 渲染在名称之前                    |
+| 选中态     | 名称变主题色                       | 名称变主题色 + 卡片描边与浅色底   |
+| 取消按钮   | 与列表之间有一条灰色间隔（`cancelGap`） | 圆角卡片，无间隔条            |
+
+`button` 变体的操作项基态就带了一圈 `border-transparent`，选中时只换颜色，行高不会跳动。
+
+## 受控选择
+
+`value` / `onChange` 控制当前选中值（非受控时用 `defaultValue`）。`children` 是一个 render prop，接收 `{ action, value, toggle }`，用于就地展示当前选中项并控制面板开合 —— 不用自己再维护一份显示文本，`action.name` 就是。
+
+<Demo src="@playground/action-sheet/ActionSheetControlled" />
+
+选中值和面板显示是两套独立的受控状态：`value` / `onChange` 管选中，`show` / `onUpdateShow` 管显示，`closeOnClickAction` 决定选完是否自动关闭（默认 `false`）。
+
+## 关闭行为
+
+面板有四条关闭路径，分别由四个属性控制：
+
+| 属性                   | 关闭路径             | 默认值  |
+| ---------------------- | -------------------- | ------- |
+| `closeable`            | 标题栏右上角关闭按钮 | `true`  |
+| `closeOnBackdropPress` | 点击遮罩             | `true`  |
+| `enablePanDownToClose` | 下拉面板             | `true`  |
+| `closeOnClickAction`   | 点击某个操作项       | `false` |
+
+<Demo src="@playground/action-sheet/ActionSheetCloseable" />
+
+把前三项全部关掉时，务必保留 `cancelText` 或 `closeOnClickAction`，否则面板将没有任何退出路径。
+
+## 样式覆盖
+
+`className` 与 `classNames` 作用于操作列表这一层，内部 `Sheet` 面板本体则由 `sheetClassName` / `sheetClassNames` 覆盖 —— 两组属性各管一层，不要混用。
+
+| slot           | 作用位置                                                |
+| -------------- | ------------------------------------------------------- |
+| `root`         | 操作列表容器（含底部安全区内边距）                        |
+| `action`       | 单个操作项的 `Pressable`                                 |
+| `actionName`   | 操作项名称文字                                           |
+| `actionSubname`| 操作项描述文字                                           |
+| `indicator`    | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 类 |
+| `cancelGap`    | 取消按钮上方的灰色间隔条（仅 `default` 变体）             |
+| `cancel`       | 取消按钮的 `Pressable`                                   |
+| `cancelName`   | 取消按钮文字                                             |
+
+<Demo src="@playground/action-sheet/ActionSheetStyles" />
+
+优先级从低到高为：变体样式 → `classNames.action` → 单个 `action.className`；`className` 排在 `classNames.root` 之后，同样是后者优先级更高。
+
+## 命令式调用
+
+`showActionSheet(options)` 直接弹出面板并返回 `Promise<ActionSheetResult | null>`：选中时 resolve `{ action, index }`，取消、点遮罩、下拉关闭时 resolve `null`。`closeActionSheet()` 从外部关闭当前面板，等待中的 Promise 会按取消结算而不是永远挂起。
+
+<Demo src="@playground/action-sheet/ActionSheetImperative" />
+
+命令式调用的几条约定：
+
+- 展示状态由内部渲染器托管，所以 `show` / `defaultShow` / `onUpdateShow` / `onClosed` / `children` / `value` 不开放，预选值请传 `defaultValue`。
+- `closeOnClickAction` 默认为 `true`（声明式是 `false`）：没有外部状态承接选中值，点完不关面板会一直挂在那里。
+- 同一时刻只显示一个面板。再次调用会顶替当前面板，被顶替的那条按取消结算，它的 Promise resolve 为 `null`。
+- 结算恰好触发一次：`onSelect` / `onCancel` / `callback` 与 Promise 走同一条路径，选中一项不会被记成「选中 + 取消」两次。
+
+## 无障碍
+
+操作项与取消按钮都是 `Pressable`，禁用与加载中的项通过 `disabled` 阻断点击。面板本身的语义（标题、关闭按钮）由内部 `Sheet` 提供。名称传自定义节点时，建议保证节点内含可朗读的文本。
+
+## API
+
+### ActionSheet
+
+<PropsTable
+  data={[
+    { name: 'actions', description: '操作项列表', type: 'ActionSheetAction[]', default: '[]' },
+    {
+      name: 'variant',
+      description: '展示变体：default 为文字列表，button 为按钮卡片',
+      type: "'default' | 'button'",
+      default: "'default'"
+    },
+    { name: 'title', description: '面板标题', type: 'string' },
+    { name: 'description', description: '描述信息，显示在标题下方', type: 'string' },
+    { name: 'cancelText', description: '取消按钮文字，不设置则不显示取消按钮', type: 'string' },
+    { name: 'show', description: '是否显示面板（受控）', type: 'boolean' },
+    { name: 'defaultShow', description: '非受控模式默认是否显示', type: 'boolean', default: 'false' },
+    { name: 'value', description: '受控选中值', type: 'string' },
+    { name: 'defaultValue', description: '非受控模式默认选中值', type: 'string', default: "''" },
+    {
+      name: 'closeOnClickAction',
+      description: '点击选项后是否自动关闭；命令式调用时默认为 true',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'closeable', description: '是否显示标题栏的关闭按钮', type: 'boolean', default: 'true' },
+    {
+      name: 'closeOnBackdropPress',
+      description: '是否允许点击遮罩关闭',
+      type: 'boolean',
+      default: 'true'
+    },
+    { name: 'enablePanDownToClose', description: '是否允许下拉关闭', type: 'boolean', default: 'true' },
+    { name: 'showHandle', description: '是否显示顶部拖拽指示条', type: 'boolean', default: 'true' },
+    {
+      name: 'children',
+      description: 'Render prop，接收 { action, value, toggle } 用于展示当前选中项并控制面板',
+      type: '(args: ActionSheetRenderArgs) => ReactNode'
+    },
+    { name: 'onSelect', description: '选项点击回调', type: '(action: ActionSheetAction, index: number) => void' },
+    { name: 'onChange', description: '选中值变化回调', type: '(value: string) => void' },
+    { name: 'onCancel', description: '取消按钮点击回调', type: '() => void' },
+    { name: 'onUpdateShow', description: '显示状态变化回调，请求关闭时触发', type: '(show: boolean) => void' },
+    {
+      name: 'onClosed',
+      description: '退场动画播放完毕、面板真正卸载后触发',
+      type: '() => void'
+    },
+    { name: 'className', description: '操作列表容器的类名', type: 'string' },
+    { name: 'classNames', description: '覆盖操作列表各 slot 的类名', type: 'SlotClassNames<ActionSheetSlots>' },
+    { name: 'sheetClassName', description: '覆盖内部 Sheet 面板本体的类名', type: 'string' },
+    { name: 'sheetClassNames', description: '覆盖内部 Sheet 各 slot 的类名', type: 'SlotClassNames<SheetSlots>' },
+    {
+      name: 'ref',
+      description: '底层 BottomSheetModal 的实例引用，用于 snapToIndex / expand / collapse 等命令式操作',
+      type: 'Ref<BottomSheetModal>'
+    }
+  ]}
+/>
+
+### showActionSheet
+
+```ts
+function showActionSheet(options: ActionSheetOptions): Promise<ActionSheetResult | null>;
+```
+
+命令式显示操作面板。选中 resolve `ActionSheetResult`，取消 / 遮罩关闭 / 被顶替 resolve `null`。
+
+### closeActionSheet
+
+```ts
+function closeActionSheet(): void;
+```
+
+关闭当前面板，按取消结算。没有面板在显示时调用无副作用。
+
+## 类型
+
+```ts
+import type {
+  ActionSheetAction,
+  ActionSheetOptions,
+  ActionSheetProps,
+  ActionSheetRenderArgs,
+  ActionSheetResult,
+  ActionSheetSlots,
+  ActionSheetVariant
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="ActionSheetVariant"
+  description="展示变体：default 为通栏文字列表，button 为带图标的卡片列表。"
+  type="'default' | 'button'"
+/>
+
+<UnionType
+  name="ActionSheetSlots"
+  description="操作列表可通过 classNames 覆盖的 slot 名称。"
+  type="'action' | 'actionName' | 'actionSubname' | 'cancel' | 'cancelGap' | 'cancelName' | 'indicator' | 'root'"
+/>
+
+<UnionType
+  name="SheetSlots"
+  description="内部 Sheet 可通过 sheetClassNames 覆盖的 slot 名称。"
+  type="'background' | 'chrome' | 'close' | 'closeIcon' | 'description' | 'handle' | 'handleBar' | 'header' | 'title'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'ActionSheetAction',
+      description: '单个操作项。',
+      fields: [
+        { name: 'value', type: 'string', required: true, description: '操作项的值，用于 value / onChange 匹配，同时作为列表 key。' },
+        { name: 'name', type: 'ReactNode', required: true, description: '操作项名称，string / number 自动包裹 Text。' },
+        { name: 'subname', type: 'ReactNode', description: '操作项描述信息，显示在名称下方。' },
+        { name: 'icon', type: 'ReactNode', description: '操作项图标，仅 variant="button" 时渲染。' },
+        { name: 'color', type: 'string', description: '文字颜色，直接写进 style，优先级高于选中态的主题色。' },
+        { name: 'disabled', type: 'boolean', description: '是否禁用，禁用后不可点击并降低透明度。' },
+        { name: 'loading', type: 'boolean', description: '是否加载中，加载时名称与描述被指示器替换且不可点击。' },
+        { name: 'className', type: 'string', description: '操作项根节点的类名，优先级高于 classNames.action。' },
+        { name: 'callback', type: '() => void', description: '点击后的回调，与 onSelect 同时触发，用于把行为写在数据里。' }
+      ]
+    },
+    {
+      name: 'ActionSheetRenderArgs',
+      description: 'Render prop children 接收的参数。',
+      fields: [
+        { name: 'value', type: 'string', required: true, description: '当前选中值。' },
+        { name: 'action', type: 'ActionSheetAction', description: '当前选中的操作项，未选中时为 undefined。' },
+        { name: 'toggle', type: '() => void', required: true, description: '切换面板显示 / 隐藏。' }
+      ]
+    },
+    {
+      name: 'ActionSheetResult',
+      description: '选中结果，由 showActionSheet 的 Promise 与 callback 一同结算。',
+      fields: [
+        { name: 'action', type: 'ActionSheetAction', required: true, description: '选中的操作项。' },
+        { name: 'index', type: 'number', required: true, description: '选中项在 actions 中的索引。' }
+      ]
+    },
+    {
+      name: 'ActionSheetOptions',
+      description:
+        "showActionSheet 的入参，等价于 Omit<ActionSheetProps, 'children' | 'defaultShow' | 'onClosed' | 'onUpdateShow' | 'show' | 'value'> 再加上 callback。",
+      fields: [
+        {
+          name: 'callback',
+          type: '(result: ActionSheetResult | null) => void',
+          description: '选中或取消后的通用回调，与 Promise 一同结算，且恰好触发一次。'
+        }
+      ]
+    }
+  ]}
+/>

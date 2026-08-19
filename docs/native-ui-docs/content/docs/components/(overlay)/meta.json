@@ -1,0 +1,5 @@
+{
+  "title": "弹层覆盖",
+  "defaultOpen": true,
+  "pages": ["popup", "dialog", "sheet", "action-sheet", "share-sheet"]
+}

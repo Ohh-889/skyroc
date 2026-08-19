@@ -1,0 +1,228 @@
+---
+title: Collapse
+description: 折叠收纳多组内容的手风琴面板
+---
+
+折叠面板（Collapse）把长内容收进可展开的分节里。标题行直接复用 [`Cell`](/docs/components/cell)，因此 `icon` / `label` / `value` 和 Cell 的 leading / subtitle / trailing 一一对应；内容区用 Reanimated 驱动高度过渡（300ms），并让内容绝对定位在独立的测量层里，收起状态下由外层裁掉溢出。
+
+```tsx
+import { Collapse, CollapseItem } from '@skyroc/native-ui';
+```
+
+`CollapseItem` 必须写在 `Collapse` 内部，否则会直接抛错而不是静默渲染空内容。
+
+## 基础用法
+
+`defaultValue` 设置初始展开项。未显式传 `name` 时，面板的标识就是它在 `Collapse` 子元素中的**序号**，所以 `defaultValue={0}` 展开的是第一项。
+
+<Demo src="@playground/collapse/CollapseBasic" />
+
+序号只对 `Collapse` 的直接子元素成立。面板外面套了容器、或需要动态增删面板时，必须显式传 `name`，否则序号会随渲染结构漂移。
+
+## 何时使用
+
+- 一屏塞不下的分组信息（FAQ、设置项、订单明细）需要按需展开时使用。
+- 同时只允许看一节、需要互斥时用 `accordion`。
+- 只是一行可点的设置项、不需要展开内容时直接用 `Cell`，不必套 `Collapse`。
+- 内容需要盖住整屏、带遮罩时用 `Sheet` / `Popup`，折叠面板是就地展开、不脱离文档流的。
+
+## 手风琴
+
+`accordion` 下同时只能展开一个面板，展开值从数组收窄为单个面板名，全部收起时是 `null`（不是 `undefined`——受控模式下 `undefined` 会被判定成非受控）。
+
+<Demo src="@playground/collapse/CollapseAccordion" />
+
+手风琴模式下 `ref.toggleAll()` 是空操作。
+
+## 受控
+
+`value` + `onChange` 完全接管展开状态。非手风琴模式下 `value` 是面板名数组，手风琴模式下是单个面板名或 `null`。
+
+<Demo src="@playground/collapse/CollapseControlled" />
+
+## 命令式控制
+
+`Collapse` 的 ref 暴露 `toggleAll`，`CollapseItem` 的 ref 暴露 `toggle`：
+
+| 方法                             | 说明                                                                 |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `toggleAll()`                    | 逐项反转当前状态                                                     |
+| `toggleAll(true / false)`        | 布尔简写，等价于 `{ expanded }`                                       |
+| `toggleAll({ expanded })`        | 全部展开或全部收起                                                   |
+| `toggleAll({ skipDisabled })`    | 禁用面板保持原状，不参与本次批量切换                                 |
+| `item.toggle()`                  | 反转该面板                                                           |
+| `item.toggle(expanded)`          | 展开或收起该面板                                                     |
+
+<Demo src="@playground/collapse/CollapseRef" />
+
+`toggleAll` 依赖面板的挂载注册，只对当前渲染出来的 `CollapseItem` 生效；`item.toggle(true)` 对已展开的面板是幂等的，不会重复写入。
+
+## 尺寸
+
+`size` 逐项设置，同时决定标题行（Cell）与内容区的规格：
+
+| 尺寸 | 标题行最小高度 | 标题字号    | 箭头 | 内容内边距        | 内容字号    |
+| ---- | -------------- | ----------- | ---- | ----------------- | ----------- |
+| `sm` | 40             | `text-sm`   | 11   | `px-3 py-2`       | `text-xs`   |
+| `md` | 48             | `text-base` | 12   | `px-4 py-3`       | `text-sm`   |
+| `lg` | 56             | `text-lg`   | 14   | `px-4 py-3.5`     | `text-base` |
+
+<Demo src="@playground/collapse/CollapseSize" />
+
+内容字号只作用于 `children` 为纯字符串、由组件自动包一层 `Text` 的情况——RN 不会把文字样式从 View 继承给子级 `Text`，传自定义节点时需要自己写字号。
+
+## 自定义标题与只读
+
+`icon` / `label` / `value` 扩展标题行，分别对应 Cell 的左侧图标、标题下方描述与右侧文本。`isLink={false}` 去掉箭头但仍可展开，`readonly` 则同时去掉箭头并禁止展开（与 `disabled` 不同，不会降低透明度）。
+
+<Demo src="@playground/collapse/CollapseCustomized" />
+
+`border={false}` 去掉整个 `Collapse` 的上下外边框；面板之间的分隔线由**序号**决定（`index > 0` 的面板画顶部分隔线），不受 `border` 影响。
+
+## 懒渲染
+
+`lazyRender` 默认开启，内容在首次展开时才挂载；收起后内容保留在树中，不会每次展开都重新挂载。需要内容在挂载时就存在（例如内部有需要提前初始化的逻辑）时传 `lazyRender={false}`。
+
+<Demo src="@playground/collapse/CollapseLazyRender" />
+
+高度动画依赖内容的 `onLayout` 测量：懒渲染下首次展开会等测量回调驱动高度；挂载即展开（`defaultValue`）时直接落位，跳过入场动画。展开状态下内容高度变化也会重新过渡到新高度。
+
+## 无障碍
+
+标题行是 `Cell` 渲染的 Pressable，带 `accessibilityRole="button"`，`disabled` 会映射到 `accessibilityState.disabled`。展开状态目前没有映射到 `accessibilityState.expanded`，读屏器不会播报展开 / 收起。
+
+## API
+
+### Collapse
+
+<PropsTable
+  data={[
+    { name: 'children', description: '面板列表，通常为 CollapseItem', type: 'ReactNode' },
+    {
+      name: 'value',
+      description: '受控展开值；手风琴模式下为单个面板名，null 表示全部收起',
+      type: 'CollapseValue'
+    },
+    { name: 'defaultValue', description: '非受控初始展开值', type: 'CollapseValue' },
+    { name: 'onChange', description: '展开值变化回调', type: '(value: CollapseValue) => void' },
+    { name: 'accordion', description: '手风琴模式，同时只能展开一个面板', type: 'boolean', default: 'false' },
+    { name: 'border', description: '是否给整个容器加上下外边框', type: 'boolean', default: 'true' },
+    { name: 'className', description: '容器类名', type: 'string' },
+    { name: 'ref', description: '命令式控制，暴露 toggleAll', type: 'Ref<CollapseRef>' }
+  ]}
+/>
+
+### CollapseItem
+
+<PropsTable
+  data={[
+    { name: 'title', description: '标题文本', type: 'ReactNode' },
+    { name: 'label', description: '标题下方的描述', type: 'ReactNode' },
+    { name: 'value', description: '标题右侧文本', type: 'ReactNode' },
+    { name: 'icon', description: '标题左侧图标', type: 'ReactNode' },
+    { name: 'children', description: '面板内容，传字符串时自动包一层 Text', type: 'ReactNode' },
+    {
+      name: 'name',
+      description: '唯一标识，默认取该面板在 Collapse 直接子元素中的序号；套了容器或动态增删时必须显式传',
+      type: 'string | number'
+    },
+    {
+      name: 'size',
+      description: '尺寸，同时决定标题行（Cell）与内容区的规格',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    { name: 'disabled', description: '禁用，不可展开并整体降低透明度', type: 'boolean', default: 'false' },
+    { name: 'readonly', description: '只读，不显示箭头且不可展开，但不降低透明度', type: 'boolean', default: 'false' },
+    { name: 'isLink', description: '是否显示右侧箭头，readonly 时强制隐藏', type: 'boolean', default: 'true' },
+    { name: 'lazyRender', description: '首次展开时才渲染内容，展开过后保留在树中', type: 'boolean', default: 'true' },
+    { name: 'className', description: '根容器类名', type: 'string' },
+    { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<CollapseItemSlots>' },
+    {
+      name: 'headerClassNames',
+      description: '标题行各 slot 的类名覆盖；标题行由内部的 Cell 渲染，只能从这里透传',
+      type: 'SlotClassNames<CellSlots>'
+    },
+    { name: 'ref', description: '命令式控制，暴露 toggle', type: 'Ref<CollapseItemRef>' }
+  ]}
+/>
+
+### 样式覆盖
+
+| slot          | 作用位置                                                            |
+| ------------- | ------------------------------------------------------------------- |
+| `root`        | 单个面板的根容器（含面板间分隔线）                                  |
+| `wrapper`     | 高度动画层，`overflow-hidden` 就加在这里                            |
+| `content`     | 内容容器 View，承载内边距与背景                                     |
+| `contentText` | 内容文字，仅在 `children` 为字符串时生效                            |
+| `arrow`       | 箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类               |
+
+内部用于绝对定位测量的那一层不对外开放；标题行的细粒度覆盖走 `headerClassNames`。
+
+## 类型
+
+```ts
+import type {
+  CollapseItemName,
+  CollapseItemProps,
+  CollapseItemRef,
+  CollapseItemSlots,
+  CollapseProps,
+  CollapseRef,
+  CollapseToggleAllOptions,
+  CollapseValue
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="CollapseItemName"
+  description="面板标识，未显式传 name 时为该面板在 Collapse 子元素中的序号。"
+  type="string | number"
+/>
+
+<UnionType
+  name="CollapseValue"
+  description="展开值：非手风琴模式下是面板名数组，手风琴模式下是单个面板名，null 表示全部收起。"
+  type="CollapseItemName | CollapseItemName[] | null"
+/>
+
+<UnionType
+  name="CollapseItemSlots"
+  description="CollapseItem 可通过 classNames 覆盖的 slot 名称。"
+  type="'arrow' | 'content' | 'contentText' | 'root' | 'wrapper'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'CollapseRef',
+      description: 'Collapse 暴露的命令式方法。',
+      fields: [
+        {
+          name: 'toggleAll',
+          type: '(options?: CollapseToggleAllOptions | boolean) => void',
+          description: '批量切换面板；传布尔等价于 { expanded }，手风琴模式下为空操作。'
+        }
+      ]
+    },
+    {
+      name: 'CollapseToggleAllOptions',
+      description: 'toggleAll 的选项。',
+      fields: [
+        { name: 'expanded', type: 'boolean', description: '目标状态；缺省时逐项反转当前状态。' },
+        { name: 'skipDisabled', type: 'boolean', description: '为 true 时禁用面板保持原状，不参与本次切换。' }
+      ]
+    },
+    {
+      name: 'CollapseItemRef',
+      description: 'CollapseItem 暴露的命令式方法。',
+      fields: [
+        {
+          name: 'toggle',
+          type: '(expanded?: boolean) => void',
+          description: '切换该面板；缺省参数时反转当前状态。'
+        }
+      ]
+    }
+  ]}
+/>

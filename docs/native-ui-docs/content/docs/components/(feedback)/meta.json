@@ -1,0 +1,5 @@
+{
+  "title": "反馈",
+  "defaultOpen": true,
+  "pages": ["toast", "notify"]
+}

@@ -1,0 +1,244 @@
+---
+title: Avatar
+description: 展示用户或实体头像的圆形图片组件
+---
+
+头像（Avatar）用圆形图片表示用户或实体，加载失败或没有图片时降级为首字母、图标等占位内容。组件直接渲染成一个 `radius="full"` 的 `Image`，不自建加载状态：空 `src` 与加载失败等价、`src` 变化时重置状态这两件事都由 `Image` 内部收敛，`AvatarGroup` 则负责把多个头像横向叠压并折叠成 `+N`。
+
+```tsx
+import { Avatar, AvatarGroup } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`src` 传图片地址，`fallback` 传没有图片时的降级内容。`fallback` 为 `string` / `number` 时自动包一层 `Text` 并套用当前尺寸的字号，传自定义节点则原样渲染。
+
+<Demo src="@playground/avatar/AvatarBasic" />
+
+## 何时使用
+
+- 列表、评论、会话等需要标识"这条内容属于谁"的位置。
+- 用户没有上传头像时，用姓氏首字母 + 主题色底做占位，比一张灰色破图更可读。
+- 需要表达"多人参与"（协作者、群成员、点赞者）时用 `AvatarGroup`，配合 `max` / `total` 折叠出 `+N`。
+- 只是展示一张普通图片、不需要圆形与降级语义时，直接用 `Image`。
+
+## 尺寸
+
+`size` 提供 6 档，同时决定头像直径与 `fallback` 的文字字号：
+
+| 尺寸   | 直径 | fallback 字号 |
+| ------ | ---- | ------------- |
+| `xs`   | 24   | 10            |
+| `sm`   | 32   | 12            |
+| `md`   | 40   | 14（默认）    |
+| `lg`   | 48   | 16            |
+| `xl`   | 56   | 18            |
+| `2xl`  | 64   | 20            |
+
+<Demo src="@playground/avatar/AvatarSize" />
+
+尺寸只落在根节点上，图片与 `fallback` 都相对根节点铺满，所以不需要再给内部节点单独设宽高。
+
+## 降级内容
+
+以下三种情况都会进入 `fallback`：`src` 为空、`src` 加载失败、`src` 指向的资源不可达。不传 `fallback` 时回落到 `Image` 内置的破损图片图标。
+
+<Demo src="@playground/avatar/AvatarFallback" />
+
+`fallback` 底部的圆盘来自 `Image` 的 error slot（`bg-muted` + 居中），想换成品牌色时覆盖 `classNames.fallback` 与 `classNames.fallbackText`，不必自己包一层 `View` 摆位置。
+
+## 底层图片属性
+
+`imageProps` 透传给内部 `Image`，用来控制过渡时长、加载占位等图片行为。`alt` / `src` / `className` / `classNames` / `errorSlot` 已由 `Avatar` 自身的 API 接管，因此从 `imageProps` 的类型里排除。
+
+<Demo src="@playground/avatar/AvatarImageProps" />
+
+`Avatar` 默认关掉了加载指示器（`showLoading={false}`）——头像尺寸小，转圈是噪音，根节点的 `bg-muted` 已经先占住位置。需要时用 `imageProps={{ showLoading: true }}` 打开。注意 `imageProps` 在内部属性之后展开，`contentFit`、`radius`、`showLoading` 都可以被它覆盖，传 `radius` 会让头像不再是圆形。
+
+## 样式覆盖
+
+`className` 追加到根节点，`classNames` 按 slot 细粒度覆盖：
+
+| slot           | 作用位置                                             |
+| -------------- | ---------------------------------------------------- |
+| `root`         | 根节点，尺寸与底色都在这里                           |
+| `image`        | 图片自身，默认额外补一层 `rounded-full`              |
+| `fallback`     | 降级内容的容器（`Image` 的 error slot）              |
+| `fallbackText` | 降级内容为 `string` / `number` 时自动包裹的 `Text`    |
+
+<Demo src="@playground/avatar/AvatarStyles" />
+
+改成方角头像要同时给 `className` 和 `classNames.image`：Android 上父级 `overflow-hidden` 加圆角偶发裁剪失效，`image` 上那层圆角是兜底，只改根节点会漏出方角。
+
+## 动态换图
+
+`src` 变化时内部会重置加载状态，坏图之后切回正常图片可以正常恢复显示，不会残留上一次的失败态。
+
+<Demo src="@playground/avatar/AvatarDynamicSource" />
+
+判定"`src` 变没变"用的是序列化后的值而不是引用，因此写成 `src={{ uri }}` 这类内联字面量也不会因父组件重渲染而闪一次占位。
+
+## 头像组
+
+`AvatarGroup` 把子 `Avatar` 横向叠压排列，并为相邻头像补一圈与页面底色同色的描边，让重叠的圆形分得开。
+
+<Demo src="@playground/avatar/AvatarGroupBasic" />
+
+叠压靠逐项包一层 `View` 施加负 margin（RN 没有 `> * + *` 选择器，`space-x-*` 不可用），首项会跳过负 margin，否则整组会整体左移半个头像。
+
+## 组尺寸
+
+组级 `size` 通过 Context 下发给子 `Avatar`，同时决定叠压幅度与描边宽度；子项显式传 `size` 时以子项为准。
+
+| 尺寸  | 叠压负 margin | 描边宽度 |
+| ----- | ------------- | -------- |
+| `xs`  | 6             | 1        |
+| `sm`  | 8             | 2        |
+| `md`  | 10（默认）    | 2        |
+| `lg`  | 12            | 2        |
+| `xl`  | 14            | 2        |
+| `2xl` | 16            | 2        |
+
+<Demo src="@playground/avatar/AvatarGroupSize" />
+
+负 margin 约取直径的 25%，叠压比例不随 `size` 漂移；`xs` 上 2px 描边占比过重，所以降到 1px。子项覆盖 `size` 只改自己的直径，叠压幅度仍按组级尺寸算。
+
+## 数量折叠
+
+`max` 限制展示几个头像，超出的折叠成一个 `+N`；不传或 `max <= 0` 表示全部展示。`total` 用于"后端只返回前几条、但知道总数"的场景：渲染 3 个头像配 `total={20}` 就会显示 `+17`。
+
+<Demo src="@playground/avatar/AvatarGroupMax" />
+
+`+N` 的计算式是 `(total ?? 子项数) - 实际展示数`，结果小于等于 0 时不渲染溢出头像。
+
+## 自定义溢出
+
+`overflowProps` 透传给 `+N` 头像，传 `fallback` 可整体替换它的内容。它排除了 `src`——溢出头像表达的是数量，不该再挂一张图片。
+
+<Demo src="@playground/avatar/AvatarGroupOverflow" />
+
+溢出头像同样在组的 Context 内，尺寸与描边自动跟随组级 `size`。
+
+## 非默认背景
+
+描边默认取 `border-background`，头像组放在非页面底色的容器上（卡片、`bg-muted` 区块）时，用 `classNames.ring` 换成所在容器的颜色。
+
+<Demo src="@playground/avatar/AvatarGroupRing" />
+
+RN 是 border-box，描边向内吃掉图片，不会把头像撑大。
+
+## 无障碍
+
+`alt` 透传给底层图片作为可访问描述。注意它只在图片真正渲染时存在：进入 `fallback` 状态后图片节点被整体移除，`alt` 也随之失效，读屏器只会读到 `fallback` 里的文字。首字母之外还需要完整姓名时，请在外层容器上自行补 `accessibilityLabel`。
+
+## API
+
+### Avatar
+
+<PropsTable
+  data={[
+    { name: 'src', description: '图片源，为空时直接展示 fallback', type: 'ImageSource' },
+    {
+      name: 'fallback',
+      description: 'src 为空或加载失败时的降级内容，string / number 自动包裹 Text 并套用 fallbackText 字号',
+      type: 'ReactNode'
+    },
+    {
+      name: 'size',
+      description: '尺寸，同时决定头像直径与 fallback 字号；在 AvatarGroup 内不传则继承组级尺寸',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    { name: 'alt', description: '无障碍描述，透传给底层图片', type: 'string' },
+    {
+      name: 'imageProps',
+      description: '透传给内部 Image 的额外属性；在内部属性之后展开，可覆盖 contentFit / radius / showLoading',
+      type: "Omit<ImageProps, 'alt' | 'className' | 'classNames' | 'errorSlot' | 'src'>"
+    },
+    { name: 'className', description: '根节点类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖',
+      type: "SlotClassNames<'fallback' | 'fallbackText' | 'image' | 'root'>"
+    }
+  ]}
+/>
+
+### AvatarGroup
+
+<PropsTable
+  data={[
+    { name: 'children', description: '组内的 Avatar 子项', type: 'ReactNode' },
+    {
+      name: 'size',
+      description: '组级尺寸，经 Context 下发给子 Avatar，并决定叠压幅度与描边宽度',
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'"
+    },
+    {
+      name: 'max',
+      description: '最多展示几个头像，超出部分折叠成一个 +N；不传或小于等于 0 表示全部展示',
+      type: 'number'
+    },
+    {
+      name: 'total',
+      description: '参与计数的总人数，默认取 children 的数量，用于只渲染前几个却声明真实总数的场景',
+      type: 'number'
+    },
+    {
+      name: 'overflowProps',
+      description: '透传给 +N 头像的属性，传 fallback 可整体替换 +N 的内容',
+      type: "Omit<AvatarProps, 'src'>"
+    },
+    { name: 'className', description: '根节点类名，合并到变体样式之后', type: 'string' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖：item 是叠压负 margin，ring 是子头像之间的分隔描边',
+      type: "SlotClassNames<'item' | 'ring' | 'root'>"
+    }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type {
+  AvatarGroupContextValue,
+  AvatarGroupProps,
+  AvatarGroupSlots,
+  AvatarProps,
+  AvatarSize,
+  AvatarSlots
+} from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="AvatarSize"
+  description="头像尺寸，同时决定直径、fallback 字号，以及组内的叠压幅度与描边宽度。"
+  type="'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'"
+/>
+
+<UnionType
+  name="AvatarSlots"
+  description="Avatar 可通过 classNames 覆盖的 slot 名称。"
+  type="'fallback' | 'fallbackText' | 'image' | 'root'"
+/>
+
+<UnionType
+  name="AvatarGroupSlots"
+  description="AvatarGroup 可通过 classNames 覆盖的 slot 名称。"
+  type="'item' | 'ring' | 'root'"
+/>
+
+<TypeTable
+  data={[
+    {
+      name: 'AvatarGroupContextValue',
+      description: 'AvatarGroup 经 Context 下发给子 Avatar 的共享配置，通常不需要直接使用。',
+      fields: [
+        { name: 'size', type: 'AvatarSize', description: '组内统一尺寸，子 Avatar 显式传 size 时以子项为准。' },
+        { name: 'ringClassName', type: 'string', description: '叠压时的分隔描边类名，合并到子 Avatar 的根节点。' }
+      ]
+    }
+  ]}
+/>

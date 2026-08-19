@@ -1,0 +1,226 @@
+---
+title: Cell
+description: 列表项与分组容器，承载设置项、信息展示等纵向列表
+---
+
+单元格（Cell）是移动端最常见的列表行：左侧图标、标题与副标题、右侧文案与箭头。传了 `onPress` / `onLongPress` 时根节点渲染为 `Pressable`，否则退化成纯展示的 `View` —— 不会给静态列表凭空加上一个可聚焦节点。`CellGroup` 负责把若干行收成一张卡片，并在行与行之间插入分隔线。
+
+```tsx
+import { Cell, CellGroup } from '@skyroc/native-ui';
+```
+
+## 基础用法
+
+`title`、`subtitle`、`trailing` 三者可以任意组合，传 `string` 时会自动包一层 `Text` 承接主题字号与颜色；传自定义节点则原样渲染。
+
+<Demo src="@playground/cell/CellBasic" />
+
+## 何时使用
+
+- 设置页、个人中心、订单详情这类「标签 + 值」的纵向列表。
+- 需要整行可点击的入口时，直接给 `Cell` 传 `onPress`，不要在外面再套一层 `Pressable`。
+- 只做信息展示、不需要点击时不传回调即可，组件会自动渲染为 `View`。
+- 需要卡片式分组、分组标题和分隔线时用 `CellGroup` 包一层。
+
+## 点击与箭头
+
+`onPress` 或 `onLongPress` 任一存在时，整行变成可点击的 `Pressable`，并默认显示右箭头。箭头的显示规则按优先级为：
+
+| 条件                                       | 是否显示箭头 |
+| ------------------------------------------ | ------------ |
+| 显式传 `showArrow`                         | 以传入值为准 |
+| 传了自定义 `arrow`                         | 显示         |
+| 传了 `onPress` / `onLongPress`             | 显示         |
+| 以上都没有                                 | 不显示       |
+
+<Demo src="@playground/cell/CellPress" />
+
+不可点击的 `Cell` 也可以通过 `showArrow` 强制显示箭头，用于「箭头只作视觉提示、点击交给外层容器」的场景。
+
+## 左侧内容
+
+`leading` 放图标、头像等前置内容，容器带 `mr-3` 的右间距并垂直居中。
+
+<Demo src="@playground/cell/CellLeading" />
+
+`leading` 内的文字颜色不会自动跟随 `Cell`：RN 的文字颜色不从父节点继承，图标组件也需要自己传 `color` 或使用 `accent-*` 类。
+
+## 右侧内容与箭头方向
+
+`trailing` 是右侧内容区，`string` 会包成弱化色的 `Text`（类名来自 `trailingText` slot）。`arrowDirection` 控制默认箭头的朝向，取值为 `'right' | 'down' | 'up' | 'left'`，传了自定义 `arrow` 时该属性失效。
+
+<Demo src="@playground/cell/CellArrow" />
+
+默认箭头是 `@expo/vector-icons` 的 AntDesign 图标，颜色取自 `arrowIcon` slot 的 `accent-muted-foreground`，跟随主题 token 而不是硬编码灰值；尺寸随 `size` 缩放（见下表）。该 slot 不在 `classNames` 里开放，需要换色请传自定义 `arrow`。
+
+## 分组
+
+`CellGroup` 把多个 `Cell` 收成一张卡片：根节点为 `overflow-hidden rounded-xl`，`title` 作为分组标题渲染在卡片上方，`border`（默认 `true`）在相邻子项之间插入 `h-px bg-border` 的分隔线。
+
+<Demo src="@playground/cell/CellGroupBasic" />
+
+两点值得注意：
+
+- 分隔线是容器插入的**独立节点**，不是往子元素上注入类名，所以子项可以是 `Cell` 之外的任何组件；需要缩进时给 `classNames.divider` 传 `ml-*`。
+- `CellGroup` 的根节点只有圆角和裁剪，**没有背景色**。底色来自每个 `Cell` 自带的 `bg-background`；要给卡片本身加底色或描边，通过 `classNames.root` 传。
+
+## 内嵌分组
+
+`inset` 给卡片加上 `mx-4` 的左右留边，形成 iOS 设置页那种悬浮卡片效果。分组标题保持 `px-4`，与卡片内容左对齐。
+
+<Demo src="@playground/cell/CellGroupInset" />
+
+## 尺寸
+
+`size` 同时决定行高、内边距、标题与副标题字号，以及默认箭头的像素大小：
+
+| 尺寸 | 最小行高 | 横向内边距 | 纵向内边距 | 标题字号 | 副标题字号 | 右侧文字字号 | 箭头大小 |
+| ---- | -------- | ---------- | ---------- | -------- | ---------- | ------------ | -------- |
+| `sm` | 40       | 12         | 8          | 14       | 10         | 12           | 11       |
+| `md` | 48       | 16         | 12         | 16       | 12         | 14           | 12       |
+| `lg` | 56       | 16         | 14         | 18       | 14         | 16           | 14       |
+
+<Demo src="@playground/cell/CellSize" />
+
+行高是 `min-h-*` 而不是固定高度，内容多行时会自然撑高。
+
+## 对齐方式
+
+`center` 默认为 `true`，`leading` / 内容区 / `trailing` / 箭头整体垂直居中。副标题较长导致内容换行时，传 `center={false}` 让各区域顶部对齐。
+
+<Demo src="@playground/cell/CellCenter" />
+
+## 禁用
+
+`disabled` 让整行降到 50% 不透明度，可点击时同时阻断 `onPress` / `onLongPress` 并把状态写进 `accessibilityState`。不可点击的 `Cell` 传 `disabled` 只有视觉效果。
+
+<Demo src="@playground/cell/CellDisabled" />
+
+## 样式覆盖
+
+`Cell` 没有 `className`，样式一律走 `classNames`：
+
+| slot           | 作用位置                                       |
+| -------------- | ---------------------------------------------- |
+| `root`         | 根节点（可点击时是 `Pressable`，否则是 `View`） |
+| `leading`      | 左侧内容容器                                   |
+| `content`      | 标题与副标题所在的中间区域                     |
+| `title`        | 标题文字（仅 `title` 为 `string` 时生效）      |
+| `subtitle`     | 副标题文字（仅 `subtitle` 为 `string` 时生效） |
+| `trailing`     | 右侧内容容器                                   |
+| `trailingText` | 右侧文字（仅 `trailing` 为 `string` 时生效）   |
+| `arrow`        | 箭头容器                                       |
+
+`CellGroup` 的 slot 为 `root`（卡片容器）、`title`（分组标题）、`divider`（分隔线）。
+
+## 无障碍
+
+可点击的 `Cell` 会设置 `accessibilityRole="button"`，并把 `disabled` 映射到 `accessibilityState.disabled`；不可点击时不设置 role，读屏器按普通内容播报。`title` / `subtitle` 传自定义节点时读屏器只能读到节点内的文本，建议一并传 `accessibilityLabel`。
+
+## API
+
+### Cell
+
+<PropsTable
+  data={[
+    { name: 'title', description: '标题，string 自动包裹 Text', type: 'ReactNode' },
+    { name: 'subtitle', description: '副标题，string 自动包裹 Text', type: 'ReactNode' },
+    { name: 'leading', description: '左侧区域内容，通常放图标或头像', type: 'ReactNode' },
+    { name: 'trailing', description: '右侧内容区域，string 自动包裹 Text', type: 'ReactNode' },
+    {
+      name: 'size',
+      description: '尺寸，同时决定行高、内边距、字号与默认箭头大小',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'"
+    },
+    {
+      name: 'center',
+      description: '内容是否垂直居中，多行内容想顶部对齐时传 false',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'showArrow',
+      description: '是否显示右侧箭头，缺省时由 arrow 与点击回调推导',
+      type: 'boolean'
+    },
+    {
+      name: 'arrow',
+      description: '自定义箭头内容，覆盖默认图标；传入即视为需要显示箭头',
+      type: 'ReactNode'
+    },
+    {
+      name: 'arrowDirection',
+      description: '默认箭头的方向，传了自定义 arrow 时无效',
+      type: "'right' | 'down' | 'up' | 'left'",
+      default: "'right'"
+    },
+    {
+      name: 'disabled',
+      description: '禁用交互并整体降低透明度；可点击时同时阻断回调',
+      type: 'boolean',
+      default: 'false'
+    },
+    { name: 'onPress', description: '点击回调，传入后根节点渲染为 Pressable', type: '() => void' },
+    { name: 'onLongPress', description: '长按回调，同样会让整行变成可点击的 Pressable', type: '() => void' },
+    { name: 'classNames', description: '覆盖各 slot 的类名', type: 'SlotClassNames<CellSlots>' },
+    { name: 'accessibilityLabel', description: '无障碍标签，未提供时读屏朗读子节点文本', type: 'string' },
+    { name: 'testID', description: '测试标识', type: 'string' },
+    {
+      name: 'ref',
+      description: '根节点的 ref，用于 measure / 滚动定位；可点击时根节点是 Pressable，实例类型同为 View',
+      type: 'Ref<View>'
+    }
+  ]}
+/>
+
+### CellGroup
+
+<PropsTable
+  data={[
+    { name: 'children', description: '分组内容，通常为 Cell 组件', type: 'ReactNode', required: true },
+    { name: 'title', description: '分组标题，string 自动包裹 Text', type: 'ReactNode' },
+    {
+      name: 'inset',
+      description: '是否为卡片式内嵌样式（左右留边 mx-4）',
+      type: 'boolean',
+      default: 'false'
+    },
+    {
+      name: 'border',
+      description: '是否在相邻子项之间插入分隔线',
+      type: 'boolean',
+      default: 'true'
+    },
+    {
+      name: 'classNames',
+      description: '覆盖各 slot 的类名，分隔线需要缩进时给 divider 传 ml-*',
+      type: 'SlotClassNames<CellGroupSlots>'
+    },
+    { name: 'ref', description: '根节点的 ref，用于 measure / 滚动定位等命令式操作', type: 'Ref<View>' }
+  ]}
+/>
+
+## 类型
+
+```ts
+import type { CellGroupProps, CellGroupSlots, CellProps, CellSize, CellSlots } from '@skyroc/native-ui';
+```
+
+<UnionType
+  name="CellSize"
+  description="Cell 尺寸，同时决定行高、内边距、字号与默认箭头大小。"
+  type="'sm' | 'md' | 'lg'"
+/>
+
+<UnionType
+  name="CellSlots"
+  description="Cell 可通过 classNames 覆盖的 slot 名称；箭头图标取色用的 arrowIcon 不在其中。"
+  type="'arrow' | 'content' | 'leading' | 'root' | 'subtitle' | 'title' | 'trailing' | 'trailingText'"
+/>
+
+<UnionType
+  name="CellGroupSlots"
+  description="CellGroup 可通过 classNames 覆盖的 slot 名称。"
+  type="'divider' | 'root' | 'title'"
+/>
