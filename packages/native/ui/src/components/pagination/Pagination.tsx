@@ -113,6 +113,8 @@ const Pagination = (props: PaginationProps) => {
     return (
       <Button
         key={item.value}
+        // Button 自己只给 busy / disabled，当前页这层身份得在这里补，否则读屏念不出「第几页是当前页」
+        accessibilityState={{ disabled, selected: isActive }}
         className={cn(itemSlots.item(), classNames?.item)}
         classNames={{ text: cn(itemSlots.itemText(), classNames?.itemText) }}
         color={isActive ? 'primary' : 'muted'}

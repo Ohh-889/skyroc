@@ -42,6 +42,9 @@ const IndexBarSidebarItem = (props: IndexBarSidebarItemProps) => {
 
   return (
     <Pressable
+      accessibilityLabel={index}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
       className={slotClassNames.sidebarItem}
       hitSlop={SIDEBAR_ITEM_HIT_SLOP}
       onPress={onPress}
