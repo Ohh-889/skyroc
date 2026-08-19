@@ -1,13 +1,22 @@
 {
   "title": "组件",
-  "defaultOpen": true,
+  "description": "按分类浏览全部 50 个组件的 API 与交互示例",
+  "icon": "Component",
+  "root": true,
   "pages": [
-    "(general)",
-    "(layout)",
-    "(input)",
-    "(data-display)",
-    "(navigation)",
-    "(overlay)",
-    "(feedback)"
+    "---通用---",
+    "...(general)",
+    "---布局容器---",
+    "...(layout)",
+    "---输入---",
+    "...(input)",
+    "---数据展示---",
+    "...(data-display)",
+    "---导航---",
+    "...(navigation)",
+    "---弹层覆盖---",
+    "...(overlay)",
+    "---反馈---",
+    "...(feedback)"
   ]
 }

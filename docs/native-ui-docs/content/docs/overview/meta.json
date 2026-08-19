@@ -1,0 +1,8 @@
+{
+  "title": "概览",
+  "description": "安装接入、根布局配置、主题令牌与依赖说明",
+  "icon": "Compass",
+  "root": true,
+  "defaultOpen": true,
+  "pages": ["introduction", "getting-started", "setup-root", "theming", "dependencies", "about"]
+}

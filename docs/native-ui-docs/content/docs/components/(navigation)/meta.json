@@ -1,5 +1,4 @@
 {
   "title": "导航",
-  "defaultOpen": true,
   "pages": ["navbar", "tabs", "sidebar", "anchor-nav", "index-bar", "back-top", "pagination", "dropdown-menu"]
 }

@@ -1,0 +1,143 @@
+---
+title: 依赖说明
+description: 哪些原生依赖需要自己安装、被哪些组件需要，以及组件与依赖的完整对照表
+---
+
+`@skyroc/native-ui` 把原生能力全部声明为 `peerDependencies`，**不会随组件库一起装到你的项目里**。这是移动端组件库的常规做法——原生模块要参与编译，版本必须由宿主应用统一决定，否则一个依赖装出两份就会在构建期或运行期炸掉。
+
+代价是：装完组件库直接用某个组件，可能会撞上 `Unable to resolve module ...` 或者原生模块找不到。这一页告诉你该装什么。
+
+## 三类依赖
+
+| 类型             | 处理方式                                      |
+| ---------------- | --------------------------------------------- |
+| **必装基础**     | 不装组件库跑不起来，见下一节                  |
+| **按需原生依赖** | `peerDependencies`，按用到的组件安装          |
+| **已内置**       | 组件库的 `dependencies`，随包自动安装，不用管 |
+
+已内置的有 `react-native-confirmation-code-field`（PasswordInput）、`react-native-ui-datepicker`（Calendar）、`@radix-ui/react-compose-refs`、`@rn-primitives/slot`、`tailwind-variants`，以及 `@skyroc/form` / `@skyroc/hooks` / `@skyroc/utils`。
+
+## 必装基础
+
+```bash
+pnpm add @skyroc/native-ui uniwind
+pnpm add -D @skyroc/tailwind-plugin tailwindcss
+```
+
+| 依赖                      | 版本要求   | 作用                                  |
+| ------------------------- | ---------- | ------------------------------------- |
+| `react`                   | `>=19.0.0` | —                                     |
+| `react-native`            | `>=0.81.0` | —                                     |
+| `uniwind`                 | `>=1.7.0`  | 把 `className` 编译成 RN 样式的运行时 |
+| `tailwindcss`             | `>=4`      | 构建期扫描与生成原子类                |
+| `@skyroc/tailwind-plugin` | workspace  | 注入设计令牌 CSS 变量                 |
+
+另外根布局用到的 `react-native-safe-area-context` 由 Expo 模板自带，如果你的项目没有，需要补装——不装则 `pt-safe` 一类工具类恒为 `0`，见 [快速开始](/docs/overview/getting-started)。
+
+## 按需原生依赖
+
+用 `expo install` 安装可以自动对齐当前 Expo SDK 的版本：
+
+```bash
+expo install react-native-gesture-handler react-native-reanimated react-native-worklets
+```
+
+| 依赖                           | 版本要求   | 被哪些组件需要                                                                                                                                                                                                                 |
+| ------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@expo/vector-icons`           | `>=15.0.0` | ActionSheet、Avatar、BackTop、Cell、Checkbox、Collapse、DatePicker、Dialog、DropdownMenu、Form、Image、Input、NavBar、Picker、PickerGroup、Radio、Rate、Search、ShareSheet、Sheet、Tag、TimePicker、TreeSelect                 |
+| `react-native-reanimated`      | `>=4.0.0`  | AnchorNav、BackTop、Collapse、DatePicker、DropdownMenu、FloatingButton、IndexBar、Notify、NumberKeyboard、Picker、PickerGroup、RollingText、Sidebar、Signature、Slider、SwipeCell、Switch、Tabs、TimePicker、Toast、TreeSelect |
+| `react-native-gesture-handler` | `>=2.28.0` | BackTop、DatePicker、FloatingButton、Picker、PickerGroup、ShareSheet、Signature、Slider、SwipeCell、TimePicker                                                                                                                 |
+| `react-native-worklets`        | `>=0.5.0`  | BackTop、DatePicker、FloatingButton、Picker、PickerGroup、Signature、Slider、SwipeCell、TimePicker                                                                                                                             |
+| `@gorhom/bottom-sheet`         | `>=5.2.0`  | ActionSheet、DatePicker、Picker、PickerGroup、ShareSheet、Sheet、TimePicker                                                                                                                                                    |
+| `expo-haptics`                 | `>=57.0.0` | AnchorNav、DatePicker、DropdownMenu、IndexBar、Picker、PickerGroup、TimePicker                                                                                                                                                 |
+| `expo-image`                   | `>=57.0.0` | Avatar、Image                                                                                                                                                                                                                  |
+| `react-native-modal`           | `>=13.0.2` | Dialog、Popup                                                                                                                                                                                                                  |
+| `react-native-pager-view`      | `>=8.0.0`  | Tabs                                                                                                                                                                                                                           |
+| `@shopify/react-native-skia`   | `>=2.4.0`  | Signature                                                                                                                                                                                                                      |
+
+上表已经算上了组件之间的内部依赖。比如 Dialog 自己没有直接 import `react-native-modal`，但它内部用了 Popup，所以照样需要装；Avatar 同理需要 `expo-image`。
+
+<Callout type="info">
+  `react-native-reanimated` 需要配套的 `react-native-worklets` 和 Babel 插件；`@gorhom/bottom-sheet` 自身也要求
+  `react-native-gesture-handler` 与 `react-native-reanimated`。按 Sheet / Picker
+  这类组件安装时，把这几个一起装上最省事。
+</Callout>
+
+嫌麻烦就一次装全，代价是包体积和构建时间：
+
+```bash
+expo install @expo/vector-icons @gorhom/bottom-sheet @shopify/react-native-skia \
+  expo-haptics expo-image react-native-gesture-handler react-native-modal \
+  react-native-pager-view react-native-reanimated react-native-worklets
+```
+
+## 零额外依赖的组件
+
+这些组件只依赖 React Native 本体，装完组件库就能用：
+
+Badge、Button、Calendar、CountDown、Divider、Field、Grid、Pagination、PasswordInput、Space、Stepper、Text、TextEllipsis
+
+（Calendar 和 PasswordInput 用到的第三方库已经在组件库的 `dependencies` 里，随包安装。）
+
+## 组件 → 依赖 对照
+
+按组件反查需要装什么。`—` 表示不需要额外安装。
+
+| 组件           | 需要安装                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ActionSheet    | `@gorhom/bottom-sheet`、`@expo/vector-icons`                                                                                                     |
+| AnchorNav      | `react-native-reanimated`、`expo-haptics`                                                                                                        |
+| Avatar         | `expo-image`、`@expo/vector-icons`                                                                                                               |
+| BackTop        | `react-native-reanimated`、`react-native-gesture-handler`、`react-native-worklets`、`@expo/vector-icons`                                         |
+| Badge          | —                                                                                                                                                |
+| Button         | —                                                                                                                                                |
+| Calendar       | —                                                                                                                                                |
+| Cell           | `@expo/vector-icons`                                                                                                                             |
+| Checkbox       | `@expo/vector-icons`                                                                                                                             |
+| Collapse       | `react-native-reanimated`、`@expo/vector-icons`                                                                                                  |
+| CountDown      | —                                                                                                                                                |
+| DatePicker     | `@gorhom/bottom-sheet`、`react-native-reanimated`、`react-native-gesture-handler`、`react-native-worklets`、`expo-haptics`、`@expo/vector-icons` |
+| Dialog         | `react-native-modal`、`@expo/vector-icons`                                                                                                       |
+| Divider        | —                                                                                                                                                |
+| DropdownMenu   | `react-native-reanimated`、`expo-haptics`、`@expo/vector-icons`                                                                                  |
+| Field          | —                                                                                                                                                |
+| FloatingButton | `react-native-gesture-handler`、`react-native-reanimated`、`react-native-worklets`                                                               |
+| Form           | `@expo/vector-icons`                                                                                                                             |
+| Grid           | —                                                                                                                                                |
+| Image          | `expo-image`、`@expo/vector-icons`                                                                                                               |
+| IndexBar       | `react-native-reanimated`、`expo-haptics`                                                                                                        |
+| Input          | `@expo/vector-icons`                                                                                                                             |
+| NavBar         | `@expo/vector-icons`                                                                                                                             |
+| Notify         | `react-native-reanimated`                                                                                                                        |
+| NumberKeyboard | `react-native-reanimated`                                                                                                                        |
+| Pagination     | —                                                                                                                                                |
+| PasswordInput  | —                                                                                                                                                |
+| Picker         | `@gorhom/bottom-sheet`、`react-native-reanimated`、`react-native-gesture-handler`、`react-native-worklets`、`expo-haptics`、`@expo/vector-icons` |
+| PickerGroup    | 同 Picker                                                                                                                                        |
+| Popup          | `react-native-modal`                                                                                                                             |
+| Radio          | `@expo/vector-icons`                                                                                                                             |
+| Rate           | `@expo/vector-icons`                                                                                                                             |
+| RollingText    | `react-native-reanimated`                                                                                                                        |
+| Search         | `@expo/vector-icons`                                                                                                                             |
+| ShareSheet     | `@gorhom/bottom-sheet`、`react-native-gesture-handler`、`@expo/vector-icons`                                                                     |
+| Sheet          | `@gorhom/bottom-sheet`、`@expo/vector-icons`                                                                                                     |
+| Sidebar        | `react-native-reanimated`                                                                                                                        |
+| Signature      | `@shopify/react-native-skia`、`react-native-gesture-handler`、`react-native-reanimated`、`react-native-worklets`                                 |
+| Slider         | `react-native-gesture-handler`、`react-native-reanimated`、`react-native-worklets`                                                               |
+| Space          | —                                                                                                                                                |
+| Stepper        | —                                                                                                                                                |
+| SwipeCell      | `react-native-gesture-handler`、`react-native-reanimated`、`react-native-worklets`                                                               |
+| Switch         | `react-native-reanimated`                                                                                                                        |
+| Tabs           | `react-native-pager-view`、`react-native-reanimated`                                                                                             |
+| Tag            | `@expo/vector-icons`                                                                                                                             |
+| Text           | —                                                                                                                                                |
+| TextEllipsis   | —                                                                                                                                                |
+| TimePicker     | 同 DatePicker                                                                                                                                    |
+| Toast          | `react-native-reanimated`                                                                                                                        |
+| TreeSelect     | `react-native-reanimated`、`@expo/vector-icons`                                                                                                  |
+
+<Callout type="warn">
+  版本要求以
+  [`packages/native/ui/package.json`](https://github.com/Ohh-889/skyroc/blob/master/packages/native/ui/package.json) 的
+  `peerDependencies` 为准，本页表格可能滞后于代码。
+</Callout>

@@ -1,0 +1,64 @@
+---
+title: 主题与样式
+description: 语义色令牌、主题切换，以及编写组件样式时的约定
+---
+
+Native UI 的主题来自 `@skyroc/tailwind-plugin`——和 `@skyroc/web-ui` 是同一套令牌定义，只是输出形态按平台切换。组件只写语义色，明暗由宿主应用整体切换，**组件内部不写 `dark:` 分支**。
+
+## 语义色令牌
+
+`@plugin "@skyroc/tailwind-plugin"` 会注入下面这些 CSS 变量，对应的工具类是 `bg-*` / `text-*` / `border-*`：
+
+| 令牌 | 语义 |
+| --- | --- |
+| `background` / `foreground` | 页面底色与主文字色 |
+| `card` / `card-foreground` | 卡片容器与其上的文字 |
+| `popover` / `popover-foreground` | 浮层容器与其上的文字 |
+| `primary` / `primary-foreground` | 主题色与其上的前景色 |
+| `secondary` / `secondary-foreground` | 次级操作 |
+| `destructive` / `destructive-foreground` | 删除、注销等不可逆操作 |
+| `success` / `warning` / `info`（各含 `-foreground`） | 反馈语义色 |
+| `carbon` / `carbon-foreground` | 中性强调色 |
+| `muted` / `muted-foreground` | 弱化背景与次要文字 |
+| `accent` / `accent-foreground` | 悬停、选中等强调态 |
+| `border` / `input` / `ring` | 描边、输入框边框与聚焦环 |
+
+组件的 `color` 属性通常映射到 `primary`、`destructive`、`secondary`、`success`、`warning`、`info`、`muted` 这七个语义色。
+
+## 切换主题
+
+主题由宿主应用切换，组件不参与：
+
+```tsx
+import { Uniwind } from 'uniwind';
+
+Uniwind.setTheme('dark'); // light | dark | system
+```
+
+切换后所有语义色工具类自动指向新的变量值，组件无需重渲染逻辑配合。
+
+## 平台差异：颜色变量的形态
+
+`@plugin` 的 `platform` 选项决定令牌怎么输出：
+
+- **Web**（`platform: 'web'`）— 变量存 HSL 分量，工具类展开成 `hsl(var(--primary))`。
+- **Native**（`platform: 'native'`）— 变量直接存 hex。
+
+<Callout type="warn">
+  Native 端在原生颜色属性上要写 `var(--primary)`，**不要写 `hsl(var(--primary))`**——变量里已经是 hex 了，再包一层 `hsl()` 会解析失败。
+</Callout>
+
+## 样式编写约定
+
+给这套组件库写组件或做二次封装时，遵循以下几条：
+
+- **静态样式用 `className`，运行时计算值才用 `style`。** 能在构建期确定的样式一律走 Uniwind 原子类。
+- **动态变体用 `tailwind-variants` 或显式映射。** 不能拼接 `bg-${color}` 这类 className——Tailwind 是静态扫描的，拼出来的类名不会被生成。
+- **合并外部 className 用包内的 `cn()`**，避免冲突样式同时生效。
+- **文本用本包的 `Text`，分隔线用 `Divider`**，不要直接用 RN 的 `Text` 或手画一条 `View`。
+
+完整约束见仓库里的 [`packages/native/AGENTS.md`](https://github.com/Ohh-889/skyroc/blob/master/packages/native/AGENTS.md)。
+
+## 安全区
+
+`pt-safe`、`pb-safe`、`inset-safe` 等工具类依赖宿主应用把安全区尺寸同步给 Uniwind 运行时。如果这些类看起来"没生效"，先检查根布局里有没有接 `Uniwind.updateInsets`——具体做法见 [根布局配置](/docs/overview/setup-root)。

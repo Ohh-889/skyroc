@@ -1,0 +1,73 @@
+---
+title: 关于
+description: 这个库的由来、作者Ohh的技术背景，以及定制开发合作方式
+---
+
+## 为什么会有这个库
+
+市面上的 React Native 组件库，用起来总有些地方不顺手：主题体系和业务割裂、组件 API 各成一套、样式定制要么改不动要么只能整个覆盖、原生交互细节（按下态、安全区、键盘避让）得在业务页面里反复补齐。
+
+`@skyroc/native-ui` 是把这些踩过的坑重做一遍的结果：
+
+- **来自真实业务。** 作者在上一家公司从 0 封装过公司内部的 React Native 组件库，基于 Design Token 沉淀了 40+ 基础与业务组件，支撑多个线上项目；这个库是那套经验的公开重构版。
+- **和 Web 端同源。** 设计令牌与 `@skyroc/web-ui` 共用 `@skyroc/tailwind-plugin`，同一个产品的 App 端和管理后台不用维护两套色板。
+- **原生行为进默认值。** 44pt 触摸热区、按下态、安全区、底部面板的手势与档位，都收进组件默认行为，而不是留给调用方。
+
+它是 [Skyroc](https://github.com/Ohh-889/skyroc) 这个 Monorepo 的一部分，和 Web UI、管理后台物料、请求层、脚手架共享同一套工程基建。
+
+## 关于作者
+
+**Ohh** — 高级全栈偏前端工程师 / React Native 跨端工程师。
+
+- **跨端与原生。** 多个 Expo React Native 应用从 0 到上线。
+- **全栈交付。** 近一年半持续承担 FastAPI 服务端开发，覆盖接口设计、业务建模、鉴权、Redis、WebSocket 与自动化测试，能独立完成「接口设计 — 客户端实现 — 构建发布 — 线上问题定位」的完整链路。
+- **工程化。** 独立搭建过 Jenkins CI/CD 与热更新流水线，实现自动构建、测试包分发、热更新下发与版本回滚。
+
+开源方面：
+
+| 项目                                                        | 角色       | Stars |
+| ----------------------------------------------------------- | ---------- | ----- |
+| [Skyroc](https://github.com/Ohh-889/skyroc)                 | 作者       | 785   |
+| [Soybean Admin](https://github.com/soybeanjs/soybean-admin) | 生态贡献者 | 14.8k |
+
+## 技术栈
+
+| 方向       | 技术                                                                                                                       |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 前端       | React、Next.js、Vue 3、TypeScript;Redux Toolkit、Zustand、Pinia、TanStack Query;Ant Design、Naive UI、Tailwind CSS、UnoCSS |
+| 跨端与原生 | React Native、Expo、uni-app、微信小程序；Expo Module、RN Bridge、iOS / Android 原生模块                                    |
+| 服务端     | Python、FastAPI、Node.js、NestJS、Hono;RESTful API、WebSocket、SSE、Redis、MySQL、PostgreSQL、SQLAlchemy                   |
+| 工程质量   | Vite、Rollup、pnpm workspace、Monorepo；Jenkins CI/CD、热更新、灰度发布；Pytest、Vitest、Jest、E2E                         |
+
+## 可承接的定制开发
+
+从零开发和接手已有项目继续迭代都可以。
+
+| 方向              | 范围                                       |
+| ----------------- | ------------------------------------------ |
+| 跨端产品开发      | 从需求梳理到 App、小程序和 Web 端完整交付  |
+| 中后台系统        | 管理后台、业务工作台、数据录入与权限系统   |
+| UI 组件与页面实现 | 设计系统、业务组件封装与现有界面还原       |
+| 现有项目迭代      | 功能新增、接口联调、体验优化与疑难问题修复 |
+
+合作按阶段推进，过程透明：**需求沟通 → 方案确认 → 开发交付 → 维护迭代**。
+
+## 联系方式
+
+<div className="flex flex-wrap items-center gap-6 rounded-2xl border border-border bg-card/40 p-5">
+  <img
+    alt="Ohh的微信二维码"
+    className="h-auto w-[190px] rounded-xl border border-border"
+    height={1605}
+    src="/wechat-contact-qr.jpg"
+    width={1224}
+  />
+  <div className="flex flex-col gap-2">
+    <strong className="text-base">微信扫码添加</strong>
+    <span className="text-sm text-muted-foreground">添加时请备注：定制开发 + 项目类型</span>
+  </div>
+</div>
+
+- **GitHub** — [@Ohh-889](https://github.com/Ohh-889)
+- **邮箱** — [1509326266@qq.com](mailto:1509326266@qq.com)
+- **组件问题与需求** — 优先提 [Issue](https://github.com/Ohh-889/skyroc/issues),方便沉淀给其他使用者

@@ -1,0 +1,120 @@
+---
+title: 根布局配置
+description: GestureHandlerRootView、安全区桥接、BottomSheetModalProvider 与 PortalHost 的作用、顺序和缺失时的症状
+---
+
+组件库没法自己往应用根节点挂东西——浮层要有宿主容器，手势要有根视图，底部面板要有 Provider，这些只能由宿主应用在根布局提供。这一页说明四个部件各自解决什么问题、放错位置会怎样。
+
+只用 Button、Cell、Text 这类纯展示组件的话，这一页可以跳过；一旦用到 Toast、Sheet、Picker、SwipeCell 等，就必须配齐。
+
+## 完整根布局
+
+```tsx title="app/_layout.tsx"
+import { BottomSheetModalProvider, PortalHost } from '@skyroc/native-ui';
+import { useEffect } from 'react';
+import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Uniwind } from 'uniwind';
+import './global.css';
+
+const UniwindInsetsBridge = () => {
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    Uniwind.updateInsets(insets);
+  }, [insets]);
+
+  return null;
+};
+
+const AppRoot = () => {
+  return (
+    <GestureHandlerRootView className="flex-1">
+      <UniwindInsetsBridge />
+      <BottomSheetModalProvider>
+        <View className="flex-1">{/* 应用路由或页面 */}</View>
+        <PortalHost />
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
+  );
+};
+```
+
+非 Expo Router 项目把同样的结构套在 `App.tsx` 的根组件上即可，与路由方案无关。
+
+## CSS 入口的导入位置
+
+`global.css` 必须从**根组件**导入。
+
+放到 `index.js` 里同样能让样式生效，但会把 Uniwind 的热更新降级成整页刷新——改一个 className 就整个应用重载，开发期体感差别很大。
+
+## GestureHandlerRootView
+
+手势驱动组件的根容器，来自 `react-native-gesture-handler`，必须在**最外层**并撑满（`className="flex-1"` 或 `style={{ flex: 1 }}`）。
+
+需要它的组件：SwipeCell、Slider、FloatingButton、Signature、BackTop，以及所有底部面板（`@gorhom/bottom-sheet` 自身依赖手势）。
+
+缺失时手势组件不报错，只是**划不动**——滑动单元格拖不出操作区，滑块拖不动。
+
+## UniwindInsetsBridge
+
+Uniwind 把 `env(safe-area-inset-*)` 编译成运行时的 `rt.insets.*`，但它自己不采集安全区数值，初始值恒为 `0`。这个桥接组件负责把 `react-native-safe-area-context` 的 inset 同步进去。
+
+<Callout type="warn">
+  不接这一步，`pt-safe`、`pb-safe`、`inset-safe` 等所有 `*-safe` 工具类都会**静默失效**——不报错、不警告，只是全部按 `0`
+  计算，内容顶到刘海和底部指示条下面。
+</Callout>
+
+它要放在 `GestureHandlerRootView` 内、且必须能读到 `SafeAreaProvider` 的上下文。Expo Router 已经内置了 `SafeAreaProvider`；裸 React Native 项目需要自己在更外层套一个。
+
+组件本身不渲染任何东西，返回 `null`，放在哪一层都不影响布局。
+
+## BottomSheetModalProvider
+
+底部面板基于 `@gorhom/bottom-sheet` 的 `BottomSheetModal` 实现，没有这个 Provider 挂不上。
+
+从 `@skyroc/native-ui` 直接导出，不用额外从 `@gorhom/bottom-sheet` 导入：
+
+```tsx
+import { BottomSheetModalProvider } from '@skyroc/native-ui';
+```
+
+需要它的组件：**Sheet**，以及全部基于 Sheet 实现的 **ActionSheet、ShareSheet、Picker、PickerGroup、DatePicker、TimePicker**。
+
+缺失时调用打开面板会直接抛错或毫无反应。
+
+## PortalHost
+
+所有浮层节点的实际渲染位置。组件内部通过 Portal 把内容送到这里，而不是就地渲染——这样浮层的层级由 `PortalHost` 统一决定，不受调用处的父容器 `overflow`、`zIndex` 影响。
+
+需要它的组件：**Toast、Notify、Dialog、ActionSheet、ShareSheet、NumberKeyboard、Sheet**（以及基于 Sheet 的 Picker 系列）。命令式调用（`showToast`、`showNotify` 等）同样走 Portal。
+
+三条硬性要求：
+
+- **必须放在页面内容之后。** `PortalHost` 是 `absolute inset-0 z-50` 的兄弟节点，靠 JSX 顺序决定覆盖关系。放到页面前面，浮层会被页面盖住。
+- **整个应用只能有一个。** 挂多个会导致同一批节点被重复渲染，开发期 store 会打印 `[Portal] 检测到多个 PortalHost` 警告。
+- **要在 `BottomSheetModalProvider` 内。** 否则从 Toast 里触发的 Sheet 拿不到 Provider 上下文。
+
+它在没有浮层时返回 `null`，不产生任何额外视图层级；容器用 `pointerEvents="box-none"`，不会拦截页面点击。
+
+层级不够用时可以覆盖默认类名，或在挂载浮层时指定 `zIndex`（数值越大越靠上，相同层级按挂载先后叠放）：
+
+```tsx
+<PortalHost className="z-[100]" />
+```
+
+开发期如果挂了浮层却没有找到宿主，控制台会打印 `[Portal] 挂载了 portal 节点但没有找到 PortalHost`。
+
+## 症状对照
+
+| 症状                                            | 原因                                                                               |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `pt-safe` / `pb-safe` 无效，内容顶到刘海下      | 没接 `UniwindInsetsBridge`                                                         |
+| Toast / Dialog 调了没反应，控制台有 Portal 警告 | 根布局缺 `PortalHost`                                                              |
+| Toast / Dialog 弹出来但被页面盖住               | `PortalHost` 放在了页面内容之前                                                    |
+| 同一个 Toast 出现两次                           | 应用里挂了多个 `PortalHost`                                                        |
+| Sheet / Picker 打不开或抛错                     | 缺 `BottomSheetModalProvider`                                                      |
+| SwipeCell 划不动、Slider 拖不动                 | 缺 `GestureHandlerRootView` 或它没有 `flex-1`                                      |
+| 改 className 触发整页刷新而非热更新             | `global.css` 从 `index.js` 导入了，应改为根组件                                    |
+| 全部组件都没有样式                              | 与根布局无关，是 `@source` 路径问题，见 [快速开始](/docs/overview/getting-started) |

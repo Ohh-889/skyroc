@@ -1,0 +1,169 @@
+---
+title: 快速开始
+description: 安装依赖、配置 Metro 与 CSS 入口、在根布局初始化运行时能力
+---
+
+`@skyroc/native-ui` 不是一个装完就能用的纯 JS 包：它的样式由 Uniwind 在构建期扫描生成，浮层和手势组件又依赖宿主应用在根布局挂好 Provider。下面四步缺一不可。
+
+## 安装
+
+仓库内的应用已经统一管理 React Native、Uniwind 和各原生依赖，只需声明组件库依赖：
+
+```json
+{
+  "dependencies": {
+    "@skyroc/native-ui": "workspace:*"
+  }
+}
+```
+
+仓库外安装，请先确保宿主项目已完成 Expo、React Native 和 Uniwind 配置：
+
+```bash
+pnpm add @skyroc/native-ui uniwind
+pnpm add -D @skyroc/tailwind-plugin tailwindcss
+```
+
+组件用到的原生能力以 `peerDependencies` 声明，**不随组件库自动安装**，需要按实际用到的组件用 `expo install` 逐个安装。最常用的几个：
+
+```bash
+expo install react-native-reanimated react-native-worklets react-native-gesture-handler @expo/vector-icons
+```
+
+哪个组件需要哪个依赖、以及版本要求，见 [依赖说明](/docs/overview/dependencies)。Badge、Button、Divider、Text 等组件不需要任何额外依赖。
+
+## 1. 配置 Metro
+
+让 Uniwind 读取应用级 CSS 入口：
+
+```js title="metro.config.js"
+const { getDefaultConfig } = require('expo/metro-config');
+const { withUniwindConfig } = require('uniwind/metro');
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: './global.css',
+  dtsFile: './uniwind-types.d.ts'
+});
+```
+
+## 2. 接入设计令牌并扫描组件源码
+
+```css title="global.css"
+@import 'tailwindcss';
+@import 'uniwind';
+
+@plugin "@skyroc/tailwind-plugin" {
+  platform: 'native';
+}
+
+@source "./node_modules/@skyroc/native-ui/dist";
+```
+
+`platform: 'native'` 会让令牌以 `var(--primary)` 而非 Web 端的 `hsl(var(--primary))` 形式输出。
+
+<Callout type="warn">
+  `@source` 的路径相对于 `global.css`，且必须指向**当前安装方式下真实存在的组件代码**——发布包扫描 `dist`，workspace
+  软链接开发时扫描 `src`。指错了 Tailwind 就发现不了组件库内部用的 className，组件会渲染成没有样式的裸元素。仓库内的
+  playground 用的是 `@source "./node_modules/@skyroc/native-ui/src"`。
+</Callout>
+
+## 3. 在根布局初始化运行时能力
+
+CSS 入口必须从**根组件**导入（放到 `index.js` 会把热更新降级成整页刷新）。安全区工具类还需要宿主应用把 inset 同步给 Uniwind：
+
+```tsx title="app/_layout.tsx"
+import { BottomSheetModalProvider, PortalHost } from '@skyroc/native-ui';
+import { useEffect } from 'react';
+import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Uniwind } from 'uniwind';
+import './global.css';
+
+const UniwindInsetsBridge = () => {
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    Uniwind.updateInsets(insets);
+  }, [insets]);
+
+  return null;
+};
+
+const AppRoot = () => {
+  return (
+    <GestureHandlerRootView className="flex-1">
+      <UniwindInsetsBridge />
+      <BottomSheetModalProvider>
+        <View className="flex-1">{/* 应用路由或页面 */}</View>
+        <PortalHost />
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
+  );
+};
+```
+
+四个部件各自解决一件事：
+
+- **`GestureHandlerRootView`** — 手势驱动组件的根容器。
+- **`UniwindInsetsBridge`** — 让 `pt-safe`、`pb-safe` 等安全区工具类拿到真实值。
+- **`BottomSheetModalProvider`** — Sheet、Picker 等底部面板的运行环境。
+- **`PortalHost`** — Toast、Dialog、Notify 等浮层的宿主，必须放在页面内容之后。
+
+各自的缺失症状、放置顺序和层级控制见 [根布局配置](/docs/overview/setup-root)。
+
+## 4. 使用组件
+
+组件和类型统一从包根路径导入：
+
+```tsx
+import { DatePicker, Toast, showToast } from '@skyroc/native-ui';
+import type { DatePickerFormatter, ToastPosition } from '@skyroc/native-ui';
+```
+
+```tsx
+import { Button, Text } from '@skyroc/native-ui';
+import { View } from 'react-native';
+
+interface SubmitPanelProps {
+  /** 是否正在提交 */
+  submitting?: boolean;
+  /** 点击提交时执行 */
+  onSubmit: () => void;
+}
+
+const SubmitPanel = (props: SubmitPanelProps) => {
+  const { onSubmit, submitting = false } = props;
+
+  return (
+    <View className="gap-3 rounded-2xl bg-background p-4">
+      <Text className="text-lg font-semibold text-foreground">确认提交</Text>
+      <Button
+        loading={submitting}
+        size="lg"
+        onPress={onSubmit}
+      >
+        提交
+      </Button>
+    </View>
+  );
+};
+```
+
+## 本地调试
+
+从仓库根目录启动 playground，它是查看组件实际效果和交互行为的首选入口：
+
+```bash
+pnpm --filter native-ui-playground start
+```
+
+也可以直接指定平台：
+
+```bash
+pnpm --filter native-ui-playground ios
+pnpm --filter native-ui-playground android
+pnpm --filter native-ui-playground web
+```
