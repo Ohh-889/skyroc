@@ -29,17 +29,13 @@ Web Admin、Web UI 和 React Native / Expo 组件库都已经落地；小程序�
 
 ## 🚀 在线体验与文档
 
-| 内容                  | 说明                         | 入口                                                      |
-| --------------------- | ---------------------------- | --------------------------------------------------------- |
-| **Skyroc Admin**      | 当前 v3 管理端               | [在线预览](https://admin.skyroc.me/)                      |
-| **RuoYi Plus Fast**   | RuoYi / FastAPI 全栈管理端   | [在线预览](http://47.98.185.172:8080/)                    |
-| **Web UI Playground** | Web 组件交互式演示           | [ui-play.skyroc.me](https://ui-play.skyroc.me/)           |
-| **项目文档**          | 架构、分层、工程约定         | [project-docs.skyroc.me](https://project-docs.skyroc.me/) |
-| **Admin 文档**        | 路由、菜单、权限、请求与主题 | [admin-docs.skyroc.me](https://admin-docs.skyroc.me/)     |
-| **Core 文档**         | 跨端基础设施包               | [core-docs.skyroc.me](https://core-docs.skyroc.me/)       |
-| **Web Kit 文档**      | 布局、主题、运行时与构建套件 | [web-kit-docs.skyroc.me](https://web-kit-docs.skyroc.me/) |
-| **Web UI 文档**       | Web 组件 API 与设计系统      | [web-ui-docs.skyroc.me](https://web-ui-docs.skyroc.me/)   |
-| **Native UI 文档**    | Native 组件 API 与真实 Demo  | [`docs/native-ui-docs`](./docs/native-ui-docs)（本地）    |
+| 内容                | 说明                         | 入口                                                    |
+| ------------------- | ---------------------------- | ------------------------------------------------------- |
+| **Skyroc Admin**    | 当前 v3 管理端               | [在线预览](https://admin.skyroc.me/)                    |
+| **RuoYi Plus Fast** | RuoYi / FastAPI 全栈管理端   | [在线预览](http://47.98.185.172:8080/)                  |
+| **Admin 文档**      | 路由、菜单、权限、请求与主题 | [admin-docs.skyroc.me](https://admin-docs.skyroc.me/)   |
+| **Web UI 文档**     | Web 组件 API 与设计系统      | [web-ui-docs.skyroc.me](https://web-ui-docs.skyroc.me/) |
+| **Native UI 文档**  | Native 组件 API 与真实 Demo  | [`docs/native-ui-docs`](./docs/native-ui-docs)（本地）  |
 
 <details>
 <summary><strong>历史版本与文档</strong></summary>
