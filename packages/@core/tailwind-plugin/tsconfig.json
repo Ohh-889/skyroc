@@ -1,0 +1,16 @@
+{
+  "extends": "@skyroc/tsconfig/library.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./*"]
+    },
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["dist", "node_modules"]
+}

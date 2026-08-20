@@ -15,14 +15,14 @@
     "ui-tokens"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/tailwind-plugin",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/tailwind-plugin",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
-    "directory": "packages/web/tailwind-plugin"
+    "directory": "packages/@core/tailwind-plugin"
   },
   "author": {
     "name": "Ohh",
