@@ -34,7 +34,7 @@ className="border-border"
 ### 色阶 50–950
 
 所有语义色均注册了 50–950 色阶（`colorScale()`，
-见 `packages/web/tailwind-plugin/src/index.ts`）。需要深浅变体时优先用色阶：
+见 `packages/@core/tailwind-plugin/src/index.ts`）。需要深浅变体时优先用色阶：
 
 ```tsx
 // ✅ 色阶

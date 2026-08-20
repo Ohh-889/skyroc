@@ -106,9 +106,9 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 分层           | 包                                                                                                                                                                            |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/scheduler` · `@skyroc/color` · `@skyroc/scripts` |
+| **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/scheduler` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` |
 | **共享与原语** | `@skyroc/type-utils` · `@skyroc/ui-types` · `@skyroc/hooks` · `@skyroc/form`                                                                                                  |
-| **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme` · `@skyroc/tailwind-plugin`                                                                        |
+| **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme`                                                                                                    |
 | **UI**         | `@skyroc/web-ui` · `@skyroc/web-ui-antd` · `@skyroc/web-ui-compose` · `@skyroc/native-ui`                                                                                     |
 | **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@sa/uno-config`                                                                                                                      |
 
@@ -127,6 +127,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/logger`     | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
 | `@skyroc/scheduler`  | 零运行时依赖的协作式任务调度器，统一 init、periodic 与 listener 任务              |
 | `@skyroc/color`      | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
+| `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设            |
 | `@skyroc/scripts`    | 创建应用、同步模板、提交、清理、发布与 changelog 等仓库 CLI                       |
 
 ### 🔗 共享能力与原语
@@ -152,7 +153,6 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/web-admin-notification` | 通知 Provider、Hooks、Header 入口与通知面板                       |
 | `@skyroc/web-admin-devtools`     | 开发环境的 Router、Query、Jotai 调试面板                          |
 | `@skyroc/web-admin-styles`       | Admin 应用共享的全局 CSS 资源                                     |
-| `@skyroc/tailwind-plugin`        | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设 |
 
 ### 🎨 UI 组件库
 

@@ -37,6 +37,7 @@
 | `logger/` | `@skyroc/logger` | 跨平台日志及平台存储适配 | 不依赖其他 `@core` 包 |
 | `scheduler/` | `@skyroc/scheduler` | 初始化、周期任务和监听器调度 | 无运行时依赖 |
 | `service/` | `@skyroc/service` | 请求与查询基础设施 | 依赖 `@skyroc/axios`；`.`、`./query` |
+| `tailwind-plugin/` | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind 主题变量与预设 | 构建期插件；依赖 `@skyroc/color`，由 `platform` 选项区分 Web / Native 输出 |
 | `scripts/` | `@skyroc/scripts` | 项目自动化 CLI | Node.js 工具，可执行命令 `sa` |
 
 包版本、完整依赖和导出始终以对应 `package.json` 为准，本表不重复维护这些易变信息。
@@ -50,6 +51,9 @@
 └── @skyroc/axios
     └── @skyroc/utils
         └── @skyroc/type-utils（packages/shared）
+
+@skyroc/tailwind-plugin
+└── @skyroc/color
 ```
 
 `color`、`logger`、`scheduler`、`state` 和 `scripts` 目前不依赖其他 `@core` 包。

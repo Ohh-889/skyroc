@@ -16,7 +16,8 @@
 
 ```text
 packages/
-├── @core/                  # 跨平台运行时基础设施和独立 CLI
+├── @core/                  # 跨平台运行时基础设施、共享构建工具和独立 CLI
+│   └── tailwind-plugin/    # @skyroc/tailwind-plugin，Web / Native 共用的设计令牌来源
 ├── shared/                 # 纯类型、纯数据和极轻量工具
 ├── hooks/                  # React Hooks；平台能力通过子入口隔离
 ├── primitives/             # 可复用的交互或领域原语
@@ -40,7 +41,7 @@ packages/
 | 位置 | 放入条件 | 不应包含 |
 | --- | --- | --- |
 | `shared/` | 纯类型、纯常量或极轻量通用工具 | React、DOM、React Native API、平台原生模块、大型运行时依赖 |
-| `@core/` | 与业务无关、可独立复用的运行时基础设施或 CLI | 页面逻辑、业务组件、具体平台 UI |
+| `@core/` | 与业务无关、可独立复用的运行时基础设施、跨端共享的构建工具或 CLI | 页面逻辑、业务组件、具体平台 UI |
 | `hooks/` | 可跨应用复用的 React Hooks；浏览器能力使用独立子入口 | UI 组件、应用业务流程、未隔离的平台副作用 |
 | `primitives/` | 可跨应用复用、有独立状态或交互模型的底层原语 | 完整页面、管理端业务物料 |
 | `web/` | 依赖 DOM、浏览器、Ant Design、Web 构建工具或管理端运行时 | React Native 或 Expo API |
@@ -51,7 +52,7 @@ packages/
 1. 是否依赖某个平台的 API？依赖则进入对应平台子树。
 2. 是否只是纯类型、纯数据或极轻量工具？是则进入 `shared/`。
 3. 是否是通用 React Hook？是则进入 `hooks/`，并隔离平台子入口。
-4. 是否是业务无关的运行时基础设施或 CLI？是则进入 `@core/`。
+4. 是否是业务无关的运行时基础设施、跨端共享的构建工具或 CLI？是则进入 `@core/`。
 5. 是否是可复用的底层交互模型？是则进入 `primitives/`。
 6. 其余业务能力优先留在应用或明确的业务模块中，不因“可能复用”提前建包。
 
@@ -67,8 +68,9 @@ packages/
 新增平台 UI 包时不要使用 `@skyroc/ui` 这种无法识别所属平台的裸名。
 目录名和发布包名不要求完全相同，最终名称以 `package.json#name` 为准。
 
-仓库中已有少量历史专名，例如位于 `web/` 下的 `@skyroc/materials` 和
-`@skyroc/tailwind-plugin`。新包不要仅为保持这些历史名称而继续扩大例外。
+仓库中已有少量历史专名，例如位于 `web/` 下的 `@skyroc/materials`。新包不要仅为保持
+这些历史名称而继续扩大例外。跨平台能力的裸名是合规的，例如 `@core/` 下的
+`@skyroc/tailwind-plugin`。
 
 ## 依赖边界
 
@@ -97,9 +99,9 @@ hooks / @core
 - `shared/` 保持在依赖链底部，不反向依赖 `@core/`、`hooks/` 或平台包。
 - 应用可以组合多个包，但不应把应用业务反向下沉进通用包。
 
-当前 `@skyroc/tailwind-plugin` 位于 `web/`，同时为 Web 和 Native 生成设计令牌。
-这是已存在的共享构建工具例外，不代表 Native 包可以依赖其他 Web 运行时包；如果它继续
-承载更多跨端职责，应单独评估是否迁出 `web/`。
+`@skyroc/tailwind-plugin` 同时为 Web 和 Native 生成设计令牌，因此位于 `@core/` 而非
+`web/`。Native 包可以依赖它，但这不代表 Native 包可以依赖 Web 运行时包——跨端共享的
+构建工具必须先下沉到 `@core/`，不能以“反正只有构建期用”为由跨平台子树引用。
 
 ## 平台样式边界
 

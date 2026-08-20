@@ -73,7 +73,7 @@ className="border-border"          // 边框色
 ### 色阶 50–950
 
 Native 与 Web 一样拥有完整色阶（由 `colorScale()` 生成，
-见 `packages/web/tailwind-plugin/src/index.ts`）。需要深浅变体时优先用色阶：
+见 `packages/@core/tailwind-plugin/src/index.ts`）。需要深浅变体时优先用色阶：
 
 ```tsx
 // ✅ 色阶
