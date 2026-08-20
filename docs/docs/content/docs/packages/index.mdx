@@ -57,13 +57,14 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 
 「内部依赖」一列只列 workspace 内的包（`dependencies` + `peerDependencies`），不含第三方。
 
-### packages/@core —— 基础设施层（9）
+### packages/@core —— 基础设施层（10）
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
 | [`@skyroc/types`](/docs/core/types) | `@core/types` | 全局类型声明，挂 `Api` / `Router` / `I18n` / `App` 命名空间 | — |
 | [`@skyroc/utils`](/docs/core/utils/overview) | `@core/utils` | 跨端工具函数，含 `./web`、`./path`、`./cn`、`./crypto` 子入口 | `type-utils` |
 | [`@skyroc/color`](/docs/core/color) | `@core/color` | 颜色处理与调色板，基于 colord / culori，OKLCH + antd 色板 | — |
+| [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) | `@core/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板，Web / Native 共用 | `color` |
 | [`@skyroc/axios`](/docs/core/axios) | `@core/axios` | 类型安全 HTTP 客户端：重试、转换管线、取消、可插拔后端响应处理 | `utils` |
 | [`@skyroc/service`](/docs/core/service) | `@core/service` | 平台无关的请求 & 查询基础设施，适配器模式 | `axios` |
 | [`@skyroc/core-state`](/docs/core/state) | `@core/state` | Jotai 状态封装，跨端 | — |
@@ -85,7 +86,7 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | [`@skyroc/hooks`](/docs/hooks) | `hooks` | 跨端 React hooks，浏览器能力隔离在 `./web` 子入口 | — |
 | [`@skyroc/form`](/docs/form) | `primitives/filed-form` | 类型安全表单原语，字段级订阅 | `type-utils`、`utils` |
 
-### packages/web —— Web 平台（14）
+### packages/web —— Web 平台（13）
 
 **设计系统**
 
@@ -99,7 +100,6 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
-| [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) | `web/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板 | `color` |
 | [`@skyroc/adapter-antd-theme`](/docs/web/theme/antd-theme) | `web/antd-theme` | antd 主题算法适配，OKLCH 色彩空间 | `color` |
 | [`@skyroc/web-admin-theme`](/docs/web/theme/admin-theme) | `web/admin-theme` | 应用级主题：配置、预设、hooks、CSS 变量、暗色模式 | `adapter-antd-theme`、`color`、`hooks`、`utils`、`web-ui-antd`、`web-ui-compose` |
 
@@ -219,7 +219,7 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | Native 专属 | `@skyroc/native-*` | `@skyroc/native-ui` |
 | 平台适配器 | `@skyroc/adapter-*` | `@skyroc/adapter-antd-theme` |
 
-`@skyroc/materials` 和 `@skyroc/tailwind-plugin` 是位于 `web/` 下的历史专名，新包不要照此扩大例外。目录名与发布名不要求一致，**以 `package.json#name` 为准**。
+`@skyroc/materials` 是位于 `web/` 下的历史专名，新包不要照此扩大例外。`@skyroc/tailwind-plugin` 的裸名是合规的——它是跨平台能力，住在 `@core/`。目录名与发布名不要求一致，**以 `package.json#name` 为准**。
 
 ## 怎么查
 

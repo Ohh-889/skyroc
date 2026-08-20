@@ -1,6 +1,6 @@
 ---
 title: "@web 总览"
-description: "packages/web 命名空间下 14 个 Web 平台包的定位、分层与文档入口，覆盖设计系统、主题、布局、运行时与构建"
+description: "packages/web 命名空间下 Web 平台包的定位、分层与文档入口，覆盖设计系统、主题、布局、运行时与构建"
 ---
 
 `packages/web/` 是 **Web 平台一整棵能力树**，从组件库、主题算法、布局壳，一直到运行时启动、通知中心和 Vite 配置预设，Web 端专属的能力全部收在这里。
@@ -25,8 +25,8 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
   <Card title="Theme 系统概述" href="/docs/web/theme/overview">
     算法层 → React 层 → 应用层的三层主题架构，以及切换暗色时的完整数据流。
   </Card>
-  <Card title="@skyroc/tailwind-plugin" href="/docs/web/tailwind-plugin">
-    Tailwind 插件：CSS 变量主题系统、12 套内置配色、语义化 token 与可配置圆角，Web / Native 双平台共用。
+  <Card title="@skyroc/tailwind-plugin" href="/docs/core/tailwind-plugin">
+    Tailwind 插件：CSS 变量主题系统、12 套内置配色、语义化 token 与可配置圆角。Web / Native 双平台共用，因此住在 `@core/` 而非 `web/`。
   </Card>
   <Card title="@skyroc/adapter-antd-theme" href="/docs/web/theme/antd-theme">
     Ant Design 主题算法适配器，用 OKLCH 感知均匀色彩空间替换默认调色板生成器。
@@ -98,18 +98,20 @@ description: "packages/web 命名空间下 14 个 Web 平台包的定位、分�
 
 ## 命名映射
 
-`packages/web/` 下有两处目录名与发布名不一致，看包名不要按目录猜：
+`packages/web/` 下有几处目录名与发布名不一致，看包名不要按目录猜：
 
 | 目录 | 包名 |
 | --- | --- |
 | `packages/web/ui/shadcn` | `@skyroc/web-ui` |
 | `packages/web/antd-theme` | `@skyroc/adapter-antd-theme` |
 | `packages/web/materials` | `@skyroc/materials`（无 `web-` 前缀，历史专名） |
-| `packages/web/tailwind-plugin` | `@skyroc/tailwind-plugin`（同上） |
 | 其余 `packages/web/*` | `@skyroc/web-*` 同名 |
+
+`@skyroc/tailwind-plugin` 不在这棵树里——它同时给 Web 和 Native 生成设计令牌，住在
+[`packages/@core/tailwind-plugin`](/docs/core/tailwind-plugin)。
 
 ## 推荐阅读顺序
 
-1. **从外到内读壳**：[admin-layouts](/docs/web/admin-layouts/overview) → [materials](/docs/web/materials) → [admin-theme](/docs/web/theme/admin-theme) → [adapter-antd-theme](/docs/web/theme/antd-theme) → [tailwind-plugin](/docs/web/tailwind-plugin)
+1. **从外到内读壳**：[admin-layouts](/docs/web/admin-layouts/overview) → [materials](/docs/web/materials) → [admin-theme](/docs/web/theme/admin-theme) → [adapter-antd-theme](/docs/web/theme/antd-theme) → [tailwind-plugin](/docs/core/tailwind-plugin)
 2. **接入一个新后台**：[admin-vite](/docs/web/admin-vite) → [admin-runtime](/docs/web/admin-runtime) → [admin-layouts/快速接入](/docs/web/admin-layouts/quick-start) → [admin-i18n](/docs/web/admin-i18n)
 3. **看这些包在 Admin 里怎么用**：[Admin 应用文档](/docs/admin)

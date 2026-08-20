@@ -28,7 +28,7 @@ description: packages/shared、hooks、primitives —— 跨端可复用的纯�
 
 - ✅ `ThemeColor`、`WithClassName`（纯类型）放 `@skyroc/ui-types`
 - ❌ OKLCH 调色板生成算法（依赖 colord / culori）→ 不能放 shared，要放 `@skyroc/color`
-- ❌ 设计令牌常量 → 三端统一走 Tailwind，令牌直接住在唯一的翻译层 [`@skyroc/tailwind-plugin`](/docs/web/tailwind-plugin) 里，不再单独成包
+- ❌ 设计令牌常量 → 三端统一走 Tailwind，令牌直接住在唯一的翻译层 [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) 里，不再单独成包
 
 ### 2. hooks 用平台子入口隔离
 

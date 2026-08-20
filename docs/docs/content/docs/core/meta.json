@@ -1,6 +1,6 @@
 {
   "title": "跨端核心",
-  "description": "packages/@core 下的跨平台基础能力：工具函数、请求、状态、调度与色彩",
+  "description": "packages/@core 下的跨平台基础能力：工具函数、请求、状态、调度、色彩与设计令牌",
   "icon": "Box",
   "root": true,
   "pages": [
@@ -11,6 +11,7 @@
     "state",
     "scheduler",
     "color",
+    "tailwind-plugin",
     "logger",
     "types",
     "scripts"
