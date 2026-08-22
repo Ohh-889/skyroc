@@ -42,11 +42,13 @@ import { ShareSheet, showShareSheet, closeShareSheet } from '@skyroc/native-ui';
 
 ## 事件
 
-`onSelect` 与 `onCancel` 记录用户动作，`onUpdateShow` 是显隐变化，`onClosed` 在退场动画播完、面板真正卸载后触发。
+`onSelect` 与 `onCancel` 记录用户动作，`onUpdateShow` 是显隐变化，`onClosed` 在面板真正卸载后触发。
 
 <Demo src="@playground/share-sheet/ShareSheetEvents" />
 
-`onUpdateShow(false)` 是「请求关闭」，此时动画才刚开始；命令式场景要等 `onClosed` 才能安全移除节点，否则面板会硬闪消失。
+`onUpdateShow(false)` 是「请求关闭」，组件式用法里要等 `onClosed` 再做清理。命令式路径不走这条：面板一结算就从渲染器上摘掉。
+
+ShareSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时长 0），弹出与关闭都是即时的。需要动画的自定义面板请直接用 `Sheet`。
 
 `closeOnSelect` 默认 `false`（组件式用法里通常由外部状态决定何时关），命令式调用则默认打开 —— 那边没有外部状态承接，不自动关面板会一直挂着。
 
@@ -115,7 +117,7 @@ if (result) {
       type: '(option: ShareSheetOption, index: number, rowIndex: number) => void'
     },
     { name: 'onCancel', description: '取消按钮点击回调', type: '() => void' },
-    { name: 'onClosed', description: '退场动画播完、面板真正卸载后触发', type: '() => void' },
+    { name: 'onClosed', description: '面板真正卸载后触发', type: '() => void' },
     { name: 'closeOnSelect', description: '点击选项后是否自动关闭', type: 'boolean', default: 'false' },
     { name: 'title', description: '面板标题', type: 'ReactNode' },
     { name: 'description', description: '描述信息，显示在标题下方', type: 'ReactNode' },

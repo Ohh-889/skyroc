@@ -83,13 +83,13 @@ export interface DialogProps {
   messageAlign?: 'center' | 'left' | 'right';
   /** 取消按钮回调，showInput 时参数为输入值 */
   onCancel?: (inputValue?: string) => void;
-  /** 关闭动画播放完毕后的回调 */
+  /** 关闭完成后的回调。Dialog 的动画时长为 0，等同于关闭动作发生的那一刻 */
   onClosed?: () => void;
   /** 确认按钮回调，showInput 时参数为输入值 */
   onConfirm?: (inputValue?: string) => void;
   /** 输入框内容变化回调 */
   onInputChange?: (value: string) => void;
-  /** 打开动画播放完毕后的回调 */
+  /** 打开完成后的回调。Dialog 的动画时长为 0，等同于弹出的那一刻 */
   onOpened?: () => void;
   /** 显示状态变化回调，始终在 onConfirm / onCancel 之后触发 */
   onUpdateShow?: (show: boolean) => void;

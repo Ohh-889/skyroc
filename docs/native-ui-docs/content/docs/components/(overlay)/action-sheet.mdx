@@ -19,7 +19,9 @@ import { ActionSheet, closeActionSheet, showActionSheet } from '@skyroc/native-u
 
 <Demo src="@playground/action-sheet/ActionSheetBasic" />
 
-`onUpdateShow(false)` 表示「请求关闭」，此时退场动画才刚开始；要等面板真正卸载再做清理（移除节点、释放资源），监听 `onClosed`。
+`onUpdateShow(false)` 表示「请求关闭」；要等面板真正卸载再做清理（移除节点、释放资源），监听 `onClosed`。
+
+ActionSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时长 0），弹出与关闭都是即时的。需要动画的自定义面板请直接用 `Sheet`。
 
 ## 何时使用
 
@@ -164,7 +166,7 @@ import { ActionSheet, closeActionSheet, showActionSheet } from '@skyroc/native-u
     { name: 'onUpdateShow', description: '显示状态变化回调，请求关闭时触发', type: '(show: boolean) => void' },
     {
       name: 'onClosed',
-      description: '退场动画播放完毕、面板真正卸载后触发',
+      description: '面板真正卸载后触发',
       type: '() => void'
     },
     { name: 'className', description: '操作列表容器的类名', type: 'string' },

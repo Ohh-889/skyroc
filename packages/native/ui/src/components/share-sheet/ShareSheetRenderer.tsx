@@ -1,18 +1,23 @@
 import { useStore } from '@skyroc/hooks';
 import { shareSheetManager } from './share-sheet-manager';
 import { ShareSheet } from './ShareSheet';
-import type { ShareSheetOption } from './types';
+import type { ShareSheetOption, ShareSheetResult } from './types';
 
 /** ShareSheet 渲染器，通过 Portal 自动挂载，订阅 shareSheetManager 渲染当前面板 */
 const ShareSheetRenderer = () => {
   const entry = useStore(shareSheetManager);
 
+  /** 所有出口的唯一收口：结算的同时把条目摘掉，节点跟着卸载，不留正在退场的那一帧 */
+  function handleAction(result: ShareSheetResult | null) {
+    shareSheetManager.close(entry?.id, result);
+  }
+
   function handleSelect(option: ShareSheetOption, index: number, rowIndex: number) {
-    shareSheetManager.close(entry?.id, { index, option, rowIndex });
+    handleAction({ index, option, rowIndex });
   }
 
   function handleCancel() {
-    shareSheetManager.close(entry?.id, null);
+    handleAction(null);
   }
 
   function handleUpdateShow(show: boolean) {
@@ -22,22 +27,16 @@ const ShareSheetRenderer = () => {
     handleCancel();
   }
 
-  function handleClosed() {
-    if (!entry) return;
-
-    shareSheetManager.destroy(entry.id);
-  }
-
   if (!entry) return null;
 
-  // Key 落在 entry.id 上：换一条面板时走卸载 + 重挂，不会把上一条的展开状态串下去
+  // 条目存在就一定是展示中，show 恒为 true；Key 落在 entry.id 上：换一条面板时走卸载 + 重挂，
+  // 不会把上一条的展开状态串下去
   return (
     <ShareSheet
       {...entry.options}
       key={entry.id}
-      show={entry.visible}
+      show
       onCancel={handleCancel}
-      onClosed={handleClosed}
       onSelect={handleSelect}
       onUpdateShow={handleUpdateShow}
     />

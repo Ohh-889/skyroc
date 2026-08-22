@@ -104,9 +104,9 @@ export interface ActionSheetProps {
   onChange?: (value: string) => void;
 
   /**
-   * 退场动画播放完毕、面板真正卸载后触发。
+   * 面板真正卸载后触发。
    *
-   * 与 onUpdateShow(false) 的区别：后者是「请求关闭」，此时动画才刚开始； 命令式调用要等这个回调才能安全移除 Portal 节点，否则面板会硬闪消失。
+   * 与 onUpdateShow(false) 的区别：后者是「请求关闭」，此时关闭流程才刚开始。 命令式路径不走这个回调——面板一结算就从渲染器上摘掉了。
    */
   onClosed?: () => void;
 

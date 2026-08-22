@@ -106,11 +106,13 @@ import { Dialog, closeDialog, showConfirmDialog, showDialog } from '@skyroc/nati
 
 ## 声明式受控
 
-`<Dialog />` 由 `show` + `onUpdateShow` 控制显示。`onOpened` / `onClosed` 在进出场动画播放完毕后触发，可以用来做埋点或资源清理。
+`<Dialog />` 由 `show` + `onUpdateShow` 控制显示。`onOpened` / `onClosed` 在打开 / 关闭完成后触发，可以用来做埋点或资源清理。
+
+Dialog 的进出场动画时长为 0（含遮罩过渡），弹出与关闭都是即时的。需要动画的自定义弹层请直接用 `Popup`。
 
 <Demo src="@playground/dialog/DialogDeclarative" />
 
-回调顺序是固定的：先 `onConfirm` / `onCancel`，再 `onUpdateShow(false)`，最后动画结束时 `onClosed`。基于 Dialog 再做封装时可以依赖这个顺序区分「确定」与「被关闭」。
+回调顺序是固定的：先 `onConfirm` / `onCancel`，再 `onUpdateShow(false)`，最后关闭完成时 `onClosed`。基于 Dialog 再做封装时可以依赖这个顺序区分「确定」与「被关闭」。
 
 不要把声明式的 `<Dialog />` 写在 `ScrollView` 里面：JS 触摸响应链走的是 React 树而不是原生视图树，Modal 渲染到哪儿都改变不了这一点。键盘弹起时 `ScrollView` 会在 capture 阶段抢走第一次点击用于收键盘（`keyboardShouldPersistTaps` 默认 `never`），于是带输入框的对话框要点两下才关得掉。解决办法是套一层 `Portal` 挂到 `PortalHost` 下、放到 `ScrollView` 外层，或者给该 `ScrollView` 传 `keyboardShouldPersistTaps="handled"`。命令式的 `showDialog` 走 Portal，不受影响。
 
@@ -213,8 +215,8 @@ import { Dialog, closeDialog, showConfirmDialog, showDialog } from '@skyroc/nati
       description: '显示状态变化回调，始终在 onConfirm / onCancel 之后触发',
       type: '(show: boolean) => void'
     },
-    { name: 'onOpened', description: '打开动画播放完毕后触发', type: '() => void' },
-    { name: 'onClosed', description: '关闭动画播放完毕后触发', type: '() => void' },
+    { name: 'onOpened', description: '打开完成后触发', type: '() => void' },
+    { name: 'onClosed', description: '关闭完成后触发', type: '() => void' },
     { name: 'className', description: '卡片根节点的类名，合并在 classNames.root 之后', type: 'string' },
     { name: 'classNames', description: '各 slot 的类名覆盖', type: 'SlotClassNames<DialogSlots>' }
   ]}
