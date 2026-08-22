@@ -45,13 +45,17 @@ uniwind-types.d.ts
 # ---------- Expo / React Native ----------
 .expo/
 .kotlin/
+.gradle/
 ios/
 android/
 *.orig.*
 
-# expo modules 下的 ios/android 是手写的原生源码，不是 prebuild 产物，要提交
-!apps/expo-templete/modules/*/ios/
-!apps/expo-templete/modules/*/android/
+# expo module 包里的 ios/android 是手写的原生源码，不是 prebuild 产物，要提交
+!packages/native/*/ios/
+!packages/native/*/android/
+# 但 Gradle 的构建产物照旧忽略
+packages/native/*/android/build/
+packages/native/*/android/.gradle/
 
 # ---------- Native signing / certificates ----------
 *.jks
