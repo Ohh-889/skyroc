@@ -1,22 +1,26 @@
+// oxlint-disable import/no-unassigned-import
+import { BottomSheetModalProvider, PortalHost } from '@skyroc/native-ui';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { SafeAreaListener, SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { Uniwind } from 'uniwind';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import { SessionProvider, useSession } from '@/contexts/auth';
+import { SessionProvider, useSession } from '@/feature/auth/auth-context';
+import { DevFloatingButton } from '@/feature/dev';
+import { QueryProvider } from '@/feature/query/query-provider';
+import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <SessionProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <RootNavigator />
-      </ThemeProvider>
-    </SessionProvider>
-  );
+// uniwind 免费版的 *-safe-* 工具类不会自己读安全区，得由 react-native-safe-area-context 喂进去，
+// 否则 insets 恒为 0，pt-safe-offset-10 会退化成普通的 pt-10。
+// 这里先用原生启动时量好的 initialWindowMetrics 打底，避免首帧按 0 排版再跳一下
+if (initialWindowMetrics) {
+  Uniwind.updateInsets(initialWindowMetrics.insets);
 }
 
 function RootNavigator() {
@@ -28,23 +32,73 @@ function RootNavigator() {
   return (
     <>
       <AnimatedSplashOverlay />
-      <Stack screenOptions={{ headerShown: false }}>
-        {/* 已登录：可进入 (tabs)，未登录时被踢回下面第一个可用路由 */}
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { flex: 1 },
+          animationMatchesGesture: true,
+          animation: 'slide_from_right',
+          orientation: 'portrait'
+        }}
+      >
+        {/* 已登录：(app) 下的一切，含 demo 演示分组。新增业务页面只往 (app) 里加，这里永远不用再动 */}
         <Stack.Protected guard={Boolean(session)}>
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="(app)"
+          />
         </Stack.Protected>
 
         {/* 未登录：只能停在 (auth)/login */}
         <Stack.Protected guard={!session}>
-          <Stack.Screen name="(auth)" />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="(auth)"
+          />
         </Stack.Protected>
-
-        {/* 微信能力测试页：故意不放进任何 guard，登录前后都要能进去测 */}
-        <Stack.Screen
-          name="wechat-demo"
-          options={{ headerShown: true, title: '微信能力测试' }}
-        />
       </Stack>
     </>
+  );
+}
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        {/* 转屏、分屏、键盘导航栏变化时把最新 insets 同步给 uniwind */}
+        <SafeAreaListener onChange={({ insets }) => Uniwind.updateInsets(insets)}>
+          <QueryProvider>
+            <SessionProvider>
+              {/* 键盘底座：statusBar/navigationBar 都标成 translucent，
+                否则 Android 端会被额外顶出一段系统栏高度，破坏 edge-to-edge 布局 */}
+              <KeyboardProvider
+                navigationBarTranslucent
+                statusBarTranslucent
+              >
+                <BottomSheetModalProvider>
+                  <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                    <RootNavigator />
+
+                    <StatusBar
+                      animated
+                      // oxlint-disable-next-line react/style-prop-object
+                      style="auto"
+                    />
+
+                    {/* 开发期的 sitemap 悬浮入口，生产包里自身返回 null */}
+                    <DevFloatingButton />
+
+                    {/* 所有 portal 节点（Toast 等）的宿主，必须放在 Stack 之后才能盖在页面之上 */}
+                    <PortalHost />
+                  </ThemeProvider>
+                </BottomSheetModalProvider>
+              </KeyboardProvider>
+            </SessionProvider>
+          </QueryProvider>
+        </SafeAreaListener>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

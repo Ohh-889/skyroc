@@ -7,7 +7,6 @@ import { ExternalLink } from '@/components/external-link';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -25,10 +24,6 @@ export default function TabTwoScreen() {
       paddingLeft: insets.left,
       paddingRight: insets.right,
       paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
     },
   });
 
@@ -119,7 +114,6 @@ export default function TabTwoScreen() {
             </ThemedText>
           </Collapsible>
         </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
       </ThemedView>
     </ScrollView>
   );
