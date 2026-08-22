@@ -1,5 +1,6 @@
 import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Link } from 'expo-router';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
@@ -8,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useSession } from '@/contexts/auth';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -29,6 +31,8 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const { signOut } = useSession();
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -46,7 +50,7 @@ export default function HomeScreen() {
         <ThemedView type="backgroundElement" style={styles.stepContainer}>
           <HintRow
             title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+            hint={<ThemedText type="code">src/app/(tabs)/index.tsx</ThemedText>}
           />
           <HintRow title="Dev tools" hint={getDevMenuHint()} />
           <HintRow
@@ -54,6 +58,17 @@ export default function HomeScreen() {
             hint={<ThemedText type="code">npm run reset-project</ThemedText>}
           />
         </ThemedView>
+
+        <Link href="/wechat-demo" asChild>
+          <Pressable style={({ pressed }) => pressed && styles.pressed}>
+            <ThemedText type="link">微信能力测试</ThemedText>
+          </Pressable>
+        </Link>
+
+        {/* 退出登录：清掉凭证，Stack.Protected 会自动踢回 (auth)/login */}
+        <Pressable onPress={signOut} style={({ pressed }) => pressed && styles.pressed}>
+          <ThemedText type="link">退出登录</ThemedText>
+        </Pressable>
 
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>
@@ -87,6 +102,9 @@ const styles = StyleSheet.create({
   },
   code: {
     textTransform: 'uppercase',
+  },
+  pressed: {
+    opacity: 0.7,
   },
   stepContainer: {
     gap: Spacing.three,
