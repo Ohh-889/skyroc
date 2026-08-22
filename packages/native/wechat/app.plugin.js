@@ -126,7 +126,7 @@ const withWechatEntryActivity = config =>
       await fs.promises.mkdir(dir, { recursive: true });
       await fs.promises.writeFile(
         path.join(dir, 'WXEntryActivity.kt'),
-        `// 由 modules/wechat/app.plugin.js 在 prebuild 时生成，请勿手动修改
+        `// 由 @skyroc/expo-wechat 的 app.plugin.js 在 prebuild 时生成，请勿手动修改
 package ${androidPackage}.wxapi
 
 import android.app.Activity
@@ -177,4 +177,4 @@ const withWechat = (config, props) => {
   ].reduce((acc, apply) => apply(acc), config);
 };
 
-module.exports = createRunOncePlugin(withWechat, 'modules/wechat', '1.0.0');
+module.exports = createRunOncePlugin(withWechat, '@skyroc/expo-wechat', '1.0.0');
