@@ -4,11 +4,11 @@ export type ConfigType = 'N' | 'Y';
 export interface ConfigItem {
   configId: ConfigId;
   configKey: string;
-  configType: ConfigType;
   configName: string;
+  configType: ConfigType;
   configValue: string;
-  remark: null | string;
   createTime: null | string;
+  remark: null | string;
 }
 
 export interface ConfigListPage {

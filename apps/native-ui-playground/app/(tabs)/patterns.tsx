@@ -13,10 +13,10 @@ interface PatternEntry {
   components: readonly string[];
   /** 当前场景的任务目标 */
   description: string;
-  /** 代表当前场景的图标名称 */
-  icon: PatternIconName;
   /** 现阶段用于验证该场景的组件示例 */
   href: Href;
+  /** 代表当前场景的图标名称 */
+  icon: PatternIconName;
   /** 场景展示序号 */
   index: string;
   /** 场景名称 */
