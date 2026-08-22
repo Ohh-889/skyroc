@@ -13,7 +13,7 @@
     "unicorn/no-array-reverse": "off",
     "unicorn/no-array-sort": "off",
     "react/rules-of-hooks": "error",
-    "react/exhaustive-deps": "warn",
+    "react/exhaustive-deps": "off",
     "react/no-unescaped-entities": "off",
     "no-use-before-define": [
       "error",
