@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Android 11+ 包可见性：不声明的话 isWXAppInstalled 永远返回 false -->
+  <queries>
+    <package android:name="com.tencent.mm" />
+  </queries>
+</manifest>

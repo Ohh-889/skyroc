@@ -1,0 +1,23 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.wechat'
+version = '0.1.0'
+
+android {
+  namespace "expo.modules.wechat"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  // 微信开放平台 Android SDK
+  api 'com.tencent.mm.opensdk:wechat-sdk-android:6.8.34'
+}
