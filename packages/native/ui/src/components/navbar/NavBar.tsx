@@ -17,7 +17,7 @@ const NavBar = (props: NavBarProps) => {
     className,
     classNames,
     left,
-    leftArrow = false,
+    leftArrow = true,
     leftDisabled = false,
     leftText,
     onLeftPress,
