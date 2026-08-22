@@ -141,9 +141,15 @@ export function useInfiniteList<TItem, TParams extends object = Record<string, n
     items,
     /** 直接展开给 `<List>` */
     listProps,
+    /** 加载下一页；已到底或正在加载时是空操作 */
+    loadMore,
     /** 原始 query，需要 isStale / dataUpdatedAt 之类的细节时用 */
     query,
-    /** 总条数 */
+    /** 等价于下拉刷新：截断到第一页再重拉 */
+    refresh,
+    /** 失败后重试 */
+    retry,
+    /** 总条数，来自最后一页响应的 total 字段，不是已加载条数 */
     total,
     updateItem
   };

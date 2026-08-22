@@ -45,7 +45,11 @@ export type MessageType = 'comment' | 'like' | 'system';
 export interface Message {
   content: string;
 
+  /** 时间，只到分钟；日期在 dayLabel 里 */
   createdAt: string;
+
+  /** 所属日期分组，如「今天」 */
+  dayLabel: string;
 
   id: string;
 
@@ -54,7 +58,16 @@ export interface Message {
 
   sender: string;
 
+  /** 消息正文里被高亮的对象，比如帖子标题 */
+  target?: string;
+
   type: MessageType;
+}
+
+/** 消息查询参数 */
+export interface MessageQuery {
+  /** `all` 表示不过滤 */
+  type: 'all' | MessageType;
 }
 
 /** 联系人 */
@@ -63,9 +76,19 @@ export interface Contact {
 
   id: string;
 
+  /**
+   * 是否是所属部门的第一条。
+   *
+   * 由服务端在过滤、排序、分页之后算好下发 —— 客户端如果自己比对「上一条的部门」，跨页时拿不到上一页的最后一条，第二页的组头会漏掉。
+   */
+  isDepartmentStart: boolean;
+
   name: string;
 
   online: boolean;
+
+  /** 分机号 */
+  phone: string;
 
   /** 职位 */
   title: string;
@@ -85,16 +108,36 @@ export interface Activity {
   /** 动作描述 */
   action: string;
 
+  /** 时间，只到分钟；日期在 dayLabel 里 */
   createdAt: string;
+
+  /** 所属日期分组，如「08-22」 */
+  dayLabel: string;
 
   /** 补充说明 */
   detail: string;
 
   id: string;
 
+  /** 是否是当天的第一条，用来决定要不要画日期标题和时间轴的起点 */
+  isDayStart: boolean;
+
   operator: string;
 
+  /** 关联的单号 */
+  refId: string;
+
   result: ActivityResult;
+}
+
+/** 通讯录概览，跟着「常用联系人」一起返回，头部区域用普通 useQuery 拿，不参与分页 */
+export interface ContactOverview {
+  /** 常用联系人，只取前几位 */
+  frequent: Contact[];
+
+  onlineCount: number;
+
+  total: number;
 }
 
 function delay(ms: number) {
@@ -140,7 +183,7 @@ const ORDER_STATUSES: OrderStatus[] = ['pending', 'shipped', 'completed'];
 const ORDERS: Order[] = Array.from({ length: 43 }, (_, index) => ({
   amount: 1990 + index * 1370,
   coverColor: COVER_COLORS[index % COVER_COLORS.length],
-  createdAt: `2026-08-${String(22 - (index % 22)).padStart(2, '0')} 1${index % 10}:0${index % 6}`,
+  createdAt: `08-${String(22 - (index % 22)).padStart(2, '0')} 1${index % 10}:0${index % 6}`,
   id: `order-${index + 1}`,
   itemCount: (index % 3) + 1,
   shopName: SHOP_NAMES[index % SHOP_NAMES.length],
@@ -149,27 +192,38 @@ const ORDERS: Order[] = Array.from({ length: 43 }, (_, index) => ({
   title: ORDER_TITLES[index % ORDER_TITLES.length]
 }));
 
-const MESSAGE_SENDERS = ['林开阳', '周清和', '陈斯年', '系统通知', '苏见月', '何知白'];
+const MESSAGE_SENDERS = ['林开阳', '周清和', '陈斯年', '发布系统', '苏见月', '何知白'];
 
-const MESSAGE_CONTENTS = [
-  '在「列表组件重构」里回复了你：这个 footer 的三态终于统一了',
-  '赞了你的评论「空态也要能下拉刷新」',
-  '你提交的发布单 #2481 已通过审核，将于今晚 22:00 上线',
-  '把你加入了协作者，现在你可以编辑这份文档',
-  '提到了你：这里的分页逻辑要不要顺手换成 useInfiniteList',
-  '你的周报已被主管查阅'
+/** 每种消息类型对应的文案模板，`target` 会在正文里被高亮出来 */
+const MESSAGE_TEMPLATES: { content: string; target?: string; type: MessageType }[] = [
+  { content: '回复了你：这个 footer 的三态终于统一了，之前三处各写一遍太难维护', target: '列表组件重构', type: 'comment' },
+  { content: '赞了你的评论「空态也要能下拉刷新」', type: 'like' },
+  { content: '已通过审核，将于今晚 22:00 开始灰度', target: '发布单 #2481', type: 'system' },
+  { content: '提到了你：这里的分页逻辑要不要顺手换成 useInfiniteList', target: '每周技术评审', type: 'comment' },
+  { content: '赞了你提交的方案', target: 'RFC-018 列表统一', type: 'like' },
+  { content: '你的周报已被主管查阅', type: 'system' }
 ];
 
-const MESSAGE_TYPES: MessageType[] = ['comment', 'like', 'system'];
+const MESSAGES: Message[] = Array.from({ length: 28 }, (_, index) => {
+  const template = MESSAGE_TEMPLATES[index % MESSAGE_TEMPLATES.length];
 
-const MESSAGES: Message[] = Array.from({ length: 28 }, (_, index) => ({
-  content: MESSAGE_CONTENTS[index % MESSAGE_CONTENTS.length],
-  createdAt: `${index < 6 ? '今天' : '昨天'} ${String(9 + (index % 12)).padStart(2, '0')}:${String((index * 7) % 60).padStart(2, '0')}`,
-  id: `message-${index + 1}`,
-  read: index % 3 === 0,
-  sender: MESSAGE_SENDERS[index % MESSAGE_SENDERS.length],
-  type: MESSAGE_TYPES[index % MESSAGE_TYPES.length]
-}));
+  function resolveDayLabel() {
+    if (index < 8) return '今天';
+
+    return index < 18 ? '昨天' : '更早';
+  }
+
+  return {
+    content: template.content,
+    createdAt: `${String(9 + (index % 12)).padStart(2, '0')}:${String((index * 7) % 60).padStart(2, '0')}`,
+    dayLabel: resolveDayLabel(),
+    id: `message-${index + 1}`,
+    read: index % 3 === 0,
+    sender: template.type === 'system' ? '发布系统' : MESSAGE_SENDERS[index % MESSAGE_SENDERS.length],
+    target: template.target,
+    type: template.type
+  };
+});
 
 const CONTACT_NAMES = [
   '安其然',
@@ -200,42 +254,53 @@ const DEPARTMENTS = ['基础架构', '增长技术', '设计中心', '数据平�
 
 const TITLES = ['前端工程师', '资深前端工程师', '技术专家', '产品设计师', '数据分析师', '解决方案顾问'];
 
-const CONTACTS: Contact[] = CONTACT_NAMES.map((name, index) => ({
-  department: DEPARTMENTS[index % DEPARTMENTS.length],
+/** 每个部门连续放 5 个人，这样按顺序分页时同部门是挨着的，组头才有意义 */
+const DEPARTMENT_SIZE = Math.ceil(CONTACT_NAMES.length / DEPARTMENTS.length);
+
+const CONTACTS: Omit<Contact, 'isDepartmentStart'>[] = CONTACT_NAMES.map((name, index) => ({
+  department: DEPARTMENTS[Math.min(Math.floor(index / DEPARTMENT_SIZE), DEPARTMENTS.length - 1)],
   id: `contact-${index + 1}`,
   name,
   online: index % 4 !== 0,
+  phone: `81${String(200 + index).padStart(3, '0')}`,
   title: TITLES[index % TITLES.length]
 }));
 
-const ACTIVITY_ACTIONS = [
-  '提交了发布单',
-  '回滚了灰度批次',
-  '修改了限流阈值',
-  '关闭了告警规则',
-  '扩容了实例组',
-  '更新了配置项'
-];
+/** 过滤、排序都结束之后再打分组标记，否则被过滤掉组内第一条时组头会整个消失 */
+function withDepartmentFlags(list: Omit<Contact, 'isDepartmentStart'>[]): Contact[] {
+  return list.map((contact, index) => ({
+    ...contact,
+    isDepartmentStart: index === 0 || list[index - 1].department !== contact.department
+  }));
+}
 
-const ACTIVITY_DETAILS = [
-  '版本 v2.14.0，涉及 12 个服务',
-  '批次 canary-03，影响 5% 流量',
-  '从 2000 QPS 调整为 3500 QPS',
-  '规则「订单超时率 > 3%」已停用',
-  '4C8G × 6 → 4C8G × 10',
-  '开启了新的列表分页开关'
+const ACTIVITY_TEMPLATES: { action: string; detail: string }[] = [
+  { action: '提交了发布单', detail: '版本 v2.14.0，涉及 12 个服务，灰度 5%' },
+  { action: '回滚了灰度批次', detail: '批次 canary-03，错误率超过阈值触发自动回滚' },
+  { action: '修改了限流阈值', detail: '订单查询接口 2000 QPS → 3500 QPS' },
+  { action: '关闭了告警规则', detail: '规则「订单超时率 > 3%」已停用，预计恢复时间 08:00' },
+  { action: '扩容了实例组', detail: 'order-api 4C8G × 6 → 4C8G × 10' },
+  { action: '更新了配置项', detail: '开启新的列表分页开关 list.infinite.enabled' }
 ];
 
 const ACTIVITY_OPERATORS = ['林开阳', '周清和', '自动化流水线', '陈斯年'];
 
-const ACTIVITIES: Activity[] = Array.from({ length: 24 }, (_, index) => ({
-  action: ACTIVITY_ACTIONS[index % ACTIVITY_ACTIONS.length],
-  createdAt: `08-${String(22 - (index % 20)).padStart(2, '0')} ${String(8 + (index % 12)).padStart(2, '0')}:${String((index * 13) % 60).padStart(2, '0')}`,
-  detail: ACTIVITY_DETAILS[index % ACTIVITY_DETAILS.length],
-  id: `activity-${index + 1}`,
-  operator: ACTIVITY_OPERATORS[index % ACTIVITY_OPERATORS.length],
-  result: index % 7 === 3 ? 'failed' : 'success'
-}));
+/** 每天放 3 条，24 条正好铺满 8 天，日期分组和时间轴的连线都能看出来 */
+const ACTIVITIES: Activity[] = Array.from({ length: 24 }, (_, index) => {
+  const template = ACTIVITY_TEMPLATES[index % ACTIVITY_TEMPLATES.length];
+
+  return {
+    action: template.action,
+    createdAt: `${String(20 - (index % 3) * 5).padStart(2, '0')}:${String((index * 13) % 60).padStart(2, '0')}`,
+    dayLabel: `08-${String(22 - Math.floor(index / 3)).padStart(2, '0')}`,
+    detail: template.detail,
+    id: `activity-${index + 1}`,
+    isDayStart: index % 3 === 0,
+    operator: ACTIVITY_OPERATORS[index % ACTIVITY_OPERATORS.length],
+    refId: `#${2481 - index}`,
+    result: index % 7 === 3 ? 'failed' : 'success'
+  };
+});
 
 /** 订单分页；`shouldFail` 为 true 时直接抛错，用来演示错误态 */
 export async function fetchOrderList(params: OrderQuery & PageParams): Promise<PageResult<Order>> {
@@ -249,11 +314,13 @@ export async function fetchOrderList(params: OrderQuery & PageParams): Promise<P
   return paginate(matched, params);
 }
 
-/** 消息分页 */
-export async function fetchMessageList(params: PageParams): Promise<PageResult<Message>> {
+/** 消息分页，按类型过滤 */
+export async function fetchMessageList(params: MessageQuery & PageParams): Promise<PageResult<Message>> {
   await delay(NETWORK_DELAY);
 
-  return paginate(MESSAGES, params);
+  const matched = params.type === 'all' ? MESSAGES : MESSAGES.filter(message => message.type === params.type);
+
+  return paginate(matched, params);
 }
 
 /** 联系人分页，按关键词模糊匹配姓名 / 部门 / 职位 */
@@ -266,7 +333,20 @@ export async function fetchContactList(params: ContactQuery & PageParams): Promi
     ? CONTACTS.filter(contact => `${contact.name}${contact.department}${contact.title}`.includes(keyword))
     : CONTACTS;
 
-  return paginate(matched, params);
+  return paginate(withDepartmentFlags(matched), params);
+}
+
+/** 通讯录头部概览，不分页，用普通 useQuery 拿 */
+export async function fetchContactOverview(): Promise<ContactOverview> {
+  await delay(NETWORK_DELAY);
+
+  const online = CONTACTS.filter(contact => contact.online);
+
+  return {
+    frequent: withDepartmentFlags(online.slice(0, 8)),
+    onlineCount: online.length,
+    total: CONTACTS.length
+  };
 }
 
 /** 操作日志分页 */

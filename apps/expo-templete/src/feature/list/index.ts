@@ -6,7 +6,7 @@ export type { ListFooterProps } from './ListFooter';
 export { ListPlaceholder } from './ListPlaceholder';
 export type { ListPlaceholderProps } from './ListPlaceholder';
 export { QueryList } from './QueryList';
-export type { QueryListProps } from './QueryList';
+export type { QueryListHandle, QueryListProps } from './QueryList';
 export type {
   ListFooterContext,
   ListPlaceholderContext,
