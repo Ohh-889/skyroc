@@ -6,6 +6,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@/modules/*": [
+        "./modules/*"
+      ],
       "@/assets/*": [
         "./assets/*"
       ]
