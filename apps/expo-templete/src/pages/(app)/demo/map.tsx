@@ -6,6 +6,7 @@ import { withUniwind } from 'uniwind';
 
 import { MAP_PROVIDERS, MapLinkButton, getAvailableMapProviders, openMapLink } from '@/feature/map-link';
 import type { MapProvider, MapTarget, TravelMode } from '@/feature/map-link';
+import { DemoHeader } from './modules/DemoHeader';
 
 const Icon = withUniwind(MaterialCommunityIcons);
 
@@ -18,8 +19,7 @@ interface DemoTarget extends MapTarget {
 /**
  * 演示用目的地。
  *
- * 坐标是 GCJ-02（高德坐标拾取器取的近似值），正是 MapTarget 要求的坐标系——
- * 换成后端返回的 WGS-84 会整体偏几百米，这里的取值本身就是一条隐性用例。
+ * 坐标是 GCJ-02（高德坐标拾取器取的近似值），正是 MapTarget 要求的坐标系—— 换成后端返回的 WGS-84 会整体偏几百米，这里的取值本身就是一条隐性用例。
  */
 const TARGETS: DemoTarget[] = [
   {
@@ -82,30 +82,30 @@ const MapDemoScreen = () => {
   }, []);
 
   return (
-    <ScrollView
-      className="flex-1 bg-background"
-      contentContainerClassName="gap-4 px-4 py-5"
-    >
-      <View className="gap-2">
-        <Text
-          size="xl"
-          weight="semibold"
-        >
-          调起第三方地图导航
-        </Text>
+    <View className="flex-1 bg-background">
+      <DemoHeader title="地图导航演示" />
 
-        <Text
-          color="muted"
-          size="sm"
-        >
-          openMapLink 先用 canOpenURL 探测装了哪些地图，再用 ActionSheet 让用户选，最后拼 scheme 调起。一个都没装时兜底跳高德 H5 导航页。
-        </Text>
-      </View>
-
-      <CellGroup
-        inset
-        title="本机探测结果"
+      <ScrollView
+        className="flex-1 bg-background"
+        contentContainerClassName="gap-4 px-4 py-5"
       >
+        <View className="gap-2">
+          <Text
+            size="xl"
+            weight="semibold"
+          >
+            调起第三方地图导航
+          </Text>
+
+          <Text
+            color="muted"
+            size="sm"
+          >
+            openMapLink 先用 canOpenURL 探测装了哪些地图，再用 ActionSheet 让用户选，最后拼 scheme
+            调起。一个都没装时兜底跳高德 H5 导航页。
+          </Text>
+        </View>
+
         <Cell
           center
           title="已安装的地图"
@@ -114,7 +114,8 @@ const MapDemoScreen = () => {
               color="muted"
               size="xs"
             >
-              探测依赖 iOS 的 LSApplicationQueriesSchemes 与 Android 的 queries，两者由 plugins/with-map-app-links.js 写入，改完要重新 prebuild
+              探测依赖 iOS 的 LSApplicationQueriesSchemes 与 Android 的 queries，两者由 plugins/with-map-app-links.js
+              写入，改完要重新 prebuild
             </Text>
           }
           trailing={
@@ -144,88 +145,89 @@ const MapDemoScreen = () => {
             </View>
           }
         />
-      </CellGroup>
 
-      <View className="gap-2">
-        <Text
-          size="sm"
-          weight="medium"
-        >
-          出行方式
-        </Text>
+        <View className="gap-2">
+          <Text
+            size="sm"
+            weight="medium"
+          >
+            出行方式
+          </Text>
 
-        <View className="flex-row gap-2">
-          {MODES.map(item => (
-            <Button
-              className="flex-1"
-              key={item.value}
-              size="sm"
-              variant={item.value === mode ? 'solid' : 'outline'}
-              onPress={() => setMode(item.value)}
-            >
-              {item.label}
-            </Button>
-          ))}
+          <View className="flex-row gap-2">
+            {MODES.map(item => (
+              <Button
+                className="flex-1"
+                key={item.value}
+                size="sm"
+                variant={item.value === mode ? 'solid' : 'outline'}
+                onPress={() => setMode(item.value)}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </View>
+
+          <Text
+            color="muted"
+            size="xs"
+          >
+            同一个 mode 会翻译成高德的 t、百度的 mode、腾讯的 type 和 Apple 的 dirflg——Apple
+            没有骑行档，选骑行时它按步行走。
+          </Text>
         </View>
 
-        <Text
-          color="muted"
-          size="xs"
+        <CellGroup
+          inset
+          title="点一条就弹面板"
         >
-          同一个 mode 会翻译成高德的 t、百度的 mode、腾讯的 type 和 Apple 的 dirflg——Apple 没有骑行档，选骑行时它按步行走。
-        </Text>
-      </View>
+          {TARGETS.map(target => (
+            <Cell
+              showArrow
+              key={target.name}
+              subtitle={target.address}
+              title={target.name}
+              onPress={() => handleOpen(target)}
+              leading={
+                <View className="size-9 items-center justify-center rounded-xl bg-primary/10">
+                  <Icon
+                    colorClassName="accent-primary"
+                    name={target.icon}
+                    size={20}
+                  />
+                </View>
+              }
+            />
+          ))}
+        </CellGroup>
 
-      <CellGroup
-        inset
-        title="点一条就弹面板"
-      >
-        {TARGETS.map(target => (
-          <Cell
-            showArrow
-            key={target.name}
-            subtitle={target.address}
-            title={target.name}
-            onPress={() => handleOpen(target)}
-            leading={
-              <View className="size-9 items-center justify-center rounded-xl bg-primary/10">
-                <Icon
-                  colorClassName="accent-primary"
-                  name={target.icon}
-                  size={20}
-                />
-              </View>
-            }
-          />
-        ))}
-      </CellGroup>
+        <View className="gap-2">
+          <Text
+            size="sm"
+            weight="medium"
+          >
+            MapLinkButton
+          </Text>
 
-      <View className="gap-2">
-        <Text
-          size="sm"
-          weight="medium"
-        >
-          MapLinkButton
-        </Text>
+          <MapLinkButton
+            block
+            mode={mode}
+            target={TARGETS[0]}
+            title="导航到天安门"
+            onOpened={provider => setLastResult(provider ? `按钮 → 已调起 ${provider}` : '按钮 → 已取消')}
+          >
+            导航到天安门
+          </MapLinkButton>
 
-        <MapLinkButton
-          block
-          mode={mode}
-          target={TARGETS[0]}
-          title="导航到天安门"
-          onOpened={provider => setLastResult(provider ? `按钮 → 已调起 ${provider}` : '按钮 → 已取消')}
-        >
-          导航到天安门
-        </MapLinkButton>
-
-        <Text
-          color="muted"
-          size="xs"
-        >
-          上次结果：{lastResult}
-        </Text>
-      </View>
-    </ScrollView>
+          <Text
+            color="muted"
+            size="xs"
+          >
+            上次结果：{lastResult}
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
