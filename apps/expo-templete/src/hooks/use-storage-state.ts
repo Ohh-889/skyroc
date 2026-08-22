@@ -1,30 +1,16 @@
 import * as SecureStore from 'expo-secure-store';
-import { useCallback, useEffect, useReducer } from 'react';
-import { Platform } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
 
-type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
+type StorageState = {
+  /** 是否仍在从 SecureStore 读取 */
+  isLoading: boolean;
+  setValue: (value: string | null) => void;
+  /** 当前值；`null` 表示不存在 */
+  value: string | null;
+};
 
-function useAsyncState<T>(initialValue: [boolean, T | null] = [true, null]): UseStateHook<T> {
-  return useReducer(
-    (_state: [boolean, T | null], action: T | null = null): [boolean, T | null] => [false, action],
-    initialValue
-  ) as UseStateHook<T>;
-}
-
+/** 写入 SecureStore，`null` 表示删除该项。 */
 export async function setStorageItemAsync(key: string, value: string | null) {
-  if (Platform.OS === 'web') {
-    try {
-      if (value === null) {
-        localStorage.removeItem(key);
-      } else {
-        localStorage.setItem(key, value);
-      }
-    } catch (e) {
-      console.error('Local storage is unavailable:', e);
-    }
-    return;
-  }
-
   if (value === null) {
     await SecureStore.deleteItemAsync(key);
   } else {
@@ -32,30 +18,53 @@ export async function setStorageItemAsync(key: string, value: string | null) {
   }
 }
 
-/** Persisted `useState`: SecureStore on native, localStorage on web. */
-export function useStorageState(key: string): UseStateHook<string> {
-  const [state, setState] = useAsyncState<string>();
+/** Persisted `useState`，底层用 SecureStore。 */
+export function useStorageState(key: string): StorageState {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [value, setValue] = useState<string | null>(null);
 
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      try {
-        setState(localStorage.getItem(key));
-      } catch (e) {
-        console.error('Local storage is unavailable:', e);
-      }
-      return;
-    }
+    let cancelled = false;
 
-    SecureStore.getItemAsync(key).then(value => setState(value));
+    setIsLoading(true);
+
+    SecureStore.getItemAsync(key)
+      .then(stored => {
+        if (!cancelled) {
+          setValue(stored);
+        }
+      })
+      .catch(error => {
+        // 读不出来按「没有值」处理，绝不能把 isLoading 卡在 true
+        console.warn(`[useStorage] read "${key}" failed`, error);
+        if (!cancelled) {
+          setValue(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [key]);
 
-  const setValue = useCallback(
-    (value: string | null) => {
-      setState(value);
-      setStorageItemAsync(key, value);
+  // 身份必须稳定：上层会把它包成 signIn / signOut 放进 context，
+  // 每次渲染换一个新函数会让所有依赖它的 effect 白跑一遍
+  const setValueState = useCallback(
+    (next: string | null) => {
+      setValue(next);
+
+      setStorageItemAsync(key, next).catch(error => {
+        console.warn(`[useStorage] write "${key}" failed`, error);
+      });
     },
-    [key]
+    [key],
   );
 
-  return [state, setValue];
+  return { isLoading, value, setValue: setValueState };
 }
