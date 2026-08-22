@@ -1,0 +1,52 @@
+{
+  "name": "@skyroc/expo-bluetooth",
+  "version": "1.0.0",
+  "private": true,
+  "description": "蓝牙可用性的 Expo 模块封装（状态查询、权限、引导用户开启）",
+  "keywords": [
+    "expo",
+    "expo-module",
+    "react-native",
+    "skyroc",
+    "bluetooth",
+    "ble"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
+    "directory": "packages/native/bluetooth"
+  },
+  "sideEffects": false,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "files": [
+    "android",
+    "ios",
+    "src",
+    "index.ts",
+    "app.plugin.js",
+    "expo-module.config.json",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "oxlint --fix",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "devDependencies": {
+    "expo": "~57.0.15",
+    "expo-modules-core": "~57.0.12",
+    "oxlint": "catalog:dev",
+    "typescript": "catalog:core"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

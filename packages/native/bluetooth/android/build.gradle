@@ -1,0 +1,20 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.bluetooth'
+version = '1.0.0'
+
+android {
+  namespace "expo.modules.bluetooth"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+// 只用到 android.bluetooth / androidx.core，没有第三方 SDK 依赖

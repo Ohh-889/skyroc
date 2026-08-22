@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!--
+    Android 12(S) 起蓝牙权限拆成了 BLUETOOTH_CONNECT / BLUETOOTH_SCAN 两个运行时权限，
+    旧的 BLUETOOTH / BLUETOOTH_ADMIN 只在 30 及以下有效，加 maxSdkVersion 免得
+    在新系统上被当成多余权限（上架时也少一项要解释的）。
+  -->
+  <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+
+  <!-- 读适配器状态、弹系统开关对话框都要它 -->
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+  <!--
+    本模块不做扫描，所以不声明 BLUETOOTH_SCAN / ACCESS_FINE_LOCATION。
+    要扫描的话在**应用自己的** manifest 里加，别加在这里——
+    位置权限会让应用商店多一轮审核，不该由一个只管开关的模块强加给所有使用方。
+  -->
+
+  <!-- required=false：没有蓝牙的设备也能装，能不能用交给运行时的 getStateAsync 判断 -->
+  <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+  <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+</manifest>

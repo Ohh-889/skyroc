@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["BluetoothModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.bluetooth.BluetoothModule"]
+  }
+}
