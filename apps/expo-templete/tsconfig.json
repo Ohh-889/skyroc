@@ -6,9 +6,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@/modules/*": [
-        "./modules/*"
-      ],
       "@/assets/*": [
         "./assets/*"
       ]
@@ -19,5 +16,8 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
+  ],
+  "exclude": [
+    "scripts"
   ]
 }
