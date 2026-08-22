@@ -2,16 +2,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import type {
-  WechatLaunchOptions,
-  WechatResult,
-  WechatShareResponse,
-  WechatShareScene,
-} from '@/modules/wechat';
+import type { WechatLaunchOptions, WechatResult, WechatShareResponse, WechatShareScene } from '@skyroc/expo-wechat';
 import {
   addWechatResponseListener,
   checkWechatUniversalLink,
@@ -29,13 +20,15 @@ import {
   shareMusicVideo,
   shareText,
   shareVideo,
-  shareWebpage,
-} from '@/modules/wechat';
+  shareWebpage
+} from '@skyroc/expo-wechat';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+import { DemoHeader } from './modules/DemoHeader';
 
-/**
- * 演示用的远程素材，换成你自己的地址即可。
- * 缩略图故意用了一张大图，用来验证原生侧的 32KB 自动压缩。
- */
+/** 演示用的远程素材，换成你自己的地址即可。 缩略图故意用了一张大图，用来验证原生侧的 32KB 自动压缩。 */
 const Demo = {
   emoticon: 'https://picsum.photos/seed/wechat-emoticon/240/240',
   file: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
@@ -44,7 +37,7 @@ const Demo = {
   /** 512×512 仍然超 32KB，压缩逻辑照样能验到，但下载比 1200×1200 快得多 */
   thumb: 'https://picsum.photos/seed/wechat-thumb/512/512',
   video: 'https://www.w3schools.com/html/mov_bbb.mp4',
-  webpage: 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Share_and_Favorites/iOS.html',
+  webpage: 'https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Share_and_Favorites/iOS.html'
 } as const;
 
 interface ShareAction {
@@ -58,20 +51,14 @@ interface ShareAction {
    * @param scene 由页面顶部的开关决定
    * @param launch 第一段回调，展开进 options 即可；用来区分「本地准备中」和「等待微信」
    */
-  run: (
-    scene: WechatShareScene,
-    launch: WechatLaunchOptions,
-  ) => Promise<WechatResult<WechatShareResponse>>;
+  run: (scene: WechatShareScene, launch: WechatLaunchOptions) => Promise<WechatResult<WechatShareResponse>>;
 }
 
-/**
- * 九种分享类型。放在组件外是因为它不闭包任何组件状态，
- * scene 通过参数传进来即可。
- */
+/** 九种分享类型。放在组件外是因为它不闭包任何组件状态， scene 通过参数传进来即可。 */
 const SHARE_ACTIONS: ShareAction[] = [
   {
     label: '文本',
-    run: (scene, launch) => shareText({ ...launch, scene, text: '来自 expo-templete 的微信分享测试' }),
+    run: (scene, launch) => shareText({ ...launch, scene, text: '来自 expo-templete 的微信分享测试' })
   },
   {
     label: '图片',
@@ -83,8 +70,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         image: Demo.image,
         scene,
         thumb: Demo.thumb,
-        title: '图片分享',
-      }),
+        title: '图片分享'
+      })
   },
   {
     label: '网页',
@@ -96,8 +83,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         scene,
         thumb: Demo.thumb,
         title: '网页分享',
-        url: Demo.webpage,
-      }),
+        url: Demo.webpage
+      })
   },
   {
     label: '视频',
@@ -109,8 +96,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         scene,
         thumb: Demo.thumb,
         title: '视频分享',
-        url: Demo.video,
-      }),
+        url: Demo.video
+      })
   },
   {
     label: '音乐',
@@ -123,8 +110,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         scene,
         thumb: Demo.thumb,
         title: '音乐分享',
-        url: Demo.webpage,
-      }),
+        url: Demo.webpage
+      })
   },
   {
     label: '音乐视频',
@@ -140,8 +127,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         singerName: '测试歌手',
         songLyric: '[00:00.00] 这里是歌词',
         thumb: Demo.thumb,
-        title: '音乐视频分享',
-      }),
+        title: '音乐视频分享'
+      })
   },
   {
     label: '文件',
@@ -153,8 +140,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         file: Demo.file,
         scene,
         thumb: Demo.thumb,
-        title: 'dummy.pdf',
-      }),
+        title: 'dummy.pdf'
+      })
   },
   {
     label: '表情',
@@ -165,8 +152,8 @@ const SHARE_ACTIONS: ShareAction[] = [
         emoticon: Demo.emoticon,
         scene,
         thumb: Demo.thumb,
-        title: '表情分享',
-      }),
+        title: '表情分享'
+      })
   },
   {
     label: '小程序',
@@ -180,15 +167,15 @@ const SHARE_ACTIONS: ShareAction[] = [
         thumb: Demo.thumb,
         title: '小程序分享',
         userName: 'gh_0000000000',
-        webpageUrl: Demo.webpage,
-      }),
-  },
+        webpageUrl: Demo.webpage
+      })
+  }
 ];
 
 const SCENES: { label: string; value: WechatShareScene }[] = [
   { label: '会话', value: 'session' },
   { label: '朋友圈', value: 'timeline' },
-  { label: '收藏', value: 'favorite' },
+  { label: '收藏', value: 'favorite' }
 ];
 
 interface LogEntry {
@@ -235,7 +222,10 @@ const SectionCard = (props: SectionCardProps) => {
   const { children, title } = props;
 
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
+    <ThemedView
+      type="backgroundElement"
+      style={styles.card}
+    >
       <ThemedText type="smallBold">{title}</ThemedText>
       {children}
     </ThemedView>
@@ -268,9 +258,15 @@ const ActionButton = (props: ActionButtonProps) => {
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: selected ? theme.backgroundSelected : theme.background },
-        (pressed || disabled) && styles.pressed,
-      ]}>
-      {loading ? <ActivityIndicator size="small" color={theme.text} /> : null}
+        (pressed || disabled) && styles.pressed
+      ]}
+    >
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color={theme.text}
+        />
+      ) : null}
       <ThemedText type="small">{loading ? (loadingLabel ?? label) : label}</ThemedText>
     </Pressable>
   );
@@ -293,10 +289,10 @@ export default function WechatDemoScreen() {
             action: `event:${result.kind}`,
             detail: result.ok ? JSON.stringify(result.payload) : `${result.code} · ${result.message}`,
             duration: 0,
-            ok: result.ok,
+            ok: result.ok
           }),
-          ...prev,
-        ].slice(0, 50),
+          ...prev
+        ].slice(0, 50)
       );
     });
 
@@ -313,9 +309,9 @@ export default function WechatDemoScreen() {
           action: 'cold-start:share',
           detail: result.ok ? JSON.stringify(result.payload) : `${result.code} · ${result.message}`,
           duration: 0,
-          ok: result.ok,
+          ok: result.ok
         }),
-        ...prev,
+        ...prev
       ]);
     });
   }, []);
@@ -336,15 +332,26 @@ export default function WechatDemoScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+      <DemoHeader title="微信能力测试" />
+
+      <SafeAreaView
+        edges={['bottom']}
+        style={styles.safeArea}
+      >
         <ScrollView contentContainerStyle={styles.content}>
           <SectionCard title="环境">
-            <ThemedText type="small" themeColor="textSecondary">
-              微信登录 / 分享都需要真机 + 已安装微信，模拟器上一律返回未安装。
-              按钮上的「准备中…」是本地在下载媒体 / 压缩缩略图，「等待微信…」是已经切到微信、
-              在等你操作——两段的分界就是 onLaunched 回调。同一张缩略图第二次走缓存。
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+            >
+              微信登录 / 分享都需要真机 + 已安装微信，模拟器上一律返回未安装。 按钮上的「准备中…」是本地在下载媒体 /
+              压缩缩略图，「等待微信…」是已经切到微信、 在等你操作——两段的分界就是 onLaunched
+              回调。同一张缩略图第二次走缓存。
             </ThemedText>
-            <ThemedView type="backgroundElement" style={styles.row}>
+            <ThemedView
+              type="backgroundElement"
+              style={styles.row}
+            >
               <ActionButton
                 disabled={busy !== null}
                 label="是否安装微信"
@@ -373,11 +380,17 @@ export default function WechatDemoScreen() {
           </SectionCard>
 
           <SectionCard title="Universal Link 自检">
-            <ThemedText type="small" themeColor="textSecondary">
-              仅调试用，微信头文件明确写了别在正式环境调。会真的切到微信再跳回来，只能真机跑。
-              排查 ERR_WECHAT_NO_RESPONSE 就从这里开始——失败时看最后一条 step 的 suggestion。
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+            >
+              仅调试用，微信头文件明确写了别在正式环境调。会真的切到微信再跳回来，只能真机跑。 排查
+              ERR_WECHAT_NO_RESPONSE 就从这里开始——失败时看最后一条 step 的 suggestion。
             </ThemedText>
-            <ThemedView type="backgroundElement" style={styles.row}>
+            <ThemedView
+              type="backgroundElement"
+              style={styles.row}
+            >
               <ActionButton
                 disabled={busy !== null}
                 label="检查 Universal Link"
@@ -389,10 +402,16 @@ export default function WechatDemoScreen() {
           </SectionCard>
 
           <SectionCard title="登录">
-            <ThemedText type="small" themeColor="textSecondary">
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+            >
               成功后拿到的是 code，要交给自己的后端换 token；这里只展示原始返回，不写入登录态
             </ThemedText>
-            <ThemedView type="backgroundElement" style={styles.row}>
+            <ThemedView
+              type="backgroundElement"
+              style={styles.row}
+            >
               <ActionButton
                 disabled={busy !== null}
                 label="微信授权登录"
@@ -403,8 +422,8 @@ export default function WechatDemoScreen() {
                     sendWechatAuth({
                       onLaunched: () => setStage('waiting'),
                       scope: 'snsapi_userinfo',
-                      state: `demo_${logSeq}`,
-                    }),
+                      state: `demo_${logSeq}`
+                    })
                   )
                 }
               />
@@ -412,10 +431,16 @@ export default function WechatDemoScreen() {
           </SectionCard>
 
           <SectionCard title="分享场景">
-            <ThemedText type="small" themeColor="textSecondary">
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+            >
               小程序卡片只支持会话，选别的会被原生强制改回去
             </ThemedText>
-            <ThemedView type="backgroundElement" style={styles.row}>
+            <ThemedView
+              type="backgroundElement"
+              style={styles.row}
+            >
               {SCENES.map(item => (
                 <ActionButton
                   key={item.value}
@@ -429,20 +454,26 @@ export default function WechatDemoScreen() {
 
           <SectionCard title="分享与收藏">
             {SHARE_ACTIONS.map(action => (
-              <ThemedView key={action.label} type="backgroundElement" style={styles.shareRow}>
+              <ThemedView
+                key={action.label}
+                type="backgroundElement"
+                style={styles.shareRow}
+              >
                 <ActionButton
                   disabled={busy !== null}
                   label={action.label}
                   loading={busy === `share:${action.label}`}
                   loadingLabel={stage === 'preparing' ? '准备中…' : '等待微信…'}
                   onPress={() =>
-                    run(`share:${action.label}`, () =>
-                      action.run(scene, { onLaunched: () => setStage('waiting') }),
-                    )
+                    run(`share:${action.label}`, () => action.run(scene, { onLaunched: () => setStage('waiting') }))
                   }
                 />
                 {action.note ? (
-                  <ThemedText type="small" themeColor="textSecondary" style={styles.note}>
+                  <ThemedText
+                    type="small"
+                    themeColor="textSecondary"
+                    style={styles.note}
+                  >
                     {action.note}
                   </ThemedText>
                 ) : null}
@@ -452,17 +483,30 @@ export default function WechatDemoScreen() {
 
           <SectionCard title={`调用记录（${logs.length}）`}>
             {logs.length === 0 ? (
-              <ThemedText type="small" themeColor="textSecondary">
+              <ThemedText
+                type="small"
+                themeColor="textSecondary"
+              >
                 还没有调用记录
               </ThemedText>
             ) : (
               logs.map(entry => (
-                <ThemedView key={entry.id} type="backgroundElement" style={styles.logEntry}>
-                  <ThemedText type="smallBold" style={{ color: entry.ok ? theme.text : '#E5484D' }}>
+                <ThemedView
+                  key={entry.id}
+                  type="backgroundElement"
+                  style={styles.logEntry}
+                >
+                  <ThemedText
+                    type="smallBold"
+                    style={{ color: entry.ok ? theme.text : '#E5484D' }}
+                  >
                     {entry.ok ? '✓' : '✗'} {entry.action}
                     {entry.duration > 0 ? ` · ${entry.duration}ms` : ''}
                   </ThemedText>
-                  <ThemedText type="code" style={styles.logDetail}>
+                  <ThemedText
+                    type="code"
+                    style={styles.logDetail}
+                  >
                     {entry.detail}
                   </ThemedText>
                 </ThemedView>
@@ -477,33 +521,33 @@ export default function WechatDemoScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   safeArea: {
     flex: 1,
     width: '100%',
     maxWidth: MaxContentWidth,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   content: {
     gap: Spacing.three,
-    padding: Spacing.three,
+    padding: Spacing.three
   },
   card: {
     borderRadius: Spacing.three,
     gap: Spacing.two,
-    padding: Spacing.three,
+    padding: Spacing.three
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.two,
+    gap: Spacing.two
   },
   shareRow: {
     alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.two,
+    gap: Spacing.two
   },
   button: {
     alignItems: 'center',
@@ -511,21 +555,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.one,
     paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
+    paddingVertical: Spacing.two
   },
   pressed: {
-    opacity: 0.5,
+    opacity: 0.5
   },
   note: {
-    flexShrink: 1,
+    flexShrink: 1
   },
   logEntry: {
     borderRadius: Spacing.two,
     gap: Spacing.half,
-    padding: Spacing.two,
+    padding: Spacing.two
   },
   logDetail: {
     fontSize: 11,
-    lineHeight: 16,
-  },
+    lineHeight: 16
+  }
 });
