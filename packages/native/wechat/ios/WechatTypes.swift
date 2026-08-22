@@ -17,6 +17,15 @@ struct WechatError: Error {
   let message: String
 }
 
+extension String {
+  /// 微信 SDK 的头文件整份包在 `NS_ASSUME_NONNULL_BEGIN` 里，`errStr` 这类字段在 Swift
+  /// 侧是非可选 `String`，写 `?? "兜底"` 右边永远执行不到（编译器会报 warning）。
+  /// 但微信失败时给的往往是空串而不是 nil，所以兜底要判空串。
+  func orIfEmpty(_ fallback: @autoclosure () -> String) -> String {
+    isEmpty ? fallback() : self
+  }
+}
+
 /// 把微信的整数错误码翻成 JS 侧稳定的字符串错误码。
 ///
 /// 错误码定义见 SDK 头文件 `WXApiObject.h` 的 `enum WXErrCode`：
@@ -36,14 +45,14 @@ enum WechatErrCode {
     case Int32(WXErrCodeUnsupport.rawValue):
       return WechatError(code: "ERR_WECHAT_UNSUPPORTED", message: "当前微信版本不支持该功能")
     case Int32(WXErrCodeSentFail.rawValue):
-      return WechatError(code: "ERR_WECHAT_SENT_FAILED", message: resp.errStr ?? "微信发送失败")
+      return WechatError(code: "ERR_WECHAT_SENT_FAILED", message: resp.errStr.orIfEmpty("微信发送失败"))
     case Int32(WXErrCodeCommon.rawValue):
-      return WechatError(code: "ERR_WECHAT_COMMON", message: resp.errStr ?? "微信返回普通错误")
+      return WechatError(code: "ERR_WECHAT_COMMON", message: resp.errStr.orIfEmpty("微信返回普通错误"))
     default:
       // 微信后续新增的错误码会走到这里
       return WechatError(
         code: "ERR_WECHAT_FAILED",
-        message: resp.errStr ?? "微信返回失败(\(resp.errCode))"
+        message: resp.errStr.orIfEmpty("微信返回失败(\(resp.errCode))")
       )
     }
   }

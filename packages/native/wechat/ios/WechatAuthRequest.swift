@@ -20,7 +20,7 @@ enum WechatAuthRequest {
 
     var payload: [String: Any] = [
       "errCode": Int(resp.errCode),
-      "errStr": resp.errStr ?? ""
+      "errStr": resp.errStr
     ]
     // 字典下标赋 nil 会把 key 删掉，JS 侧就成了 undefined；显式写 NSNull 才是 null
     payload["code"] = resp.code ?? NSNull()

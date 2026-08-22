@@ -245,11 +245,14 @@ enum WechatShareRequest {
     if let error = WechatErrCode.commonError(from: resp) {
       return .failure(error)
     }
+    // 注意和 `WechatAuthRequest` 不一样：`SendAuthResp` 的 lang/country 在头文件里标了
+    // `nullable`，这里 `SendMessageToWXResp` 的没标，Swift 侧是非可选 String——
+    // 所以不需要（也不能）用 `?? NSNull()` 兜。JS 侧这两个字段拿到的是字符串，不会是 null。
     return .success([
       "errCode": Int(resp.errCode),
-      "errStr": resp.errStr ?? "",
-      "lang": resp.lang ?? NSNull(),
-      "country": resp.country ?? NSNull()
+      "errStr": resp.errStr,
+      "lang": resp.lang,
+      "country": resp.country
     ])
   }
 

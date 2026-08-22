@@ -130,15 +130,18 @@ final class WechatSDK: NSObject, WXApiDelegate {
       WXApi.checkUniversalLinkReady { step, result in
         // 微信没承诺回调在哪条线程，steps 只在主线程累加
         self.onMain {
+          let errorInfo = Self.ulText(result, "errorInfo")
+          let suggestion = Self.ulText(result, "suggestion")
+
           steps.append([
             "step": Self.stepName(step),
             "success": result.success,
-            "errorInfo": result.errorInfo ?? "",
-            "suggestion": result.suggestion ?? ""
+            "errorInfo": errorInfo,
+            "suggestion": suggestion
           ])
 
           if !result.success {
-            finish(false, result.errorInfo ?? "Universal Link 自检未通过")
+            finish(false, errorInfo.orIfEmpty("Universal Link 自检未通过"))
           } else if step == .final {
             finish(true, "Universal Link 配置正常")
           }
@@ -270,6 +273,16 @@ final class WechatSDK: NSObject, WXApiDelegate {
   /// 请求还没发出去就失败时走这里，保证 JS 侧拿到的形状和正常结果完全一致
   func fail(_ kind: WechatRespKind, _ code: String, _ message: String, _ promise: Promise) {
     promise.resolve(Self.encode(kind, .failure(WechatError(code: code, message: message))))
+  }
+
+  /// 安全地读 `WXCheckULStepResult` 的字符串字段。
+  ///
+  /// 这个类的属性声明在 `NS_ASSUME_NONNULL_BEGIN` 里且没标 `nullable`，Swift 侧因此是
+  /// 非可选 `String`；但同一个类的 `initWithCheckResult:errorInfo:suggestion:` 收的是
+  /// `nullable NSString*`（WXApiObject.h:120）——也就是说头文件在撒谎，运行时真的可能是 nil，
+  /// 而直接读非可选 `String` 会在桥接时崩。走 KVC 把可选性拿回来。
+  private static func ulText(_ result: WXCheckULStepResult, _ key: String) -> String {
+    (result.value(forKey: key) as? String) ?? ""
   }
 
   private static func stepName(_ step: WXULCheckStep) -> String {
