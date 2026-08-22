@@ -1,125 +1,136 @@
-import { Link } from 'expo-router';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Button, Input, Text, showDialog } from '@skyroc/native-ui';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, View } from 'react-native';
+import { withUniwind } from 'uniwind';
+import { useSession } from '@/feature/auth/auth-context';
+import { AuthAgreement } from './modules/AuthAgreement';
+import { AuthShell } from './modules/AuthShell';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useSession } from '@/contexts/auth';
-import { useTheme } from '@/hooks/use-theme';
-import { useWechatLogin } from '@/hooks/use-wechat-login';
+const Icon = withUniwind(MaterialCommunityIcons);
 
-export default function LoginScreen() {
-  const { signIn } = useSession();
-  const theme = useTheme();
+const PasswordLoginScreen = () => {
+  const router = useRouter();
+
   const [account, setAccount] = useState('');
-  const { isPending: isWechatPending, login: loginWithWechat } = useWechatLogin(signIn);
 
-  // 登录成功后只需要写入凭证，跳转交给根布局的 Stack.Protected
-  const handleLogin = () => signIn(account.trim() || 'demo-token');
+  const [password, setPassword] = useState('');
+
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const { signIn } = useSession();
+
+  function handleLogin() {
+    if (!termsAccepted) {
+      showDialog({ message: '请先同意用户协议和隐私政策', title: '请先阅读并同意' });
+      return;
+    }
+
+    signIn(account.trim() || 'demo-token');
+  }
+
+  function handleRegister() {
+    showDialog({ message: '演示应用暂未接入注册流程', title: '注册账号' });
+  }
+
+  function handleForgotPassword() {
+    showDialog({ message: '演示应用暂未接入密码找回流程', title: '找回密码' });
+  }
+
+  function handlePhoneLogin() {
+    router.replace('/phone-login');
+  }
 
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.content}>
-        <AnimatedIcon />
+    <AuthShell>
+      <Text className="text-2xl font-bold tracking-tight text-foreground">账号密码登录</Text>
+      <Text className="mt-2 text-sm text-muted-foreground">使用已有账号进入 Skyroc App</Text>
 
-        <ThemedText type="subtitle">欢迎回来</ThemedText>
-        <ThemedText
-          type="small"
-          themeColor="textSecondary"
-          style={styles.caption}
-        >
-          登录后即可进入应用
-        </ThemedText>
-
-        <TextInput
-          value={account}
-          onChangeText={setAccount}
-          placeholder="账号"
-          placeholderTextColor={theme.textSecondary}
+      <View className="mt-8">
+        <Input
           autoCapitalize="none"
           autoCorrect={false}
-          style={[styles.input, { backgroundColor: theme.backgroundElement, color: theme.text }]}
+          clearable
+          leading={
+            <Icon
+              colorClassName="accent-muted-foreground"
+              name="account-outline"
+              size={22}
+            />
+          }
+          returnKeyType="next"
+          size="lg"
+          value={account}
+          variant="filled"
+          placeholder="请输入手机号或账号"
+          onChangeText={setAccount}
         />
 
-        <Pressable
+        <Input
+          className="mt-4"
+          leading={
+            <Icon
+              colorClassName="accent-muted-foreground"
+              name="lock-outline"
+              size={22}
+            />
+          }
+          returnKeyType="done"
+          size="lg"
+          type="password"
+          value={password}
+          variant="filled"
+          placeholder="请输入密码"
+          onChangeText={setPassword}
+          onSubmitEditing={handleLogin}
+        />
+
+        <Button
+          variant="ghost"
+          className="self-start px-0"
+          onPress={handlePhoneLogin}
+        >
+          <Icon
+            colorClassName="accent-primary"
+            name="swap-horizontal"
+            size={20}
+          />
+          <Text className="ml-1.5 text-sm font-semibold text-primary">使用验证码登录</Text>
+        </Button>
+
+        <Button
+          block
+          className="mt-6"
+          shape="pill"
+          size="lg"
           onPress={handleLogin}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: theme.backgroundSelected },
-            pressed && styles.pressed
-          ]}
         >
-          <ThemedText type="smallBold">登录</ThemedText>
-        </Pressable>
+          登录
+        </Button>
 
-        <Pressable
-          onPress={loginWithWechat}
-          disabled={isWechatPending}
-          style={({ pressed }) => [styles.button, styles.wechatButton, (pressed || isWechatPending) && styles.pressed]}
-        >
-          <ThemedText
-            type="smallBold"
-            style={styles.wechatLabel}
+        <AuthAgreement
+          checked={termsAccepted}
+          onCheckedChange={setTermsAccepted}
+        />
+
+        <View className="mt-3 flex-row items-center justify-between">
+          <Pressable
+            className="py-2 active:opacity-60"
+            onPress={handleRegister}
           >
-            {isWechatPending ? '正在跳转微信…' : '微信登录'}
-          </ThemedText>
-        </Pressable>
-
-        <Link
-          href="/wechat-demo"
-          asChild
-        >
-          <Pressable style={({ pressed }) => pressed && styles.pressed}>
-            <ThemedText type="link">微信能力测试</ThemedText>
+            <Text className="text-sm font-medium text-primary">注册账号</Text>
           </Pressable>
-        </Link>
-      </SafeAreaView>
-    </ThemedView>
+          <Pressable
+            className="py-2 active:opacity-60"
+            onPress={handleForgotPassword}
+          >
+            <Text  className="text-sm text-muted-foreground">忘记密码？</Text>
+          </Pressable>
+        </View>
+      </View>
+    </AuthShell>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    width: '100%',
-    maxWidth: MaxContentWidth,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.four,
-    gap: Spacing.two
-  },
-  caption: {
-    marginBottom: Spacing.three
-  },
-  input: {
-    width: '100%',
-    maxWidth: 360,
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-    fontSize: 16
-  },
-  button: {
-    width: '100%',
-    maxWidth: 360,
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.three,
-    alignItems: 'center'
-  },
-  wechatButton: {
-    backgroundColor: '#07C160'
-  },
-  wechatLabel: {
-    color: '#FFFFFF'
-  },
-  pressed: {
-    opacity: 0.7
-  }
-});
+export default PasswordLoginScreen;
