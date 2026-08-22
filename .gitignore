@@ -49,6 +49,10 @@ ios/
 android/
 *.orig.*
 
+# expo modules 下的 ios/android 是手写的原生源码，不是 prebuild 产物，要提交
+!apps/expo-templete/modules/*/ios/
+!apps/expo-templete/modules/*/android/
+
 # ---------- Native signing / certificates ----------
 *.jks
 *.p8
