@@ -8,8 +8,7 @@ const SOURCE_APP = 'expo-templete';
 /**
  * 腾讯地图的 referer，必须是腾讯位置服务后台申请的 key。
  *
- * 没配 key 时腾讯地图会被整个摘掉：调起链接照样能拉起 App，但落地就是「来源未授权」的报错页，
- * 与其给用户一个必然失败的选项，不如当它不存在。
+ * 没配 key 时腾讯地图会被整个摘掉：调起链接照样能拉起 App，但落地就是「来源未授权」的报错页， 与其给用户一个必然失败的选项，不如当它不存在。
  */
 const TENCENT_KEY = process.env.EXPO_PUBLIC_TENCENT_MAP_KEY ?? '';
 
@@ -53,8 +52,8 @@ export interface MapProvider {
   /**
    * 仅用于 canOpenURL 探测的裸 scheme。
    *
-   * 不拿 buildUrl 的完整链接去探测：iOS 只按 scheme 匹配 LSApplicationQueriesSchemes，
-   * Android 反而会因为 query 里的中文和 `|` 让 Intent 解析出意料之外的结果。
+   * 不拿 buildUrl 的完整链接去探测：iOS 只按 scheme 匹配 LSApplicationQueriesSchemes， Android 反而会因为 query 里的中文和 `|` 让 Intent
+   * 解析出意料之外的结果。
    */
   probeScheme: string;
 }
@@ -119,9 +118,8 @@ export const MAP_PROVIDERS = ALL_PROVIDERS.filter(provider => provider.id !== 't
 /**
  * 探测本机装了哪些地图 App。
  *
- * canOpenURL 需要预先声明可探测的 scheme，否则一律返回 false：
- * iOS 看 Info.plist 的 LSApplicationQueriesSchemes，Android 11+ 看 AndroidManifest 的 queries，
- * 两边都由 `plugins/with-map-app-links.js` 在 prebuild 时写入。
+ * CanOpenURL 需要预先声明可探测的 scheme，否则一律返回 false： iOS 看 Info.plist 的 LSApplicationQueriesSchemes，Android 11+ 看
+ * AndroidManifest 的 queries， 两边都由 `plugins/with-map-app-links.js` 在 prebuild 时写入。
  */
 export const getAvailableMapProviders = async () => {
   const os = Platform.OS === 'ios' ? 'ios' : 'android';

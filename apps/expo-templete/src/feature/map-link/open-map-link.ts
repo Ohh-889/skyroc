@@ -19,8 +19,7 @@ export interface OpenMapLinkOptions {
 /**
  * 调起链接并吞掉异常。
  *
- * openURL 在「scheme 无人接管」时是 reject 而不是返回 false，调用点都拿不住这个 promise，
- * 抛出去就是一条 unhandled rejection 加上用户看不到任何提示。
+ * OpenURL 在「scheme 无人接管」时是 reject 而不是返回 false，调用点都拿不住这个 promise， 抛出去就是一条 unhandled rejection 加上用户看不到任何提示。
  */
 const openUrl = async (url: string) => {
   try {
@@ -36,8 +35,7 @@ const openUrl = async (url: string) => {
 /**
  * 弹出地图选择面板，并调起用户选中的地图 App。
  *
- * 写成普通函数而不是 hook：整个流程没有任何 React 状态，面板由 showActionSheet 挂在 Portal 上，
- * 包成 hook 只会平白给调用点加上「必须在组件顶层调用」的限制。
+ * 写成普通函数而不是 hook：整个流程没有任何 React 状态，面板由 showActionSheet 挂在 Portal 上， 包成 hook 只会平白给调用点加上「必须在组件顶层调用」的限制。
  *
  * @returns 实际被调起的地图 id；用户取消、或调起失败时返回 null。
  */
