@@ -22,11 +22,11 @@ src/pages/(app)/order/[id]/
 
 ### 规则
 
-| 位置 | 只能放 |
-| --- | --- |
-| `src/app/**` | `_layout.tsx`、expo-router 特殊文件、一行转发文件 |
-| `src/pages/**` | 页面主体、`modules/` 私有组件 |
-| `src/feature/<域>/` | api、types、领域 hooks、跨分组复用的组件 |
+| 位置                | 只能放                                            |
+| ------------------- | ------------------------------------------------- |
+| `src/app/**`        | `_layout.tsx`、expo-router 特殊文件、一行转发文件 |
+| `src/pages/**`      | 页面主体、`modules/` 私有组件                     |
+| `src/feature/<域>/` | api、types、领域 hooks、跨分组复用的组件          |
 
 - 页面默认是单文件 `src/pages/<同路径>.tsx`；需要私有组件时升级成目录 `<同路径>/index.tsx` + `modules/`。
 - `modules/` 放在**使用它的所有页面的最近公共父目录**下。跨路由分组复用则上移到 `src/feature/<域>/components/`。
@@ -43,16 +43,47 @@ src/pages/(app)/order/[id]/
 
 ## 路由分组
 
-| 分组 | 用途 | 守卫 |
-| --- | --- | --- |
-| `(auth)` | 登录流程 | 仅未登录可进 |
-| `(app)` | 登录后的全部页面 | 仅已登录可进 |
+| 分组          | 用途                           | 守卫                       |
+| ------------- | ------------------------------ | -------------------------- |
+| `(auth)`      | 登录流程                       | 仅未登录可进               |
+| `(app)`       | 登录后的全部页面               | 仅已登录可进               |
 | `(app)/demo/` | 组件与原生能力演示，真实路径段 | 跟随 `(app)`，仅已登录可进 |
 
 守卫只在 `src/app/_layout.tsx` 写一次。**新增业务页面往 `(app)` 里加，不要动根 layout。**
 
 二级页默认与 `(app)/(tabs)` 平级，push 时整页盖住 tab bar；只有必须保留 tab 上下文的流程才在
 对应 tab 目录里再套一层 Stack。
+
+## 深链（deep link / universal link）
+
+外部进 App 的入口——自定义 scheme、Universal Link / App Links、以及项目自己接的推送点击——
+都汇到 `src/feature/linking` 的 `resolveLink`：归一成路由路径 → 过白名单 → 未登录则暂存，
+等登录后重放。路由决策只有这一处。
+
+| 文件                                             | 职责                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------ |
+| `src/app/+native-intent.ts`                      | 深链的原生入口，跑在导航器挂载**之前**，唯一能改写目标的地方 |
+| `src/feature/linking/resolve-link.ts`            | URL → 路由的归一与白名单，怎么接推送也写在这份注释里         |
+| `src/feature/linking/pending-link.ts`            | 未登录时暂存目标（只在内存里）                               |
+| `src/feature/linking/use-pending-link-replay.ts` | 登录后重放，挂在根 `_layout`                                 |
+
+同一个目标的三种写法：
+
+```text
+expotemplete.dev://demo/messages?from=link            自定义 scheme，按环境带后缀
+https://<APP_LINK_HOST>/app/demo/messages?from=link   Universal Link，网页侧前缀 /app 会被切掉
+/demo/messages?from=push                              推送 payload 里下发的站内路径
+```
+
+- **新增可被外部打开的页面，必须往 `resolve-link.ts` 的 `ALLOWED_PREFIXES` 里加一条**，
+  否则链接会落到 `+not-found`。这个动作是故意做成显式的：深链和推送 payload 都来自 App 之外，
+  放开任意路径等于「谁都能把用户送进任意页面」。
+- 模板不预装推送 SDK。装了 `expo-notifications` 之后，把点击通知的回调接到 `resolveLink` 上即可，
+  调用范例在 `resolve-link.ts` 顶部的注释里。
+- `scheme` / `associatedDomains` / `intentFilters` 写进 Info.plist 与 AndroidManifest，
+  **改了必须重新 build，OTA 覆盖不到**；`feature/linking` 全是纯 JS，可以 OTA。
+- 域名侧还要放 `/.well-known/apple-app-site-association` 与 `/.well-known/assetlinks.json`
+  （https、无重定向、`application/json`），这两份不在仓库里。
 
 ## 页面头部（强制）
 
@@ -88,19 +119,19 @@ const OrderDetailScreen = () => (
 
 目录结构和 web 端（`apps/admin-example/src/service`）保持一致：
 
-| 文件 | 职责 |
-| --- | --- |
-| `src/service/config.ts` | baseURL、超时、后端业务码，全部读 `EXPO_PUBLIC_*` |
-| `src/service/adapter.ts` | 平台差异：用什么弹提示、凭据存在哪、登录页怎么跳 |
-| `src/service/request/index.ts` | 全局 `request` 实例 |
-| `src/service/queryClient.ts` | 全局 `queryClient` |
-| `src/service/api/<域>/urls.ts` | `MODULE_URLS` |
-| `src/service/api/<域>/api.ts` | `fetchXxx`，一行 `request()` |
-| `src/service/api/<域>/keys.ts` | `MODULE_QUERY_KEYS` / `MODULE_MUTATION_KEYS` |
-| `src/service/api/<域>/hooks.ts` | `useXxxQuery` / `useXxxMutation` |
-| `src/service/api/<域>/types.d.ts` | `Api.<域>` 的接口类型，就近放在模块里 |
-| `src/service/api/<域>/index.ts` | 域内四个 ts 文件的 barrel，再由 `api/index.ts` 汇总 |
-| `src/service/common.d.ts` | `Api.Service.*`：响应信封、分页这类公共类型 |
+| 文件                              | 职责                                                |
+| --------------------------------- | --------------------------------------------------- |
+| `src/service/config.ts`           | baseURL、超时、后端业务码，全部读 `EXPO_PUBLIC_*`   |
+| `src/service/adapter.ts`          | 平台差异：用什么弹提示、凭据存在哪、登录页怎么跳    |
+| `src/service/request/index.ts`    | 全局 `request` 实例                                 |
+| `src/service/queryClient.ts`      | 全局 `queryClient`                                  |
+| `src/service/api/<域>/urls.ts`    | `MODULE_URLS`                                       |
+| `src/service/api/<域>/api.ts`     | `fetchXxx`，一行 `request()`                        |
+| `src/service/api/<域>/keys.ts`    | `MODULE_QUERY_KEYS` / `MODULE_MUTATION_KEYS`        |
+| `src/service/api/<域>/hooks.ts`   | `useXxxQuery` / `useXxxMutation`                    |
+| `src/service/api/<域>/types.d.ts` | `Api.<域>` 的接口类型，就近放在模块里               |
+| `src/service/api/<域>/index.ts`   | 域内四个 ts 文件的 barrel，再由 `api/index.ts` 汇总 |
+| `src/service/common.d.ts`         | `Api.Service.*`：响应信封、分页这类公共类型         |
 
 接口类型跟着接口走：每个域自己的 `types.d.ts`，公共的（响应信封、分页）放 `src/service/common.d.ts`，
 都写成 `declare namespace Api { namespace <域> { ... } }`。它们是全局声明，不用也不该被 `index.ts` 再导出一遍。
