@@ -183,6 +183,11 @@ catalogs:
     # 安全区（版本跟随 Expo SDK 57 的锁定值）
     'react-native-safe-area-context': ~5.7.0
 
+    # 长列表底座：feature/list 的 List 基于其封装。v2 只跑在新架构上，没有老架构回退。
+    # 这里不跟 Expo SDK 57 的锁定值（2.0.2），直接用 npm latest——2.0.2 之后修了一批回收与
+    # 布局的 bug。代价是 `expo install --check` 会报一条 outdated，属预期
+    '@shopify/flash-list': 2.3.2
+
     # 弹出层底座：Popup 基于其封装。npm latest 即为该 rc 版本
     'react-native-modal': 14.0.0-rc.1
 
