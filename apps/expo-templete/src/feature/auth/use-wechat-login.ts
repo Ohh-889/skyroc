@@ -5,10 +5,11 @@ import type { WechatAuthResponse, WechatResult } from '@skyroc/expo-wechat';
 import { consumePendingWechatAuth, isWechatCancelled, sendWechatAuth } from '@skyroc/expo-wechat';
 
 /** 前端只拿得到 code，换 token 必须走后端（需要 AppSecret，不能下发到客户端） */
-const exchangeToken = async (code: string) => {
+const exchangeToken = async (code: string): Promise<Api.Auth.LoginToken> => {
   // 换成自己的接口：后端用 code + AppSecret 调
-  // https://api.weixin.qq.com/sns/oauth2/access_token，再返回业务 token
-  return `wechat:${code}`;
+  // https://api.weixin.qq.com/sns/oauth2/access_token，再返回业务凭据。
+  // 真实写法就是 service/api/auth/api.ts 里那样的一行 request()
+  return { refreshToken: 'demo-refresh-token', token: `wechat:${code}` };
 };
 
 /**
@@ -24,7 +25,10 @@ const createState = () => `login_${Date.now()}_${Math.random().toString(36).slic
  * 自己吞掉所有异常：两个调用点（点击、冷启动）都拿不住 promise，
  * 抛出去就是一条 unhandled rejection + 用户看不到任何提示。
  */
-const handleAuthResult = async (result: WechatResult<WechatAuthResponse>, onSuccess: (token: string) => void) => {
+const handleAuthResult = async (
+  result: WechatResult<WechatAuthResponse>,
+  onSuccess: (tokens: Api.Auth.LoginToken) => void
+) => {
   if (!result.ok) {
     // 用户自己点的取消，不用弹窗打扰
     if (!isWechatCancelled(result)) {
@@ -47,7 +51,7 @@ const handleAuthResult = async (result: WechatResult<WechatAuthResponse>, onSucc
   }
 };
 
-export const useWechatLogin = (onSuccess: (token: string) => void) => {
+export const useWechatLogin = (onSuccess: (tokens: Api.Auth.LoginToken) => void) => {
   const [isPending, setIsPending] = useState(false);
 
   // 重入锁用 ref 不用 state：同一帧内连点两次都会读到旧的 isPending

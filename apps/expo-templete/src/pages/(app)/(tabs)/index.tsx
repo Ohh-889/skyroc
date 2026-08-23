@@ -8,7 +8,7 @@ import { HintRow } from '@/components/hint-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useSession } from '@/feature/auth/auth-context';
+import { useSession } from '@/feature/auth';
 
 function getDevMenuHint() {
   if (Device.isDevice) {

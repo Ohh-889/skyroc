@@ -2,8 +2,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Button, Divider, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 import { withUniwind } from 'uniwind';
-import { useSession } from '@/feature/auth/auth-context';
-import { useWechatLogin } from '@/feature/auth/use-wechat-login';
+import { useSession, useWechatLogin } from '@/feature/auth';
 
 const Icon = withUniwind(MaterialCommunityIcons);
 

@@ -4,7 +4,9 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { withUniwind } from 'uniwind';
-import { useSession } from '@/feature/auth/auth-context';
+import { DEMO_AUTH_TOKENS, useSession } from '@/feature/auth';
+import { useLoginMutation } from '@/service/api';
+import { HAS_API_BASE_URL } from '@/service/config';
 import { AuthAgreement } from './modules/AuthAgreement';
 import { AuthShell } from './modules/AuthShell';
 
@@ -21,13 +23,23 @@ const PasswordLoginScreen = () => {
 
   const { signIn } = useSession();
 
+  const { isPending: isLoggingIn, mutate: login } = useLoginMutation();
+
   function handleLogin() {
     if (!termsAccepted) {
       showDialog({ message: '请先同意用户协议和隐私政策', title: '请先阅读并同意' });
       return;
     }
 
-    signIn(account.trim() || 'demo-token');
+    // 模板不自带后端：没配 EXPO_PUBLIC_API_BASE_URL 就用一份本地假凭据放行。
+    // 接上真实接口后把这个分支和 DEMO_AUTH_TOKENS 一起删掉
+    if (!HAS_API_BASE_URL) {
+      signIn(DEMO_AUTH_TOKENS);
+      return;
+    }
+
+    // 失败的提示由请求层统一弹（见 service/adapter），这里只管成功之后的事
+    login({ password, userName: account.trim() }, { onSuccess: tokens => signIn(tokens) });
   }
 
   function handleRegister() {
@@ -102,6 +114,7 @@ const PasswordLoginScreen = () => {
         <Button
           block
           className="mt-6"
+          loading={isLoggingIn}
           shape="pill"
           size="lg"
           onPress={handleLogin}

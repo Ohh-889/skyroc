@@ -1,4 +1,5 @@
 // oxlint-disable import/no-unassigned-import
+import { JotaiProvider } from '@skyroc/core-state';
 import { BottomSheetModalProvider, PortalHost } from '@skyroc/native-ui';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,7 +10,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaListener, SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { Uniwind } from 'uniwind';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import { SessionProvider, useSession } from '@/feature/auth/auth-context';
+import { useSession } from '@/feature/auth';
 import { DevFloatingButton } from '@/feature/dev';
 import { QueryProvider } from '@/feature/query/query-provider';
 import '../global.css';
@@ -24,10 +25,9 @@ if (initialWindowMetrics) {
 }
 
 function RootNavigator() {
-  const { isLoading, session } = useSession();
-
-  // 凭证还没读出来，先让原生启动屏留在上面，避免闪一下登录页
-  if (isLoading) return null;
+  // 凭据是从 SecureStore 同步读出来的（见 store/secure-storage），第一帧就是准的，
+  // 不需要再等一个 loading 态
+  const { isLoggedIn } = useSession();
 
   return (
     <>
@@ -42,7 +42,7 @@ function RootNavigator() {
         }}
       >
         {/* 已登录：(app) 下的一切，含 demo 演示分组。新增业务页面只往 (app) 里加，这里永远不用再动 */}
-        <Stack.Protected guard={Boolean(session)}>
+        <Stack.Protected guard={isLoggedIn}>
           <Stack.Screen
             options={{ headerShown: false }}
             name="(app)"
@@ -50,7 +50,7 @@ function RootNavigator() {
         </Stack.Protected>
 
         {/* 未登录：只能停在 (auth)/login */}
-        <Stack.Protected guard={!session}>
+        <Stack.Protected guard={!isLoggedIn}>
           <Stack.Screen
             options={{ headerShown: false }}
             name="(auth)"
@@ -69,10 +69,10 @@ export default function RootLayout() {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         {/* 转屏、分屏、键盘导航栏变化时把最新 insets 同步给 uniwind */}
         <SafeAreaListener onChange={({ insets }) => Uniwind.updateInsets(insets)}>
-          <QueryProvider>
-            <SessionProvider>
+          <JotaiProvider>
+            <QueryProvider>
               {/* 键盘底座：statusBar/navigationBar 都标成 translucent，
-                否则 Android 端会被额外顶出一段系统栏高度，破坏 edge-to-edge 布局 */}
+                  否则 Android 端会被额外顶出一段系统栏高度，破坏 edge-to-edge 布局 */}
               <KeyboardProvider
                 navigationBarTranslucent
                 statusBarTranslucent
@@ -95,8 +95,8 @@ export default function RootLayout() {
                   </ThemeProvider>
                 </BottomSheetModalProvider>
               </KeyboardProvider>
-            </SessionProvider>
-          </QueryProvider>
+            </QueryProvider>
+          </JotaiProvider>
         </SafeAreaListener>
       </SafeAreaProvider>
     </GestureHandlerRootView>

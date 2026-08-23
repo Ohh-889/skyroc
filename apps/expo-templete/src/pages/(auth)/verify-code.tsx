@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { View } from 'react-native';
 import { withUniwind } from 'uniwind';
-import { useSession } from '@/feature/auth/auth-context';
+import { DEMO_AUTH_TOKENS, useSession } from '@/feature/auth';
 import { AuthShell } from './modules/AuthShell';
 
 const Icon = withUniwind(MaterialCommunityIcons);
@@ -67,7 +67,8 @@ const VerifyCodeScreen = () => {
       return;
     }
 
-    signIn(`phone:${phone}`);
+    // 模板没接后端，验证码校验和换取凭据都要换成真实接口
+    signIn(DEMO_AUTH_TOKENS);
   }
 
   function handleResend() {
