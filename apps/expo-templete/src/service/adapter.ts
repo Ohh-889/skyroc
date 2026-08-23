@@ -2,6 +2,7 @@ import { showDialog, showFailToast } from '@skyroc/native-ui';
 import type { RequestAdapter } from '@skyroc/service';
 
 import { getRefreshToken, getToken, resetAuth, setAuth } from '@/feature/auth/auth-store';
+import { OFFLINE_MESSAGE, getIsOnline } from '@/feature/network/network-store';
 
 import { fetchRefreshToken } from './api/auth/refresh';
 import { AUTH_URLS } from './api/auth/urls';
@@ -15,6 +16,20 @@ const REQUEST_TEXTS: Record<string, string> = {
   'common.error': '提示',
   'request.logoutMsg': '登录状态已失效，请重新登录'
 };
+
+/**
+ * 把请求层给的原始消息换成用户看得懂的话。
+ *
+ * 断网时 axios 只会甩一句英文 `Network Error`，超时则是 `timeout of 10000ms exceeded`——
+ * 直接弹给用户毫无意义。这里按当前网络状态分流，也正是「断网」和「服务端挂了」必须分开的地方：
+ *
+ * - 没网：告诉用户去检查网络，这事他自己能解决，也**不该**上报给 Sentry
+ *   （地铁、电梯、隧道里产生的断网错误能把错误看板刷爆，真正的后端 bug 全被淹掉）
+ * - 有网还失败：那是服务端或链路的问题，保留原始消息，该报警报警
+ */
+function resolveErrorMessage(msg: string) {
+  return getIsOnline() ? msg : OFFLINE_MESSAGE;
+}
 
 /**
  * React Native 平台适配器。
@@ -44,7 +59,7 @@ export const nativeAdapter: RequestAdapter = {
   resetAuth,
   setAuth,
   showErrorMessage(msg, onClose) {
-    showFailToast({ message: msg, onClose });
+    showFailToast({ message: resolveErrorMessage(msg), onClose });
   },
   showErrorModal(options) {
     showDialog({
