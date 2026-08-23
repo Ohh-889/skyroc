@@ -1,5 +1,6 @@
+import { Button, Text } from '@skyroc/native-ui';
 import { type ReactNode, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { WechatLaunchOptions, WechatResult, WechatShareResponse, WechatShareScene } from '@skyroc/expo-wechat';
@@ -22,10 +23,7 @@ import {
   shareVideo,
   shareWebpage
 } from '@skyroc/expo-wechat';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { MaxContentWidth } from '@/constants/theme';
 import { DemoHeader } from './modules/DemoHeader';
 
 /** 演示用的远程素材，换成你自己的地址即可。 缩略图故意用了一张大图，用来验证原生侧的 32KB 自动压缩。 */
@@ -222,13 +220,16 @@ const SectionCard = (props: SectionCardProps) => {
   const { children, title } = props;
 
   return (
-    <ThemedView
-      type="backgroundElement"
-      style={styles.card}
-    >
-      <ThemedText type="smallBold">{title}</ThemedText>
+    <View className="gap-2 rounded-2xl border border-border bg-card p-4">
+      <Text
+        size="sm"
+        weight="bold"
+      >
+        {title}
+      </Text>
+
       {children}
-    </ThemedView>
+    </View>
   );
 };
 
@@ -249,31 +250,21 @@ interface ActionButtonProps {
 
 const ActionButton = (props: ActionButtonProps) => {
   const { disabled = false, label, loading = false, loadingLabel, onPress, selected = false } = props;
-  const theme = useTheme();
 
   return (
-    <Pressable
+    <Button
       disabled={disabled}
+      loading={loading}
+      size="sm"
+      variant={selected ? 'solid' : 'outline'}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        { backgroundColor: selected ? theme.backgroundSelected : theme.background },
-        (pressed || disabled) && styles.pressed
-      ]}
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={theme.text}
-        />
-      ) : null}
-      <ThemedText type="small">{loading ? (loadingLabel ?? label) : label}</ThemedText>
-    </Pressable>
+      {loading ? (loadingLabel ?? label) : label}
+    </Button>
   );
 };
 
 export default function WechatDemoScreen() {
-  const theme = useTheme();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [scene, setScene] = useState<WechatShareScene>('session');
   const [busy, setBusy] = useState<string | null>(null);
@@ -331,27 +322,25 @@ export default function WechatDemoScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View className="flex-1 bg-background">
       <DemoHeader title="微信能力测试" />
 
       <SafeAreaView
         edges={['bottom']}
         style={styles.safeArea}
       >
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerClassName="gap-4 p-4">
           <SectionCard title="环境">
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
+            <Text
+              color="muted"
+              size="sm"
             >
               微信登录 / 分享都需要真机 + 已安装微信，模拟器上一律返回未安装。 按钮上的「准备中…」是本地在下载媒体 /
               压缩缩略图，「等待微信…」是已经切到微信、 在等你操作——两段的分界就是 onLaunched
               回调。同一张缩略图第二次走缓存。
-            </ThemedText>
-            <ThemedView
-              type="backgroundElement"
-              style={styles.row}
-            >
+            </Text>
+
+            <View className="flex-row flex-wrap gap-2">
               <ActionButton
                 disabled={busy !== null}
                 label="是否安装微信"
@@ -376,21 +365,19 @@ export default function WechatDemoScreen() {
                 loading={busy === 'getWechatInstallUrl'}
                 onPress={() => run('getWechatInstallUrl', getWechatInstallUrl)}
               />
-            </ThemedView>
+            </View>
           </SectionCard>
 
           <SectionCard title="Universal Link 自检">
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
+            <Text
+              color="muted"
+              size="sm"
             >
               仅调试用，微信头文件明确写了别在正式环境调。会真的切到微信再跳回来，只能真机跑。 排查
               ERR_WECHAT_NO_RESPONSE 就从这里开始——失败时看最后一条 step 的 suggestion。
-            </ThemedText>
-            <ThemedView
-              type="backgroundElement"
-              style={styles.row}
-            >
+            </Text>
+
+            <View className="flex-row flex-wrap gap-2">
               <ActionButton
                 disabled={busy !== null}
                 label="检查 Universal Link"
@@ -398,20 +385,18 @@ export default function WechatDemoScreen() {
                 loadingLabel="自检中（会切到微信）…"
                 onPress={() => run('checkWechatUniversalLink', checkWechatUniversalLink)}
               />
-            </ThemedView>
+            </View>
           </SectionCard>
 
           <SectionCard title="登录">
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
+            <Text
+              color="muted"
+              size="sm"
             >
               成功后拿到的是 code，要交给自己的后端换 token；这里只展示原始返回，不写入登录态
-            </ThemedText>
-            <ThemedView
-              type="backgroundElement"
-              style={styles.row}
-            >
+            </Text>
+
+            <View className="flex-row flex-wrap gap-2">
               <ActionButton
                 disabled={busy !== null}
                 label="微信授权登录"
@@ -427,20 +412,18 @@ export default function WechatDemoScreen() {
                   )
                 }
               />
-            </ThemedView>
+            </View>
           </SectionCard>
 
           <SectionCard title="分享场景">
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
+            <Text
+              color="muted"
+              size="sm"
             >
               小程序卡片只支持会话，选别的会被原生强制改回去
-            </ThemedText>
-            <ThemedView
-              type="backgroundElement"
-              style={styles.row}
-            >
+            </Text>
+
+            <View className="flex-row flex-wrap gap-2">
               {SCENES.map(item => (
                 <ActionButton
                   key={item.value}
@@ -449,15 +432,14 @@ export default function WechatDemoScreen() {
                   selected={scene === item.value}
                 />
               ))}
-            </ThemedView>
+            </View>
           </SectionCard>
 
           <SectionCard title="分享与收藏">
             {SHARE_ACTIONS.map(action => (
-              <ThemedView
+              <View
                 key={action.label}
-                type="backgroundElement"
-                style={styles.shareRow}
+                className="flex-row flex-wrap items-center gap-2"
               >
                 <ActionButton
                   disabled={busy !== null}
@@ -469,107 +451,57 @@ export default function WechatDemoScreen() {
                   }
                 />
                 {action.note ? (
-                  <ThemedText
-                    type="small"
-                    themeColor="textSecondary"
-                    style={styles.note}
+                  <Text
+                    className="shrink"
+                    color="muted"
+                    size="sm"
                   >
                     {action.note}
-                  </ThemedText>
+                  </Text>
                 ) : null}
-              </ThemedView>
+              </View>
             ))}
           </SectionCard>
 
           <SectionCard title={`调用记录（${logs.length}）`}>
             {logs.length === 0 ? (
-              <ThemedText
-                type="small"
-                themeColor="textSecondary"
+              <Text
+                color="muted"
+                size="sm"
               >
                 还没有调用记录
-              </ThemedText>
+              </Text>
             ) : (
               logs.map(entry => (
-                <ThemedView
+                <View
                   key={entry.id}
-                  type="backgroundElement"
-                  style={styles.logEntry}
+                  className="gap-0.5 rounded-lg bg-muted p-2"
                 >
-                  <ThemedText
-                    type="smallBold"
-                    style={{ color: entry.ok ? theme.text : '#E5484D' }}
+                  <Text
+                    color={entry.ok ? 'foreground' : 'destructive'}
+                    size="sm"
+                    weight="bold"
                   >
                     {entry.ok ? '✓' : '✗'} {entry.action}
                     {entry.duration > 0 ? ` · ${entry.duration}ms` : ''}
-                  </ThemedText>
-                  <ThemedText
-                    type="code"
-                    style={styles.logDetail}
-                  >
-                    {entry.detail}
-                  </ThemedText>
-                </ThemedView>
+                  </Text>
+
+                  <Text className="font-mono text-[11px] leading-4">{entry.detail}</Text>
+                </View>
               ))
             )}
           </SectionCard>
         </ScrollView>
       </SafeAreaView>
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
   safeArea: {
     flex: 1,
     width: '100%',
     maxWidth: MaxContentWidth,
     alignSelf: 'center'
-  },
-  content: {
-    gap: Spacing.three,
-    padding: Spacing.three
-  },
-  card: {
-    borderRadius: Spacing.three,
-    gap: Spacing.two,
-    padding: Spacing.three
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two
-  },
-  shareRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two
-  },
-  button: {
-    alignItems: 'center',
-    borderRadius: Spacing.two,
-    flexDirection: 'row',
-    gap: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two
-  },
-  pressed: {
-    opacity: 0.5
-  },
-  note: {
-    flexShrink: 1
-  },
-  logEntry: {
-    borderRadius: Spacing.two,
-    gap: Spacing.half,
-    padding: Spacing.two
-  },
-  logDetail: {
-    fontSize: 11,
-    lineHeight: 16
   }
 });
