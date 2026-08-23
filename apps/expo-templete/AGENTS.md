@@ -83,3 +83,61 @@ const OrderDetailScreen = () => (
 
 只传标量（id、status），不传对象。详情数据由详情页按 id 自己查，列表已缓存时靠 React Query 命中，
 需要秒开就用 `placeholderData` 从列表缓存取。
+
+## 网络层
+
+目录结构和 web 端（`apps/admin-example/src/service`）保持一致：
+
+| 文件 | 职责 |
+| --- | --- |
+| `src/service/config.ts` | baseURL、超时、后端业务码，全部读 `EXPO_PUBLIC_*` |
+| `src/service/adapter.ts` | 平台差异：用什么弹提示、凭据存在哪、登录页怎么跳 |
+| `src/service/request/index.ts` | 全局 `request` 实例 |
+| `src/service/queryClient.ts` | 全局 `queryClient` |
+| `src/service/api/<域>/urls.ts` | `MODULE_URLS` |
+| `src/service/api/<域>/api.ts` | `fetchXxx`，一行 `request()` |
+| `src/service/api/<域>/keys.ts` | `MODULE_QUERY_KEYS` / `MODULE_MUTATION_KEYS` |
+| `src/service/api/<域>/hooks.ts` | `useXxxQuery` / `useXxxMutation` |
+| `src/service/api/<域>/types.d.ts` | `Api.<域>` 的接口类型，就近放在模块里 |
+| `src/service/api/<域>/index.ts` | 域内四个 ts 文件的 barrel，再由 `api/index.ts` 汇总 |
+| `src/service/common.d.ts` | `Api.Service.*`：响应信封、分页这类公共类型 |
+
+接口类型跟着接口走：每个域自己的 `types.d.ts`，公共的（响应信封、分页）放 `src/service/common.d.ts`，
+都写成 `declare namespace Api { namespace <域> { ... } }`。它们是全局声明，不用也不该被 `index.ts` 再导出一遍。
+字段一律 camelCase；后端返回 snake_case 就在 service 层转换，别把 snake_case 带进类型。
+
+错误提示、令牌续签、并发去重、登出这些逻辑都在 `@skyroc/service` 里，和 web 端共用同一份；
+本地只写 adapter。`src/service/api/auth` 是完整范例，照着抄即可。
+
+登录状态本身在 `src/feature/auth`，不进 service：凭据是一个 jotai atom（`authAtom`），
+和 web 端 `features/auth/use-auth.ts` 一个路子——请求拦截器在 React 之外用 `getAtomValue`
+同步读 token，页面用 `useAtomValue` 跟着重渲染，一份状态两条出口。
+
+持久化走 `src/store/secure-storage.ts` 注册进 core-state 的 SecureStore 适配器。它是**同步**读的，
+所以冷启动第一帧就知道登没登录，没有 loading 态，也不会闪一下登录页。
+
+> `<JotaiProvider>` 必须和 `getAtomValue` 用同一份 jotai。pnpm 的 peer 解析会给 app 和
+> workspace 包各装一份，两份的 React context 互相看不见——`metro.config.js` 的 `SINGLETONS`
+> 就是把它钉成一份（web 端对应 admin-vite 的 `resolve.dedupe`）。
+> `RESET` 这类模块级 symbol 更要命，一律从 `@skyroc/core-state` 取，别直接引 `jotai/utils`。
+
+### 加一个接口的四步
+
+1. `urls.ts` 加地址，`types.d.ts` 加参数 / 响应类型
+2. `api.ts` 写 `fetchXxx`——`request<T>()` 拿到的已经是拆过信封的业务数据，失败会 reject 且已经弹过提示
+3. `keys.ts` 加 query key
+4. `hooks.ts` 包成 hook
+
+页面只 `import { useXxxQuery } from '@/service/api'`，**不写请求定义**。
+
+### 几条必须知道的
+
+- **服务端状态只放 TanStack Query**，不要把接口数据塞进全局 store —— 这是 RN 项目最常见的架构错误。
+- 凭据存 SecureStore（不是 AsyncStorage，后者是明文文件），事实来源是 `feature/auth/auth-store`
+  的 `authAtom`；别再另起一套 storage hook，两份状态必然对不齐。
+- 登出必须走 `signOut()`：清凭据 + `queryClient.clear()`。少了后面那步，下一个账号会看到上一个账号的数据。
+- 令牌过期由请求层自动续签后重发一次，并发的一批请求只会触发一次 refresh，业务代码不用管。
+- 重试只对幂等请求生效（GET/HEAD/OPTIONS/PUT/DELETE 和 5xx），POST 永远不会被自动重发。
+- 请求 id（`X-Request-Id`）默认关着：它依赖 `crypto.getRandomValues`，Hermes 没有这个全局，
+  要开先装 `react-native-get-random-values`。
+- `EXPO_PUBLIC_*` 会被编译期打进包里，任何人解包都能看到，**只放公开配置**；改了要 `expo start --clear`。
