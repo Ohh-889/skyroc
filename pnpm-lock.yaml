@@ -929,6 +929,9 @@ importers:
       '@shopify/react-native-skia':
         specifier: catalog:native
         version: 2.4.18(react-native-reanimated@4.5.1(react-native-worklets@0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      '@skyroc/core-state':
+        specifier: workspace:*
+        version: link:../../packages/@core/state
       '@skyroc/expo-bluetooth':
         specifier: workspace:*
         version: link:../../packages/native/bluetooth
@@ -938,12 +941,18 @@ importers:
       '@skyroc/native-ui':
         specifier: workspace:*
         version: link:../../packages/native/ui
+      '@skyroc/service':
+        specifier: workspace:*
+        version: link:../../packages/@core/service
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../packages/@core/utils
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.2.3)
+      axios:
+        specifier: catalog:utils
+        version: 1.13.5
       expo:
         specifier: ~57.0.15
         version: 57.0.15(@babel/core@7.29.0)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.10)(expo-router@57.0.15)(expo-widgets@57.0.11)(react-dom@19.2.8(react@19.2.3))(react-native-web@0.21.2(react-dom@19.2.8(react@19.2.3))(react@19.2.3))(react-native-worklets@0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -992,6 +1001,9 @@ importers:
       expo-widgets:
         specifier: 57.0.11
         version: 57.0.11(@babel/core@7.29.0)(@types/react-dom@19.2.4(@types/react@19.2.14))(@types/react@19.2.14)(expo@57.0.15)(react-dom@19.2.8(react@19.2.3))(react-native-worklets@0.10.1(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.2(@babel/core@7.29.0)(@react-native/metro-config@0.87.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      jotai:
+        specifier: catalog:core
+        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -1035,6 +1047,9 @@ importers:
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
+      dotenv-cli:
+        specifier: ^11.0.0
+        version: 11.0.0
       oxlint:
         specifier: catalog:dev
         version: 1.60.0
@@ -12706,6 +12721,14 @@ packages:
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
+
+  dotenv-cli@11.0.0:
+    resolution: {integrity: sha512-r5pA8idbk7GFWuHEU7trSTflWcdBpQEK+Aw17UrSHjS6CReuhrrPcyC3zcQBPQvhArRHnBo/h6eLH1fkCvNlww==}
+    hasBin: true
+
+  dotenv-expand@12.0.3:
+    resolution: {integrity: sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==}
+    engines: {node: '>=12'}
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
@@ -32315,6 +32338,17 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
 
+  dotenv-cli@11.0.0:
+    dependencies:
+      cross-spawn: 7.0.6
+      dotenv: 17.3.1
+      dotenv-expand: 12.0.3
+      minimist: 1.2.8
+
+  dotenv-expand@12.0.3:
+    dependencies:
+      dotenv: 16.6.1
+
   dotenv@16.6.1: {}
 
   dotenv@17.3.1: {}
@@ -36013,6 +36047,13 @@ snapshots:
       '@babel/template': 7.29.7
       '@types/react': 19.2.14
       react: 19.1.0
+
+  jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3):
+    optionalDependencies:
+      '@babel/core': 7.29.0
+      '@babel/template': 7.29.7
+      '@types/react': 19.2.14
+      react: 19.2.3
 
   jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0):
     optionalDependencies:
