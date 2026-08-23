@@ -53,6 +53,17 @@ const LIST_ENTRIES: DemoEntry[] = [
   }
 ];
 
+/** 地基类演示：主题、Token 这类全 App 共用的东西，和具体业务能力无关 */
+const FOUNDATION_ENTRIES: DemoEntry[] = [
+  {
+    api: 'useThemeMode · Uniwind.setTheme · SecureStore 持久化',
+    href: '/demo/theme',
+    icon: 'palette-outline',
+    subtitle: '亮 / 暗 / 跟随系统三态，顺带把整套语义色和尺度过一遍',
+    title: '主题与 Token'
+  }
+];
+
 /** 原生能力演示，和上面的列表场景无关，单独一组免得混进 src/feature/list 的叙述里 */
 const NATIVE_ENTRIES: DemoEntry[] = [
   {
@@ -153,6 +164,13 @@ export default function PagesIndexScreen() {
           title="演示页面"
         >
           {LIST_ENTRIES.map(renderEntry)}
+        </CellGroup>
+
+        <CellGroup
+          inset
+          title="地基"
+        >
+          {FOUNDATION_ENTRIES.map(renderEntry)}
         </CellGroup>
 
         <CellGroup
