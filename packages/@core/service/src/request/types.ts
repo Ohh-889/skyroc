@@ -1,6 +1,6 @@
 import type { CreateAxiosDefaults } from '@skyroc/axios';
-
-import type { ApiCryptoOptions } from '../crypto';
+import type { InternalAxiosRequestConfig } from 'axios';
+import type { IAxiosRetryConfig } from 'axios-retry';
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -92,6 +92,15 @@ export interface RequestInstanceState {
   [key: string]: unknown;
 }
 
+/**
+ * 请求体加密器，由 `@skyroc/service/crypto` 的 `createRequestSealer` 造。
+ *
+ * 做成注入而不是在这里 import：加密实现依赖 node-forge，它会 `require('crypto')`。
+ * 打包器是静态分析的，只要主入口引到它，没有 node 内置模块的运行时（React Native / Metro）
+ * 连包都打不出来——而这些端根本不需要加密。不传就不参与，请求体原样发出。
+ */
+export type RequestSealer = (config: InternalAxiosRequestConfig) => Promise<InternalAxiosRequestConfig>;
+
 /** CreateAppRequest 工厂函数的配置项 */
 export interface CreateRequestOptions {
   /** 平台适配器 */
@@ -100,10 +109,23 @@ export interface CreateRequestOptions {
   axiosConfig?: CreateAxiosDefaults;
   /** 后端业务状态码 */
   codes: ServiceCodes;
-  /** 接口传输加密。不配也能跑，但标了 `encrypt: true` 的请求会直接抛错 */
-  crypto?: ApiCryptoOptions;
   /** 自定义后端成功判断（默认：response.data.code === codes.success） */
   isBackendSuccess?: (response: { data: { code: string | number } }) => boolean;
+  /**
+   * 请求 id 的 header 名，传 `false` 则不发送
+   *
+   * @default 'X-Request-Id'
+   */
+  requestIdKey?: string | false;
+  /**
+   * axios-retry 配置，默认不重试
+   *
+   * 打开时务必带上 `axios-retry` 的幂等判断（默认的 `isNetworkOrIdempotentRequestError` 就够），
+   * 无差别重试会把下单、支付这类请求重复提交出去。
+   */
+  retry?: IAxiosRetryConfig;
+  /** 请求体加密器。不传则不加密；标了 `encrypt: true` 的请求会原样发出 */
+  sealRequest?: RequestSealer;
   /** 自定义响应数据转换（默认：response.data.data） */
   transform?: (response: any) => any;
 }

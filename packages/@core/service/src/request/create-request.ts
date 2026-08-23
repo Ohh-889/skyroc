@@ -1,6 +1,5 @@
 import { createRequest } from '@skyroc/axios';
 import type { AxiosResponse } from 'axios';
-import { createRequestSealer } from '../crypto';
 import { backEndFail, handleError } from './error-handler';
 import { getAuthorization, normalizeCodes } from './shared';
 import type { CreateRequestOptions, RequestInstanceState } from './types';
@@ -11,10 +10,8 @@ import type { CreateRequestOptions, RequestInstanceState } from './types';
  * 通过 adapter 注入平台差异（UI 反馈、认证、导航、i18n）， 使错误处理、token 刷新等逻辑可跨端复用。
  */
 export function createAppRequest(options: CreateRequestOptions) {
-  const { adapter, axiosConfig } = options;
+  const { adapter, axiosConfig, requestIdKey, retry, sealRequest } = options;
   const codes = normalizeCodes(options.codes);
-
-  const sealRequest = createRequestSealer(options.crypto);
 
   const request = createRequest<{ code: string | number; data: any; msg: string }, any, RequestInstanceState>(
     axiosConfig,
@@ -40,8 +37,10 @@ export function createAppRequest(options: CreateRequestOptions) {
         config.headers.set('Authorization', getAuthorization(adapter));
 
         // 加密放在最后：认证头不能跟着 body 一起被加密掉
-        return sealRequest(config);
+        return sealRequest ? sealRequest(config) : config;
       },
+      requestIdKey,
+      retry,
       transform:
         options.transform ??
         ((response: AxiosResponse<{ data: any }>) => {

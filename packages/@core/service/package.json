@@ -45,6 +45,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./crypto": "./src/crypto/index.ts",
     "./query": "./src/query/index.ts"
   },
   "publishConfig": {
@@ -58,6 +59,12 @@
         "import": {
           "types": "./dist/index.d.ts",
           "default": "./dist/index.js"
+        }
+      },
+      "./crypto": {
+        "import": {
+          "types": "./dist/crypto/index.d.ts",
+          "default": "./dist/crypto/index.js"
         }
       },
       "./query": {

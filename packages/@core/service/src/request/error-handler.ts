@@ -5,6 +5,16 @@ import { getAuthorization, isRefreshTokenRequest, showErrorMsg } from './shared'
 import { refreshToken } from './token-refresh';
 import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types';
 
+/**
+ * 浏览器才有的「关页面前再清一次凭据」兜底。
+ *
+ * 只判 `typeof window !== 'undefined'` 不够：React Native 把 `window` 指向 global，判断为真，
+ * 但它没有 addEventListener，调下去直接 TypeError —— 弹窗登出这条路会在原生端整个断掉。
+ */
+function canListenBeforeUnload() {
+  return typeof window !== 'undefined' && typeof window.addEventListener === 'function';
+}
+
 /** 后端业务错误处理（response.data.code 非成功码） */
 export async function backEndFail(
   response: AxiosResponse<{ code: string | number; data: any; msg: string }>,
@@ -26,7 +36,7 @@ export async function backEndFail(
 
   function logoutAndCleanup() {
     handleLogout();
-    if (typeof window !== 'undefined') {
+    if (canListenBeforeUnload()) {
       window.removeEventListener('beforeunload', handleLogout);
     }
     request.state.errMsgStack = request.state.errMsgStack.filter(msg => msg !== response.data.msg);
@@ -43,7 +53,7 @@ export async function backEndFail(
   if (codes.modalLogout.includes(responseCode) && !request.state.errMsgStack?.includes(response.data.msg)) {
     request.state.errMsgStack = [...(request.state.errMsgStack || []), response.data.msg];
 
-    if (typeof window !== 'undefined') {
+    if (canListenBeforeUnload()) {
       window.addEventListener('beforeunload', handleLogout);
     }
 

@@ -1,4 +1,5 @@
 import { createAppRequest } from '@skyroc/service';
+import { createRequestSealer } from '@skyroc/service/crypto';
 
 import { getServiceBaseURL } from '@/utils/service';
 
@@ -18,8 +19,9 @@ export const request = createAppRequest({
     modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES.split(',') ,
     success: import.meta.env.VITE_SERVICE_SUCCESS_CODE
   },
-  crypto: {
+  // 加密器由调用方注入：node-forge 只会进真正用到它的端的包
+  sealRequest: createRequestSealer({
     header: import.meta.env.VITE_API_CRYPTO_HEADER || 'X-Encrypt-Key',
     publicKey: import.meta.env.VITE_API_CRYPTO_PUBLIC_KEY || ''
-  }
+  })
 });
