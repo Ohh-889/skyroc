@@ -196,7 +196,11 @@ const MESSAGE_SENDERS = ['林开阳', '周清和', '陈斯年', '发布系统', 
 
 /** 每种消息类型对应的文案模板，`target` 会在正文里被高亮出来 */
 const MESSAGE_TEMPLATES: { content: string; target?: string; type: MessageType }[] = [
-  { content: '回复了你：这个 footer 的三态终于统一了，之前三处各写一遍太难维护', target: '列表组件重构', type: 'comment' },
+  {
+    content: '回复了你：这个 footer 的三态终于统一了，之前三处各写一遍太难维护',
+    target: '列表组件重构',
+    type: 'comment'
+  },
   { content: '赞了你的评论「空态也要能下拉刷新」', type: 'like' },
   { content: '已通过审核，将于今晚 22:00 开始灰度', target: '发布单 #2481', type: 'system' },
   { content: '提到了你：这里的分页逻辑要不要顺手换成 useInfiniteList', target: '每周技术评审', type: 'comment' },
@@ -224,6 +228,18 @@ const MESSAGES: Message[] = Array.from({ length: 28 }, (_, index) => {
     type: template.type
   };
 });
+
+/**
+ * 服务端侧的已读状态。真实项目里这是数据库里的一列，这里用一个模块级 Set 顶替。
+ *
+ * 刻意不去改 `MESSAGES` 里的 `read`：列表和未读数是两个接口，必须读同一份事实来源， 否则「点了已读、角标不动」这类 bug 要等联调才暴露。
+ */
+const READ_IDS = new Set<string>();
+
+/** 把服务端已读状态合进一条消息 */
+function withReadState(message: Message): Message {
+  return READ_IDS.has(message.id) ? { ...message, read: true } : message;
+}
 
 const CONTACT_NAMES = [
   '安其然',
@@ -320,7 +336,7 @@ export async function fetchMessageList(params: MessageQuery & PageParams): Promi
 
   const matched = params.type === 'all' ? MESSAGES : MESSAGES.filter(message => message.type === params.type);
 
-  return paginate(matched, params);
+  return paginate(matched.map(withReadState), params);
 }
 
 /** 联系人分页，按关键词模糊匹配姓名 / 部门 / 职位 */
@@ -354,4 +370,167 @@ export async function fetchActivityList(params: PageParams): Promise<PageResult<
   await delay(NETWORK_DELAY);
 
   return paginate(ACTIVITIES, params);
+}
+
+/** 标记已读。真实项目里是一个 POST，成功后由调用方 invalidate 相关 query */
+export async function markMessagesRead(ids: string[]) {
+  await delay(NETWORK_DELAY);
+
+  ids.forEach(id => READ_IDS.add(id));
+}
+
+/** 全部标为已读。单独一个接口而不是把全量 id 传上去——客户端手里只有已加载的那几页 */
+export async function markAllMessagesRead() {
+  await delay(NETWORK_DELAY);
+
+  MESSAGES.forEach(message => READ_IDS.add(message.id));
+}
+
+/**
+ * 未读数。底部 tab 的角标读它。
+ *
+ * 单独一个接口，不从列表里数：列表是分页的，第一页数出来的只是「已加载部分的未读数」， 角标要的是全量。
+ */
+export async function fetchUnreadCount(): Promise<number> {
+  await delay(NETWORK_DELAY);
+
+  return MESSAGES.filter(message => !withReadState(message).read).length;
+}
+
+/** 首页统计项的语义 key。配色和图标由页面按 key 查表，别让接口下发 className */
+export type HomeStatKey = 'done' | 'pending' | 'running';
+
+/** 首页一格统计 */
+export interface HomeStat {
+  key: HomeStatKey;
+
+  label: string;
+
+  value: number;
+}
+
+/** 首页待办的紧急程度 */
+export type HomeTodoLevel = 'high' | 'low' | 'normal';
+
+/** 首页待办 */
+export interface HomeTodo {
+  /** 截止时间的人话描述，如「今天 18:00」 */
+  deadline: string;
+
+  id: string;
+
+  level: HomeTodoLevel;
+
+  owner: string;
+
+  title: string;
+}
+
+/** 首页公告 */
+export interface HomeNotice {
+  content: string;
+
+  publishedAt: string;
+
+  title: string;
+}
+
+/**
+ * 首页首屏数据。
+ *
+ * 一次请求把首屏要的东西全带回来，而不是让首页并发打四五个接口：首屏的每个接口都各有各的 loading 和失败态，拆得越碎，页面上要处理的状态组合越多，弱网下也越容易半屏空着。
+ */
+export interface HomeSummary {
+  notice: HomeNotice;
+
+  stats: HomeStat[];
+
+  todos: HomeTodo[];
+
+  /** 当前用户昵称，问候语里用 */
+  userName: string;
+}
+
+const HOME_NOTICES: HomeNotice[] = [
+  {
+    content: '本周四 22:00 - 23:00 订单中心灰度发版，期间下单可能出现短暂排队，请提前周知客户。',
+    publishedAt: '08-22 09:30',
+    title: '发布窗口通知'
+  },
+  {
+    content: '新的列表分页开关已全量，页面若仍有手写 pageNum 的地方，请统一换成 useInfiniteList。',
+    publishedAt: '08-21 17:05',
+    title: '组件库升级'
+  }
+];
+
+const HOME_TODOS: HomeTodo[] = [
+  { deadline: '今天 18:00', id: 'todo-1', level: 'high', owner: '周清和', title: '确认 v2.14.0 灰度批次的回滚预案' },
+  { deadline: '今天 20:00', id: 'todo-2', level: 'normal', owner: '陈斯年', title: '补齐订单导出接口的字段说明' },
+  { deadline: '明天 12:00', id: 'todo-3', level: 'normal', owner: '苏见月', title: '复核通讯录部门分组的排序规则' },
+  { deadline: '本周内', id: 'todo-4', level: 'low', owner: '何知白', title: '把埋点文档同步到新的 wiki 空间' }
+];
+
+/** 每请求一次 +1，让下拉刷新肉眼可见地刷出新数字，否则刷完看不出到底有没有重拉 */
+let homeFetchCount = 0;
+
+/** 首页首屏数据 */
+export async function fetchHomeSummary(): Promise<HomeSummary> {
+  await delay(NETWORK_DELAY);
+
+  homeFetchCount += 1;
+
+  return {
+    notice: HOME_NOTICES[homeFetchCount % HOME_NOTICES.length],
+    stats: [
+      { key: 'pending', label: '待处理', value: 6 + (homeFetchCount % 4) },
+      { key: 'running', label: '进行中', value: 12 },
+      { key: 'done', label: '本周完成', value: 38 + homeFetchCount }
+    ],
+    todos: HOME_TODOS,
+    userName: '林开阳'
+  };
+}
+
+/** 「我的」页统计项的语义 key */
+export type ProfileStatKey = 'collection' | 'coupon' | 'footprint';
+
+/** 「我的」页一格统计 */
+export interface ProfileStat {
+  key: ProfileStatKey;
+
+  label: string;
+
+  value: number;
+}
+
+/** 当前用户概览 */
+export interface ProfileOverview {
+  department: string;
+
+  name: string;
+
+  /** 已打码的手机号。脱敏在服务端做，明文不下发到客户端 */
+  phone: string;
+
+  stats: ProfileStat[];
+
+  title: string;
+}
+
+/** 当前用户概览 */
+export async function fetchProfile(): Promise<ProfileOverview> {
+  await delay(NETWORK_DELAY);
+
+  return {
+    department: '基础架构',
+    name: '林开阳',
+    phone: '138****2049',
+    stats: [
+      { key: 'collection', label: '收藏', value: 24 },
+      { key: 'footprint', label: '足迹', value: 186 },
+      { key: 'coupon', label: '优惠券', value: 3 }
+    ],
+    title: '资深前端工程师'
+  };
 }
