@@ -1,5 +1,5 @@
+import type { FlashListProps, FlashListRef } from '@shopify/flash-list';
 import type { ReactElement, Ref } from 'react';
-import type { FlatList, FlatListProps } from 'react-native';
 
 /** 各 slot 的 className 覆盖表 */
 export type SlotClassNames<Slots extends string> = Partial<Record<Slots, string>>;
@@ -28,8 +28,13 @@ export interface PageResult<TItem> {
   total: number;
 }
 
-/** 列表整体状态；`loading` 只表示首屏，翻页中的状态是 `isFetchingMore` */
-export type ListStatus = 'error' | 'loading' | 'success';
+/**
+ * 列表整体状态；`loading` 只表示首屏，翻页中的状态是 `isFetchingMore`。
+ *
+ * `offline` 是「首屏还没数据就断网了」：请求被 onlineManager 拦下没发出去，这时候既不是加载中
+ * （转不出结果）也不是失败（没人失败过），必须单独占一态，否则就是一个永远转圈的骗子 loading。
+ */
+export type ListStatus = 'error' | 'loading' | 'offline' | 'success';
 
 /** List 可覆盖的 slot 名称 */
 export type ListSlots = 'content' | 'footer' | 'placeholder' | 'root' | 'separator';
@@ -57,6 +62,9 @@ export interface ListPlaceholderContext {
   /** 加载失败文案 */
   errorText?: string;
 
+  /** 断网文案 */
+  offlineText?: string;
+
   /** 失败后的重试回调 */
   onRetry?: () => void;
 
@@ -64,7 +72,7 @@ export interface ListPlaceholderContext {
   status: ListStatus;
 }
 
-/** 被 List 接管、不再透传给 FlatList 的属性 */
+/** 被 List 接管、不再透传给 FlashList 的属性 */
 type OmittedListProps =
   | 'ItemSeparatorComponent'
   | 'keyExtractor'
@@ -74,7 +82,7 @@ type OmittedListProps =
   | 'onEndReachedThreshold';
 
 /** List 组件属性 */
-export interface ListProps<TItem> extends Omit<FlatListProps<TItem>, OmittedListProps> {
+export interface ListProps<TItem> extends Omit<FlashListProps<TItem>, OmittedListProps> {
   /** 覆盖各 slot 的 className */
   classNames?: SlotClassNames<ListSlots>;
 
@@ -96,6 +104,9 @@ export interface ListProps<TItem> extends Omit<FlatListProps<TItem>, OmittedList
   /** 取 key 的字段名，默认 `id`；字段不存在时回退到下标 */
   keyField?: keyof TItem;
 
+  /** 断网文案，默认「网络未连接，恢复后会自动加载」 */
+  offlineText?: string;
+
   /** 折叠态下点「查看更多」的回调 */
   onExpand?: () => void;
 
@@ -105,8 +116,8 @@ export interface ListProps<TItem> extends Omit<FlatListProps<TItem>, OmittedList
   /** 加载失败后的重试回调 */
   onRetry?: () => void;
 
-  /** 底层 FlatList 的 ref，用于 scrollToTop 等命令式操作 */
-  ref?: Ref<FlatList<TItem>>;
+  /** 底层 FlashList 的 ref，用于 scrollToTop 等命令式操作 */
+  ref?: Ref<FlashListRef<TItem>>;
 
   /** 自定义 footer，返回 null 表示不渲染 */
   renderFooter?: (context: ListFooterContext) => ReactElement | null;

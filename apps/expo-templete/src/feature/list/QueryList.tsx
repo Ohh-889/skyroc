@@ -1,6 +1,6 @@
+import type { FlashListRef } from '@shopify/flash-list';
 import { useImperativeHandle, useRef } from 'react';
 import type { Ref } from 'react';
-import type { FlatList } from 'react-native';
 
 import { List } from './List';
 import type { ListProps } from './types';
@@ -28,8 +28,8 @@ export interface QueryListHandle<TItem> {
   /** 已加载的全部条目 */
   readonly items: TItem[];
 
-  /** 底层 FlatList，scrollToIndex / scrollToOffset 这些原生方法从这里拿 */
-  readonly list: FlatList<TItem> | null;
+  /** 底层 FlashList，scrollToIndex / scrollToOffset 这些命令式方法从这里拿 */
+  readonly list: FlashListRef<TItem> | null;
 
   /** 加载下一页；已到底或正在加载时是空操作 */
   loadMore: () => void;
@@ -89,7 +89,7 @@ export const QueryList = <TItem, TParams extends object = Record<string, never>>
 
   const result = useInfiniteList<TItem, TParams>({ enabled, pageSize, params, queryKey, request });
 
-  const listRef = useRef<FlatList<TItem>>(null);
+  const listRef = useRef<FlashListRef<TItem>>(null);
 
   /**
    * 句柄本身保持同一个对象，值通过 ref 现取。
@@ -116,7 +116,7 @@ export const QueryList = <TItem, TParams extends object = Record<string, never>>
       },
       refresh: () => latest.current.refresh(),
       retry: () => latest.current.retry(),
-      scrollToTop: (animated = true) => listRef.current?.scrollToOffset({ animated, offset: 0 }),
+      scrollToTop: (animated = true) => listRef.current?.scrollToTop({ animated }),
       get total() {
         return latest.current.total;
       },

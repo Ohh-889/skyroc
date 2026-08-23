@@ -4,7 +4,7 @@ import { tv } from 'tailwind-variants';
 /**
  * List 样式变体。
  *
- * `empty` 为 true 时给内容容器加 `grow`，让占位区能在整屏高度里居中： FlatList 的 contentContainer 默认按内容高度收缩，不撑开的话空态会贴在顶部。
+ * `empty` 为 true 时给内容容器加 `grow`，让占位区能在整屏高度里居中： FlashList 底下就是一个 ScrollView，contentContainer 默认按内容高度收缩，不撑开的话空态会贴在顶部。
  *
  * 分割线复用 Divider，但它自带 `my-2` 的上下外边距，作为列表分割线要清掉。
  */

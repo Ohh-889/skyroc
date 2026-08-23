@@ -117,6 +117,11 @@ export function useInfiniteList<TItem, TParams extends object = Record<string, n
   );
 
   function resolveStatus(): ListStatus {
+    // 必须排在 loading 前面：断网时 status 也是 pending（请求压根没发出去，谈不上成功失败），
+    // 只有 fetchStatus 会告诉你它是被 onlineManager 按住了，不判这一下就是一个永远转圈的 loading。
+    // 已经有数据时 status 是 success，落不到这里——后台刷新被暂停不该把整页替换成断网提示
+    if (query.status === 'pending' && query.fetchStatus === 'paused') return 'offline';
+
     if (query.status === 'pending') return 'loading';
 
     if (query.status === 'error') return 'error';
