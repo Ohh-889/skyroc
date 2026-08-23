@@ -54,6 +54,35 @@ src/pages/(app)/order/[id]/
 二级页默认与 `(app)/(tabs)` 平级，push 时整页盖住 tab bar；只有必须保留 tab 上下文的流程才在
 对应 tab 目录里再套一层 Stack。
 
+`(app)/demo/` 没有 index —— 演示页的入口清单是「发现」tab（`src/pages/(app)/(tabs)/explore`）。
+
+## 底部 Tab
+
+`(app)/(tabs)` 下四个页面，用 `expo-router/unstable-native-tabs` 的原生 tab bar：
+
+| 路由        | 页面 | 立起来的骨架                                                   |
+| ----------- | ---- | -------------------------------------------------------------- |
+| `/`         | 首页 | 自定义头部 + 单个 ScrollView + 下拉刷新 + 首屏三态             |
+| `/explore`  | 发现 | 模板的能力目录，本地关键词过滤                                 |
+| `/messages` | 消息 | tab 内长列表 + mutation 乐观更新 + tab bar 角标                |
+| `/profile`  | 我的 | 主题、缓存、登出这类**改一下影响整个 App**的开关               |
+
+- 图标同时给 `sf`（iOS 的 SF Symbol，选中态自动换 fill 版）和 `src`（Android 的矢量图标），
+  两端各用各的图标源，不用再维护两套 @2x/@3x 位图。
+- **每个 tab 页的滚动容器必须套一层 `ScrollViewMarker`**（`react-native-screens/experimental`），
+  并带上 `contentInsetAdjustmentBehavior="automatic"`。少了它 iOS 上有两个症状：内容底部被 tab bar
+  整块盖住；tab bar 一直停在 scrollEdgeAppearance（透明、无模糊、无分隔线），看着就是一条死色带。
+  根因是 UIKit 要拿到「内容滚动视图」才会算 contentInset、才会在贴边/非贴边两套 appearance 之间切换，
+  而 expo-router 默认那套只沿 `subviews[0]` 找第一个 ScrollView（`RNSScrollViewFinder.mm`），
+  tab 页的头部固定在滚动区之外，遍历第一步就断了。`ScrollViewMarker` 改走 `reactSuperview` 往上登记，
+  和滚动容器摆在哪一层无关。**别用写死 `BottomTabInset` 数值的方式绕过去**——那样内容不再从 tab bar
+  底下透出来，模糊质感也一起没了。
+- 角标读 `useUnreadCountQuery()`，也就是消息页用的同一个 query。**别为了让角标跟着变就把未读数
+  搬进全局 store**——那是服务端状态，两份必然对不齐（见「网络层」最后一节）。
+- Tab 根页的头部用 `src/pages/(app)/(tabs)/modules/TabHeader`：左对齐大标题、没有返回箭头。
+  二级页仍然用 `NavBar`，两者不通用。
+- 新增 tab 要在 `(tabs)/_layout.tsx` 里加一个 `<NativeTabs.Trigger>`，`name` 与文件名一致。
+
 ## 深链（deep link / universal link）
 
 外部进 App 的入口——自定义 scheme、Universal Link / App Links、以及项目自己接的推送点击——
@@ -84,6 +113,35 @@ https://<APP_LINK_HOST>/app/demo/messages?from=link   Universal Link，网页侧
   **改了必须重新 build，OTA 覆盖不到**；`feature/linking` 全是纯 JS，可以 OTA。
 - 域名侧还要放 `/.well-known/apple-app-site-association` 与 `/.well-known/assetlinks.json`
   （https、无重定向、`application/json`），这两份不在仓库里。
+
+## 应用锁（生物识别）
+
+「我的」页在验证身份之前不显示内容，但**不是每次进页面都验**。规则只有两条，都在
+`src/feature/auth/use-app-lock.ts`：
+
+1. **进程重开**要验 —— 已验证标记是个不落盘的内存 atom（`appUnlockedAtom`），App 被杀掉再打开
+   它天然回到 `false`。别顺手给它加持久化，加了这条规则就没了；
+2. **回前台且离开超过 `APP_LOCK_GRACE_MS`**（默认 3 分钟）要验。
+
+反过来说：切 tab、push 二级页再返回、拉一下控制中心、被系统弹窗打断，都**不会**重新验证。
+计时只认 `background` 不认 `inactive`——iOS 上来个电话、下拉通知栏都会进 `inactive`，
+按它计时的话用户每划一次通知栏回来都要验一次。
+
+几个必须知道的：
+
+- 系统验证框本身会把 App 推进 `inactive`/`background`。验证期间的 AppState 变化要整段忽略
+  （`skipAppStateRef`），否则验证成功回到前台的那一刻会被当成「刚从后台回来」再判一次超时。
+- 生物识别不可用（没传感器、没录入）时**放行**，不是把人关在外面。应用锁是便利性的第二道门，
+  防的是「登录态还在、手机换了个人拿」；真正的鉴权在服务端。同理，锁屏上必须留「退出登录」出口，
+  传感器坏了才不至于只能卸载重装。
+- `disableDeviceFallback` 保持默认的 `false`：戴口罩、手指有水都可能连着失败，得留设备密码这条路。
+- 验证框**只在用户点「验证身份」时弹**，不要在页面出现时自动弹：系统验证框是模态的，一进来就糊上来
+  一个夺焦点的框，用户连自己在哪都还没看清；取消之后再自动弹，就成了关不掉的东西。
+- 锁用绝对定位的遮罩盖在页面上，不要做成 `/lock` 路由——锁是页面的一个状态，不是一个位置，
+  走路由的话返回栈、tab 选中态、深链落点都要为它让路。
+- 要保护整个 `(app)` 而不只是「我的」，把 `useAppLock()` 挪到 `(app)/_layout` 即可，规则不用改。
+- iOS 的 `NSFaceIDUsageDescription` 由 `app.config.ts` 里的 `expo-local-authentication` 插件写入，
+  缺了它第一次调用面容验证会直接崩。**改了必须重新 build，OTA 覆盖不到。**
 
 ## 页面头部（强制）
 
@@ -172,3 +230,27 @@ const OrderDetailScreen = () => (
 - 请求 id（`X-Request-Id`）默认关着：它依赖 `crypto.getRandomValues`，Hermes 没有这个全局，
   要开先装 `react-native-get-random-values`。
 - `EXPO_PUBLIC_*` 会被编译期打进包里，任何人解包都能看到，**只放公开配置**；改了要 `expo start --clear`。
+
+### 离线与断网提示
+
+事实来源是 `src/feature/network`：`expo-network` 的监听写进 `isOnlineAtom`，React 外用 `getIsOnline()`
+同步读，界面用 `useIsOnline()`。别再各处自己调 `getNetworkStateAsync`，那样每个页面拿到的都是一次快照。
+
+接线只有三处，都已经接好：
+
+- `feature/query/query-provider`：把在线状态喂给 `onlineManager`。RN 上不接这一段，TanStack 会
+  **永远认为在线**——断网时查询照发不误只能干等超时，`refetchOnReconnect` 也永远等不到重连事件。
+- `service/adapter`：断网时把 axios 那句英文 `Network Error` 换成能照做的中文提示。
+  「断网」和「服务端挂了」必须分开，前者用户自己能解决且不该上报监控。
+- `app/_layout`：挂 `<OfflineNotice />`，一条常驻横幅，恢复时报一句「网络已恢复」再自己消失。
+
+几个容易踩的点：
+
+- `isConnected` 为 true 只代表连上了路由器 / 基站，**不代表你的服务器能通**（酒店 WiFi 的门户劫持）。
+  它适合做负向判断（没网就是没网），别拿它当「网络 OK 所以请求一定能成」的前提。
+- 查询用默认的 `networkMode: 'online'`：断网时进 `paused`，网一回来自己接着跑。首屏还没数据就断网时，
+  `useInfiniteList` 会把列表状态判成 `offline`，占位区显示「恢复后会自动加载」——不判这一下就是一个
+  永远转圈的假 loading。
+- mutation 反过来用 `networkMode: 'always'`（见 `service/queryClient`）：写操作被静默挂起，表现是
+  用户点了按钮一直转圈却没有任何报错。要做离线队列再改回去，并配 `persistQueryClient`。
+- `expo-network` 是原生模块，装完要重新出一个 dev build，`expo start --clear` 不够。
