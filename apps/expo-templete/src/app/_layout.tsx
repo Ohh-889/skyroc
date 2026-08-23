@@ -4,15 +4,20 @@ import { BottomSheetModalProvider, PortalHost } from '@skyroc/native-ui';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
+import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaListener, SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import { Uniwind } from 'uniwind';
+import { Uniwind, useCSSVariable } from 'uniwind';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useSession } from '@/feature/auth';
 import { DevFloatingButton } from '@/feature/dev';
+import { usePendingLinkReplay } from '@/feature/linking';
+import { OfflineNotice, startNetworkWatch } from '@/feature/network';
 import { QueryProvider } from '@/feature/query/query-provider';
+import { applyStoredThemeMode } from '@/feature/theme';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -24,10 +29,23 @@ if (initialWindowMetrics) {
   Uniwind.updateInsets(initialWindowMetrics.insets);
 }
 
+// 把落盘的主题偏好喂给 Uniwind。放在模块顶层是因为它必须早于首帧：Uniwind 自己只认系统色，
+// 不告诉它用户选过 dark，第一帧会按系统的浅色画出来，挂载后再跳一下。
+// SecureStore 是同步读的，这一句不会拖慢启动（见 feature/theme/theme-store）
+applyStoredThemeMode();
+
+// 开始监听网络状态。同样放模块顶层：断网时 onlineManager 要在首屏查询发出去之前就知道现在没网
+// （接线在 feature/query/query-provider），等到 effect 里再开就晚了一帧
+startNetworkWatch();
+
 function RootNavigator() {
   // 凭据是从 SecureStore 同步读出来的（见 store/secure-storage），第一帧就是准的，
   // 不需要再等一个 loading 态
   const { isLoggedIn } = useSession();
+
+  // 登录后重放被深链带进来、却因未登录被拦下的目标。
+  // 必须放在 <Stack> 所在的组件里——它靠 useRootNavigationState 判断导航器是否已挂载
+  usePendingLinkReplay();
 
   return (
     <>
@@ -56,13 +74,32 @@ function RootNavigator() {
             name="(auth)"
           />
         </Stack.Protected>
+
+        {/* 认不出来的路径（深链白名单外、后端下发的旧地址）落到这里，不声明也能用，
+            写出来只是为了让它换个转场：404 不是「更深一层」，滑进来不合适 */}
+        <Stack.Screen
+          options={{ animation: 'fade' }}
+          name="+not-found"
+        />
       </Stack>
     </>
   );
 }
 
 export default function RootLayout() {
+  // 手动覆盖也走这里：setThemeMode 最终会调到 Appearance.setColorScheme，
+  // 所以读 useColorScheme() 的东西（导航主题、下面的 StatusBar）不用再各自订阅一遍主题
   const colorScheme = useColorScheme();
+
+  const backgroundColor = useCSSVariable('--background');
+
+  // 根视图背景。Stack 转场的间隙、Android 手势条后面露出来的都是它，默认是白的——
+  // 暗色主题下每次 push 都会闪一下白边
+  useEffect(() => {
+    if (typeof backgroundColor === 'string') {
+      SystemUI.setBackgroundColorAsync(backgroundColor);
+    }
+  }, [backgroundColor]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -86,6 +123,9 @@ export default function RootLayout() {
                       // oxlint-disable-next-line react/style-prop-object
                       style="auto"
                     />
+
+                    {/* 全局断网横幅。放在 Stack 之后才能盖住页面，且不随路由切换重挂 */}
+                    <OfflineNotice />
 
                     {/* 开发期的 sitemap 悬浮入口，生产包里自身返回 null */}
                     <DevFloatingButton />
