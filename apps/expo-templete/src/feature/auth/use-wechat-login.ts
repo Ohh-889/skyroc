@@ -22,8 +22,7 @@ const createState = () => `login_${Date.now()}_${Math.random().toString(36).slic
 /**
  * 统一处理一次授权结果。
  *
- * 自己吞掉所有异常：两个调用点（点击、冷启动）都拿不住 promise，
- * 抛出去就是一条 unhandled rejection + 用户看不到任何提示。
+ * 自己吞掉所有异常：两个调用点（点击、冷启动）都拿不住 promise， 抛出去就是一条 unhandled rejection + 用户看不到任何提示。
  */
 const handleAuthResult = async (
   result: WechatResult<WechatAuthResponse>,
@@ -56,7 +55,6 @@ export const useWechatLogin = (onSuccess: (tokens: Api.Auth.LoginToken) => void)
 
   // 重入锁用 ref 不用 state：同一帧内连点两次都会读到旧的 isPending
   const isPendingRef = useRef(false);
-
 
   // 冷启动兜底：进程被系统杀掉后从微信返回时，结果先落在原生侧，JS 起来要主动取一次
   useEffect(() => {
@@ -101,7 +99,6 @@ export const useWechatLogin = (onSuccess: (tokens: Api.Auth.LoginToken) => void)
       if (result.ok && result.payload.state !== state) return;
 
       await handleAuthResult(result, onSuccess);
-
     } finally {
       isPendingRef.current = false;
 

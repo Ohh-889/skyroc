@@ -3,6 +3,8 @@ import { RESET, createAtomWithStorage, getAtomValue, setAtomValue } from '@skyro
 import { queryClient } from '@/service/queryClient';
 import { SECURE_STORAGE } from '@/store/secure-storage';
 
+import { markAppUnlocked } from './app-lock-store';
+
 /** SecureStore 的 key 只允许字母、数字和 `.`、`-`、`_` */
 const AUTH_STORAGE_KEY = 'auth.tokens';
 
@@ -13,8 +15,7 @@ function isLoginToken(raw: unknown): raw is Api.Auth.LoginToken {
 /**
  * 登录凭据。`null` 表示未登录。
  *
- * 用 atom 而不是自己写一套订阅：请求拦截器要在 React 之外同步读 token（`getAtomValue`），
- * 页面又要跟着它重渲染（`useAtomValue`），jotai 的 store 本来就同时提供这两条路。
+ * 用 atom 而不是自己写一套订阅：请求拦截器要在 React 之外同步读 token（`getAtomValue`）， 页面又要跟着它重渲染（`useAtomValue`），jotai 的 store 本来就同时提供这两条路。
  *
  * 落盘走 SecureStore，且读是同步的：冷启动时第一帧就知道登没登录，不存在「先闪一下登录页」。
  */
@@ -32,9 +33,15 @@ export function getRefreshToken() {
   return getAtomValue(authAtom)?.refreshToken ?? null;
 }
 
-/** 保存凭据。登录成功、续签成功都走这里 */
+/**
+ * 保存凭据。登录成功、续签成功都走这里。
+ *
+ * 顺手把应用锁标成已验证：刚输完密码 / 刚过完微信授权就再弹一次面容，是纯粹的重复验证。 应用锁要挡的是「登录态还在、手机换了个人拿」，不是刚验过身份的这一刻。
+ */
 export function setAuth(tokens: Api.Auth.LoginToken) {
   setAtomValue(authAtom, tokens);
+
+  markAppUnlocked();
 }
 
 /**
@@ -42,8 +49,7 @@ export function setAuth(tokens: Api.Auth.LoginToken) {
  *
  * 用 RESET 而不是写个 null：它会把 Keychain 里那条也删掉，凭据不该以任何形式留在设备上。
  *
- * 清 Query 缓存必须和清凭据绑在一起：漏了的话，下一个账号登录后任何一个还没过期的 query
- * 都会把上一个账号的数据直接渲染出来。
+ * 清 Query 缓存必须和清凭据绑在一起：漏了的话，下一个账号登录后任何一个还没过期的 query 都会把上一个账号的数据直接渲染出来。
  */
 export function resetAuth() {
   setAtomValue(authAtom, RESET);

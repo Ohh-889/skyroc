@@ -5,8 +5,7 @@ import { authAtom, resetAuth, setAuth } from './auth-store';
 /**
  * 登录状态。
  *
- * 刻意不套 Context：凭据的事实来源是 `authAtom`，`<JotaiProvider>` 已经把全局 store 接进了
- * React，再包一层 Provider 只会多出一份随时可能和它不同步的状态。
+ * 刻意不套 Context：凭据的事实来源是 `authAtom`，`<JotaiProvider>` 已经把全局 store 接进了 React，再包一层 Provider 只会多出一份随时可能和它不同步的状态。
  *
  * 没有 loading 态：SecureStore 是同步读的，第一帧就知道登没登录。
  */
