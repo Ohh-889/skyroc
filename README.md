@@ -8,14 +8,14 @@
 
 从中后台应用到 Web / Native UI，再到请求、状态、日志与工程工具，能力全部沉淀为边界清晰的 workspace 包。
 
-[在线预览](https://admin.skyroc.me/) · [项目文档](https://project-docs.skyroc.me/) · [Admin 文档](https://admin-docs.skyroc.me/) · [Web UI 文档](https://web-ui-docs.skyroc.me/) · [Native UI 文档](https://native-ui.skyroc.me/) · [GitHub](https://github.com/Ohh-889/skyroc-admin) · [Gitee](https://gitee.com/sjgk_dl/react-admin)
+[在线预览](https://admin.skyroc.me/) · [项目文档](https://project-docs.skyroc.me/) · [Admin 文档](https://admin-docs.skyroc.me/) · [Web UI 文档](https://web-ui-docs.skyroc.me/) · [Native UI 文档](https://native-ui.skyroc.me/) · [GitHub](https://github.com/Ohh-889/skyroc) · [Gitee](https://gitee.com/sjgk_dl/skyroc)
 
 <p align="center"><a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19.2-149ECA?logo=react&amp;logoColor=white" alt="React" height="20" /></a> <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript" height="20" /></a> <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite&amp;logoColor=white" alt="Vite" height="20" /></a> <a href="https://expo.dev/"><img src="https://img.shields.io/badge/Expo-SDK_57-000020?logo=expo&amp;logoColor=white" alt="Expo" height="20" /></a> <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-10.4-F69220?logo=pnpm&amp;logoColor=white" alt="pnpm" height="20" /></a> <a href="https://turbo.build/"><img src="https://img.shields.io/badge/Turborepo-2.7-EF4444?logo=turborepo&amp;logoColor=white" alt="Turborepo" height="20" /></a></p>
 
 </div>
 
 > [!TIP]
-> 想先看效果，打开 [Admin 在线预览](https://admin.skyroc.me/)、[Web UI 文档](https://web-ui-docs.skyroc.me/) 或 [Native UI 文档](https://native-ui.skyroc.me/)；想直接开发，从 [`apps/admin`](./apps/admin) 开始。
+> 想先看效果，打开 [Admin 在线预览](https://admin.skyroc.me/)、[Web UI 文档](https://web-ui-docs.skyroc.me/) 或 [Native UI 文档](https://native-ui.skyroc.me/)；想直接开发，Web 后台从 [`apps/admin`](./apps/admin) 开始，移动端从 [`apps/expo-templete`](./apps/expo-templete) 开始。
 
 ## ✨ 为什么是 Skyroc
 
@@ -24,8 +24,9 @@
 - 🎨 **双端设计系统** — `@skyroc/web-ui` 与 `@skyroc/native-ui` 共用设计令牌，各自保留符合平台习惯的实现。
 - 🔧 **统一工程化** — pnpm catalog 管理版本，Turborepo 编排任务，oxlint、oxfmt、Vitest 与 Playwright 统一质量流程。
 - 📦 **开箱即用** — `skyroc-admin` 提供干净骨架，`admin-example` 展示完整能力，`pnpm create:admin` 可以创建新应用。
+- 📱 **移动端模板** — `expo-templete` 是可直接 fork 的 Expo 业务模板，登录态、网络层、主题、国际化、深链与原生打包脚本都已就位。
 
-Web Admin、Web UI 和 React Native / Expo 组件库都已经落地；小程序目录仍作为后续扩展预留。
+Web Admin、Web UI、React Native / Expo 组件库和 Expo 业务模板都已经落地；小程序目录仍作为后续扩展预留。
 
 ## 🚀 在线体验与文档
 
@@ -55,6 +56,7 @@ Web Admin、Web UI 和 React Native / Expo 组件库都已经落地；小程序�
 | 基于干净骨架开发后台 | [`apps/admin`](./apps/admin)                               | `pnpm --filter skyroc-admin dev`           |
 | 查看完整后台能力     | [`apps/admin-example`](./apps/admin-example)               | `pnpm --filter admin-example dev`          |
 | 对接 RuoYi / FastAPI | [`apps/ruoyi-plus-fast`](./apps/ruoyi-plus-fast)           | `pnpm --filter ruoyi-plus-fast dev`        |
+| 开发 Expo 业务 App   | [`apps/expo-templete`](./apps/expo-templete)               | `pnpm --filter expo-templete start`        |
 | 开发 Web 组件        | [`apps/web-ui-playground`](./apps/web-ui-playground)       | `pnpm --filter skyroc-ui-playground dev`   |
 | 开发 Native 组件     | [`apps/native-ui-playground`](./apps/native-ui-playground) | `pnpm --filter native-ui-playground start` |
 
@@ -65,7 +67,8 @@ Skyroc 不是把所有代码堆进一个 Admin 应用，而是让应用成为轻
 ```text
 ┌────────────────────────────────────────────────────────────────────┐
 │ Applications                                                       │
-│ admin · admin-example · ruoyi-plus-fast · Web / Native Playground │
+│ admin · admin-example · ruoyi-plus-fast · expo-templete            │
+│ Web / Native Playground                                            │
 │ 负责：业务页面、路由装配、服务适配与应用配置                        │
 └──────────────────────────────┬─────────────────────────────────────┘
                                │ depends on
@@ -99,36 +102,38 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/<能力>`    | 跨端基础设施、共享能力或平台无关原语 | `@skyroc/utils`、`@skyroc/service`、`@skyroc/form` |
 | `@skyroc/web-*`     | Web 布局、主题、UI 与运行时能力      | `@skyroc/web-admin-layouts`、`@skyroc/web-ui`      |
 | `@skyroc/native-*`  | React Native / Expo 专属能力         | `@skyroc/native-ui`                                |
+| `@skyroc/expo-*`    | Expo 原生模块（含自定义原生代码）    | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`    |
 | `@skyroc/adapter-*` | 对具体第三方库的适配层               | `@skyroc/adapter-antd-theme`                       |
 | `@sa/*`             | 兼容历史命名的仓库内部配置           | `@sa/uno-config`                                   |
 
 ## 📦 Workspace 包地图
 
-| 分层           | 包                                                                                                                                                                            |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 分层           | 包                                                                                                                                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/scheduler` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` |
-| **共享与原语** | `@skyroc/type-utils` · `@skyroc/ui-types` · `@skyroc/hooks` · `@skyroc/form`                                                                                                  |
-| **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme`                                                                                                    |
-| **UI**         | `@skyroc/web-ui` · `@skyroc/web-ui-antd` · `@skyroc/web-ui-compose` · `@skyroc/native-ui`                                                                                     |
-| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@sa/uno-config`                                                                                                                      |
+| **共享与原语** | `@skyroc/type-utils` · `@skyroc/ui-types` · `@skyroc/hooks` · `@skyroc/form`                                                                                                                              |
+| **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme`                                                                                                                                |
+| **UI**         | `@skyroc/web-ui` · `@skyroc/web-ui-antd` · `@skyroc/web-ui-compose` · `@skyroc/native-ui`                                                                                                                 |
+| **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                                          |
+| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@sa/uno-config`                                                                                                                                                  |
 
 <details>
 <summary><strong>查看全部包的职责</strong></summary>
 
 ### 🧬 跨端内核 — `packages/@core/*`
 
-| 包名                 | 职责                                                                              |
-| -------------------- | --------------------------------------------------------------------------------- |
-| `@skyroc/types`      | 全局类型与 API 类型声明，作为低依赖类型基础                                       |
-| `@skyroc/utils`      | 平台无关工具集合，通过 `./web`、`./path`、`./cn`、`./crypto` 等子路径隔离特定能力 |
-| `@skyroc/axios`      | 类型安全的 Axios 客户端，提供重试、转换管道、请求取消与后端响应处理               |
-| `@skyroc/service`    | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈                |
-| `@skyroc/core-state` | Jotai 状态封装与可注入存储的跨端状态能力                                          |
-| `@skyroc/logger`     | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
-| `@skyroc/scheduler`  | 零运行时依赖的协作式任务调度器，统一 init、periodic 与 listener 任务              |
-| `@skyroc/color`      | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
-| `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设            |
-| `@skyroc/scripts`    | 创建应用、同步模板、提交、清理、发布与 changelog 等仓库 CLI                       |
+| 包名                      | 职责                                                                              |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| `@skyroc/types`           | 全局类型与 API 类型声明，作为低依赖类型基础                                       |
+| `@skyroc/utils`           | 平台无关工具集合，通过 `./web`、`./path`、`./cn`、`./crypto` 等子路径隔离特定能力 |
+| `@skyroc/axios`           | 类型安全的 Axios 客户端，提供重试、转换管道、请求取消与后端响应处理               |
+| `@skyroc/service`         | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈                |
+| `@skyroc/core-state`      | Jotai 状态封装与可注入存储的跨端状态能力                                          |
+| `@skyroc/logger`          | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
+| `@skyroc/scheduler`       | 零运行时依赖的协作式任务调度器，统一 init、periodic 与 listener 任务              |
+| `@skyroc/color`           | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
+| `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设                 |
+| `@skyroc/scripts`         | 创建应用、同步模板、提交、清理、发布与 changelog 等仓库 CLI                       |
 
 ### 🔗 共享能力与原语
 
@@ -154,14 +159,16 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/web-admin-devtools`     | 开发环境的 Router、Query、Jotai 调试面板                          |
 | `@skyroc/web-admin-styles`       | Admin 应用共享的全局 CSS 资源                                     |
 
-### 🎨 UI 组件库
+### 🎨 UI 组件库与原生模块
 
-| 包名                     | 位置                      | 职责                                                           |
-| ------------------------ | ------------------------- | -------------------------------------------------------------- |
-| `@skyroc/web-ui`         | `packages/web/ui/shadcn`  | 基于 Radix UI 与 Tailwind CSS 的 Web 基础组件和 primitives API |
-| `@skyroc/web-ui-antd`    | `packages/web/ui/antd`    | 面向管理系统场景的 Ant Design 复合组件                         |
-| `@skyroc/web-ui-compose` | `packages/web/ui/compose` | 无状态、高复用的 Web 组合组件                                  |
-| `@skyroc/native-ui`      | `packages/native/ui`      | 基于 React Native、Expo 与 Uniwind 的 Native 组件库            |
+| 包名                     | 位置                        | 职责                                                           |
+| ------------------------ | --------------------------- | -------------------------------------------------------------- |
+| `@skyroc/web-ui`         | `packages/web/ui/shadcn`    | 基于 Radix UI 与 Tailwind CSS 的 Web 基础组件和 primitives API |
+| `@skyroc/web-ui-antd`    | `packages/web/ui/antd`      | 面向管理系统场景的 Ant Design 复合组件                         |
+| `@skyroc/web-ui-compose` | `packages/web/ui/compose`   | 无状态、高复用的 Web 组合组件                                  |
+| `@skyroc/native-ui`      | `packages/native/ui`        | 基于 React Native、Expo 与 Uniwind 的 Native 组件库            |
+| `@skyroc/expo-bluetooth` | `packages/native/bluetooth` | 蓝牙可用性的 Expo 模块封装：状态查询、权限申请与开启引导       |
+| `@skyroc/expo-wechat`    | `packages/native/wechat`    | 微信开放平台 SDK 的 Expo 模块封装：登录授权与九种分享          |
 
 ### 🛠️ 内部工程配置 — `internal/*`
 
@@ -190,6 +197,16 @@ pnpm install
 pnpm --filter skyroc-admin dev
 ```
 
+### 启动移动端模板
+
+```bash
+pnpm --filter expo-templete doctor   # 环境自检：工具链 / .env / ANDROID_HOME / xcode-select
+pnpm --filter expo-templete ios      # 首次需要 development build，Expo Go 跑不起来
+pnpm --filter expo-templete start    # 之后改 JS 只要起 dev server
+```
+
+模板的环境变量、打包脚本与目录约定见 [`apps/expo-templete/README.md`](./apps/expo-templete/README.md)。
+
 ### 创建新的 Admin 应用
 
 ```bash
@@ -210,6 +227,7 @@ skyroc-admin/
 │   ├── admin/                  # 精简 Admin 模板
 │   ├── admin-example/          # 完整功能示例
 │   ├── ruoyi-plus-fast/        # RuoYi / FastAPI 管理端
+│   ├── expo-templete/          # Expo 业务 App 模板
 │   ├── web-ui-playground/      # Web UI 演示场
 │   └── native-ui-playground/   # Expo / Native UI 演示场
 ├── packages/
@@ -218,7 +236,7 @@ skyroc-admin/
 │   ├── hooks/                  # 跨端 React Hooks
 │   ├── primitives/             # 平台无关原语
 │   ├── web/                    # Web Kit 与 Web UI
-│   └── native/                 # React Native UI
+│   └── native/                 # React Native UI 与 Expo 原生模块
 ├── docs/                       # 六个独立文档站
 ├── design/                     # 产品设计、决策与原型
 ├── internal/                   # 内部共享配置
@@ -230,7 +248,7 @@ skyroc-admin/
 | 范围       | 技术                                                                   |
 | ---------- | ---------------------------------------------------------------------- |
 | **Web**    | React 19、Vite 8、TanStack Router、TanStack Query、Jotai、Ant Design 6 |
-| **Native** | React Native、Expo SDK 57、Uniwind、Tailwind CSS 4                     |
+| **Native** | React Native、Expo SDK 57、expo-router、Uniwind、Tailwind CSS 4        |
 | **UI**     | Radix UI、Ant Design、`@skyroc/web-ui`、`@skyroc/native-ui`            |
 | **工程**   | TypeScript 6、pnpm workspace、Turborepo、oxlint、oxfmt                 |
 | **测试**   | Vitest、Testing Library、Playwright                                    |
