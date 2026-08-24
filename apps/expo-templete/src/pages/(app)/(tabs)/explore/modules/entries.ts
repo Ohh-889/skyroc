@@ -77,6 +77,13 @@ export const DEMO_ENTRY_GROUPS: DemoEntryGroup[] = [
         icon: 'translate',
         subtitle: '中英 / 跟随系统三态，切换当场生效，日期数字货币都走同一个入口',
         title: '国际化'
+      },
+      {
+        api: 'FieldGroup · FormItem · FormList · valuePropName / trigger',
+        href: '/demo/form',
+        icon: 'form-select',
+        subtitle: '一屏过完输入与选择控件，含异步、联动、服务端回填五种校验',
+        title: '表单解决方案'
       }
     ]
   },
