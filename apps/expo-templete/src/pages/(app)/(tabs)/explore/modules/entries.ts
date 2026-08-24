@@ -70,6 +70,13 @@ export const DEMO_ENTRY_GROUPS: DemoEntryGroup[] = [
         icon: 'palette-outline',
         subtitle: '亮 / 暗 / 跟随系统三态，顺带把整套语义色和尺度过一遍',
         title: '主题与 Token'
+      },
+      {
+        api: 'useLocale · setupI18n · format 统一入口 · i18next 插值与复数',
+        href: '/demo/i18n',
+        icon: 'translate',
+        subtitle: '中英 / 跟随系统三态，切换当场生效，日期数字货币都走同一个入口',
+        title: '国际化'
       }
     ]
   },

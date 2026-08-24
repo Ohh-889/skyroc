@@ -1,0 +1,64 @@
+{
+  "common": {
+    "cancel": "取消",
+    "confirm": "确定",
+    "gotIt": "我知道了",
+    "loading": "加载中",
+    "notConfigured": "未配置",
+    "retry": "重试"
+  },
+  "format": {
+    "relative": {
+      "now": "刚刚",
+      "future": {
+        "day_other": "{{count}} 天后",
+        "hour_other": "{{count}} 小时后",
+        "minute_other": "{{count}} 分钟后",
+        "month_other": "{{count}} 个月后",
+        "year_other": "{{count}} 年后"
+      },
+      "past": {
+        "day_other": "{{count}} 天前",
+        "hour_other": "{{count}} 小时前",
+        "minute_other": "{{count}} 分钟前",
+        "month_other": "{{count}} 个月前",
+        "year_other": "{{count}} 年前"
+      }
+    }
+  },
+  "locale": {
+    "options": {
+      "system": "跟随系统"
+    },
+    "title": "语言"
+  },
+  "demo": {
+    "i18n": {
+      "title": "国际化",
+      "intro": "偏好存在 MMKV 里，i18next 在模块顶层同步初始化，冷启动第一帧就是对的语言。切换不重挂界面——react-i18next 直接让订阅了 t 的组件重渲染。",
+      "pick": "选择语言",
+      "state": {
+        "effective": "实际生效",
+        "preference": "当前偏好",
+        "system": "系统语言",
+        "title": "当前状态"
+      },
+      "plural": {
+        "description": "Hermes 没有 Intl.PluralRules，模板补了 intl-pluralrules 这个 polyfill。少了它 i18next 会回落到一条硬编码的英文规则（count===1 取 _one），英文因此毫无异常，中文却在 count 恰好为 1 时查不到词条，界面上直接漏出 key。",
+        "sample_other": "共 {{count}} 条未读消息",
+        "title": "插值与复数"
+      },
+      "format": {
+        "currency": "货币",
+        "date": "日期",
+        "dateTime": "日期时间",
+        "description": "全部走 feature/i18n/format 这一个入口，页面里不要自己 new Intl。Hermes 只带了 Collator / DateTimeFormat / NumberFormat 三样，相对时间是用词条 + 复数拼的，不是 Intl.RelativeTimeFormat。",
+        "number": "数字",
+        "percent": "百分比",
+        "relative": "相对时间",
+        "title": "格式化统一入口",
+        "weekday": "星期"
+      }
+    }
+  }
+}

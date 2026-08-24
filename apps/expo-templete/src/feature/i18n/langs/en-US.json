@@ -1,0 +1,75 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "gotIt": "Got it",
+    "loading": "Loading",
+    "notConfigured": "Not configured",
+    "retry": "Retry"
+  },
+  "format": {
+    "relative": {
+      "now": "Just now",
+      "future": {
+        "day_one": "in {{count}} day",
+        "day_other": "in {{count}} days",
+        "hour_one": "in {{count}} hour",
+        "hour_other": "in {{count}} hours",
+        "minute_one": "in {{count}} minute",
+        "minute_other": "in {{count}} minutes",
+        "month_one": "in {{count}} month",
+        "month_other": "in {{count}} months",
+        "year_one": "in {{count}} year",
+        "year_other": "in {{count}} years"
+      },
+      "past": {
+        "day_one": "{{count}} day ago",
+        "day_other": "{{count}} days ago",
+        "hour_one": "{{count}} hour ago",
+        "hour_other": "{{count}} hours ago",
+        "minute_one": "{{count}} minute ago",
+        "minute_other": "{{count}} minutes ago",
+        "month_one": "{{count}} month ago",
+        "month_other": "{{count}} months ago",
+        "year_one": "{{count}} year ago",
+        "year_other": "{{count}} years ago"
+      }
+    }
+  },
+  "locale": {
+    "options": {
+      "system": "System"
+    },
+    "title": "Language"
+  },
+  "demo": {
+    "i18n": {
+      "title": "Internationalization",
+      "intro": "The preference lives in MMKV and i18next initializes synchronously at module scope, so the very first frame is already in the right language. Switching doesn't remount anything — react-i18next just re-renders whatever subscribed to t.",
+      "pick": "Language",
+      "state": {
+        "effective": "In effect",
+        "preference": "Preference",
+        "system": "System language",
+        "title": "Current state"
+      },
+      "plural": {
+        "description": "Hermes ships no Intl.PluralRules, so the template pulls in the intl-pluralrules polyfill. Without it i18next falls back to a hard-coded English rule (count===1 picks _one): English looks perfectly fine, while Chinese has no _one form and leaks the raw key whenever the count is exactly 1.",
+        "sample_one": "{{count}} unread message",
+        "sample_other": "{{count}} unread messages",
+        "title": "Interpolation and plurals"
+      },
+      "format": {
+        "currency": "Currency",
+        "date": "Date",
+        "dateTime": "Date and time",
+        "description": "Everything goes through the single entry in feature/i18n/format — never new up an Intl formatter in a page. Hermes only ships Collator / DateTimeFormat / NumberFormat, so relative time is built from message keys plus plurals, not Intl.RelativeTimeFormat.",
+        "number": "Number",
+        "percent": "Percent",
+        "relative": "Relative time",
+        "title": "One formatting entry",
+        "weekday": "Weekday"
+      }
+    }
+  }
+}

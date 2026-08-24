@@ -14,6 +14,7 @@ import { Uniwind, useCSSVariable } from 'uniwind';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useSession } from '@/feature/auth';
 import { DevFloatingButton } from '@/feature/dev';
+import { LocaleEffect, setupI18n } from '@/feature/i18n';
 import { usePendingLinkReplay } from '@/feature/linking';
 import { OfflineNotice, startNetworkWatch } from '@/feature/network';
 import { QueryProvider } from '@/feature/query/query-provider';
@@ -33,6 +34,11 @@ if (initialWindowMetrics) {
 // 不告诉它用户选过 dark，第一帧会按系统的浅色画出来，挂载后再跳一下。
 // SecureStore 是同步读的，这一句不会拖慢启动（见 feature/theme/theme-store）
 applyStoredThemeMode();
+
+// 同理，语言也必须在首帧之前就位。setupI18n 是**同步**的：词条打包在 JS 里，偏好从 MMKV 同步读，
+// i18next 又被要求 initImmediate: false —— 三样凑齐，第一帧就是用户选的语言，不会先用兜底语言
+// 画一遍再跳（见 feature/i18n/i18n）
+setupI18n();
 
 // 开始监听网络状态。同样放模块顶层：断网时 onlineManager 要在首屏查询发出去之前就知道现在没网
 // （接线在 feature/query/query-provider），等到 effect 里再开就晚了一帧
@@ -126,6 +132,9 @@ export default function RootLayout() {
 
                     {/* 全局断网横幅。放在 Stack 之后才能盖住页面，且不随路由切换重挂 */}
                     <OfflineNotice />
+
+                    {/* 「跟随系统」在安卓上要靠它跟上系统语言的变化，无渲染产出 */}
+                    <LocaleEffect />
 
                     {/* 开发期的 sitemap 悬浮入口，生产包里自身返回 null */}
                     <DevFloatingButton />
