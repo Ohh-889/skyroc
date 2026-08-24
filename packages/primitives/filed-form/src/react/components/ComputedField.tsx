@@ -1,14 +1,14 @@
 'use client';
 
 /**
- * ComputedField component for reactive computed form fields
- * Automatically recalculates its value based on dependencies and renders as read-only
+ * ComputedField component for reactive computed form fields Automatically recalculates its value based on dependencies
+ * and renders as read-only
  */
 
-import type { ReactElement } from 'react';
-import { useEffect, useState } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import type { AllPathsKeys } from '@skyroc/type-utils';
+import type { ReactElement } from 'react';
+import { useEffect, useState } from 'react';
 import type { StoreValue } from '../../form-core/types';
 import type { Rule } from '../../form-core/validation';
 import { useFieldContext } from '../hooks/FieldContext';
@@ -32,34 +32,33 @@ export type ComputedFieldProps<Values, T extends AllPathsKeys<Values> = AllPaths
 } & Record<string, any>;
 
 /**
- * ComputedField component that creates a reactive computed field
- * The field automatically recalculates when its dependencies change
- * and renders as a read-only field
+ * ComputedField component that creates a reactive computed field The field automatically recalculates when its
+ * dependencies change and renders as a read-only field
  *
  * @example
- * ```tsx
- * // Example: Calculate total price based on quantity and unit price
- * <Form>
- *   <Field name="quantity" >
- *     <Input />
- *   </Field>
- *   <Field name="unitPrice" >
- *     <Input />
- *   </Field>
+ *   ```tsx
+ *   // Example: Calculate total price based on quantity and unit price
+ *   <Form>
+ *     <Field name="quantity">
+ *       <Input />
+ *     </Field>
+ *     <Field name="unitPrice">
+ *       <Input />
+ *     </Field>
  *
- *   <ComputedField
- *     name="totalPrice"
- *     deps={['quantity', 'unitPrice']}
- *     compute={(get) => {
- *       const quantity = get('quantity') || 0;
- *       const unitPrice = get('unitPrice') || 0;
- *       return quantity * unitPrice;
- *     }}
- *   >
- *     <Input placeholder="Total Price (calculated)" />
- *   </ComputedField>
- * </Form>
- * ```
+ *     <ComputedField
+ *       name="totalPrice"
+ *       deps={['quantity', 'unitPrice']}
+ *       compute={get => {
+ *         const quantity = get('quantity') || 0;
+ *         const unitPrice = get('unitPrice') || 0;
+ *         return quantity * unitPrice;
+ *       }}
+ *     >
+ *       <Input placeholder="Total Price (calculated)" />
+ *     </ComputedField>
+ *   </Form>;
+ *   ```;
  */
 function ComputedField<Values = any>({
   children,
@@ -77,11 +76,13 @@ function ComputedField<Values = any>({
   const { getFieldsValue, getFieldValue, getInternalHooks, isHidden, setFieldValue } =
     fieldContext as unknown as InternalFormInstance<Values>;
 
-  // Local state to track computed value for re-rendering
-
-  const value = getFieldValue(name);
-
-  const [_, forceUpdate] = useState({});
+  // 计算值放在 state 里，而不是在渲染期调 getFieldValue 现读。
+  //
+  // 现读的写法在 React Compiler 下会被整个记忆化掉：`getFieldValue(name)` 的缓存键是
+  // (getFieldValue, name)，前者是 store 实例上的 bound arrow、后者是常量字符串，两个都永远不变，
+  // 于是 value 被冻在首次渲染的结果上。value 不动 → slotProps 不动 → 返回的 element 引用不动 →
+  // React 直接 bailout，子组件根本不进 render，字段永远显示不出计算结果。
+  const [value, setValue] = useState(() => getFieldValue(name));
 
   const fieldIsHidden = isHidden(name);
 
@@ -96,7 +97,7 @@ function ComputedField<Values = any>({
     // This ensures the component re-renders when the computed value changes
     const unsub = registerField({
       changeValue: () => {
-        forceUpdate({});
+        setValue(getFieldValue(name));
       },
       initialValue: getFieldValue(name),
       name,
@@ -109,7 +110,10 @@ function ComputedField<Values = any>({
     // Registration only wires up the dependency graph - the compute function runs on the next
     // dependency change. Without this first pass the field stays empty until a dependency is
     // edited, which is most visible when the deps come from `initialValues`.
-    setFieldValue(name, compute(dep => getFieldValue(dep), getFieldsValue() as Values));
+    setFieldValue(
+      name,
+      compute(dep => getFieldValue(dep), getFieldsValue() as Values)
+    );
 
     // Cleanup: unregister computed field and field entity
     return () => {
