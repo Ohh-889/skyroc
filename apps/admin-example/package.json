@@ -48,7 +48,6 @@
     "@skyroc/service": "workspace:*",
     "@skyroc/utils": "workspace:*",
     "@skyroc/web-admin-devtools": "workspace:*",
-    "@skyroc/web-admin-shell": "workspace:*",
     "@skyroc/web-ui": "workspace:*",
     "@tanstack/react-query": "catalog:core",
     "@tanstack/react-router": "catalog:web",

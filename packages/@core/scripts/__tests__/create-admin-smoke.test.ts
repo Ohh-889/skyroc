@@ -136,7 +136,9 @@ describe('workspace 模式', () => {
 
     const pkg = await readJson(path.join(workspaceDir, 'package.json'));
 
-    expect(pkg.dependencies['@skyroc/web-admin-shell']).toBe('workspace:*');
+    // shell 经 @shell 别名按目录访问，不需要任何人声明依赖：
+    // pnpm 对 workspace 包一律安装其自身依赖，turbo 上 shell 也没有 build 任务可依赖
+    expect(pkg.dependencies['@skyroc/web-admin-shell']).toBeUndefined();
 
     const viteConfig = await readFile(path.join(workspaceDir, 'vite.config.ts'), 'utf8');
 

@@ -489,9 +489,6 @@ importers:
       '@skyroc/web-admin-devtools':
         specifier: workspace:*
         version: link:../../packages/web/admin-devtools
-      '@skyroc/web-admin-shell':
-        specifier: workspace:*
-        version: link:../../packages/web/admin
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
@@ -658,9 +655,6 @@ importers:
       '@skyroc/web-admin-devtools':
         specifier: workspace:*
         version: link:../../packages/web/admin-devtools
-      '@skyroc/web-admin-shell':
-        specifier: workspace:*
-        version: link:../../packages/web/admin
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
@@ -1162,9 +1156,6 @@ importers:
       '@skyroc/web-admin-devtools':
         specifier: workspace:*
         version: link:../../packages/web/admin-devtools
-      '@skyroc/web-admin-shell':
-        specifier: workspace:*
-        version: link:../../packages/web/admin
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
