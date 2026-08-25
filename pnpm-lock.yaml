@@ -477,9 +477,6 @@ importers:
       '@skyroc/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
-      '@skyroc/logger':
-        specifier: workspace:*
-        version: link:../../packages/@core/logger
       '@skyroc/service':
         specifier: workspace:*
         version: link:../../packages/@core/service
@@ -643,9 +640,6 @@ importers:
       '@skyroc/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
-      '@skyroc/logger':
-        specifier: workspace:*
-        version: link:../../packages/@core/logger
       '@skyroc/service':
         specifier: workspace:*
         version: link:../../packages/@core/service
@@ -1144,9 +1138,6 @@ importers:
       '@skyroc/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
-      '@skyroc/logger':
-        specifier: workspace:*
-        version: link:../../packages/@core/logger
       '@skyroc/service':
         specifier: workspace:*
         version: link:../../packages/@core/service

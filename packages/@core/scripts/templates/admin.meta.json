@@ -4,7 +4,6 @@
     "@skyroc/color": "^2.6.0",
     "@skyroc/core-state": "^1.0.0",
     "@skyroc/hooks": "^1.0.0",
-    "@skyroc/logger": "^1.0.0",
     "@skyroc/service": "^1.0.0",
     "@skyroc/utils": "^4.0.0",
     "@skyroc/web-admin-devtools": "^0.1.0",

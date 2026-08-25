@@ -44,7 +44,6 @@
     "@skyroc/color": "workspace:*",
     "@skyroc/core-state": "workspace:*",
     "@skyroc/hooks": "workspace:*",
-    "@skyroc/logger": "workspace:*",
     "@skyroc/service": "workspace:*",
     "@skyroc/utils": "workspace:*",
     "@skyroc/web-admin-devtools": "workspace:*",
