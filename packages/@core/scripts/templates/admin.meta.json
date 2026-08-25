@@ -30,7 +30,7 @@
     "@iconify/react": "^6.0.2",
     "@iconify/types": "^2.0.0",
     "@sa/uno-config": "^1.0.0",
-    "@skyroc/scripts": "^2.5.0",
+    "@skyroc/scripts": "^2.5.1",
     "@skyroc/web-admin-vite": "^0.1.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
