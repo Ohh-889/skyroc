@@ -55,13 +55,13 @@
 | `request/overview.mdx` | 请求概览 | 看懂请求封装 | `request`、`demoRequest`、业务 code、token、错误提示适配 | `service/request/index.ts` |
 | `request/service-modules.mdx` | 服务模块 | 新增业务接口 | `urls/api/hooks/keys/types` 分层、React Query hooks 接页面 | `service/api/*` |
 | `request/proxy-and-backend.mdx` | 代理与后端对接 | 切换真实后端 | `VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL`、`/proxy-default`、`/proxy-{key}` | `.env*`, admin-vite proxy |
-| `theme/overview.mdx` | 主题系统 | 改主题和暗色模式 | `@skyroc/web-admin-theme`、默认主题、本地缓存、Antd Provider | `config.ts`, `features/antd`, web-kit docs |
-| `theme/i18n-and-icons.mdx` | 国际化与图标 | 改语言和图标 | `@skyroc/web-admin-i18n`、语言配置、本地 svg、Iconify、前缀 | `locales`, `assets/svg-icon`, `.env` |
+| `theme/overview.mdx` | 主题系统 | 改主题和暗色模式 | `@shell/theme`、默认主题、本地缓存、Antd Provider | `config.ts`, `features/antd`, web-kit docs |
+| `theme/i18n-and-icons.mdx` | 国际化与图标 | 改语言和图标 | `@shell/i18n`、语言配置、本地 svg、Iconify、前缀 | `locales`, `assets/svg-icon`, `.env` |
 | `features/table-and-form.mdx` | 表格与表单 | 写管理页列表 | `useTable`、URL 查询同步、分页、列显隐、Antd Form 搜索 | `features/table`, `manage/user` |
 | `features/demo-pages.mdx` | 示例页面边界 | 区分 demo、占位和真实业务入口 | `manage/user` 通知 demo、`manage/menu` 弹窗测试、`manage/role` 主题展示 | `apps/admin/src/pages/(admin)` |
 | `features/charts-and-dashboard.mdx` | 图表与 Dashboard | 写首页图表和 dashboard 模块 | `useEcharts`、首页模块、暗色模式、尺寸监听、菜单 badge | `home/index.tsx`, `home/modules`, `hooks/use-echarts.ts` |
 | `features/auth-login.mdx` | 登录认证 | 理解登录和退出 | 登录页结构、`useLogin/useAuth`、token 持久化、退出登录 | `(auth)/login`, `features/auth` |
-| `features/notification.mdx` | 通知系统 | 使用通知能力 | `@skyroc/web-admin-notification` 在 header 和示例页中的用法 | `(admin)/layout.tsx`, `manage/user` |
+| `features/notification.mdx` | 通知系统 | 使用通知能力 | `@shell/notification` 在 header 和示例页中的用法 | `(admin)/layout.tsx`, `manage/user` |
 | `deployment/build-and-deploy.mdx` | 构建部署 | 正确部署生产包 | build、preview、history rewrite、Nginx、base url、常见问题 | `package.json`, `.env`, Vite config |
 | `faq.mdx` | 常见问题 | 快速排错 | 菜单不显示、动态路由失效、刷新 404、代理失败、token、Vite 预设未构建、devtools 顺序 | 以上各模块 |
 

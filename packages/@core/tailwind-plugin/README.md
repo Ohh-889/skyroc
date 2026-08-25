@@ -2,7 +2,7 @@
 
 > Skyroc UI 的 Tailwind CSS 插件 — 通过 CSS 变量提供主题系统、12 套内置配色、语义化 token、可配置圆角与一组常用 utility，支持 Web / Native 双平台与运行时主题切换
 
-构建于 [`@skyroc/color`](../../@core/color) 之上，与 [`@skyroc/web-admin-theme`](../admin-theme) 互不依赖：本包负责 Tailwind 端的样式系统，后者负责 React 状态与 Ant Design 集成。
+构建于 [`@skyroc/color`](../../@core/color) 之上，与 admin shell 的主题层（[`packages/web/admin/theme`](../../web/admin/theme)，经 `@shell/theme` 引用）互不依赖：本包负责 Tailwind 端的样式系统，后者负责 React 状态、Ant Design 集成与主题算法。
 
 ## Features
 
@@ -169,8 +169,7 @@ src/
 ## Related Packages
 
 - [`@skyroc/color`](../../@core/color) — OKLCH 色板生成与色彩工具
-- [`@skyroc/web-admin-theme`](../admin-theme) — React 主题状态 + Ant Design 集成
-- [`@skyroc/adapter-antd-theme`](../antd-theme) — Ant Design 主题算法适配
+- [`@shell/theme`](../../web/admin/theme) — React 主题状态、Ant Design 集成与主题算法（admin shell 主题层）
 - [`@skyroc/utils`](../utils) — 通用工具函数，`./type` 子入口提供零运行时 TypeScript 工具类型
 
 ## License

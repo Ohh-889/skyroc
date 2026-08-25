@@ -23,16 +23,15 @@
 - Web、Native UI 和平台运行时：放入对应平台子树。
 - 页面、业务组件和应用流程：留在应用或明确的业务模块中。
 
-`@skyroc/types` 是当前全局声明类型的既有基础包。新增纯类型时先找已有的归属包，
-独立发一个纯类型包要付版本、README、构建与发布的长期成本 —— `@skyroc/type-utils` 和
-`@skyroc/ui-types` 就是这么退役的，分别并入了 `@skyroc/utils/type` 与
-`@skyroc/tailwind-plugin/ui`。
+新增纯类型时先找已有的归属包，独立发一个纯类型包要付版本、README、构建与发布的
+长期成本 —— `@skyroc/type-utils` 和 `@skyroc/ui-types` 就是这么退役的，分别并入了
+`@skyroc/utils/type` 与 `@skyroc/tailwind-plugin/ui`；`@skyroc/types` 的全局命名空间
+声明（`Api` / `App` 等）同样并入了 admin shell 的 `packages/web/admin/types/`。
 
 ## 当前包
 
 | 目录 | 包名 | 职责 | 关键边界或公开子入口 |
 | --- | --- | --- | --- |
-| `types/` | `@skyroc/types` | 全局类型声明 | 零运行时依赖；`.`、`./types` |
 | `utils/` | `@skyroc/utils` | 跨平台通用工具 | 平台无关入口及 `./cn`、`./crypto`、`./path`、`./scheduler`、`./web` |
 | `color/` | `@skyroc/color` | 颜色转换和调色板生成 | 不依赖其他 `@core` 包 |
 | `axios/` | `@skyroc/axios` | 类型安全的 HTTP 客户端 | 依赖 `@skyroc/utils` |
@@ -40,6 +39,7 @@
 | `logger/` | `@skyroc/logger` | 跨平台日志及平台存储适配 | 不依赖其他 `@core` 包 |
 | `service/` | `@skyroc/service` | 请求与查询基础设施 | 依赖 `@skyroc/axios`；`.`、`./query` |
 | `tailwind-plugin/` | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind 主题变量与预设 | 构建期插件；依赖 `@skyroc/color`，由 `platform` 选项区分 Web / Native 输出 |
+| `create-skyroc/` | `create-skyroc` | `pnpm create skyroc` 脚手架入口 | 薄壳，依赖 `@skyroc/scripts`；模板不在本包 |
 | `scripts/` | `@skyroc/scripts` | 项目自动化 CLI | Node.js 工具，可执行命令 `sa` |
 
 包版本、完整依赖和导出始终以对应 `package.json` 为准，本表不重复维护这些易变信息。

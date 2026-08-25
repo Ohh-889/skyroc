@@ -9,6 +9,8 @@
 - React 组件通用规范见仓库根目录的 [`AGENTS.md`](../AGENTS.md)。
 - Web 和 Native 的样式规范分别见 [`web/AGENTS.md`](./web/AGENTS.md) 和
   [`native/AGENTS.md`](./native/AGENTS.md)。
+- 各包的 npm 发布状态是会漂移的事实，不是架构规则，见
+  [`PUBLISHING.md`](./PUBLISHING.md)。
 
 ## 目录分层
 
@@ -20,11 +22,12 @@ packages/
 │   └── tailwind-plugin/    # @skyroc/tailwind-plugin，Web / Native 共用的设计令牌来源
 ├── hooks/                  # React Hooks；平台能力通过子入口隔离
 ├── primitives/             # 可复用的交互或领域原语
-├── web/                    # Web UI、管理端运行时、主题和构建能力
+├── web/                    # Web UI、管理端 shell 和构建能力
+│   ├── admin/              # admin shell 源码目录（不发布，@shell/* 别名引用，见下方专节）
+│   ├── admin-vite/         # @skyroc/web-admin-vite，构建预设
+│   ├── admin-devtools/     # @skyroc/web-admin-devtools，dev-only 调试面板
 │   └── ui/
-│       ├── shadcn/         # @skyroc/web-ui
-│       ├── compose/        # @skyroc/web-ui-compose
-│       └── antd/           # @skyroc/web-ui-antd
+│       └── shadcn/         # @skyroc/web-ui
 └── native/                 # React Native / Expo 专属能力
     └── ui/                 # @skyroc/native-ui
 ```
@@ -62,7 +65,7 @@ packages/
 | 依赖 DOM 的类型（`FieldElement` 等） | `@skyroc/utils` 的 `./web` 子入口 |
 | 设计令牌与三端组件词汇（`ThemeColor`、`ThemeSize` 等） | `@skyroc/tailwind-plugin` 的 `./ui` 子入口 |
 | 只有一个 UI 包在用的类型（`WithClassName` 等） | 该包自己的 `types/shared.ts` |
-| 全局命名空间声明（`Api`、`Router` 等） | `@skyroc/types` |
+| 全局命名空间声明（`Api`、`App`、`Theme` 等） | `packages/web/admin/types/`（随 shell 走，见下方「admin shell」） |
 
 这条规则来自一次实际回退：`packages/shared/` 曾经装着 `@skyroc/ui-types` 与
 `@skyroc/type-utils` 两个纯类型包，为几十行类型长期支付版本、README、构建与发布的成本；
@@ -70,21 +73,43 @@ packages/
 `SemanticColorName` 还长成了一字不差的两份定义。**类型离它的真正来源越远，越容易长出第二份。**
 两个包已并入上表的归属，`packages/shared/` 目录随之删除。
 
+## admin shell（`web/admin/`）
+
+后台 shell（布局、主题、i18n、通知、运行时、全局样式、全局类型，以及 admin 侧的
+复合组件 `ui/compose` 与 `ui/antd`）**不是普通包**：
+
+- 它的 `package.json` 只是给 pnpm 的依赖清单（`private: true`，永不发布），
+  没有 `exports`——消费方一律经 **`@shell/*` 别名** 访问
+  （`@shell/layouts`、`@shell/theme`、`@shell/styles/global.css`……）。
+- 别名两侧同名：monorepo 里指向 `packages/web/admin/*`（app 的 vite.config 显式传
+  `shellAlias: '../../packages/web/admin'`），`sa create-admin` 生成的独立项目里指向
+  `src/framework/*`（admin-vite 的默认值）。因此 **shell 源码在两侧字节相同**，
+  生成时只需整目录复制，不需要改写任何 import。
+- 全局命名空间声明（`Api` / `App` / `Theme` / 路由增强）都在 shell 里；
+  monorepo 内的 app 通过 tsconfig `include` 的
+  `../../packages/web/admin/**/*.d.ts` 获得，独立项目由 `./**/*.ts` 自然覆盖。
+- shell 里的代码**不得 import `@/*` 或 `~/*`**（app 内部别名）——它会被原样复制进
+  生成的项目，引用了 app 内部路径就不再可移植。`packages/web/admin/.oxlintrc.json`
+  的 `no-restricted-imports` 强制这一条。
+- 模板侧的镜像是 `packages/@core/scripts/templates/admin-shell/`，由
+  `sa sync-admin-template` 同步、`--check` 校验，与 `templates/admin/` 一样不要手改。
+
+为什么这样而不是发包：shell 绑死 admin 形态、消费者必然要改它，属于
+「复制进项目」的 shadcn 模型；而 `web-ui` / `utils` 这类底座是消费者当黑盒用的，
+继续走 npm。完整决策记录见 [`MIGRATION-ADMIN-SHELL.md`](./MIGRATION-ADMIN-SHELL.md)。
+
 ## 包命名
 
 | 包类别 | 命名方式 | 示例 |
 | --- | --- | --- |
 | 跨平台能力 | 不带平台前缀 | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/form` |
-| Web 专属能力 | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-admin-runtime` |
+| Web 专属能力 | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-admin-vite` |
 | Native 专属能力 | `@skyroc/native-*` | `@skyroc/native-ui` |
-| 平台适配器 | `@skyroc/adapter-*` | `@skyroc/adapter-antd-theme` |
 
 新增平台 UI 包时不要使用 `@skyroc/ui` 这种无法识别所属平台的裸名。
 目录名和发布包名不要求完全相同，最终名称以 `package.json#name` 为准。
 
-仓库中已有少量历史专名，例如位于 `web/` 下的 `@skyroc/materials`。新包不要仅为保持
-这些历史名称而继续扩大例外。跨平台能力的裸名是合规的，例如 `@core/` 下的
-`@skyroc/tailwind-plugin`。
+跨平台能力的裸名是合规的，例如 `@core/` 下的 `@skyroc/tailwind-plugin`。
 
 ## 依赖边界
 
@@ -109,6 +134,7 @@ hooks
 - 跨平台包不得依赖 Web 或 Native 平台包。
 - Web 和 Native 包不得互相依赖。
 - 包之间只能通过公开 `exports` 访问，不得导入其他包的 `src` 内部路径。
+  唯一例外是 admin shell：它经 `@shell/*` 别名按目录访问（见上方专节）。
 - 同一层内允许存在职责明确的单向依赖；不要用“同层”作为禁止依赖的理由。
 - `@core/` 保持在依赖链底部，不反向依赖 `hooks/`、`primitives/` 或平台包。
 - 应用可以组合多个包，但不应把应用业务反向下沉进通用包。

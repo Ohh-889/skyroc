@@ -87,6 +87,6 @@ style={{ color: 'var(--primary)' }}
 
 以下条目尚无经过核实的约定，需要时再写，**不要凭空补**：
 
-- antd 组件的封装/覆盖边界（何时用 `@skyroc/web-ui-antd`，何时直接用 antd）
-- `@skyroc/web-ui` / `web-ui-compose` / `web-ui-antd` 三层的选用规则
+- antd 组件的封装/覆盖边界（何时用 `@shell/ui/antd`，何时直接用 antd）
+- `@skyroc/web-ui` / `@shell/ui/compose` / `@shell/ui/antd` 三层的选用规则
 - 布局与间距的项目级约定（Tailwind 默认 scale 无需重复说明）
