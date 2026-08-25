@@ -33,7 +33,7 @@ description: 类型层 → 基础层 → 平台能力层 → 应用层，以及�
 ```text
 types（零依赖，类型声明）
   ↑
-utils（零 @core 依赖）     logger / scheduler / state / scripts（彼此独立）
+utils（零 @core 依赖）     logger / state / scripts（彼此独立）
   ↑
 color / axios（依赖 utils）
   ↑
@@ -43,7 +43,7 @@ service（依赖 axios）
 - 箭头表示「被依赖」方向；
 - `color`、`axios` 依赖 `utils`；`service` 依赖 `axios`；
 - `state` 通过 `peerDependencies` 依赖 `jotai` / `react`，不进入内部依赖图；
-- `logger` / `scheduler` / `scripts` 自包含，彼此独立。
+- `logger` / `scripts` 自包含，彼此独立。
 
 ## Web 端包的依赖关系
 

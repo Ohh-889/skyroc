@@ -1,6 +1,6 @@
 # @skyroc/utils
 
-平台无关的通用工具函数集，提供日期处理、路径读写、事件总线、优先级队列、并发合并等基础能力，并通过独立子路径暴露浏览器专用工具。
+平台无关的通用工具函数集，提供日期处理、路径读写、事件总线、优先级队列、并发合并、任务调度等基础能力，并通过独立子路径暴露浏览器专用工具。
 
 ## 入口一览
 
@@ -10,6 +10,7 @@
 | 样式合并 | `@skyroc/utils/cn` | 同上 | 只要 `cn` 时用它，避免拉进整个 barrel |
 | 加密 | `@skyroc/utils/crypto` | 同上 | 单独出口，crypto-js 体积较大 |
 | 路径读写 | `@skyroc/utils/path` | 同上 | `deepGet` / `deepSet` / 路径归一 |
+| 任务调度 | `@skyroc/utils/scheduler` | 同上 | `TaskHub`：单心跳统一管理 init / periodic / listener 任务 |
 | 类型工具 | `@skyroc/utils/type` | 同上 | 零运行时的 TS 工具类型，深度路径推导等 |
 | 浏览器 | `@skyroc/utils/web` | **仅浏览器** | 下载、BOM、Storage、UA 探测、表单元素类型 |
 
@@ -54,6 +55,7 @@ import { downloadFileFromUrl, openWindow, createStorage } from '@skyroc/utils/we
 | `singleflight` | `.` | `Singleflight`、`createSingleflight` | 合并同 key 的并发请求 |
 | `query` | `.` | `parseQuery`、`stringifyQuery` | Query string 解析/序列化 |
 | `radash` | `.` | 类型守卫族 + `assign` | radash 白名单转出，**非全量** |
+| `scheduler` | `./scheduler` | `TaskHub` | 协作式任务调度中枢（零运行时依赖） |
 | `web/download` | `./web` | `downloadFileFromUrl` 等 | 多策略文件下载 |
 | `web/storage` | `./web` | `createStorage`、`createLocalforage` | 类型安全存储封装 |
 | `web/env` | `./web` | `isMacOs`、`isPC` 等 | UA 环境探测 |

@@ -1,4 +1,4 @@
-import { TaskHub } from '@skyroc/scheduler';
+import { TaskHub } from '@skyroc/utils/scheduler';
 
 const DEFAULT_UPDATE_CHECK_INTERVAL = 3 * 60 * 1000;
 

@@ -12,6 +12,7 @@
     "subject",
     "singleflight",
     "priority-queue",
+    "scheduler",
     "storage",
     "date",
     "type",

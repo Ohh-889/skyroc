@@ -33,12 +33,11 @@
 | 目录 | 包名 | 职责 | 关键边界或公开子入口 |
 | --- | --- | --- | --- |
 | `types/` | `@skyroc/types` | 全局类型声明 | 零运行时依赖；`.`、`./types` |
-| `utils/` | `@skyroc/utils` | 跨平台通用工具 | 平台无关入口及 `./cn`、`./crypto`、`./path`、`./web` |
+| `utils/` | `@skyroc/utils` | 跨平台通用工具 | 平台无关入口及 `./cn`、`./crypto`、`./path`、`./scheduler`、`./web` |
 | `color/` | `@skyroc/color` | 颜色转换和调色板生成 | 不依赖其他 `@core` 包 |
 | `axios/` | `@skyroc/axios` | 类型安全的 HTTP 客户端 | 依赖 `@skyroc/utils` |
 | `state/` | `@skyroc/core-state` | Jotai 状态管理封装 | React 和 Jotai 为 peer dependencies |
 | `logger/` | `@skyroc/logger` | 跨平台日志及平台存储适配 | 不依赖其他 `@core` 包 |
-| `scheduler/` | `@skyroc/scheduler` | 初始化、周期任务和监听器调度 | 无运行时依赖 |
 | `service/` | `@skyroc/service` | 请求与查询基础设施 | 依赖 `@skyroc/axios`；`.`、`./query` |
 | `tailwind-plugin/` | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind 主题变量与预设 | 构建期插件；依赖 `@skyroc/color`，由 `platform` 选项区分 Web / Native 输出 |
 | `scripts/` | `@skyroc/scripts` | 项目自动化 CLI | Node.js 工具，可执行命令 `sa` |

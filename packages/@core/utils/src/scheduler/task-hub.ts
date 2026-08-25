@@ -1,6 +1,6 @@
 // oxlint-disable no-bitwise
 // oxlint-disable no-continue
-import type { InitSettleResult, TaskDef, TaskHubOptions, TaskSnapshot, TaskStatus } from '../types';
+import type { InitSettleResult, TaskDef, TaskHubOptions, TaskSnapshot, TaskStatus } from './types';
 
 const DEFAULT_TICK_INTERVAL = 1000;
 const DEFAULT_MAX_RETRIES = 3;

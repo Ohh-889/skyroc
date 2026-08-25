@@ -2,7 +2,7 @@
   "name": "@skyroc/utils",
   "version": "4.0.0",
   "type": "module",
-  "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./type, ./web, ./path, ./cn and ./crypto subpath exports",
+  "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./type, ./web, ./path, ./cn, ./crypto and ./scheduler subpath exports",
   "keywords": [
     "browser",
     "crypto",
@@ -10,7 +10,9 @@
     "dayjs",
     "platform-agnostic",
     "react",
+    "scheduler",
     "storage",
+    "task",
     "typescript",
     "utility"
   ],
@@ -45,6 +47,7 @@
     "./cn": "./src/cn.ts",
     "./crypto": "./src/crypto.ts",
     "./path": "./src/path.ts",
+    "./scheduler": "./src/scheduler/index.ts",
     "./type": "./src/type/index.ts",
     "./web": "./src/web/index.ts"
   },
@@ -77,6 +80,12 @@
         "import": {
           "types": "./dist/path.d.ts",
           "default": "./dist/path.js"
+        }
+      },
+      "./scheduler": {
+        "import": {
+          "types": "./dist/scheduler/index.d.ts",
+          "default": "./dist/scheduler/index.js"
         }
       },
       "./type": {

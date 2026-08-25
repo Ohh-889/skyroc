@@ -33,7 +33,6 @@ const TESTED_PACKAGES = [
   'packages/@core/color',
   'packages/@core/axios',
   'packages/@core/state',
-  'packages/@core/scheduler',
   'packages/@core/service',
   'packages/web/admin-notification'
 ];

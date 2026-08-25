@@ -110,7 +110,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 分层           | 包                                                                                                                                                                                                        |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/scheduler` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` |
+| **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` |
 | **共享与原语** | `@skyroc/hooks` · `@skyroc/form`                                                                                                                                                                          |
 | **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme`                                                                                                                                |
 | **UI**         | `@skyroc/web-ui` · `@skyroc/web-ui-antd` · `@skyroc/web-ui-compose` · `@skyroc/native-ui`                                                                                                                 |
@@ -130,7 +130,6 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/service`         | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈                |
 | `@skyroc/core-state`      | Jotai 状态封装与可注入存储的跨端状态能力                                          |
 | `@skyroc/logger`          | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
-| `@skyroc/scheduler`       | 零运行时依赖的协作式任务调度器，统一 init、periodic 与 listener 任务              |
 | `@skyroc/color`           | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
 | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设                 |
 | `@skyroc/scripts`         | 创建应用、同步模板、提交、清理、发布与 changelog 等仓库 CLI                       |

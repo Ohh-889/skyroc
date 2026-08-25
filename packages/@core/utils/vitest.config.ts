@@ -22,7 +22,16 @@ export default defineConfig({
     },
     coverage: {
       ...baseCoverageConfig,
-      exclude: [...COVERAGE_EXCLUDE, '**/klona.ts', '**/nanoid.ts', '**/path.ts', '**/radash.ts', '**/type/**', '**/web/form.ts']
+      exclude: [
+        ...COVERAGE_EXCLUDE,
+        '**/klona.ts',
+        '**/nanoid.ts',
+        '**/path.ts',
+        '**/radash.ts',
+        '**/scheduler/types.ts',
+        '**/type/**',
+        '**/web/form.ts'
+      ]
     }
   }
 });

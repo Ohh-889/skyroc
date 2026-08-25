@@ -68,7 +68,6 @@
 - 🔌 **@skyroc/service** - 请求与查询基础设施（适配器模式，接入 UI、鉴权、导航与 React Query）
 - 📦 **@skyroc/core-state** - Jotai 状态管理封装，跨平台支持
 - 📝 **@skyroc/logger** - 跨平台日志系统（基于 LogLayer）
-- ⏱️ **@skyroc/scheduler** - 协作式任务调度器
 - 🎨 **@skyroc/color** - 色彩工具与调色板生成（OKLCH）
 - 📋 **@skyroc/types** - 全局类型定义
 - 🔧 **@skyroc/utils/type** - 高级 TypeScript 工具类型

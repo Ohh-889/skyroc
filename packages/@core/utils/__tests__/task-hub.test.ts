@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TaskHub } from '../src';
-import type { InitSettleResult } from '../src';
+import { TaskHub } from '../src/scheduler';
+import type { InitSettleResult } from '../src/scheduler';
 
 /** 只推进微任务队列，不推进时钟 —— 用于验证 init 调度不依赖定时器 */
 async function flush(times = 20) {

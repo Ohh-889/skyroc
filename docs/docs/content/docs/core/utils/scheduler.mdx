@@ -1,11 +1,11 @@
 ---
-title: "@skyroc/scheduler"
+title: "TaskHub"
 description: "协作式任务调度中枢，用单一心跳统一管理应用启动时的初始化链、定时任务和监听器，支持依赖声明、指数退避重试与完整生命周期控制"
 ---
 
 ## 概述
 
-`@skyroc/scheduler` 提供一个轻量的任务调度引擎，解决复杂应用启动时的典型困境：
+`@skyroc/utils/scheduler` 提供一个轻量的任务调度引擎，解决复杂应用启动时的典型困境：
 
 ```
 ❌ 认证、配置、权限、路由 … 各自 init，执行顺序靠运气
@@ -109,7 +109,7 @@ interface InitSettleResult {
 ## 快速上手
 
 ```ts
-import { TaskHub } from '@skyroc/scheduler';
+import { TaskHub } from '@skyroc/utils/scheduler';
 
 const hub = new TaskHub({
   tickInterval: 1000,
@@ -406,7 +406,7 @@ const hub = new TaskHub({
 
 ```ts
 import { useEffect } from 'react';
-import { TaskHub } from '@skyroc/scheduler';
+import { TaskHub } from '@skyroc/utils/scheduler';
 
 // 在模块作用域创建单例（避免 StrictMode 双调用的干扰）
 const hub = new TaskHub({
@@ -435,10 +435,10 @@ export function AppScheduler() {
 
 ```bash
 # 从 monorepo 根目录
-npx vitest run packages/@core/scheduler/__tests__/task-hub.test.ts
+npx vitest run packages/@core/utils/__tests__/task-hub.test.ts
 
 # 或在包目录内
-cd packages/@core/scheduler && pnpm test
+cd packages/@core/utils && pnpm test
 
 # 含覆盖率报告
 pnpm test --coverage

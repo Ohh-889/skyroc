@@ -93,6 +93,6 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "@skyroc/scheduler": "workspace:*"
+    "@skyroc/utils": "workspace:*"
   }
 }

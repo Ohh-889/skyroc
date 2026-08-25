@@ -1,11 +1,11 @@
 ---
 title: "概述"
-description: "平台无关工具函数集合，提供日期、事件、数组、对象、路径与 query 工具，附带 cn / crypto / path / type / web 五个子入口"
+description: "平台无关工具函数集合，提供日期、事件、数组、对象、路径与 query 工具，附带 cn / crypto / path / scheduler / type / web 六个子入口"
 ---
 
 ## 概述
 
-`@skyroc/utils` 是项目的通用工具包，分为一个主入口和五个子入口：
+`@skyroc/utils` 是项目的通用工具包，分为一个主入口和六个子入口：
 
 | 入口 | 导入路径 | 适用环境 |
 | --- | --- | --- |
@@ -13,6 +13,7 @@ description: "平台无关工具函数集合，提供日期、事件、数组、
 | `cn` 子入口 | `@skyroc/utils/cn` | 只要 `cn` 时用，避免拉进整个主入口；主入口也导出它 |
 | `crypto` 子入口 | `@skyroc/utils/crypto` | AES 对称加密，**不在主入口** |
 | `path` 子入口 | `@skyroc/utils/path` | 路径工具的独立子路径；常规使用可直接从主入口导入 |
+| `scheduler` 子入口 | `@skyroc/utils/scheduler` | `TaskHub` 任务调度中枢，**不在主入口**；平台无关 |
 | `type` 子入口 | `@skyroc/utils/type` | 零运行时的 TypeScript 工具类型，**平台无关** |
 | `web` 子入口 | `@skyroc/utils/web` | **仅浏览器环境** |
 
@@ -49,6 +50,7 @@ description: "平台无关工具函数集合，提供日期、事件、数组、
 | 子入口 | 主要导出 | 说明 |
 | --- | --- | --- |
 | `@skyroc/utils/crypto` | `AesCrypto` | [AES 对称加密](/docs/core/utils/crypto) |
+| `@skyroc/utils/scheduler` | `TaskHub` | [协作式任务调度](/docs/core/utils/scheduler) |
 | `@skyroc/utils/type` | `LeafPaths`、`PathValue`、`DeepPartial`、`Prettify` 等 | [零运行时类型工具](/docs/core/utils/type) |
 | `@skyroc/utils/web` | `createStorage`、`createLocalforage`、`downloadFileFrom*`、`openWindow`、`isPC`、`FieldElement` 等 | [浏览器专用工具](/docs/core/utils/web) |
 

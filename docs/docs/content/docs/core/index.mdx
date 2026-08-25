@@ -22,9 +22,6 @@ description: "Skyroc 基础设施层文档入口，覆盖工具函数、请求�
   <Card title="@skyroc/core-state" href="/docs/core/state">
     基于 Jotai 的状态管理封装，支持全局 store、持久化原子和组件外访问。
   </Card>
-  <Card title="@skyroc/scheduler" href="/docs/core/scheduler">
-    协作式任务调度中枢，用统一心跳管理初始化任务、周期任务和监听器。
-  </Card>
   <Card title="@skyroc/color" href="/docs/core/color">
     面向设计系统和主题引擎的色彩工具包，提供调色板生成、颜色转换和无障碍对比度能力。
   </Card>
@@ -51,7 +48,7 @@ description: "Skyroc 基础设施层文档入口，覆盖工具函数、请求�
 | 只需要一个类型安全的 HTTP 客户端 | `@skyroc/axios` |
 | 需要业务错误处理、Token 刷新、React Query 和平台适配 | `@skyroc/service` |
 | 需要跨组件或组件外访问的状态管理 | `@skyroc/core-state` |
-| 需要统一调度启动任务、定时任务或监听器 | `@skyroc/scheduler` |
+| 需要统一调度启动任务、定时任务或监听器 | `@skyroc/utils/scheduler` |
 | 需要生成主题色、暗色模式色板或做 WCAG 对比度检测 | `@skyroc/color` |
 | 需要给 Web 或 Native 注入设计令牌、切换整套配色 | `@skyroc/tailwind-plugin` |
 | 需要日志落盘、灰度上报或离线补传 | `@skyroc/logger` |
@@ -70,7 +67,7 @@ color / axios / logger
   |     service
 tailwind-plugin      （构建期消费 color，被 Web / Native 两侧共同引入）
 
-state / scheduler / scripts 相对独立，按具体业务场景引入。
+state / scripts 相对独立，按具体业务场景引入。
 ```
 
 依赖方向应保持从基础能力到上层组合能力，不应让底层包依赖业务包、UI 包或上层服务包。

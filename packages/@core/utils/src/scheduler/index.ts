@@ -1,4 +1,4 @@
-export { TaskHub } from './core';
+export { TaskHub } from './task-hub';
 
 export type {
   InitSettleResult,
