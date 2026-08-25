@@ -1,0 +1,67 @@
+{
+  "name": "create-skyroc",
+  "version": "0.1.0",
+  "description": "Scaffold a Skyroc admin app with one command: pnpm create skyroc",
+  "keywords": [
+    "admin",
+    "create",
+    "react",
+    "scaffold",
+    "skyroc",
+    "template"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/create-skyroc",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
+    "directory": "packages/@core/create-skyroc"
+  },
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
+  },
+  "type": "module",
+  "bin": {
+    "create-skyroc": "./bin.ts"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "dev": "tsdown --watch",
+    "lint": "oxlint --fix",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "dependencies": {
+    "@skyroc/scripts": "workspace:^",
+    "cac": "catalog:dev",
+    "enquirer": "catalog:dev",
+    "kolorist": "catalog:dev"
+  },
+  "devDependencies": {
+    "@skyroc/tsconfig": "workspace:*",
+    "@types/node": "catalog:dev",
+    "oxlint": "catalog:dev",
+    "rimraf": "catalog:dev",
+    "tsdown": "catalog:dev",
+    "typescript": "catalog:core"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "bin": {
+      "create-skyroc": "./dist/index.mjs"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
