@@ -56,7 +56,7 @@ npm 上的 web-ui@0.1.3 依赖：@skyroc/ui-types@0.1.0  @skyroc/color@2.5.0
 ### 3.2 要发的是 14 个，不是 8 个
 
 生成的项目除了 shell 的依赖闭包，还**直接**用 `axios` / `service` / `logger` /
-`types` 这几个跨端内核包，以及 `@sa/uno-config` 和 CLI 自己（`@skyroc/scripts`）。
+`types` 这几个跨端内核包，以及 `@skyroc/uno-config` 和 CLI 自己（`@skyroc/scripts`）。
 以 `admin.meta.json` 的实际依赖列表为准（扣掉会被内联的 admin-*）：
 
 | 层 | 包 | 本地版本 | 行数 | 动作 |
@@ -67,7 +67,7 @@ npm 上的 web-ui@0.1.3 依赖：@skyroc/ui-types@0.1.0  @skyroc/color@2.5.0
 | 0 | `@skyroc/core-state` | 1.0.0 | 430 | **首发** |
 | 0 | `@skyroc/types` | 1.0.0 | 1,207 | **首发** |
 | 0 | `@skyroc/logger` | 1.0.0 | 1,318 | **首发** |
-| 0 | `@sa/uno-config` | 1.0.0 | 522 | **首发** |
+| 0 | `@skyroc/uno-config` | 1.0.0 | 522 | **首发** |
 | 0 | `@skyroc/scripts` | 2.5.0 | 1,596 | **首发**（CLI 自己）|
 | 1 | `@skyroc/axios` | 2.2.0 | 534 | **首发** |
 | 1 | `@skyroc/form` | → **0.0.3** | 4,966 | 升版本（0.0.2 已被占用，见 3.1）|

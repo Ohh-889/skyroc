@@ -547,7 +547,7 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@sa/uno-config':
+      '@skyroc/uno-config':
         specifier: workspace:*
         version: link:../../internal/uno-config
       '@skyroc/scripts':
@@ -767,7 +767,7 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@sa/uno-config':
+      '@skyroc/uno-config':
         specifier: workspace:*
         version: link:../../internal/uno-config
       '@skyroc/scripts':
@@ -1214,7 +1214,7 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@sa/uno-config':
+      '@skyroc/uno-config':
         specifier: workspace:*
         version: link:../../internal/uno-config
       '@skyroc/scripts':

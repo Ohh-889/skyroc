@@ -11,7 +11,7 @@ description: internal/ 下的 tsconfig / config / uno-config 三个工程化配�
 internal/
 ├── tsconfig/       # @skyroc/tsconfig    7 个共享 TS 编译预设
 ├── config/         # @skyroc/config      4 个 Oxlint 预设 + Vitest 共享配置
-└── uno-config/     # @sa/uno-config      UnoCSS presetSoybeanAdmin
+└── uno-config/     # @skyroc/uno-config  UnoCSS presetSoybeanAdmin
 ```
 
 ## 快速上手
@@ -21,7 +21,7 @@ internal/
 | `@skyroc/tsconfig` | `"extends": "@skyroc/tsconfig/web-app.json"` |
 | `@skyroc/config`（Oxlint） | `"extends": ["../../internal/config/oxlint/react.json"]`（相对路径） |
 | `@skyroc/config`（Vitest） | `import { baseTestConfig } from '@skyroc/config/vitest'` |
-| `@sa/uno-config` | `import { presetSoybeanAdmin } from '@sa/uno-config'` |
+| `@skyroc/uno-config` | `import { presetSoybeanAdmin } from '@skyroc/uno-config'` |
 
 Oxlint 预设走**相对路径**而不是包名子路径——`.oxlintrc.json` 的 `extends` 由 oxlint 自己解析，不经过 Node 的 exports 字段，详见 [`@skyroc/config`](/docs/packages/internal/config)。
 
@@ -31,9 +31,9 @@ Oxlint 预设走**相对路径**而不是包名子路径——`.oxlintrc.json` �
 | --- | --- | --- | --- | --- |
 | `tsconfig` | `@skyroc/tsconfig` | 7 个 `*.json` TS 预设 | ✅ | 无（纯 JSON） |
 | `config` | `@skyroc/config` | 4 个 Oxlint JSON 预设 + Vitest TS 预设 | ✅ | tsdown → `dist/`（仅 vitest 部分） |
-| `uno-config` | `@sa/uno-config` | UnoCSS `presetSoybeanAdmin()` | ❌ | 源码直出 `src/`，`publishConfig` 才指向 `dist/` |
+| `uno-config` | `@skyroc/uno-config` | UnoCSS `presetSoybeanAdmin()` | ❌ | 源码直出 `src/`，`publishConfig` 才指向 `dist/` |
 
-三者里只有 `@sa/uno-config` 没有声明 `private: true`，带 `publishConfig`，是可发布到 npm 的；另外两个只在 workspace 内通过 `workspace:*` 消费。
+三者里只有 `@skyroc/uno-config` 没有声明 `private: true`，带 `publishConfig`，是可发布到 npm 的；另外两个只在 workspace 内通过 `workspace:*` 消费。
 
 ## 为什么单独成包
 
@@ -58,14 +58,14 @@ Oxlint 预设走**相对路径**而不是包名子路径——`.oxlintrc.json` �
 | 新包该 extends 哪个预设 | [新建包流程](/docs/guide/engineering/new-package) |
 | UnoCSS / Tailwind 选型 | [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) |
 
-## 关于 `@sa` 命名
+## 包命名
 
-`@sa/uno-config` 用的是 `@sa` 而不是 `@skyroc`——`@sa` 是项目早期的 scope 缩写，该包已按此名发布，改名会破坏外部用户，因此保留。新增包**一律使用 `@skyroc/*`**，见 [命名规范](/docs/guide/architecture/naming)。
+`uno-config` 与其他内部包统一使用 `@skyroc/*` scope，见 [命名规范](/docs/guide/architecture/naming)。
 
 ## 相关文档
 
 <Cards>
   <Card title="@skyroc/tsconfig" href="/docs/packages/internal/tsconfig" description="7 个 TS 编译预设（base / library / node / web / web-app / RN / RN-app）" />
   <Card title="@skyroc/config" href="/docs/packages/internal/config" description="4 个 Oxlint 预设 + Vitest 共享常量与配置对象" />
-  <Card title="@sa/uno-config" href="/docs/packages/internal/uno-config" description="UnoCSS presetSoybeanAdmin：调色板、shortcuts、动画、design token" />
+  <Card title="@skyroc/uno-config" href="/docs/packages/internal/uno-config" description="UnoCSS presetSoybeanAdmin：调色板、shortcuts、动画、design token" />
 </Cards>

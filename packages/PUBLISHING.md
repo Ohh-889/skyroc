@@ -13,7 +13,7 @@
 ## 一、可发布包的 npm 状态
 
 > shell 零包化落地后，可发布包从 23 个减为 **15 个**（含 `internal/` 的
-> `@sa/uno-config`）：`web-admin-layouts` / `theme` / `i18n` / `notification` /
+> `@skyroc/uno-config`）：`web-admin-layouts` / `theme` / `i18n` / `notification` /
 > `runtime` / `styles` 六包、`@skyroc/types`，以及第二轮并入的
 > `@skyroc/web-ui-compose` / `@skyroc/web-ui-antd`，都已进入 `packages/web/admin`
 > （private，不发布），不再出现在下面的清单里。
@@ -63,7 +63,7 @@ Web Kit（仍走 registry 的两个）
   @skyroc/core-state              @skyroc/service
 
 CLI 与配置
-  @skyroc/scripts                 @sa/uno-config
+  @skyroc/scripts                 @skyroc/uno-config
 ```
 
 这 8 个里除 `@skyroc/scripts`（已于 2026-08-26 发布 2.5.0 ✅）外都在
@@ -114,7 +114,7 @@ shell 依赖）。生成物由 `packages/@core/scripts/__tests__/create-admin-sm
 ## 四、复核命令
 
 重新采集本文数据（下面的脚本连 `internal/` 一起扫，会比第一节的 23 个多出
-`@sa/uno-config` 一行）：
+`@skyroc/uno-config` 一行）：
 
 ```bash
 # 各可发布包的本地版本 vs npm 版本

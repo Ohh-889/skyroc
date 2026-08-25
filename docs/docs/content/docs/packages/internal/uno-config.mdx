@@ -1,5 +1,5 @@
 ---
-title: "@sa/uno-config"
+title: "@skyroc/uno-config"
 description: UnoCSS 预设：18 色调色板 CSS 变量、shortcuts、动画规则、字号 / 间距 / 圆角 / 阴影 token
 ---
 
@@ -7,7 +7,7 @@ description: UnoCSS 预设：18 色调色板 CSS 变量、shortcuts、动画规�
 
 | 项 | 值 |
 | --- | --- |
-| 包名 | `@sa/uno-config` |
+| 包名 | `@skyroc/uno-config` |
 | 目录 | `internal/uno-config` |
 | 版本 | 1.0.0 |
 | private | ❌（带 `publishConfig`，可发布） |
@@ -21,7 +21,7 @@ description: UnoCSS 预设：18 色调色板 CSS 变量、shortcuts、动画规�
 
 ```ts
 // apps/admin/uno.config.ts
-import { presetSoybeanAdmin } from '@sa/uno-config';
+import { presetSoybeanAdmin } from '@skyroc/uno-config';
 import { defineConfig, presetWind3, transformerDirectives, transformerVariantGroup } from 'unocss';
 
 export default defineConfig({
@@ -60,7 +60,7 @@ import {
   createColorsPalette,
   textVariants,
   builtinRadiuses
-} from '@sa/uno-config';
+} from '@skyroc/uno-config';
 ```
 
 > `commonShortcuts` 定义在 `src/shortcuts.ts`，但**没有从 `src/index.ts` 再导出**——它已经通过 `allShortcuts` 进入预设，只是无法单独 import。
@@ -166,7 +166,7 @@ border-primary-hover → var(--primary-300)
 
 ## 与 `@skyroc/tailwind-plugin` 的关系
 
-| 维度 | `@sa/uno-config` | [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) |
+| 维度 | `@skyroc/uno-config` | [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) |
 | --- | --- | --- |
 | 服务对象 | admin 应用的业务页面 | `@skyroc/web-ui` 组件库 |
 | 工具 | UnoCSS（`presetWind3` + 本预设） | Tailwind 4 |

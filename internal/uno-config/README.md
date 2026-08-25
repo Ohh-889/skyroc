@@ -1,4 +1,4 @@
-# @sa/uno-config
+# @skyroc/uno-config
 
 SoyBean Admin 的 UnoCSS 预设配置，包含主题系统、颜色调色板、快捷方式和 UI Kit 扫描器。
 
@@ -13,14 +13,14 @@ SoyBean Admin 的 UnoCSS 预设配置，包含主题系统、颜色调色板、�
 ## 安装
 
 ```bash
-pnpm add @sa/uno-config
+pnpm add @skyroc/uno-config
 ```
 
 ## 基础使用
 
 ```ts
 // uno.config.ts
-import { presetSoybeanAdmin } from '@sa/uno-config';
+import { presetSoybeanAdmin } from '@skyroc/uno-config';
 import { defineConfig, presetWind4 } from 'unocss';
 
 export default defineConfig({
@@ -40,7 +40,7 @@ export default defineConfig({
 
 ```ts
 // uno.config.ts
-import { createUnoContentConfig, presetSoybeanAdmin } from '@sa/uno-config';
+import { createUnoContentConfig, presetSoybeanAdmin } from '@skyroc/uno-config';
 import { defineConfig, presetWind4 } from 'unocss';
 
 export default defineConfig({
@@ -61,7 +61,7 @@ export default defineConfig({
 需要更多控制时使用：
 
 ```ts
-import { scanUiKitPackagesSync } from '@sa/uno-config';
+import { scanUiKitPackagesSync } from '@skyroc/uno-config';
 
 const result = scanUiKitPackagesSync({
   workspaceRoot: process.cwd(),
@@ -84,7 +84,7 @@ export default defineConfig({
 #### 方式 3: 使用 `scanUiKitPackages` (异步)
 
 ```ts
-import { scanUiKitPackages } from '@sa/uno-config';
+import { scanUiKitPackages } from '@skyroc/uno-config';
 
 const result = await scanUiKitPackages({
   workspaceRoot: process.cwd()

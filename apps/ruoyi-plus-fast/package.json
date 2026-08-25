@@ -70,7 +70,7 @@
     "@iconify/json": "catalog:ui-shared",
     "@iconify/react": "catalog:ui-shared",
     "@iconify/types": "catalog:ui-shared",
-    "@sa/uno-config": "workspace:*",
+    "@skyroc/uno-config": "workspace:*",
     "@skyroc/scripts": "workspace:*",
     "@skyroc/web-admin-vite": "workspace:*",
     "@svgr/core": "catalog:web",

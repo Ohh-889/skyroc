@@ -99,11 +99,10 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 命名                | 适用范围                             | 示例                                               |
 | ------------------- | ------------------------------------ | -------------------------------------------------- |
-| `@skyroc/<能力>`    | 跨端基础设施、共享能力或平台无关原语 | `@skyroc/utils`、`@skyroc/service`、`@skyroc/form` |
+| `@skyroc/<能力>`    | 跨端基础设施、共享能力或平台无关原语 | `@skyroc/utils`、`@skyroc/service`、`@skyroc/form`、`@skyroc/uno-config` |
 | `@skyroc/web-*`     | Web 布局、主题、UI 与运行时能力      | `@skyroc/web-ui`、`@skyroc/web-admin-vite`         |
 | `@skyroc/native-*`  | React Native / Expo 专属能力         | `@skyroc/native-ui`                                |
 | `@skyroc/expo-*`    | Expo 原生模块（含自定义原生代码）    | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`    |
-| `@sa/*`             | 兼容历史命名的仓库内部配置           | `@sa/uno-config`                                   |
 
 ## 📦 Workspace 包地图
 
@@ -114,7 +113,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | **Web Kit**    | admin shell（`packages/web/admin`，经 `@shell/*` 别名引用）· `@skyroc/web-admin-vite` · `@skyroc/web-admin-devtools`                                                                                        |
 | **UI**         | `@skyroc/web-ui` · `@skyroc/native-ui`（admin 侧复合组件已并入 shell 的 `ui/`）                                                                                                                           |
 | **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                                          |
-| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@sa/uno-config`                                                                                                                                                  |
+| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@skyroc/uno-config`                                                                                                                                              |
 
 <details>
 <summary><strong>查看全部包的职责</strong></summary>
@@ -167,7 +166,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | ------------------ | ---------------------------------------------- |
 | `@skyroc/config`   | Vitest、Oxlint 等共享开发配置                  |
 | `@skyroc/tsconfig` | 各 workspace 复用的 TypeScript 基础配置        |
-| `@sa/uno-config`   | Admin 主题、shortcuts 与设计变量的 UnoCSS 预设 |
+| `@skyroc/uno-config` | Admin 主题、shortcuts 与设计变量的 UnoCSS 预设 |
 
 </details>
 

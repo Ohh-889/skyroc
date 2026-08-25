@@ -1,5 +1,5 @@
 {
-  "name": "@sa/uno-config",
+  "name": "@skyroc/uno-config",
   "version": "1.0.0",
   "type": "module",
   "description": "UnoCSS preset configuration for Soybean Admin themes, shortcuts, and design tokens",

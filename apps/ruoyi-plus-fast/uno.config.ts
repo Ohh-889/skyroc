@@ -1,4 +1,4 @@
-import { presetSoybeanAdmin } from '@sa/uno-config';
+import { presetSoybeanAdmin } from '@skyroc/uno-config';
 import { defineConfig, presetWind3, transformerDirectives, transformerVariantGroup } from 'unocss';
 
 export default defineConfig({

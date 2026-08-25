@@ -591,7 +591,7 @@ function RouteComponent() {
           <div className="mb-3 inline-block rounded-full from-indigo-500 via-purple-500 to-pink-500 bg-gradient-to-r p-0.5">
             <div className="rounded-full bg-white px-5 py-2 dark:bg-slate-900">
               <span className="from-indigo-600 via-purple-600 to-pink-600 bg-gradient-to-r bg-clip-text text-transparent font-bold">
-                @sa/uno-config
+                @skyroc/uno-config
               </span>
             </div>
           </div>
