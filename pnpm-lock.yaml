@@ -10,8 +10,8 @@ catalogs:
       specifier: ^5.90.12
       version: 5.90.21
     jotai:
-      specifier: ^2.16.0
-      version: 2.18.0
+      specifier: 2.20.3
+      version: 2.20.3
     react:
       specifier: 19.1.0
       version: 19.1.0
@@ -395,8 +395,8 @@ catalogs:
       specifier: ^6.0.0
       version: 6.1.0
     jotai-devtools:
-      specifier: ^0.13.0
-      version: 0.13.0
+      specifier: 0.14.0
+      version: 0.14.0
     sass:
       specifier: ^1.96.0
       version: 1.97.3
@@ -465,6 +465,18 @@ importers:
 
   apps/admin:
     dependencies:
+      '@better-scroll/core':
+        specifier: catalog:web
+        version: 2.5.1
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.1.0)
       '@skyroc/axios':
         specifier: workspace:*
         version: link:../../packages/@core/axios
@@ -515,7 +527,7 @@ importers:
         version: 25.7.2(typescript@6.0.3)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -547,12 +559,12 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@skyroc/uno-config':
-        specifier: workspace:*
-        version: link:../../internal/uno-config
       '@skyroc/scripts':
         specifier: workspace:*
         version: link:../../packages/@core/scripts
+      '@skyroc/uno-config':
+        specifier: workspace:*
+        version: link:../../internal/uno-config
       '@skyroc/web-admin-vite':
         specifier: workspace:*
         version: link:../../packages/web/admin-vite
@@ -628,6 +640,15 @@ importers:
       '@better-scroll/core':
         specifier: catalog:web
         version: 2.5.1
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.1.0)
       '@skyroc/axios':
         specifier: workspace:*
         version: link:../../packages/@core/axios
@@ -705,7 +726,7 @@ importers:
         version: 25.7.2(typescript@6.0.3)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       jsbarcode:
         specifier: ^3.12.3
         version: 3.12.3
@@ -767,12 +788,12 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@skyroc/uno-config':
-        specifier: workspace:*
-        version: link:../../internal/uno-config
       '@skyroc/scripts':
         specifier: workspace:*
         version: link:../../packages/@core/scripts
+      '@skyroc/uno-config':
+        specifier: workspace:*
+        version: link:../../internal/uno-config
       '@skyroc/web-admin-vite':
         specifier: workspace:*
         version: link:../../packages/web/admin-vite
@@ -952,7 +973,7 @@ importers:
         version: 2.0.1
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -1126,6 +1147,18 @@ importers:
 
   apps/ruoyi-plus-fast:
     dependencies:
+      '@better-scroll/core':
+        specifier: catalog:web
+        version: 2.5.1
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@19.1.0)
       '@skyroc/axios':
         specifier: workspace:*
         version: link:../../packages/@core/axios
@@ -1182,7 +1215,7 @@ importers:
         version: 25.7.2(typescript@6.0.3)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1214,12 +1247,12 @@ importers:
       '@iconify/types':
         specifier: catalog:ui-shared
         version: 2.0.0
-      '@skyroc/uno-config':
-        specifier: workspace:*
-        version: link:../../internal/uno-config
       '@skyroc/scripts':
         specifier: workspace:*
         version: link:../../packages/@core/scripts
+      '@skyroc/uno-config':
+        specifier: workspace:*
+        version: link:../../internal/uno-config
       '@skyroc/web-admin-vite':
         specifier: workspace:*
         version: link:../../packages/web/admin-vite
@@ -2073,7 +2106,7 @@ importers:
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       oxlint:
         specifier: catalog:dev
         version: 1.60.0
@@ -2452,7 +2485,7 @@ importers:
         version: 25.7.2(typescript@6.0.3)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2522,7 +2555,7 @@ importers:
         version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       jotai-devtools:
         specifier: catalog:web
-        version: 0.13.0(@types/react@19.2.18)(jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
     devDependencies:
       '@skyroc/config':
         specifier: workspace:*
@@ -2544,7 +2577,7 @@ importers:
         version: 19.2.4(@types/react@19.2.18)
       jotai:
         specifier: catalog:core
-        version: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       oxlint:
         specifier: catalog:dev
         version: 1.60.0
@@ -5576,23 +5609,23 @@ packages:
     resolution: {integrity: sha512-sfw6xvsIOzTh4l8ZpSH7Vfj3ajH/y+PUBShclqjaLtXxurKGh8xZuciDsL3wuern+Ea/r8+iT2vzK3d2BSUyQQ==}
     engines: {node: '>=18'}
 
-  '@mantine/code-highlight@7.17.8':
-    resolution: {integrity: sha512-KfdLi8MhpoeHiXkLMfuPQz1IDTUjvP2w3hbdx8Oz/hL0o+mbPYfgrU/w/D3ONjVQMoEbPpEL5vSA2eTYCmwVKg==}
+  '@mantine/code-highlight@7.17.4':
+    resolution: {integrity: sha512-Ewi4X/4a5Lbty7MmOg5OTOv7QexxuVA5dwUZ79zWEvqB3e/AHzGK//5Nb92x78FvmuEZ9M0rK5eRtWTT/+4zeA==}
     peerDependencies:
-      '@mantine/core': 7.17.8
-      '@mantine/hooks': 7.17.8
+      '@mantine/core': 7.17.4
+      '@mantine/hooks': 7.17.4
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
-  '@mantine/core@7.17.8':
-    resolution: {integrity: sha512-42sfdLZSCpsCYmLCjSuntuPcDg3PLbakSmmYfz5Auea8gZYLr+8SS5k647doVu0BRAecqYOytkX2QC5/u/8VHw==}
+  '@mantine/core@7.17.4':
+    resolution: {integrity: sha512-Ea4M/98jxgIWCuxCdM0YIotVYjfLTGQsfIA6zDg0LsClgjo/ZLnnh4zbi+bLNgM+GGjP4ju7gv4MZvaTKuLO8g==}
     peerDependencies:
-      '@mantine/hooks': 7.17.8
+      '@mantine/hooks': 7.17.4
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
-  '@mantine/hooks@7.17.8':
-    resolution: {integrity: sha512-96qygbkTjRhdkzd5HDU8fMziemN/h758/EwrFu7TlWrEP10Vw076u+Ap/sG6OT4RGPZYYoHrTlT+mkCZblWHuw==}
+  '@mantine/hooks@7.17.4':
+    resolution: {integrity: sha512-PBcJxDAfGm8k1/JJmaDcxzRVQ3JSE1iXGktbgGz+qEOJmCxwbbAYe+CtGFFgi1xX2bPZ+7dtRr/+XFhnKtt/aw==}
     peerDependencies:
       react: ^18.x || ^19.x
 
@@ -13779,15 +13812,33 @@ packages:
       '@babel/template': '>=7.0.0'
       jotai: '>=2.0.0'
 
-  jotai-devtools@0.13.0:
-    resolution: {integrity: sha512-YI5cXCZA806H+7IEqU3Mw8LG2MeEdoI5eKKLmGFJLCFBI0J/M5u9v714xwWuCw7SM5CjAjRtd801zFOU3kyUTg==}
+  jotai-devtools@0.14.0:
+    resolution: {integrity: sha512-vtUE3hlcZJeBpaziPMu07jB0kWu5MWUsGAsYBUUFBbTcE8Tzumb2+ZV6lPrIgEAJmVg5ZD1vf73URDzdgoKZaw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      jotai: '>=2.14.0'
+      jotai: '>=2.20.0'
       react: '>=17.0.0'
 
   jotai@2.18.0:
     resolution: {integrity: sha512-XI38kGWAvtxAZ+cwHcTgJsd+kJOJGf3OfL4XYaXWZMZ7IIY8e53abpIHvtVn1eAgJ5dlgwlGFnP4psrZ/vZbtA==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@babel/core': '>=7.0.0'
+      '@babel/template': '>=7.0.0'
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@babel/template':
+        optional: true
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+
+  jotai@2.20.3:
+    resolution: {integrity: sha512-N8L9FUbeGDP+0qNJw1FebOxt+5hk+jTOwUA2LlRE4C081jUcY6F1T/FSETp4DT2/INMtiSRZyNm2D+yZdzrSgA==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@babel/core': '>=7.0.0'
@@ -21483,19 +21534,19 @@ snapshots:
     dependencies:
       '@loglayer/shared': 3.3.0
 
-  '@mantine/code-highlight@7.17.8(@mantine/core@7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.8(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@mantine/code-highlight@7.17.4(@mantine/core@7.17.4(@mantine/hooks@7.17.4(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.4(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@mantine/core': 7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.8(react@19.1.0)
+      '@mantine/core': 7.17.4(@mantine/hooks@7.17.4(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks': 7.17.4(react@19.1.0)
       clsx: 2.1.1
       highlight.js: 11.11.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@mantine/core@7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@mantine/core@7.17.4(@mantine/hooks@7.17.4(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.8(react@19.1.0)
+      '@mantine/hooks': 7.17.4(react@19.1.0)
       clsx: 2.1.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -21506,7 +21557,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mantine/hooks@7.17.8(react@19.1.0)':
+  '@mantine/hooks@7.17.4(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -32070,15 +32121,15 @@ snapshots:
       '@babel/template': 7.28.6
       jotai: 2.18.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.18)(react@19.2.8)
 
-  jotai-devtools@0.13.0(@types/react@19.2.18)(jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1):
+  jotai-devtools@0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1):
     dependencies:
-      '@mantine/code-highlight': 7.17.8(@mantine/core@7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.8(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/core': 7.17.8(@mantine/hooks@7.17.8(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@mantine/hooks': 7.17.8(react@19.1.0)
+      '@mantine/code-highlight': 7.17.4(@mantine/core@7.17.4(@mantine/hooks@7.17.4(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@7.17.4(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/core': 7.17.4(@mantine/hooks@7.17.4(react@19.1.0))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks': 7.17.4(react@19.1.0)
       '@redux-devtools/extension': 3.3.0(redux@5.0.1)
       clsx: 2.1.1
       javascript-stringify: 2.1.0
-      jotai: 2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+      jotai: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
       jsondiffpatch: 0.5.0
       react: 19.1.0
       react-base16-styling: 0.9.1
@@ -32097,14 +32148,14 @@ snapshots:
       '@types/react': 19.2.18
       react: 19.2.8
 
-  jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3):
+  jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.14)(react@19.2.3):
     optionalDependencies:
       '@babel/core': 7.29.0
       '@babel/template': 7.29.7
       '@types/react': 19.2.14
       react: 19.2.3
 
-  jotai@2.18.0(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0):
+  jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0):
     optionalDependencies:
       '@babel/core': 7.29.0
       '@babel/template': 7.29.7

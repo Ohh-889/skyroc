@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "@better-scroll/core": "^2.5.1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@skyroc/axios": "^2.2.0",
     "@skyroc/color": "^2.6.1",
     "@skyroc/core-state": "^1.0.0",
@@ -16,7 +20,7 @@
     "dayjs": "^1.11.19",
     "defu": "^6.1.4",
     "i18next": "25.7.2",
-    "jotai": "^2.16.0",
+    "jotai": "2.20.3",
     "motion": "^12.23.26",
     "nprogress": "^0.2.0",
     "react": "19.1.0",
@@ -683,6 +687,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "antd": "6.5.3",
+    "jotai-devtools": "0.14.0",
     "typescript": "^6.0.3"
   },
   "tsconfig": {
