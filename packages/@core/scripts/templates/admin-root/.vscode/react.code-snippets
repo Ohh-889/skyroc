@@ -1,0 +1,79 @@
+{
+  "Print soy React route page": {
+    "scope": "typescriptreact",
+    "prefix": ["r3", "page", "view"],
+    "body": [
+      "import { createFileRoute } from '@tanstack/react-router';",
+      "",
+      "interface ${1:PageName}Props {",
+      "  /** Extra class names for the page root container. */",
+      "  className?: string;",
+      "}",
+      "",
+      "const ${1:PageName} = (props: ${1:PageName}Props) => {",
+      "  const { className } = props;",
+      "",
+      "  return (",
+      "    <div className={className}>",
+      "      $2",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export const Route = createFileRoute('${3:/}')({",
+      "  component: ${1:PageName},",
+      "  staticData: {",
+      "    title: '${4:title}'",
+      "  }",
+      "});"
+    ]
+  },
+  "Print soy React component": {
+    "scope": "typescriptreact",
+    "prefix": ["component", "comp"],
+    "body": [
+      "import type { ReactNode } from 'react';",
+      "",
+      "interface ${1:ComponentName}Props {",
+      "  /** Content rendered inside the component. */",
+      "  children?: ReactNode;",
+      "",
+      "  /** Extra class names for the component root container. */",
+      "  className?: string;",
+      "}",
+      "",
+      "const ${1:ComponentName} = (props: ${1:ComponentName}Props) => {",
+      "  const { children, className } = props;",
+      "",
+      "  return (",
+      "    <div className={className}>",
+      "      {children}",
+      "      $2",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:ComponentName};"
+    ]
+  },
+  "Print soy React props": {
+    "scope": "typescriptreact",
+    "prefix": ["props", "iprops"],
+    "body": [
+      "interface ${1:ComponentName}Props {",
+      "  /** ${2:Explain why this prop exists.} */",
+      "  ${3:children}?: ${4:ReactNode};",
+      "}"
+    ]
+  },
+  "Print soy React function": {
+    "scope": "typescriptreact",
+    "prefix": ["fn", "handler"],
+    "body": ["function ${1:handleAction}() {", "  $2", "}"]
+  },
+  "Print soy React jsx container": {
+    "scope": "typescriptreact",
+    "prefix": ["te", "jsx"],
+    "body": ["return (", "  <div className=\"\">", "    $1", "  </div>", ");"]
+  }
+}

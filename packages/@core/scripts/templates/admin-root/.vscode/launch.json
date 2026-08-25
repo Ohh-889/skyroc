@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "React Admin Debugger",
+      "url": "http://localhost:9527",
+      "webRoot": "${workspaceFolder}/apps/admin"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "TSX Current File Debugger",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["exec", "tsx"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

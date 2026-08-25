@@ -144,10 +144,13 @@ pnpm sa create-admin my-admin --install
 
 从 `apps/admin` 生成 `packages/@core/scripts/templates/admin`。`apps/admin` 是唯一源码，模板目录是发布快照，不手工维护。
 
-同步产出两样东西：
+同步产出三样东西：
 
-1. `templates/admin/` —— `apps/admin` 的逐字节镜像。跳过 `node_modules`、`dist`、`.turbo`、`.tanstack`、`coverage`、`.DS_Store`、本地 `.env.*.local` 和 `src/features/router/routeTree.gen.ts`，再根据模板自身的 `src/pages` 重新生成 `routeTree.gen.ts`。
-2. `templates/admin.meta.json` —— 物化元数据。**只有在 monorepo 内才解析得出**，所以必须在同步期算好：解析后的依赖版本、展平后的 tsconfig 与 oxlint 配置、根级 `overrides`、以及未发布的 workspace 包清单。`create-admin` 的 standalone 模式只读这份文件做替换，不需要 monorepo 在场。
+1. `templates/admin-root/` + `templates/admin-root.manifest.json` —— 仓库根级工程文件快照。包含 Git 已跟踪的根级点文件/点目录，以及 `AGENTS.md`、`CLAUDE.md`、`skills-lock.json`；排除 `.git`、缓存、构建产物、本机文件，以及 admin 模板已经自带的 `.oxlintrc.json`。manifest 用于还原 npm 固定忽略的 `.npmignore`、`.npmrc` 等点文件及符号链接。
+2. `templates/admin/` —— `apps/admin` 的逐字节镜像。跳过 `node_modules`、`dist`、`.turbo`、`.tanstack`、`coverage`、`.DS_Store`、本地 `.env.*.local` 和 `src/features/router/routeTree.gen.ts`，再根据模板自身的 `src/pages` 重新生成 `routeTree.gen.ts`。
+3. `templates/admin.meta.json` —— 物化元数据。**只有在 monorepo 内才解析得出**，所以必须在同步期算好：解析后的依赖版本、展平后的 tsconfig 与 oxlint 配置、根级 `overrides`、以及未发布的 workspace 包清单。`create-admin` 的 standalone 模式只读这份文件做替换，不需要 monorepo 在场。
+
+`create-admin` 会先复制 `admin-root`，再覆盖 `admin`。因此协作说明、编辑器配置、skills 和格式化配置会进入新项目；`package.json`、`README.md`、`.oxlintrc.json` 等应用已有文件只取 admin 模板版本。
 
 元数据放在 `templates/admin/` **外层**，这样快照目录仍是纯镜像，逐字节比对不需要为 sidecar 开特例。
 

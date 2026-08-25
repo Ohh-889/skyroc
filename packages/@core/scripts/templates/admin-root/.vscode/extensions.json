@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    "afzalsayed96.icones",
+    "antfu.iconify",
+    "antfu.unocss",
+    "oxc.oxc-vscode",
+    "editorconfig.editorconfig",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-complete-tag",
+    "formulahendry.auto-rename-tag",
+    "lokalise.i18n-ally",
+    "mhutchie.git-graph",
+    "mikestead.dotenv",
+    "naumovs.color-highlight",
+    "pkief.material-icon-theme",
+    "dsznajder.es7-react-js-snippets",
+    "whtouche.vscode-js-console-utils",
+    "zhuangtongfa.material-theme",
+    "alibaba-cloud.tongyi-lingma"
+  ]
+}

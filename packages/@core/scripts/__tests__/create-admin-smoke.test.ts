@@ -1,11 +1,9 @@
 /**
  * `sa create-admin` 端到端冒烟测试。
  *
- * 独立模式此前在「20 个依赖装不上」的状态下静默存活了很久，根因就是没有任何测试真的跑生成流程。
- * 这里对 standalone / workspace 两种模式各生成一次，校验生成物的关键不变量。
+ * 独立模式此前在「20 个依赖装不上」的状态下静默存活了很久，根因就是没有任何测试真的跑生成流程。 这里对 standalone / workspace 两种模式各生成一次，校验生成物的关键不变量。
  *
- * 不做 `pnpm install`：standalone 的 registry 依赖要等底座包发布后才装得上
- * （见 packages/MIGRATION-ADMIN-SHELL.md §3.2），装不上是发布问题，不是生成问题。
+ * 不做 `pnpm install`：standalone 的 registry 依赖要等底座包发布后才装得上 （见 packages/MIGRATION-ADMIN-SHELL.md §3.2），装不上是发布问题，不是生成问题。
  */
 import { existsSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -39,6 +37,39 @@ afterAll(async () => {
 });
 
 describe('standalone 模式', () => {
+  it('包含仓库根级工程文件与点目录', () => {
+    const rootPaths = [
+      '.agents',
+      '.claude',
+      '.cursor',
+      '.editorconfig',
+      '.gitattributes',
+      '.gitignore',
+      '.npmignore',
+      '.npmrc',
+      '.oxfmtrc.json',
+      '.vscode',
+      'AGENTS.md',
+      'CLAUDE.md',
+      'skills-lock.json'
+    ];
+
+    for (const relativePath of rootPaths) {
+      expect(existsSync(path.join(standaloneDir, relativePath)), relativePath).toBe(true);
+    }
+
+    expect(existsSync(path.join(standaloneDir, '.git'))).toBe(false);
+    expect(existsSync(path.join(standaloneDir, '.turbo'))).toBe(false);
+    expect(existsSync(path.join(standaloneDir, '.tanstack'))).toBe(false);
+  });
+
+  it('package.json 使用 admin 应用版本', async () => {
+    const pkg = await readJson(path.join(standaloneDir, 'package.json'));
+
+    expect(pkg.name).toBe('smoke-standalone');
+    expect(pkg.scripts.dev).toBe('vite --mode test');
+  });
+
   it('shell 源码被完整复制进 src/framework', () => {
     for (const dir of SHELL_DIRS) {
       expect(existsSync(path.join(standaloneDir, 'src/framework', dir)), `src/framework/${dir}`).toBe(true);
@@ -112,19 +143,27 @@ describe('standalone 模式', () => {
     const files = collectSourceFiles('src');
     const missing: string[] = [];
 
-    for (const file of files) {
-      const content = await readFile(path.join(standaloneDir, file), 'utf8');
+    await Promise.all(
+      files.map(async file => {
+        const content = await readFile(path.join(standaloneDir, file), 'utf8');
 
-      for (const match of content.matchAll(/from '@shell\/([^']+)'/g)) {
-        const specifier = match[1]!;
-        const base = path.join(standaloneDir, 'src/framework', specifier);
-        const candidates = [base, `${base}.ts`, `${base}.tsx`, path.join(base, 'index.ts'), path.join(base, 'index.tsx')];
+        for (const match of content.matchAll(/from '@shell\/([^']+)'/g)) {
+          const specifier = match[1]!;
+          const base = path.join(standaloneDir, 'src/framework', specifier);
+          const candidates = [
+            base,
+            `${base}.ts`,
+            `${base}.tsx`,
+            path.join(base, 'index.ts'),
+            path.join(base, 'index.tsx')
+          ];
 
-        if (!candidates.some(candidate => existsSync(candidate))) {
-          missing.push(`${file}: @shell/${specifier}`);
+          if (!candidates.some(candidate => existsSync(candidate))) {
+            missing.push(`${file}: @shell/${specifier}`);
+          }
         }
-      }
-    }
+      })
+    );
 
     expect(missing).toEqual([]);
   });

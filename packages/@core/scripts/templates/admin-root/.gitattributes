@@ -1,0 +1,16 @@
+"*.vue"    eol=lf
+"*.js"     eol=lf
+"*.ts"     eol=lf
+"*.jsx"    eol=lf
+"*.tsx"    eol=lf
+"*.mjs"    eol=lf
+"*.json"   eol=lf
+"*.html"   eol=lf
+"*.css"    eol=lf
+"*.scss"   eol=lf
+"*.md"     eol=lf
+"*.yaml"   eol=lf
+"*.yml"    eol=lf
+
+# Denote all files that are truly binary and should not be modified.
+*.{ico,png,jpg,jpeg,gif,webp,svg,woff,woff2} binary

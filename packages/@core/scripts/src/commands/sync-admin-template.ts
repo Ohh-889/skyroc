@@ -2,7 +2,7 @@
 // oxlint-disable no-continue
 // oxlint-disable no-await-in-loop
 import { existsSync } from 'node:fs';
-import { cp, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
@@ -28,18 +28,41 @@ interface DirectoryDifference {
   type: DifferenceType;
 }
 
+interface RootTemplateManifestEntry {
+  /** 普通文件时为 base64 内容。 */
+  content?: string;
+  /** 相对生成项目根的文件路径。 */
+  path: string;
+  /** 符号链接时保留原始相对目标。 */
+  target?: string;
+  /** 节点类型。 */
+  type: 'file' | 'symlink';
+}
+
 const TEMPLATE_NAME = 'admin';
 
-/** shell 源码模板目录名，与 templates/admin 平级，保持 admin/ 仍是 apps/admin 的逐字节镜像。 */
+/** 仓库根级工程文件模板目录；生成项目时先铺这一层，再由 admin 应用文件覆盖同名项。 */
+const ROOT_TEMPLATE_NAME = 'admin-root';
+
+/** Npm 会主动忽略部分点文件，因此另存一份可完整还原根快照的清单。 */
+const ROOT_TEMPLATE_MANIFEST_FILE = 'admin-root.manifest.json';
+
+/** 不以点开头、但应随新项目保留的仓库根级文件。 */
+const ROOT_TEMPLATE_FILES = ['AGENTS.md', 'CLAUDE.md', 'skills-lock.json'];
+
+/** Admin 应用模板已有自己的版本，不再从仓库根重复复制。 */
+const ROOT_TEMPLATE_EXCLUDED_FILES = new Set(['.oxlintrc.json']);
+
+/** Shell 源码模板目录名，与 templates/admin 平级，保持 admin/ 仍是 apps/admin 的逐字节镜像。 */
 const SHELL_TEMPLATE_NAME = 'admin-shell';
 
-/** shell 里会被复制进生成项目 src/framework 的运行时目录；配置、测试与文档不属于产物。 */
+/** Shell 里会被复制进生成项目 src/framework 的运行时目录；配置、测试与文档不属于产物。 */
 const SHELL_RUNTIME_DIRS = ['i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
 
 const MAX_REPORTED_DIFFERENCES = 20;
 
 /** 构建产物与工具缓存目录，同步时既不复制也不参与比对。 */
-const TECHNICAL_DIRS = new Set(['.tanstack', '.turbo', 'coverage', 'dist', 'node_modules']);
+const TECHNICAL_DIRS = new Set(['.tanstack', '.turbo', '__pycache__', 'coverage', 'dist', 'node_modules']);
 
 function normalizeRelativePath(filePath: string) {
   return filePath.split(path.sep).join('/');
@@ -59,6 +82,7 @@ function isTechnicalGeneratedPath(relativePath: string) {
 
   return (
     basename === '.DS_Store' ||
+    basename?.endsWith('.pyc') ||
     basename?.endsWith('.tsbuildinfo') ||
     basename?.endsWith('.log') ||
     isLocalEnvFile(relativePath) ||
@@ -84,6 +108,47 @@ function resolveSourceDir(workspaceRoot: string, source?: string) {
 
 function resolveTargetDir(target?: string) {
   return path.resolve(process.cwd(), target || path.join(getPackageRoot(), 'templates', TEMPLATE_NAME));
+}
+
+async function collectTrackedRootTemplateFiles(workspaceRoot: string) {
+  const { execa } = await import('execa');
+  const { stdout } = await execa('git', ['ls-files', '-z', '--', '.*', ...ROOT_TEMPLATE_FILES], {
+    cwd: workspaceRoot
+  });
+
+  return stdout
+    .split('\0')
+    .map(normalizeRelativePath)
+    .filter(Boolean)
+    .filter(relativePath => !ROOT_TEMPLATE_EXCLUDED_FILES.has(relativePath))
+    .filter(relativePath => !isTechnicalGeneratedPath(relativePath));
+}
+
+async function copyRootSource(workspaceRoot: string, targetDir: string) {
+  await rm(targetDir, { force: true, recursive: true });
+
+  const files = await collectTrackedRootTemplateFiles(workspaceRoot);
+  const manifestEntries: RootTemplateManifestEntry[] = [];
+
+  for (const relativePath of files) {
+    const source = path.join(workspaceRoot, relativePath);
+    const target = path.join(targetDir, relativePath);
+    const sourceStat = await lstat(source);
+
+    await mkdir(path.dirname(target), { recursive: true });
+    await cp(source, target, { recursive: true, verbatimSymlinks: true });
+
+    if (sourceStat.isSymbolicLink()) {
+      manifestEntries.push({ path: relativePath, target: await readlink(source), type: 'symlink' });
+    } else if (sourceStat.isFile()) {
+      manifestEntries.push({ content: (await readFile(source)).toString('base64'), path: relativePath, type: 'file' });
+    }
+  }
+
+  await writeFile(
+    path.join(path.dirname(targetDir), ROOT_TEMPLATE_MANIFEST_FILE),
+    `${JSON.stringify(manifestEntries, null, 2)}\n`
+  );
 }
 
 async function copyAdminSource(sourceDir: string, targetDir: string) {
@@ -224,7 +289,9 @@ async function generateSnapshot(workspaceRoot: string, sourceDir: string, target
 
   const shellSourceDir = path.join(workspaceRoot, 'packages/web/admin');
   const shellTargetDir = path.join(path.dirname(targetDir), SHELL_TEMPLATE_NAME);
+  const rootTargetDir = path.join(path.dirname(targetDir), ROOT_TEMPLATE_NAME);
 
+  await copyRootSource(workspaceRoot, rootTargetDir);
   await copyAdminSource(sourceDir, targetDir);
   await copyShellSource(shellSourceDir, shellTargetDir);
   await generateRouteTree(targetDir);
@@ -266,11 +333,29 @@ async function checkAdminTemplate(workspaceRoot: string, sourceDir: string, targ
       path.join(path.dirname(targetDir), SHELL_TEMPLATE_NAME),
       path.join(tempDir, SHELL_TEMPLATE_NAME)
     );
+    const rootDifferences = await compareDirectories(
+      path.join(path.dirname(targetDir), ROOT_TEMPLATE_NAME),
+      path.join(tempDir, ROOT_TEMPLATE_NAME)
+    );
 
     differences.push(
+      ...rootDifferences.map(item => ({ ...item, path: `${ROOT_TEMPLATE_NAME}/${item.path}` })),
       ...shellDifferences.map(item => ({ ...item, path: `${SHELL_TEMPLATE_NAME}/${item.path}` }))
     );
     const currentMetaContent = await readMetaContent(path.join(path.dirname(targetDir), TEMPLATE_META_FILE));
+    const rootManifestPath = path.join(path.dirname(targetDir), ROOT_TEMPLATE_MANIFEST_FILE);
+    const generatedRootManifestPath = path.join(tempDir, ROOT_TEMPLATE_MANIFEST_FILE);
+    const [currentRootManifest, generatedRootManifest] = await Promise.all([
+      readMetaContent(rootManifestPath),
+      readMetaContent(generatedRootManifestPath)
+    ]);
+
+    if (currentRootManifest !== generatedRootManifest) {
+      differences.push({
+        path: ROOT_TEMPLATE_MANIFEST_FILE,
+        type: currentRootManifest ? 'changed' : 'added'
+      });
+    }
 
     if (currentMetaContent !== metaContent) {
       differences.push({ path: TEMPLATE_META_FILE, type: currentMetaContent ? 'changed' : 'added' });

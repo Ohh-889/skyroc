@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { cyan, green, yellow } from 'kolorist';
@@ -44,6 +44,17 @@ interface EnvFileUpdate {
   title: string;
 }
 
+interface RootTemplateManifestEntry {
+  /** 普通文件的 base64 内容。 */
+  content?: string;
+  /** 相对生成项目根的路径。 */
+  path: string;
+  /** 符号链接的原始相对目标。 */
+  target?: string;
+  /** 节点类型。 */
+  type: 'file' | 'symlink';
+}
+
 const TEMPLATE_NAME = 'admin';
 
 export function normalizePackageName(name: string) {
@@ -86,6 +97,14 @@ export function toStoragePrefix(name: string) {
 
 function getTemplateDir() {
   return path.join(getPackageRoot(), 'templates', TEMPLATE_NAME);
+}
+
+function getRootTemplateDir() {
+  return path.join(getPackageRoot(), 'templates', 'admin-root');
+}
+
+function getRootTemplateManifestPath() {
+  return path.join(getPackageRoot(), 'templates', 'admin-root.manifest.json');
 }
 
 function getShellTemplateDir() {
@@ -142,6 +161,41 @@ async function installDependencies(cwd: string) {
   await execa('pnpm', ['install'], { cwd, stdio: 'inherit' });
 }
 
+async function restoreRootTemplateFiles(targetDir: string) {
+  const manifestPath = getRootTemplateManifestPath();
+
+  if (!existsSync(manifestPath)) {
+    throw new Error(`Admin root template manifest is missing: ${manifestPath}`);
+  }
+
+  const entries = JSON.parse(await readFile(manifestPath, 'utf8')) as RootTemplateManifestEntry[];
+
+  await Promise.all(
+    entries.map(async entry => {
+      const target = path.resolve(targetDir, entry.path);
+      const relativeTarget = path.relative(targetDir, target);
+
+      if (path.isAbsolute(entry.path) || relativeTarget.startsWith('..') || path.isAbsolute(relativeTarget)) {
+        throw new Error(`Invalid admin root template path: ${entry.path}`);
+      }
+
+      await mkdir(path.dirname(target), { recursive: true });
+
+      if (entry.type === 'symlink') {
+        if (!entry.target) throw new Error(`Admin root template symlink target is missing: ${entry.path}`);
+
+        await rm(target, { force: true, recursive: true });
+        await symlink(entry.target, target);
+        return;
+      }
+
+      if (entry.content === undefined) throw new Error(`Admin root template content is missing: ${entry.path}`);
+
+      await writeFile(target, Buffer.from(entry.content, 'base64'));
+    })
+  );
+}
+
 /** 独立模式下把 monorepo 协议物化掉，并把物化过程中发现的隐患打印出来。 */
 async function applyStandaloneMaterialization(targetDir: string, packageName: string, description: string) {
   const metaPath = getTemplateMetaPath();
@@ -181,9 +235,14 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
   const directoryName = packageName.replace(/^@[^/]+\//, '');
   const targetDir = path.resolve(process.cwd(), options.target || path.join('apps', directoryName));
   const templateDir = getTemplateDir();
+  const rootTemplateDir = getRootTemplateDir();
 
   if (!existsSync(templateDir)) {
     throw new Error(`Admin template is missing: ${templateDir}`);
+  }
+
+  if (!existsSync(rootTemplateDir)) {
+    throw new Error(`Admin root template is missing: ${rootTemplateDir}`);
   }
 
   if (existsSync(targetDir) && !(await isDirectoryEmpty(targetDir))) {
@@ -195,6 +254,9 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
   }
 
   await mkdir(path.dirname(targetDir), { recursive: true });
+  // 生成目录同时是独立项目根：先复制仓库根级约定，再让 apps/admin 的应用配置覆盖 package.json、README 等同名文件。
+  await cp(rootTemplateDir, targetDir, { recursive: true, verbatimSymlinks: true });
+  await restoreRootTemplateFiles(targetDir);
   await cp(templateDir, targetDir, { recursive: true });
 
   if (options.workspace) {
@@ -205,7 +267,9 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
     const shellTemplateDir = getShellTemplateDir();
 
     if (!existsSync(shellTemplateDir)) {
-      throw new Error(`Admin shell template is missing: ${shellTemplateDir}\nRun "pnpm sa sync-admin-template" to regenerate it.`);
+      throw new Error(
+        `Admin shell template is missing: ${shellTemplateDir}\nRun "pnpm sa sync-admin-template" to regenerate it.`
+      );
     }
 
     await cp(shellTemplateDir, path.join(targetDir, 'src', 'framework'), { recursive: true });
