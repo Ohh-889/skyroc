@@ -18,6 +18,9 @@ import { Route as authLoginOutRouteImport } from './../../pages/(auth)/login-out
 import { Route as authLoginLayoutRouteImport } from './../../pages/(auth)/login/layout'
 import { Route as authLoginIndexRouteImport } from './../../pages/(auth)/login/index'
 import { Route as adminHomeIndexRouteImport } from './../../pages/(admin)/home/index'
+import { Route as authLoginResetPwdRouteImport } from './../../pages/(auth)/login/reset-pwd'
+import { Route as authLoginRegisterRouteImport } from './../../pages/(auth)/login/register'
+import { Route as authLoginCodeLoginRouteImport } from './../../pages/(auth)/login/code-login'
 
 const adminLayoutRoute = adminLayoutRouteImport.update({
   id: '/(admin)',
@@ -63,6 +66,21 @@ const adminHomeIndexRoute = adminHomeIndexRouteImport.update({
   path: '/home/',
   getParentRoute: () => adminLayoutRoute,
 } as any)
+const authLoginResetPwdRoute = authLoginResetPwdRouteImport.update({
+  id: '/reset-pwd',
+  path: '/reset-pwd',
+  getParentRoute: () => authLoginLayoutRoute,
+} as any)
+const authLoginRegisterRoute = authLoginRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => authLoginLayoutRoute,
+} as any)
+const authLoginCodeLoginRoute = authLoginCodeLoginRouteImport.update({
+  id: '/code-login',
+  path: '/code-login',
+  getParentRoute: () => authLoginLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,6 +89,9 @@ export interface FileRoutesByFullPath {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/login/code-login': typeof authLoginCodeLoginRoute
+  '/login/register': typeof authLoginRegisterRoute
+  '/login/reset-pwd': typeof authLoginResetPwdRoute
   '/home/': typeof adminHomeIndexRoute
   '/login/': typeof authLoginIndexRoute
 }
@@ -80,6 +101,9 @@ export interface FileRoutesByTo {
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
+  '/login/code-login': typeof authLoginCodeLoginRoute
+  '/login/register': typeof authLoginRegisterRoute
+  '/login/reset-pwd': typeof authLoginResetPwdRoute
   '/home': typeof adminHomeIndexRoute
   '/login': typeof authLoginIndexRoute
 }
@@ -92,6 +116,9 @@ export interface FileRoutesById {
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
+  '/(auth)/login/code-login': typeof authLoginCodeLoginRoute
+  '/(auth)/login/register': typeof authLoginRegisterRoute
+  '/(auth)/login/reset-pwd': typeof authLoginResetPwdRoute
   '/(admin)/home/': typeof adminHomeIndexRoute
   '/(auth)/login/': typeof authLoginIndexRoute
 }
@@ -104,10 +131,23 @@ export interface FileRouteTypes {
     | '/403'
     | '/404'
     | '/500'
+    | '/login/code-login'
+    | '/login/register'
+    | '/login/reset-pwd'
     | '/home/'
     | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login-out' | '/403' | '/404' | '/500' | '/home' | '/login'
+  to:
+    | '/'
+    | '/login-out'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/login/code-login'
+    | '/login/register'
+    | '/login/reset-pwd'
+    | '/home'
+    | '/login'
   id:
     | '__root__'
     | '/'
@@ -117,6 +157,9 @@ export interface FileRouteTypes {
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
+    | '/(auth)/login/code-login'
+    | '/(auth)/login/register'
+    | '/(auth)/login/reset-pwd'
     | '/(admin)/home/'
     | '/(auth)/login/'
   fileRoutesById: FileRoutesById
@@ -196,6 +239,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof adminHomeIndexRouteImport
       parentRoute: typeof adminLayoutRoute
     }
+    '/(auth)/login/reset-pwd': {
+      id: '/(auth)/login/reset-pwd'
+      path: '/reset-pwd'
+      fullPath: '/login/reset-pwd'
+      preLoaderRoute: typeof authLoginResetPwdRouteImport
+      parentRoute: typeof authLoginLayoutRoute
+    }
+    '/(auth)/login/register': {
+      id: '/(auth)/login/register'
+      path: '/register'
+      fullPath: '/login/register'
+      preLoaderRoute: typeof authLoginRegisterRouteImport
+      parentRoute: typeof authLoginLayoutRoute
+    }
+    '/(auth)/login/code-login': {
+      id: '/(auth)/login/code-login'
+      path: '/code-login'
+      fullPath: '/login/code-login'
+      preLoaderRoute: typeof authLoginCodeLoginRouteImport
+      parentRoute: typeof authLoginLayoutRoute
+    }
   }
 }
 
@@ -212,10 +276,16 @@ const adminLayoutRouteWithChildren = adminLayoutRoute._addFileChildren(
 )
 
 interface authLoginLayoutRouteChildren {
+  authLoginCodeLoginRoute: typeof authLoginCodeLoginRoute
+  authLoginRegisterRoute: typeof authLoginRegisterRoute
+  authLoginResetPwdRoute: typeof authLoginResetPwdRoute
   authLoginIndexRoute: typeof authLoginIndexRoute
 }
 
 const authLoginLayoutRouteChildren: authLoginLayoutRouteChildren = {
+  authLoginCodeLoginRoute: authLoginCodeLoginRoute,
+  authLoginRegisterRoute: authLoginRegisterRoute,
+  authLoginResetPwdRoute: authLoginResetPwdRoute,
   authLoginIndexRoute: authLoginIndexRoute,
 }
 
