@@ -1,4 +1,4 @@
-import { LookForward } from '@skyroc/web-ui-compose';
+import { LookForward } from '@shell/ui/compose';
 import { createFileRoute, useLoaderData } from '@tanstack/react-router';
 import { Card, Descriptions, Tag } from 'antd';
 import type { DescriptionsProps } from 'antd';

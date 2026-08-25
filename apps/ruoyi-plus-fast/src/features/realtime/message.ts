@@ -1,4 +1,4 @@
-import type { AddNotificationInput, NotificationPriority, NotificationType } from '@skyroc/web-admin-notification';
+import type { AddNotificationInput, NotificationPriority, NotificationType } from '@shell/notification';
 import { z } from 'zod';
 
 /**

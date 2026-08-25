@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Button, Descriptions, Drawer, Flex, Image, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 

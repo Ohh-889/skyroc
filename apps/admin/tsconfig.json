@@ -3,9 +3,20 @@
   "extends": "@skyroc/tsconfig/web-app.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./*"
+      ],
+      "@shell/*": [
+        "../../packages/web/admin/*"
+      ]
     }
   },
-  "include": ["./**/*.ts", "./**/*.tsx"]
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "../../packages/web/admin/**/*.d.ts"
+  ]
 }

@@ -1,5 +1,5 @@
-import { useMockNotifications } from '@skyroc/web-admin-notification/mock';
-import { useNotificationContext } from '@skyroc/web-admin-notification';
+import { useMockNotifications } from '@shell/notification/mock';
+import { useNotificationContext } from '@shell/notification';
 import { createFileRoute } from '@tanstack/react-router';
 import { Button, Card, Space, Tag } from 'antd';
 

@@ -1,4 +1,4 @@
-import { useAdminTab } from '@skyroc/web-admin-layouts';
+import { useAdminTab } from '@shell/layouts';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 type MultiTabSearch = Record<string, string>;

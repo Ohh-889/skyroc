@@ -95,7 +95,6 @@
   "devDependencies": {
     "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "@skyroc/types": "workspace:*",
     "@tanstack/react-query": "catalog:core",
     "@tanstack/react-router": "catalog:web",
     "@types/react": "catalog:dev",

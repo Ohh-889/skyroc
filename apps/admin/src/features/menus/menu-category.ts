@@ -1,4 +1,4 @@
-import type { AdminLayoutMenuCategory } from '@skyroc/web-admin-layouts';
+import type { AdminLayoutMenuCategory } from '@shell/layouts';
 
 export const menuCategories = {
   admin: {

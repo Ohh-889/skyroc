@@ -1,4 +1,4 @@
-import { useAdminMenuBadges } from '@skyroc/web-admin-layouts';
+import { useAdminMenuBadges } from '@shell/layouts';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 

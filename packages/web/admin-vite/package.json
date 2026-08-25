@@ -94,7 +94,6 @@
   "devDependencies": {
     "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "@skyroc/types": "workspace:*",
     "@types/babel__core": "catalog:dev",
     "@types/node": "catalog:dev",
     "oxlint": "catalog:dev",

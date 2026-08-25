@@ -1,4 +1,4 @@
-import { useSettingsTheme } from '@skyroc/web-admin-theme';
+import { useSettingsTheme } from '@shell/theme';
 import { BarChart, GaugeChart, LineChart, PictorialBarChart, PieChart, RadarChart, ScatterChart } from 'echarts/charts';
 import type {
   BarSeriesOption,

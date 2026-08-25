@@ -1,7 +1,7 @@
 // oxlint-disable import/no-unassigned-import
-import { setupAdminLayouts } from '@skyroc/web-admin-layouts';
-import { setupTheme } from '@skyroc/web-admin-theme';
-import { ErrorBoundary as FallbackRender } from '@skyroc/web-ui-antd';
+import { setupAdminLayouts } from '@shell/layouts';
+import { setupTheme } from '@shell/theme';
+import { ErrorBoundary as FallbackRender } from '@shell/ui/antd';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 

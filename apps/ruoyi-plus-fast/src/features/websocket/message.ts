@@ -1,4 +1,4 @@
-import type { AddNotificationInput } from '@skyroc/web-admin-notification';
+import type { AddNotificationInput } from '@shell/notification';
 
 import { parseRealtimeNotification } from '@/features/realtime/message';
 

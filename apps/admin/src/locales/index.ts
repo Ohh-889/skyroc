@@ -1,10 +1,10 @@
-import { setupI18n as setupCoreI18n } from '@skyroc/web-admin-i18n';
-import type { LocaleSetupOptions } from '@skyroc/web-admin-i18n';
+import { setupI18n as setupCoreI18n } from '@shell/i18n';
+import type { LocaleSetupOptions } from '@shell/i18n';
 
 import { globalConfig } from '@/config';
 import { localStg } from '@/utils/storage';
 
-export { $t } from '@skyroc/web-admin-i18n';
+export { $t } from '@shell/i18n';
 
 /** Setup plugin i18n */
 export async function setupI18n(options: LocaleSetupOptions<I18n.LangType> = {}) {

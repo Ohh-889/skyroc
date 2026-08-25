@@ -1,4 +1,4 @@
-import { ErrorBoundary } from '@skyroc/web-ui-antd';
+import { ErrorBoundary } from '@shell/ui/antd';
 import type { ErrorComponentProps } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 

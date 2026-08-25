@@ -1,5 +1,5 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
-import type { TableSearchProps } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
+import type { TableSearchProps } from '@shell/ui/compose';
 import { AutoComplete, Button, Col, Flex, Form, Input, InputNumber, Row } from 'antd';
 
 import SearchRangePicker from '@/features/table/SearchRangePicker';

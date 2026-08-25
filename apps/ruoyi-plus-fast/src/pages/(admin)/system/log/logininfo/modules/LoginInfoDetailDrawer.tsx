@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Badge, Button, Descriptions, Drawer, Flex } from 'antd';
 import type { DescriptionsProps } from 'antd';
 

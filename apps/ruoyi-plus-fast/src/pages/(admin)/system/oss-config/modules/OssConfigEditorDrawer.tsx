@@ -1,4 +1,4 @@
-import { showConfirmModal } from '@skyroc/web-admin-theme';
+import { showConfirmModal } from '@shell/theme';
 import { Alert, Button, Card, Checkbox, Drawer, Flex, Form, Input, Radio, Spin, Typography } from 'antd';
 import { useEffect } from 'react';
 

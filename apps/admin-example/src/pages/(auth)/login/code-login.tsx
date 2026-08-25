@@ -1,5 +1,5 @@
 import { useCaptcha } from '@skyroc/hooks';
-import { ButtonLink } from '@skyroc/web-ui-antd';
+import { ButtonLink } from '@shell/ui/antd';
 import { REG_PHONE } from '@skyroc/utils';
 import { createFileRoute } from '@tanstack/react-router';
 

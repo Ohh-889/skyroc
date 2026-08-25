@@ -1,5 +1,5 @@
-import { LangEffect } from '@skyroc/web-admin-i18n';
-import { ThemeEffect } from '@skyroc/web-admin-theme';
+import { LangEffect } from '@shell/i18n';
+import { ThemeEffect } from '@shell/theme';
 
 import { syncLocales } from '@/locales/sync';
 

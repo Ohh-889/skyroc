@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 
 type SocialProvider = 'feishu' | 'wechat';
 

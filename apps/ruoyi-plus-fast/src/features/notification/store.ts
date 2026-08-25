@@ -1,4 +1,4 @@
-import { NotificationStore } from '@skyroc/web-admin-notification';
+import { NotificationStore } from '@shell/notification';
 
 let store: NotificationStore | null = null;
 

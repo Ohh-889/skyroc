@@ -1,5 +1,5 @@
-import { useLang } from '@skyroc/web-admin-i18n';
-import { AntdProvider } from '@skyroc/web-admin-theme';
+import { useLang } from '@shell/i18n';
+import { AntdProvider } from '@shell/theme';
 import type { PropsWithChildren } from 'react';
 
 import { antdLocales } from '@/locales/antd';

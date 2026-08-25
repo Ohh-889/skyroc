@@ -1,5 +1,5 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
-import type { TableSearchProps } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
+import type { TableSearchProps } from '@shell/ui/compose';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 import { useState } from 'react';
 

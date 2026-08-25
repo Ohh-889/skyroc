@@ -1,5 +1,5 @@
-import { LangSwitch } from '@skyroc/web-admin-i18n';
-import { ThemeSchemaSwitch, useSettingsTheme } from '@skyroc/web-admin-theme';
+import { LangSwitch } from '@shell/i18n';
+import { ThemeSchemaSwitch, useSettingsTheme } from '@shell/theme';
 
 interface LoginHeaderProps {
   /** 当前登录方式的说明文字 */

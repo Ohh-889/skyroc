@@ -1,5 +1,5 @@
-import { AppTree } from '@skyroc/web-ui-antd';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { AppTree } from '@shell/ui/antd';
+import { SvgIcon } from '@shell/ui/compose';
 import {
   Alert,
   Button,

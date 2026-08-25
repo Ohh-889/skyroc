@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Button, Flex, Modal, Typography } from 'antd';
 
 interface TenantSyncModalProps {

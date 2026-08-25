@@ -1,5 +1,5 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
-import type { GeneralPopupOperationProps, TableDataWithIndex } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
+import type { GeneralPopupOperationProps, TableDataWithIndex } from '@shell/ui/compose';
 import { Button, Col, Divider, Drawer, Flex, Form, Input, InputNumber, Radio, Row, Select, Switch } from 'antd';
 import type { FormRule } from 'antd';
 import { useTranslation } from 'react-i18next';

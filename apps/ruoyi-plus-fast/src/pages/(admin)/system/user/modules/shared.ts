@@ -1,4 +1,4 @@
-import type { TableQueryHookOptions } from '@skyroc/web-ui-compose';
+import type { TableQueryHookOptions } from '@shell/ui/compose';
 import { z } from 'zod';
 
 import {

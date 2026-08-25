@@ -1,4 +1,4 @@
-import { LookForward } from '@skyroc/web-ui-compose';
+import { LookForward } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 
 const HideChildTwo = () => {

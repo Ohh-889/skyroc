@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Card, Space, Tag, Typography } from 'antd';
 import type { ReactNode } from 'react';
 

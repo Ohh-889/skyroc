@@ -1,8 +1,8 @@
 import { JotaiProvider, globalStore } from '@skyroc/core-state';
 import type { AdminDevtoolsProps } from '@skyroc/web-admin-devtools';
-import { NotificationProvider } from '@skyroc/web-admin-notification';
-import { useSettingsTheme } from '@skyroc/web-admin-theme';
-import { LazyAnimate } from '@skyroc/web-ui-compose';
+import { NotificationProvider } from '@shell/notification';
+import { useSettingsTheme } from '@shell/theme';
+import { LazyAnimate } from '@shell/ui/compose';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Suspense, lazy, useMemo } from 'react';
 import type { ReactNode } from 'react';

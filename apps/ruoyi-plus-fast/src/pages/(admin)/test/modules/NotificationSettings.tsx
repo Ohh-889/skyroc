@@ -1,5 +1,5 @@
-import { showSuccessMessage } from '@skyroc/web-admin-theme';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showSuccessMessage } from '@shell/theme';
+import { SvgIcon } from '@shell/ui/compose';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Card, Empty, Flex, Select, Space, Table, Tag, Typography } from 'antd';
 

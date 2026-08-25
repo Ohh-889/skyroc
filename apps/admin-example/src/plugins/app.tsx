@@ -1,4 +1,4 @@
-import type { SetupAppVersionNotificationOptions } from '@skyroc/web-admin-runtime';
+import type { SetupAppVersionNotificationOptions } from '@shell/runtime';
 
 import { destroyNotification, globalConfig, showNotification } from '@/config';
 import { router } from '@/features/router';

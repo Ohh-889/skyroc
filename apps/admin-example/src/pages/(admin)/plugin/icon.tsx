@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 import { Card, Select, Space, Typography } from 'antd';
 import { useState } from 'react';
@@ -43,7 +43,7 @@ const IconDemo = () => {
       <PluginPageHeader
         icon="mdi:emoticon"
         resources={[{ label: 'Iconify', url: 'https://icon-sets.iconify.design/' }]}
-        tags={['@iconify/react', '@skyroc/web-ui-compose']}
+        tags={['@iconify/react', '@shell/ui/compose']}
         title="图标示例"
       />
       <ExamplePanel icon="mdi:emoticon" title="Iconify 图标">

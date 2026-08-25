@@ -1,5 +1,5 @@
-import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showConfirmModal } from '@shell/theme';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Button, Drawer, Flex, Typography, Upload } from 'antd';
 import { useEffect, useState } from 'react';
 

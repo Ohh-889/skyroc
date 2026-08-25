@@ -1,5 +1,5 @@
 import type { AdminDevtoolsConfig } from '@skyroc/web-admin-devtools';
-import { defaultThemeSettings } from '@skyroc/web-admin-theme';
+import { defaultThemeSettings } from '@shell/theme';
 import type { NProgress } from 'nprogress';
 
 import { menuCategoryKeys } from './features/menus/menu-category';
@@ -29,7 +29,7 @@ export {
   showWarningMessage,
   showWarningModal,
   showWarningNotification
-} from '@skyroc/web-admin-theme';
+} from '@shell/theme';
 
 // ============================================================================
 // NProgress

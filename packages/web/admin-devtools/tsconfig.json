@@ -3,8 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": ".",
-    "types": ["vite/client", "@skyroc/types/types"]
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src/**/*", "tsdown.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "tsdown.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

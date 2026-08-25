@@ -1,5 +1,5 @@
-import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showConfirmModal } from '@shell/theme';
+import { SvgIcon } from '@shell/ui/compose';
 import type { ModalFuncProps } from 'antd';
 import type { ReactNode } from 'react';
 

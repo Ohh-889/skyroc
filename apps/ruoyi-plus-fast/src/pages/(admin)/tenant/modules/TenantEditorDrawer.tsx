@@ -1,4 +1,4 @@
-import { showConfirmModal } from '@skyroc/web-admin-theme';
+import { showConfirmModal } from '@shell/theme';
 import { Alert, Button, Card, DatePicker, Drawer, Flex, Form, Input, InputNumber, Radio, Select, Spin } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';

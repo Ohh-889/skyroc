@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary, no-void, unicorn/consistent-function-scoping */
-import { showSuccessMessage } from '@skyroc/web-admin-theme';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showSuccessMessage } from '@shell/theme';
+import { SvgIcon } from '@shell/ui/compose';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Alert,

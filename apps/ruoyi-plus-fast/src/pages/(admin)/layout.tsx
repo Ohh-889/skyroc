@@ -1,6 +1,6 @@
-import { AdminLayout as WebAdminLayout } from '@skyroc/web-admin-layouts';
-import { NotificationButton } from '@skyroc/web-admin-notification';
-import { DarkModeContainer } from '@skyroc/web-ui-compose';
+import { AdminLayout as WebAdminLayout } from '@shell/layouts';
+import { NotificationButton } from '@shell/notification';
+import { DarkModeContainer } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 

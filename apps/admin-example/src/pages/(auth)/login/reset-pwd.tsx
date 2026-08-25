@@ -1,4 +1,4 @@
-import { ButtonLink } from '@skyroc/web-ui-antd';
+import { ButtonLink } from '@shell/ui/antd';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';

@@ -1,5 +1,5 @@
-import { ButtonIcon } from '@skyroc/web-ui-antd';
-import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
+import { ButtonIcon } from '@shell/ui/antd';
+import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
 import { Alert, Card, Empty, Flex, Input, Table, Typography } from 'antd';
 import type { TableProps } from 'antd';
 

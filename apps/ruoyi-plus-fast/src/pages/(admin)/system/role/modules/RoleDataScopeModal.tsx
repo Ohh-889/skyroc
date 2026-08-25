@@ -1,5 +1,5 @@
-import { AppTree } from '@skyroc/web-ui-antd';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { AppTree } from '@shell/ui/antd';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Checkbox, Flex, Input, Modal, Radio, Spin, Typography } from 'antd';
 import type { TreeProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';

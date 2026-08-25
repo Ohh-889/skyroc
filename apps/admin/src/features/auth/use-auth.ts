@@ -1,5 +1,5 @@
 import { setAtomValue } from '@skyroc/core-state';
-import { cacheTabs, useMenus } from '@skyroc/web-admin-layouts';
+import { cacheTabs, useMenus } from '@shell/layouts';
 import { atom, useAtom } from 'jotai';
 
 import { useUserInfoQuery } from '@/service/api';

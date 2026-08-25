@@ -1,4 +1,4 @@
-import type { MenuNodeCallback, MenuNodeConfig } from '@skyroc/web-admin-layouts';
+import type { MenuNodeCallback, MenuNodeConfig } from '@shell/layouts';
 
 import { menuCategories } from './menu-category';
 

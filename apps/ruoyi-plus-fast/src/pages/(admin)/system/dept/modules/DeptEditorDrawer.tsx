@@ -1,6 +1,6 @@
 // oxlint-disable max-params
 // oxlint-disable complexity
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import {
   Alert,
   Button,

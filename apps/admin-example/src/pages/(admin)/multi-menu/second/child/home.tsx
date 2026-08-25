@@ -1,4 +1,4 @@
-import { LookForward } from '@skyroc/web-ui-compose';
+import { LookForward } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/(admin)/multi-menu/second/child/home')({

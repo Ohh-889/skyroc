@@ -1,7 +1,7 @@
-import { useAdminState } from '@skyroc/web-admin-layouts';
-import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
+import { useAdminState } from '@shell/layouts';
+import { showConfirmModal } from '@shell/theme';
+import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
+import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';

@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Alert, Badge, Button, Card, Descriptions, Drawer, Flex, Spin, Tag, Typography } from 'antd';
 
 import { useRoleDetailQuery, useRoleMenuTreeQuery } from '@/service/api/system-role';

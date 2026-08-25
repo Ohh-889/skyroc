@@ -1,4 +1,4 @@
-import { TypingAnimation } from '@skyroc/web-ui-compose';
+import { TypingAnimation } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 
 import pkg from '~/package.json';

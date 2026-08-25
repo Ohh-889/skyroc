@@ -1,4 +1,4 @@
-import { hasAuthorizedRoutePath, hasMatchedRoutePermission, normalizePath } from '@skyroc/web-admin-layouts';
+import { hasAuthorizedRoutePath, hasMatchedRoutePermission, normalizePath } from '@shell/layouts';
 import { redirect } from '@tanstack/react-router';
 import type {MakeRouteMatchUnion, ParsedLocation} from '@tanstack/react-router'
 

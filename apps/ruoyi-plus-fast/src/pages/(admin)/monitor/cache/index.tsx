@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 import { Alert, Button, Card, Descriptions, Flex, Space, Spin, Switch, Typography } from 'antd';
 import type { DescriptionsProps } from 'antd';

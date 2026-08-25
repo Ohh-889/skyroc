@@ -1,4 +1,4 @@
-import type { GeneralPopupOperationProps, TableDataWithIndex } from '@skyroc/web-ui-compose';
+import type { GeneralPopupOperationProps, TableDataWithIndex } from '@shell/ui/compose';
 import { Button, Drawer, Flex, Form, Input, Radio, Space } from 'antd';
 import type { FormRule } from 'antd';
 import { useState } from 'react';

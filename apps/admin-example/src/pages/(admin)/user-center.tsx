@@ -1,7 +1,7 @@
-import { useLang } from '@skyroc/web-admin-i18n';
-import { useAdminState } from '@skyroc/web-admin-layouts';
-import { useSettingsTheme } from '@skyroc/web-admin-theme';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { useLang } from '@shell/i18n';
+import { useAdminState } from '@shell/layouts';
+import { useSettingsTheme } from '@shell/theme';
+import { SvgIcon } from '@shell/ui/compose';
 import { createFileRoute } from '@tanstack/react-router';
 import { Avatar, Button, Card, Col, Descriptions, Form, Input, Row, Select, Space, Switch, Tag, Timeline } from 'antd';
 import { useEffect } from 'react';

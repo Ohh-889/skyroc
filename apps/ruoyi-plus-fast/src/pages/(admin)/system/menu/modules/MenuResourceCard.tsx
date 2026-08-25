@@ -1,5 +1,5 @@
-import { ButtonIcon } from '@skyroc/web-ui-antd';
-import { SvgIcon, useTableScroll } from '@skyroc/web-ui-compose';
+import { ButtonIcon } from '@shell/ui/antd';
+import { SvgIcon, useTableScroll } from '@shell/ui/compose';
 import { Badge, Button, Card, Empty, Flex, List, Table, Tag, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 

@@ -1,6 +1,6 @@
-import { useAdminState } from '@skyroc/web-admin-layouts';
-import { TableHeaderOperation, useTable, useTableOperate, useTableScroll } from '@skyroc/web-ui-compose';
-import type { TableColumn, TableDataWithIndex } from '@skyroc/web-ui-compose';
+import { useAdminState } from '@shell/layouts';
+import { TableHeaderOperation, useTable, useTableOperate, useTableScroll } from '@shell/ui/compose';
+import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Button, Card, Collapse, Popconfirm, Table, Tag } from 'antd';
 import { Suspense, lazy } from 'react';

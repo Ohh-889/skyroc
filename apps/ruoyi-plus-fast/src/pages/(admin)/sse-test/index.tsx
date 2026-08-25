@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
-import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { ButtonIcon } from '@skyroc/web-ui-antd';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showConfirmModal } from '@shell/theme';
+import { ButtonIcon } from '@shell/ui/antd';
+import { SvgIcon } from '@shell/ui/compose';
 import { Flex, Select, Space } from 'antd';
 import { getToken } from '@/features/auth/use-auth';
 import type { RealtimeReadyPayload } from '@/features/realtime/message';

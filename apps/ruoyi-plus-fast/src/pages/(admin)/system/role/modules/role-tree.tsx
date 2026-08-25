@@ -1,4 +1,4 @@
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { SvgIcon } from '@shell/ui/compose';
 import { Flex, Tag, Typography } from 'antd';
 import type { TreeDataNode } from 'antd';
 import type { Key } from 'react';
