@@ -1,8 +1,11 @@
-import { mixColor } from '@skyroc/color';
+import { getPaletteColorByNumber, mixColor } from '@skyroc/color';
+import { WaveBg } from '@shell/ui/compose';
 import { useSettingsTheme } from '@shell/theme';
 import { Outlet, createFileRoute, redirect, useLocation } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import { z } from 'zod';
+
+import Header from './modules/Header';
 
 const COLOR_WHITE = '#ffffff';
 
@@ -10,10 +13,24 @@ const LoginSearchSchema = z.object({
   redirect: z.string().startsWith('/').optional()
 });
 
-const LoginLayout = () => {
-  const { t } = useTranslation();
+export const Route = createFileRoute('/(auth)/login')({
+  component: LoginLayout,
+  validateSearch: LoginSearchSchema,
+  beforeLoad: async ({ context, search }) => {
+    if (context.isLoggedIn) {
+      throw redirect({ to: search.redirect || context.getHomeRoute() });
+    }
+  },
+  staticData: {
+    title: 'login',
+    i18nKey: 'route.login'
+  }
+});
 
+function LoginLayout() {
   const { darkMode, themeColor } = useSettingsTheme();
+
+  const bgThemeColor = darkMode ? getPaletteColorByNumber(themeColor, 600) : themeColor;
 
   const ratio = darkMode ? 0.5 : 0.2;
 
@@ -23,12 +40,11 @@ const LoginLayout = () => {
 
   return (
     <div className="relative size-full flex-center overflow-hidden bg-layout" style={{ backgroundColor: bgColor }}>
-      <ACard className="relative z-4 w-auto rd-8px" variant="borderless">
+      <WaveBg themeColor={bgThemeColor} />
+
+      <ACard className="relative z-4 w-auto rd-12px" variant="borderless">
         <div className="w-400px lt-sm:w-300px">
-          <div className="text-center">
-            <h1 className="m-0 text-28px font-600 text-primary">{t('system.title')}</h1>
-            <p className="m-0 mt-8px text-14px text-text-2">{t('page.login.common.loginOrRegister')}</p>
-          </div>
+          <Header />
 
           <AnimatePresence initial={false} mode="wait">
             <motion.main
@@ -54,18 +70,4 @@ const LoginLayout = () => {
       </ACard>
     </div>
   );
-};
-
-export const Route = createFileRoute('/(auth)/login')({
-  component: LoginLayout,
-  validateSearch: LoginSearchSchema,
-  beforeLoad: async ({ context, search }) => {
-    if (context.isLoggedIn) {
-      throw redirect({ to: search.redirect || context.getHomeRoute() });
-    }
-  },
-  staticData: {
-    title: 'login',
-    i18nKey: 'route.login'
-  }
-});
+}

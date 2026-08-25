@@ -1,7 +1,8 @@
+import { ButtonLink } from '@shell/ui/antd';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';
+import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 
 type AccountKey = 'admin' | 'super' | 'user';
 
@@ -18,6 +19,11 @@ const INITIAL_VALUES = {
   password: '123456',
   userName: 'Soybean'
 };
+
+const LOGIN_ACTION_I18N_KEYS = {
+  codeLogin: 'page.login.codeLogin.title',
+  register: 'page.login.register.title'
+} as const satisfies Record<'codeLogin' | 'register', I18n.I18nKey>;
 
 const Login = () => {
   const { t } = useTranslation();
@@ -74,9 +80,24 @@ const Login = () => {
           <AInput.Password autoComplete="password" size="large" />
         </AForm.Item>
         <ASpace className="w-full" orientation="vertical" size={24}>
+          <div className="flex-y-center justify-between">
+            <ACheckbox>{t('page.login.pwdLogin.rememberMe')}</ACheckbox>
+
+            <ButtonLink btnType="text" to="/login/reset-pwd">
+              {t('page.login.pwdLogin.forgetPassword')}
+            </ButtonLink>
+          </div>
           <AButton block color="primary" htmlType="submit" loading={loading} shape="round" size="large" type="primary">
             {t('common.confirm')}
           </AButton>
+          <div className="flex-y-center justify-between gap-12px">
+            <ButtonLink block className="flex-1" to="/login/code-login">
+              {t(LOGIN_ACTION_I18N_KEYS.codeLogin) as string}
+            </ButtonLink>
+            <ButtonLink block className="flex-1" to="/login/register">
+              {t(LOGIN_ACTION_I18N_KEYS.register) as string}
+            </ButtonLink>
+          </div>
           <ADivider className="!m-0 !text-14px !text-#666">{t('page.login.pwdLogin.otherAccountLogin')}</ADivider>
           <div className="flex-center gap-12px">
             {accounts.map(item => {
