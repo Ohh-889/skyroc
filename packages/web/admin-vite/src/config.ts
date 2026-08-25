@@ -75,6 +75,14 @@ export interface AdminViteResolveOptions {
   /** Path used by the ~ alias. */
   rootAlias?: false | string;
 
+  /**
+   * Path used by the `@shell` alias (admin shell source).
+   *
+   * 默认值面向 `sa create-admin` 生成的独立项目（shell 源码被复制到 `src/framework`）。
+   * monorepo 内的应用需显式指回 `../../packages/web/admin`。
+   */
+  shellAlias?: false | string;
+
   /** Path used by the @ alias. */
   srcAlias?: false | string;
 }
@@ -291,7 +299,7 @@ function createCssOptions<E extends AdminViteEnv>(
 }
 
 function createResolveOptions(resolveOptions: AdminViteResolveOptions | undefined, root: string): UserConfig['resolve'] {
-  const { dedupeReact = true, rootAlias = '.', srcAlias = 'src' } = resolveOptions ?? {};
+  const { dedupeReact = true, rootAlias = '.', shellAlias = 'src/framework', srcAlias = 'src' } = resolveOptions ?? {};
   const alias: Record<string, string> = {};
 
   if (srcAlias !== false) {
@@ -300,6 +308,10 @@ function createResolveOptions(resolveOptions: AdminViteResolveOptions | undefine
 
   if (rootAlias !== false) {
     alias['~'] = resolve(root, rootAlias);
+  }
+
+  if (shellAlias !== false) {
+    alias['@shell'] = resolve(root, shellAlias);
   }
 
   return {
