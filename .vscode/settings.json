@@ -137,7 +137,7 @@
 
   // i18n-ally
   "i18n-ally.localesPaths": [
-    "packages/web/admin-i18n/src/langs"
+    "packages/web/admin/i18n/langs"
   ],
   "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
   "i18n-ally.namespace": true,
