@@ -1,0 +1,33 @@
+{
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "extends": [
+    "../../../internal/config/oxlint/react.json"
+  ],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "@/*",
+              "~/*"
+            ],
+            "message": "shell 不能反向依赖应用层：@/ 与 ~/ 属于各 app 自己的别名，shell 源码会被原样复制进生成的项目，引用了 app 内部路径就不再可移植。"
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "types/**/*.d.ts",
+        "**/*.d.ts"
+      ],
+      "rules": {
+        "unicorn/require-module-specifiers": "off"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "extends": "@skyroc/tsconfig/web.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+    "paths": {
+      "@shell/*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "layouts",
+    "theme",
+    "i18n",
+    "notification",
+    "runtime",
+    "ui",
+    "types",
+    "__tests__",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ]
+}
