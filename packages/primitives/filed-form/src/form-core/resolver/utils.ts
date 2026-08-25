@@ -5,7 +5,7 @@
  * Provides helper functions to transform validation issues and create generic resolvers
  */
 
-import type { AllPathsKeys } from '@skyroc/type-utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import { keyOfName } from '@skyroc/utils';
 import type { Action, Middleware } from '../middleware';
 import type { StandardSchemaV1NormalizedIssue } from './standard';

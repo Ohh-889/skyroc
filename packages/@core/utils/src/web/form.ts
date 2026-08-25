@@ -1,4 +1,4 @@
-import type { Noop } from '../fn';
+import type { Noop } from '../type/fn';
 
 /**
  * 自定义表单控件的最小结构。

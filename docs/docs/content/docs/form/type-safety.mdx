@@ -19,9 +19,9 @@ form.setFieldValue('user.age', 'Alice'); // ❌ 编译报错（age 不是 string
 
 关键在于**路径不是 `string`**，而是从 `Values` 结构展开出来的字面量联合。写错路径、写错值类型都在编译期挡住，不用等运行时。
 
-## 路径类型由 type-utils 驱动
+## 路径类型由 `@skyroc/utils/type` 驱动
 
-推导逻辑不在本包，而在 [`@skyroc/type-utils`](/docs/packages/shared/type-utils)：
+推导逻辑不在本包，而在 [`@skyroc/utils/type`](/docs/core/utils/type)：
 
 | 用处 | 类型 |
 | --- | --- |

@@ -44,7 +44,12 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 
 子元素通过 `@radix-ui/react-slot` 注入 props，所以自定义组件只要转发 `value` / `onChange` 就能直接用，不需要额外适配层。
 
-`FieldElement` 类型从 `@skyroc/type-utils/web` 透传，用于标注可绑定的元素。
+需要标注可绑定元素时用 `FieldElement`，它在 [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型)。
+
+<Callout type="warn">
+  本包的根出口**不转发** `FieldElement`——它依赖 DOM lib，而 `@skyroc/native-ui` 也消费本包，
+  转发会把 DOM 类型带进无 DOM lib 的 React Native 环境。Web 侧请直接从 `@skyroc/utils/web` 导入。
+</Callout>
 
 每个 `Field` 是独立订阅单元，见 [精确订阅](/docs/form/subscription)。
 

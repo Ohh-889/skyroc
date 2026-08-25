@@ -1,5 +1,5 @@
 import Feather from '@expo/vector-icons/Feather';
-import type { ThemeColor } from '@skyroc/ui-types';
+import type { ThemeColor } from '@skyroc/tailwind-plugin/ui';
 import { cn } from '@skyroc/utils';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';

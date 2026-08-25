@@ -80,7 +80,7 @@ Skyroc 不是把所有代码堆进一个 Admin 应用，而是让应用成为轻
                                │ depends on
 ┌──────────────────────────────▼─────────────────────────────────────┐
 │ Foundation                                                         │
-│ packages/@core/* · packages/shared/* · packages/hooks              │
+│ packages/@core/* · packages/hooks · packages/primitives/*          │
 │ 负责：请求、状态、日志、调度、色彩、类型与通用工具                  │
 └────────────────────────────────────────────────────────────────────┘
 
@@ -111,7 +111,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | 分层           | 包                                                                                                                                                                                                        |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **跨端内核**   | `@skyroc/types` · `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/scheduler` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` |
-| **共享与原语** | `@skyroc/type-utils` · `@skyroc/ui-types` · `@skyroc/hooks` · `@skyroc/form`                                                                                                                              |
+| **共享与原语** | `@skyroc/hooks` · `@skyroc/form`                                                                                                                                                                          |
 | **Web Kit**    | `@skyroc/web-admin-*` · `@skyroc/materials` · `@skyroc/adapter-antd-theme`                                                                                                                                |
 | **UI**         | `@skyroc/web-ui` · `@skyroc/web-ui-antd` · `@skyroc/web-ui-compose` · `@skyroc/native-ui`                                                                                                                 |
 | **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                                          |
@@ -137,12 +137,14 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 🔗 共享能力与原语
 
-| 包名                 | 位置                             | 职责                                                     |
-| -------------------- | -------------------------------- | -------------------------------------------------------- |
-| `@skyroc/type-utils` | `packages/shared/type-utils`     | 表单路径、深层变换等零运行时 TypeScript 工具类型         |
-| `@skyroc/ui-types`   | `packages/shared/ui-types`       | Web / Native 组件共享的主题、尺寸、方向与 className 类型 |
-| `@skyroc/hooks`      | `packages/hooks`                 | 平台无关 React Hooks，并以 `./web` 隔离浏览器 Hooks      |
-| `@skyroc/form`       | `packages/primitives/filed-form` | 类型安全字段管理、路径级订阅与 Standard Schema 校验原语  |
+| 包名            | 位置                             | 职责                                                    |
+| --------------- | -------------------------------- | ------------------------------------------------------- |
+| `@skyroc/hooks` | `packages/hooks`                 | 平台无关 React Hooks，并以 `./web` 隔离浏览器 Hooks      |
+| `@skyroc/form`  | `packages/primitives/filed-form` | 类型安全字段管理、路径级订阅与 Standard Schema 校验原语  |
+
+> 零运行时的 TypeScript 工具类型在 `@skyroc/utils/type`，三端组件共用的主题 / 尺寸 / 方向
+> 类型在 `@skyroc/tailwind-plugin/ui`。原先的 `@skyroc/type-utils` 与 `@skyroc/ui-types`
+> 两个包已分别并入这两处。
 
 ### 🧩 Web 工程套件 — `packages/web/*`
 

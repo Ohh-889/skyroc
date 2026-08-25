@@ -45,7 +45,8 @@
     }
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./ui": "./src/ui.ts"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -58,6 +59,12 @@
         "import": {
           "types": "./dist/index.d.ts",
           "default": "./dist/index.js"
+        }
+      },
+      "./ui": {
+        "import": {
+          "types": "./dist/ui.d.ts",
+          "default": "./dist/ui.js"
         }
       }
     }

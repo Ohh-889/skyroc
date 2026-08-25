@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { Fn, FunctionKeys, FunctionUnion, Noop, OnlyFunctions } from '../src';
+import type { Fn, FunctionKeys, FunctionUnion, Noop, OnlyFunctions } from '../src/type';
 
 interface Foo {
   a: number;

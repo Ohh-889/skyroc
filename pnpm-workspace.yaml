@@ -2,7 +2,6 @@ packages:
   - 'apps/*'
   - 'packages/*'
   - 'packages/@core/*'
-  - 'packages/shared/*'
   - 'packages/web/*'
   - 'packages/web/ui/*'
   - 'packages/native/*'

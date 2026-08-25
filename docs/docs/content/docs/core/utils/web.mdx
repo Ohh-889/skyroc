@@ -1,6 +1,6 @@
 ---
 title: "Web"
-description: "仅限浏览器环境的工具集：文件下载策略、存储封装、环境检测、表单取值、props 合并、新窗口打开与 HTML class 切换"
+description: "仅限浏览器环境的工具集：文件下载策略、存储封装、环境检测、表单元素类型与取值、props 合并、新窗口打开与 HTML class 切换"
 ---
 
 ## 概述
@@ -19,6 +19,7 @@ import { downloadFileFromUrl, createStorage, openWindow, toggleHtmlClass } from 
 | `class` | `toggleHtmlClass` | 切换 `<html>` 元素上的 class（本页） |
 | `storage` | `createStorage`、`createLocalforage` | [类型安全的存储封装](/docs/core/utils/storage) |
 | `env` | `isWindow`、`isMacOs`、`isWindowsOs`、`isPC` | [环境与设备检测](/docs/core/utils/utils) |
+| `form` | `FieldElement`、`CustomElement` | 表单元素类型，仅类型导出（本页） |
 | `input` | `isCheckBoxInput`、`isRadioInput`、`isFileInput`、`getEventValue` | 表单元素判定与取值（本页） |
 | `compose-props` | `mergeProps`、`withClassName` | React props 合并（本页） |
 
@@ -238,6 +239,32 @@ const ThemeWatcher = ({ isDark }: { isDark: boolean }) => {
   return null;
 };
 ```
+
+---
+
+## 表单元素类型
+
+```ts
+import type { CustomElement, FieldElement } from '@skyroc/utils/web';
+```
+
+`FieldElement` 是表单收集器能接受的元素：
+
+```ts
+type FieldElement<T = unknown> =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement
+  | CustomElement<T>;
+```
+
+`CustomElement<T = unknown>` 描述第三方 / 自研控件至少要暴露的结构（`value`、`type`、`checked`、`files`、`options`、`focus`），`T` 是该控件额外暴露的字段。泛型默认值是 `unknown` 而不是 `any`——交叉类型里出现 `any` 会把整个类型塌成 `any`，那样 `FieldElement` 就完全失去约束力了。
+
+<Callout type="warn">
+  这两个类型依赖 DOM lib，所以住在 `./web` 而不是 [`./type`](/docs/core/utils/type)。React Native
+  侧不要从这里 import——`@skyroc/form` 的根出口刻意不再转发 `FieldElement`，就是为了不把 DOM
+  类型带进无 DOM lib 的环境。
+</Callout>
 
 ---
 

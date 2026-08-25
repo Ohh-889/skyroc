@@ -1,12 +1,12 @@
 {
   "title": "包总览",
-  "description": "31 个包的总表与分层，以及 shared / internal",
+  "description": "29 个包的总表与分层，以及跨端共享层 / internal",
   "icon": "Package",
   "root": true,
   "pages": [
     "index",
     "---跨端---",
-    "shared",
+    "cross-platform",
     "---内部配置---",
     "internal"
   ]

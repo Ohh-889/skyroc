@@ -1,0 +1,88 @@
+---
+title: 跨端共享层
+description: packages/hooks、packages/primitives —— 跨端可复用的 hooks 与 primitive，以及纯类型的归属规则
+---
+
+## 定位
+
+`packages/hooks` 与 `packages/primitives` 属于「跨端共享层」——**React 跨端的 hooks 与 primitive**，可同时服务 Web / React Native / 小程序。
+
+详细的准入标准见 [命名规范](/docs/guide/architecture/naming)。
+
+## 包列表
+
+| 目录 | 包名 | 形态 | 跨端 |
+| --- | --- | --- | --- |
+| `hooks` | [`@skyroc/hooks`](/docs/hooks) | React hooks（含 `./web` 子入口） | RN 安全 + Web 增强 |
+| `primitives/filed-form` | [`@skyroc/form`](/docs/form) | React 表单 primitive | React 通用 |
+
+## 纯类型放哪里
+
+这里曾经还有一个 `packages/shared/` 目录，装着 `@skyroc/ui-types` 与 `@skyroc/type-utils` 两个纯类型包。它们已经分别并入更合适的归属包，`packages/shared/` 随之删除：
+
+| 内容 | 现在的位置 |
+| --- | --- |
+| 通用 TS 工具类型（路径推导、递归变换、函数类型） | [`@skyroc/utils/type`](/docs/core/utils/type) |
+| 依赖 DOM 的表单元素类型（`FieldElement`、`CustomElement`） | [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型) |
+| 三端组件共用的主题 / 尺寸 / 方向词汇 | [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口) |
+| `WithClassName`（依赖 clsx 的 `ClassValue`） | 各 UI 包自己的 `types/shared.ts` |
+
+<Callout type="info">
+  为几十行类型单开一个包，要长期支付版本、README、构建与发布的成本；而 `ThemeColor` 还在
+  `@skyroc/ui-types` 与 `@skyroc/tailwind-plugin` 里长出了一字不差的两份定义。**新增纯类型时先找
+  已有的归属包**——通用工具类型进 `@skyroc/utils/type`，设计令牌与组件词汇进
+  `@skyroc/tailwind-plugin`。
+</Callout>
+
+## 设计原则
+
+### 1. hooks 用平台子入口隔离
+
+`@skyroc/hooks` 主入口（`.`）**RN 安全**，浏览器专用 hooks 放 `./web`：
+
+```ts
+import { useCaptcha } from '@skyroc/hooks';         // ✅ RN / Web 通用
+import { useCopy } from '@skyroc/hooks/web';        // ✅ 仅 Web
+```
+
+Native 端引用 `.` 不会误打包 `navigator.clipboard` 等浏览器 API。
+
+同样的平台子入口约定也用在 [`@skyroc/utils`](/docs/core/utils/overview) 上：`.` 与 `./type` 平台无关，`./web` 仅浏览器。这条边界由 tsconfig 编译期强制，不是靠自觉。
+
+### 2. primitives 是「能力底座」
+
+`@skyroc/form` 是典型的 primitive：它定义了一套**类型安全的表单状态引擎**，但不绑定具体 UI。
+
+- [`@skyroc/web-ui`](/docs/web/ui) 的 `Form` 组件基于它实现
+- `@skyroc/native-ui` 的 `Form` 组件基于同一个 form-core 实现
+
+正因为要同时服务两端，`@skyroc/form` 的根出口**不转发任何 DOM 类型**。需要 `FieldElement` 的 Web 侧代码直接从 [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型) 导入。
+
+## 与 @core 的区别
+
+| 维度 | `@core/*` | hooks + primitives |
+| --- | --- | --- |
+| 形态 | 运行时基础设施（请求 / 状态 / 日志 / 工具 / 类型…） | 跨端 React hooks 与 primitive |
+| React 依赖 | 部分（state / service） | 是 |
+| 典型例子 | `@skyroc/service`、`@skyroc/axios`、`@skyroc/utils` | `@skyroc/hooks`、`@skyroc/form` |
+
+## 依赖关系
+
+```text
+@skyroc/hooks（ahooks）
+       ↑
+@skyroc/web-admin-layouts / @skyroc/web-admin-theme / apps/admin
+
+@skyroc/form（@skyroc/utils）
+       ↑
+@skyroc/web-ui (Form preset) / @skyroc/native-ui (Form preset)
+```
+
+## 推荐阅读
+
+<Cards>
+  <Card title="@skyroc/hooks" href="/docs/hooks" description="跨端 React hooks + Store 基类" />
+  <Card title="@skyroc/form" href="/docs/form" description="类型安全的 React 表单 primitive" />
+  <Card title="@skyroc/utils/type" href="/docs/core/utils/type" description="零运行时的 TypeScript 工具类型" />
+  <Card title="@skyroc/tailwind-plugin" href="/docs/core/tailwind-plugin" description="设计令牌与三端组件词汇表" />
+</Cards>

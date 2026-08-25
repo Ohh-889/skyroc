@@ -1,10 +1,10 @@
 ---
 title: 包总览
-description: 31 个包的用途、分层与依赖关系
+description: 29 个包的用途、分层与依赖关系
 icon: Package
 ---
 
-仓库把后台系统里反复出现的能力拆成了 **31 个包**。这一页是它们的全局视图：总表、分层、依赖关系与命名规则。
+仓库把后台系统里反复出现的能力拆成了 **29 个包**。这一页是它们的全局视图：总表、分层、依赖关系与命名规则。
 
 API 参考按平台分成三处，下面的总表每一行都直接指过去：
 
@@ -14,7 +14,7 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | [跨端 Hooks](/docs/hooks) | `packages/hooks`：Store 基类与七个 React hooks |
 | [表单原语](/docs/form) | `packages/primitives/filed-form`：类型安全表单 |
 | [Web 端包](/docs/web) | `packages/web/*` 十四个包：设计系统、主题、布局、运行时、构建 |
-| 本栏 | `shared/*` 纯类型包与 `internal/*` 配置预设 |
+| 本栏 | 跨端共享层总览与 `internal/*` 配置预设 |
 
 想知道这些能力**在应用里怎么装配**，去 [Admin 应用](/docs/admin)；想理解**为什么这么拆**，去 [包分层与依赖方向](/docs/guide/architecture/package-layering)。
 
@@ -35,8 +35,6 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
             packages/primitives/* · packages/hooks
                             │
                     packages/@core/*
-                            │
-                    packages/shared/*
 ```
 
 `@core` 只是物理目录分组，不是 TypeScript namespace，也**不存在** `@skyroc/core` 这个包。
@@ -46,14 +44,14 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | 规则 | 说明 |
 | --- | --- |
 | 禁止循环依赖 | 无例外。 |
-| 跨平台包不得依赖平台包 | `@core/`、`shared/`、`hooks/` 不能 import `web/` 或 `native/`。 |
+| 跨平台包不得依赖平台包 | `@core/`、`hooks/`、`primitives/` 不能 import `web/` 或 `native/`。 |
 | Web 与 Native 不得互相依赖 | 两棵平台子树彼此隔离。 |
 | 只走公开 `exports` | 不得导入其他包的 `src/` 内部路径。 |
-| `shared/` 保持在链底 | 不反向依赖 `@core/`、`hooks/` 或平台包。 |
+| `@core/` 保持在链底 | 不反向依赖 `hooks/`、`primitives/` 或平台包。 |
 
 同一层内允许职责明确的**单向**依赖——「同层」不是禁止依赖的理由。完整规则见 [`packages/ARCHITECTURE.md`](/docs/guide/architecture/package-layering)。
 
-## 31 个包总表
+## 29 个包总表
 
 「内部依赖」一列只列 workspace 内的包（`dependencies` + `peerDependencies`），不含第三方。
 
@@ -62,9 +60,9 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
 | [`@skyroc/types`](/docs/core/types) | `@core/types` | 全局类型声明，挂 `Api` / `Router` / `I18n` / `App` 命名空间 | — |
-| [`@skyroc/utils`](/docs/core/utils/overview) | `@core/utils` | 跨端工具函数，含 `./web`、`./path`、`./cn`、`./crypto` 子入口 | `type-utils` |
+| [`@skyroc/utils`](/docs/core/utils/overview) | `@core/utils` | 跨端工具函数，含 `./type`、`./web`、`./path`、`./cn`、`./crypto` 子入口 | — |
 | [`@skyroc/color`](/docs/core/color) | `@core/color` | 颜色处理与调色板，基于 colord / culori，OKLCH + antd 色板 | — |
-| [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) | `@core/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板，Web / Native 共用 | `color` |
+| [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) | `@core/tailwind-plugin` | Tailwind 插件：OKLCH 主题 token、反馈色、侧边栏色板，Web / Native 共用；`./ui` 子入口提供三端组件词汇表 | `color` |
 | [`@skyroc/axios`](/docs/core/axios) | `@core/axios` | 类型安全 HTTP 客户端：重试、转换管线、取消、可插拔后端响应处理 | `utils` |
 | [`@skyroc/service`](/docs/core/service) | `@core/service` | 平台无关的请求 & 查询基础设施，适配器模式 | `axios` |
 | [`@skyroc/core-state`](/docs/core/state) | `@core/state` | Jotai 状态封装，跨端 | — |
@@ -72,19 +70,12 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | [`@skyroc/scheduler`](/docs/core/scheduler) | `@core/scheduler` | 协作式任务调度：统一初始化、周期任务、监听器管理 | — |
 | [`@skyroc/scripts`](/docs/core/scripts) | `@core/scripts` | CLI `sa`：changelog、release、git-commit、cleanup | — |
 
-### packages/shared —— 类型层（2）
-
-| 包 | 目录 | 职责 | 内部依赖 |
-| --- | --- | --- | --- |
-| [`@skyroc/type-utils`](/docs/packages/shared/type-utils) | `shared/type-utils` | 高级 TS 工具类型：表单、路径推导、类型变换 | — |
-| [`@skyroc/ui-types`](/docs/packages/shared/ui-types) | `shared/ui-types` | 跨端 UI 类型定义 | — |
-
 ### 跨端 hooks 与原语（2）
 
 | 包 | 目录 | 职责 | 内部依赖 |
 | --- | --- | --- | --- |
 | [`@skyroc/hooks`](/docs/hooks) | `hooks` | 跨端 React hooks，浏览器能力隔离在 `./web` 子入口 | — |
-| [`@skyroc/form`](/docs/form) | `primitives/filed-form` | 类型安全表单原语，字段级订阅 | `type-utils`、`utils` |
+| [`@skyroc/form`](/docs/form) | `primitives/filed-form` | 类型安全表单原语，字段级订阅 | `utils` |
 
 ### packages/web —— Web 平台（13）
 
@@ -156,14 +147,14 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | --- | --- | --- |
 | `@skyroc/utils` | **9** | axios、form、materials、native-ui、web-ui、web-ui-compose、web-admin-layouts、web-admin-notification、web-admin-theme |
 | `@skyroc/color` | **8** | uno-config、adapter-antd-theme、materials、tailwind-plugin、web-ui、web-ui-compose、web-admin-layouts、web-admin-theme |
+| `@skyroc/tailwind-plugin` | 2 | native-ui、web-ui |
 | `@skyroc/web-ui-antd` | 4 | web-admin-i18n、web-admin-layouts、web-admin-notification、web-admin-theme |
 | `@skyroc/web-ui-compose` | 4 | web-admin-layouts、web-admin-notification、web-admin-theme、web-ui-antd |
 | `@skyroc/hooks` | 3 | native-ui、web-admin-layouts、web-admin-theme |
 | `@skyroc/core-state` | 2 | web-admin-i18n、web-admin-layouts |
-| `@skyroc/type-utils` | 2 | utils、form |
 | `@skyroc/web-ui` | 2 | materials、web-admin-layouts |
 | `@skyroc/form` | 2 | native-ui、web-ui |
-| `@skyroc/axios`、`scheduler`、`ui-types`、`tailwind-plugin`、`materials`、`adapter-antd-theme`、`web-admin-i18n`、`web-admin-theme` | 1 | — |
+| `@skyroc/axios`、`scheduler`、`materials`、`adapter-antd-theme`、`web-admin-i18n`、`web-admin-theme` | 1 | — |
 
 `@skyroc/utils` 和 `@skyroc/color` 是两个真正的枢纽：改它们的公开 API，一次要验证 8–9 个下游包。
 
@@ -214,7 +205,7 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 
 | 包类别 | 命名方式 | 示例 |
 | --- | --- | --- |
-| 跨平台能力 | 不带平台前缀 | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/type-utils` |
+| 跨平台能力 | 不带平台前缀 | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/form` |
 | Web 专属 | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-admin-runtime` |
 | Native 专属 | `@skyroc/native-*` | `@skyroc/native-ui` |
 | 平台适配器 | `@skyroc/adapter-*` | `@skyroc/adapter-antd-theme` |

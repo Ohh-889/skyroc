@@ -26,7 +26,7 @@
 且 URL 与旧站一致（`/docs/core/:slug`、`/docs/web/:slug`），第三节的重定向表因此少两条规则；
 `hooks/` 与 `form/` 原本各只有一篇几百行的单页，提为 root 时按源码结构拆成 10 / 9 篇。
 
-`packages/` 留下 `index.mdx` 全局总表 + `shared/` + `internal/`，改名「包总览」——
+`packages/` 留下 `index.mdx` 全局总表 + `cross-platform.mdx` + `internal/`，改名「包总览」——
 不叫「包参考」是因为 core / hooks / form / web 都不在里面了，挂那块牌子会误导；
 「包总览」与 `index.mdx` 的 frontmatter、header 中间导航的「包文档」一项三处对齐。
 
@@ -107,11 +107,13 @@ content/docs/
 │   ui.mdx                          新写：一页指路，跳 ui.skyroc.xxx
 │                                   取代 ui-shadcn / ui-antd / ui-compose 三篇
 │
-└── packages/               9 篇    root: true　icon: Package　title「包总览」
-    ├── index.mdx                   31 个包总表 + 分层图 + 依赖关系；
+└── packages/               6 篇    root: true　icon: Package　title「包总览」
+    ├── index.mdx                   29 个包总表 + 分层图 + 依赖关系；
     │                               开头一张分流表指向 core / hooks / form / web 四个 root，
     │                               总表每行的链接也直接指过去
-    ├── shared/             3 篇    ← project-docs/shared/{overview,type-utils,ui-types}.mdx
+    ├── cross-platform.mdx  1 篇    跨端共享层（hooks + primitives）与纯类型的归属规则；
+    │                               原 shared/{overview,type-utils,ui-types}.mdx 三篇随
+    │                               packages/shared 目录删除而合并为这一篇
     └── internal/           4 篇    ← project-docs/internal/*
         overview / tsconfig / config / uno-config
 ```
@@ -266,7 +268,7 @@ content/docs/
 /docs/web/ui-shadcn|ui-antd|ui-compose → /docs/web/ui
 /docs/shared/form           → /docs/form
 /docs/shared/hooks          → /docs/hooks
-/docs/shared/:slug          → /docs/packages/shared/:slug
+/docs/shared/:slug          → /docs/packages/cross-platform
 /docs/internal/:slug        → /docs/packages/internal/:slug
 /docs/admin-app/:slug*      → /docs/admin/:slug*     （修复 meta.json:15 与 index.mdx:51 的死链）
 
@@ -316,6 +318,7 @@ project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 3. 搬 `admin-docs` 整站 → `content/docs/admin/`（同时修掉 admin-app 死链）
 4. 搬 `core-docs` → `core/`，`web-kit-docs` → `web/`（✅ 已完成，两棵已提为独立 root，`web/` 21 篇齐；两个站壳待第 8 步统一删）
 5. 搬 `project-docs` 的 getting-started / architecture / engineering / shared / internal，逐篇按第二节表格取舍重复页
+   （`shared/` 三篇后来随 `packages/shared` 目录删除，合并为 `packages/cross-platform.mdx`）
    （✅ 已完成；其中 `shared/hooks.mdx`、`shared/form.mdx` 两个单页已提为 `hooks/`、`form/` 两个 root 并按源码拆页）
 6. 配 `next.config.mjs` 重定向 + 六站统一顶部导航 + 页脚"相关内容"
 7. 首页 `app/(home)/modules/*` 换成真实链接（✅ 死链部分已完成）

@@ -1,4 +1,4 @@
-import type { ThemeAlign, ThemeOrientation } from '@skyroc/ui-types';
+import type { ThemeAlign, ThemeOrientation } from '@skyroc/tailwind-plugin/ui';
 import type { ReactNode, Ref } from 'react';
 import type { View, ViewProps } from 'react-native';
 import type { SlotClassNames } from '../../types';

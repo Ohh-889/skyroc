@@ -27,8 +27,32 @@ src/
 ├── themePresets.ts       skyrocUITheme()：base 样式（CSS 变量 + keyframes + html.size-* 字号档）
 ├── generate.ts           generateCSSVars / generateGlobalStyles + 色板生成
 ├── theme.json            12 套内置颜色主题（default / zinc / blue / rose ...）的亮暗 CSS 变量
-└── types.ts              类型定义（HslColorString / ThemeOptions / SkyrocUIPluginOptions ...）
+├── tokens.ts             设计令牌单一数据源（色名、间距 / 圆角 / 字号 / 字重尺度）
+├── types.ts              类型定义（HslColorString / ThemeOptions / SkyrocUIPluginOptions ...）
+└── ui.ts                 `./ui` 子入口：三端 UI 组件共用的 props 词汇表
 ```
+
+### 子入口
+
+| 导入路径 | 内容 | 拉入 tailwindcss |
+| --- | --- | --- |
+| `@skyroc/tailwind-plugin` | 插件本体与配置类型 | 是 |
+| `@skyroc/tailwind-plugin/ui` | `ThemeColor`、`ThemeSize`、`ThemeAlign`、`ThemeOrientation`、`ThemeSide`、`Value` | 否 |
+
+`./ui` 是给 [`@skyroc/web-ui`](/docs/web/ui)、`@skyroc/native-ui` 这类组件库用的**纯类型入口**，文件零 import，不会牵出 `tailwindcss` / `@unocss/core`：
+
+```ts
+import type { ThemeColor, ThemeSize } from '@skyroc/tailwind-plugin/ui';
+```
+
+其中 `ThemeColor` 直接等于 `tokens.ts` 里的 `SemanticColorName`——插件生成 CSS 变量用的就是这个联合类型，组件的 `color` prop 因此不可能和实际产出的变量漂移。
+
+<Callout type="info">
+  这些类型原先住在独立的 `@skyroc/ui-types` 包里，其中 `ThemeColor` 与本包 `tokens.ts` 的
+  `SemanticColorName` 是一字不差的两份定义。该包已并入这里，重复的那一份被删掉了。`ThemeSize`
+  刻意不复用 `tokens.ts` 的 `FontSizeToken`：那是字号尺度（中档叫 `base`），这里是组件尺寸档位
+  （中档叫 `md`），语义和取值都不一样。
+</Callout>
 
 数据流：
 
@@ -397,6 +421,17 @@ const baseStyles = skyrocUITheme({ color: 'blue', radius: 0.75 });
 ```ts
 import { presetSkyrocUI } from '@skyroc/tailwind-plugin';
 ```
+
+### `./ui` 组件词汇表
+
+| 类型 | 取值 |
+| --- | --- |
+| `ThemeColor` | `'accent' \| 'carbon' \| 'destructive' \| 'info' \| 'primary' \| 'secondary' \| 'success' \| 'warning'`（= `SemanticColorName`） |
+| `ThemeSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` |
+| `ThemeOrientation` | `'horizontal' \| 'vertical'` |
+| `ThemeAlign` | `'start' \| 'center' \| 'end'` |
+| `ThemeSide` | `'top' \| 'right' \| 'bottom' \| 'left'` |
+| `Value` | `string`，表单控件的值标识 |
 
 ### `generateCSSVars`
 

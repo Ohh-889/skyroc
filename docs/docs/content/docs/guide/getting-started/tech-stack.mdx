@@ -11,7 +11,7 @@ description: 从平台、共享基础设施与工程治理三个层面理解项�
 | ---------- | ------------------------------- | -------------------------- | -------------------------------------------------------- |
 | 核心技术   | React 19                        | React Native 0.86、Expo 57 | 平台无关的 TypeScript / React 包                         |
 | 路由       | TanStack Router                 | Expo Router                | 路由无关                                                 |
-| UI         | Ant Design 6、`@skyroc/web-ui*` | `@skyroc/native-ui`        | `@skyroc/ui-types`、`@skyroc/form`                       |
+| UI         | Ant Design 6、`@skyroc/web-ui*` | `@skyroc/native-ui`        | `@skyroc/tailwind-plugin/ui`、`@skyroc/form`             |
 | 样式       | UnoCSS、Tailwind CSS、Sass      | Uniwind（Tailwind CSS v4） | `@skyroc/color`、`@skyroc/tailwind-plugin`               |
 | 状态与请求 | Jotai、TanStack Query           | Jotai、TanStack Query      | `@skyroc/core-state`、`@skyroc/service`、`@skyroc/axios` |
 | 构建       | Vite                            | Expo / Metro               | tsdown（多数可发布 TypeScript 库）                       |
@@ -38,7 +38,7 @@ Native UI playground 基于 **Expo 57、React Native 0.86 和 Expo Router**。`@
 
 Web 和 Native 共享的是类型、设计语义和不依赖平台的逻辑，而不是具体 UI 实现：
 
-- `@skyroc/ui-types` 共享 UI 类型；
+- `@skyroc/tailwind-plugin/ui` 共享组件的主题 / 尺寸 / 方向类型；
 - `@skyroc/hooks` 共享通用 React hooks，并通过子入口隔离 Web 专属能力；
 - `@skyroc/form` 提供不绑定具体视觉组件的表单基础能力；
 - `@skyroc/color` 与 `@skyroc/tailwind-plugin` 生成颜色和语义 token；

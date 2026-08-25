@@ -18,7 +18,7 @@ import type {
   PathToDeepType,
   ShapeFromPaths,
   Wrap
-} from '@skyroc/type-utils';
+} from '@skyroc/utils/type';
 import type { ChangeMask } from '../../form-core/event';
 import type { Action, ArrayOpArgs, Middleware } from '../../form-core/middleware';
 import type { FieldEntity, Meta, StoreValue } from '../../form-core/types';

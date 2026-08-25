@@ -8,8 +8,14 @@ description: 从命名、目录、tsconfig、构建、导出到接入仓库的�
 ```text
 要建一个新包
         │
-        ├── 它跨多个平台、几乎无依赖（types / 数据 / 常量）？
-        │     └── packages/shared/
+        ├── 它只是一组纯类型？
+        │     └── 不要新建包，并入已有归属：
+        │        通用工具类型 → @skyroc/utils/type
+        │        设计令牌 / 组件词汇 → @skyroc/tailwind-plugin
+        │        全局命名空间声明 → @skyroc/types
+        │
+        ├── 它跨多个平台、是无 UI 的运行时能力（请求 / 状态 / 日志 / 工具）？
+        │     └── packages/@core/
         │
         ├── 它跨多个平台、是 React Hook？
         │     └── packages/hooks（包已存在，直接加 module）

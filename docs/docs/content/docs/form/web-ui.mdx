@@ -36,8 +36,8 @@ import { Form, FormField } from '@skyroc/web-ui';
 
 ```text
 @skyroc/web-ui  ──┐
-                  ├──→ @skyroc/form ──→ @skyroc/type-utils
-@skyroc/native-ui ┘                 └─→ @skyroc/utils
+                  ├──→ @skyroc/form ──→ @skyroc/utils（含 ./type 子入口）
+@skyroc/native-ui ┘
 ```
 
 本包在 `packages/primitives/`，位于跨平台层，**不能反向依赖任何平台包**。约束见 [包分层与依赖方向](/docs/guide/architecture/package-layering)。

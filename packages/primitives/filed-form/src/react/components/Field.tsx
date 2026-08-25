@@ -8,7 +8,7 @@
 import type { ReactElement } from 'react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import type { AllPathsKeys } from '@skyroc/type-utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import { isEqual, omitUndefined, toArray } from '@skyroc/utils';
 import { getEventValue } from '../../form-core/event-value';
 import type { EventArgs, StoreValue } from '../../form-core/types';

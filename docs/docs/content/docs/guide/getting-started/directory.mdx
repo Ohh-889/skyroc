@@ -78,16 +78,16 @@ soybean-admin-react/
 
 详见 [Web 端包总览](/docs/web)。三个 `ui/*` 包的组件文档、实时 Demo 与 Props 表在独立的 [Web UI 站点](/docs/web/ui)。
 
-## packages/shared、hooks、primitives —— 跨端共享
+## packages/hooks、primitives —— 跨端共享
 
 | 目录 | 包名 | 职责 |
 | --- | --- | --- |
-| `shared/ui-types` | `@skyroc/ui-types` | 跨端 UI 类型 |
-| `shared/type-utils` | `@skyroc/type-utils` | 高级 TypeScript 工具类型（含 `./web` 子入口） |
 | `hooks` | `@skyroc/hooks` | 跨端 React hooks（含 `./web`） |
 | `primitives/filed-form` | `@skyroc/form` | 类型安全表单 primitive |
 
-详见 [跨端共享包](/docs/packages/shared/overview)、[`@skyroc/hooks`](/docs/hooks)、[`@skyroc/form`](/docs/form)。
+纯类型不单独成包：通用 TS 工具类型在 [`@skyroc/utils/type`](/docs/core/utils/type)，三端组件词汇在 [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口)。原先的 `packages/shared/` 目录已随两个包并入而删除。
+
+详见 [跨端共享层](/docs/packages/cross-platform)、[`@skyroc/hooks`](/docs/hooks)、[`@skyroc/form`](/docs/form)。
 
 ## packages/native —— React Native 端
 

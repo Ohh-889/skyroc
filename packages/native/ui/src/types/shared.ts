@@ -1,4 +1,4 @@
-import type { ThemeSize } from '@skyroc/ui-types';
+import type { ThemeSize } from '@skyroc/tailwind-plugin/ui';
 import type { ViewStyle } from 'react-native';
 
 /**

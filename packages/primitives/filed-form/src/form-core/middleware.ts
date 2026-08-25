@@ -3,7 +3,7 @@
  * Provides type-safe action definitions and middleware composition utilities
  */
 
-import type { AllPathsKeys, PathToDeepType } from '@skyroc/type-utils';
+import type { AllPathsKeys, PathToDeepType } from '@skyroc/utils/type';
 import type { NamePath } from '@skyroc/utils';
 
 import type { ValidateOptions } from './validation';

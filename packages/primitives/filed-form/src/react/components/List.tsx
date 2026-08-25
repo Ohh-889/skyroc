@@ -8,7 +8,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import type { AllPathsKeys, ArrayElementValue, ArrayKeys } from '@skyroc/type-utils';
+import type { AllPathsKeys, ArrayElementValue, ArrayKeys } from '@skyroc/utils/type';
 import type { InternalFormInstance, ListRenderItem } from '../hooks/FieldContext';
 import { useFieldContext } from '../hooks/FieldContext';
 

@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { Atomic, IsAny, IsTuple, Primitive } from '../src';
+import type { Atomic, IsAny, IsTuple, Primitive } from '../src/type';
 
 describe('Primitive', () => {
   it('只包含语言层面的原始类型', () => {

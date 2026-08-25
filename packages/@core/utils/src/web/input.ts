@@ -1,4 +1,4 @@
-import type { FieldElement } from '@skyroc/type-utils/web';
+import type { FieldElement } from './form';
 import { isEventObject } from '../object';
 
 type Event = { target: any };

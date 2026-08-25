@@ -1,4 +1,4 @@
-import type { ThemeSize } from '@skyroc/ui-types';
+import type { ThemeSize } from '@skyroc/tailwind-plugin/ui';
 import { tv } from 'tailwind-variants';
 
 /** Maps size preset to control (circle/square) pixel size */

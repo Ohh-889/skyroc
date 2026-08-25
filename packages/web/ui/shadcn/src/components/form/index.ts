@@ -17,7 +17,6 @@ export type {
   Action as FormAction,
   AllPathsKeys,
   ComputedFieldProps,
-  FieldElement,
   FormInstance,
   FormProps,
   Meta,
@@ -25,6 +24,8 @@ export type {
   SubscribeMaskOptions,
   ValidateMessages
 } from '@skyroc/form';
+
+export type { FieldElement } from '@skyroc/utils/web';
 
 export { default as FormComputedField } from './FormComputedField';
 

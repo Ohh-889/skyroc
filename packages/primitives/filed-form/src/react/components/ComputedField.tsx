@@ -6,7 +6,7 @@
  */
 
 import { Slot } from '@radix-ui/react-slot';
-import type { AllPathsKeys } from '@skyroc/type-utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import type { ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 import type { StoreValue } from '../../form-core/types';

@@ -7,7 +7,7 @@
 
 import type { ComponentPropsWithoutRef, ComponentRef, ElementType, HTMLProps, Ref } from 'react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import type { DeepPartial } from '@skyroc/type-utils';
+import type { DeepPartial } from '@skyroc/utils/type';
 import type { FormSchema } from '../../form-core/resolver/resolver';
 import { extractSchemaValidator, resolveSchema } from '../../form-core/resolver/resolver';
 import type { ValidateMessages } from '../../form-core/validate';

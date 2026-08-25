@@ -1,10 +1,3 @@
-// Provider
-export { JotaiProvider } from './provider/JotaiProvider';
-export type { JotaiProviderProps } from './provider/JotaiProvider';
-
-// Store
-export { getAtomValue, globalStore, setAtomValue } from './store/global';
-
 /**
  * Re-exported so consumers write to storage-backed atoms without importing `jotai/utils` themselves.
  *
@@ -14,6 +7,13 @@ export { getAtomValue, globalStore, setAtomValue } from './store/global';
  * from here guarantees it comes from the same jotai instance the atoms were created with.
  */
 export { RESET } from 'jotai/utils';
+// Provider
+export { JotaiProvider } from './provider/JotaiProvider';
+
+export type { JotaiProviderProps } from './provider/JotaiProvider';
+
+// Store
+export { getAtomValue, globalStore, setAtomValue } from './store/global';
 
 // Types
 export type { AtomStorage } from './types';

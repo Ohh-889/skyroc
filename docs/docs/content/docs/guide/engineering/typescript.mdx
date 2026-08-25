@@ -173,7 +173,7 @@ catalogs:
 | 现象 | 原因 / 对策 |
 | --- | --- |
 | `Cannot find namespace 'Api'` | 应用 `tsconfig.json` 未 extends `web-app.json` |
-| `Type instantiation is excessively deep` | 通常是 `@skyroc/type-utils` 的 path 类型嵌套太深，限制泛型层级 |
+| `Type instantiation is excessively deep` | 通常是 `@skyroc/utils/type` 的 path 类型嵌套太深，调小 `Depth` 参数 |
 | 包内 import 形如 `@skyroc/utils` 报错 | 包未把 `@skyroc/utils` 写进 `dependencies`（不是 devDependencies） |
 | dts 缺少类型 | tsdown 配置漏写 `entry` 子入口 |
 | `verbatimModuleSyntax` 报错 | 漏写 `import type`，按提示修 |

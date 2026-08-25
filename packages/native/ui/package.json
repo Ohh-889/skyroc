@@ -96,8 +96,8 @@
   "devDependencies": {
     "@expo/vector-icons": "catalog:native",
     "@shopify/react-native-skia": "catalog:native",
+    "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "@skyroc/ui-types": "workspace:*",
     "@types/react": "catalog:dev",
     "eslint-plugin-sort": "catalog:dev",
     "expo-haptics": "catalog:native",
@@ -119,6 +119,7 @@
   "peerDependencies": {
     "@expo/vector-icons": ">=14.0.0",
     "@shopify/react-native-skia": ">=1.5.0",
+    "@skyroc/tailwind-plugin": "workspace:*",
     "expo-haptics": ">=12.0.0",
     "expo-image": ">=1.10.0",
     "react": ">=19.0.0",

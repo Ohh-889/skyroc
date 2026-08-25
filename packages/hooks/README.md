@@ -129,4 +129,4 @@ Store 与 `useStore` 的继承、订阅和 selector 用法见 [`src/store/README
 1. 平台无关 Hook 更新 `src/index.ts`；浏览器 Hook 更新 `src/web/index.ts`。
 2. 添加或更新对应的针对性测试。
 3. 更新本 README 的公开 API 和示例。
-4. 更新 `docs/project-docs/content/docs/shared/hooks.mdx`。
+4. 更新 `docs/docs/content/docs/hooks/` 下对应的页面。

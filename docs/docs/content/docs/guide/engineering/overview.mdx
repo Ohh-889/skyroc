@@ -71,7 +71,7 @@ description: 仓库的开发约定、工具链、自动化脚本与 CI 全景
 | --- | --- |
 | **catalog 集中版本** | 在 `pnpm-workspace.yaml` 的 `catalogs:` 集中管理依赖版本，子包 `"react": "catalog:core"` |
 | **Internal 配置包** | tsconfig / oxlintrc / vitest 等以独立包形式共享 |
-| **平台优先目录** | `packages/web`、`packages/native`、`packages/miniapp`、`packages/shared` 分层 |
+| **平台优先目录** | `packages/@core`、`packages/web`、`packages/native`、`packages/miniapp` 分层 |
 | **Adapter Pattern** | 跨平台核心包依赖抽象适配器，由 web/RN 各自实现 |
 | **Strict TS** | 全仓库 strict + `verbatimModuleSyntax + noUncheckedIndexedAccess` |
 | **No useCallback** | 项目代码风格禁用 `useCallback`，详见 [开发约定](/docs/guide/engineering/conventions) |

@@ -83,8 +83,10 @@ pnpm upload    # 只上传新版本，不切流量
 pnpm cf-typegen # 由 wrangler.jsonc 生成 CloudflareEnv 类型
 ```
 
-三个命令都会先跑 `worker:build`，它在 OpenNext 构建前先构建 `@skyroc/ui-types` 与 `@skyroc/type-utils`——
-`@skyroc/web-ui` 依赖这两个包的构建产物，而 OpenNext 的构建阶段不会自动触发 workspace 依赖的构建。
+三个命令都会先跑 `worker:build`。它过去还要在 OpenNext 构建前先构建 `@skyroc/ui-types` 与
+`@skyroc/type-utils`（这两个包的入口指向 `dist/`，而 OpenNext 的构建阶段不会自动触发 workspace
+依赖的构建）；两个包已分别并入 `@skyroc/tailwind-plugin/ui` 与 `@skyroc/utils/type`，入口直接指向
+`src/`，该预构建步骤已删除。
 
 两个容易踩的点：
 

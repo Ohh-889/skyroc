@@ -133,12 +133,10 @@ pnpm cf-typegen # 由 wrangler.jsonc 生成 CloudflareEnv 类型
 
 前三个命令都会先跑 `worker:build`（即 `opennextjs-cloudflare build`），它内部再去调 `pnpm build`。
 
-`build` 脚本会先构建 `@skyroc/ui-types` 与 `@skyroc/type-utils`：这两个包的 `main` / `types` 指向
-`dist/`（其余 `@skyroc/*` 都指向 `src/`），而 `@skyroc/native-ui` 用到前者、`@skyroc/native-ui` →
-`@skyroc/form` 用到后者。CI 上 `pnpm install` 之后 dist 是空的，缺这一步类型检查会直接报
-`TS2307: Cannot find module '@skyroc/ui-types'`。放在 `build` 而不是 `worker:build` 里，是因为
-OpenNext 构建阶段不会触发 workspace 依赖的构建，却一定会调 `pnpm build`——这样无论 CI 跑的是
-`pnpm deploy`、`pnpm worker:build` 还是直接 `opennextjs-cloudflare build` 都能覆盖到。
+`build` 脚本过去要先构建 `@skyroc/ui-types` 与 `@skyroc/type-utils`——这两个包的 `main` / `types`
+指向 `dist/`，CI 上 `pnpm install` 之后 dist 是空的，缺这一步类型检查会报 `TS2307`。这两个包已分别
+并入 `@skyroc/tailwind-plugin/ui` 与 `@skyroc/utils/type`，而它们和其余 `@skyroc/*` 一样开发态直接
+指向 `src/`，所以这个预构建步骤已经删除。
 
 `/api/chat` 用到的 `OPENROUTER_API_KEY` 不会被打进产物，需要单独配置：
 

@@ -1,22 +1,21 @@
 ---
 title: 平台优先目录
-description: packages/web / packages/native / packages/shared / packages/primitives 的分工与共生
+description: packages/web / packages/native / packages/hooks / packages/primitives 的分工与共生
 ---
 
 ## 定位
 
 「平台优先」(Platform-first) 是本仓库的核心目录策略：
 
-> 包不按「类型」（components / hooks / utils）组织，而按「平台」（web / native / miniapp / shared / primitives）组织。
+> 包不按「类型」（components / hooks / utils）组织，而按「平台」（web / native / miniapp / @core / primitives）组织。
 
-这意味着：当你打开 `packages/web/` 你看到的全部都是 Web 专属代码；打开 `packages/shared/` 看到的全部都是跨平台零依赖代码。**目录就是承诺**。
+这意味着：当你打开 `packages/web/` 你看到的全部都是 Web 专属代码；打开 `packages/@core/` 看到的全部都是跨平台代码。**目录就是承诺**。
 
 ## 平台目录
 
 ```text
 packages/
 ├── @core/         # 跨平台 · 无 UI · 业务核心能力
-├── shared/        # 跨平台 · 零依赖或近零依赖
 ├── hooks/         # 跨平台 · React hooks
 ├── primitives/    # 跨平台 · UI-agnostic 能力原语
 ├── web/           # Web 专属（DOM / antd / vite）
@@ -27,7 +26,7 @@ packages/
     └── ui/        # 小程序组件
 ```
 
-前四个是跨平台的，后三个是平台专属的。各目录下具体有哪些包、分别叫什么，见 [目录结构总览](/docs/guide/getting-started/directory)。
+前三个是跨平台的，后三个是平台专属的。各目录下具体有哪些包、分别叫什么，见 [目录结构总览](/docs/guide/getting-started/directory)。
 
 ### 1. `@core/` —— 跨平台无 UI 业务核心
 
@@ -42,19 +41,24 @@ packages/
 
 详见 [跨端核心总览](/docs/core)。
 
-### 2. `shared/` —— 跨平台零依赖共享
+### 2. `hooks/` —— 跨平台 React hooks
 
 | 性质 | 含义 |
 | --- | --- |
-| 极轻 | 零依赖或极少（仅 React / TS） |
 | 跨端 | Web、RN、小程序都可用 |
-| 设计 token / 类型 / 数据 | 不包含运行时复杂逻辑 |
+| React 运行时 | 依赖 React，因此不放进 `@core/` |
+| 平台子入口 | 浏览器专用 hooks 隔离在 `./web` |
 
-包（2 个）：`ui-types`（共享 TS 类型）、`type-utils`（高级 TS 工具类型）。
+包（1 个）：`@skyroc/hooks`。
 
-跨端 React hooks 不在 `shared/` 里，而是独立的 `packages/hooks`（`@skyroc/hooks`）——它依赖 React 运行时，不符合 shared 的准入门槛。
+<Callout type="info">
+  这里曾经还有一个 `shared/` 目录，放 `@skyroc/ui-types` 与 `@skyroc/type-utils` 两个纯类型包。
+  为几十行类型单开一个包要长期付版本、构建与发布的成本，它们已分别并入
+  [`@skyroc/utils/type`](/docs/core/utils/type) 与
+  [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口)，`shared/` 目录已删除。
+</Callout>
 
-详见 [Shared 总览](/docs/packages/shared/overview)、[`@skyroc/hooks`](/docs/hooks)。
+详见 [跨端共享层](/docs/packages/cross-platform)、[`@skyroc/hooks`](/docs/hooks)。
 
 ### 3. `primitives/` —— UI-agnostic 能力原语
 

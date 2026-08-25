@@ -1,6 +1,6 @@
 'use client';
 
-import type { AllPathsKeys, PathToDeepType, ShapeFromPaths } from '@skyroc/type-utils';
+import type { AllPathsKeys, PathToDeepType, ShapeFromPaths } from '@skyroc/utils/type';
 import { isObject, isString } from '@skyroc/utils';
 import type { FormInstance } from './FieldContext';
 import { useFieldContext } from './FieldContext';

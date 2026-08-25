@@ -9,7 +9,7 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 
 | 包类别 | 规则 | 示例 |
 | --- | --- | --- |
-| 跨端共享（纯数据/类型） | 不带平台前缀 | `@skyroc/ui-types`、`@skyroc/type-utils` |
+| 跨端共享（纯数据/类型） | 不带平台前缀 | `@skyroc/types`、`@skyroc/form` |
 | 跨端共享（基础设施/构建工具） | 不带平台前缀 | `@skyroc/color`、`@skyroc/tailwind-plugin` |
 | Web 端 UI | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-ui-compose`、`@skyroc/web-ui-antd` |
 | Web 端主题/工具 | `@skyroc/web-*` 或保留专名 | `@skyroc/web-admin-theme`、`@skyroc/materials` |
@@ -30,17 +30,21 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 | `packages/primitives/filed-form` | `@skyroc/form` |
 | `internal/uno-config` | `@sa/uno-config` |
 
-## shared/ 准入规则
+## 纯类型该放哪里
 
-`shared/*` 必须严格保持「零或极轻依赖」：
+**先找已有的归属包，不要为几十行类型单开一个包。** 独立发一个纯类型包要长期支付版本、README、构建与发布的成本，而收益通常只是「看起来更整齐」。
 
-- ✅ 纯 TS 常量（spacing、colors、radius、fontSize…）
-- ✅ 类型定义（`ThemeColor`、`WithClassName`…）
-- ✅ 极轻量工具（如 `clsx`）
-- ❌ React 运行时 / DOM API / React Native API / 任何平台原生模块
-- ❌ 大型依赖（antd、tailwindcss 等）
+| 内容 | 归属 |
+| --- | --- |
+| 通用 TS 工具类型（路径推导、递归变换、函数类型） | [`@skyroc/utils/type`](/docs/core/utils/type) |
+| 依赖 DOM 的类型（`FieldElement`…） | [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型) |
+| 设计令牌与三端组件词汇（`ThemeColor`、`ThemeSize`…） | [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口) |
+| 只有一个 UI 包在用的类型（`WithClassName`…） | 该包自己的 `types/shared.ts` |
+| 全局命名空间声明（`Api`、`Router`…） | [`@skyroc/types`](/docs/core/types) |
 
-举例：颜色 **算法**（OKLCH 调色板生成）放 `@skyroc/color`——它依赖 colord/culori，不符合 shared 准入。颜色 **token**（hex / hsl 常量）曾经放在 shared，现已并入 [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin)：三端统一走 Tailwind 后该插件是唯一消费者，令牌没有第二个读者，独立成包只剩形式意义。
+这条规则是踩过坑之后写下的：`packages/shared/` 曾经装着 `@skyroc/ui-types` 与 `@skyroc/type-utils`，前者的 `ThemeColor` 和 `@skyroc/tailwind-plugin` 里 `tokens.ts` 的 `SemanticColorName` 长成了一字不差的两份定义——**类型离它的真正来源越远，越容易长出第二份**。两个包现已并入上表的归属，`packages/shared/` 删除。
+
+同理，颜色 **算法**（OKLCH 调色板生成）放 `@skyroc/color`——它依赖 colord/culori；颜色 **token**（hex / hsl 常量）住在 [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin)：三端统一走 Tailwind 后该插件是唯一消费者，令牌没有第二个读者。
 
 ## 包子入口（exports）约定
 
@@ -50,9 +54,10 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 // @skyroc/utils
 {
   "exports": {
-    ".": "./src/index.ts",       // 平台无关
-    "./path": "./src/path.ts",   // 路径工具
-    "./web": "./src/web/index.ts" // 仅浏览器（download/openWindow…）
+    ".": "./src/index.ts",            // 平台无关
+    "./path": "./src/path.ts",        // 路径工具
+    "./type": "./src/type/index.ts",  // 零运行时类型工具
+    "./web": "./src/web/index.ts"     // 仅浏览器（download/openWindow…）
   }
 }
 ```

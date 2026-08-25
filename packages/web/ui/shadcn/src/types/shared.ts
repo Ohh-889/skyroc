@@ -1,19 +1,25 @@
 import type { ClassValue } from 'clsx';
 import type { ReactNode } from 'react';
 
-// Re-export shared cross-platform types from @skyroc/ui-types
+export type { MaybeArray } from '@skyroc/utils/type';
+
+// 三端共用的组件词汇表，单一数据源在设计令牌包里
 export type {
-  AcceptableValue,
-  ClassValue,
-  MaybeArray,
   ThemeAlign,
   ThemeColor,
   ThemeOrientation,
   ThemeSide,
   ThemeSize,
-  Value,
-  WithClassName
-} from '@skyroc/ui-types';
+  Value
+} from '@skyroc/tailwind-plugin/ui';
+
+export type { ClassValue };
+
+/** 带 className 的 props */
+export interface WithClassName {
+  /** CSS class name */
+  className?: ClassValue;
+}
 
 // ==================== Web-Specific Types ====================
 
@@ -59,7 +65,7 @@ export type StyledComponentProps<T> = Omit<T, 'className'> & {
   /** CSS class name */
   className?: ClassValue;
   /** Component size variant */
-  size?: import('@skyroc/ui-types').ThemeSize;
+  size?: import('@skyroc/tailwind-plugin/ui').ThemeSize;
 };
 
 /** Props for components with leading and trailing slots */

@@ -106,8 +106,24 @@ src/
 ├── themePresets.ts       skyrocUITheme()：base 样式（CSS 变量 + keyframes + html.size-* 字号档）
 ├── generate.ts           generateCSSVars / generateGlobalStyles + 色板生成
 ├── theme.json            12 套内置颜色主题的亮暗 CSS 变量（详见下方说明）
-└── types.ts              类型定义（HslColorString / ThemeOptions ...）
+├── tokens.ts             设计令牌单一数据源（色名、间距 / 圆角 / 字号 / 字重尺度）
+├── types.ts              类型定义（HslColorString / ThemeOptions ...）
+└── ui.ts                 `./ui` 子入口：三端 UI 组件共用的 props 词汇表
 ```
+
+## 子入口
+
+| 导入路径 | 内容 |
+|----------|------|
+| `@skyroc/tailwind-plugin` | 插件本体与配置类型 |
+| `@skyroc/tailwind-plugin/ui` | `ThemeColor` / `ThemeSize` / `ThemeAlign` / `ThemeOrientation` / `ThemeSide` / `Value` |
+
+`./ui` 是给 `@skyroc/web-ui`、`@skyroc/native-ui` 这类组件库用的纯类型入口，零 import，
+不会牵出 tailwindcss / @unocss/core。
+
+其中 `ThemeColor` 直接等于 `tokens.ts` 里的 `SemanticColorName` —— 插件生成 CSS 变量用的
+就是这个联合类型，组件的 `color` prop 因此不可能和实际产出的变量漂移。原先 `@skyroc/ui-types`
+另写了一份一模一样的联合类型，那个包已并入这里。
 
 ## API 速览
 
@@ -155,6 +171,7 @@ src/
 - [`@skyroc/color`](../../@core/color) — OKLCH 色板生成与色彩工具
 - [`@skyroc/web-admin-theme`](../admin-theme) — React 主题状态 + Ant Design 集成
 - [`@skyroc/adapter-antd-theme`](../antd-theme) — Ant Design 主题算法适配
+- [`@skyroc/utils`](../utils) — 通用工具函数，`./type` 子入口提供零运行时 TypeScript 工具类型
 
 ## License
 

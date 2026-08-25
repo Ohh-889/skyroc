@@ -13,7 +13,7 @@
     "postinstall": "fumadocs-mdx",
     "lint": "oxlint --fix",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "worker:build": "pnpm --filter @skyroc/ui-types --filter @skyroc/type-utils run build && opennextjs-cloudflare build"
+    "worker:build": "opennextjs-cloudflare build"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.170",

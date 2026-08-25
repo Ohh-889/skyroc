@@ -71,7 +71,7 @@
 - ⏱️ **@skyroc/scheduler** - 协作式任务调度器
 - 🎨 **@skyroc/color** - 色彩工具与调色板生成（OKLCH）
 - 📋 **@skyroc/types** - 全局类型定义
-- 🔧 **@skyroc/type-utils** - 高级 TypeScript 工具类型
+- 🔧 **@skyroc/utils/type** - 高级 TypeScript 工具类型
 - 💻 **@skyroc/scripts** - 项目 CLI（changelog、release、git-commit 等）
 
 **Web Kit 层（`packages/web/*`）**

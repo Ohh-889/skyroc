@@ -1,5 +1,5 @@
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
+import type { ThemeColor, ThemeSize } from '@skyroc/tailwind-plugin/ui';
 import { useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { resolveRadioSizes } from './radio-variants';

@@ -11,7 +11,7 @@ description: 阅读其它文档前的术语对齐
 | **Workspace** | pnpm 概念，由 `pnpm-workspace.yaml` 的 glob 定义的「子项目」 |
 | **Catalog** | pnpm 10 的依赖版本集中管理机制（`catalogs:` 配置） |
 | **Internal 包** | `internal/` 下的不发布工程化配置包 |
-| **Platform-first** | 包按平台（web/native/miniapp/shared）分目录的策略 |
+| **Platform-first** | 包按平台（@core/hooks/primitives 跨端，web/native/miniapp 各占一棵）分目录的策略 |
 | **Adapter Pattern** | 用接口隔离平台 API，使核心代码跨平台的设计模式 |
 | **`@skyroc` scope** | 仓库统一的 npm scope；新包一律用它 |
 | **`@sa` scope** | 历史遗留 scope，目前仅 `@sa/uno-config` 使用 |
@@ -94,7 +94,7 @@ description: 阅读其它文档前的术语对齐
 | **`@skyroc/form`** | 类型安全的表单原语（`packages/primitives/filed-form`） |
 | **ChangeTag** | bitmask，精确订阅字段的某类变化 |
 | **StandardSchema** | 跨校验库的统一协议（zod / valibot 等） |
-| **Path 类型** | `@skyroc/type-utils` 派生的「嵌套字段访问路径」类型 |
+| **Path 类型** | `@skyroc/utils/type` 派生的「嵌套字段访问路径」类型 |
 
 ## 文档
 

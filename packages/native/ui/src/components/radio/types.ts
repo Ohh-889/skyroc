@@ -1,4 +1,4 @@
-import type { ThemeColor, ThemeSize } from '@skyroc/ui-types';
+import type { ThemeColor, ThemeSize } from '@skyroc/tailwind-plugin/ui';
 import type { ReactNode, Ref } from 'react';
 import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';

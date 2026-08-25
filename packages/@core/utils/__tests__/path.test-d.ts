@@ -11,7 +11,7 @@ import type {
   PathToType,
   PathValue,
   ShapeFromPaths
-} from '../src';
+} from '../src/type';
 
 interface FormValues {
   age: number;

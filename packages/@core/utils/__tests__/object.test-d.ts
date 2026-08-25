@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { DeepPartial, MergeUnion, Prettify, ShallowPartial, UnionToIntersection, Wrap } from '../src';
+import type { DeepPartial, MergeUnion, Prettify, ShallowPartial, UnionToIntersection, Wrap } from '../src/type';
 
 describe('Prettify', () => {
   it('展平交叉类型', () => {

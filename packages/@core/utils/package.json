@@ -1,8 +1,8 @@
 {
   "name": "@skyroc/utils",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "type": "module",
-  "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./web, ./path, ./cn and ./crypto subpath exports",
+  "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./type, ./web, ./path, ./cn and ./crypto subpath exports",
   "keywords": [
     "browser",
     "crypto",
@@ -45,6 +45,7 @@
     "./cn": "./src/cn.ts",
     "./crypto": "./src/crypto.ts",
     "./path": "./src/path.ts",
+    "./type": "./src/type/index.ts",
     "./web": "./src/web/index.ts"
   },
   "publishConfig": {
@@ -78,6 +79,12 @@
           "default": "./dist/path.js"
         }
       },
+      "./type": {
+        "import": {
+          "types": "./dist/type/index.d.ts",
+          "default": "./dist/type/index.js"
+        }
+      },
       "./web": {
         "import": {
           "types": "./dist/web/index.d.ts",
@@ -100,7 +107,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.web.json --noEmit"
   },
   "dependencies": {
-    "@skyroc/type-utils": "workspace:*",
     "clsx": "catalog:utils",
     "crypto-js": "catalog:utils",
     "dayjs": "catalog:utils",

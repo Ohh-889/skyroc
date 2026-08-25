@@ -5,7 +5,7 @@
  * Provides array operations for dynamic field arrays with stable keys
  */
 
-import type { ArrayKeys } from '@skyroc/type-utils';
+import type { ArrayKeys } from '@skyroc/utils/type';
 
 import type { FormInstance, InternalFormInstance } from './FieldContext';
 import { useFieldContext } from './FieldContext';

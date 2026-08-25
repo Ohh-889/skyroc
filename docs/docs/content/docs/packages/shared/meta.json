@@ -1,5 +1,0 @@
-{
-  "title": "跨端共享包",
-  "description": "shared/ 下的零依赖纯类型包：ui-types / type-utils",
-  "pages": ["overview", "ui-types", "type-utils"]
-}

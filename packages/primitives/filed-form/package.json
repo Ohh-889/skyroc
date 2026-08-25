@@ -94,7 +94,6 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "catalog:ui-shared",
-    "@skyroc/type-utils": "workspace:*",
     "@skyroc/utils": "workspace:*"
   },
   "devDependencies": {

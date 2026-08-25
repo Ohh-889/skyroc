@@ -25,7 +25,7 @@ Skyroc Admin 是一个**工程化的后台管理系统脚手架**，但它的野
 
 ### 2. 平台优先（Platform-first）
 
-`packages/` 的顶层目录按**平台**切分（`@core` / `shared` / `hooks` / `primitives` 跨端，`web` / `native` / `miniapp` 各占一棵），而不是按功能（components / hooks / utils）切分。
+`packages/` 的顶层目录按**平台**切分（`@core` / `hooks` / `primitives` 跨端，`web` / `native` / `miniapp` 各占一棵），而不是按功能（components / hooks / utils）切分。
 
 原因：Web 与 Native 的运行时、UI 依赖和样式方案不同（Ant Design / UnoCSS 与 React Native / Uniwind），与其强行抽象一个「通用 UI」，不如让平台目录各自完整。详见 [平台优先目录](/docs/guide/architecture/platform-first)。
 

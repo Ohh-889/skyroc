@@ -6,7 +6,7 @@
  * Provides efficient re-rendering by only updating when selected data changes
  */
 
-import type { AllPathsKeys } from '@skyroc/type-utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 

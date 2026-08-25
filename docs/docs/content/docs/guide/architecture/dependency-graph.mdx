@@ -50,10 +50,11 @@ description: 主题、请求、日志、UI、状态、表单等实际功能链�
 ### 4. UI 设计系统链路
 
 ```text
-@skyroc/ui-types  ←  @skyroc/tailwind-plugin（内含设计令牌 src/tokens.ts）
-                                                  │
-                                                  ▼
-                                          @skyroc/web-ui  （shadcn 风格）
+@skyroc/tailwind-plugin（设计令牌 src/tokens.ts + 组件词汇表 src/ui.ts）
+                    │
+                    ├──────────────────▶ @skyroc/native-ui
+                    ▼
+            @skyroc/web-ui  （shadcn 风格）
                                                   │
                                                   ▼
                                        @skyroc/web-ui-antd
@@ -83,9 +84,9 @@ jotai (npm)
 ### 6. 表单链路
 
 ```text
-@skyroc/type-utils (深层 path 类型)
+@skyroc/utils/type (深层 path 类型)
    └─ @skyroc/form (form-core + react)
-         └─ apps/admin / @skyroc/web-ui
+         └─ apps/admin / @skyroc/web-ui / @skyroc/native-ui
 ```
 
 详见 [@skyroc/form](/docs/form)。

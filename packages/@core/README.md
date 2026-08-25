@@ -17,13 +17,16 @@
 
 以下内容不放入 `@core/`：
 
-- 纯类型或极轻量共享工具：放入 `packages/shared/`。
+- 纯类型或极轻量共享工具：并入已有的同性质包（通用工具类型进 `@skyroc/utils/type`，
+  设计令牌与组件词汇进 `@skyroc/tailwind-plugin`），不要为几十行类型单开一个包。
 - 通用 React Hooks：放入 `packages/hooks/`。
 - Web、Native UI 和平台运行时：放入对应平台子树。
 - 页面、业务组件和应用流程：留在应用或明确的业务模块中。
 
-`@skyroc/types` 是当前全局声明类型的既有基础包。新增纯类型包时仍应先按
-`packages/shared/` 的准入规则判断，不要因为该历史位置而默认放入 `@core/`。
+`@skyroc/types` 是当前全局声明类型的既有基础包。新增纯类型时先找已有的归属包，
+独立发一个纯类型包要付版本、README、构建与发布的长期成本 —— `@skyroc/type-utils` 和
+`@skyroc/ui-types` 就是这么退役的，分别并入了 `@skyroc/utils/type` 与
+`@skyroc/tailwind-plugin/ui`。
 
 ## 当前包
 
@@ -50,7 +53,6 @@
 @skyroc/service
 └── @skyroc/axios
     └── @skyroc/utils
-        └── @skyroc/type-utils（packages/shared）
 
 @skyroc/tailwind-plugin
 └── @skyroc/color
