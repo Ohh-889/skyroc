@@ -60,6 +60,8 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
       }
     },
     token: {
+      // 先注入预设色板，再用运行时主题色覆盖语义色
+      ...defaultPresetColors,
       colorBgContainer: containerBgColor,
       colorInverted: invertedColor,
       colorError: error,
@@ -70,9 +72,7 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
       colorPrimary: primary,
       borderRadius: themeRadius,
       colorSuccess: success,
-      colorWarning: warning,
-      // 使用预设的颜色
-      ...defaultPresetColors
+      colorWarning: warning
     }
   };
 

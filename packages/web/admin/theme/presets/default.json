@@ -17,7 +17,7 @@
   },
   "themeRadius": 6,
   "isInfoFollowPrimary": true,
-  "themeTextSize": 16,
+  "themeTextSize": 14,
   "layout": {
     "mode": "vertical",
     "scrollMode": "content"

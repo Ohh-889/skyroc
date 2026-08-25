@@ -12,7 +12,7 @@ export const LIGHT_TEXT_BASE = '#1F1F1F';
  * antd's 1-10 indexes
  */
 export const generateColorPalettes: GenerateColorMap = (baseColor: string): ColorMap => {
-  const { palettes } = generateOklchPaletteAnchored(baseColor);
+  const { palettes } = generateOklchPaletteAnchored(baseColor, 500);
   const [p50, p100, p200, p300, p400, p500, p600, p700, p800, p900, p950] = palettes;
 
   return {

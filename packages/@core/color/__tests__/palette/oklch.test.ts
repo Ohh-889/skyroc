@@ -343,6 +343,14 @@ describe('generateDarkModePalette', () => {
     const dark = generateDarkModePalette('#3b82f6');
     expect(dark.palettes.map(p => p.hex)).not.toEqual(light.palettes.map(p => p.hex));
   });
+
+  it('强制档位时应保留输入色并沿用暗色色板曲线', () => {
+    const result = generateDarkModePalette('#18181b', 500);
+
+    expect(result.palettes.find(item => item.number === 500)?.hex).toBe('#18181b');
+    expect(result.palettes[0].number).toBe(50);
+    expect(result.palettes.at(-1)?.number).toBe(950);
+  });
 });
 
 // ==================== findAccessibleTextColor ====================

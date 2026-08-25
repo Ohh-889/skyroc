@@ -37,6 +37,23 @@ describe('getAntdTheme', () => {
     expect(theme.hashed).toBe(false);
   });
 
+  it('运行时主题色覆盖默认预设中的语义色', () => {
+    const colors = {
+      error: '#dc2626',
+      info: '#0284c7',
+      primary: '#ef4444',
+      success: '#16a34a',
+      warning: '#ca8a04'
+    };
+    const theme = getAntdTheme(colors, false, defaultThemeSettings);
+
+    expect(theme.token?.colorPrimary).toBe(colors.primary);
+    expect(theme.token?.colorError).toBe(colors.error);
+    expect(theme.token?.colorInfo).toBe(colors.info);
+    expect(theme.token?.colorSuccess).toBe(colors.success);
+    expect(theme.token?.colorWarning).toBe(colors.warning);
+  });
+
   it('components 中 Button/Collapse/Menu/Modal 节点存在', () => {
     const colors = getThemeColors(defaultThemeSettings);
     const theme = getAntdTheme(colors, false, defaultThemeSettings);

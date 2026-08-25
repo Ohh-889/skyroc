@@ -8,8 +8,8 @@ export const DARK_TEXT_BASE = '#FFFFFF';
 /**
  * Generate color palettes (dark mode)
  *
- * Uses generateDarkModePalette algorithm to replace antd's @ant-design/colors Reference Ant Design official dark
- * algorithm, palette mapping needs special handling.
+ * Uses a dark-mode OKLCH palette anchored at 500 so the user-provided theme color remains the semantic main color. The
+ * palette mapping follows Ant Design's dark-mode interaction rules.
  *
  * 档位号语义与亮色一致——50 最亮、950 最暗。暗色主题需要深色背景，因此 antd 的 1-4 档取的是色板暗端（950-700），而不是靠翻转档位号来实现。
  *
@@ -17,7 +17,7 @@ export const DARK_TEXT_BASE = '#FFFFFF';
  * 7→600)，增强交互对比 - 8-10: 复用 5-7 (8→400, 9→500, 10→600)，用于文字色
  */
 export const generateColorPalettes: GenerateColorMap = (baseColor: string): ColorMap => {
-  const { palettes } = generateDarkModePalette(baseColor);
+  const { palettes } = generateDarkModePalette(baseColor, 500);
   const [p50, p100, p200, p300, p400, p500, p600, p700, p800, p900, p950] = palettes;
 
   return {

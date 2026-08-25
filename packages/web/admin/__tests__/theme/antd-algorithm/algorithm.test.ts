@@ -82,6 +82,13 @@ describe('derivative（light 模式）', () => {
     expect(result.colorPrimary).toMatch(/^#[0-9a-fA-F]{6}$/);
   });
 
+  it('用户提供的主题色应固定为 500 档和语义主色', () => {
+    const result = derivative({ ...token, colorPrimary: '#18181b' });
+
+    expect(result.colorPrimary).toBe('#18181b');
+    expect(Reflect.get(result, 'primary-500')).toBe('#18181b');
+  });
+
   it('info / success / warning / error 颜色系列均应存在', () => {
     const result = derivative(token);
 
@@ -125,5 +132,12 @@ describe('derivativeDark（dark 模式）', () => {
 
     expect(result).toHaveProperty('primary-1');
     expect(result).toHaveProperty('primary-500');
+  });
+
+  it('dark 模式也应保留用户提供的主题色', () => {
+    const result = derivativeDark({ ...token, colorPrimary: '#18181b' });
+
+    expect(result.colorPrimary).toBe('#18181b');
+    expect(Reflect.get(result, 'primary-500')).toBe('#18181b');
   });
 });

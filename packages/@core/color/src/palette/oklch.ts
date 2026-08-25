@@ -486,9 +486,21 @@ export interface ColorPaletteFamilyWithOklch extends Omit<ColorPaletteFamily, 'p
  */
 export function generateOklchPaletteAnchored(
   color: string,
-  forceStep?: ColorPaletteNumber
+  forceStep?: ColorPaletteNumber,
+  options: Pick<OklchPaletteOptions, 'lightnessCurve'> = {}
 ): ColorPaletteFamilyWithOklch {
+  const { lightnessCurve } = options;
+
+  if (lightnessCurve && lightnessCurve.length !== PALETTE_STEP_COUNT) {
+    throw new Error(
+      `Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`
+    );
+  }
+
   const { chroma, hex: inputHex, hue, lightness } = parseInputColor(color);
+  const baseConfig = lightnessCurve
+    ? PALETTE_CONFIG.map((step, index) => ({ ...step, targetL: lightnessCurve[index] }))
+    : PALETTE_CONFIG;
 
   // Determine matched step
   let matchedStep: ColorPaletteNumber;
@@ -496,20 +508,20 @@ export function generateOklchPaletteAnchored(
   if (forceStep) {
     matchedStep = forceStep;
   } else {
-    const closestStep = findClosestStep(PALETTE_CONFIG, lightness);
+    const closestStep = findClosestStep(baseConfig, lightness);
 
     // If input lightness is close to 500's target (within 0.12), prefer 500
-    const step500 = PALETTE_CONFIG.find(step => step.number === 500)!;
+    const step500 = baseConfig.find(step => step.number === 500)!;
     const diffTo500 = Math.abs(step500.targetL - lightness);
 
     matchedStep = diffTo500 < 0.12 ? 500 : closestStep.number;
   }
 
   // Build adjusted lightness curve that passes through input at matchedStep
-  const matchedStepConfig = PALETTE_CONFIG.find(step => step.number === matchedStep)!;
+  const matchedStepConfig = baseConfig.find(step => step.number === matchedStep)!;
   const lightnessDelta = lightness - matchedStepConfig.targetL;
 
-  const config = PALETTE_CONFIG.map(step => {
+  const config = baseConfig.map(step => {
     if (step.number === matchedStep) {
       return { ...step, targetL: lightness };
     }
@@ -684,7 +696,11 @@ const DARK_MODE_LIGHTNESS: number[] = [
  * @param color - Input color
  * @returns Dark mode optimized palette
  */
-export function generateDarkModePalette(color: string): ColorPaletteFamily {
+export function generateDarkModePalette(color: string, forceStep?: ColorPaletteNumber): ColorPaletteFamily {
+  if (forceStep) {
+    return generateOklchPaletteAnchored(color, forceStep, { lightnessCurve: DARK_MODE_LIGHTNESS });
+  }
+
   return generateOklchPaletteAdvanced(color, {
     appleHueShift: true,
     chromaCompensation: true,
