@@ -1,4 +1,4 @@
-import { createAdminDynamicRouteLoader } from '@skyroc/web-admin-layouts';
+import { createAdminDynamicRouteLoader } from '@shell/layouts';
 
 import { routeTree } from '@/features/router/routeTree.gen';
 import { queryMenusOptions } from '@/service/api/route/hooks';

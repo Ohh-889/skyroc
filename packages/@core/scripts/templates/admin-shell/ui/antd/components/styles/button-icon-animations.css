@@ -1,0 +1,246 @@
+/* ==================== ButtonIcon Hover Animations ==================== */
+
+/* 基础过渡效果 */
+.btn-icon-hover-scale,
+.btn-icon-hover-rotate,
+.btn-icon-hover-shake,
+.btn-icon-hover-bounce,
+.btn-icon-hover-pulse,
+.btn-icon-hover-spin,
+.btn-icon-hover-swing,
+.btn-icon-hover-flip,
+.btn-icon-hover-wiggle,
+.btn-icon-hover-tada {
+  display: inline-flex;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 1. Scale - 缩放放大效果 (经典的交互反馈) */
+.btn-icon-hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.btn-icon-hover-scale:hover {
+  transform: scale(1.2);
+}
+
+/* 2. Rotate - 旋转效果 (适合刷新、设置图标) */
+.btn-icon-hover-rotate {
+  transition: transform 0.4s ease;
+}
+
+.btn-icon-hover-rotate:hover {
+  transform: rotate(180deg);
+}
+
+/* 3. Shake - 左右抖动效果 (吸引注意力) */
+.btn-icon-hover-shake:hover {
+  animation: btn-icon-shake 0.5s ease-in-out;
+}
+
+@keyframes btn-icon-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+/* 4. Bounce - 弹跳效果 (活泼有趣) */
+.btn-icon-hover-bounce:hover {
+  animation: btn-icon-bounce 0.6s ease;
+}
+
+@keyframes btn-icon-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  10%,
+  30% {
+    transform: translateY(-8px);
+  }
+  20% {
+    transform: translateY(-12px);
+  }
+  40%,
+  60% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  70%,
+  90% {
+    transform: translateY(-2px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 5. Pulse - 脉冲缩放效果 (呼吸效果) */
+.btn-icon-hover-pulse:hover {
+  animation: btn-icon-pulse 1s ease-in-out infinite;
+}
+
+@keyframes btn-icon-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+/* 6. Spin - 持续旋转效果 (适合加载、刷新) */
+.btn-icon-hover-spin:hover {
+  animation: btn-icon-spin 0.8s linear infinite;
+}
+
+@keyframes btn-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 7. Swing - 摇摆效果 (类似钟摆) */
+.btn-icon-hover-swing:hover {
+  animation: btn-icon-swing 0.6s ease-in-out;
+  transform-origin: center top;
+}
+
+@keyframes btn-icon-swing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(15deg);
+  }
+  30% {
+    transform: rotate(-10deg);
+  }
+  45% {
+    transform: rotate(8deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+  90% {
+    transform: rotate(-2deg);
+  }
+}
+
+/* 8. Flip - 3D翻转效果 (酷炫效果) */
+.btn-icon-hover-flip {
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+}
+
+.btn-icon-hover-flip:hover {
+  transform: rotateY(180deg);
+}
+
+/* 9. Wiggle - 扭动效果 (俏皮可爱) */
+.btn-icon-hover-wiggle:hover {
+  animation: btn-icon-wiggle 0.5s ease-in-out;
+}
+
+@keyframes btn-icon-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: rotate(-3deg);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: rotate(3deg);
+  }
+}
+
+/* 10. Tada - 惊喜效果 (多维度组合动画) */
+.btn-icon-hover-tada:hover {
+  animation: btn-icon-tada 0.8s ease;
+}
+
+@keyframes btn-icon-tada {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  10%,
+  20% {
+    transform: scale(0.95) rotate(-3deg);
+  }
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  40%,
+  60%,
+  80% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* 性能优化：使用 GPU 加速 */
+.btn-icon-hover-scale,
+.btn-icon-hover-rotate,
+.btn-icon-hover-shake,
+.btn-icon-hover-bounce,
+.btn-icon-hover-pulse,
+.btn-icon-hover-spin,
+.btn-icon-hover-swing,
+.btn-icon-hover-flip,
+.btn-icon-hover-wiggle,
+.btn-icon-hover-tada {
+  will-change: transform;
+}
+
+/* 添加平滑的光标指针 */
+.btn-icon-hover-scale:hover,
+.btn-icon-hover-rotate:hover,
+.btn-icon-hover-shake:hover,
+.btn-icon-hover-bounce:hover,
+.btn-icon-hover-pulse:hover,
+.btn-icon-hover-spin:hover,
+.btn-icon-hover-swing:hover,
+.btn-icon-hover-flip:hover,
+.btn-icon-hover-wiggle:hover,
+.btn-icon-hover-tada:hover {
+  cursor: pointer;
+}

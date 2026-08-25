@@ -1,0 +1,54 @@
+@import './reset.css';
+@import './nprogress.css';
+
+html,
+body,
+#app {
+  height: 100%;
+  text-autospace: normal;
+}
+
+html {
+  overflow-x: hidden;
+  border-color: var(--color-border);
+  font-size: var(--font-size);
+  color: var(--color-text-base);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(144, 147, 153, 0.3) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(144, 147, 153, 0.3);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(144, 147, 153, 0.3);
+}
+
+*::-webkit-scrollbar-track-piece {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.ant-table-header::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+html.grayscale {
+  filter: grayscale(100%);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}

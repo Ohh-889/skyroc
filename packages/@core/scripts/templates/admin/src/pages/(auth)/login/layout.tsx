@@ -1,5 +1,5 @@
 import { mixColor } from '@skyroc/color';
-import { useSettingsTheme } from '@skyroc/web-admin-theme';
+import { useSettingsTheme } from '@shell/theme';
 import { Outlet, createFileRoute, redirect, useLocation } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import { z } from 'zod';

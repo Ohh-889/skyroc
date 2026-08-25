@@ -1,4 +1,4 @@
-import type { MenuNodeCallback } from '@skyroc/web-admin-layouts';
+import type { MenuNodeCallback } from '@shell/layouts';
 
 export const menuNodeCallback: MenuNodeCallback = () => {
   return [];

@@ -126,7 +126,8 @@ pnpm sa create-admin my-admin --install
 ```
 
 > **注意**：物化只负责把协议翻译成 registry 能识别的版本号，不保证这些包真的发布过。生成时若发现依赖里有
-> `private: true` 的 workspace 包，命令会显式告警——目前 `@skyroc/web-admin-theme` 就属于这种情况，独立工程装不上它。
+> `private: true` 的 workspace 包，命令会显式告警。admin shell（`@skyroc/web-admin-shell`）不受此限——它不进
+> 依赖列表，源码会被直接复制进生成项目的 `src/framework`。
 
 #### 选项
 

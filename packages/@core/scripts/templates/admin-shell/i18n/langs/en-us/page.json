@@ -1,0 +1,442 @@
+{
+  "about": {
+    "devDep": "Development Dependency",
+    "introduction": "SkyrocAdmin is a React admin example built for real dashboard workflows. Its current stack centers on React 19, TypeScript, Vite, TanStack Router, TanStack Query, Jotai, Ant Design 6, and UnoCSS. Routing, permissions, themes, i18n, request handling, notifications, layouts, and global styles are split into @skyroc workspace packages, while apps/admin-example focuses on application orchestration and demo pages. Use it as a reference for the Skyroc admin architecture, component composition, and engineering conventions.",
+    "prdDep": "Production Dependency",
+    "projectInfo": {
+      "githubLink": "Github Link",
+      "latestBuildTime": "Latest Build Time",
+      "previewLink": "Preview Link",
+      "title": "Project Info",
+      "version": "Version"
+    },
+    "title": "About"
+  },
+  "function": {
+    "multiTab": {
+      "backTab": "Back function_tab",
+      "routeParam": "Route Param"
+    },
+    "request": {
+      "repeatedError": "Repeated Request Error",
+      "repeatedErrorMsg1": "Custom Request Error 1",
+      "repeatedErrorMsg2": "Custom Request Error 2",
+      "repeatedErrorOccurOnce": "Repeated Request Error Occurs Once"
+    },
+    "tab": {
+      "tabOperate": {
+        "addMultiTab": "Add Multi Tab",
+        "addMultiTabDesc1": "To MultiTab page",
+        "addMultiTabDesc2": "To MultiTab page(with query params)",
+        "addTab": "Add Tab",
+        "addTabDesc": "To about page",
+        "closeAboutTab": "Close \"About\" Tab",
+        "closeCurrentTab": "Close Current Tab",
+        "closeTab": "Close Tab",
+        "title": "Tab Operation"
+      },
+      "tabTitle": {
+        "change": "Change",
+        "changeTitle": "Change Title",
+        "reset": "Reset",
+        "resetTitle": "Reset Title",
+        "title": "Tab Title"
+      }
+    },
+    "toggleAuth": {
+      "adminOrUserVisible": "Admin and User Visible",
+      "adminVisible": "Admin Visible",
+      "authHook": "Auth Hook Function `hasAuth`",
+      "superAdminVisible": "Super Admin Visible",
+      "toggleAccount": "Toggle Account"
+    }
+  },
+  "home": {
+    "creativity": "Creativity",
+    "dealCount": "Deal Count",
+    "downloadCount": "Download Count",
+    "entertainment": "Entertainment",
+    "greeting": "Good morning, {{userName}}, today is another day full of vitality!",
+    "message": "Message",
+    "projectCount": "Project Count",
+    "projectNews": {
+      "desc1": "Skyroc created the open source project skyroc-admin on May 28, 2021!",
+      "desc2": "Yanbowe submitted a bug to skyroc-admin, the multi-tab bar will not adapt.",
+      "desc3": "Skyroc is ready to do sufficient preparation for the release of skyroc-admin!",
+      "desc4": "Skyroc is busy writing project documentation for skyroc-admin!",
+      "desc5": "Skyroc just wrote some of the workbench pages casually, and it was enough to see!",
+      "moreNews": "More News",
+      "title": "Project News"
+    },
+    "registerCount": "Register Count",
+    "rest": "Rest",
+    "schedule": "Work and rest Schedule",
+    "study": "Study",
+    "todo": "Todo",
+    "turnover": "Turnover",
+    "visitCount": "Visit Count",
+    "weatherDesc": "Today is cloudy to clear, 20℃ - 25℃!",
+    "work": "Work"
+  },
+  "login": {
+    "bindWeChat": {
+      "title": "Bind WeChat"
+    },
+    "codeLogin": {
+      "getCode": "Get verification code",
+      "imageCodePlaceholder": "Please enter image verification code",
+      "reGetCode": "Reacquire after {{time}}s",
+      "sendCodeSuccess": "Verification code sent successfully",
+      "title": "Verification Code Login"
+    },
+    "common": {
+      "back": "Back",
+      "codeLogin": "Verification code login",
+      "codePlaceholder": "Please enter verification code",
+      "confirm": "Confirm",
+      "confirmPasswordPlaceholder": "Please enter password again",
+      "loginOrRegister": "Login / Register",
+      "loginSuccess": "Login successfully",
+      "passwordPlaceholder": "Please enter password",
+      "phonePlaceholder": "Please enter phone number",
+      "userNamePlaceholder": "Please enter user name",
+      "validateSuccess": "Verification passed",
+      "welcomeBack": "Welcome back, {{userName}} !"
+    },
+    "enterprise": {
+      "accountLabel": "Account",
+      "accountPlaceholder": "Enter username, phone number, or email",
+      "accountRequired": "Please enter your account",
+      "adminHint": "Accounts are created by administrators. Contact your administrator if you need help.",
+      "brandDescription": "View organization, access, tenants, and system status, then handle everyday admin work.",
+      "brandFeatureAudit": "Traceable critical actions",
+      "brandFeaturePermission": "Unified organization and permissions",
+      "brandFeatureSecure": "A secure and reliable admin gateway",
+      "brandTitle": "Skyroc Admin Workspace",
+      "captchaAlt": "Image verification code",
+      "captchaLabel": "Image verification code",
+      "captchaLoadError": "Load failed. Click to retry.",
+      "captchaPlaceholder": "Enter the characters shown",
+      "captchaRefresh": "Refresh verification code",
+      "captchaRefreshShort": "Refresh",
+      "captchaRequired": "Please enter the image verification code",
+      "codeChannelLabel": "Verification code method",
+      "codeLogin": "Use verification code",
+      "codeNotReceived": "Didn't get it? Make sure it is linked to an account, or contact your administrator",
+      "codeSentEmail": "If that email is registered, a code has been sent",
+      "codeSentPhone": "If that phone number is registered, a code has been sent",
+      "codeSubtitle": "Sign in with a phone or email verification code",
+      "codeTitle": "Verification code login",
+      "emailCode": "Email code",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "forgetPassword": "Forgot password?",
+      "getCode": "Get code",
+      "keepSignedIn": "Stay signed in",
+      "previewActivity": "Access trend",
+      "previewEmpty": "No notifications",
+      "previewEventConfig": "System settings updated",
+      "previewEventMember": "New member joined Engineering",
+      "previewEventRole": "Admin role access changed",
+      "previewEvents": "Latest activity",
+      "previewGreeting": "Good evening, admin",
+      "previewGreetingHint": "Handle what matters, then continue your work.",
+      "previewHome": "Home",
+      "previewLatest": "Latest notifications",
+      "previewLatestHint": "Your most recent messages",
+      "previewMembers": "Team members",
+      "previewOverview": "Operations overview",
+      "previewMonitor": "System monitor",
+      "previewOrganization": "Organization",
+      "previewPending": "Pending items",
+      "previewPermission": "Access roles",
+      "previewRole": "My roles",
+      "previewRoles": "Access roles",
+      "previewSessions": "Online sessions",
+      "previewShortcuts": "Quick access",
+      "previewShortcutsHint": "Open everyday admin modules",
+      "previewTenant": "Tenants",
+      "previewUnread": "Unread",
+      "previewUpdated": "updated",
+      "previewWorkspace": "Skyroc Workspace",
+      "login": "Log in",
+      "notConfigured": "This feature is not configured. Contact your administrator.",
+      "otherLogin": "Other sign-in methods",
+      "passwordLogin": "Use password",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "phoneCode": "Phone code",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
+      "privacy": "Privacy Policy",
+      "socialFeishu": "Continue with Feishu",
+      "socialWechat": "Continue with WeChat",
+      "subtitle": "Continue with your enterprise account",
+      "tenantLabel": "Company",
+      "tenantPlaceholder": "Select your company",
+      "terms": "Terms of Service",
+      "title": "Welcome to Skyroc",
+      "verificationLabel": "Verification code",
+      "verificationPlaceholder": "Enter the 6-digit code",
+      "verificationRequired": "Please enter the verification code"
+    },
+    "pwdLogin": {
+      "admin": "Admin",
+      "forgetPassword": "Forget password?",
+      "otherAccountLogin": "Other Account Login",
+      "otherLoginMode": "Other Login Mode",
+      "register": "Register",
+      "rememberMe": "Remember me",
+      "superAdmin": "Super Admin",
+      "title": "Password Login",
+      "user": "User"
+    },
+    "register": {
+      "agreement": "I have read and agree to",
+      "policy": "《Privacy Policy》",
+      "protocol": "《User Agreement》",
+      "title": "Register"
+    },
+    "resetPwd": {
+      "title": "Reset Password"
+    }
+  },
+  "userCenter": {
+    "activity": {
+      "currentLogin": "Current session has passed access token validation",
+      "permissionSynced": "Menu and button permissions have been synced",
+      "profileUpdated": "Profile sample information has been loaded",
+      "securityChecked": "Account security status check completed",
+      "title": "Recent Activity"
+    },
+    "emptyUserName": "Unnamed User",
+    "messages": {
+      "profileSaved": "Profile saved",
+      "securityActionTodo": "This is a demo action. Connect it to backend APIs in a real project."
+    },
+    "preferences": {
+      "fullContent": "Full Content",
+      "fullContentDesc": "Hide navigation areas and focus on the current page",
+      "language": "Language",
+      "languageDesc": "Switch the admin display language",
+      "openThemeConfig": "Theme Config",
+      "siderCollapse": "Collapse Menu",
+      "siderCollapseDesc": "Control the left menu expanded state",
+      "themeAuto": "System",
+      "themeDark": "Dark",
+      "themeLight": "Light",
+      "themeScheme": "Theme Mode",
+      "themeSchemeDesc": "Use light, dark, or system mode",
+      "title": "Preferences"
+    },
+    "profile": {
+      "accountId": "Account ID",
+      "buttonPermissionCount": "Button Permissions",
+      "roleCount": "Role Count",
+      "roles": "Role Permissions",
+      "title": "Identity Overview"
+    },
+    "profileForm": {
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "Enter display name",
+      "email": "Email",
+      "emailPlaceholder": "Enter email",
+      "gender": "Gender",
+      "genderFemale": "Female",
+      "genderMale": "Male",
+      "genderPlaceholder": "Select gender",
+      "introduction": "Introduction",
+      "introductionPlaceholder": "Add your position, responsibilities, or personal notes",
+      "phone": "Phone",
+      "phonePlaceholder": "Enter phone number",
+      "saveProfile": "Save Profile",
+      "title": "Basic Profile"
+    },
+    "security": {
+      "device": {
+        "action": "View",
+        "desc": "Review recent login devices for this account",
+        "title": "Login Devices"
+      },
+      "email": {
+        "action": "Change",
+        "desc": "Used for account notifications and security alerts",
+        "title": "Security Email"
+      },
+      "password": {
+        "action": "Change",
+        "desc": "Update your login password regularly",
+        "title": "Login Password"
+      },
+      "phone": {
+        "action": "Change",
+        "desc": "Used for login verification and account recovery",
+        "title": "Security Phone"
+      },
+      "title": "Account Security"
+    },
+    "status": {
+      "bound": "Bound",
+      "enabled": "Enabled",
+      "online": "Online",
+      "trusted": "Trusted"
+    },
+    "subtitle": "Manage your profile, account security, and admin preferences"
+  },
+  "manage": {
+    "common": {
+      "status": {
+        "disable": "Disable",
+        "enable": "Enable"
+      }
+    },
+    "menu": {
+      "activeMenu": "Active Menu",
+      "addChildMenu": "Add Child Menu",
+      "addMenu": "Add Menu",
+      "badge": "Badge",
+      "badgeShowZero": "Show Zero",
+      "badgeType": {
+        "dot": "Dot",
+        "normal": "Content"
+      },
+      "badgeTypeTitle": "Badge Type",
+      "badgeValue": "Badge Value",
+      "badgeValueKey": "Badge Value Key",
+      "badgeVariant": {
+        "default": "Default",
+        "error": "Error",
+        "info": "Info",
+        "primary": "Primary",
+        "success": "Success",
+        "warning": "Warning"
+      },
+      "badgeVariantTitle": "Badge Color",
+      "accessConfig": "Access",
+      "behaviorConfig": "Behavior",
+      "constant": "Constant",
+      "editMenu": "Edit Menu",
+      "extra": "Extra Component",
+      "fixedIndexInTab": "Fixed Index In Tab",
+      "form": {
+        "activeMenu": "Please select the highlighted menu path",
+        "badgeType": "Please select badge type",
+        "badgeValue": "Please enter static badge value",
+        "badgeValueKey": "Please enter dynamic badge value key",
+        "badgeVariant": "Please select badge color",
+        "extra": "Please select extra component",
+        "fixedIndexInTab": "Please enter the fixed tab index",
+        "hideInMenu": "Please select whether to hide menu",
+        "home": "Please select home",
+        "href": "Please enter href",
+        "i18nKey": "Please enter i18n key",
+        "icon": "Please enter Iconify icon",
+        "id": "Please enter backend route ID",
+        "keepAlive": "Please select whether to cache route",
+        "layout": "Please select menu category",
+        "localIcon": "Please select local icon",
+        "menuName": "Please enter menu title",
+        "menuType": "Please select menu type",
+        "multiTab": "Please select whether to support multiple tabs",
+        "order": "Please enter order",
+        "parent": "Please select parent route",
+        "queryKey": "Please enter route parameter key",
+        "queryValue": "Please enter route parameter value",
+        "redirect": "Please enter redirect target",
+        "roles": "Please enter allowed roles",
+        "routeName": "Please enter route name",
+        "routePath": "Please enter route path",
+        "title": "Please enter menu title",
+        "url": "Please enter iframe URL"
+      },
+      "handle": "Menu Handle",
+      "hideInMenu": "Hide In Menu",
+      "home": "Home",
+      "href": "Href",
+      "i18nKey": "I18n Key",
+      "icon": "Icon",
+      "id": "ID",
+      "keepAlive": "Keep Alive",
+      "layout": "Menu Category",
+      "localIcon": "Local Icon",
+      "menuConfig": "Menu Config",
+      "menuInfo": "Menu",
+      "menuName": "Menu Title",
+      "menuType": "Menu Type",
+      "multiTab": "Multi Tab",
+      "notConfigured": "Not configured",
+      "navigation": "Navigation",
+      "order": "Order",
+      "parent": "Parent Route",
+      "parentId": "Parent Route ID",
+      "query": "Route Params",
+      "redirect": "Redirect",
+      "roles": "Roles",
+      "routeInfo": "Route",
+      "routeName": "Route Name",
+      "routePath": "Route Path",
+      "routePayload": "Route Payload",
+      "title": "Dynamic Menu List",
+      "type": {
+        "directory": "Directory",
+        "divider": "Divider",
+        "group": "Group",
+        "item": "Menu Item",
+        "menu": "Menu"
+      },
+      "url": "Iframe URL"
+    },
+    "role": {
+      "addRole": "Add Role",
+      "buttonAuth": "Button Auth",
+      "editRole": "Edit Role",
+      "form": {
+        "roleCode": "Please enter role code",
+        "roleDesc": "Please enter role description",
+        "roleName": "Please enter role name",
+        "roleStatus": "Please select role status"
+      },
+      "menuAuth": "Menu Auth",
+      "roleCode": "Role Code",
+      "roleDesc": "Role Description",
+      "roleName": "Role Name",
+      "roleStatus": "Role Status",
+      "title": "Role List"
+    },
+    "roleDetail": {
+      "content": "This page is solely for displaying all matched multi-level dynamic routes.",
+      "explain": "Current role detail data is prefetched by the TanStack Router loader and reuses the TanStack Query cache.",
+      "title": "Role Detail"
+    },
+    "user": {
+      "addUser": "Add User",
+      "editUser": "Edit User",
+      "form": {
+        "nickName": "Please enter nick name",
+        "userEmail": "Please enter email",
+        "userGender": "Please select gender",
+        "userName": "Please enter user name",
+        "userPhone": "Please enter phone number",
+        "userRole": "Please select user role",
+        "userStatus": "Please select user status"
+      },
+      "gender": {
+        "female": "Female",
+        "male": "Male"
+      },
+      "nickName": "Nick Name",
+      "title": "User List",
+      "userEmail": "Email",
+      "userGender": "Gender",
+      "userName": "User Name",
+      "userPhone": "Phone Number",
+      "userRole": "User Role",
+      "userStatus": "User Status"
+    },
+    "userDetail": {
+      "content": "The loader allows network requests and lazy-loaded files to be triggered almost simultaneously, enabling the lazy-loaded files to be parsed while waiting for the network request to complete. Once the network request finishes, the page is displayed all at once. Leveraging React's Fiber architecture, if users find the waiting time too long, they can switch to different pages during the wait. This is an advantage of the React framework and React Router's data loader, as it avoids the conventional sequence of: request lazy-loaded file -> parse -> mount -> send network request -> render page -> display, and eliminates the need for manually adding a loading effect.",
+      "explain": "Current detail data is prefetched by the TanStack Router loader and reuses the TanStack Query cache.",
+      "title": "User Detail"
+    }
+  }
+}

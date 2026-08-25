@@ -1,0 +1,60 @@
+.admin-notification-button-unread {
+  animation: admin-notification-swing 2s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes admin-notification-swing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  5%,
+  15% {
+    transform: rotate(15deg);
+  }
+
+  10%,
+  20% {
+    transform: rotate(-10deg);
+  }
+
+  25%,
+  35% {
+    transform: rotate(8deg);
+  }
+
+  30%,
+  40% {
+    transform: rotate(-6deg);
+  }
+
+  45% {
+    transform: rotate(4deg);
+  }
+
+  50% {
+    transform: rotate(-2deg);
+  }
+
+  55% {
+    transform: rotate(0deg);
+  }
+}
+
+.admin-notification-panel-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-notification-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-notification-panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--ant-color-border);
+  border-radius: 3px;
+}
+
+.admin-notification-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ant-color-border-secondary);
+}

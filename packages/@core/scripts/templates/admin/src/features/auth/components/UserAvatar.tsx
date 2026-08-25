@@ -1,6 +1,6 @@
-import { showConfirmModal } from '@skyroc/web-admin-theme';
-import { ButtonIcon } from '@skyroc/web-ui-antd';
-import { SvgIcon } from '@skyroc/web-ui-compose';
+import { showConfirmModal } from '@shell/theme';
+import { ButtonIcon } from '@shell/ui/antd';
+import { SvgIcon } from '@shell/ui/compose';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { Button as AButton, Dropdown as ADropdown, type MenuProps } from 'antd';
 import { memo } from 'react';

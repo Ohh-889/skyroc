@@ -1,0 +1,13 @@
+{
+  "collapse": "折叠菜单",
+  "expand": "展开菜单",
+  "fullscreen": "全屏",
+  "fullscreenExit": "退出全屏",
+  "lang": "切换语言",
+  "notification": "通知",
+  "pin": "固定",
+  "reload": "刷新页面",
+  "themeConfig": "主题配置",
+  "themeSchema": "主题模式",
+  "unpin": "取消固定"
+}

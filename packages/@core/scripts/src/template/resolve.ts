@@ -54,6 +54,12 @@ const SKIP_DIRS = new Set(['.git', '.turbo', 'dist', 'node_modules']);
 const INLINED_DEV_DEPENDENCIES = new Set(['@skyroc/tsconfig']);
 
 /**
+ * shell 源码会被 `sa create-admin` 原样复制进生成项目的 `src/framework`（经 `@shell` 别名访问），
+ * 依赖里不能再指向这个私有 workspace 包。
+ */
+const INLINED_DEPENDENCIES = new Set(['@skyroc/web-admin-shell']);
+
+/**
  * 把 pnpm 的依赖协议解析成 registry 能识别的版本区间。
  *
  * `workspace:*` 走 `^version` 而不是 pnpm publish 时的精确版本——脚手架产出的是一个新项目，它应该能跟着上游收补丁。
@@ -299,7 +305,7 @@ export async function resolveTemplateMeta(options: ResolveTemplateMetaOptions): 
     devDependencies?: Record<string, string>;
   };
 
-  const dependencies = resolveDependencies(packageJson.dependencies, context);
+  const dependencies = resolveDependencies(packageJson.dependencies, context, INLINED_DEPENDENCIES);
   const devDependencies = resolveDependencies(packageJson.devDependencies, context, INLINED_DEV_DEPENDENCIES);
 
   const [tsconfig, oxlintConfig] = await Promise.all([

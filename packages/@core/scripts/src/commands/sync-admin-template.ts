@@ -30,6 +30,12 @@ interface DirectoryDifference {
 
 const TEMPLATE_NAME = 'admin';
 
+/** shell 源码模板目录名，与 templates/admin 平级，保持 admin/ 仍是 apps/admin 的逐字节镜像。 */
+const SHELL_TEMPLATE_NAME = 'admin-shell';
+
+/** shell 里会被复制进生成项目 src/framework 的运行时目录；配置、测试与文档不属于产物。 */
+const SHELL_RUNTIME_DIRS = ['i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
+
 const MAX_REPORTED_DIFFERENCES = 20;
 
 /** 构建产物与工具缓存目录，同步时既不复制也不参与比对。 */
@@ -91,6 +97,23 @@ async function copyAdminSource(sourceDir: string, targetDir: string) {
     },
     recursive: true
   });
+}
+
+async function copyShellSource(shellSourceDir: string, shellTargetDir: string) {
+  await rm(shellTargetDir, { force: true, recursive: true });
+
+  for (const dir of SHELL_RUNTIME_DIRS) {
+    const from = path.join(shellSourceDir, dir);
+
+    if (!existsSync(from)) {
+      throw new Error(`Admin shell source dir is missing: ${from}`);
+    }
+
+    await cp(from, path.join(shellTargetDir, dir), {
+      filter: source => !source.split(path.sep).some(segment => TECHNICAL_DIRS.has(segment)),
+      recursive: true
+    });
+  }
 }
 
 async function generateRouteTree(targetDir: string) {
@@ -199,7 +222,11 @@ async function generateSnapshot(workspaceRoot: string, sourceDir: string, target
     throw new Error(`Admin source is missing: ${sourceDir}`);
   }
 
+  const shellSourceDir = path.join(workspaceRoot, 'packages/web/admin');
+  const shellTargetDir = path.join(path.dirname(targetDir), SHELL_TEMPLATE_NAME);
+
   await copyAdminSource(sourceDir, targetDir);
+  await copyShellSource(shellSourceDir, shellTargetDir);
   await generateRouteTree(targetDir);
 
   const meta = await resolveTemplateMeta({ sourceDir, workspaceRoot });
@@ -235,6 +262,14 @@ async function checkAdminTemplate(workspaceRoot: string, sourceDir: string, targ
     const { metaContent } = await generateSnapshot(workspaceRoot, sourceDir, generatedDir);
 
     const differences = await compareDirectories(targetDir, generatedDir);
+    const shellDifferences = await compareDirectories(
+      path.join(path.dirname(targetDir), SHELL_TEMPLATE_NAME),
+      path.join(tempDir, SHELL_TEMPLATE_NAME)
+    );
+
+    differences.push(
+      ...shellDifferences.map(item => ({ ...item, path: `${SHELL_TEMPLATE_NAME}/${item.path}` }))
+    );
     const currentMetaContent = await readMetaContent(path.join(path.dirname(targetDir), TEMPLATE_META_FILE));
 
     if (currentMetaContent !== metaContent) {

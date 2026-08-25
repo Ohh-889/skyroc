@@ -1,0 +1,8 @@
+{
+  "fixed": {
+    "left": "Fix to left",
+    "right": "Fix to right",
+    "unFixed": "Unfix"
+  },
+  "itemCount": "Total {{total}} items"
+}

@@ -55,6 +55,12 @@ const DROPPED_PACKAGE_SCRIPTS = [
 
 const STANDALONE_REWRITES: StandaloneRewrite[] = [
   {
+    file: 'vite.config.ts',
+    hint: 'vite.config.ts 里没找到 monorepo 的 shellAlias 覆盖块，请同步更新 STANDALONE_REWRITES。',
+    pattern: /,\s*\/\/ monorepo 内 shell 源码[^\n]*\n\s*resolve:\s*\{\s*shellAlias:[^}]*\}/,
+    replacement: ''
+  },
+  {
     file: 'uno.config.ts',
     hint: 'uno.config.ts 的 filesystem 不再是预期的 monorepo 相对路径，请同步更新 STANDALONE_REWRITES。',
     pattern: /filesystem:\s*\[[^\]]*\]/,
@@ -167,6 +173,29 @@ async function applyStandaloneRewrites(targetDir: string) {
 }
 
 /**
+ * shell 源码在生成项目里位于 `src/framework`，monorepo 里位于 `packages/web/admin`。
+ * 展平后的 tsconfig 还带着 monorepo 的映射，这里改写成独立工程的路径。
+ */
+function rewriteShellTsconfig(tsconfig: Record<string, unknown>) {
+  const rewritten = structuredClone(tsconfig);
+  const compilerOptions = (rewritten.compilerOptions ?? {}) as Record<string, unknown>;
+  const paths = compilerOptions.paths as Record<string, string[]> | undefined;
+
+  if (paths?.['@shell/*']) {
+    paths['@shell/*'] = ['./src/framework/*'];
+  }
+
+  if (Array.isArray(rewritten.include)) {
+    // src/framework 已被 `./**/*.ts` 覆盖，monorepo 的 d.ts include 直接去掉。
+    rewritten.include = rewritten.include.filter(
+      entry => typeof entry !== 'string' || !entry.includes('packages/web/admin')
+    );
+  }
+
+  return rewritten;
+}
+
+/**
  * 把同步期解析好的数据套用到生成目录，产出一个脱离 monorepo 也能 install 的应用。
  *
  * 返回需要提醒用户的问题：命中失败的重写规则、以及依赖里仍然指向未发布 workspace 包的部分。这两类问题都不应该静默——
@@ -177,7 +206,7 @@ export async function materializeStandaloneApp(options: MaterializeOptions) {
 
   await materializePackageJson(options);
   await materializeJsonConfig(targetDir, {
-    content: meta.tsconfig,
+    content: rewriteShellTsconfig(meta.tsconfig),
     file: 'tsconfig.json',
     schema: 'https://json.schemastore.org/tsconfig'
   });

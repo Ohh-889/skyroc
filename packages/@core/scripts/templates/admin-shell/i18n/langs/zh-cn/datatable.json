@@ -1,0 +1,8 @@
+{
+  "fixed": {
+    "left": "固定到左侧",
+    "right": "固定到右侧",
+    "unFixed": "取消固定"
+  },
+  "itemCount": "共 {{total}} 条"
+}

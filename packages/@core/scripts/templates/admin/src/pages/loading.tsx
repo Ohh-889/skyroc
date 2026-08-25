@@ -1,6 +1,6 @@
 // @unocss-include
 import { getHsl } from '@skyroc/color';
-import { toggleCssDarkMode } from '@skyroc/web-admin-theme';
+import { toggleCssDarkMode } from '@shell/theme';
 import { clsx } from 'clsx';
 
 import SystemLogo from '@/components/SystemLogo';

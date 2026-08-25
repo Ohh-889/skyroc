@@ -1,4 +1,4 @@
-import { ExceptionBase } from '@skyroc/web-ui-antd';
+import { ExceptionBase } from '@shell/ui/antd';
 
 const NotFound = () => {
   const { t } = useTranslation();

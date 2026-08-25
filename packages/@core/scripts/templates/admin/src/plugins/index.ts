@@ -1,5 +1,5 @@
-import { setupAdminRuntimePlugins } from '@skyroc/web-admin-runtime';
-import type { SetupDayjsOptions, SetupIconifyOfflineOptions, SetupNProgressOptions } from '@skyroc/web-admin-runtime';
+import { setupAdminRuntimePlugins } from '@shell/runtime';
+import type { SetupDayjsOptions, SetupIconifyOfflineOptions, SetupNProgressOptions } from '@shell/runtime';
 
 import { initNProgress } from '@/config';
 

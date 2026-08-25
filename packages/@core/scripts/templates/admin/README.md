@@ -69,25 +69,21 @@
 - 📦 **@skyroc/core-state** - Jotai 状态管理封装，跨平台支持
 - 📝 **@skyroc/logger** - 跨平台日志系统（基于 LogLayer）
 - 🎨 **@skyroc/color** - 色彩工具与调色板生成（OKLCH）
-- 📋 **@skyroc/types** - 全局类型定义
 - 🔧 **@skyroc/utils/type** - 高级 TypeScript 工具类型
 - 💻 **@skyroc/scripts** - 项目 CLI（changelog、release、git-commit 等）
 
 **Web Kit 层（`packages/web/*`）**
 
-- 🏠 **@skyroc/web-admin-layouts** - 后台应用壳（菜单/权限/路由页签/布局状态）
-- 🧩 **@skyroc/materials** - 插槽式 AdminLayout 与多风格 PageTab
-- 🌗 **@skyroc/web-admin-theme** - Ant Design 主题工具（暗黑/系统主题）
-- 🎨 **@skyroc/adapter-antd-theme** - Ant Design OKLCH 主题适配
-- 🌍 **@skyroc/web-admin-i18n** - 后台国际化运行时与语言 UI
+- 🏠 **admin shell**（`packages/web/admin`，经 `@shell/*` 别名引用）- 后台应用壳源码：
+  布局与菜单权限（`@shell/layouts`）、主题与 antd 集成（`@shell/theme`）、国际化
+  （`@shell/i18n`）、通知（`@shell/notification`）、启动插件（`@shell/runtime`）、
+  全局样式（`@shell/styles`）与全局类型。不发布；`sa create-admin` 生成独立项目时
+  整目录复制进 `src/framework`，代码归你所有、可随意修改
 - ⚡️ **@skyroc/web-admin-vite** - Vite 构建辅助与插件预设
-- 🚀 **@skyroc/web-admin-runtime** - 启动插件运行时辅助
-- 🔔 **@skyroc/web-admin-notification** - 通知 Provider / hooks / Header 动作
 - 🛠️ **@skyroc/web-admin-devtools** - 仅开发态的 devtools 面板
-- 🎨 **@skyroc/web-admin-styles** - 全局 CSS 资源
 - 🌈 **@skyroc/web-ui** - 基于 Radix UI + Tailwind 的现代 React 组件库
-- 🎯 **@skyroc/web-ui-antd** - Ant Design 复合组件
-- 🔲 **@skyroc/web-ui-compose** - 基于 UI primitives 的无状态复合组件
+- 🎯 **@shell/ui/antd** - Ant Design 复合组件（admin shell 的一部分）
+- 🔲 **@shell/ui/compose** - 无状态复合组件（admin shell 的一部分）
 
 **共享层**
 

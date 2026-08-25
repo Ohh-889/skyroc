@@ -88,6 +88,10 @@ function getTemplateDir() {
   return path.join(getPackageRoot(), 'templates', TEMPLATE_NAME);
 }
 
+function getShellTemplateDir() {
+  return path.join(getPackageRoot(), 'templates', 'admin-shell');
+}
+
 function getTemplateMetaPath() {
   return path.join(getPackageRoot(), 'templates', TEMPLATE_META_FILE);
 }
@@ -194,8 +198,17 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
   await cp(templateDir, targetDir, { recursive: true });
 
   if (options.workspace) {
+    // workspace 模式共用 packages/web/admin 的那份 shell（vite/tsconfig 里的 @shell 已指向它）。
     await updatePackageJson(targetDir, packageName, description);
   } else {
+    // 独立模式把 shell 源码复制进项目，@shell 走 admin-vite 的默认别名 src/framework。
+    const shellTemplateDir = getShellTemplateDir();
+
+    if (!existsSync(shellTemplateDir)) {
+      throw new Error(`Admin shell template is missing: ${shellTemplateDir}\nRun "pnpm sa sync-admin-template" to regenerate it.`);
+    }
+
+    await cp(shellTemplateDir, path.join(targetDir, 'src', 'framework'), { recursive: true });
     await applyStandaloneMaterialization(targetDir, packageName, description);
   }
 

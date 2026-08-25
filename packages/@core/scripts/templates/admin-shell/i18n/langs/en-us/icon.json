@@ -1,0 +1,13 @@
+{
+  "collapse": "Collapse Menu",
+  "expand": "Expand Menu",
+  "fullscreen": "Fullscreen",
+  "fullscreenExit": "Exit Fullscreen",
+  "lang": "Switch Language",
+  "notification": "Notification",
+  "pin": "Pin",
+  "reload": "Reload Page",
+  "themeConfig": "Theme Configuration",
+  "themeSchema": "Theme Schema",
+  "unpin": "Unpin"
+}
