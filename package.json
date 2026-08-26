@@ -4,7 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
-    "create:admin": "pnpm --filter create-skyroc create:workspace",
+    "create:admin": "pnpm --filter create-skyroc create:workspace --template admin",
+    "create:expo": "pnpm --filter create-skyroc create:workspace --template expo",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "postinstall": "bash scripts/skia-prebuilt.sh --soft --only ios",

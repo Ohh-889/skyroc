@@ -13,11 +13,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { prepareTemplateAssets } from '../src/maintenance/prepare-template-assets';
 import { createAdminTemplate } from '../src/scaffold/create-admin';
+import { createExpoTemplate } from '../src/scaffold/create-expo';
 import { getWorkspaceRoot } from '../src/shared/paths';
 
 const SHELL_DIRS = ['devtools', 'i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
 
 let tempRoot: string;
+let expoStandaloneDir: string;
+let expoWorkspaceDir: string;
 let standaloneDir: string;
 let templateAssetsDir: string;
 let workspaceDir: string;
@@ -54,6 +57,8 @@ async function readJson<T>(filePath: string) {
 
 beforeAll(async () => {
   tempRoot = await mkdtemp(path.join(tmpdir(), 'skyroc-create-admin-smoke-'));
+  expoStandaloneDir = path.join(tempRoot, 'expo-standalone-app');
+  expoWorkspaceDir = path.join(tempRoot, 'expo-workspace-app');
   standaloneDir = path.join(tempRoot, 'standalone-app');
   templateAssetsDir = path.join(tempRoot, 'template-assets');
   workspaceDir = path.join(tempRoot, 'workspace-app');
@@ -61,6 +66,8 @@ beforeAll(async () => {
   await prepareTemplateAssets({ targetDir: templateAssetsDir, workspaceRoot: getWorkspaceRoot() });
   await createAdminTemplate('smoke-standalone', { target: standaloneDir, templateAssetsDir });
   await createAdminTemplate('smoke-workspace', { target: workspaceDir, templateAssetsDir, workspace: true });
+  await createExpoTemplate('expo-standalone', { target: expoStandaloneDir, templateAssetsDir });
+  await createExpoTemplate('expo-workspace', { target: expoWorkspaceDir, templateAssetsDir, workspace: true });
 }, 120_000);
 
 afterAll(async () => {
@@ -95,15 +102,19 @@ describe('standalone 模式', () => {
   });
 
   it('还原 npm 特殊点文件与约定符号链接', async () => {
-    await expect(readFile(path.join(standaloneDir, '.gitignore'), 'utf8')).resolves.toContain('node_modules');
+    const sharedGitignore = await readFile(path.join(getWorkspaceRoot(), '.gitignore'), 'utf8');
+
+    await expect(readFile(path.join(standaloneDir, '.gitignore'), 'utf8')).resolves.toBe(sharedGitignore);
     await expect(readFile(path.join(standaloneDir, '.npmignore'), 'utf8')).resolves.toContain('*.jks');
     await expect(readFile(path.join(standaloneDir, '.npmrc'), 'utf8')).resolves.toContain('registry');
 
     await Promise.all(
-      ([
-        ['.claude/skills/migrate-oxfmt', '../../.agents/skills/migrate-oxfmt'],
-        ['.claude/skills/migrate-oxlint', '../../.agents/skills/migrate-oxlint']
-      ] as const).map(async ([relativePath, target]) => {
+      (
+        [
+          ['.claude/skills/migrate-oxfmt', '../../.agents/skills/migrate-oxfmt'],
+          ['.claude/skills/migrate-oxlint', '../../.agents/skills/migrate-oxlint']
+        ] as const
+      ).map(async ([relativePath, target]) => {
         const fullPath = path.join(standaloneDir, relativePath);
 
         expect((await lstat(fullPath)).isSymbolicLink(), relativePath).toBe(true);
@@ -245,5 +256,68 @@ describe('workspace 模式', () => {
     const viteConfig = await readFile(path.join(workspaceDir, 'vite.config.ts'), 'utf8');
 
     expect(viteConfig).toContain("shellAlias: '../../packages/web/admin'");
+  });
+});
+
+describe('Expo standalone 模式', () => {
+  it('复用共享 root，并排除 Expo 与原生生成物', async () => {
+    expect(existsSync(path.join(expoStandaloneDir, '.agents'))).toBe(true);
+    expect(existsSync(path.join(expoStandaloneDir, '.vscode'))).toBe(true);
+    expect(existsSync(path.join(expoStandaloneDir, 'ios'))).toBe(false);
+    expect(existsSync(path.join(expoStandaloneDir, 'android'))).toBe(false);
+    expect(existsSync(path.join(expoStandaloneDir, '.expo'))).toBe(false);
+    expect(existsSync(path.join(expoStandaloneDir, 'expo-env.d.ts'))).toBe(false);
+    expect(existsSync(path.join(expoStandaloneDir, 'scripts/commands/ios/build-ipa.sh'))).toBe(true);
+    expect(existsSync(path.join(expoStandaloneDir, 'scripts/commands/android/build-apk.sh'))).toBe(true);
+
+    const gitignore = await readFile(path.join(expoStandaloneDir, '.gitignore'), 'utf8');
+    const sharedGitignore = await readFile(path.join(getWorkspaceRoot(), '.gitignore'), 'utf8');
+
+    expect(gitignore).toBe(sharedGitignore);
+    expect(gitignore).toContain('ios/');
+    expect(gitignore).toContain('android/');
+  });
+
+  it('物化依赖、tsconfig、oxlint 与 native-ui 样式路径', async () => {
+    const pkg = await readJson<GeneratedPackageJson>(path.join(expoStandaloneDir, 'package.json'));
+    const all = { ...pkg.dependencies, ...pkg.devDependencies };
+
+    expect(pkg.name).toBe('expo-standalone');
+    expect(pkg.scripts.start).toBe('dotenv -e .env.dev -- expo start');
+    expect(pkg.packageManager).toBeUndefined();
+    expect(pkg.pnpm).toBeUndefined();
+
+    for (const [name, specifier] of Object.entries(all)) {
+      expect(specifier, name).not.toMatch(/^workspace:|^catalog:/);
+    }
+
+    const tsconfig = await readFile(path.join(expoStandaloneDir, 'tsconfig.json'), 'utf8');
+    const oxlint = await readFile(path.join(expoStandaloneDir, '.oxlintrc.json'), 'utf8');
+    const globalCss = await readFile(path.join(expoStandaloneDir, 'src/global.css'), 'utf8');
+
+    expect(tsconfig).not.toContain('"extends"');
+    expect(oxlint).not.toContain('../../internal');
+    expect(globalCss).toContain('@skyroc/native-ui/dist');
+    expect(globalCss).not.toContain('@skyroc/native-ui/src');
+  });
+
+  it('保留现有 Expo 应用标识', async () => {
+    const appConfig = await readFile(path.join(expoStandaloneDir, 'app.config.ts'), 'utf8');
+
+    expect(appConfig).toContain("const BUNDLE_ID = 'com.example.skyroc'");
+    expect(appConfig).toContain("slug: 'expo-templete'");
+    expect(appConfig).toContain('const SCHEME = `expotemplete');
+  });
+});
+
+describe('Expo workspace 模式', () => {
+  it('保留 workspace 协议与源码扫描路径', async () => {
+    const pkg = await readJson<GeneratedPackageJson>(path.join(expoWorkspaceDir, 'package.json'));
+    const globalCss = await readFile(path.join(expoWorkspaceDir, 'src/global.css'), 'utf8');
+
+    expect(pkg.name).toBe('expo-workspace');
+    expect(pkg.dependencies['@skyroc/native-ui']).toBe('workspace:*');
+    expect(pkg.dependencies['react-native-modal']).toBe('catalog:native');
+    expect(globalCss).toContain('@skyroc/native-ui/src');
   });
 });

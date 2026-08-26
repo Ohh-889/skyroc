@@ -1,10 +1,11 @@
 {
   "name": "create-skyroc",
-  "version": "0.2.0",
-  "description": "Scaffold a Skyroc admin app with one command: pnpm create skyroc",
+  "version": "1.0.0",
+  "description": "Scaffold Skyroc Admin and Expo apps with one command: pnpm create skyroc",
   "keywords": [
     "admin",
     "create",
+    "expo",
     "react",
     "scaffold",
     "skyroc",
@@ -46,10 +47,9 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@clack/prompts": "catalog:dev",
     "cac": "catalog:dev",
-    "enquirer": "catalog:dev",
-    "execa": "catalog:dev",
-    "kolorist": "catalog:dev"
+    "execa": "catalog:dev"
   },
   "devDependencies": {
     "@skyroc/config": "workspace:*",

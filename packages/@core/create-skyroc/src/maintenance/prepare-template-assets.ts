@@ -1,4 +1,3 @@
-// oxlint-disable no-console
 // oxlint-disable no-continue
 // oxlint-disable no-await-in-loop
 import { existsSync } from 'node:fs';
@@ -7,7 +6,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { cyan, green } from 'kolorist';
+import * as prompts from '@clack/prompts';
 
 import { getTemplateAssetsDir, getWorkspaceRoot } from '../shared/paths';
 import {
@@ -17,10 +16,12 @@ import {
   ROOT_TEMPLATE_SYMLINKS,
   TECHNICAL_DIRS
 } from '../template-rules';
-import { TEMPLATE_META_FILE, stringifyTemplateMeta } from '../template/meta';
+import { getTemplateMetaFile, stringifyTemplateMeta } from '../template/meta';
 import { resolveTemplateMeta } from '../template/resolve';
 
 export interface PrepareTemplateAssetsOptions {
+  /** Expo 应用源码目录，默认 apps/expo-templete。 */
+  expoSourceDir?: string;
   /** Admin 应用源码目录，默认 apps/admin。 */
   sourceDir?: string;
   /** 生成的模板资产目录，默认 create-skyroc/dist/template-assets。 */
@@ -74,7 +75,7 @@ function assertSourceExists(source: string) {
 }
 
 async function copyRootAssets(workspaceRoot: string, targetDir: string) {
-  const rootTargetDir = path.join(targetDir, 'admin-root');
+  const rootTargetDir = path.join(targetDir, 'root');
   const specialTargetDir = path.join(targetDir, 'root-special');
   const symlinkPaths = new Set<string>(ROOT_TEMPLATE_SYMLINKS.map(item => item.path));
 
@@ -106,6 +107,33 @@ async function copyRootAssets(workspaceRoot: string, targetDir: string) {
       await cp(source, path.join(specialTargetDir, file.assetName));
     })
   );
+}
+
+function isExpoGeneratedPath(relativePath: string) {
+  const [topLevel] = relativePath.split('/');
+
+  return (
+    topLevel === '.expo' ||
+    topLevel === 'android' ||
+    topLevel === 'ios' ||
+    relativePath === '.gitignore' ||
+    relativePath === 'expo-env.d.ts' ||
+    relativePath === 'types/uniwind-types.d.ts'
+  );
+}
+
+async function copyExpoSource(sourceDir: string, targetDir: string) {
+  const expoTargetDir = path.join(targetDir, 'expo');
+
+  assertSourceExists(sourceDir);
+  await cp(sourceDir, expoTargetDir, {
+    filter: source => {
+      const relativePath = normalizeRelativePath(path.relative(sourceDir, source));
+
+      return !isTechnicalGeneratedPath(relativePath) && !isExpoGeneratedPath(relativePath);
+    },
+    recursive: true
+  });
 }
 
 async function copyAdminSource(sourceDir: string, targetDir: string) {
@@ -168,23 +196,32 @@ async function generateRouteTree(adminTargetDir: string) {
 export async function prepareTemplateAssets(options: PrepareTemplateAssetsOptions = {}) {
   const workspaceRoot = path.resolve(options.workspaceRoot || getWorkspaceRoot());
   const sourceDir = path.resolve(options.sourceDir || path.join(workspaceRoot, 'apps/admin'));
+  const expoSourceDir = path.resolve(options.expoSourceDir || path.join(workspaceRoot, 'apps/expo-templete'));
   const targetDir = path.resolve(options.targetDir || getTemplateAssetsDir());
 
   assertSafeTarget(targetDir, workspaceRoot, sourceDir);
+  assertSafeTarget(targetDir, workspaceRoot, expoSourceDir);
   await rm(targetDir, { force: true, recursive: true });
   await mkdir(targetDir, { recursive: true });
 
   await Promise.all([
     copyRootAssets(workspaceRoot, targetDir),
     copyAdminSource(sourceDir, targetDir),
+    copyExpoSource(expoSourceDir, targetDir),
     copyShellSource(workspaceRoot, targetDir)
   ]);
   await generateRouteTree(path.join(targetDir, 'admin'));
 
-  const meta = await resolveTemplateMeta({ sourceDir, workspaceRoot });
-  await writeFile(path.join(targetDir, TEMPLATE_META_FILE), stringifyTemplateMeta(meta));
+  const [meta, expoMeta] = await Promise.all([
+    resolveTemplateMeta({ sourceDir, workspaceRoot }),
+    resolveTemplateMeta({ sourceDir: expoSourceDir, workspaceRoot })
+  ]);
+  await Promise.all([
+    writeFile(path.join(targetDir, getTemplateMetaFile('admin')), stringifyTemplateMeta(meta)),
+    writeFile(path.join(targetDir, getTemplateMetaFile('expo')), stringifyTemplateMeta(expoMeta))
+  ]);
 
-  return { meta, sourceDir, targetDir, workspaceRoot };
+  return { expoMeta, expoSourceDir, meta, sourceDir, targetDir, workspaceRoot };
 }
 
 const isDirectExecution = Boolean(process.argv[1]) && path.resolve(process.argv[1]!) === fileURLToPath(import.meta.url);
@@ -192,7 +229,8 @@ const isDirectExecution = Boolean(process.argv[1]) && path.resolve(process.argv[
 if (isDirectExecution) {
   const result = await prepareTemplateAssets();
 
-  console.log(green('Prepared create-skyroc template assets.'));
-  console.log(`${cyan('source')} ${result.sourceDir}`);
-  console.log(`${cyan('target')} ${result.targetDir}`);
+  prompts.log.success('Prepared create-skyroc template assets.');
+  prompts.log.info(`Admin source: ${result.sourceDir}`);
+  prompts.log.info(`Expo source: ${result.expoSourceDir}`);
+  prompts.log.info(`Target: ${result.targetDir}`);
 }

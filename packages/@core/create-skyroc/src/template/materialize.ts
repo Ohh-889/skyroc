@@ -62,22 +62,6 @@ const STANDALONE_REWRITES: StandaloneRewrite[] = [
   }
 ];
 
-const GITIGNORE = `node_modules
-dist
-dist-ssr
-coverage
-
-.turbo
-.tanstack
-*.tsbuildinfo
-
-.env.local
-.env.*.local
-
-.DS_Store
-*.log
-`;
-
 function createReadme(packageName: string, description: string) {
   return `# ${packageName}
 
@@ -204,7 +188,6 @@ export async function materializeStandaloneApp(options: MaterializeOptions) {
 
   const missedRewrites = await applyStandaloneRewrites(targetDir);
 
-  await writeFile(path.join(targetDir, '.gitignore'), GITIGNORE);
   await writeFile(path.join(targetDir, 'README.md'), createReadme(packageName, description));
 
   return {

@@ -111,6 +111,7 @@ catalogs:
     bumpp: ^10.0.3
     'npm-check-updates': ^17.1.14
     # 配置和执行工具
+    '@clack/prompts': ^1.7.0
     c12: ^2.0.4
     cac: ^6.7.14
     confbox: ^0.1.8

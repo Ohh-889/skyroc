@@ -1,9 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
+import type { TemplateName } from '../templates';
+
 /**
  * 模板物化元数据。
  *
- * `apps/admin` 里满是只有 monorepo 才能解析的写法：`workspace:*`、`catalog:dev`、指向 `internal/` 的 extends
+ * 模板里满是只有 monorepo 才能解析的写法：`workspace:*`、`catalog:dev`、指向 `internal/` 的 extends
  * 链。这些写法在仓库外一律无解，而 create-skyroc 恰恰要在仓库外跑。
  *
  * 解法是把「解析」和「生成」拆到两个时刻：构建 create-skyroc 时在 monorepo 内把所有协议解析成具体值，写进本文件描述的
@@ -24,6 +26,11 @@ export interface TemplateMeta {
 
 /** 构建期生成到 `dist/template-assets` 的物化元数据文件名。 */
 export const TEMPLATE_META_FILE = 'admin.meta.json';
+
+/** 每套模板都有独立 sidecar，避免运行时重新解析 monorepo 协议。 */
+export function getTemplateMetaFile(template: TemplateName) {
+  return `${template}.meta.json`;
+}
 
 /** 按 key 排序，保证同样的输入产出同样的字节，`--check` 才能靠内容比对判断是否落后。 */
 function sortRecord(record: Record<string, string>) {

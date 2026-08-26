@@ -1,13 +1,13 @@
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
+import { cp, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { cyan, green, yellow } from 'kolorist';
 
+import type { PackageManager } from '../shared/package-manager';
 import { getTemplateAssetsDir, getWorkspaceRoot } from '../shared/paths';
-import { ROOT_SPECIAL_FILES, ROOT_TEMPLATE_SYMLINKS } from '../template-rules';
 import { materializeStandaloneApp } from '../template/materialize';
 import { TEMPLATE_META_FILE, readTemplateMeta } from '../template/meta';
+import { copySharedRoot, installDependencies, prepareTargetDirectory, reportMaterializationWarnings } from './shared';
 
 export interface CreateAdminTemplateOptions {
   /** 应用描述，写入 .env 和 package.json。 */
@@ -16,6 +16,8 @@ export interface CreateAdminTemplateOptions {
   force?: boolean;
   /** 生成后执行 pnpm install。 */
   install?: boolean;
+  /** 安装依赖时使用的包管理器。 */
+  packageManager?: PackageManager;
   /** 目标目录，默认 apps/<name>。 */
   target?: string;
   /** 内部测试与仓库命令可覆盖模板资产目录；公开 CLI 不暴露此选项。 */
@@ -69,7 +71,7 @@ export function normalizePackageName(name: string) {
     .toLowerCase();
 
   if (!normalizedName) {
-    throw new Error('Admin app name is required.');
+    throw new Error('App name is required.');
   }
 
   if (!/^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(normalizedName)) {
@@ -96,14 +98,6 @@ export function toStoragePrefix(name: string) {
     .toUpperCase();
 
   return `${prefix || 'ADMIN'}_`;
-}
-
-async function isDirectoryEmpty(dir: string) {
-  if (!existsSync(dir)) return true;
-
-  const files = await readdir(dir);
-
-  return files.length === 0;
 }
 
 export function replaceEnvValue(content: string, key: string, value: string) {
@@ -140,37 +134,6 @@ async function updateEnvFile(options: EnvFileUpdate) {
   await writeFile(envPath, env);
 }
 
-async function installDependencies(cwd: string) {
-  const { execa } = await import('execa');
-  await execa('pnpm', ['install'], { cwd, stdio: 'inherit' });
-}
-
-async function restoreRootSpecialFiles(templateAssetsDir: string, targetDir: string) {
-  await Promise.all(
-    ROOT_SPECIAL_FILES.map(async file => {
-      const source = path.join(templateAssetsDir, 'root-special', file.assetName);
-
-      if (!existsSync(source)) {
-        throw new Error(`Admin root special file is missing: ${source}`);
-      }
-
-      await cp(source, path.join(targetDir, file.target));
-    })
-  );
-}
-
-async function restoreRootSymlinks(targetDir: string) {
-  await Promise.all(
-    ROOT_TEMPLATE_SYMLINKS.map(async entry => {
-      const target = path.join(targetDir, entry.path);
-
-      await mkdir(path.dirname(target), { recursive: true });
-      await rm(target, { force: true, recursive: true });
-      await symlink(entry.target, target);
-    })
-  );
-}
-
 /** 独立模式下把 monorepo 协议物化掉，并把物化过程中发现的隐患打印出来。 */
 async function applyStandaloneMaterialization(options: StandaloneMaterializationOptions) {
   const { description, packageName, targetDir, templateAssetsDir } = options;
@@ -188,17 +151,7 @@ async function applyStandaloneMaterialization(options: StandaloneMaterialization
     targetDir
   });
 
-  for (const missed of missedRewrites) {
-    console.log(yellow(`warning  ${missed}`));
-  }
-
-  if (unpublishedPackages.length > 0) {
-    console.log(
-      yellow(
-        `warning  these workspace packages are marked "private": true and cannot be installed from the registry: ${unpublishedPackages.join(', ')}`
-      )
-    );
-  }
+  reportMaterializationWarnings(missedRewrites, unpublishedPackages);
 }
 
 export async function createAdminTemplate(name: string, options: CreateAdminTemplateOptions = {}) {
@@ -210,29 +163,14 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
   const targetDir = path.resolve(process.cwd(), options.target || path.join('apps', directoryName));
   const templateAssetsDir = path.resolve(options.templateAssetsDir || getTemplateAssetsDir());
   const templateDir = path.join(templateAssetsDir, TEMPLATE_NAME);
-  const rootTemplateDir = path.join(templateAssetsDir, 'admin-root');
 
   if (!existsSync(templateDir)) {
     throw new Error(`Admin template is missing: ${templateDir}. Build create-skyroc to prepare template assets.`);
   }
 
-  if (!existsSync(rootTemplateDir)) {
-    throw new Error(`Admin root template is missing: ${rootTemplateDir}`);
-  }
-
-  if (existsSync(targetDir) && !(await isDirectoryEmpty(targetDir))) {
-    if (!options.force) {
-      throw new Error(`Target directory is not empty: ${targetDir}. Use --force to overwrite it.`);
-    }
-
-    await rm(targetDir, { force: true, recursive: true });
-  }
-
-  await mkdir(path.dirname(targetDir), { recursive: true });
+  await prepareTargetDirectory(targetDir, options.force);
   // 生成目录同时是独立项目根：先复制仓库根级约定，再让 apps/admin 的应用配置覆盖 package.json、README 等同名文件。
-  await cp(rootTemplateDir, targetDir, { recursive: true, verbatimSymlinks: true });
-  await restoreRootSpecialFiles(templateAssetsDir, targetDir);
-  await restoreRootSymlinks(targetDir);
+  await copySharedRoot(templateAssetsDir, targetDir);
   await cp(templateDir, targetDir, { recursive: true });
 
   if (options.workspace) {
@@ -253,18 +191,9 @@ export async function createAdminTemplate(name: string, options: CreateAdminTemp
   await updateEnvFile({ description, storagePrefix, targetDir, title });
 
   if (options.install) {
-    await installDependencies(options.workspace ? getWorkspaceRoot(targetDir) : targetDir);
-  }
-
-  console.log(green(`Created admin app: ${packageName}`));
-  console.log(`${cyan('mode')}   ${options.workspace ? 'workspace (monorepo protocols kept)' : 'standalone'}`);
-  console.log(`${cyan('target')} ${targetDir}`);
-
-  if (!options.install) {
-    console.log(
-      `${cyan('next')}   ${options.workspace ? 'pnpm install (from the workspace root)' : `pnpm --dir ${targetDir} install`}`
+    await installDependencies(
+      options.workspace ? getWorkspaceRoot(targetDir) : targetDir,
+      options.packageManager ?? 'pnpm'
     );
   }
-
-  console.log(yellow('The template starts with a minimal Home page; add product routes under src/pages/(admin).'));
 }
