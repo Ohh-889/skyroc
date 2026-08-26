@@ -6,7 +6,7 @@
 @plugin "@skyroc/tailwind-plugin" {
 }
 
-@source "../../../packages/web/ui/shadcn/src/**/*.{ts,tsx}";
+@source "../../../packages/web/shadcn-ui/src/**/*.{ts,tsx}";
 @source "../../../apps/web-ui-playground/src/app/**/*.{ts,tsx}";
 
 html {

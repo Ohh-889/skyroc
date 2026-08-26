@@ -12,7 +12,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@/*": [
-        "../../packages/web/ui/shadcn/src/*"
+        "../../packages/web/shadcn-ui/src/*"
       ]
     },
     "resolveJsonModule": true,

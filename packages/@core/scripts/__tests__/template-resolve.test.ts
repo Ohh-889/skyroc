@@ -108,8 +108,8 @@ describe('matchesWorkspacePattern', () => {
     ['apps/admin', 'apps/*', true],
     ['apps/admin/src', 'apps/*', false],
     ['packages/@core/scripts', 'packages/@core/*', true],
-    ['packages/web/ui/shadcn', 'packages/web/ui/*', true],
-    ['packages/web/ui', 'packages/web/ui/*', false],
+    ['packages/web/shadcn-ui', 'packages/web/*', true],
+    ['packages/web', 'packages/web/*', false],
     ['a/b/c/d', 'a/**/d', true],
     ['a/d', 'a/**/d', true],
     ['internal/tsconfig', 'internal/*', true]

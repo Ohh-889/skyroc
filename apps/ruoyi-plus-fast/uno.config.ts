@@ -10,7 +10,7 @@ export default defineConfig({
     filesystem: [
       '../../ui-kit/ui',
       '../../packages/web/ui/antd/src/**/*.{ts,tsx}',
-      '../../packages/web/ui/shadcn/src/**/*.{ts,tsx}'
+      '../../packages/web/shadcn-ui/src/**/*.{ts,tsx}'
     ]
   },
   presets: [
