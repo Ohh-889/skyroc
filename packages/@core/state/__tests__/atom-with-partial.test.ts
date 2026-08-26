@@ -1,3 +1,4 @@
+import type { Atom } from 'jotai';
 import { createStore } from 'jotai';
 import { describe, expect, it } from 'vitest';
 import { atomWithPartial } from '../src/utils/atom-with-partial';
@@ -7,6 +8,21 @@ describe('atomWithPartial', () => {
     const store = createStore();
     const testAtom = atomWithPartial({ a: 1, b: 'hello' });
     expect(store.get(testAtom)).toEqual({ a: 1, b: 'hello' });
+  });
+
+  it('内部 atom 标记为私有', () => {
+    const testAtom = atomWithPartial({ value: 1 });
+    let dependency: Atom<unknown> | undefined;
+
+    testAtom.read(
+      <Value>(targetAtom: Atom<Value>) => {
+        dependency = targetAtom as Atom<unknown>;
+        return (targetAtom as Atom<Value> & { init: Value }).init;
+      },
+      { setSelf: () => undefined, signal: new AbortController().signal }
+    );
+
+    expect(dependency?.debugPrivate).toBe(true);
   });
 
   it('部分更新只修改指定字段', () => {

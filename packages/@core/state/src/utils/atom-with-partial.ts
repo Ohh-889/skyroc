@@ -25,6 +25,7 @@ export function atomWithPartial<T extends object>(
   initialValue: T
 ): WritableAtom<T, [PartialUpdater<T>], void> {
   const baseAtom = atom(initialValue);
+  baseAtom.debugPrivate = true;
 
   return atom(
     get => get(baseAtom),

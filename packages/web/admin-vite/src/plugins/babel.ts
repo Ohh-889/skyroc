@@ -4,6 +4,10 @@ import { reactCompilerPreset } from '@vitejs/plugin-react';
 type BabelPluginOptions = NonNullable<Parameters<typeof babel>[0]>;
 type ReactCompilerPresetOptions = NonNullable<Parameters<typeof reactCompilerPreset>[0]>;
 
+const JOTAI_PRESETS: NonNullable<BabelPluginOptions['presets']> = [
+  ['jotai-babel/preset', { customAtomNames: ['atomWithPartial'] }]
+];
+
 export interface SetupAdminBabelPluginOptions extends Omit<BabelPluginOptions, 'presets'> {
   /** Jotai atom debug and refresh preset switch retained from the legacy admin Vite config. */
   jotai?: boolean;
@@ -21,7 +25,7 @@ export function setupAdminBabelPlugin(options: SetupAdminBabelPluginOptions = {}
   return babel({
     ...restOptions,
     presets: [
-      ...(jotai ? ['jotai-babel/preset'] : []),
+      ...(jotai ? JOTAI_PRESETS : []),
       ...presets,
       ...(reactCompiler === false ? [] : [reactCompilerPreset(reactCompiler)])
     ]

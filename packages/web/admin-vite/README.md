@@ -477,7 +477,9 @@ export default defineConfig({
 
 ### Babel
 
-Babel 插件默认启用 Jotai preset 和 React Compiler preset。
+Babel 插件默认启用 Jotai preset 和 React Compiler preset。Jotai preset 会把项目自定义的
+`atomWithPartial` 识别为 atom 工厂，因此调用点变量名会自动写入 `debugLabel`，供 Devtools
+显示并用于开发态热更新缓存。
 
 ```ts
 export default defineConfig({
