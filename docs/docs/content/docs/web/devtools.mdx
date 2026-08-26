@@ -1,20 +1,19 @@
 ---
-title: "@skyroc/web-admin-devtools"
-description: "把 TanStack Query / Router 与 Jotai 三套 DevTools 聚合进一个浮动面板的开发期调试包，生产构建完全不打包"
+title: "@shell/devtools"
+description: "Admin Shell 内置的开发期调试模块，聚合 TanStack Query / Router 与 Jotai 三套 DevTools"
 ---
 
 ## 概述
 
 | 项 | 值 |
 | --- | --- |
-| 包名 | `@skyroc/web-admin-devtools` |
-| 目录 | `packages/web/admin-devtools` |
-| 版本 | 0.1.0 |
+| 模块 | `@shell/devtools` |
+| 目录 | `packages/web/admin/devtools` |
+| 分发 | 随 Admin Shell 源码复制进生成项目，不独立发布 |
 | 依赖 | `@tanstack/react-devtools`、`@tanstack/react-query-devtools`、`@tanstack/react-router-devtools`、`jotai-devtools` |
-| peer | `@tanstack/react-query`、`@tanstack/react-router`、`jotai`、`react`、`react-dom` |
-| 子入口 | `.`、`./jotai` |
+| 入口 | `@shell/devtools`、`@shell/devtools/jotai` |
 
-三套 DevTools 各自都会往页面右下角塞一个浮动按钮。这个包把它们收进一个 `TanStackDevtools` 壳里：Query 和 Router 作为壳的两个 plugin 面板，Jotai 单独渲染但共用同一份主题和一套位置配置。
+三套 DevTools 各自都会往页面右下角塞一个浮动按钮。这个模块把它们收进一个 `TanStackDevtools` 壳里：Query 和 Router 作为壳的两个 plugin 面板，Jotai 单独渲染但共用同一份主题和一套位置配置。
 
 - **Query 面板**：React Query 缓存、请求状态、手动 refetch
 - **Router 面板**：TanStack Router 的路由树、当前匹配、route context
@@ -23,7 +22,7 @@ description: "把 TanStack Query / Router 与 Jotai 三套 DevTools 聚合进一
 ## 使用
 
 ```tsx
-import { AdminDevtools } from '@skyroc/web-admin-devtools';
+import { AdminDevtools } from '@shell/devtools';
 
 <AdminDevtools
   config={{
@@ -113,10 +112,10 @@ interface AdminJotaiDevtoolsTriggerOffset {
 --skyroc-jotai-devtools-trigger-top
 ```
 
-## 子入口 `./jotai`
+## 子入口 `@shell/devtools/jotai`
 
 ```ts
-import '@skyroc/web-admin-devtools/jotai';
+import '@shell/devtools/jotai';
 ```
 
 纯 side-effect，内容就是 `import 'jotai-devtools/utils'`，作用是让之后每个 `atom()` 调用自动带上 `debugLabel`。**必须在任何 atom 创建之前执行**，所以 `apps/admin/src/main.tsx` 把它放在动态 import `./bootstrap` 之前：
@@ -124,7 +123,7 @@ import '@skyroc/web-admin-devtools/jotai';
 ```ts
 async function bootstrap() {
   if (import.meta.env.DEV) {
-    await import('@skyroc/web-admin-devtools/jotai');
+    await import('@shell/devtools/jotai');
   }
 
   await import('./bootstrap');
@@ -138,9 +137,9 @@ async function bootstrap() {
 ```tsx
 // App.tsx
 const AdminDevtools = import.meta.env.DEV
-  ? lazy(() => import('@skyroc/web-admin-devtools').then(mod => ({ default: mod.AdminDevtools })))
+  ? lazy(() => import('@shell/devtools').then(mod => ({ default: mod.AdminDevtools })))
   : (_props: AdminDevtoolsProps) => null;
-//                ^^^ 生产环境是个 no-op 组件，整个包会被 tree-shaking 掉
+//                ^^^ 生产环境是个 no-op 组件，整个模块不会进入生产构建
 
 const Devtools = () => {
   const { darkMode } = useSettingsTheme();
@@ -184,4 +183,4 @@ devtools: {
 - **统一面板**：三套 DevTools 各占一个浮动按钮太挤，收进一个壳里；
 - **可定位**：TanStack 壳和 Jotai 面板各有独立位置，`triggerOffset` 再补一层像素级微调；
 - **零生产成本**：`import.meta.env.DEV` 三元 + `lazy` 动态 import + tree-shaking 三层保护，生产 bundle 里不含任何 devtools 代码；
-- **懒加载到底**：包内部四个 DevTools 组件本身也都是 `lazy()`，Jotai 的样式表也在 lazy 工厂里才 import。
+- **懒加载到底**：模块内部四个 DevTools 组件本身也都是 `lazy()`，Jotai 的样式表也在 lazy 工厂里才 import。

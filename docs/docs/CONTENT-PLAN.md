@@ -102,7 +102,7 @@ content/docs/
 │       overview / quick-start / menus / static-menu-generation /
 │       dynamic-menu-generation / slots / state-tabs / api
 │   theme/                  3 篇    ← web-kit-docs/theme/*（overview / antd-theme / admin-theme）
-│   admin-devtools / admin-notification / admin-styles
+│   devtools / admin-notification / admin-styles
 │                                   ← project-docs/web/*.mdx，已对着源码重写补详
 │   ui.mdx                          新写：一页指路，跳 ui.skyroc.xxx
 │                                   取代 ui-shadcn / ui-antd / ui-compose 三篇
@@ -169,7 +169,7 @@ content/docs/
     "---设计系统---", "ui",
     "---主题---", "tailwind-plugin", "theme",
     "---布局与样式---", "materials", "admin-layouts", "admin-styles",
-    "---运行时---", "admin-runtime", "admin-i18n", "admin-notification", "admin-devtools",
+    "---运行时---", "admin-runtime", "admin-i18n", "admin-notification", "devtools",
     "---构建---", "admin-vite"
   ]
 }
@@ -201,13 +201,13 @@ content/docs/
 | antd-theme      | 106 行             | 477 行                         | 删短版，用详版                             |
 | admin-layouts   | 193 行（1 篇）     | 8 篇 / 1640 行                 | 短版删除，用详版目录                       |
 
-**只有短版、没有详版的 5 篇**（`core/logger`、`core/types`、`web/admin-devtools`、`web/admin-notification`、`web/admin-styles`）搬过来后对着源码重写。
+**只有短版、没有详版的 5 篇**（`core/logger`、`core/types`、`web/devtools`、`web/admin-notification`、`web/admin-styles`）搬过来后对着源码重写。
 
 `web/` 这三篇搬过来时发现短版已经落后于代码，已按源码修正：
 
 | 页面 | 落后点 |
 | --- | --- |
-| `web/admin-devtools` | 缺 `AdminDevtoolsConfig.enabled`；`jotai` 实为 `boolean \| AdminJotaiDevtoolsConfig`（旧文档写成 `\| false`）；`theme` 在根配置而非 `jotai` 内；`triggerOffset` 值是 `number \| string`，补上四个 CSS 变量与默认值判定表 |
+| `web/devtools` | 缺 `AdminDevtoolsConfig.enabled`；`jotai` 实为 `boolean \| AdminJotaiDevtoolsConfig`（旧文档写成 `\| false`）；`theme` 在根配置而非 `jotai` 内；`triggerOffset` 值是 `number \| string`，补上四个 CSS 变量与默认值判定表 |
 | `web/admin-notification` | 整个通知模型写错（`description`/`time`/`data` 实为 `content`/`timestamp`/`meta`，`type` 五种、`priority` 四档）；漏掉 `NotificationStore` 与 `DEFAULT_NOTIFICATION_CONFIG` 两个导出、五个语义快捷方法、优先级排序规则、免打扰、浏览器原生通知与 React 树外投递；依赖表写了并不存在的 `nanoid` |
 | `web/admin-styles` | `global.css` 自己 `@import` 了另外两个文件，旧文档教人三个都引；各文件作用描述过泛，已按实际 CSS 补细节 |
 

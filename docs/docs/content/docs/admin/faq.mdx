@@ -270,11 +270,11 @@ pnpm --filter skyroc-admin build:admin-vite
 
 | 阶段 | 位置 | 作用 |
 | --- | --- | --- |
-| 1 | `main.tsx` | 开发环境先加载 `@skyroc/web-admin-devtools/jotai`，再进入 `bootstrap.tsx`。 |
+| 1 | `main.tsx` | 开发环境先加载 `@shell/devtools/jotai`，再进入 `bootstrap.tsx`。 |
 | 2 | `bootstrap.tsx` | 初始化 theme、layout runtime、plugins、i18n。 |
 | 3 | `App.tsx` | 挂载 Query、Jotai、AdminDevtools、Antd、Notification、Router。 |
 
-如果 devtools、Jotai 面板或 Router 面板异常，先确认是否改动了入口顺序。`@skyroc/web-admin-devtools/jotai` 需要在应用 Provider 挂载前加载，否则 Jotai 调试能力可能拿不到正确上下文。
+如果 devtools、Jotai 面板或 Router 面板异常，先确认是否改动了入口顺序。`@shell/devtools/jotai` 需要在应用 Provider 挂载前加载，否则 Jotai 调试能力可能拿不到正确上下文。
 
 NProgress 也依赖初始化顺序。`globalConfig.nprogress` 读取前，必须先由 `setupAdminPlugins()` 调用 `initNProgress()`。如果提前读取，会触发：
 

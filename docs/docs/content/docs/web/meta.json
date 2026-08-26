@@ -17,7 +17,7 @@
     "admin-runtime",
     "admin-i18n",
     "admin-notification",
-    "admin-devtools",
+    "devtools",
     "---构建---",
     "admin-vite"
   ]

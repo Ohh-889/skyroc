@@ -84,7 +84,7 @@
 写首页前先按下面结构理解当前应用：
 
 - `apps/admin/package.json` 定义应用定位、运行脚本、基础技术栈和 workspace 包依赖。
-- `apps/admin/src/main.tsx` 是浏览器入口；开发环境先加载 `@skyroc/web-admin-devtools/jotai`，再进入应用 bootstrap。
+- `apps/admin/src/main.tsx` 是浏览器入口；开发环境先加载 `@shell/devtools/jotai`，再进入应用 bootstrap。
 - `apps/admin/src/bootstrap.tsx` 是启动编排层；它依次完成主题初始化、布局系统初始化、插件注册、i18n 初始化，最后渲染 `App`。
 - `apps/admin/src/App.tsx` 是 Provider 组合层；它挂载 QueryClient、Jotai、开发工具、Ant Design Provider、通知 Provider、动画能力、路由 Provider 和全局副作用。
 - `apps/admin/src/features/*` 承载 admin 应用内的业务能力封装，例如路由、菜单、权限、表格、表单、Ant Design 适配和全局 effect。

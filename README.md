@@ -110,7 +110,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **跨端内核**   | `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` · `create-skyroc` |
 | **共享与原语** | `@skyroc/hooks` · `@skyroc/form`                                                                                                                                                                          |
-| **Web Kit**    | admin shell（`packages/web/admin`，经 `@shell/*` 别名引用）· `@skyroc/web-admin-vite` · `@skyroc/web-admin-devtools`                                                                                        |
+| **Web Kit**    | admin shell（`packages/web/admin`，经 `@shell/*` 别名引用，包含开发调试面板）· `@skyroc/web-admin-vite`                                                                                                     |
 | **UI**         | `@skyroc/web-ui` · `@skyroc/native-ui`（admin 侧复合组件已并入 shell 的 `ui/`）                                                                                                                           |
 | **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                                          |
 | **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@skyroc/uno-config`                                                                                                                                              |
@@ -147,9 +147,8 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 包名                             | 职责                                                              |
 | -------------------------------- | ----------------------------------------------------------------- |
-| `packages/web/admin`（shell）    | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`sa create-admin` 生成独立项目时整目录复制进 `src/framework` |
+| `packages/web/admin`（shell）    | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、开发调试面板、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`sa create-admin` 生成独立项目时整目录复制进 `src/framework` |
 | `@skyroc/web-admin-vite`         | Vite、React Compiler、TanStack Router、UnoCSS、自动导入等构建预设 |
-| `@skyroc/web-admin-devtools`     | 开发环境的 Router、Query、Jotai 调试面板                          |
 
 ### 🎨 UI 组件库与原生模块
 

@@ -25,7 +25,6 @@ packages/
 ├── web/                    # Web UI、管理端 shell 和构建能力
 │   ├── admin/              # admin shell 源码目录（不发布，@shell/* 别名引用，见下方专节）
 │   ├── admin-vite/         # @skyroc/web-admin-vite，构建预设
-│   ├── admin-devtools/     # @skyroc/web-admin-devtools，dev-only 调试面板
 │   └── ui/
 │       └── shadcn/         # @skyroc/web-ui
 └── native/                 # React Native / Expo 专属能力
@@ -75,7 +74,7 @@ packages/
 
 ## admin shell（`web/admin/`）
 
-后台 shell（布局、主题、i18n、通知、运行时、全局样式、全局类型，以及 admin 侧的
+后台 shell（布局、主题、i18n、通知、运行时、开发调试面板、全局样式、全局类型，以及 admin 侧的
 复合组件 `ui/compose` 与 `ui/antd`）**不是普通包**：
 
 - 它的 `package.json` 只是给 pnpm 的依赖清单（`private: true`，永不发布），

@@ -108,7 +108,7 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 | [`@skyroc/web-admin-runtime`](/docs/web/admin-runtime) | `web/admin-runtime` | 启动期插件 helper：Dayjs、Iconify、NProgress、更新检测 | `utils` |
 | [`@skyroc/web-admin-i18n`](/docs/web/admin-i18n) | `web/admin-i18n` | 后台 i18n 运行时与语言切换 UI，语言 JSON 也在这里 | `core-state`、`web-ui-antd` |
 | [`@skyroc/web-admin-notification`](/docs/web/admin-notification) | `web/admin-notification` | 通知 Provider、hooks、通知面板、header action | `utils`、`web-ui-antd`、`web-ui-compose` |
-| [`@skyroc/web-admin-devtools`](/docs/web/admin-devtools) | `web/admin-devtools` | 仅开发环境的调试面板 | — |
+| [`@shell/devtools`](/docs/web/devtools) | `web/admin/devtools` | Admin Shell 内置的开发调试模块 | — |
 
 **构建**
 
@@ -182,11 +182,11 @@ API 参考按平台分成三处，下面的总表每一行都直接指过去：
 
 所以「后台壳」不是一个包，而是一条装配链。定位布局问题时按这条链自上而下排查。
 
-### 零内部依赖的包（13）
+### 零内部依赖的包（12）
 
 这些包不依赖任何其他 workspace 包，可以单独理解、测试和发布：
 
-`types`、`color`、`core-state`、`logger`、`scripts`、`type-utils`、`ui-types`、`hooks`、`web-admin-devtools`、`web-admin-styles`、`web-admin-vite`、`tsconfig`、`config`
+`types`、`color`、`core-state`、`logger`、`scripts`、`type-utils`、`ui-types`、`hooks`、`web-admin-styles`、`web-admin-vite`、`tsconfig`、`config`
 
 ### 工程化底座（devDependency）
 

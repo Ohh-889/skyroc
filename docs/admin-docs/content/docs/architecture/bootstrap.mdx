@@ -61,7 +61,7 @@ index.html
 ```ts
 async function bootstrap() {
   if (import.meta.env.DEV) {
-    await import('@skyroc/web-admin-devtools/jotai');
+    await import('@shell/devtools/jotai');
   }
 
   await import('./bootstrap');
@@ -70,7 +70,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-开发环境会先加载 `@skyroc/web-admin-devtools/jotai`，再进入真正的应用启动。这样 Jotai devtools 的接入发生在应用 atom 被 Provider 使用之前。生产环境不会加载这段 devtools 入口。
+开发环境会先加载 `@shell/devtools/jotai`，再进入真正的应用启动。这样 Jotai devtools 的接入发生在应用 atom 被 Provider 使用之前。生产环境不会加载这段 devtools 入口。
 
 不要把主题、路由、请求、布局、权限等应用初始化直接塞进 `main.tsx`。这里应该保持为“环境相关入口加载层”。
 
@@ -254,7 +254,7 @@ const App = () => (
 | 现象 | 先检查 |
 | --- | --- |
 | 页面完全不挂载 | `index.html` 是否存在 `#app`，`main.tsx` 是否成功导入 `bootstrap.tsx`。 |
-| 开发环境 devtools 不出现 | `import.meta.env.DEV` 是否为 true，`main.tsx` 是否先加载了 `@skyroc/web-admin-devtools/jotai`，`App.tsx` 中 `AdminDevtools` 是否被 lazy 加载。 |
+| 开发环境 devtools 不出现 | `import.meta.env.DEV` 是否为 true，`main.tsx` 是否先加载了 `@shell/devtools/jotai`，`App.tsx` 中 `AdminDevtools` 是否被 lazy 加载。 |
 | 主题或暗色模式初始值不对 | `setupTheme` 是否在 render 前执行，生产环境缓存和 `BUILD_TIME` 是否符合预期。 |
 | 菜单或 tabs 异常 | `setupAdminLayouts` 的 `routeMode`、`routeTree`、`menuCategories`、`loadDynamicRoutes` 和 `storage` 是否正确。 |
 | 登录后菜单没有生成 | `useAuth().initAuth()` 是否成功拿到用户信息，`initMenus(data)` 是否执行。 |
