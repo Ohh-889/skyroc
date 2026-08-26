@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/web-admin-vite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Configurable Vite build helpers and plugin presets for Skyroc admin applications.",
   "keywords": [
     "admin",

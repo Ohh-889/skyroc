@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/core-state",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Jotai state management wrapper - Cross-platform support",
   "keywords": [
