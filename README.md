@@ -154,7 +154,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 包名                     | 位置                        | 职责                                                           |
 | ------------------------ | --------------------------- | -------------------------------------------------------------- |
-| `@skyroc/web-ui`         | `packages/web/ui/shadcn`    | 基于 Radix UI 与 Tailwind CSS 的 Web 基础组件和 primitives API |
+| `@skyroc/web-ui`         | `packages/web/shadcn-ui`    | 基于 Radix UI 与 Tailwind CSS 的 Web 基础组件和 primitives API |
 | `@skyroc/native-ui`      | `packages/native/ui`        | 基于 React Native、Expo 与 Uniwind 的 Native 组件库            |
 | `@skyroc/expo-bluetooth` | `packages/native/bluetooth` | 蓝牙可用性的 Expo 模块封装：状态查询、权限申请与开启引导       |
 | `@skyroc/expo-wechat`    | `packages/native/wechat`    | 微信开放平台 SDK 的 Expo 模块封装：登录授权与九种分享          |

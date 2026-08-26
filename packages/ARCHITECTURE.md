@@ -25,8 +25,7 @@ packages/
 ├── web/                    # Web UI、管理端 shell 和构建能力
 │   ├── admin/              # admin shell 源码目录（不发布，@shell/* 别名引用，见下方专节）
 │   ├── admin-vite/         # @skyroc/web-admin-vite，构建预设
-│   └── ui/
-│       └── shadcn/         # @skyroc/web-ui
+│   └── shadcn-ui/          # @skyroc/web-ui
 └── native/                 # React Native / Expo 专属能力
     └── ui/                 # @skyroc/native-ui
 ```

@@ -22,7 +22,6 @@ packages:
   - 'packages/*'
   - 'packages/@core/*'
   - 'packages/web/*'
-  - 'packages/web/ui/*'
   - 'packages/native/*'
   - 'packages/native/ui/*'
   - 'packages/primitives/*'
@@ -32,7 +31,7 @@ packages:
   - 'internal/*'
 ```
 
-注意 glob 是**逐层显式声明**的（`packages/@core/*` 与 `packages/web/ui/*` 各算一层），因为目录有嵌套，单个 `packages/**` 无法精确匹配到「包」这一层。
+注意 glob 是**逐层显式声明**的（`packages/@core/*` 是嵌套目录，因此需要单独列出；`packages/web/*` 已覆盖 Web 包），避免用单个 `packages/**` 模糊匹配所有层级。
 
 ### 包之间的引用
 
