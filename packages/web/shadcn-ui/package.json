@@ -19,7 +19,7 @@
     "ui",
     "ui-library"
   ],
-  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/ui/shadcn",
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/web/shadcn-ui",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
   },
@@ -31,7 +31,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
-    "directory": "packages/web/ui/shadcn"
+    "directory": "packages/web/shadcn-ui"
   },
   "files": [
     "dist",

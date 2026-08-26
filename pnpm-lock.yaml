@@ -497,7 +497,7 @@ importers:
         version: link:../../packages/@core/utils
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       '@tanstack/react-devtools':
         specifier: catalog:web
         version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
@@ -678,7 +678,7 @@ importers:
         version: link:../../packages/@core/utils
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       '@tanstack/react-devtools':
         specifier: catalog:web
         version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
@@ -1197,7 +1197,7 @@ importers:
         version: link:../../packages/@core/utils
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       '@tanstack/react-devtools':
         specifier: catalog:web
         version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
@@ -1360,7 +1360,7 @@ importers:
         version: link:../../packages/@core/utils
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       async-validator:
         specifier: ^4.2.5
         version: 4.2.5
@@ -1533,7 +1533,7 @@ importers:
     dependencies:
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       cnfast:
         specifier: ^0.1.0
         version: 0.1.0
@@ -1739,7 +1739,7 @@ importers:
         version: 1.1.5(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../../packages/web/ui/shadcn
+        version: link:../../packages/web/shadcn-ui
       ai:
         specifier: ^6.0.168
         version: 6.0.191(zod@4.4.3)
@@ -2485,7 +2485,7 @@ importers:
         version: link:../../@core/utils
       '@skyroc/web-ui':
         specifier: workspace:*
-        version: link:../ui/shadcn
+        version: link:../shadcn-ui
       '@tanstack/react-devtools':
         specifier: catalog:web
         version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
@@ -2678,7 +2678,7 @@ importers:
         specifier: catalog:core
         version: 8.0.14(@types/node@24.10.13)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0)
 
-  packages/web/ui/shadcn:
+  packages/web/shadcn-ui:
     dependencies:
       '@formkit/auto-animate':
         specifier: ^0.9.0
@@ -2778,13 +2778,13 @@ importers:
         version: 1.2.2(@types/react@19.2.18)(react@19.1.0)
       '@skyroc/color':
         specifier: workspace:*
-        version: link:../../../@core/color
+        version: link:../../@core/color
       '@skyroc/form':
         specifier: workspace:*
-        version: link:../../../primitives/filed-form
+        version: link:../../primitives/filed-form
       '@skyroc/utils':
         specifier: workspace:*
-        version: link:../../../@core/utils
+        version: link:../../@core/utils
       '@tanstack/react-virtual':
         specifier: ^3.13.24
         version: 3.13.24(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2818,13 +2818,13 @@ importers:
     devDependencies:
       '@skyroc/config':
         specifier: workspace:*
-        version: link:../../../../internal/config
+        version: link:../../../internal/config
       '@skyroc/tailwind-plugin':
         specifier: workspace:*
-        version: link:../../../@core/tailwind-plugin
+        version: link:../../@core/tailwind-plugin
       '@skyroc/tsconfig':
         specifier: workspace:*
-        version: link:../../../../internal/tsconfig
+        version: link:../../../internal/tsconfig
       '@soybeanjs/eslint-config':
         specifier: catalog:dev
         version: 1.7.5(@typescript-eslint/utils@8.67.0(eslint@10.2.0(jiti@2.7.0))(typescript@6.0.3))(@unocss/eslint-config@66.6.0(eslint@10.2.0(jiti@2.7.0))(typescript@6.0.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-react-hooks@7.0.1(eslint@10.2.0(jiti@2.7.0)))(eslint-plugin-react-refresh@0.4.26(eslint@10.2.0(jiti@2.7.0)))(eslint-plugin-react@7.37.5(eslint@10.2.0(jiti@2.7.0)))(eslint@10.2.0(jiti@2.7.0))(svelte-eslint-parser@1.5.0)(typescript@6.0.3)

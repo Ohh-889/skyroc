@@ -3,7 +3,6 @@ packages:
   - 'packages/*'
   - 'packages/@core/*'
   - 'packages/web/*'
-  - 'packages/web/ui/*'
   - 'packages/native/*'
   - 'packages/native/ui/*'
   - 'packages/primitives/*'
