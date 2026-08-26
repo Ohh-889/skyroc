@@ -13,7 +13,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { createAdminTemplate } from '../src/commands/create-admin';
 
-const SHELL_DIRS = ['i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
+const SHELL_DIRS = ['devtools', 'i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
 
 let tempRoot: string;
 let standaloneDir: string;
@@ -76,6 +76,8 @@ describe('standalone 模式', () => {
     }
 
     // 抽查 @shell/* 说明符的落点真实存在
+    expect(existsSync(path.join(standaloneDir, 'src/framework/devtools/index.ts'))).toBe(true);
+    expect(existsSync(path.join(standaloneDir, 'src/framework/devtools/jotai.ts'))).toBe(true);
     expect(existsSync(path.join(standaloneDir, 'src/framework/theme/index.ts'))).toBe(true);
     expect(existsSync(path.join(standaloneDir, 'src/framework/layouts/index.ts'))).toBe(true);
     expect(existsSync(path.join(standaloneDir, 'src/framework/styles/global.css'))).toBe(true);
@@ -98,12 +100,9 @@ describe('standalone 模式', () => {
 
     expect(all['@skyroc/web-admin-shell']).toBeUndefined();
 
-    // 旧的六个 admin 包一个都不该出现（vite / devtools 是仍走 registry 的例外）
+    // 已内联的 admin shell 模块不应继续以独立包出现，只有构建预设仍走 registry。
     const legacy = Object.keys(all).filter(
-      name =>
-        name.startsWith('@skyroc/web-admin-') &&
-        name !== '@skyroc/web-admin-vite' &&
-        name !== '@skyroc/web-admin-devtools'
+      name => name.startsWith('@skyroc/web-admin-') && name !== '@skyroc/web-admin-vite'
     );
 
     expect(legacy).toEqual([]);

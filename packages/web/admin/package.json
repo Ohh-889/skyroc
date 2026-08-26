@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Admin shell source (layouts / theme / i18n / notification / runtime / styles / ui / types). Not published: consumed via the @shell/* alias in-repo, and copied into generated projects by `sa create-admin`.",
+  "description": "Admin shell source (devtools / layouts / theme / i18n / notification / runtime / styles / ui / types). Not published: consumed via the @shell/* alias in-repo, and copied into generated projects by `sa create-admin`.",
   "sideEffects": [
     "**/*.css"
   ],
@@ -24,8 +24,11 @@
     "@skyroc/hooks": "workspace:*",
     "@skyroc/utils": "workspace:*",
     "@skyroc/web-ui": "workspace:*",
+    "@tanstack/react-devtools": "catalog:web",
     "@tanstack/react-query": "catalog:core",
+    "@tanstack/react-query-devtools": "catalog:web",
     "@tanstack/react-router": "catalog:web",
+    "@tanstack/react-router-devtools": "catalog:web",
     "ahooks": "catalog:utils",
     "antd": "catalog:web",
     "clsx": "catalog:utils",
@@ -33,6 +36,7 @@
     "defu": "catalog:utils",
     "i18next": "catalog:i18n",
     "jotai": "catalog:core",
+    "jotai-devtools": "catalog:web",
     "motion": "catalog:ui-shared",
     "nprogress": "catalog:ui-shared",
     "react": "catalog:core",

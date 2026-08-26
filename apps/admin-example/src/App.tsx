@@ -1,5 +1,5 @@
 import { JotaiProvider, globalStore } from '@skyroc/core-state';
-import type { AdminDevtoolsProps } from '@skyroc/web-admin-devtools';
+import type { AdminDevtoolsProps } from '@shell/devtools';
 import { reactI18nextInstance } from '@shell/i18n';
 import { NotificationProvider } from '@shell/notification';
 import { useSettingsTheme } from '@shell/theme';
@@ -26,7 +26,7 @@ interface ProviderProps {
 
 // 开发环境才加载 Devtools，生产环境会被 tree-shaking 移除
 const AdminDevtools = import.meta.env.DEV
-  ? lazy(() => import('@skyroc/web-admin-devtools').then(mod => ({ default: mod.AdminDevtools })))
+  ? lazy(() => import('@shell/devtools').then(mod => ({ default: mod.AdminDevtools })))
   : (_props: AdminDevtoolsProps) => null;
 
 

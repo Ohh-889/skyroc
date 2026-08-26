@@ -57,7 +57,7 @@ const ROOT_TEMPLATE_EXCLUDED_FILES = new Set(['.oxlintrc.json']);
 const SHELL_TEMPLATE_NAME = 'admin-shell';
 
 /** Shell 里会被复制进生成项目 src/framework 的运行时目录；配置、测试与文档不属于产物。 */
-const SHELL_RUNTIME_DIRS = ['i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
+const SHELL_RUNTIME_DIRS = ['devtools', 'i18n', 'layouts', 'notification', 'runtime', 'styles', 'theme', 'types', 'ui'];
 
 const MAX_REPORTED_DIFFERENCES = 20;
 

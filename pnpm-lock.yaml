@@ -495,18 +495,24 @@ importers:
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../packages/@core/utils
-      '@skyroc/web-admin-devtools':
-        specifier: workspace:*
-        version: link:../../packages/web/admin-devtools
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
+      '@tanstack/react-devtools':
+        specifier: catalog:web
+        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.1.0)
+      '@tanstack/react-query-devtools':
+        specifier: catalog:web
+        version: 5.91.3(@tanstack/react-query@5.90.21(react@19.1.0))(react@19.1.0)
       '@tanstack/react-router':
         specifier: catalog:web
         version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-router-devtools':
+        specifier: catalog:web
+        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ahooks:
         specifier: catalog:utils
         version: 3.9.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -528,6 +534,9 @@ importers:
       jotai:
         specifier: catalog:core
         version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+      jotai-devtools:
+        specifier: catalog:web
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -667,18 +676,24 @@ importers:
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../packages/@core/utils
-      '@skyroc/web-admin-devtools':
-        specifier: workspace:*
-        version: link:../../packages/web/admin-devtools
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
+      '@tanstack/react-devtools':
+        specifier: catalog:web
+        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.1.0)
+      '@tanstack/react-query-devtools':
+        specifier: catalog:web
+        version: 5.91.3(@tanstack/react-query@5.90.21(react@19.1.0))(react@19.1.0)
       '@tanstack/react-router':
         specifier: catalog:web
         version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-router-devtools':
+        specifier: catalog:web
+        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@uiw/react-md-editor':
         specifier: ^4.1.1
         version: 4.1.1(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -727,6 +742,9 @@ importers:
       jotai:
         specifier: catalog:core
         version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+      jotai-devtools:
+        specifier: catalog:web
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
       jsbarcode:
         specifier: ^3.12.3
         version: 3.12.3
@@ -1177,18 +1195,24 @@ importers:
       '@skyroc/utils':
         specifier: workspace:*
         version: link:../../packages/@core/utils
-      '@skyroc/web-admin-devtools':
-        specifier: workspace:*
-        version: link:../../packages/web/admin-devtools
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/ui/shadcn
+      '@tanstack/react-devtools':
+        specifier: catalog:web
+        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.1.0)
+      '@tanstack/react-query-devtools':
+        specifier: catalog:web
+        version: 5.91.3(@tanstack/react-query@5.90.21(react@19.1.0))(react@19.1.0)
       '@tanstack/react-router':
         specifier: catalog:web
         version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-router-devtools':
+        specifier: catalog:web
+        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@wangeditor/editor':
         specifier: ^5.1.23
         version: 5.1.23
@@ -1216,6 +1240,9 @@ importers:
       jotai:
         specifier: catalog:core
         version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+      jotai-devtools:
+        specifier: catalog:web
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2459,12 +2486,21 @@ importers:
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../ui/shadcn
+      '@tanstack/react-devtools':
+        specifier: catalog:web
+        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.1.0)
+      '@tanstack/react-query-devtools':
+        specifier: catalog:web
+        version: 5.91.3(@tanstack/react-query@5.90.21(react@19.1.0))(react@19.1.0)
       '@tanstack/react-router':
         specifier: catalog:web
         version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-router-devtools':
+        specifier: catalog:web
+        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ahooks:
         specifier: catalog:utils
         version: 3.9.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2486,6 +2522,9 @@ importers:
       jotai:
         specifier: catalog:core
         version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
+      jotai-devtools:
+        specifier: catalog:web
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2541,61 +2580,6 @@ importers:
       vitest:
         specifier: catalog:dev
         version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@26.2.0)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@2.7.0)(jsdom@28.1.0(@noble/hashes@1.8.0))(lightningcss@1.30.1)(msw@2.12.10(@types/node@26.2.0)(typescript@6.0.3))(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0)
-
-  packages/web/admin-devtools:
-    dependencies:
-      '@tanstack/react-devtools':
-        specifier: catalog:web
-        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
-      '@tanstack/react-query-devtools':
-        specifier: catalog:web
-        version: 5.91.3(@tanstack/react-query@5.90.21(react@19.1.0))(react@19.1.0)
-      '@tanstack/react-router-devtools':
-        specifier: catalog:web
-        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      jotai-devtools:
-        specifier: catalog:web
-        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
-    devDependencies:
-      '@skyroc/config':
-        specifier: workspace:*
-        version: link:../../../internal/config
-      '@skyroc/tsconfig':
-        specifier: workspace:*
-        version: link:../../../internal/tsconfig
-      '@tanstack/react-query':
-        specifier: catalog:core
-        version: 5.90.21(react@19.1.0)
-      '@tanstack/react-router':
-        specifier: catalog:web
-        version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@types/react':
-        specifier: catalog:dev
-        version: 19.2.18
-      '@types/react-dom':
-        specifier: catalog:dev
-        version: 19.2.4(@types/react@19.2.18)
-      jotai:
-        specifier: catalog:core
-        version: 2.20.3(@babel/core@7.29.0)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.1.0)
-      oxlint:
-        specifier: catalog:dev
-        version: 1.60.0
-      react:
-        specifier: catalog:core
-        version: 19.1.0
-      react-dom:
-        specifier: catalog:core
-        version: 19.1.0(react@19.1.0)
-      rimraf:
-        specifier: catalog:dev
-        version: 6.1.3
-      tsdown:
-        specifier: catalog:dev
-        version: 0.18.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)(typescript@6.0.3)
-      typescript:
-        specifier: catalog:core
-        version: 6.0.3
 
   packages/web/admin-vite:
     dependencies:
@@ -11229,6 +11213,7 @@ packages:
 
   crypto-js@4.2.0:
     resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    deprecated: Active development of CryptoJS has been discontinued. This library is no longer maintained.
 
   css-in-js-utils@3.1.0:
     resolution: {integrity: sha512-fJAcud6B3rRu+KHYk+Bwf+WFL2MDCJJ1XG9x137tJQ0xYxor7XziQtuGFbWNdqrvF4Tk26O3H73nfVqXt/fW1A==}

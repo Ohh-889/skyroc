@@ -1,0 +1,27 @@
+.skyroc-admin-jotai-devtools[data-position='bottom-left'] .jotai-devtools-trigger-button {
+  bottom: var(--skyroc-jotai-devtools-trigger-bottom, 0.2rem) !important;
+  left: var(--skyroc-jotai-devtools-trigger-left, 0.2rem) !important;
+  right: var(--skyroc-jotai-devtools-trigger-right, unset) !important;
+  top: var(--skyroc-jotai-devtools-trigger-top, unset) !important;
+}
+
+.skyroc-admin-jotai-devtools[data-position='bottom-right'] .jotai-devtools-trigger-button {
+  bottom: var(--skyroc-jotai-devtools-trigger-bottom, 0.2rem) !important;
+  left: var(--skyroc-jotai-devtools-trigger-left, unset) !important;
+  right: var(--skyroc-jotai-devtools-trigger-right, 0.2rem) !important;
+  top: var(--skyroc-jotai-devtools-trigger-top, unset) !important;
+}
+
+.skyroc-admin-jotai-devtools[data-position='top-left'] .jotai-devtools-trigger-button {
+  bottom: var(--skyroc-jotai-devtools-trigger-bottom, unset) !important;
+  left: var(--skyroc-jotai-devtools-trigger-left, 0.2rem) !important;
+  right: var(--skyroc-jotai-devtools-trigger-right, unset) !important;
+  top: var(--skyroc-jotai-devtools-trigger-top, 0.2rem) !important;
+}
+
+.skyroc-admin-jotai-devtools[data-position='top-right'] .jotai-devtools-trigger-button {
+  bottom: var(--skyroc-jotai-devtools-trigger-bottom, unset) !important;
+  left: var(--skyroc-jotai-devtools-trigger-left, unset) !important;
+  right: var(--skyroc-jotai-devtools-trigger-right, 0.2rem) !important;
+  top: var(--skyroc-jotai-devtools-trigger-top, 0.2rem) !important;
+}

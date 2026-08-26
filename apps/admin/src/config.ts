@@ -1,4 +1,4 @@
-import type { AdminDevtoolsConfig } from '@skyroc/web-admin-devtools';
+import type { AdminDevtoolsConfig } from '@shell/devtools';
 import { defaultThemeSettings } from '@shell/theme';
 import type { NProgress } from 'nprogress';
 
