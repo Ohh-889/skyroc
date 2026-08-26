@@ -22,8 +22,6 @@ description: "Skyroc Admin CLI 工具集，提供 changelog 生成、版本发�
 - `sa changelog` — 单独生成/更新 CHANGELOG.md
 - `sa cleanup` — 批量删除 dist、node_modules、lock 文件等构建产物
 - `sa update-pkg` — 一键检测并更新所有依赖版本
-- `sa create-admin` — 从内置模板生成一个新的 Skyroc admin 应用
-- `sa sync-admin-template` — 用 `apps/admin` 回灌内置模板
 
 ## 安装
 
@@ -66,14 +64,12 @@ pnpm sa cleanup
 | `sa git-commit-verify` | 校验当前 git 提交信息是否符合规范（用于 git hook） |
 | `sa release` | 版本发布：升级版本号 → 生成 changelog → commit + tag + push |
 | `sa update-pkg` | 检测并升级 package.json 中的依赖版本 |
-| `sa create-admin <name>` | 从内置模板生成一个新的 admin 应用 |
-| `sa sync-admin-template` | 把 `apps/admin` 的改动同步回内置模板 |
 
 裸跑 `sa`（不带任何子命令）会输出帮助，而不是静默退出。
 
 ## 全局选项
 
-以下选项注册在 CLI 根上，供上面表格中前六条命令使用（`create-admin` / `sync-admin-template` 有各自的专属选项）：
+以下选项注册在 CLI 根上，供上述命令使用：
 
 | 选项 | 简写 | 说明 | 默认值 |
 | --- | --- | --- | --- |
@@ -248,57 +244,6 @@ pnpm sa update-pkg && pnpm install
 
 ---
 
-### `sa create-admin <name>`
-
-从包内置的 admin 模板（`packages/@core/scripts/templates/admin`）生成一个新的应用。
-
-```bash
-# 生成到 apps/shop-admin
-pnpm sa create-admin shop-admin
-
-# 指定目录、标题与描述，生成后自动安装依赖
-pnpm sa create-admin shop-admin \
-  --target apps/shop \
-  --title "商城后台" \
-  --description "Shop management console" \
-  --install
-```
-
-| 选项 | 说明 |
-| --- | --- |
-| `--target <dir>` | 目标目录，默认 `apps/<name>` |
-| `--title <title>` | 应用标题，写入 `.env` 的 `VITE_APP_TITLE` |
-| `--description <desc>` | 应用描述，写入 `package.json` 与 `.env` 的 `VITE_APP_DESC` |
-| `--force` | 目标目录已存在时先删除再生成 |
-| `--install` | 生成后执行 `pnpm install` |
-| `--workspace` | 保留模板里的 monorepo 写法 |
-
-<Callout>
-  `--workspace` 决定生成产物能不能离开本仓库。默认**不**开启：模板里的 `workspace:*`、`catalog:`
-  以及指向 `internal/` 的 tsconfig `extends` 会被物化成 registry 能解析的具体值，生成的应用可以单独拷走。
-  只有当新应用要留在本 monorepo 里时才加上它。
-</Callout>
-
----
-
-### `sa sync-admin-template`
-
-反方向：把 `apps/admin` 的改动回灌到内置模板，让 `create-admin` 生成的应用不落后于主应用。
-
-```bash
-# 只检查模板是否落后，不写文件（适合放进 CI）
-pnpm sa sync-admin-template --check
-
-# 实际同步
-pnpm sa sync-admin-template
-```
-
-| 选项 | 说明 |
-| --- | --- |
-| `--check` | 只报告差异（新增 / 修改 / 删除），不写文件 |
-| `--source <dir>` | 源 admin 应用目录，默认 `apps/admin` |
-| `--target <dir>` | 目标模板目录，默认 `packages/@core/scripts/templates/admin` |
-
 ## 配置
 
 `@skyroc/scripts` 通过 [c12](https://github.com/unjs/c12) 加载配置，支持以下配置文件（位于项目根目录）：
@@ -407,22 +352,15 @@ pnpm sa git-commit --lang zh-cn
 ```
 packages/@core/scripts/
 ├── bin.ts                        # bin 入口，指向 src/cli.ts
-├── templates/admin/              # create-admin 用的内置模板
 ├── src/
 │   ├── cli.ts                    # setupCli()：注册所有命令，解析 argv
 │   ├── index.ts                  # 库入口：defineConfig + 各模块 re-export
 │   ├── commands/
 │   │   ├── changelog.ts          # genChangelog()
 │   │   ├── cleanup.ts            # cleanup()
-│   │   ├── create-admin.ts       # createAdminTemplate()
 │   │   ├── git-commit.ts         # gitCommit() / gitCommitVerify()
 │   │   ├── release.ts            # release()
-│   │   ├── sync-admin-template.ts# syncAdminTemplate()
 │   │   └── update-pkg.ts         # updatePkg()
-│   ├── template/                 # 模板解析 / 物化 / 元信息
-│   │   ├── resolve.ts
-│   │   ├── materialize.ts        # 把 workspace: / catalog: 换成具体版本
-│   │   └── meta.ts
 │   ├── config/index.ts           # loadCliOptions()：c12 加载配置 + 默认值合并
 │   ├── locales/index.ts          # 多语言文本（en-us / zh-cn）
 │   ├── shared/index.ts           # execCommand()：execa 封装

@@ -19,7 +19,7 @@
 ## Installation
 
 > shell 不是 npm 包：monorepo 内经 `@shell/*` 别名直接引用源码（app 无需
-> 声明任何依赖，shell 自己的 package.json 管理其运行时依赖），`sa create-admin`
+> 声明任何依赖，shell 自己的 package.json 管理其运行时依赖），`pnpm create skyroc`
 > 生成的独立项目里它就在 `src/framework/`，无需安装。
 
 运行时依赖 `antd >= 6.0.0`、`react >= 19.0.0`、`jotai >= 2.0.0`，由 shell 的

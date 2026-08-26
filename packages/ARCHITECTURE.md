@@ -80,7 +80,7 @@ packages/
   没有 `exports`——消费方一律经 **`@shell/*` 别名** 访问
   （`@shell/layouts`、`@shell/theme`、`@shell/styles/global.css`……）。
 - 别名两侧同名：monorepo 里指向 `packages/web/admin/*`（app 的 vite.config 显式传
-  `shellAlias: '../../packages/web/admin'`），`sa create-admin` 生成的独立项目里指向
+  `shellAlias: '../../packages/web/admin'`），`pnpm create skyroc` 生成的独立项目里指向
   `src/framework/*`（admin-vite 的默认值）。因此 **shell 源码在两侧字节相同**，
   生成时只需整目录复制，不需要改写任何 import。
 - 全局命名空间声明（`Api` / `App` / `Theme` / 路由增强）都在 shell 里；
@@ -89,8 +89,8 @@ packages/
 - shell 里的代码**不得 import `@/*` 或 `~/*`**（app 内部别名）——它会被原样复制进
   生成的项目，引用了 app 内部路径就不再可移植。`packages/web/admin/.oxlintrc.json`
   的 `no-restricted-imports` 强制这一条。
-- 模板侧的镜像是 `packages/@core/scripts/templates/admin-shell/`，由
-  `sa sync-admin-template` 同步、`--check` 校验，与 `templates/admin/` 一样不要手改。
+- `create-skyroc` 构建时按运行时目录白名单把 shell 复制到 `dist/template-assets/admin-shell/`；
+  该目录是构建产物，不提交 Git，也不存在需要人工同步的源码镜像。
 
 为什么这样而不是发包：shell 绑死 admin 形态、消费者必然要改它，属于
 「复制进项目」的 shadcn 模型；而 `web-ui` / `utils` 这类底座是消费者当黑盒用的，

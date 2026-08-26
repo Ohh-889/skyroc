@@ -129,8 +129,8 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/logger`          | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
 | `@skyroc/color`           | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
 | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设                 |
-| `create-skyroc`           | `packages/@core/create-skyroc` | `pnpm create skyroc` 入口，薄壳调用 `@skyroc/scripts` 的 create-admin |
-| `@skyroc/scripts`         | 创建应用、同步模板、提交、清理、发布与 changelog 等仓库 CLI                       |
+| `create-skyroc`           | `packages/@core/create-skyroc` | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
+| `@skyroc/scripts`         | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI                            |
 
 ### 🔗 共享能力与原语
 
@@ -147,7 +147,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 | 包名                             | 职责                                                              |
 | -------------------------------- | ----------------------------------------------------------------- |
-| `packages/web/admin`（shell）    | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、开发调试面板、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`sa create-admin` 生成独立项目时整目录复制进 `src/framework` |
+| `packages/web/admin`（shell）    | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、开发调试面板、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`pnpm create skyroc` 生成独立项目时复制进 `src/framework` |
 | `@skyroc/web-admin-vite`         | Vite、React Compiler、TanStack Router、UnoCSS、自动导入等构建预设 |
 
 ### 🎨 UI 组件库与原生模块
@@ -203,10 +203,10 @@ pnpm --filter expo-templete start    # 之后改 JS 只要起 dev server
 pnpm create:admin my-admin
 
 # 创建可以脱离 monorepo 独立安装的工程
-pnpm sa create-admin my-admin --target /path/to/projects/my-admin
+pnpm create skyroc my-admin --target /path/to/projects/my-admin
 ```
 
-更多参数见 [`@skyroc/scripts` 文档](./packages/@core/scripts/README.md#sa-create-admin)。
+更多参数见 [`create-skyroc` 文档](./packages/@core/create-skyroc/README.md)。
 
 ## 🗂️ 仓库结构
 
@@ -254,7 +254,6 @@ skyroc-admin/
 | `pnpm format` / `pnpm format:check` | oxfmt 格式化 / 仅检查          |
 | `pnpm test` / `pnpm test:e2e`       | Vitest / Playwright            |
 | `pnpm create:admin <name>`          | 从内置模板创建 Admin 应用      |
-| `pnpm sync:admin-template`          | 将 `apps/admin` 同步到内置模板 |
 | `pnpm clean`                        | 清理 workspace 构建产物        |
 
 开发单个 workspace 时优先使用 `pnpm --filter <workspace-name> <command>`，减少无关任务和输出。

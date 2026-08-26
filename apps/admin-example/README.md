@@ -77,7 +77,7 @@
 - 🏠 **admin shell**（`packages/web/admin`，经 `@shell/*` 别名引用）- 后台应用壳源码：
   布局与菜单权限（`@shell/layouts`）、主题与 antd 集成（`@shell/theme`）、国际化
   （`@shell/i18n`）、通知（`@shell/notification`）、启动插件（`@shell/runtime`）、
-  开发调试面板（`@shell/devtools`）、全局样式（`@shell/styles`）与全局类型。不发布；`sa create-admin` 生成独立项目时
+  开发调试面板（`@shell/devtools`）、全局样式（`@shell/styles`）与全局类型。不发布；`pnpm create skyroc` 生成独立项目时
   整目录复制进 `src/framework`，代码归你所有、可随意修改
 - ⚡️ **@skyroc/web-admin-vite** - Vite 构建辅助与插件预设
 - 🌈 **@skyroc/web-ui** - 基于 Radix UI + Tailwind 的现代 React 组件库
