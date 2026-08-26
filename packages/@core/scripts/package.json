@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/scripts",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "type": "module",
   "description": "Skyroc admin CLI - changelog, release, git-commit, cleanup and other project automation scripts",
   "keywords": [
