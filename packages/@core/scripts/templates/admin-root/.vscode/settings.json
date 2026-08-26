@@ -195,10 +195,17 @@
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/.vscode/**": true,
+    "**/.turbo/**": true,
+    "**/.next/**": true,
+    "**/.open-next/**": true,
+    "**/.expo/**": true,
     "**/node_modules/**": true,
     "**/tmp/**": true,
     "**/bower_components/**": true,
     "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/ios/build/**": true,
+    "**/android/build/**": true,
     "**/yarn.lock": true
   },
 
