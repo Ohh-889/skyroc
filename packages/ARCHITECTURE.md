@@ -95,7 +95,7 @@ packages/
 
 为什么这样而不是发包：shell 绑死 admin 形态、消费者必然要改它，属于
 「复制进项目」的 shadcn 模型；而 `web-ui` / `utils` 这类底座是消费者当黑盒用的，
-继续走 npm。完整决策记录见 [`MIGRATION-ADMIN-SHELL.md`](./MIGRATION-ADMIN-SHELL.md)。
+继续走 npm。
 
 ## 包命名
 

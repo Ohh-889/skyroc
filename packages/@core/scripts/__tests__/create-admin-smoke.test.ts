@@ -3,7 +3,7 @@
  *
  * 独立模式此前在「20 个依赖装不上」的状态下静默存活了很久，根因就是没有任何测试真的跑生成流程。 这里对 standalone / workspace 两种模式各生成一次，校验生成物的关键不变量。
  *
- * 不做 `pnpm install`：standalone 的 registry 依赖要等底座包发布后才装得上 （见 packages/MIGRATION-ADMIN-SHELL.md §3.2），装不上是发布问题，不是生成问题。
+ * 不做 `pnpm install`：该测试只验证生成过程和产物结构，registry 依赖可用性由发布流程验证。
  */
 import { existsSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
