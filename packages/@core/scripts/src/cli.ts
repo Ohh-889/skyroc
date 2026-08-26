@@ -4,17 +4,7 @@ import { blue, lightGreen, red } from 'kolorist';
 
 import { version } from '../package.json';
 
-import {
-  cleanup,
-  createAdminTemplate,
-  genChangelog,
-  gitCommit,
-  gitCommitVerify,
-  release,
-  syncAdminTemplate,
-  updatePkg
-} from './commands';
-import type { CreateAdminTemplateOptions, SyncAdminTemplateOptions } from './commands';
+import { cleanup, genChangelog, gitCommit, gitCommitVerify, release, updatePkg } from './commands';
 import { loadCliOptions } from './config';
 import type { Lang } from './locales';
 
@@ -109,27 +99,6 @@ export async function setupCli() {
   for (const [command, { action, desc }] of Object.entries(commands)) {
     cli.command(command, lightGreen(desc)).action(action);
   }
-
-  cli
-    .command('create-admin <name>', lightGreen('create a new Skyroc admin app from the built-in template'))
-    .option('--target <dir>', 'target directory, defaults to apps/<name>')
-    .option('--title <title>', 'app title written to VITE_APP_TITLE')
-    .option('--description <description>', 'app description written to package.json and VITE_APP_DESC')
-    .option('--force', 'overwrite target directory if it already exists')
-    .option('--install', 'run pnpm install after generation')
-    .option('--workspace', 'keep workspace:/catalog: protocols, for apps that stay inside this monorepo')
-    .action(async (name: string, args: CreateAdminTemplateOptions) => {
-      await createAdminTemplate(name, args);
-    });
-
-  cli
-    .command('sync-admin-template', lightGreen('sync the built-in admin template from apps/admin'))
-    .option('--check', 'check whether the admin template is up to date without writing files')
-    .option('--source <dir>', 'source admin app directory, defaults to apps/admin')
-    .option('--target <dir>', 'target template directory, defaults to packages/@core/scripts/templates/admin')
-    .action(async (args: SyncAdminTemplateOptions) => {
-      await syncAdminTemplate(args);
-    });
 
   // 裸跑 `sa` 时给出帮助，而不是静默退出。
   cli.command('').action(() => {

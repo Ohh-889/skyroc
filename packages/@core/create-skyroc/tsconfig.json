@@ -22,8 +22,10 @@
   },
   "include": [
     "src/**/*",
+    "__tests__/**/*",
     "bin.ts",
-    "tsdown.config.ts"
+    "tsdown.config.ts",
+    "vitest.config.ts"
   ],
   "exclude": [
     "node_modules",

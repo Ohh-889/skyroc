@@ -34,25 +34,34 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsx src/maintenance/build.ts",
     "clean": "rimraf dist",
+    "create:workspace": "tsx src/maintenance/create-workspace.ts",
     "dev": "tsdown --watch",
     "lint": "oxlint --fix",
+    "prepack": "pnpm run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
-    "@skyroc/scripts": "workspace:^",
     "cac": "catalog:dev",
     "enquirer": "catalog:dev",
+    "execa": "catalog:dev",
     "kolorist": "catalog:dev"
   },
   "devDependencies": {
+    "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "@types/node": "catalog:dev",
+    "@tanstack/router-generator": "catalog:web",
+    "confbox": "catalog:dev",
     "oxlint": "catalog:dev",
     "rimraf": "catalog:dev",
     "tsdown": "catalog:dev",
-    "typescript": "catalog:core"
+    "tsx": "catalog:dev",
+    "typescript": "catalog:core",
+    "vitest": "catalog:dev"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

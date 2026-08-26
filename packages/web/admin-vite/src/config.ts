@@ -78,7 +78,7 @@ export interface AdminViteResolveOptions {
   /**
    * Path used by the `@shell` alias (admin shell source).
    *
-   * 默认值面向 `sa create-admin` 生成的独立项目（shell 源码被复制到 `src/framework`）。
+   * 默认值面向 `pnpm create skyroc` 生成的独立项目（shell 源码被复制到 `src/framework`）。
    * monorepo 内的应用需显式指回 `../../packages/web/admin`。
    */
   shellAlias?: false | string;

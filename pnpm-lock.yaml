@@ -1968,25 +1968,31 @@ importers:
 
   packages/@core/create-skyroc:
     dependencies:
-      '@skyroc/scripts':
-        specifier: workspace:^
-        version: link:../scripts
       cac:
         specifier: catalog:dev
         version: 6.7.14
       enquirer:
         specifier: catalog:dev
         version: 2.4.1
+      execa:
+        specifier: catalog:dev
+        version: 9.6.1
       kolorist:
         specifier: catalog:dev
         version: 1.8.0
     devDependencies:
+      '@skyroc/config':
+        specifier: workspace:*
+        version: link:../../../internal/config
       '@skyroc/tsconfig':
         specifier: workspace:*
         version: link:../../../internal/tsconfig
-      '@types/node':
+      '@tanstack/router-generator':
+        specifier: catalog:web
+        version: 1.162.6
+      confbox:
         specifier: catalog:dev
-        version: 24.10.13
+        version: 0.1.8
       oxlint:
         specifier: catalog:dev
         version: 1.60.0
@@ -1996,9 +2002,15 @@ importers:
       tsdown:
         specifier: catalog:dev
         version: 0.18.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.3)(synckit@0.11.12)(typescript@6.0.3)
+      tsx:
+        specifier: catalog:dev
+        version: 4.21.0
       typescript:
         specifier: catalog:core
         version: 6.0.3
+      vitest:
+        specifier: catalog:dev
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@26.2.0)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@2.7.0)(jsdom@28.1.0(@noble/hashes@1.8.0))(lightningcss@1.30.1)(msw@2.12.10(@types/node@26.2.0)(typescript@6.0.3))(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
 
   packages/@core/logger:
     dependencies:
@@ -2039,9 +2051,6 @@ importers:
       cac:
         specifier: catalog:dev
         version: 6.7.14
-      confbox:
-        specifier: catalog:dev
-        version: 0.1.8
       enquirer:
         specifier: catalog:dev
         version: 2.4.1
@@ -2064,9 +2073,6 @@ importers:
       '@skyroc/tsconfig':
         specifier: workspace:*
         version: link:../../../internal/tsconfig
-      '@tanstack/router-generator':
-        specifier: catalog:web
-        version: 1.162.6
       oxlint:
         specifier: catalog:dev
         version: 1.60.0

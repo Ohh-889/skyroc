@@ -4,8 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
-    "check:admin-template": "sa sync-admin-template --check",
-    "create:admin": "sa create-admin --workspace",
+    "create:admin": "pnpm --filter create-skyroc create:workspace",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "postinstall": "bash scripts/skia-prebuilt.sh --soft --only ios",
@@ -16,7 +15,6 @@
     "format:check": "oxfmt --check",
     "test:ui": "vitest --ui",
     "test:watch": "turbo run test:watch",
-    "sync:admin-template": "sa sync-admin-template",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {

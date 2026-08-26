@@ -9,7 +9,6 @@
     "git-commit",
     "release",
     "skyroc-admin",
-    "template",
     "tooling"
   ],
   "license": "MIT",
@@ -29,8 +28,7 @@
   },
   "files": [
     "dist",
-    "README.md",
-    "templates"
+    "README.md"
   ],
   "main": "./src/index.ts",
   "module": "./src/index.ts",
@@ -60,7 +58,7 @@
     "build": "tsdown",
     "clean": "rimraf dist",
     "dev": "tsdown --watch",
-    "lint": "oxlint --fix --ignore-pattern 'templates/**'",
+    "lint": "oxlint --fix",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
@@ -71,7 +69,6 @@
     "bumpp": "catalog:dev",
     "c12": "catalog:dev",
     "cac": "catalog:dev",
-    "confbox": "catalog:dev",
     "enquirer": "catalog:dev",
     "execa": "catalog:dev",
     "kolorist": "catalog:dev",
@@ -81,7 +78,6 @@
   "devDependencies": {
     "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "@tanstack/router-generator": "catalog:web",
     "oxlint": "catalog:dev",
     "tsdown": "catalog:dev",
     "tsx": "catalog:dev",

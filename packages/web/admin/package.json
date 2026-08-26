@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Admin shell source (devtools / layouts / theme / i18n / notification / runtime / styles / ui / types). Not published: consumed via the @shell/* alias in-repo, and copied into generated projects by `sa create-admin`.",
+  "description": "Admin shell source (devtools / layouts / theme / i18n / notification / runtime / styles / ui / types). Not published: consumed via the @shell/* alias in-repo, and copied into generated projects by `create-skyroc`.",
   "sideEffects": [
     "**/*.css"
   ],
