@@ -122,6 +122,7 @@ async function updatePackageJson(targetDir: string, packageName: string, descrip
   const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8')) as PackageJson;
 
   packageJson.name = packageName;
+
   packageJson.description = description;
 
   await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);

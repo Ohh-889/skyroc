@@ -27,7 +27,7 @@ cd my-admin && pnpm install && pnpm dev
 - `apps/admin` 提供应用源码；
 - `packages/web/admin` 的运行时目录进入生成项目的 `src/framework`；
 - 仓库根的协作说明、编辑器配置和 skills 按白名单进入项目；
-- workspace / catalog 依赖、tsconfig、oxlint 与 overrides 被解析到 `admin.meta.json`。
+- workspace / catalog 依赖、tsconfig 与 oxlint 被解析到 `admin.meta.json`。
 
 生成结果位于 `dist/template-assets`，随 `create-skyroc` 发布包交付。`.gitignore`、`.npmignore`、`.npmrc`
 在构建资产中使用安全名称保存，创建项目时还原；约定的符号链接也在创建时重建。

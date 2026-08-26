@@ -35,12 +35,6 @@ interface StandaloneRewrite {
 }
 
 /**
- * 只在 monorepo 内成立的 package.json 字段。生成的是一个全新的私有应用，继承 skyroc-admin 的 homepage / repository /
- * author 只会让新项目一开始就带着错误的身份信息。
- */
-const DROPPED_PACKAGE_FIELDS = ['author', 'bugs', 'homepage', 'keywords', 'repository', 'website'] as const;
-
-/**
  * 这些 script 靠 `pnpm --filter` 去构建同一个 workspace 里的 `@skyroc/web-admin-vite`。独立工程里该包直接来自 registry，
  * 已经是构建产物，pre* 钩子只会因为 filter 不到包而失败。
  */
@@ -126,20 +120,12 @@ async function materializePackageJson(options: MaterializeOptions) {
   packageJson.dependencies = meta.dependencies;
   packageJson.devDependencies = meta.devDependencies;
 
-  for (const field of DROPPED_PACKAGE_FIELDS) {
-    delete packageJson[field];
-  }
-
   const scripts = packageJson.scripts as Record<string, string> | undefined;
 
   if (scripts) {
     for (const script of DROPPED_PACKAGE_SCRIPTS) {
       delete scripts[script];
     }
-  }
-
-  if (Object.keys(meta.overrides).length > 0) {
-    packageJson.pnpm = { overrides: meta.overrides };
   }
 
   await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);

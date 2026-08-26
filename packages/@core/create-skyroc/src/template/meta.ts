@@ -14,8 +14,6 @@ export interface TemplateMeta {
   dependencies: Record<string, string>;
   /** 协议已解析的开发依赖。 */
   devDependencies: Record<string, string>;
-  /** 从 pnpm-workspace.yaml 继承的版本 overrides，写入生成应用的 `pnpm.overrides`。 */
-  overrides: Record<string, string>;
   /** 展平后的 oxlint 配置，extends 链已就地合并。 */
   oxlintConfig: Record<string, unknown>;
   /** 展平后的 tsconfig，extends 链已就地合并。 */
@@ -37,7 +35,6 @@ export function stringifyTemplateMeta(meta: TemplateMeta) {
     dependencies: sortRecord(meta.dependencies),
     devDependencies: sortRecord(meta.devDependencies),
     oxlintConfig: meta.oxlintConfig,
-    overrides: sortRecord(meta.overrides),
     tsconfig: meta.tsconfig,
     unpublishedPackages: meta.unpublishedPackages.toSorted((a, b) => a.localeCompare(b))
   };

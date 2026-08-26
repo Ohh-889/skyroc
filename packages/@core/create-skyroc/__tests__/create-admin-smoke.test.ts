@@ -23,10 +23,23 @@ let templateAssetsDir: string;
 let workspaceDir: string;
 
 interface GeneratedPackageJson {
+  author?: {
+    email: string;
+    name: string;
+    url: string;
+  };
+  bugs?: { url: string };
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  homepage?: string;
+  license?: string;
   name: string;
+  packageManager?: string;
+  pnpm?: Record<string, unknown>;
+  repository?: { url: string };
   scripts: Record<string, string>;
+  type?: string;
+  website?: string;
 }
 
 interface GeneratedTsconfig {
@@ -104,6 +117,19 @@ describe('standalone 模式', () => {
 
     expect(pkg.name).toBe('smoke-standalone');
     expect(pkg.scripts.dev).toBe('vite --mode test');
+    expect(pkg.packageManager).toBeUndefined();
+    expect(pkg.pnpm).toBeUndefined();
+    expect(pkg.homepage).toBe('https://github.com/Ohh-889/skyroc');
+    expect(pkg.bugs?.url).toBe('https://github.com/Ohh-889/skyroc/issues');
+    expect(pkg.license).toBe('MIT');
+    expect(pkg.author).toEqual({
+      email: '1509326266@qq.com',
+      name: 'Ohh',
+      url: 'https://github.com/mufeng889'
+    });
+    expect(pkg.repository?.url).toBe('https://github.com/Ohh-889/skyroc.git');
+    expect(pkg.type).toBe('module');
+    expect(pkg.website).toBe('https://skyroc-admin.com/home/');
   });
 
   it('shell 源码被完整复制进 src/framework', () => {
@@ -213,6 +239,8 @@ describe('workspace 模式', () => {
     // shell 经 @shell 别名按目录访问，不需要任何人声明依赖：
     // pnpm 对 workspace 包一律安装其自身依赖，turbo 上 shell 也没有 build 任务可依赖
     expect(pkg.dependencies['@skyroc/web-admin-shell']).toBeUndefined();
+    expect(pkg.packageManager).toBeUndefined();
+    expect(pkg.pnpm).toBeUndefined();
 
     const viteConfig = await readFile(path.join(workspaceDir, 'vite.config.ts'), 'utf8');
 

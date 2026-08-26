@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "private": false,
   "description": "A fresh and elegant admin template, based on React18、Vite5、TypeScript、Ant Design and UnoCSS. 一个基于React18、Vite5、TypeScript、Ant Design and UnoCSS的清新优雅的中后台模版。",
-  "keywords": [],
+  "keywords": [ ],
   "homepage": "https://github.com/Ohh-889/skyroc",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
@@ -105,6 +105,5 @@
     "node": ">=18.12.0",
     "pnpm": ">=8.7.0"
   },
-  "packageManager": "pnpm@10.4.1",
   "website": "https://skyroc-admin.com/home/"
 }

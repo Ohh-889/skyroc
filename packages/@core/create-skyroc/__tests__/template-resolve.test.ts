@@ -12,7 +12,6 @@ const context = {
   catalog: {
     catalogs: { dev: { oxlint: '^1.60.0' }, web: { antd: '6.5.3' } },
     defaultCatalog: { react: '19.1.0' },
-    overrides: {},
     packages: []
   },
   workspacePackages: new Map([

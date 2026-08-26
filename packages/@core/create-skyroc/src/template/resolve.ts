@@ -18,8 +18,6 @@ interface WorkspaceCatalog {
   catalogs: Record<string, Record<string, string>>;
   /** 默认 catalog，对应裸写的 `catalog:`。 */
   defaultCatalog: Record<string, string>;
-  /** 根级版本 overrides。 */
-  overrides: Record<string, string>;
   /** workspace 包目录的 glob 模式。 */
   packages: string[];
 }
@@ -27,7 +25,6 @@ interface WorkspaceCatalog {
 interface PnpmWorkspaceFile {
   catalog?: Record<string, string>;
   catalogs?: Record<string, Record<string, string>>;
-  overrides?: Record<string, string>;
   packages?: string[];
 }
 
@@ -241,7 +238,6 @@ async function readWorkspaceCatalog(workspaceRoot: string): Promise<WorkspaceCat
   return {
     catalogs: workspaceFile.catalogs ?? {},
     defaultCatalog: workspaceFile.catalog ?? {},
-    overrides: workspaceFile.overrides ?? {},
     packages: workspaceFile.packages ?? []
   };
 }
@@ -317,7 +313,6 @@ export async function resolveTemplateMeta(options: ResolveTemplateMetaOptions): 
     dependencies: dependencies.resolved,
     devDependencies: devDependencies.resolved,
     oxlintConfig,
-    overrides: catalog.overrides,
     tsconfig,
     unpublishedPackages: Array.from(new Set([...dependencies.unpublished, ...devDependencies.unpublished]))
   };
