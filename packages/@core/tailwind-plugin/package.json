@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/tailwind-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": false,
   "type": "module",
   "description": "Tailwind CSS plugin for Skyroc UI — OKLCH theme tokens, feedback colors, sidebar palette, and design-system presets",

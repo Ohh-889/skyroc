@@ -1,6 +1,6 @@
 {
   "name": "create-skyroc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Scaffold Skyroc Admin and Expo apps with one command: pnpm create skyroc",
   "keywords": [
     "admin",

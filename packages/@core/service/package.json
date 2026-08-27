@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "Platform-agnostic request & query infrastructure with adapter pattern",
   "keywords": [
