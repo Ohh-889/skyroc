@@ -26,10 +26,12 @@
 ```json
 {
   "dependencies": {
-    "@skyroc/expo-wechat": "workspace:*"
+    "@skyroc/expo-wechat": "^1.0.0"
   }
 }
 ```
+
+仓库内开发时仍使用 `workspace:*`。
 
 这是一个标准的 Expo 模块包，包根有 `expo-module.config.json`，装好之后 autolinking 会自动扫到，**不需要手动改 Podfile 或 settings.gradle**。可以用下面的命令确认：
 
@@ -229,13 +231,28 @@ await configureWechat({ resumeGraceMs: 1200 });
 packages/native/wechat/
 ├── expo-module.config.json   # autolinking 入口，必须在包根
 ├── app.plugin.js             # config plugin，CJS
-├── index.ts                  # 公开 API（package.json 的 main）
+├── index.ts                  # 公开 API 源码
+├── build/                    # npm 包的 JavaScript 与类型声明
 ├── src/                      # TS 类型与 NativeModule 声明
 ├── ios/                      # Swift 实现 + Wechat.podspec
 └── android/                  # Kotlin 实现 + build.gradle
 ```
 
-`main` 直接指向 `index.ts`，由宿主的 Metro 编译，本包不产出 `dist/`。若要发布到 npm，需要改用 `expo-module-scripts` 输出 `build/`。
+发布时 `expo-module-scripts` 的 `prepublishOnly` 会清理并重新生成 `build/`，`main` 和 `types` 均指向其中的编译产物。
+
+发布预检：
+
+```bash
+pnpm typecheck
+pnpm build
+npm pack --dry-run
+```
+
+确认内容无误后发布：
+
+```bash
+npm publish --access public --registry https://registry.npmjs.org/
+```
 
 `ios/` `android/` 里是**手写的原生源码不是 prebuild 产物**，仓库根 `.gitignore` 对 `packages/native/*/` 有对应的放行规则，新增原生文件时留意别被忽略掉。
 

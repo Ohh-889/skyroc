@@ -7,16 +7,16 @@
 
 ## 安装
 
-monorepo 内直接引工作区版本：
-
 ```jsonc
 // apps/xxx/package.json
 {
   "dependencies": {
-    "@skyroc/expo-bluetooth": "workspace:*"
+    "@skyroc/expo-bluetooth": "^1.0.0"
   }
 }
 ```
+
+仓库内开发时使用 `workspace:*`。
 
 然后在 `app.config.ts` 里挂插件（只影响 iOS 的 Info.plist）：
 
@@ -130,3 +130,14 @@ if (!result.ok) {
 ```
 
 `code` 的取值见 `BluetoothResultCode`。
+
+## 发布
+
+发布时 `expo-module-scripts` 的 `prepublishOnly` 会清理并重新生成 `build/`，`main` 和 `types` 均指向其中的编译产物。
+
+```bash
+pnpm typecheck
+pnpm build
+npm pack --dry-run
+npm publish --access public --registry https://registry.npmjs.org/
+```

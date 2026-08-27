@@ -1,0 +1,7 @@
+# 本地工具与构建缓存
+/.*/
+/android/.gradle/
+/android/build/
+
+# npm pack 生成的本地包
+/*.tgz

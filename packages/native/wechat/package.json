@@ -1,7 +1,7 @@
 {
   "name": "@skyroc/expo-wechat",
-  "version": "1.0.0",
-  "private": true,
+  "version": "1.0.1",
+  "private": false,
   "description": "微信开放平台 SDK 的 Expo 模块封装（登录授权与九种分享）",
   "keywords": [
     "expo",
@@ -19,27 +19,43 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ohh-889/skyroc.git",
+    "url": "git+https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/native/wechat"
   },
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/native/wechat",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
   "sideEffects": false,
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
-    "android",
-    "ios",
-    "src",
-    "index.ts",
+    "android/build.gradle",
+    "android/src",
+    "build",
+    "ios/*.podspec",
+    "ios/*.swift",
     "app.plugin.js",
     "expo-module.config.json",
+    "LICENSE",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "expo-module": "expo-module",
     "lint": "oxlint --fix",
-    "typecheck": "tsc --noEmit --skipLibCheck"
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "typecheck": "expo-module typecheck"
   },
   "devDependencies": {
     "expo": "~57.0.15",
+    "expo-module-scripts": "56.0.3",
     "expo-modules-core": "~57.0.12",
     "oxlint": "catalog:dev",
     "typescript": "catalog:core"
