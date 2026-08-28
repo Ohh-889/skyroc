@@ -82,6 +82,6 @@
     "dotenv-cli": "^11.0.0",
     "oxlint": "catalog:dev",
     "tsx": "^4.23.12",
-    "typescript": "~6.0.3"
+    "typescript": "catalog:core"
   }
 }

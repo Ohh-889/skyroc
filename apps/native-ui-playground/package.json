@@ -51,7 +51,7 @@
     "jest-expo": "~57.0.0",
     "oxlint": "catalog:dev",
     "react-test-renderer": "19.1.0",
-    "typescript": "~6.0.3"
+    "typescript": "catalog:core"
   },
   "jest": {
     "preset": "jest-expo"

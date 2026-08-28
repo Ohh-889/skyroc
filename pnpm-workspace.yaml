@@ -20,7 +20,7 @@ overrides:
   '@types/react-dom': ^19.2.3
   antd: 6.5.3
   jotai-devtools: 0.14.0
-  typescript: ^6.0.3
+  typescript: 7.0.2
 
 catalogs:
   # ==================== 核心基础依赖 ====================
@@ -31,8 +31,8 @@ catalogs:
     'react-error-boundary': 6.0.0
 
     # TypeScript 和构建工具
-    typescript: ^6.0.3
-    vite: ^8.0.14
+    typescript: 7.0.2
+    vite: ^8.2.2
 
     # 状态管理
     jotai: 2.20.3
@@ -51,11 +51,11 @@ catalogs:
     '@types/qs': ^6.14.0
 
     # 构建和打包工具
-    '@babel/core': ^7.29.0
+    '@babel/core': ^8.0.1
     '@babel/template': ^7.28.6
-    tsdown: ^0.18.2
+    tsdown: ^0.22.14
     tsx: ^4.21.0
-    turbo: ^2.7.1
+    turbo: ^2.10.12
     rimraf: ^6.0.1
 
     # 代码质量工具
@@ -64,10 +64,10 @@ catalogs:
     oxlint: ^1.60.0
 
     # 测试工具
-    vitest: ^4.0.18
+    vitest: ^4.1.11
     '@vitest/coverage-v8': ^4.0.18
     jsdom: ^28.0.0
-    happy-dom: 20.6.1
+    happy-dom: 20.11.12
     '@playwright/test': ^1.59.1
     '@testing-library/react': ^16.3.2
     '@testing-library/jest-dom': ^6.9.1
@@ -123,7 +123,7 @@ catalogs:
     kolorist: ^1.8.0
     # 文件处理工具
     'fast-glob': ^3.3.3
-    picomatch: ^4.0.3
+    picomatch: ^4.0.7
 
   # ==================== Web 前端专用 ====================
   web:
@@ -141,7 +141,7 @@ catalogs:
     sass: ^1.96.0
 
     # 数据可视化
-    echarts: ^6.0.0
+    echarts: ^6.1.0
 
     # 滚动库
     '@better-scroll/core': ^2.5.1
@@ -215,7 +215,7 @@ catalogs:
     # 通用工具
     dayjs: ^1.11.19
     date-fns: ^4.1.0
-    nanoid: ^5.0.9
+    nanoid: ^6.0.1
     clsx: ^2.1.1
     colord: ^2.9.3
     klona: ^2.0.6
@@ -225,14 +225,14 @@ catalogs:
     localforage: ^1.10.0
     'tailwind-merge': ^3.4.0
     'tailwind-variants': ^3.2.2
-    defu: ^6.1.4
+    defu: ^6.1.7
     ahooks: ^3.9.6
     zod: ^4.1.13
 
     # 网络请求
-    axios: ^1.7.9
+    axios: ^1.20.0
     'axios-retry': ^4.5.0
-    qs: ^6.14.0
+    qs: ^6.15.3
 
   # ==================== UI 组件共享 ====================
   ui-shared:
@@ -262,7 +262,16 @@ catalogs:
     tailwindcss: ^4.1.18
     '@tailwindcss/cli': ^4.1.18
     '@tailwindcss/postcss': ^4.1.13
-    postcss: ^8.5.6
+    '@tailwindcss/vite': ^4.1.18
+    postcss: ^8.5.26
+
+  # ==================== Electron 桌面端专用 ====================
+  electron:
+    electron: ^42.1.0
+    electron-builder: ^26.8.1
+    electron-updater: ^6.8.3
+    'vite-plugin-electron': ^1.0.1
+    'vite-plugin-electron-renderer': ^1.0.0
 
   # ==================== peer 依赖管理 ====================
   peer:
