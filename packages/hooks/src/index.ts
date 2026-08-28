@@ -16,3 +16,5 @@ export { default as useCountDownTimer } from './use-count-down-timer';
 // ahooks 封装 hooks（平台无关）
 export { default as useLoading } from './use-loading';
 export { useNow } from './use-now';
+export { default as usePriorityQueue } from './use-priority-queue';
+export type { UsePriorityQueueOptions, UsePriorityQueueReturn } from './use-priority-queue';

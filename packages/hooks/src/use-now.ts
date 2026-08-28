@@ -57,6 +57,8 @@ export function useNow(options: UseNowOptions = {}) {
 
   const store = useCreation(() => new NowStore(interval), []);
 
+  const now = useStore(store);
+
   useEffect(() => {
     if (immediate) {
       store.resume();
@@ -64,8 +66,6 @@ export function useNow(options: UseNowOptions = {}) {
 
     return () => store.pause();
   }, [store, immediate]);
-
-  const now = useStore(store);
 
   return { now, pause: store.pause, resume: store.resume };
 }

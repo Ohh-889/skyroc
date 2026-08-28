@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/hooks",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "React hooks - platform-agnostic core with ./web subpath for browser hooks",
   "keywords": [
@@ -78,6 +78,7 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@skyroc/utils": "workspace:*",
     "ahooks": "catalog:utils"
   },
   "devDependencies": {
