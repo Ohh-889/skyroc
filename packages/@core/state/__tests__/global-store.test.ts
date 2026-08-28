@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { describe, expect, it } from 'vitest';
-import { atomWithPartial } from '../src/utils/atom-with-partial';
 import { getAtomValue, setAtomValue } from '../src/store/global';
+import { atomWithPartial } from '../src/utils/atom-with-partial';
 
 describe('global store', () => {
   it('getAtomValue 读取 atom 初始值', () => {
