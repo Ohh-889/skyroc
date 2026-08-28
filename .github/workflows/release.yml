@@ -4,12 +4,17 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '.changeset/**'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
+  actions: write
   contents: write
   id-token: write
   pull-requests: write
@@ -34,7 +39,9 @@ jobs:
         with:
           node-version: 22.14.0
           package-manager-cache: false
-          registry-url: https://registry.npmjs.org/
+
+      - name: Set up npm trusted publishing
+        run: npm install --global npm@11.19.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,6 +57,13 @@ jobs:
           version: pnpm release:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Rebase and merge release PR
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: |
+          gh pr merge "$RELEASE_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --rebase
+          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref master
