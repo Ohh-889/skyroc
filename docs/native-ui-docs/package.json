@@ -50,7 +50,6 @@
     "@tailwindcss/node": "^4",
     "@types/react-dom": "catalog:dev",
     "postcss": "^8.5.26",
-    "@skyroc/tailwind-plugin": "workspace:*",
     "lightningcss": ">=1.30.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",

@@ -43,7 +43,6 @@
     "uniwind": "catalog:native"
   },
   "devDependencies": {
-    "@skyroc/tailwind-plugin": "workspace:*",
     "@types/jest": "^29.5.12",
     "@types/react": "catalog:dev",
     "eslint-plugin-sort": "catalog:dev",

@@ -1,11 +1,6 @@
 @import 'tailwindcss';
 @import 'uniwind';
-
-@plugin "@skyroc/tailwind-plugin" {
-  platform: 'native';
-}
-
-@source "../node_modules/@skyroc/native-ui/src";
+@import '@skyroc/native-ui/uniwind.css';
 
 :root {
   --font-display:

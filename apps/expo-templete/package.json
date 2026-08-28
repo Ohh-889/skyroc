@@ -54,7 +54,6 @@
     "uniwind": "catalog:native"
   },
   "devDependencies": {
-    "@skyroc/tailwind-plugin": "workspace:*",
     "@types/react": "19.2.14",
     "dotenv-cli": "^11.0.0",
     "oxlint": "catalog:dev",

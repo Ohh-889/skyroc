@@ -51,7 +51,9 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./components": "./src/components/index.ts"
+    "./components": "./src/components/index.ts",
+    "./uniwind.css": "./src/uniwind.css",
+    "./uniwind-plugin": "./src/uniwind-plugin.js"
   },
   "publishConfig": {
     "access": "public",
@@ -67,7 +69,9 @@
           "types": "./dist/components/index.d.ts",
           "default": "./dist/components/index.js"
         }
-      }
+      },
+      "./uniwind.css": "./dist/uniwind.css",
+      "./uniwind-plugin": "./dist/uniwind-plugin.js"
     },
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -75,7 +79,8 @@
     "types": "./dist/index.d.ts"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "node -e \"const fs = require('node:fs'); fs.copyFileSync('src/uniwind.css', 'dist/uniwind.css'); fs.copyFileSync('src/uniwind-plugin.js', 'dist/uniwind-plugin.js')\"",
     "clean": "rimraf dist",
     "dev": "tsdown --watch",
     "lint": "oxlint --fix",
@@ -86,6 +91,7 @@
     "@radix-ui/react-compose-refs": "^1.1.2",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@rn-primitives/slot": "^1.2.0",
+    "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/utils": "workspace:*",
     "@skyroc/hooks": "workspace:*",
     "@skyroc/form": "workspace:*",
@@ -96,7 +102,6 @@
   "devDependencies": {
     "@expo/vector-icons": "catalog:native",
     "@shopify/react-native-skia": "catalog:native",
-    "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
     "@types/react": "catalog:dev",
     "eslint-plugin-sort": "catalog:dev",
@@ -119,7 +124,6 @@
   "peerDependencies": {
     "@expo/vector-icons": ">=14.0.0",
     "@shopify/react-native-skia": ">=1.5.0",
-    "@skyroc/tailwind-plugin": "workspace:*",
     "expo-haptics": ">=12.0.0",
     "expo-image": ">=1.10.0",
     "react": ">=19.0.0",

@@ -1,5 +1,5 @@
 import { Radio, RadioGroup } from '@skyroc/native-ui';
-import type { ThemeColor } from '@skyroc/tailwind-plugin/ui';
+import type { ThemeColor } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
 const COLORS: ThemeColor[] = ['primary', 'destructive', 'success', 'warning', 'info', 'accent', 'carbon', 'secondary'];

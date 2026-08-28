@@ -1,0 +1,5 @@
+@plugin "@skyroc/native-ui/uniwind-plugin" {
+  platform: 'native';
+}
+
+@source "./**/*.{js,ts,tsx}";
