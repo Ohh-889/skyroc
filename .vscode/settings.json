@@ -1,4 +1,11 @@
 {
+  "json.schemas": [
+    {
+      "fileMatch": ["/apps/electron-vite-react/electron-builder.json"],
+      "url": "https://json.schemastore.org/electron-builder"
+    }
+  ],
+
   // tailwindcss
   "files.associations": {
     "*.css": "tailwindcss"

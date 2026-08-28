@@ -1,0 +1,39 @@
+{
+  "name": "electron-vite-react",
+  "version": "2.3.0",
+  "private": true,
+  "description": "Electron Vite React boilerplate.",
+  "license": "MIT",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "type": "module",
+  "main": "dist-electron/main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "preview": "vite preview",
+    "pretest": "vite build --mode=test",
+    "test": "vitest run",
+    "test:e2e": "pnpm pretest && playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:dev",
+    "@tailwindcss/vite": "catalog:css",
+    "@types/react": "catalog:dev",
+    "@types/react-dom": "catalog:dev",
+    "@vitejs/plugin-react": "catalog:web",
+    "electron": "catalog:electron",
+    "electron-builder": "catalog:electron",
+    "react": "catalog:core",
+    "react-dom": "catalog:core",
+    "tailwindcss": "catalog:css",
+    "typescript": "catalog:core",
+    "vite": "catalog:core",
+    "vite-plugin-electron": "catalog:electron",
+    "vite-plugin-electron-renderer": "catalog:electron",
+    "vitest": "catalog:dev"
+  }
+}

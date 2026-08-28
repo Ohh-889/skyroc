@@ -23,6 +23,10 @@ web-build/
 .open-next
 app-example
 
+# Electron Vite React
+/apps/electron-vite-react/dist-electron/
+/apps/electron-vite-react/release/
+
 # ---------- Caches ----------
 .cache
 .temp
@@ -79,6 +83,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+pnpm-debug.log*
+
+# Electron Vite React
+/apps/electron-vite-react/logs/
 
 # ---------- Env & local overrides ----------
 .env*.local
@@ -91,6 +99,14 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Electron Vite React local debug settings
+/apps/electron-vite-react/.vscode/.debug.env
+
+# ---------- Electron Vite React local artifacts ----------
+/apps/electron-vite-react/pnpm-lock.yaml
+/apps/electron-vite-react/playwright/.cache/
+/apps/electron-vite-react/test/screenshots/
 
 # ---------- Python ----------
 # skill 脚本运行后产生的字节码缓存

@@ -19,6 +19,40 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Electron: Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/electron-vite-react",
+      "runtimeExecutable": "${workspaceFolder}/apps/electron-vite-react/node_modules/.bin/vite",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/apps/electron-vite-react/node_modules/.bin/vite.cmd"
+      },
+      "runtimeArgs": ["dev"],
+      "env": {
+        "REMOTE_DEBUGGING_PORT": "9222"
+      }
+    },
+    {
+      "name": "Electron: Debug Renderer Process",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/apps/electron-vite-react/src",
+      "timeout": 60000,
+      "presentation": {
+        "hidden": true
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Electron: Debug All",
+      "configurations": ["Electron: Debug Main Process", "Electron: Debug Renderer Process"],
+      "presentation": {
+        "order": 1
+      }
     }
   ]
 }
