@@ -30,7 +30,7 @@ export const isObjectType = (value: unknown): value is object => typeof value ==
  * 用于表单取值：受控组件的 onChange 第一个参数既可能是原生/合成事件，也可能是裸值。 这里只做形状判断 —— 非 null 的非数组、非 Date 对象都算，plain object（`{ target: ...
  * }`）同样算。
  */
-export const isEventObject = (event: unknown): event is Event => {
+export const isEventObject = (event: unknown): event is Record<string, unknown> => {
   return isObjectType(event) && !Array.isArray(event) && !isDate(event);
 };
 

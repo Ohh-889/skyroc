@@ -142,7 +142,7 @@ diffObject({ name: 'Alice', age: 30 }, { name: 'Alice', age: 31 });
 
 判断值的 `typeof` 是否为 `'object'` **且不为 `null`**。
 
-#### `isEventObject(event)` → `event is Event`
+#### `isEventObject(event)` → `event is Record<string, unknown>`
 
 判断值是否为「事件形状」的对象：非 null 的非数组、非 Date 对象都算，plain object（`{ target: ... }`）同样算。
 
