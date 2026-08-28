@@ -5,12 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/workflows/build.yml'
-      - '.npmrc'
-      - 'apps/electron-vite-react/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
+      - 'apps/electron-vite-react/package.json'
   workflow_dispatch:
 
 permissions:
@@ -21,8 +16,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-version:
+    name: Check Electron version
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Check package version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          current_version="$(node -p "require('./apps/electron-vite-react/package.json').version")"
+          previous_version="$(git show HEAD^:apps/electron-vite-react/package.json | node -e "let input = ''; process.stdin.on('data', chunk => input += chunk); process.stdin.on('end', () => console.log(JSON.parse(input).version))")"
+
+          if [ "$current_version" = "$previous_version" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: Build on ${{ matrix.os }}
+    needs: check-version
+    if: needs.check-version.outputs.changed == 'true'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
 
