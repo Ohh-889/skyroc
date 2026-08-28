@@ -26,12 +26,12 @@ import { Cell, CellGroup } from '@skyroc/native-ui';
 
 `onPress` 或 `onLongPress` 任一存在时，整行变成可点击的 `Pressable`，并默认显示右箭头。箭头的显示规则按优先级为：
 
-| 条件                                       | 是否显示箭头 |
-| ------------------------------------------ | ------------ |
-| 显式传 `showArrow`                         | 以传入值为准 |
-| 传了自定义 `arrow`                         | 显示         |
-| 传了 `onPress` / `onLongPress`             | 显示         |
-| 以上都没有                                 | 不显示       |
+| 条件                           | 是否显示箭头 |
+| ------------------------------ | ------------ |
+| 显式传 `showArrow`             | 以传入值为准 |
+| 传了自定义 `arrow`             | 显示         |
+| 传了 `onPress` / `onLongPress` | 显示         |
+| 以上都没有                     | 不显示       |
 
 <Demo src="@playground/cell/CellPress" />
 
@@ -56,6 +56,8 @@ import { Cell, CellGroup } from '@skyroc/native-ui';
 ## 分组
 
 `CellGroup` 把多个 `Cell` 收成一张卡片：根节点为 `overflow-hidden rounded-xl`，`title` 作为分组标题渲染在卡片上方，`border`（默认 `true`）在相邻子项之间插入 `h-px bg-border` 的分隔线。
+
+基础数据列表可以通过 `items` 传入 `CellGroupItem[]`，每项会作为 `Cell` 的属性并要求提供稳定的 `key`。需要放入 `FormItem`、业务包装组件或条件节点时继续使用 `children`；`items` 与 `children` 不能同时传入。
 
 <Demo src="@playground/cell/CellGroupBasic" />
 
@@ -100,16 +102,16 @@ import { Cell, CellGroup } from '@skyroc/native-ui';
 
 `Cell` 没有 `className`，样式一律走 `classNames`：
 
-| slot           | 作用位置                                       |
-| -------------- | ---------------------------------------------- |
+| slot           | 作用位置                                        |
+| -------------- | ----------------------------------------------- |
 | `root`         | 根节点（可点击时是 `Pressable`，否则是 `View`） |
-| `leading`      | 左侧内容容器                                   |
-| `content`      | 标题与副标题所在的中间区域                     |
-| `title`        | 标题文字（仅 `title` 为 `string` 时生效）      |
-| `subtitle`     | 副标题文字（仅 `subtitle` 为 `string` 时生效） |
-| `trailing`     | 右侧内容容器                                   |
-| `trailingText` | 右侧文字（仅 `trailing` 为 `string` 时生效）   |
-| `arrow`        | 箭头容器                                       |
+| `leading`      | 左侧内容容器                                    |
+| `content`      | 标题与副标题所在的中间区域                      |
+| `title`        | 标题文字（仅 `title` 为 `string` 时生效）       |
+| `subtitle`     | 副标题文字（仅 `subtitle` 为 `string` 时生效）  |
+| `trailing`     | 右侧内容容器                                    |
+| `trailingText` | 右侧文字（仅 `trailing` 为 `string` 时生效）    |
+| `arrow`        | 箭头容器                                        |
 
 `CellGroup` 的 slot 为 `root`（卡片容器）、`title`（分组标题）、`divider`（分隔线）。
 
@@ -178,7 +180,16 @@ import { Cell, CellGroup } from '@skyroc/native-ui';
 
 <PropsTable
   data={[
-    { name: 'children', description: '分组内容，通常为 Cell 组件', type: 'ReactNode', required: true },
+    {
+      name: 'children',
+      description: '自由组合的分组内容，通常为 Cell，也可以是 FormItem 等自定义组件；与 items 二选一',
+      type: 'ReactNode'
+    },
+    {
+      name: 'items',
+      description: '批量渲染 Cell 的配置数组，每项必须提供稳定 key；与 children 二选一',
+      type: 'readonly CellGroupItem[]'
+    },
     { name: 'title', description: '分组标题，string 自动包裹 Text', type: 'ReactNode' },
     {
       name: 'inset',
@@ -204,7 +215,7 @@ import { Cell, CellGroup } from '@skyroc/native-ui';
 ## 类型
 
 ```ts
-import type { CellGroupProps, CellGroupSlots, CellProps, CellSize, CellSlots } from '@skyroc/native-ui';
+import type { CellGroupItem, CellGroupProps, CellGroupSlots, CellProps, CellSize, CellSlots } from '@skyroc/native-ui';
 ```
 
 <UnionType

@@ -1,18 +1,10 @@
-import type { ReactNode, Ref } from 'react';
+import type { Key, ReactNode, Ref } from 'react';
 import type { View } from 'react-native';
 import type { SlotClassNames } from '../../types';
 import type { CellGroupVariantProps, CellVariantProps } from './cell-variants';
 
 /** Cell 组件可覆盖的 slot 名称 */
-export type CellSlots =
-  | 'arrow'
-  | 'content'
-  | 'leading'
-  | 'root'
-  | 'subtitle'
-  | 'title'
-  | 'trailing'
-  | 'trailingText';
+export type CellSlots = 'arrow' | 'content' | 'leading' | 'root' | 'subtitle' | 'title' | 'trailing' | 'trailingText';
 
 /** CellGroup 组件可覆盖的 slot 名称 */
 export type CellGroupSlots = 'divider' | 'root' | 'title';
@@ -65,13 +57,16 @@ export interface CellProps extends CellVariantProps {
   trailing?: ReactNode;
 }
 
-/** CellGroup 分组容器组件属性 */
-export interface CellGroupProps extends CellGroupVariantProps {
+/** CellGroup 通过 items 渲染的列表项配置 */
+export interface CellGroupItem extends CellProps {
+  /** React 列表渲染使用的稳定标识 */
+  key: Key;
+}
+
+/** CellGroup 分组容器公共属性 */
+interface CellGroupBaseProps extends CellGroupVariantProps {
   /** 是否在子项之间插入分隔线 */
   border?: boolean;
-
-  /** 分组内容，通常为 Cell 组件 */
-  children: ReactNode;
 
   /** 覆盖各 slot 的类名，分隔线需要缩进时给 divider 传 ml-* */
   classNames?: SlotClassNames<CellGroupSlots>;
@@ -85,3 +80,24 @@ export interface CellGroupProps extends CellGroupVariantProps {
   /** 分组标题，string 自动包裹 Text */
   title?: ReactNode;
 }
+
+/** 使用 children 自由组合分组内容 */
+export interface CellGroupChildrenProps extends CellGroupBaseProps {
+  /** 分组内容，通常为 Cell，也可以是 FormItem 等自定义组件 */
+  children: ReactNode;
+
+  /** 使用 children 时不能同时传 items */
+  items?: never;
+}
+
+/** 使用配置数组批量渲染 Cell */
+export interface CellGroupItemsProps extends CellGroupBaseProps {
+  /** 使用 items 时不能同时传 children */
+  children?: never;
+
+  /** Cell 配置数组，每项必须提供稳定 key */
+  items: readonly CellGroupItem[];
+}
+
+/** CellGroup 支持 children 自由组合或 items 配置渲染，两种模式不能同时使用 */
+export type CellGroupProps = CellGroupChildrenProps | CellGroupItemsProps;
