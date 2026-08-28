@@ -1,0 +1,105 @@
+name: 🚀 功能请求（中文）
+description: 为 Skyroc 的应用、公共包、模板或工程能力提出改进建议
+title: '[Feature]: '
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你参与完善 Skyroc。提交前请先搜索已有 Issue；尚未形成明确需求的想法，请先在 [Discussions](https://github.com/Ohh-889/skyroc/discussions) 中讨论。
+
+  - type: dropdown
+    id: target-area
+    attributes:
+      label: 目标模块
+      description: 请选择该功能主要归属的应用或包。
+      options:
+        - Admin 应用（apps/admin、admin-example、ruoyi-plus-fast）
+        - Web UI（@skyroc/web-ui）
+        - Native UI（@skyroc/native-ui）
+        - Native 能力包（Bluetooth、WeChat）
+        - Expo 模板（apps/expo-templete）
+        - 脚手架（create-skyroc）
+        - 共享、基础与配置包（packages/@core、hooks、primitives、internal）
+        - 文档与示例
+        - 构建、测试或发布流程
+        - 新的跨模块能力
+        - 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 适用平台
+      description: 可选择该需求涉及的所有平台。
+      multiple: true
+      options:
+        - Web
+        - Expo iOS
+        - Expo Android
+        - Node.js / CLI
+        - 文档
+        - 全平台
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 需求背景
+      description: 请描述当前限制、实际使用场景、目标用户，以及为什么现有能力无法满足需求。
+      placeholder: 当我在……场景中使用……时，目前无法……，这会导致……
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 建议方案
+      description: 请描述期望行为、交互流程或 API；涉及 UI 时可附草图或参考案例。
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-compatibility
+    attributes:
+      label: API 与兼容性考虑
+      description: 如涉及公共包、模板或脚手架，请说明建议的 API、默认行为、Web/Native 差异及潜在破坏性变更。
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 备选方案
+      description: 请说明考虑过的替代方案、临时做法，以及它们为什么不够合适。
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: 是否愿意参与实现？
+      options:
+        - 愿意提交 Pull Request
+        - 可以协助设计或测试
+        - 暂时无法参与
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 补充信息
+      description: 可添加相关 Issue、设计稿、竞品方案、示例代码或其他参考资料。
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已搜索现有 Issue，确认没有重复提案。
+          required: true
+        - label: 我已说明实际问题和使用场景，而不只是指定某一种实现方式。
+          required: true
+        - label: 该请求具有可复用价值，并非仅适用于单个业务项目的定制功能。
+          required: true

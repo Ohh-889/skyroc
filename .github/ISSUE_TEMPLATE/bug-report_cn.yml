@@ -1,0 +1,135 @@
+name: 🐞 Bug 报告（中文）
+description: 报告 Skyroc 应用、组件、脚手架或工程链路中的可复现问题
+title: '[Bug]: '
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你帮助改进 Skyroc。提交前请先搜索已有 Issue，并确认问题在当前版本或 `master` 分支中仍然存在。
+
+        使用方式咨询、方案讨论和无法稳定复现的问题，请优先发到 [Discussions](https://github.com/Ohh-889/skyroc/discussions)。
+
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: 受影响模块
+      description: 请选择问题最直接涉及的应用或包。
+      options:
+        - Admin 应用（apps/admin、admin-example、ruoyi-plus-fast）
+        - Web UI（@skyroc/web-ui、web-ui-playground）
+        - Native UI（@skyroc/native-ui、native-ui-playground）
+        - Native 能力包（Bluetooth、WeChat）
+        - Expo 模板（apps/expo-templete）
+        - 脚手架（create-skyroc）
+        - 共享、基础与配置包（packages/@core、hooks、primitives、internal）
+        - 文档站
+        - 构建、测试或发布流程
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 使用版本
+      description: 请填写包版本、应用版本或 Git 提交哈希。
+      placeholder: 例如：@skyroc/native-ui@1.2.0 或 commit a1b2c3d
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 运行平台
+      description: 可选择所有能够复现问题的平台。
+      multiple: true
+      options:
+        - Web 浏览器
+        - Expo iOS
+        - Expo Android
+        - Node.js / CLI
+        - 文档站 / 服务端渲染
+        - CI / 发布环境
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境信息
+      description: 请保留与问题相关的项目；Native 问题请补充 Expo、设备和构建方式。
+      placeholder: |
+        操作系统：
+        Node.js：
+        pnpm：
+        浏览器：
+        Expo SDK / React Native：
+        设备或模拟器：
+        开发模式或生产构建：
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction-link
+    attributes:
+      label: 最小复现链接
+      description: 如可提供，请填写公开仓库、StackBlitz 或 Expo Snack 地址。
+      placeholder: https://github.com/...
+
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: 复现步骤
+      description: 请从安装依赖或启动应用开始，按顺序列出稳定触发问题的操作和命令。
+      placeholder: |
+        1. 执行 `pnpm ...`
+        2. 打开或进入……
+        3. 执行……
+        4. 出现问题
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+      description: 请说明你认为正确的行为。
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 请说明实际发生了什么；涉及 UI 或交互时请附截图或录屏。
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 错误日志
+      description: 请粘贴浏览器控制台、Metro、Xcode、Gradle 或终端中的完整错误，并移除 Token、证书等敏感信息。
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 补充信息
+      description: 可填写相关 Issue、初步定位、临时解决方案或其他上下文。
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已搜索现有 Issue，确认没有重复报告。
+          required: true
+        - label: 我已确认问题能够在当前版本或 master 分支中复现。
+          required: true
+        - label: 我已提供足以复现问题的步骤，且内容不包含敏感数据。
+          required: true

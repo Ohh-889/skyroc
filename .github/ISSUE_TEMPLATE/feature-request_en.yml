@@ -1,0 +1,105 @@
+name: 🚀 Feature Request (English)
+description: Suggest an improvement to a Skyroc app, public package, template, or toolchain
+title: '[Feature]: '
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping shape Skyroc. Search existing issues before submitting. If the need is not yet concrete, start a conversation in [Discussions](https://github.com/Ohh-889/skyroc/discussions).
+
+  - type: dropdown
+    id: target-area
+    attributes:
+      label: Target area
+      description: Select the app or package where this feature primarily belongs.
+      options:
+        - Admin apps (apps/admin, admin-example, ruoyi-plus-fast)
+        - Web UI (@skyroc/web-ui)
+        - Native UI (@skyroc/native-ui)
+        - Native capability packages (Bluetooth, WeChat)
+        - Expo template (apps/expo-templete)
+        - Scaffolding (create-skyroc)
+        - Shared, core, and configuration packages (packages/@core, hooks, primitives, internal)
+        - Documentation and examples
+        - Build, test, or release workflow
+        - New cross-package capability
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Applicable platforms
+      description: Select every platform affected by the request.
+      multiple: true
+      options:
+        - Web
+        - Expo iOS
+        - Expo Android
+        - Node.js / CLI
+        - Documentation
+        - All platforms
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and use case
+      description: Describe the current limitation, real use case, affected users, and why the existing capabilities are insufficient.
+      placeholder: When using ... in ..., I am currently unable to ..., which causes ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the expected behavior, interaction flow, or API. Include sketches or references for UI changes when helpful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-compatibility
+    attributes:
+      label: API and compatibility considerations
+      description: For public packages, templates, or scaffolding, describe the proposed API, defaults, Web/Native differences, and potential breaking changes.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe other approaches or workarounds you considered and why they are insufficient.
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Are you willing to contribute?
+      options:
+        - I am willing to submit a pull request
+        - I can help with design or testing
+        - I am unable to contribute at this time
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add related issues, designs, comparable solutions, example code, or other references.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and confirmed that this is not a duplicate proposal.
+          required: true
+        - label: I described the underlying problem and use case rather than only prescribing an implementation.
+          required: true
+        - label: This request has reusable value and is not a customization for one business project.
+          required: true

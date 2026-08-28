@@ -1,0 +1,135 @@
+name: 🐞 Bug Report (English)
+description: Report a reproducible issue in a Skyroc app, package, scaffold, or toolchain
+title: '[Bug]: '
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve Skyroc. Search existing issues first and confirm that the problem still occurs in the current version or on the `master` branch.
+
+        Use [Discussions](https://github.com/Ohh-889/skyroc/discussions) for usage questions, early proposals, and problems that cannot yet be reproduced consistently.
+
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected area
+      description: Select the app or package most directly affected.
+      options:
+        - Admin apps (apps/admin, admin-example, ruoyi-plus-fast)
+        - Web UI (@skyroc/web-ui, web-ui-playground)
+        - Native UI (@skyroc/native-ui, native-ui-playground)
+        - Native capability packages (Bluetooth, WeChat)
+        - Expo template (apps/expo-templete)
+        - Scaffolding (create-skyroc)
+        - Shared, core, and configuration packages (packages/@core, hooks, primitives, internal)
+        - Documentation sites
+        - Build, test, or release workflow
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Enter the package version, app version, or Git commit hash.
+      placeholder: 'For example: @skyroc/native-ui@1.2.0 or commit a1b2c3d'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Runtime platform
+      description: Select every platform where the issue can be reproduced.
+      multiple: true
+      options:
+        - Web browser
+        - Expo iOS
+        - Expo Android
+        - Node.js / CLI
+        - Documentation / server rendering
+        - CI / release environment
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Keep the relevant entries. For Native issues, include Expo, device, and build details.
+      placeholder: |
+        OS:
+        Node.js:
+        pnpm:
+        Browser:
+        Expo SDK / React Native:
+        Device or simulator:
+        Development mode or production build:
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction-link
+    attributes:
+      label: Minimal reproduction
+      description: If available, provide a public repository, StackBlitz project, or Expo Snack.
+      placeholder: https://github.com/...
+
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: Steps to reproduce
+      description: Starting with installation or app startup, list the exact commands and actions that consistently trigger the problem.
+      placeholder: |
+        1. Run `pnpm ...`
+        2. Open or navigate to ...
+        3. Perform ...
+        4. Observe the issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Describe what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Describe what actually happened. Include screenshots or recordings for UI and interaction issues.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error logs
+      description: Paste complete browser console, Metro, Xcode, Gradle, or terminal output with tokens, certificates, and other secrets removed.
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add related issues, initial findings, workarounds, or any other relevant context.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and confirmed that this is not a duplicate.
+          required: true
+        - label: I confirmed that the problem is reproducible in the current version or on master.
+          required: true
+        - label: I provided enough steps to reproduce the issue and removed all sensitive data.
+          required: true

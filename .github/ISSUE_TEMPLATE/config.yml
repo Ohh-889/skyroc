@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Project Guide
+    url: https://github.com/Ohh-889/skyroc#readme
+    about: Read the project overview, workspace structure, setup, and contribution links before opening an issue.
+  - name: 🖥️ Admin Documentation
+    url: https://admin-docs.skyroc.me/
+    about: Check the Admin guides for routing, permissions, requests, themes, and configuration.
+  - name: 🧩 Component Documentation
+    url: https://web-ui-docs.skyroc.me/
+    about: Check the Web UI component APIs and examples.
+  - name: 📱 Native UI Documentation
+    url: https://native-ui.skyroc.me/
+    about: Check the Native UI component APIs and Expo examples.
+  - name: 💬 Questions and Discussions
+    url: https://github.com/Ohh-889/skyroc/discussions
+    about: Ask usage questions and discuss ideas that are not yet actionable issues.
