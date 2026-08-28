@@ -155,7 +155,7 @@ const HomeQuickEntries = (props: HomeQuickEntriesProps) => {
 };
 
 const HomeNotifications = (props: HomeNotificationsProps) => {
-  const { isError, isLoading, notifications, onOpenPage } = props;
+  const { isError, isLoading, notifications } = props;
 
   function formatNotificationTime(value: string) {
     return dayjs(value).format('MM-DD HH:mm');
@@ -170,7 +170,6 @@ const HomeNotifications = (props: HomeNotificationsProps) => {
         </div>
         <AButton
           type="link"
-          onClick={() => onOpenPage('/notification')}
         >
           查看全部
         </AButton>
@@ -199,7 +198,6 @@ const HomeNotifications = (props: HomeNotificationsProps) => {
           <button
             key={item.msgId}
             type="button"
-            onClick={() => onOpenPage('/notification')}
           >
             <span className={`is-${item.category}`}>
               <SvgIcon icon={item.readTime ? 'ph:envelope-open' : 'ph:envelope-simple'} />
