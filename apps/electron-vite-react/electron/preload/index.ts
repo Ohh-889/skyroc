@@ -23,6 +23,28 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   // ...
 });
 
+contextBridge.exposeInMainWorld('desktopWindow', {
+  close() {
+    ipcRenderer.send('desktop-window:close');
+  },
+  minimize() {
+    ipcRenderer.send('desktop-window:minimize');
+  },
+  platform: process.platform,
+  toggleMaximize() {
+    ipcRenderer.send('desktop-window:toggle-maximize');
+  }
+});
+
+contextBridge.exposeInMainWorld('desktopFiles', {
+  importFiles() {
+    return ipcRenderer.invoke('desktop-files:import-files') as Promise<string[]>;
+  },
+  openDirectory() {
+    return ipcRenderer.invoke('desktop-files:open-directory') as Promise<string[]>;
+  }
+});
+
 // --------- Preload scripts loading ---------
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise(resolve => {

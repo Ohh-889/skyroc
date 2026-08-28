@@ -1,7 +1,8 @@
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BrowserWindow, app, ipcMain, shell } from 'electron';
+import { BrowserWindow, Menu, app, dialog, ipcMain, shell } from 'electron';
+import type { OpenDialogOptions } from 'electron';
 import { update } from './update';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -41,8 +42,13 @@ const indexHtml = path.join(RENDERER_DIST, 'index.html');
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
+    height: 800,
     icon: path.join(process.env.VITE_PUBLIC ?? '', 'favicon.ico'),
+    minHeight: 560,
+    minWidth: 760,
+    title: 'Main window',
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 18, y: 16 },
     webPreferences: {
       preload
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -51,14 +57,31 @@ async function createWindow() {
       // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // contextIsolation: false,
-    }
+    },
+    width: 1240
   });
 
   if (VITE_DEV_SERVER_URL) {
     // #298
     win.loadURL(VITE_DEV_SERVER_URL);
-    // Open devTool if the app is not packaged
-    win.webContents.openDevTools();
+
+    win.webContents.on('before-input-event', (event, input) => {
+      if (input.type === 'keyDown' && input.key === 'F12') {
+        event.preventDefault();
+        win?.webContents.toggleDevTools();
+      }
+    });
+
+    win.webContents.on('context-menu', (_, params) => {
+      Menu.buildFromTemplate([
+        {
+          label: '打开开发者工具',
+          click() {
+            win?.webContents.openDevTools();
+          }
+        }
+      ]).popup({ window: win ?? undefined, x: params.x, y: params.y });
+    });
   } else {
     win.loadFile(indexHtml);
   }
@@ -77,6 +100,40 @@ async function createWindow() {
   // Auto update
   update(win);
 }
+
+ipcMain.on('desktop-window:minimize', event => {
+  BrowserWindow.fromWebContents(event.sender)?.minimize();
+});
+
+ipcMain.on('desktop-window:toggle-maximize', event => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+
+  if (window?.isMaximized()) {
+    window.unmaximize();
+  } else {
+    window?.maximize();
+  }
+});
+
+ipcMain.on('desktop-window:close', event => {
+  BrowserWindow.fromWebContents(event.sender)?.close();
+});
+
+ipcMain.handle('desktop-files:open-directory', async event => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  const options: OpenDialogOptions = { properties: ['openDirectory', 'createDirectory'] };
+  const result = window ? await dialog.showOpenDialog(window, options) : await dialog.showOpenDialog(options);
+
+  return result.canceled ? [] : result.filePaths;
+});
+
+ipcMain.handle('desktop-files:import-files', async event => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  const options: OpenDialogOptions = { properties: ['openFile', 'multiSelections'] };
+  const result = window ? await dialog.showOpenDialog(window, options) : await dialog.showOpenDialog(options);
+
+  return result.canceled ? [] : result.filePaths;
+});
 
 app.whenReady().then(createWindow);
 

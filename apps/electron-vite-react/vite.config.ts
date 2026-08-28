@@ -1,6 +1,7 @@
 import { rmSync } from 'node:fs';
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { electronSimple } from 'vite-plugin-electron/multi-env';
@@ -24,6 +25,14 @@ export default defineConfig(({ command }) => {
       }
     },
     plugins: [
+      tanstackRouter({
+        autoCodeSplitting: true,
+        generatedRouteTree: './src/features/router/routeTree.gen.ts',
+        routeFileIgnorePattern: '(?:^|/)(components|modules)(?:/|$)|(?:^|/)(loading|error|not-found)(?:.tsx?|$)',
+        routesDirectory: './src/pages',
+        routeToken: 'layout',
+        target: 'react'
+      }),
       react(),
       tailwindcss(),
       electronSimple({

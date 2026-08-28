@@ -1,4 +1,6 @@
 import { type ChildProcess, spawn } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import {
   _electron as electron,
@@ -13,6 +15,7 @@ import type { BrowserWindow } from 'electron';
 const root = path.resolve(import.meta.dirname, '..', '..');
 let electronApp: ElectronApplication;
 let page: Page;
+let testUserDataDir: string | undefined;
 let xvfbProcess: ChildProcess | undefined;
 
 function startXvfbOnLinux(): Promise<void> {
@@ -38,9 +41,10 @@ function startXvfbOnLinux(): Promise<void> {
 test.beforeAll(async () => {
   test.setTimeout(30000);
   await startXvfbOnLinux();
+  testUserDataDir = mkdtempSync(path.join(os.tmpdir(), 'skyroc-electron-e2e-'));
 
   electronApp = await electron.launch({
-    args: ['.', '--no-sandbox'],
+    args: ['.', '--no-sandbox', `--user-data-dir=${testUserDataDir}`],
     cwd: root,
     env: { ...process.env, NODE_ENV: 'development' }
   });
@@ -62,6 +66,11 @@ test.afterAll(async () => {
     await electronApp.close();
   }
 
+  if (testUserDataDir) {
+    rmSync(testUserDataDir, { force: true, recursive: true });
+    testUserDataDir = undefined;
+  }
+
   if (xvfbProcess?.pid) {
     process.kill(-xvfbProcess.pid);
     xvfbProcess = undefined;
@@ -72,24 +81,31 @@ test.describe('[electron-vite-react] e2e tests', () => {
   test('startup', async () => {
     const title = await page.title();
     expect(title).toBe('Electron + Vite + React');
+    await expect(page).toHaveURL(/#\/login$/);
   });
 
-  test('should be home page is load correctly', async () => {
+  test('should load login page correctly', async () => {
     const h1 = await page.$('h1');
-    const title = await h1?.textContent();
-    expect(title).toBe('A sharp starter with Tailwind-first styling.');
+    const heading = await h1?.textContent();
+    expect(heading).toBe('欢迎回来');
+    await page.screenshot({ path: 'test/screenshots/login.png' });
   });
 
-  test('should be count button can click', async () => {
-    const countButton = await page.$('button:has-text("Increment counter")');
-    const countValue = await page.$('div.text-5xl');
+  test('should enter workspace and use the desktop shell', async () => {
+    await page.getByTestId('local-mode').click();
+    await expect(page).toHaveURL(/#\/workspace$/);
+    await expect(page.getByRole('heading', { name: '上午好，Shipeng' })).toBeVisible();
+    await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
 
-    const valueBeforeClick = await countValue?.textContent();
-    expect(valueBeforeClick).toBe('0');
+    await page.getByTestId('sidebar-toggle').click();
+    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+    await expect(page.getByText('全局命令面板')).toBeAttached();
 
-    await countButton?.click();
+    await page.keyboard.press('Escape');
+    await page.getByTestId('demo-data-toggle').click();
+    await expect(page.getByTestId('workspace-empty')).toBeVisible();
 
-    const valueAfterClick = await countValue?.textContent();
-    expect(valueAfterClick).toBe('1');
+    await page.getByRole('button', { name: '恢复示例数据' }).click();
+    await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
   });
 });
