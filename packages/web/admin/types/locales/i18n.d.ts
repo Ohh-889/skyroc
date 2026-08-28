@@ -93,8 +93,8 @@ declare global {
       trigger: string;
       tryAlign: string;
       update: string;
-      updateTime: string;
       updateSuccess: string;
+      updateTime: string;
       userCenter: string;
       warning: string;
       yesOrNo: {
