@@ -1,0 +1,140 @@
+{
+  "name": "@skyroc/native-ui",
+  "version": "1.2.0",
+  "private": false,
+  "description": "React Native UI component library powered by Uniwind (Tailwind CSS v4) for SoybeanAdmin",
+  "keywords": [
+    "component-library",
+    "design-system",
+    "expo",
+    "react",
+    "react-native",
+    "skyroc",
+    "soybean-admin",
+    "tailwind",
+    "tailwindcss",
+    "typescript",
+    "ui",
+    "ui-library",
+    "uniwind"
+  ],
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/native/ui",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ohh-889/skyroc.git",
+    "directory": "packages/native/ui"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "typesVersions": {
+    "*": {
+      "components": [
+        "./src/components/index.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts",
+    "./uniwind.css": "./src/uniwind.css",
+    "./uniwind-plugin": "./src/uniwind-plugin.js"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "./components": {
+        "import": {
+          "types": "./dist/components/index.d.ts",
+          "default": "./dist/components/index.js"
+        }
+      },
+      "./uniwind.css": "./dist/uniwind.css",
+      "./uniwind-plugin": "./dist/uniwind-plugin.js"
+    },
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsdown && pnpm build:css",
+    "build:css": "node -e \"const fs = require('node:fs'); fs.copyFileSync('src/uniwind.css', 'dist/uniwind.css'); fs.copyFileSync('src/uniwind-plugin.js', 'dist/uniwind-plugin.js')\"",
+    "clean": "rimraf dist",
+    "dev": "tsdown --watch",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "catalog:native",
+    "@radix-ui/react-compose-refs": "^1.1.2",
+    "@radix-ui/react-use-controllable-state": "^1.2.2",
+    "@rn-primitives/slot": "^1.2.0",
+    "@skyroc/form": "workspace:*",
+    "@skyroc/hooks": "workspace:*",
+    "@skyroc/tailwind-plugin": "workspace:*",
+    "@skyroc/utils": "workspace:*",
+    "react-native-confirmation-code-field": "catalog:native",
+    "react-native-ui-datepicker": "catalog:native",
+    "tailwind-variants": "catalog:utils"
+  },
+  "devDependencies": {
+    "@expo/vector-icons": "catalog:native",
+    "@shopify/react-native-skia": "catalog:native",
+    "@skyroc/tsconfig": "workspace:*",
+    "@types/react": "catalog:dev",
+    "eslint-plugin-sort": "catalog:dev",
+    "expo-haptics": "catalog:native",
+    "expo-image": "catalog:native",
+    "oxlint": "catalog:dev",
+    "react": "catalog:native",
+    "react-native": "catalog:native",
+    "react-native-gesture-handler": "catalog:native",
+    "react-native-modal": "catalog:native",
+    "react-native-pager-view": "catalog:native",
+    "react-native-reanimated": "catalog:native",
+    "react-native-worklets": "catalog:native",
+    "rimraf": "catalog:dev",
+    "tailwindcss": "catalog:css",
+    "tsdown": "catalog:dev",
+    "typescript": "catalog:core",
+    "uniwind": "catalog:native"
+  },
+  "peerDependencies": {
+    "@expo/vector-icons": ">=14.0.0",
+    "@shopify/react-native-skia": ">=1.5.0",
+    "expo-haptics": ">=12.0.0",
+    "expo-image": ">=1.10.0",
+    "react": ">=19.0.0",
+    "react-native": ">=0.81.0",
+    "react-native-gesture-handler": ">=2.16.0",
+    "react-native-modal": ">=13.0.2 || >=14.0.0-0",
+    "react-native-pager-view": ">=6.3.0",
+    "react-native-reanimated": ">=4.0.0",
+    "react-native-worklets": ">=0.5.0",
+    "tailwindcss": ">=4",
+    "uniwind": ">=1.7.0"
+  }
+}
