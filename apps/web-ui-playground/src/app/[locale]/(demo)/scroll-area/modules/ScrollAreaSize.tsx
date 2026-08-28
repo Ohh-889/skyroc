@@ -20,11 +20,7 @@ const ScrollAreaSize = () => {
                 className="bg-muted rounded px-2 py-1 text-sm"
                 key={`${size}-${index}`}
               >
-                {size}
-                {' '}
-                item
-                {' '}
-                {index + 1}
+                {size} item {index + 1}
               </div>
             ))}
           </div>
