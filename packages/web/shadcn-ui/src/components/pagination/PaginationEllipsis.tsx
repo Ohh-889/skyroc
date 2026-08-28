@@ -1,5 +1,5 @@
-import { EllipsisIcon } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { EllipsisIcon } from 'lucide-react';
 import { paginationVariants } from './pagination-variants';
 import type { PaginationEllipsisProps } from './types';
 

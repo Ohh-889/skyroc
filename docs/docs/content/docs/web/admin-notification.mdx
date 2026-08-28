@@ -1,18 +1,18 @@
 ---
-title: "@skyroc/web-admin-notification"
-description: "站内通知中心：不依赖 React 的通知仓库、Provider、铃铛按钮与通知面板，含优先级排序、去重、音效、免打扰与浏览器原生通知"
+title: '@skyroc/web-admin-notification'
+description: '站内通知中心：不依赖 React 的通知仓库、Provider、铃铛按钮与通知面板，含优先级排序、去重、音效、免打扰与浏览器原生通知'
 ---
 
 ## 概述
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/web-admin-notification` |
-| 目录 | `packages/web/admin-notification` |
-| 版本 | 0.1.0 |
-| 依赖 | [`@skyroc/utils`](/docs/core/utils/overview)、[`@skyroc/web-ui-antd`](/docs/web/ui)、[`@skyroc/web-ui-compose`](/docs/web/ui)、`clsx`、`dayjs` |
-| peer | `antd`、`i18next`、`react`、`react-dom`、`react-i18next` |
-| 子入口 | `.`、`./mock` |
+| 项     | 值                                                                                                                                             |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 包名   | `@skyroc/web-admin-notification`                                                                                                               |
+| 目录   | `packages/web/admin-notification`                                                                                                              |
+| 版本   | 0.1.0                                                                                                                                          |
+| 依赖   | [`@skyroc/utils`](/docs/core/utils/overview)、[`@skyroc/web-ui-antd`](/docs/web/ui)、[`@skyroc/web-ui-compose`](/docs/web/ui)、`clsx`、`dayjs` |
+| peer   | `antd`、`i18next`、`react`、`react-dom`、`react-i18next`                                                                                       |
+| 子入口 | `.`、`./mock`                                                                                                                                  |
 
 通知中心分成两层：
 
@@ -40,7 +40,10 @@ import soundUrl from '@/assets/audio/wechat-style-notification.wav';
 ```tsx
 import { NotificationButton } from '@skyroc/web-admin-notification';
 
-<NotificationButton className="px-12px" onViewAll={() => navigate({ to: '/notifications' })} />;
+<NotificationButton
+  className="px-12px"
+  onViewAll={() => navigate({ to: '/notifications' })}
+/>;
 ```
 
 按钮自带未读 Badge（超过 99 显示 `99+`），点击弹出 `NotificationPanel`。不传 `onViewAll` 时面板底部的"查看全部"入口会隐藏。
@@ -103,18 +106,19 @@ interface NotificationItem {
 `addNotification` 收的是 `AddNotificationInput`：`id` / `read` / `timestamp` 三个字段可省，省了就分别取随机 id、`false`、`Date.now()`。
 
 <Callout type="warn">
-  不传 `id` 等于声明这条不参与去重。推送场景要去重，就把服务端信封里的稳定 id 带进来——WebSocket 和 SSE 同时连着时同一条会推两遍，同 id 的重复投递会被静默丢掉，不会重复播音效。
+  不传 `id` 等于声明这条不参与去重。推送场景要去重，就把服务端信封里的稳定 id 带进来——WebSocket 和 SSE
+  同时连着时同一条会推两遍，同 id 的重复投递会被静默丢掉，不会重复播音效。
 </Callout>
 
 `type` 决定面板里的图标和配色：
 
-| type | 图标 | 语义 |
-| --- | --- | --- |
-| `message` | `carbon:chat` | 来自其他人的消息、@ 提醒 |
-| `info` | `carbon:information-filled` | 中性告知，用户不需要处理 |
-| `success` | `carbon:checkmark-filled` | 操作成功回执 |
-| `warning` | `carbon:warning-filled` | 需要留意但没中断流程 |
-| `error` | `carbon:close-filled` | 出错了，通常要用户介入 |
+| type      | 图标                        | 语义                     |
+| --------- | --------------------------- | ------------------------ |
+| `message` | `carbon:chat`               | 来自其他人的消息、@ 提醒 |
+| `info`    | `carbon:information-filled` | 中性告知，用户不需要处理 |
+| `success` | `carbon:checkmark-filled`   | 操作成功回执             |
+| `warning` | `carbon:warning-filled`     | 需要留意但没中断流程     |
+| `error`   | `carbon:close-filled`       | 出错了，通常要用户介入   |
 
 ## 排序规则
 
@@ -149,31 +153,31 @@ interface NotificationConfig {
 
 ## 主入口导出
 
-| 类别 | 符号 |
-| --- | --- |
-| 组件 | `NotificationProvider`、`NotificationButton`、`NotificationPanel` |
-| Hook | `useNotification`、`useNotificationContext` |
-| Context | `NotificationContext` |
-| 类 / 常量 | `NotificationStore`、`DEFAULT_NOTIFICATION_CONFIG` |
-| 类型 | `NotificationProviderProps`、`NotificationButtonProps`、`NotificationPanelProps`、`NotificationContextValue`，以及 `types` 全量导出 |
+| 类别      | 符号                                                                                                                                |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 组件      | `NotificationProvider`、`NotificationButton`、`NotificationPanel`                                                                   |
+| Hook      | `useNotification`、`useNotificationContext`                                                                                         |
+| Context   | `NotificationContext`                                                                                                               |
+| 类 / 常量 | `NotificationStore`、`DEFAULT_NOTIFICATION_CONFIG`                                                                                  |
+| 类型      | `NotificationProviderProps`、`NotificationButtonProps`、`NotificationPanelProps`、`NotificationContextValue`，以及 `types` 全量导出 |
 
 ### useNotification 返回值
 
 `useNotificationContext()` 拿到的就是 `useNotification()` 的返回值：
 
-| 字段 | 说明 |
-| --- | --- |
-| `notifications` | 排序后的通知列表 |
-| `unreadCount` | 未读数 |
-| `config` | 当前运行时配置 |
-| `notificationPermission` | 浏览器授权状态 |
-| `addNotification(input)` | 通用投递，返回 id |
+| 字段                                                                                                                            | 说明                                      |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `notifications`                                                                                                                 | 排序后的通知列表                          |
+| `unreadCount`                                                                                                                   | 未读数                                    |
+| `config`                                                                                                                        | 当前运行时配置                            |
+| `notificationPermission`                                                                                                        | 浏览器授权状态                            |
+| `addNotification(input)`                                                                                                        | 通用投递，返回 id                         |
 | `addInfoNotification` / `addSuccessNotification` / `addWarningNotification` / `addErrorNotification` / `addMessageNotification` | `(title, content, options?)` 语义快捷方法 |
-| `markAsRead(id)` / `markAllAsRead()` | 标记已读 |
-| `removeNotification(id)` / `clearAllNotifications()` / `clearReadNotifications()` | 删除 |
-| `updateConfig(partial)` | 改运行时配置 |
-| `requestNotificationPermission()` | 弹浏览器授权框，返回是否授权 |
-| `store` | 底层 `NotificationStore` 实例 |
+| `markAsRead(id)` / `markAllAsRead()`                                                                                            | 标记已读                                  |
+| `removeNotification(id)` / `clearAllNotifications()` / `clearReadNotifications()`                                               | 删除                                      |
+| `updateConfig(partial)`                                                                                                         | 改运行时配置                              |
+| `requestNotificationPermission()`                                                                                               | 弹浏览器授权框，返回是否授权              |
+| `store`                                                                                                                         | 底层 `NotificationStore` 实例             |
 
 方法都是 store 上的箭头属性，引用天然稳定，消费侧不用再包 `useCallback`。
 

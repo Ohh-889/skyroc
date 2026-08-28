@@ -1,5 +1,5 @@
-import { useMockNotifications } from '@shell/notification/mock';
 import { useNotificationContext } from '@shell/notification';
+import { useMockNotifications } from '@shell/notification/mock';
 import { createFileRoute } from '@tanstack/react-router';
 import { Button, Card, Space, Tag } from 'antd';
 
@@ -147,13 +147,18 @@ const NotificationDemo = () => {
     <div className="min-h-full p-24px">
       <div className="mb-24px">
         <h1 className="m-0 mb-8px text-24px font-bold">通知系统演示</h1>
-        <p className="m-0 text-secondary">
-          完整展示通知系统的类型、优先级、浏览器通知权限和批量管理能力。
-        </p>
+        <p className="m-0 text-secondary">完整展示通知系统的类型、优先级、浏览器通知权限和批量管理能力。</p>
       </div>
 
-      <Card className="mb-24px" title="当前状态" variant="borderless">
-        <Space orientation="vertical" size="middle">
+      <Card
+        className="mb-24px"
+        title="当前状态"
+        variant="borderless"
+      >
+        <Space
+          orientation="vertical"
+          size="middle"
+        >
           <div className="flex-y-center gap-16px">
             <span className="text-secondary">总通知数：</span>
             <Tag color="processing">{notifications.length}</Tag>
@@ -183,62 +188,115 @@ const NotificationDemo = () => {
         </Space>
       </Card>
 
-      <Card className="mb-24px" title="基础通知类型" variant="borderless">
+      <Card
+        className="mb-24px"
+        title="基础通知类型"
+        variant="borderless"
+      >
         <Space wrap>
-          <Button type="primary" onClick={addInfo}>
+          <Button
+            type="primary"
+            onClick={addInfo}
+          >
             信息通知
           </Button>
-          <Button type="primary" onClick={addSuccess}>
+          <Button
+            type="primary"
+            onClick={addSuccess}
+          >
             成功通知
           </Button>
           <Button onClick={addWarning}>警告通知</Button>
-          <Button danger onClick={addError}>
+          <Button
+            danger
+            onClick={addError}
+          >
             错误通知
           </Button>
-          <Button type="dashed" onClick={addMessage}>
+          <Button
+            type="dashed"
+            onClick={addMessage}
+          >
             消息通知
           </Button>
         </Space>
       </Card>
 
-      <Card className="mb-24px" title="优先级和特殊能力" variant="borderless">
+      <Card
+        className="mb-24px"
+        title="优先级和特殊能力"
+        variant="borderless"
+      >
         <Space wrap>
           <Button onClick={addLowPriority}>低优先级</Button>
-          <Button type="primary" onClick={addWarning}>
+          <Button
+            type="primary"
+            onClick={addWarning}
+          >
             高优先级
           </Button>
-          <Button danger type="primary" onClick={addUrgent}>
+          <Button
+            danger
+            type="primary"
+            onClick={addUrgent}
+          >
             紧急通知
           </Button>
           <Button onClick={addSilent}>静音通知</Button>
           <Button onClick={addNoBrowserNotification}>仅应用内通知</Button>
-          <Button type="dashed" onClick={addLinkedNotification}>
+          <Button
+            type="dashed"
+            onClick={addLinkedNotification}
+          >
             带跳转链接
           </Button>
         </Space>
       </Card>
 
-      <Card className="mb-24px" title="批量管理" variant="borderless">
+      <Card
+        className="mb-24px"
+        title="批量管理"
+        variant="borderless"
+      >
         <Space wrap>
-          <Button type="primary" onClick={addMockNotifications}>
+          <Button
+            type="primary"
+            onClick={addMockNotifications}
+          >
             批量添加模拟通知
           </Button>
-          <Button disabled={unreadCount === 0} onClick={markAllAsRead}>
+          <Button
+            disabled={unreadCount === 0}
+            onClick={markAllAsRead}
+          >
             全部标记已读
           </Button>
-          <Button disabled={notifications.every(item => !item.read)} onClick={clearReadNotifications}>
+          <Button
+            disabled={notifications.every(item => !item.read)}
+            onClick={clearReadNotifications}
+          >
             清除已读通知
           </Button>
-          <Button danger disabled={notifications.length === 0} onClick={clearAllNotifications}>
+          <Button
+            danger
+            disabled={notifications.length === 0}
+            onClick={clearAllNotifications}
+          >
             清空所有通知
           </Button>
         </Space>
       </Card>
 
-      <Card title="设置控制" variant="borderless">
+      <Card
+        title="设置控制"
+        variant="borderless"
+      >
         <Space wrap>
           {notificationPermission !== 'granted' && (
-            <Button type="primary" onClick={requestPermission}>
+            <Button
+              type="primary"
+              onClick={requestPermission}
+            >
               请求浏览器通知权限
             </Button>
           )}

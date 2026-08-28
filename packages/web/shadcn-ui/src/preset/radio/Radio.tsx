@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import RadioUI from '../../components/radio/RadioUI';
 import type { RadioProps } from '../../components/radio/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Radio = (props: RadioProps) => {
   const config = useComponentConfig('radio');
@@ -12,11 +12,7 @@ const Radio = (props: RadioProps) => {
     ...props
   };
 
-  return (
-    <RadioUI
-      {...mergedProps}
-    />
-  );
+  return <RadioUI {...mergedProps} />;
 };
 
 Radio.displayName = 'Radio';

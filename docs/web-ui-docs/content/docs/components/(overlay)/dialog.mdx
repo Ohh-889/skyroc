@@ -330,7 +330,8 @@ Dialog 也导出基础结构组件，适合在需要更细粒度组合时使用�
     },
     {
       name: 'DialogContentProps',
-      description: '内容容器属性。继承 Radix Dialog Content props，并通过 StyledComponentProps 增加 className 和 size。',
+      description:
+        '内容容器属性。继承 Radix Dialog Content props，并通过 StyledComponentProps 增加 className 和 size。',
       fields: [
         { name: 'children', type: 'ReactNode', description: '内容区域子节点。' },
         { name: 'className', type: 'ClassValue', description: '内容容器的 class。' },
@@ -350,7 +351,8 @@ Dialog 也导出基础结构组件，适合在需要更细粒度组合时使用�
     },
     {
       name: 'DialogDescriptionProps',
-      description: '描述文本属性。继承 Radix Dialog Description props，并通过 StyledComponentProps 增加 className 和 size。',
+      description:
+        '描述文本属性。继承 Radix Dialog Description props，并通过 StyledComponentProps 增加 className 和 size。',
       fields: [
         { name: 'children', type: 'ReactNode', description: '描述文本或自定义描述内容。' },
         { name: 'className', type: 'ClassValue', description: '描述区域的 class。' },
@@ -410,7 +412,11 @@ Dialog 也导出基础结构组件，适合在需要更细粒度组合时使用�
       name: 'StyledComponentProps<T>',
       description: '项目内用于包装 Radix props 或原生元素 props 的通用类型。',
       fields: [
-        { name: '...sourceProps', type: 'inherited props without className', description: '继承原始组件属性，但重新定义 className。' },
+        {
+          name: '...sourceProps',
+          type: 'inherited props without className',
+          description: '继承原始组件属性，但重新定义 className。'
+        },
         { name: 'className', type: 'ClassValue', description: '组件 class。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '项目统一尺寸类型。' }
       ]

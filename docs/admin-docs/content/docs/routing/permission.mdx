@@ -11,12 +11,12 @@ description: 理解权限模型、静态权限、动态权限、直接 URL 授�
 
 先记住四条，后面所有细节都是它的展开：
 
-| 维度 | 当前模型 |
-| --- | --- |
-| 权限是什么 | **角色码**，例如 `R_SUPER`、`R_ADMIN`。不是细粒度操作码，也不是接口权限。 |
-| 怎么判定 | 用户 `roles` **命中任意一个**路由 `permissions`（OR 语义），或拥有超级角色，即通过。 |
-| 作用域 | **路由级**。matched routes 上的 `permissions` 必须**全部**通过（`matches.every`），不只是叶子页面。 |
-| 静态 vs 动态 | 只是 `permissions` 这份**数据的来源**不同（前端 `staticData` / 后端路由节点），判定函数是同一套。 |
+| 维度         | 当前模型                                                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------- |
+| 权限是什么   | **角色码**，例如 `R_SUPER`、`R_ADMIN`。不是细粒度操作码，也不是接口权限。                           |
+| 怎么判定     | 用户 `roles` **命中任意一个**路由 `permissions`（OR 语义），或拥有超级角色，即通过。                |
+| 作用域       | **路由级**。matched routes 上的 `permissions` 必须**全部**通过（`matches.every`），不只是叶子页面。 |
+| 静态 vs 动态 | 只是 `permissions` 这份**数据的来源**不同（前端 `staticData` / 后端路由节点），判定函数是同一套。   |
 
 判定逻辑集中在 `packages/web/admin-layouts/src/features/menus/permissions.ts`，只有三个函数：
 
@@ -45,33 +45,33 @@ export function hasMatchedRoutePermission(matches, userInfo) {
 }
 ```
 
-| 路由配置 | 用户角色 | 结果 |
-| --- | --- | --- |
-| 未配置 `permissions` | 任意 | 允许。 |
-| 配置 `permissions` | 命中任意一个权限 | 允许。 |
-| 配置 `permissions` | 包含超级角色 | 允许。 |
-| 配置 `permissions` | 都不命中 | 403。 |
+| 路由配置             | 用户角色         | 结果   |
+| -------------------- | ---------------- | ------ |
+| 未配置 `permissions` | 任意             | 允许。 |
+| 配置 `permissions`   | 命中任意一个权限 | 允许。 |
+| 配置 `permissions`   | 包含超级角色     | 允许。 |
+| 配置 `permissions`   | 都不命中         | 403。  |
 
 > 当前项目**没有按钮级 / 接口级权限**。`permissions` 只控制路由能不能进入。如果未来需要更细粒度的权限，应在业务模块里单独设计，而不是复用这套路由级判定。
 
 ## 当前事实
 
-| 事实 | 当前实现 |
-| --- | --- |
-| 静态权限判断 | `hasMatchedRoutePermission(matches, userInfo)`。 |
-| 动态直达授权 | `hasAuthorizedRoutePath(currentRoutePath, userInfo)`。 |
-| 超级角色 | `.env` 的 `VITE_STATIC_SUPER_ROLE`，当前为 `R_SUPER`。 |
-| 路由模式 | `.env` 的 `VITE_AUTH_ROUTE_MODE`，当前默认为 `static`。 |
+| 事实         | 当前实现                                                          |
+| ------------ | ----------------------------------------------------------------- |
+| 静态权限判断 | `hasMatchedRoutePermission(matches, userInfo)`。                  |
+| 动态直达授权 | `hasAuthorizedRoutePath(currentRoutePath, userInfo)`。            |
+| 超级角色     | `.env` 的 `VITE_STATIC_SUPER_ROLE`，当前为 `R_SUPER`。            |
+| 路由模式     | `.env` 的 `VITE_AUTH_ROUTE_MODE`，当前默认为 `static`。           |
 | 注入超级角色 | `bootstrap.tsx` 的 `setupAdminLayouts({ permissionSuperRole })`。 |
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 静态路由进入 403 | 页面 `staticData.permissions`、用户 `roles`、`VITE_STATIC_SUPER_ROLE` |
-| 动态菜单模式直接输入 URL 进入 403 | 后端路由树、`quickReferenceMenus`、`hasAuthorizedRoutePath()` |
-| 给某个页面加访问角色 | `staticData.permissions`（静态）或后端节点 `permissions`（动态） |
-| 某角色应能访问全部页面 | `VITE_STATIC_SUPER_ROLE` |
+| 场景                              | 重点位置                                                              |
+| --------------------------------- | --------------------------------------------------------------------- |
+| 静态路由进入 403                  | 页面 `staticData.permissions`、用户 `roles`、`VITE_STATIC_SUPER_ROLE` |
+| 动态菜单模式直接输入 URL 进入 403 | 后端路由树、`quickReferenceMenus`、`hasAuthorizedRoutePath()`         |
+| 给某个页面加访问角色              | `staticData.permissions`（静态）或后端节点 `permissions`（动态）      |
+| 某角色应能访问全部页面            | `VITE_STATIC_SUPER_ROLE`                                              |
 
 ## 静态权限
 
@@ -161,49 +161,49 @@ return Boolean(menu && hasRoutePermission(menu, userInfo));
 
 ### 动态模式必须满足的条件
 
-| 条件 | 原因 |
-| --- | --- |
-| 后端返回的 `path` 要和前端 route path 一致 | `quickReferenceMenus` 按规范化 path 查找当前路由。 |
-| 后端节点要带正确的 `permissions` | 动态模式的直接 URL 授权读取后端节点权限。 |
-| 前端仍然要有真实页面文件 | TanStack Router 只渲染前端 route tree 中存在的组件。 |
-| 后端返回的 `home` 应是可访问 route path | 登录后首页会用动态 `home` 覆盖默认首页。 |
+| 条件                                       | 原因                                                 |
+| ------------------------------------------ | ---------------------------------------------------- |
+| 后端返回的 `path` 要和前端 route path 一致 | `quickReferenceMenus` 按规范化 path 查找当前路由。   |
+| 后端节点要带正确的 `permissions`           | 动态模式的直接 URL 授权读取后端节点权限。            |
+| 前端仍然要有真实页面文件                   | TanStack Router 只渲染前端 route tree 中存在的组件。 |
+| 后端返回的 `home` 应是可访问 route path    | 登录后首页会用动态 `home` 覆盖默认首页。             |
 
 ## 403 的来源
 
 当前进入 `/403` 主要有两个来源：
 
-| 来源 | 触发条件 |
-| --- | --- |
-| 静态权限失败 | `VITE_AUTH_ROUTE_MODE=static`，matched routes 的 `staticData.permissions` 未通过。 |
+| 来源         | 触发条件                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| 静态权限失败 | `VITE_AUTH_ROUTE_MODE=static`，matched routes 的 `staticData.permissions` 未通过。          |
 | 动态授权失败 | `VITE_AUTH_ROUTE_MODE=dynamic`，当前 path 不在 `quickReferenceMenus` 中，或节点权限未通过。 |
 
 用户信息初始化失败不会进 `/403`，而是清理认证后回 `/login`。未登录也不会进 `/403`，而是回 `/login`。这两类属于守卫流程，见 [路由守卫](./guards)。
 
 ## 排查顺序
 
-| 现象 | 先检查 |
-| --- | --- |
-| 静态模式某页面 403 | 页面和父 layout 的 `staticData.permissions`，用户 `roles`，`VITE_STATIC_SUPER_ROLE`。 |
-| 动态模式菜单里没有该页面 | 后端路由树是否返回该 path，path 是否和前端规范化 path 一致。 |
-| 动态模式菜单有但直接访问 403 | 后端节点 `permissions` 是否和用户 roles 匹配。 |
-| 动态模式点击菜单 404 | 前端是否真的有对应 `apps/admin/src/pages` 页面和生成的 route tree。 |
-| 超级角色仍然 403 | `VITE_STATIC_SUPER_ROLE` 是否和用户 `roles` 中的值完全一致，`setupAdminLayouts({ permissionSuperRole })` 是否注入。 |
+| 现象                         | 先检查                                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 静态模式某页面 403           | 页面和父 layout 的 `staticData.permissions`，用户 `roles`，`VITE_STATIC_SUPER_ROLE`。                               |
+| 动态模式菜单里没有该页面     | 后端路由树是否返回该 path，path 是否和前端规范化 path 一致。                                                        |
+| 动态模式菜单有但直接访问 403 | 后端节点 `permissions` 是否和用户 roles 匹配。                                                                      |
+| 动态模式点击菜单 404         | 前端是否真的有对应 `apps/admin/src/pages` 页面和生成的 route tree。                                                 |
+| 超级角色仍然 403             | `VITE_STATIC_SUPER_ROLE` 是否和用户 `roles` 中的值完全一致，`setupAdminLayouts({ permissionSuperRole })` 是否注入。 |
 
 ## 常见误区
 
-| 误区 | 正确理解 |
-| --- | --- |
-| 静态模式只检查最后一个页面的权限 | 当前使用 `matches.every`，父级 layout route 的权限也会参与。 |
-| 动态模式只要前端页面存在就能访问 | 必须在后端授权路由树中存在当前 path。 |
-| 超级角色只影响菜单显示 | 超级角色在 `hasAnyRoutePermission()` 中统一生效，菜单生成和守卫都会使用。 |
-| `permissions` 是按钮权限 | 这里是路由访问权限；按钮级或接口级权限应在业务模块里单独设计。 |
-| 多个 `permissions` 需要同时满足 | 是 OR 语义，命中任意一个即可通过。 |
+| 误区                             | 正确理解                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| 静态模式只检查最后一个页面的权限 | 当前使用 `matches.every`，父级 layout route 的权限也会参与。              |
+| 动态模式只要前端页面存在就能访问 | 必须在后端授权路由树中存在当前 path。                                     |
+| 超级角色只影响菜单显示           | 超级角色在 `hasAnyRoutePermission()` 中统一生效，菜单生成和守卫都会使用。 |
+| `permissions` 是按钮权限         | 这里是路由访问权限；按钮级或接口级权限应在业务模块里单独设计。            |
+| 多个 `permissions` 需要同时满足  | 是 OR 语义，命中任意一个即可通过。                                        |
 
 ## 相关位置
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 登录拦截、用户初始化、外链、守卫链路 | [路由守卫](./guards) |
-| `staticData.permissions` 字段写法 | [路由元信息](./route-meta) |
-| 页面文件、路由组和 route tree | [路由概览](./overview) |
-| 启动时注入 `permissionSuperRole` | [启动流程](../architecture/bootstrap) |
+| 主题                                 | 继续查看                              |
+| ------------------------------------ | ------------------------------------- |
+| 登录拦截、用户初始化、外链、守卫链路 | [路由守卫](./guards)                  |
+| `staticData.permissions` 字段写法    | [路由元信息](./route-meta)            |
+| 页面文件、路由组和 route tree        | [路由概览](./overview)                |
+| 启动时注入 `permissionSuperRole`     | [启动流程](../architecture/bootstrap) |

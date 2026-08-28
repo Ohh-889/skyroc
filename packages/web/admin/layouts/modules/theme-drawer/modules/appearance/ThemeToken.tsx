@@ -24,7 +24,13 @@ const ThemeToken = () => {
   return (
     <div className="flex-col-stretch gap-12px">
       <SettingItem label={t('theme.appearance.themeBase.textSize')}>
-        <AInputNumber className="w-120px" min={0} step={1} value={themeTextSize} onChange={handleThemeTextSizeChange} />
+        <AInputNumber
+          className="w-120px"
+          min={0}
+          step={1}
+          value={themeTextSize}
+          onChange={handleThemeTextSizeChange}
+        />
       </SettingItem>
 
       <SettingItem label={t('theme.appearance.themeBase.radius')}>

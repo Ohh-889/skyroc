@@ -40,20 +40,20 @@ import { Form, FormComputedField, FormItem, useForm } from '@skyroc/native-ui';
 
 `labelAlign` 决定标签与控件的关系：
 
-| 取值    | 布局                     | 适用场景                       |
-| ------- | ------------------------ | ------------------------------ |
-| `left`  | 标签在左、控件在右（默认） | 短文本、开关、选择器           |
-| `top`   | 标签压在控件上方          | 地址、备注这类长内容           |
+| 取值   | 布局                       | 适用场景             |
+| ------ | -------------------------- | -------------------- |
+| `left` | 标签在左、控件在右（默认） | 短文本、开关、选择器 |
+| `top`  | 标签压在控件上方           | 地址、备注这类长内容 |
 
 `labelWidth` 只在 `labelAlign="left"` 时生效，默认 `120`。同一个表单里各行保持同一个 `labelWidth`，标签列才对得齐——`FormComputedField` 的默认值也是 `120`，就是为了和 `FormItem` 对齐。
 
 `size` 提供三档密度，影响行高与标签 / 错误 / 描述的排版，同样**不会透传给子组件**。
 
-| 尺寸 | 标签字号    | 提示字号    |
-| ---- | ----------- | ----------- |
-| `sm` | `text-sm`   | `text-2xs`  |
-| `md` | `text-base` | `text-xs`   |
-| `lg` | `text-lg`   | `text-sm`   |
+| 尺寸 | 标签字号    | 提示字号   |
+| ---- | ----------- | ---------- |
+| `sm` | `text-sm`   | `text-2xs` |
+| `md` | `text-base` | `text-xs`  |
+| `lg` | `text-lg`   | `text-sm`  |
 
 <Demo src="@playground/form/FormLayout" />
 
@@ -75,19 +75,19 @@ import { Form, FormComputedField, FormItem, useForm } from '@skyroc/native-ui';
 
 `Form` 的 `border` / `inset` / `title` / `classNames` 直接取自 `CellGroup`；`FormItem` 的 `className` 追加到字段根容器，`classNames` 按 slot 覆盖。
 
-| 组件       | slot          | 作用位置                                        |
-| ---------- | ------------- | ----------------------------------------------- |
-| `Form`     | `root`        | CellGroup 根节点                                |
-| `Form`     | `title`       | 分组标题                                        |
-| `Form`     | `divider`     | 字段之间的分隔线                                |
-| `FormItem` | `root`        | 字段根容器 View（背景色在这里）                 |
-| `FormItem` | `cell`        | 内层 Cell 根节点，自身保持透明                  |
+| 组件       | slot          | 作用位置                                          |
+| ---------- | ------------- | ------------------------------------------------- |
+| `Form`     | `root`        | CellGroup 根节点                                  |
+| `Form`     | `title`       | 分组标题                                          |
+| `Form`     | `divider`     | 字段之间的分隔线                                  |
+| `FormItem` | `root`        | 字段根容器 View（背景色在这里）                   |
+| `FormItem` | `cell`        | 内层 Cell 根节点，自身保持透明                    |
 | `FormItem` | `control`     | 控件所在区域，右对齐 Switch / Rate 这类控件时改它 |
-| `FormItem` | `label`       | 标签文字                                        |
-| `FormItem` | `required`    | 必填星号                                        |
-| `FormItem` | `extra`       | 错误与描述的外层容器                            |
-| `FormItem` | `message`     | 错误文案                                        |
-| `FormItem` | `description` | 描述文本                                        |
+| `FormItem` | `label`       | 标签文字                                          |
+| `FormItem` | `required`    | 必填星号                                          |
+| `FormItem` | `extra`       | 错误与描述的外层容器                              |
+| `FormItem` | `message`     | 错误文案                                          |
+| `FormItem` | `description` | 描述文本                                          |
 
 <Demo src="@playground/form/FormStyles" />
 
@@ -148,7 +148,11 @@ import { Form, FormComputedField, FormItem, useForm } from '@skyroc/native-ui';
       description: '字段元信息（错误、校验状态等）变化的回调',
       type: '(changedFields: Meta[], allFields: Meta[]) => void'
     },
-    { name: 'classNames', description: '分组各 slot 的类名覆盖，取自 CellGroup', type: 'SlotClassNames<CellGroupSlots>' },
+    {
+      name: 'classNames',
+      description: '分组各 slot 的类名覆盖，取自 CellGroup',
+      type: 'SlotClassNames<CellGroupSlots>'
+    },
     { name: 'ref', description: '根节点的 ref，用于 measure / 滚动定位等命令式操作', type: 'Ref<View>' }
   ]}
 />
@@ -234,8 +238,18 @@ import { Form, FormComputedField, FormItem, useForm } from '@skyroc/native-ui';
     },
     { name: 'children', description: '子组件，接收计算值并被置为只读', type: 'ReactElement', required: true },
     { name: 'label', description: '标签文本', type: 'string' },
-    { name: 'labelWidth', description: '标签列宽度，与同表单的 FormItem 保持一致才能对齐', type: 'number', default: '120' },
-    { name: 'required', description: '是否显示必填星号，计算字段不参与推导，只作展示', type: 'boolean', default: 'false' },
+    {
+      name: 'labelWidth',
+      description: '标签列宽度，与同表单的 FormItem 保持一致才能对齐',
+      type: 'number',
+      default: '120'
+    },
+    {
+      name: 'required',
+      description: '是否显示必填星号，计算字段不参与推导，只作展示',
+      type: 'boolean',
+      default: 'false'
+    },
     { name: 'rules', description: '校验规则', type: 'Rule[]' },
     { name: 'description', description: '描述文本，显示在计算结果下方', type: 'string' },
     { name: 'size', description: '尺寸，只影响行高与标签 / 提示的排版', type: "'sm' | 'md' | 'lg'", default: "'md'" },
@@ -349,22 +363,54 @@ import type {
       description: 'useForm 返回的表单实例，本页只列常用方法。',
       fields: [
         { name: 'submit', type: '() => void', description: '校验全部字段并结算 onFinish / onFinishFailed。' },
-        { name: 'resetFields', type: '(names?: AllPathsKeys<Values>[]) => void', description: '重置指定字段（缺省全部）到初始值。' },
+        {
+          name: 'resetFields',
+          type: '(names?: AllPathsKeys<Values>[]) => void',
+          description: '重置指定字段（缺省全部）到初始值。'
+        },
         { name: 'getFieldValue', type: '(name: AllPathsKeys<Values>) => any', description: '读取单个字段的值。' },
-        { name: 'getFieldsValue', type: '(names?: AllPathsKeys<Values>[]) => Values', description: '读取指定字段（缺省全部）的值。' },
-        { name: 'setFieldValue', type: '(name: AllPathsKeys<Values>, value: any) => void', description: '写入单个字段的值。' },
+        {
+          name: 'getFieldsValue',
+          type: '(names?: AllPathsKeys<Values>[]) => Values',
+          description: '读取指定字段（缺省全部）的值。'
+        },
+        {
+          name: 'setFieldValue',
+          type: '(name: AllPathsKeys<Values>, value: any) => void',
+          description: '写入单个字段的值。'
+        },
         { name: 'setFieldsValue', type: '(values: DeepPartial<Values>) => void', description: '批量写入字段值。' },
         {
           name: 'validateFields',
           type: '(names?: AllPathsKeys<Values>[], opts?: { dirty?: boolean }) => Promise<boolean>',
           description: '手动校验指定字段（缺省全部）。'
         },
-        { name: 'validateField', type: '(name: AllPathsKeys<Values>) => Promise<boolean>', description: '手动校验单个字段。' },
-        { name: 'getFieldError', type: '(name: AllPathsKeys<Values>) => string[]', description: '读取单个字段的错误信息。' },
+        {
+          name: 'validateField',
+          type: '(name: AllPathsKeys<Values>) => Promise<boolean>',
+          description: '手动校验单个字段。'
+        },
+        {
+          name: 'getFieldError',
+          type: '(name: AllPathsKeys<Values>) => string[]',
+          description: '读取单个字段的错误信息。'
+        },
         { name: 'getField', type: '(name: AllPathsKeys<Values>) => Meta', description: '读取单个字段的完整元信息。' },
-        { name: 'setDisabled', type: '(name: AllPathsKeys<Values>, disabled: boolean) => void', description: '设置字段禁用态，会注入给子组件。' },
-        { name: 'setHidden', type: '(name: AllPathsKeys<Values>, hidden: boolean) => void', description: '设置字段隐藏态，隐藏后该字段不渲染。' },
-        { name: 'arrayOp', type: '(name: AllPathsKeys<Values>) => { insert; move; remove; replace; swap }', description: '数组字段的增删改序操作。' }
+        {
+          name: 'setDisabled',
+          type: '(name: AllPathsKeys<Values>, disabled: boolean) => void',
+          description: '设置字段禁用态，会注入给子组件。'
+        },
+        {
+          name: 'setHidden',
+          type: '(name: AllPathsKeys<Values>, hidden: boolean) => void',
+          description: '设置字段隐藏态，隐藏后该字段不渲染。'
+        },
+        {
+          name: 'arrayOp',
+          type: '(name: AllPathsKeys<Values>) => { insert; move; remove; replace; swap }',
+          description: '数组字段的增删改序操作。'
+        }
       ]
     },
     {

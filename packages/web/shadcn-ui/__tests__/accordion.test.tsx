@@ -97,9 +97,7 @@ describe('Accordion', () => {
         triggerLeading={<span aria-label="leading icon">L</span>}
         triggerTrailing={<span aria-label="trailing content">T</span>}
         type="single"
-        items={[
-          { children: 'Advanced content', title: 'Advanced', value: 'advanced' }
-        ]}
+        items={[{ children: 'Advanced content', title: 'Advanced', value: 'advanced' }]}
       />
     );
 

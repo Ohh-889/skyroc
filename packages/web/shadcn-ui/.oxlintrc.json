@@ -1,13 +1,9 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "../../../internal/config/oxlint/react.json"
-  ],
+  "extends": ["../../../internal/config/oxlint/react.json"],
   "overrides": [
     {
-      "files": [
-        "**/*.?([cm])[jt]s?(x)"
-      ],
+      "files": ["**/*.?([cm])[jt]s?(x)"],
       "rules": {
         "typescript/no-empty-object-type": "off"
       }

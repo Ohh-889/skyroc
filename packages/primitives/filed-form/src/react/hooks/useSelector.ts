@@ -2,8 +2,8 @@
 /* eslint-disable no-bitwise */
 
 /**
- * Hook for selecting and subscribing to derived form state
- * Provides efficient re-rendering by only updating when selected data changes
+ * Hook for selecting and subscribing to derived form state Provides efficient re-rendering by only updating when
+ * selected data changes
  */
 
 import type { AllPathsKeys } from '@skyroc/utils/type';
@@ -16,14 +16,10 @@ import { ChangeTag } from '../../form-core/event';
 import { useFieldContext } from './FieldContext';
 import type { FormInstance, InternalFormInstance } from './FieldContext';
 
-/**
- * Equality comparison function type
- */
+/** Equality comparison function type */
 type Eq<T> = (a: T, b: T) => boolean;
 
-/**
- * Options for useSelector hook configuration
- */
+/** Options for useSelector hook configuration */
 type UseSelectorOpts<Values, R> = {
   /** Array of field names to subscribe to; if empty, subscribes to all fields */
   deps?: AllPathsKeys<Values>[];
@@ -38,33 +34,41 @@ type UseSelectorOpts<Values, R> = {
 };
 
 /**
- * Hook to select and subscribe to derived form state with optimized re-rendering
- * Only triggers re-renders when the selected value actually changes
+ * Hook to select and subscribe to derived form state with optimized re-rendering Only triggers re-renders when the
+ * selected value actually changes
  *
  * @example
- * ```tsx
- * // Basic usage: Compute total from two fields
- * function PriceCalculator() {
- *   const total = useSelector((get) => {
- *     const price = get('price') || 0;
- *     const quantity = get('quantity') || 0;
- *     return price * quantity;
- *   }, { deps: ['price', 'quantity'] });
+ *   ```tsx
+ *   // Basic usage: Compute total from two fields
+ *   function PriceCalculator() {
+ *     const total = useSelector(
+ *       get => {
+ *         const price = get('price') || 0;
+ *         const quantity = get('quantity') || 0;
+ *         return price * quantity;
+ *       },
+ *       { deps: ['price', 'quantity'] }
+ *     );
  *
- *   return (
- *     <Form initialValues={{ price: 0, quantity: 1 }}>
- *       <Field name="price">
- *         <Input type="number" placeholder="Price" />
- *       </Field>
- *       <Field name="quantity">
- *         <Input type="number" placeholder="Quantity" />
- *       </Field>
- *       <div>Total: ${total}</div>
- *     </Form>
- *   );
- * }
- * ```
- *
+ *     return (
+ *       <Form initialValues={{ price: 0, quantity: 1 }}>
+ *         <Field name="price">
+ *           <Input
+ *             type="number"
+ *             placeholder="Price"
+ *           />
+ *         </Field>
+ *         <Field name="quantity">
+ *           <Input
+ *             type="number"
+ *             placeholder="Quantity"
+ *           />
+ *         </Field>
+ *         <div>Total: ${total}</div>
+ *       </Form>
+ *     );
+ *   }
+ *   ```;
  */
 export function useSelector<Values = any, R = unknown>(
   selector: (get: (n: AllPathsKeys<Values>) => any, all: Values) => R,

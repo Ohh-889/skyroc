@@ -1,9 +1,9 @@
-import { isValidElement } from 'react';
-import { CommandItem as _CommandItem } from 'cmdk';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
-import CommandShortcut from './CommandShortcut';
+import { CommandItem as _CommandItem } from 'cmdk';
+import { isValidElement } from 'react';
 import { commandVariants } from './command-variants';
+import CommandShortcut from './CommandShortcut';
 import type { CommandItemProps } from './types';
 
 const CommandItem = (props: CommandItemProps) => {
@@ -23,14 +23,12 @@ const CommandItem = (props: CommandItemProps) => {
       {children}
       {trailing}
 
-      {shortcut
-        ? (
-          <CommandShortcut
-            size={size}
-            value={shortcut}
-          />
-        )
-        : null}
+      {shortcut ? (
+        <CommandShortcut
+          size={size}
+          value={shortcut}
+        />
+      ) : null}
     </_CommandItem>
   );
 };

@@ -20,23 +20,23 @@ export const popoverVariants = tv({
         arrow: 'text-lg',
         content: 'p-5.5 text-xl'
       },
-      'lg': {
+      lg: {
         arrow: 'text-sm',
         content: 'p-4.5 text-base'
       },
-      'md': {
+      md: {
         arrow: 'text-xs',
         content: 'p-4 text-sm'
       },
-      'sm': {
+      sm: {
         arrow: 'text-2xs',
         content: 'p-3.5 text-xs'
       },
-      'xl': {
+      xl: {
         arrow: 'text-base',
         content: 'p-5 text-lg'
       },
-      'xs': {
+      xs: {
         arrow: 'text-3xs',
         content: 'p-3 text-2xs'
       }

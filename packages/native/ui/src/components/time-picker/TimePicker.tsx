@@ -1,9 +1,9 @@
+import { BottomSheetView } from '@gorhom/bottom-sheet';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 /* eslint-disable react-hooks/exhaustive-deps -- 每次打开面板都要拿当时的已确认值做一次快照，
    把 committedValue 列进依赖会让面板开着的时候被外部改值覆盖掉用户正在滚的选择。 */
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
-import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { Sheet } from '../sheet/Sheet';
 import { TimePickerView } from './TimePickerView';
 import type { TimePickerProps } from './types';

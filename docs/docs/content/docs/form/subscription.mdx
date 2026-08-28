@@ -41,7 +41,7 @@ const summary = useSelector(values => `${values.user.name} - ${values.user.age}`
 `deps` 是**显式声明的依赖路径**,不是自动追踪。漏写会导致该字段变化时选择器不重算,写多了会引入无谓重渲染。
 
 <Callout type="warn">
-selector 返回新对象会每次都判定为变化。要返回派生对象就自己做记忆化,或者拆成多个返回原始值的 selector。
+  selector 返回新对象会每次都判定为变化。要返回派生对象就自己做记忆化,或者拆成多个返回原始值的 selector。
 </Callout>
 
 ## Field 的订阅
@@ -50,11 +50,11 @@ selector 返回新对象会每次都判定为变化。要返回派生对象就�
 
 ## 什么时候需要手动优化
 
-| 场景 | 做法 |
-| --- | --- |
-| 只读某个字段做展示 | `useWatch(path)`,不要读整个 `values` |
-| 需要跨字段派生值 | `useSelector` + 精确 `deps` |
-| 字段间联动写值 | [`useEffectField`](/docs/form/hooks),不要在渲染期 setState |
-| 派生字段要参与提交 | `ComputedField`,见 [组件](/docs/form/components) |
+| 场景               | 做法                                                       |
+| ------------------ | ---------------------------------------------------------- |
+| 只读某个字段做展示 | `useWatch(path)`,不要读整个 `values`                       |
+| 需要跨字段派生值   | `useSelector` + 精确 `deps`                                |
+| 字段间联动写值     | [`useEffectField`](/docs/form/hooks),不要在渲染期 setState |
+| 派生字段要参与提交 | `ComputedField`,见 [组件](/docs/form/components)           |
 
 反模式是在组件里 `form.getFieldsValue()` 拿全量再自己挑——那会退化成全量订阅。

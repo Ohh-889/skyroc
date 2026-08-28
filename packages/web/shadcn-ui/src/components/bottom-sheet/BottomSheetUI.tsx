@@ -64,29 +64,25 @@ const BottomSheetUI = forwardRef<ComponentRef<typeof Content>, BottomSheetProps>
           </BottomSheetDescription>
         </DialogHeader>
 
-        {showClose
-          ? (
-            <BottomSheetClose
-              className={classNames?.close}
-              size={size}
-              {...closeProps}
-            />
-          )
-          : null}
+        {showClose ? (
+          <BottomSheetClose
+            className={classNames?.close}
+            size={size}
+            {...closeProps}
+          />
+        ) : null}
 
         {children}
 
-        {footer
-          ? (
-            <DialogFooter
-              className={classNames?.footer || 'flex-col-reverse!'}
-              size={size}
-              {...footerProps}
-            >
-              {footer}
-            </DialogFooter>
-          )
-          : null}
+        {footer ? (
+          <DialogFooter
+            className={classNames?.footer || 'flex-col-reverse!'}
+            size={size}
+            {...footerProps}
+          >
+            {footer}
+          </DialogFooter>
+        ) : null}
       </BottomSheetContent>
     </_Root>
   );

@@ -1,8 +1,8 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { showConfirmModal, showSuccessMessage } from '@shell/theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Dropdown, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
@@ -26,6 +26,13 @@ import type {
   ClientStatus
 } from '@/service/api/system-client';
 import { useDictDataQuery } from '@/service/api/system-dict';
+import {
+  FALLBACK_DEVICE_OPTIONS,
+  FALLBACK_GRANT_OPTIONS,
+  createClientOptions,
+  formatClientDuration,
+  getClientOptionLabel
+} from './modules/client-utils';
 import type { ClientEditorMode } from './modules/ClientEditorDrawer';
 import ClientSearch from './modules/ClientSearch';
 import {
@@ -35,13 +42,6 @@ import {
   normalizeClientSearchParams,
   toClientSearchQuery
 } from './modules/shared';
-import {
-  FALLBACK_DEVICE_OPTIONS,
-  FALLBACK_GRANT_OPTIONS,
-  createClientOptions,
-  formatClientDuration,
-  getClientOptionLabel
-} from './modules/client-utils';
 
 const ClientDetailDrawer = lazy(() => import('./modules/ClientDetailDrawer'));
 const ClientEditorDrawer = lazy(() => import('./modules/ClientEditorDrawer'));

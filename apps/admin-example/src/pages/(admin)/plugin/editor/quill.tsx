@@ -34,16 +34,26 @@ const RichTextEditorDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:file-document-edit-outline"
         resources={[{ label: 'wangEditor React', url: 'https://www.wangeditor.com/v5/for-frame.html#react' }]}
         tags={['@wangeditor/editor-for-react', 'Rich Text']}
         title="富文本编辑器示例"
       />
-      <ExamplePanel icon="mdi:file-document-edit-outline" title="富文本编辑器">
+      <ExamplePanel
+        icon="mdi:file-document-edit-outline"
+        title="富文本编辑器"
+      >
         <div className="overflow-hidden rounded-lg border border-border bg-white dark:bg-black">
-          <Toolbar editor={editor} mode="default" />
+          <Toolbar
+            editor={editor}
+            mode="default"
+          />
           <Editor
             defaultConfig={editorConfig}
             mode="default"
@@ -54,8 +64,14 @@ const RichTextEditorDemo = () => {
           />
         </div>
       </ExamplePanel>
-      <ExamplePanel icon="mdi:xml" title="HTML 输出">
-        <Typography.Paragraph className="mb-0 break-all" code>
+      <ExamplePanel
+        icon="mdi:xml"
+        title="HTML 输出"
+      >
+        <Typography.Paragraph
+          className="mb-0 break-all"
+          code
+        >
           {html}
         </Typography.Paragraph>
       </ExamplePanel>

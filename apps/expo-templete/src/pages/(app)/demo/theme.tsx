@@ -9,8 +9,7 @@ import { DemoHeader } from './modules/DemoHeader';
 /**
  * 色板里的一项。
  *
- * className 一律写成**完整字面量**：uniwind 在构建期扫源码里的 className 字符串，
- * `` `bg-${name}` `` 这种拼出来的类名它扫不到，运行时就是没有样式。
+ * ClassName 一律写成**完整字面量**：uniwind 在构建期扫源码里的 className 字符串， `bg-${name}` 这种拼出来的类名它扫不到，运行时就是没有样式。
  */
 interface ColorToken {
   /** 色块本身的类名 */
@@ -152,7 +151,7 @@ const SPACING_TOKENS: readonly SpacingToken[] = [
   { className: 'h-2 w-8 rounded-full bg-primary', value: 32 }
 ];
 
-/** sm / md / lg / xl 由插件按 `--radius` 算出来，改一个变量四档一起动 */
+/** Sm / md / lg / xl 由插件按 `--radius` 算出来，改一个变量四档一起动 */
 const RADIUS_TOKENS: readonly RadiusToken[] = [
   { className: 'size-12 rounded-sm border border-primary/40 bg-primary/10', label: 'sm' },
   { className: 'size-12 rounded-md border border-primary/40 bg-primary/10', label: 'md' },
@@ -226,8 +225,7 @@ const ColorRow = (props: { token: ColorToken }) => {
 /**
  * 主题与设计 Token 自检页。
  *
- * 页面里所有示例都用真 token 而不是写死的色值，所以切一次主题就能把整套语义色在明暗两套下过一遍——
- * 某个颜色换了外观就丢了含义、某对前景背景在暗色下糊成一片，在这一页会当场露馅。
+ * 页面里所有示例都用真 token 而不是写死的色值，所以切一次主题就能把整套语义色在明暗两套下过一遍—— 某个颜色换了外观就丢了含义、某对前景背景在暗色下糊成一片，在这一页会当场露馅。
  */
 const ThemeDemoScreen = () => {
   const { mode, resolvedTheme, setMode } = useThemeMode();
@@ -252,8 +250,8 @@ const ThemeDemoScreen = () => {
             color="muted"
             size="sm"
           >
-            选择存在 SecureStore 里，冷启动第一帧就生效（见 feature/theme）。切换会一路传到 uniwind
-            的 className、导航主题和状态栏——它们最终都读同一个 Appearance。
+            选择存在 SecureStore 里，冷启动第一帧就生效（见 feature/theme）。切换会一路传到 uniwind 的
+            className、导航主题和状态栏——它们最终都读同一个 Appearance。
           </Text>
         </View>
 

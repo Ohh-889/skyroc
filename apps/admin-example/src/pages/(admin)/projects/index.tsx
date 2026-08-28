@@ -89,12 +89,24 @@ const Projects = () => {
     const detailPath = `/projects/${project.pid}`;
 
     return (
-      <ACol key={project.pid} lg={8} md={12} span={24}>
-        <ACard className="h-full card-wrapper" size="small" variant="borderless">
+      <ACol
+        key={project.pid}
+        lg={8}
+        md={12}
+        span={24}
+      >
+        <ACard
+          className="h-full card-wrapper"
+          size="small"
+          variant="borderless"
+        >
           <div className="h-full flex flex-col gap-16px">
             <div className="flex items-start justify-between gap-12px">
               <div>
-                <Typography.Title className="m-0!" level={5}>
+                <Typography.Title
+                  className="m-0!"
+                  level={5}
+                >
                   {project.title}
                 </Typography.Title>
                 <Typography.Text type="secondary">{project.owner}</Typography.Text>
@@ -103,7 +115,10 @@ const Projects = () => {
               <ATag color={projectStatusColorRecord[project.status]}>{projectStatusLabelRecord[project.status]}</ATag>
             </div>
 
-            <Typography.Paragraph className="m-0!" type="secondary">
+            <Typography.Paragraph
+              className="m-0!"
+              type="secondary"
+            >
               {project.summary}
             </Typography.Paragraph>
 
@@ -112,8 +127,14 @@ const Projects = () => {
               <div className="mt-6px break-all text-secondary">{editPath}</div>
             </div>
 
-            <ASpace className="mt-auto" wrap>
-              <AButton icon={<SvgIcon icon="mdi:folder-open-outline" />} onClick={() => goProject(project.pid)}>
+            <ASpace
+              className="mt-auto"
+              wrap
+            >
+              <AButton
+                icon={<SvgIcon icon="mdi:folder-open-outline" />}
+                onClick={() => goProject(project.pid)}
+              >
                 打开详情
               </AButton>
               <AButton
@@ -131,20 +152,37 @@ const Projects = () => {
   }
 
   return (
-    <ASpace className="w-full" direction="vertical" size={16}>
-      <ACard className="card-wrapper" size="small" variant="borderless">
+    <ASpace
+      className="w-full"
+      direction="vertical"
+      size={16}
+    >
+      <ACard
+        className="card-wrapper"
+        size="small"
+        variant="borderless"
+      >
         <div className="flex flex-col gap-16px lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <Typography.Title className="m-0!" level={4}>
+            <Typography.Title
+              className="m-0!"
+              level={4}
+            >
               Projects 动态路由入口
             </Typography.Title>
-            <Typography.Paragraph className="mb-0! mt-8px!" type="secondary">
+            <Typography.Paragraph
+              className="mb-0! mt-8px!"
+              type="secondary"
+            >
               直接访问 /projects 时，先在这里选择一个项目，再进入 /projects/$pid 或 /projects/$pid/edit/$id。
             </Typography.Paragraph>
           </div>
 
           <ASpace wrap>
-            <AButton icon={<SvgIcon icon="mdi:folder-open-outline" />} onClick={goDefaultProject}>
+            <AButton
+              icon={<SvgIcon icon="mdi:folder-open-outline" />}
+              onClick={goDefaultProject}
+            >
               打开默认详情
             </AButton>
             <AButton

@@ -68,11 +68,11 @@ export function normalizeOperLogSearchParams(params: Partial<OperLogListParams>)
 export function hasOperLogFilters(params: Partial<OperLogListParams>) {
   return Boolean(
     params.beginTime ||
-      params.businessType !== undefined ||
-      params.endTime ||
-      params.operIp ||
-      params.operName ||
-      params.status !== undefined ||
-      params.title
+    params.businessType !== undefined ||
+    params.endTime ||
+    params.operIp ||
+    params.operName ||
+    params.status !== undefined ||
+    params.title
   );
 }

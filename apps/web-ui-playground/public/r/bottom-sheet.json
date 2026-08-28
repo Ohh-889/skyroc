@@ -3,9 +3,7 @@
   "name": "bottom-sheet",
   "type": "registry:block",
   "title": "Bottom Sheet",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/bottom-sheet/BottomSheet.tsx",

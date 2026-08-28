@@ -1,9 +1,9 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Group as _Group } from '@radix-ui/react-menu';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import _MenuCheckboxItem from './MenuCheckboxItem';
 import MenuLabel from './MenuLabel';
 import MenuSeparator from './MenuSeparator';
@@ -62,13 +62,12 @@ const MenuCheckboxGroup = forwardRef<ComponentRef<typeof _Group>, MenuCheckboxGr
             checked={item.checked || checks?.includes(item?.value || '')}
             classNames={classNames}
             size={size}
-            onCheckedChange={(checked) => {
+            onCheckedChange={checked => {
               item.onCheckedChange?.(checked);
 
               if (checked) {
                 onChecksChange?.([...(checks || []), item?.value || '']);
-              }
-              else {
+              } else {
                 onChecksChange?.([...(checks || []).filter(check => check !== item?.value)]);
               }
             }}

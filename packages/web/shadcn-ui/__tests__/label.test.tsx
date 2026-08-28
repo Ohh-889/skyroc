@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 import { describe, expect, it } from 'vitest';
-import { Label } from '../src/preset/label';
 import { ConfigProvider } from '../src/preset/config-provider';
+import { Label } from '../src/preset/label';
 import { render, screen, setupUser } from './helpers/render';
 
 describe('Label', () => {

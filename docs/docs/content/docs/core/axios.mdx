@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/axios"
-description: "基于 Axios 的请求客户端工厂，提供类型安全的请求实例、业务错误处理、Token 刷新、请求取消等能力"
+title: '@skyroc/axios'
+description: '基于 Axios 的请求客户端工厂，提供类型安全的请求实例、业务错误处理、Token 刷新、请求取消等能力'
 ---
 
 ## 概述
@@ -65,7 +65,7 @@ description: "基于 Axios 的请求客户端工厂，提供类型安全的请�
 export function fetchUserList(params: Api.UserListParams) {
   return request<Api.UserList>({
     url: '/api/users',
-    params,
+    params
   });
 }
 
@@ -73,15 +73,14 @@ export function fetchUserList(params: Api.UserListParams) {
 export function useUserListQuery(params: Api.UserListParams) {
   return useQuery({
     queryKey: ['users', params],
-    queryFn: () => fetchUserList(params),
+    queryFn: () => fetchUserList(params)
   });
 }
 
 // 3. 封装 Mutation Hook —— 写操作同理
 export function useCreateUserMutation() {
   return useMutation({
-    mutationFn: (data: Api.CreateUserParams) =>
-      request<Api.User>({ url: '/api/users', method: 'post', data }),
+    mutationFn: (data: Api.CreateUserParams) => request<Api.User>({ url: '/api/users', method: 'post', data })
   });
 }
 
@@ -105,16 +104,16 @@ const UserList = () => {
 function createRequest<ResponseData, ApiData, State>(
   axiosConfig?: CreateAxiosDefaults,
   options?: Partial<RequestOption<ResponseData, ApiData, State>>
-): RequestInstance<ApiData, State>
+): RequestInstance<ApiData, State>;
 ```
 
 **类型参数：**
 
-| 参数 | 说明 | 示例 |
-|------|------|------|
-| `ResponseData` | 后端原始响应体类型 | `{ code: number; data: any; msg: string }` |
-| `ApiData` | `transform` 转换后的业务数据类型 | `any` |
-| `State` | 挂载在实例上的自定义状态类型 | `Record<string, unknown>` |
+| 参数           | 说明                             | 示例                                       |
+| -------------- | -------------------------------- | ------------------------------------------ |
+| `ResponseData` | 后端原始响应体类型               | `{ code: number; data: any; msg: string }` |
+| `ApiData`      | `transform` 转换后的业务数据类型 | `any`                                      |
+| `State`        | 挂载在实例上的自定义状态类型     | `Record<string, unknown>`                  |
 
 **示例：**
 
@@ -128,13 +127,13 @@ interface BackendResponse<T = any> {
 const request = createRequest<BackendResponse>(
   { baseURL: 'https://api.example.com' },
   {
-    isBackendSuccess: (response) => response.data.code === 200,
-    transform: (response) => response.data.data,
-    onRequest: async (config) => {
+    isBackendSuccess: response => response.data.code === 200,
+    transform: response => response.data.data,
+    onRequest: async config => {
       config.headers.set('Authorization', `Bearer ${getToken()}`);
       return config;
     },
-    onError: (error) => console.error(error.message),
+    onError: error => console.error(error.message)
   }
 );
 
@@ -149,7 +148,7 @@ const userInfo = await request<Api.UserInfo>({ url: '/api/user' });
 function createFlatRequest<ResponseData, ApiData, State>(
   axiosConfig?: CreateAxiosDefaults,
   options?: Partial<RequestOption<ResponseData, ApiData, State>>
-): FlatRequestInstance<ResponseData, ApiData, State>
+): FlatRequestInstance<ResponseData, ApiData, State>;
 ```
 
 **返回值：**
@@ -170,8 +169,8 @@ function createFlatRequest<ResponseData, ApiData, State>(
 const flatRequest = createFlatRequest<BackendResponse, BackendResponse['data']>(
   { baseURL: 'https://api.example.com' },
   {
-    isBackendSuccess: (response) => response.data.code === 200,
-    transform: (response) => response.data.data,
+    isBackendSuccess: response => response.data.code === 200,
+    transform: response => response.data.data
   }
 );
 
@@ -189,55 +188,55 @@ console.log(data);
 
 通过第一个参数传入，会与以下默认值合并：
 
-| 配置 | 默认值 |
-|------|--------|
+| 配置                   | 默认值             |
+| ---------------------- | ------------------ |
 | `headers.Content-Type` | `application/json` |
-| `timeout` | `10000`（10 秒） |
-| `paramsSerializer` | `qs.stringify` |
-| `validateStatus` | `200-299` 或 `304` |
+| `timeout`              | `10000`（10 秒）   |
+| `paramsSerializer`     | `qs.stringify`     |
+| `validateStatus`       | `200-299` 或 `304` |
 
 ### RequestOption 钩子与选项
 
-| 钩子 / 选项 | 默认值 | 说明 |
-|------|------|------|
-| `isBackendSuccess` | 恒为 `true` | HTTP 成功后判断业务是否成功（仅 JSON） |
-| `transform` | `response => response.data` | 将原始响应转换为业务数据（仅 JSON 且业务成功） |
-| `onRequest` | 原样返回 config | 请求前修改配置（注入 Token 等）。**必须把 config 返回出去**，返回空会直接抛 `ERR_BAD_OPTION`，拦截器不会替你兜底沿用旧配置 |
-| `onBackendFail` | 空实现 | 业务失败处理，返回一个响应表示已就地补救（典型是续签后重试），返回空则继续走 `onError` 并 reject |
-| `onError` | 空实现 | 所有错误的统一回调 |
-| `defaultState` | `{}` | 初始化实例 `state`，两种请求风格都支持 |
-| `requestIdKey` | `'X-Request-Id'` | 请求 ID 的 header 名。传 `false` 则不发送——自定义 header 会让跨域请求多一次 OPTIONS 预检，不需要链路追踪时可以关掉 |
-| `retry` | `{ retries: 0 }` | [axios-retry](https://github.com/softonic/axios-retry) 的配置。**独立成一项，不要塞进 `axiosConfig`**：`CreateAxiosDefaults` 没有 `retries` 字段 |
+| 钩子 / 选项        | 默认值                      | 说明                                                                                                                                             |
+| ------------------ | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isBackendSuccess` | 恒为 `true`                 | HTTP 成功后判断业务是否成功（仅 JSON）                                                                                                           |
+| `transform`        | `response => response.data` | 将原始响应转换为业务数据（仅 JSON 且业务成功）                                                                                                   |
+| `onRequest`        | 原样返回 config             | 请求前修改配置（注入 Token 等）。**必须把 config 返回出去**，返回空会直接抛 `ERR_BAD_OPTION`，拦截器不会替你兜底沿用旧配置                       |
+| `onBackendFail`    | 空实现                      | 业务失败处理，返回一个响应表示已就地补救（典型是续签后重试），返回空则继续走 `onError` 并 reject                                                 |
+| `onError`          | 空实现                      | 所有错误的统一回调                                                                                                                               |
+| `defaultState`     | `{}`                        | 初始化实例 `state`，两种请求风格都支持                                                                                                           |
+| `requestIdKey`     | `'X-Request-Id'`            | 请求 ID 的 header 名。传 `false` 则不发送——自定义 header 会让跨域请求多一次 OPTIONS 预检，不需要链路追踪时可以关掉                               |
+| `retry`            | `{ retries: 0 }`            | [axios-retry](https://github.com/softonic/axios-retry) 的配置。**独立成一项，不要塞进 `axiosConfig`**：`CreateAxiosDefaults` 没有 `retries` 字段 |
 
 ```ts
 const request = createRequest<BackendResponse>(
   { baseURL: '/api' },
   {
-    requestIdKey: false,                         // 关掉请求 ID，省一次预检
-    retry: { retries: 2, retryDelay: attempt => attempt * 500 },
+    requestIdKey: false, // 关掉请求 ID，省一次预检
+    retry: { retries: 2, retryDelay: attempt => attempt * 500 }
   }
 );
 ```
 
 <Callout type="warn">
-  `onBackendFail` 返回的响应**不再**经过 `isBackendSuccess` 复检，重进本钩子的次数也没有上限：
-  用 `instance` 重发的请求会完整走一遍响应拦截器，失败了就再次落到这里。
-  补救逻辑必须自己在 `config` 上打标记来终止循环，否则「补救完还是同一个失败码」就是一个没有退避的无限重发。
+  `onBackendFail` 返回的响应**不再**经过 `isBackendSuccess` 复检，重进本钩子的次数也没有上限： 用 `instance`
+  重发的请求会完整走一遍响应拦截器，失败了就再次落到这里。 补救逻辑必须自己在 `config`
+  上打标记来终止循环，否则「补救完还是同一个失败码」就是一个没有退避的无限重发。
 </Callout>
 
 ## 错误处理
 
-| 场景 | `createRequest` | `createFlatRequest` |
-|------|----------------|---------------------|
-| HTTP 错误 (4xx/5xx)，响应体是对象 | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }` |
-| HTTP 错误，响应体非对象（网关 HTML 502、空 body 500） | `onError` → 抛出异常 | `{ data: null, error, response }` |
-| 业务错误（HTTP 200 但业务码失败） | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }` |
-| 网络错误 / 超时 / 请求取消 | `onError`（`ERR_CANCELED` 等）→ 抛出 | `{ data: null, error }`（无 `response`） |
+| 场景                                                  | `createRequest`                        | `createFlatRequest`                      |
+| ----------------------------------------------------- | -------------------------------------- | ---------------------------------------- |
+| HTTP 错误 (4xx/5xx)，响应体是对象                     | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }`        |
+| HTTP 错误，响应体非对象（网关 HTML 502、空 body 500） | `onError` → 抛出异常                   | `{ data: null, error, response }`        |
+| 业务错误（HTTP 200 但业务码失败）                     | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }`        |
+| 网络错误 / 超时 / 请求取消                            | `onError`（`ERR_CANCELED` 等）→ 抛出   | `{ data: null, error }`（无 `response`） |
 
 <Callout>
   `onBackendFail` 在**两侧**都会被调用：HTTP 200 的业务失败走成功拦截器，真实 HTTP 错误码走失败拦截器。
-  后端用真实状态码表达失败（401 带业务信封）时，续签、登出这些按业务码分岔的流程才不会失效。
-  失败侧只在 `response.data` 是对象时才进钩子——信封字段读不出来的响应没必要打扰它。
+  后端用真实状态码表达失败（401 带业务信封）时，续签、登出这些按业务码分岔的流程才不会失效。 失败侧只在 `response.data`
+  是对象时才进钩子——信封字段读不出来的响应没必要打扰它。
 </Callout>
 
 通过 `BACKEND_ERROR_CODE` 区分业务错误与 HTTP 错误：
@@ -277,7 +276,7 @@ createRequest<BackendResponse>(axiosConfig, {
       }
     }
     return null;
-  },
+  }
 });
 ```
 
@@ -293,7 +292,7 @@ request.cancelAllRequest();
 const controller = new AbortController();
 request({ url: '/api/data', signal: controller.signal });
 request.cancelAllRequest(); // 不会取消上面的请求
-controller.abort();         // 手动取消
+controller.abort(); // 手动取消
 ```
 
 ## 响应类型
@@ -301,7 +300,7 @@ controller.abort();         // 手动取消
 TypeScript 自动推导返回值类型：
 
 ```ts
-const data = await request<Api.User>({ url: '/user' });            // → Api.User
+const data = await request<Api.User>({ url: '/user' }); // → Api.User
 const blob = await request({ url: '/file', responseType: 'blob' }); // → Blob
 const text = await request({ url: '/text', responseType: 'text' }); // → string
 ```
@@ -320,10 +319,9 @@ const text = await request({ url: '/text', responseType: 'text' }); // → strin
 请求实例的 `state` 属性用于在请求生命周期中共享状态，`createRequest` 和 `createFlatRequest` 都支持：
 
 ```ts
-const request = createFlatRequest<BackendResponse, any, { token: string }>(
-  axiosConfig,
-  { defaultState: { token: '' } }
-);
+const request = createFlatRequest<BackendResponse, any, { token: string }>(axiosConfig, {
+  defaultState: { token: '' }
+});
 
 request.state.token = 'new-token';
 ```
@@ -336,25 +334,25 @@ request.state.token = 'new-token';
 
 **常量：**
 
-| 常量 | 值 | 说明 |
-|------|-----|------|
+| 常量                 | 值                | 说明                       |
+| -------------------- | ----------------- | -------------------------- |
 | `BACKEND_ERROR_CODE` | `'BACKEND_ERROR'` | 业务失败的 AxiosError code |
-| `REQUEST_ID_KEY` | `'X-Request-Id'` | 请求 ID header key |
+| `REQUEST_ID_KEY`     | `'X-Request-Id'`  | 请求 ID header key         |
 
 **类型：**
 
-| 类型 | 说明 |
-|------|------|
-| `RequestOption` | 请求选项 |
-| `RequestInstanceCommon` | 两种实例共有的 `cancelAllRequest` / `state` |
-| `RequestInstance` | `createRequest` 返回类型 |
-| `FlatRequestInstance` | `createFlatRequest` 返回类型 |
-| `FlatResponseData` | Flat 请求的联合返回类型 |
-| `FlatResponseSuccessData` / `FlatResponseFailData` | 上面联合类型的两个分支 |
-| `CustomAxiosRequestConfig` | 请求配置（支持 responseType 推导） |
-| `ResponseTransform` | `transform` 钩子的函数签名 |
-| `MappedType` | 响应类型映射 |
-| `ResponseType` | 响应类型字面量 |
-| `ContentType` | Content-Type 字面量 |
+| 类型                                               | 说明                                        |
+| -------------------------------------------------- | ------------------------------------------- |
+| `RequestOption`                                    | 请求选项                                    |
+| `RequestInstanceCommon`                            | 两种实例共有的 `cancelAllRequest` / `state` |
+| `RequestInstance`                                  | `createRequest` 返回类型                    |
+| `FlatRequestInstance`                              | `createFlatRequest` 返回类型                |
+| `FlatResponseData`                                 | Flat 请求的联合返回类型                     |
+| `FlatResponseSuccessData` / `FlatResponseFailData` | 上面联合类型的两个分支                      |
+| `CustomAxiosRequestConfig`                         | 请求配置（支持 responseType 推导）          |
+| `ResponseTransform`                                | `transform` 钩子的函数签名                  |
+| `MappedType`                                       | 响应类型映射                                |
+| `ResponseType`                                     | 响应类型字面量                              |
+| `ContentType`                                      | Content-Type 字面量                         |
 
 本包同时把 axios 的 `AxiosError` 与 `CreateAxiosDefaults` 原样转出，上层不必再单独依赖 `axios` 只为拿这两个类型。

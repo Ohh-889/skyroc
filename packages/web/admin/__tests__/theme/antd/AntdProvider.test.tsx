@@ -158,7 +158,10 @@ describe('AntdProvider', () => {
     const locale = { locale: 'zh-cn' };
 
     render(
-      <AntdProvider locale={locale as never} userName="Alice">
+      <AntdProvider
+        locale={locale as never}
+        userName="Alice"
+      >
         <span>app content</span>
       </AntdProvider>
     );

@@ -10,11 +10,11 @@ export const kbdVariants = tv({
       ghost: 'border-border bg-muted text-muted-foreground shadow-border/50'
     },
     size: {
-      'xs': 'h-4 min-w-4 px-0.5 text-3xs data-[group]:tracking-[0.125rem]',
-      'sm': 'h-4.5 min-w-4.5 px-0.625 text-2xs data-[group]:tracking-[0.15625rem]',
-      'md': 'h-5 min-w-5 px-0.75 text-xs data-[group]:tracking-[0.1875rem]',
-      'lg': 'h-6 min-w-6 px-1 text-sm data-[group]:tracking-[0.25rem]',
-      'xl': 'h-7 min-w-7 px-1.25 text-base data-[group]:tracking-[0.3125rem]',
+      xs: 'h-4 min-w-4 px-0.5 text-3xs data-[group]:tracking-[0.125rem]',
+      sm: 'h-4.5 min-w-4.5 px-0.625 text-2xs data-[group]:tracking-[0.15625rem]',
+      md: 'h-5 min-w-5 px-0.75 text-xs data-[group]:tracking-[0.1875rem]',
+      lg: 'h-6 min-w-6 px-1 text-sm data-[group]:tracking-[0.25rem]',
+      xl: 'h-7 min-w-7 px-1.25 text-base data-[group]:tracking-[0.3125rem]',
       '2xl': 'h-8 min-w-8 px-1.5 text-xl data-[group]:tracking-[0.375rem]'
     }
   },

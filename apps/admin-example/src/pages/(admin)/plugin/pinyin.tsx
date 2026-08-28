@@ -18,24 +18,53 @@ const PinyinDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:alphabetical-variant"
         resources={[{ label: 'pinyin-pro', url: 'https://pinyin-pro.cn/' }]}
         tags={['pinyin-pro', 'DOMPurify']}
         title="拼音示例"
       />
-      <ExamplePanel icon="mdi:text-box-edit-outline" title="输入文本">
-        <Input.TextArea autoSize={{ minRows: 3 }} value={source} onChange={handleTextChange} />
+      <ExamplePanel
+        icon="mdi:text-box-edit-outline"
+        title="输入文本"
+      >
+        <Input.TextArea
+          autoSize={{ minRows: 3 }}
+          value={source}
+          onChange={handleTextChange}
+        />
       </ExamplePanel>
-      <ExamplePanel icon="mdi:format-text" title="带音调">
-        <p className="text-18px" dangerouslySetInnerHTML={{ __html: toneHtml }} />
+      <ExamplePanel
+        icon="mdi:format-text"
+        title="带音调"
+      >
+        <p
+          className="text-18px"
+          dangerouslySetInnerHTML={{ __html: toneHtml }}
+        />
       </ExamplePanel>
-      <ExamplePanel icon="mdi:format-letter-case" title="不带音调">
-        <p className="text-18px" dangerouslySetInnerHTML={{ __html: plainHtml }} />
+      <ExamplePanel
+        icon="mdi:format-letter-case"
+        title="不带音调"
+      >
+        <p
+          className="text-18px"
+          dangerouslySetInnerHTML={{ __html: plainHtml }}
+        />
       </ExamplePanel>
-      <ExamplePanel icon="mdi:palette-outline" title="自定义样式">
-        <p className="plugin-pinyin-custom text-18px" dangerouslySetInnerHTML={{ __html: toneHtml }} />
+      <ExamplePanel
+        icon="mdi:palette-outline"
+        title="自定义样式"
+      >
+        <p
+          className="plugin-pinyin-custom text-18px"
+          dangerouslySetInnerHTML={{ __html: toneHtml }}
+        />
         <style>
           {`
             .plugin-pinyin-custom .py-chinese-item { color: var(--primary); }

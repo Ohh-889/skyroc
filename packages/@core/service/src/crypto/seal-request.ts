@@ -1,8 +1,7 @@
 /**
  * 拦截层：把 `encrypt: true` 的请求体换成密文，密钥放进约定的请求头。
  *
- * 只有声明了标记的接口参与，其余接口不进这段逻辑。声明写在调用处（`request({ encrypt: true })`），
- * 而不是按 url 匹配一张名单——名单和接口分处两地，加接口的人不会想起来去改它。
+ * 只有声明了标记的接口参与，其余接口不进这段逻辑。声明写在调用处（`request({ encrypt: true })`）， 而不是按 url 匹配一张名单——名单和接口分处两地，加接口的人不会想起来去改它。
  */
 
 import type { InternalAxiosRequestConfig } from 'axios';
@@ -25,8 +24,7 @@ declare module 'axios' {
 /**
  * 造一个请求体加密器，没配公钥也照样能造。
  *
- * 缺公钥不在这里报错，是为了让没有加密需求的部署不用先生成一对 RSA 密钥；
- * 真正标了 `encrypt: true` 的请求会在发出前抛错，不会退化成明文发出去。
+ * 缺公钥不在这里报错，是为了让没有加密需求的部署不用先生成一对 RSA 密钥； 真正标了 `encrypt: true` 的请求会在发出前抛错，不会退化成明文发出去。
  */
 export function createRequestSealer(options?: ApiCryptoOptions) {
   // 公钥解析一次就够，之后每个请求复用同一个 key

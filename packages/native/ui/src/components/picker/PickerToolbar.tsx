@@ -1,5 +1,5 @@
-import { View } from 'react-native';
 import { cn } from '@skyroc/utils';
+import { View } from 'react-native';
 import { Button } from '../button/Button';
 import { Text } from '../text/Typography';
 import { pickerVariants } from './picker-variants';

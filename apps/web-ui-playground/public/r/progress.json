@@ -3,9 +3,7 @@
   "name": "progress",
   "type": "registry:block",
   "title": "Progress",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/progress/Progress.tsx",

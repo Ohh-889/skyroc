@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useEffect, useMemo, useRef } from 'react';
 import { PickerView } from '../picker/PickerView';
 import type { TimePickerViewProps } from './types';
 import type { TimeParts } from './utils';

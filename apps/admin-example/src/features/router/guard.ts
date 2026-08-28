@@ -52,10 +52,7 @@ async function resolveUserInfo(context: Router.RouterContext) {
   return context.initAuth();
 }
 
-async function guardResolvedUserInfo(
-  options: AdminRouteGuardOptions,
-  userInfo: Api.Auth.UserInfo | null
-) {
+async function guardResolvedUserInfo(options: AdminRouteGuardOptions, userInfo: Api.Auth.UserInfo | null) {
   const { context, location, matches, preload } = options;
 
   if (!userInfo) {

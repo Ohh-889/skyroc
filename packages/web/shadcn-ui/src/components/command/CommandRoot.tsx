@@ -1,7 +1,7 @@
+import { cn } from '@skyroc/utils';
+import { CommandRoot as _CommandRoot } from 'cmdk';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { CommandRoot as _CommandRoot } from 'cmdk';
-import { cn } from '@skyroc/utils';
 import { commandVariants } from './command-variants';
 import type { CommandRootProps } from './types';
 

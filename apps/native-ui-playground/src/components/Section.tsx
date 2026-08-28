@@ -13,7 +13,7 @@ interface SectionProps {
   title: string;
 }
 
-/** demo 总览页的统一段落容器：标题 + 说明 + 示例卡片 */
+/** Demo 总览页的统一段落容器：标题 + 说明 + 示例卡片 */
 const Section = (props: SectionProps) => {
   const { children, description, title } = props;
 

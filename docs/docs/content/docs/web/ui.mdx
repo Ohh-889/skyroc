@@ -1,21 +1,19 @@
 ---
-title: "@skyroc/web-ui 系列"
-description: "packages/web/ui 下三个组件库包的分工、入口与安装方式，组件级文档与实时 Demo 在独立的 Web UI 站点"
+title: '@skyroc/web-ui 系列'
+description: 'packages/web/ui 下三个组件库包的分工、入口与安装方式，组件级文档与实时 Demo 在独立的 Web UI 站点'
 ---
 
 `packages/web/ui/` 下是三个各司其职的组件库包。它们的组件级文档——每个组件的实时 Demo、Props 表、可复制代码——都在独立的 **Web UI 文档站**，主站这一页只讲三者的分工、入口和该去哪查。
 
-<Callout>
-  查具体组件怎么用，去 Web UI 站点；查它们在整棵 Web 树里的位置和依赖关系，留在本页。
-</Callout>
+<Callout>查具体组件怎么用，去 Web UI 站点；查它们在整棵 Web 树里的位置和依赖关系，留在本页。</Callout>
 
 ## 三个包的分工
 
-| 包 | 目录 | 一句话 | 依赖 antd |
-| --- | --- | --- | --- |
-| `@skyroc/web-ui` | `web/shadcn-ui` | Radix UI + Tailwind 的基础组件库，48 组组件 | ❌ |
-| `@skyroc/web-ui-compose` | `web/ui/compose` | 无状态复合组件 + `useTable` 表格能力 | ❌ |
-| `@skyroc/web-ui-antd` | `web/ui/antd` | 基于 antd 的业务组件层 | ✅ peer |
+| 包                       | 目录             | 一句话                                      | 依赖 antd |
+| ------------------------ | ---------------- | ------------------------------------------- | --------- |
+| `@skyroc/web-ui`         | `web/shadcn-ui`  | Radix UI + Tailwind 的基础组件库，48 组组件 | ❌        |
+| `@skyroc/web-ui-compose` | `web/ui/compose` | 无状态复合组件 + `useTable` 表格能力        | ❌        |
+| `@skyroc/web-ui-antd`    | `web/ui/antd`    | 基于 antd 的业务组件层                      | ✅ peer   |
 
 分层是单向的：`web-ui-antd` → `web-ui-compose`，`web-ui` 与另外两个平行、互不依赖。选包的判断顺序是「先看 `web-ui` 有没有基础件 → 再看 `web-ui-compose` 有没有现成组合 → 需要 antd 生态才用 `web-ui-antd`」。
 
@@ -23,11 +21,11 @@ description: "packages/web/ui 下三个组件库包的分工、入口与安装�
 
 Radix UI primitives 加 Tailwind 样式，双层 API：
 
-| 子入口 | 内容 | 什么时候用 |
-| --- | --- | --- |
-| `@skyroc/web-ui` | `preset/` 下 48 组开箱组件 + `cn` + 类型 | 默认走这里 |
-| `@skyroc/web-ui/primitives` | `components/` 下 55 组未包装的底层件 | 要自己拼装、改结构时 |
-| `@skyroc/web-ui/style.css` | 编译后的组件样式 | 应用启动时引一次 |
+| 子入口                      | 内容                                     | 什么时候用           |
+| --------------------------- | ---------------------------------------- | -------------------- |
+| `@skyroc/web-ui`            | `preset/` 下 48 组开箱组件 + `cn` + 类型 | 默认走这里           |
+| `@skyroc/web-ui/primitives` | `components/` 下 55 组未包装的底层件     | 要自己拼装、改结构时 |
+| `@skyroc/web-ui/style.css`  | 编译后的组件样式                         | 应用启动时引一次     |
 
 ```tsx
 import { Button, Dialog, Form } from '@skyroc/web-ui';

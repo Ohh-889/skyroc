@@ -1,4 +1,4 @@
-/** sys_tenant 的主键，不是租户编号 */
+/** Sys_tenant 的主键，不是租户编号 */
 export type TenantId = number | string;
 
 /** 0 正常 1 停用 */

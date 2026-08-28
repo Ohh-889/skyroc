@@ -6,14 +6,7 @@ description: 用于从下拉列表中选择单个值的选择器
 Select 用于在有限选项中选择一个值。组件基于 Radix Select 封装，支持数据驱动的选项、分组、分隔线、禁用项、自定义图标、尺寸和弹层位置。
 
 ```tsx
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger
-} from '@skyroc/web-ui';
+import { Select, SelectContent, SelectItem, SelectLabel, SelectSeparator, SelectTrigger } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -52,7 +45,7 @@ const [value, setValue] = useState('apple');
   items={items}
   onValueChange={setValue}
   value={value}
-/>
+/>;
 ```
 
 ## 默认值
@@ -95,13 +88,7 @@ const [value, setValue] = useState('apple');
 <Demo src="@playground/select/modules/AllSeparator" />
 
 ```tsx
-<Select
-  items={[
-    { label: 'Apple', value: 'apple' },
-    { type: 'separator' },
-    { label: 'Banana', value: 'banana' }
-  ]}
-/>
+<Select items={[{ label: 'Apple', value: 'apple' }, { type: 'separator' }, { label: 'Banana', value: 'banana' }]} />
 ```
 
 ## 弹层位置
@@ -156,7 +143,10 @@ const [value, setValue] = useState('apple');
 <Demo src="@playground/select/modules/Disabled" />
 
 ```tsx
-<Select disabled items={items} />
+<Select
+  disabled
+  items={items}
+/>
 ```
 
 <Demo src="@playground/select/modules/DisabledOption" />
@@ -264,7 +254,11 @@ const [value, setValue] = useState('apple');
     { name: 'SelectItem', description: '单个可选项', type: 'SelectItemProps' },
     { name: 'SelectLabel', description: '分组标题', type: 'SelectLabelProps' },
     { name: 'SelectSeparator', description: '分隔线', type: 'SelectSeparatorProps' },
-    { name: 'SelectOption', description: '根据 SelectOptionData 渲染 item、group 或 separator 的数据渲染组件', type: 'SelectOptionProps' }
+    {
+      name: 'SelectOption',
+      description: '根据 SelectOptionData 渲染 item、group 或 separator 的数据渲染组件',
+      type: 'SelectOptionProps'
+    }
   ]}
 />
 
@@ -323,7 +317,11 @@ const [value, setValue] = useState('apple');
         { name: 'trailing', type: 'ReactNode', description: '后置内容。' },
         { name: 'indicatorIcon', type: 'ReactNode', description: '当前选项的选中指示器图标。' },
         { name: 'className', type: 'ClassValue', description: '选项 class。' },
-        { name: 'classNames', type: "Pick<SelectClassNames, 'item' | 'itemIndicator' | 'itemText'>", description: '选项相关 slot class。' }
+        {
+          name: 'classNames',
+          type: "Pick<SelectClassNames, 'item' | 'itemIndicator' | 'itemText'>",
+          description: '选项相关 slot class。'
+        }
       ]
     },
     {
@@ -356,7 +354,11 @@ const [value, setValue] = useState('apple');
         { name: 'disabled', type: 'boolean', description: '是否禁用触发器。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '触发器尺寸。' },
         { name: 'className', type: 'ClassValue', description: '触发器 class。' },
-        { name: 'classNames', type: "Pick<SelectClassNames, 'selectedValue' | 'trigger' | 'triggerIcon'>", description: '触发器相关 slot class。' }
+        {
+          name: 'classNames',
+          type: "Pick<SelectClassNames, 'selectedValue' | 'trigger' | 'triggerIcon'>",
+          description: '触发器相关 slot class。'
+        }
       ]
     },
     {
@@ -372,7 +374,11 @@ const [value, setValue] = useState('apple');
         { name: 'scrollUpButton', type: 'ReactNode', description: '向上滚动按钮内容。' },
         { name: 'scrollDownButton', type: 'ReactNode', description: '向下滚动按钮内容。' },
         { name: 'className', type: 'ClassValue', description: '弹层内容 class。' },
-        { name: 'classNames', type: "Pick<SelectClassNames, 'content' | 'scrollDownButton' | 'scrollUpButton' | 'viewport'>", description: '弹层相关 slot class。' }
+        {
+          name: 'classNames',
+          type: "Pick<SelectClassNames, 'content' | 'scrollDownButton' | 'scrollUpButton' | 'viewport'>",
+          description: '弹层相关 slot class。'
+        }
       ]
     },
     {
@@ -388,7 +394,11 @@ const [value, setValue] = useState('apple');
         { name: 'indicatorIcon', type: 'ReactNode', description: '选中指示器图标。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '选项尺寸。' },
         { name: 'className', type: 'ClassValue', description: '选项 class。' },
-        { name: 'classNames', type: "Pick<SelectClassNames, 'item' | 'itemIndicator' | 'itemText'>", description: '选项相关 slot class。' }
+        {
+          name: 'classNames',
+          type: "Pick<SelectClassNames, 'item' | 'itemIndicator' | 'itemText'>",
+          description: '选项相关 slot class。'
+        }
       ]
     },
     {
@@ -427,4 +437,8 @@ const [value, setValue] = useState('apple');
   type="SelectOptionItemData | SelectGroupOptionData | SelectSeparatorOptionData"
 />
 
-<UnionType name="ClassValue" description="CSS 类名类型" type="string | null | undefined | Record<string, boolean> | ClassValue[]" />
+<UnionType
+  name="ClassValue"
+  description="CSS 类名类型"
+  type="string | null | undefined | Record<string, boolean> | ClassValue[]"
+/>

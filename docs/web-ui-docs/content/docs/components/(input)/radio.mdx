@@ -117,7 +117,10 @@ import {
 <Demo src="@playground/radio/modules/RadioDisabledAll" />
 
 ```tsx
-<RadioGroup disabled items={items} />
+<RadioGroup
+  disabled
+  items={items}
+/>
 ```
 
 ## 卡片组选项
@@ -390,7 +393,8 @@ Radio 同时导出底层结构组件，适合需要手动组织 DOM 结构时使
     },
     {
       name: 'RadioProps',
-      description: '单个 Radio 属性。继承 RadioGroupItemProps，并增加 label、rootProps、itemProps、indicatorProps 等封装字段。',
+      description:
+        '单个 Radio 属性。继承 RadioGroupItemProps，并增加 label、rootProps、itemProps、indicatorProps 等封装字段。',
       fields: [
         { name: 'value', type: 'string', required: true, description: '选项值。' },
         { name: 'label', type: 'ReactNode', description: '选项标签。' },
@@ -442,7 +446,11 @@ Radio 同时导出底层结构组件，适合需要手动组织 DOM 结构时使
         { name: 'disabled', type: 'boolean', description: '是否禁用当前卡片。' },
         { name: 'itemProps', type: 'RadioGroupItemProps', description: '传递给内部单选项的属性。' },
         { name: 'indicatorProps', type: 'RadioIndicatorProps', description: '传递给内部指示器的属性。' },
-        { name: 'rootProps', type: 'RadioRootProps', description: '继承自 RadioProps 的字段，RadioCardGroup 当前不会直接使用。' }
+        {
+          name: 'rootProps',
+          type: 'RadioRootProps',
+          description: '继承自 RadioProps 的字段，RadioCardGroup 当前不会直接使用。'
+        }
       ]
     },
     {

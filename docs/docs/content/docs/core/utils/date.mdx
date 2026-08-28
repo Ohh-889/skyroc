@@ -1,6 +1,6 @@
 ---
-title: "Date"
-description: "基于 dayjs 的分层日期工具集，按操作意图分为格式化、运算、边界、比较四个职责层"
+title: 'Date'
+description: '基于 dayjs 的分层日期工具集，按操作意图分为格式化、运算、边界、比较四个职责层'
 ---
 
 ## 概述
@@ -38,15 +38,15 @@ index.ts        # 出口层：barrel export，不含任何逻辑
 ```ts
 import { DATE_FORMAT } from '@skyroc/utils';
 
-DATE_FORMAT.DATE           // 'YYYY-MM-DD'
-DATE_FORMAT.DATE_TIME      // 'YYYY-MM-DD HH:mm:ss'
-DATE_FORMAT.DATE_TIME_MINUTE // 'YYYY-MM-DD HH:mm'
-DATE_FORMAT.TIME           // 'HH:mm:ss'
-DATE_FORMAT.TIME_MINUTE    // 'HH:mm'
-DATE_FORMAT.MONTH          // 'YYYY-MM'
-DATE_FORMAT.YEAR           // 'YYYY'
-DATE_FORMAT.DATE_CN        // 'YYYY年MM月DD日'
-DATE_FORMAT.DATE_TIME_CN   // 'YYYY年MM月DD日 HH:mm:ss'
+DATE_FORMAT.DATE; // 'YYYY-MM-DD'
+DATE_FORMAT.DATE_TIME; // 'YYYY-MM-DD HH:mm:ss'
+DATE_FORMAT.DATE_TIME_MINUTE; // 'YYYY-MM-DD HH:mm'
+DATE_FORMAT.TIME; // 'HH:mm:ss'
+DATE_FORMAT.TIME_MINUTE; // 'HH:mm'
+DATE_FORMAT.MONTH; // 'YYYY-MM'
+DATE_FORMAT.YEAR; // 'YYYY'
+DATE_FORMAT.DATE_CN; // 'YYYY年MM月DD日'
+DATE_FORMAT.DATE_TIME_CN; // 'YYYY年MM月DD日 HH:mm:ss'
 ```
 
 ## format — 格式化
@@ -54,14 +54,7 @@ DATE_FORMAT.DATE_TIME_CN   // 'YYYY年MM月DD日 HH:mm:ss'
 > 返回 `string`，结果直接用于 UI 渲染
 
 ```ts
-import {
-  formatDate,
-  formatDateTime,
-  formatTime,
-  fromTimestamp,
-  formatDuration,
-  humanizeDuration,
-} from '@skyroc/utils';
+import { formatDate, formatDateTime, formatTime, fromTimestamp, formatDuration, humanizeDuration } from '@skyroc/utils';
 ```
 
 #### `formatDate(date, format?)`
@@ -69,9 +62,9 @@ import {
 格式化为日期字符串，默认格式 `YYYY-MM-DD`。
 
 ```ts
-formatDate(new Date());         // '2026-04-20'
-formatDate('2026-1-5');         // '2026-01-05'
-formatDate(null);               // ''
+formatDate(new Date()); // '2026-04-20'
+formatDate('2026-1-5'); // '2026-01-05'
+formatDate(null); // ''
 formatDate(new Date(), DATE_FORMAT.DATE_CN); // '2026年04月20日'
 ```
 
@@ -96,8 +89,8 @@ formatTime(new Date()); // '14:30:00'
 时间戳转日期字符串，**自动识别秒级和毫秒级**（`< 10000000000` 视为秒）。
 
 ```ts
-fromTimestamp(1745000000);       // 秒级，自动转毫秒 → '2025-04-18 ...'
-fromTimestamp(1745000000000);    // 毫秒级，直接使用
+fromTimestamp(1745000000); // 秒级，自动转毫秒 → '2025-04-18 ...'
+fromTimestamp(1745000000000); // 毫秒级，直接使用
 ```
 
 #### `formatDuration(milliseconds, format?)`
@@ -122,15 +115,7 @@ humanizeDuration(86400000); // 'a day'（英文）/ '一天'（中文，需设�
 > 返回 `Dayjs` 或 `number`，结果用于后续计算
 
 ```ts
-import {
-  toTimestamp,
-  toUnixTimestamp,
-  addDate,
-  subtractDate,
-  diffDate,
-  fromNow,
-  toNow,
-} from '@skyroc/utils';
+import { toTimestamp, toUnixTimestamp, addDate, subtractDate, diffDate, fromNow, toNow } from '@skyroc/utils';
 ```
 
 #### `toTimestamp(date)` → `number`
@@ -139,7 +124,7 @@ import {
 
 ```ts
 toTimestamp('2026-04-20'); // 1745000000000
-toTimestamp(null);         // 0
+toTimestamp(null); // 0
 ```
 
 #### `toUnixTimestamp(date)` → `number`
@@ -201,46 +186,50 @@ toNow('2026-04-23'); // 'in 3 days'
 
 ```ts
 import {
-  startOfDay, endOfDay,
-  startOfWeek, endOfWeek,
-  startOfMonth, endOfMonth,
-  startOfYear, endOfYear,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
   getTodayRange,
   getYesterdayRange,
   getThisWeekRange,
   getThisMonthRange,
   getThisYearRange,
-  getLastDaysRange,
+  getLastDaysRange
 } from '@skyroc/utils';
 ```
 
 #### 单点边界
 
-| 函数 | 返回 |
-| --- | --- |
-| `startOfDay(date)` | 当天 00:00:00 |
-| `endOfDay(date)` | 当天 23:59:59.999 |
-| `startOfWeek(date)` | 当周第一天 00:00:00 |
-| `endOfWeek(date)` | 当周最后一天 23:59:59.999 |
-| `startOfMonth(date)` | 当月第一天 00:00:00 |
-| `endOfMonth(date)` | 当月最后一天 23:59:59.999 |
-| `startOfYear(date)` | 当年第一天 00:00:00 |
-| `endOfYear(date)` | 当年最后一天 23:59:59.999 |
+| 函数                 | 返回                      |
+| -------------------- | ------------------------- |
+| `startOfDay(date)`   | 当天 00:00:00             |
+| `endOfDay(date)`     | 当天 23:59:59.999         |
+| `startOfWeek(date)`  | 当周第一天 00:00:00       |
+| `endOfWeek(date)`    | 当周最后一天 23:59:59.999 |
+| `startOfMonth(date)` | 当月第一天 00:00:00       |
+| `endOfMonth(date)`   | 当月最后一天 23:59:59.999 |
+| `startOfYear(date)`  | 当年第一天 00:00:00       |
+| `endOfYear(date)`    | 当年最后一天 23:59:59.999 |
 
 ```ts
 startOfDay('2026-04-20').format('HH:mm:ss'); // '00:00:00'
-endOfDay('2026-04-20').format('HH:mm:ss');   // '23:59:59'
+endOfDay('2026-04-20').format('HH:mm:ss'); // '23:59:59'
 ```
 
 #### 范围快捷函数
 
-| 函数 | 返回 |
-| --- | --- |
-| `getTodayRange()` | 今天的 [start, end] |
-| `getYesterdayRange()` | 昨天的 [start, end] |
-| `getThisWeekRange()` | 本周的 [start, end] |
-| `getThisMonthRange()` | 本月的 [start, end] |
-| `getThisYearRange()` | 本年的 [start, end] |
+| 函数                  | 返回                               |
+| --------------------- | ---------------------------------- |
+| `getTodayRange()`     | 今天的 [start, end]                |
+| `getYesterdayRange()` | 昨天的 [start, end]                |
+| `getThisWeekRange()`  | 本周的 [start, end]                |
+| `getThisMonthRange()` | 本月的 [start, end]                |
+| `getThisYearRange()`  | 本年的 [start, end]                |
 | `getLastDaysRange(n)` | 最近 n 天的 [start, end]（含今天） |
 
 ```ts
@@ -253,7 +242,7 @@ const [start, end] = getThisMonthRange();
 const [from, to] = getLastDaysRange(7);
 api.fetchLogs({
   startTime: toTimestamp(from),
-  endTime: toTimestamp(to),
+  endTime: toTimestamp(to)
 });
 ```
 
@@ -262,15 +251,7 @@ api.fetchLogs({
 > 返回 `boolean`，用于条件判断
 
 ```ts
-import {
-  isValidDate,
-  isBefore,
-  isAfter,
-  isSame,
-  isToday,
-  isYesterday,
-  isTomorrow,
-} from '@skyroc/utils';
+import { isValidDate, isBefore, isAfter, isSame, isToday, isYesterday, isTomorrow } from '@skyroc/utils';
 ```
 
 #### `isValidDate(date)` → `boolean`
@@ -280,7 +261,7 @@ import {
 ```ts
 isValidDate('2026-04-20'); // true
 isValidDate('not-a-date'); // false
-isValidDate(null);         // false
+isValidDate(null); // false
 ```
 
 #### `isBefore(date, compareDate)` → `boolean`
@@ -300,14 +281,14 @@ isAfter('2026-04-20', '2026-04-01'); // true
 判断两个日期是否相同，可按 `unit` 精度比较。
 
 ```ts
-isSame('2026-04-20 10:00', '2026-04-20 15:00');          // false（精确到毫秒）
-isSame('2026-04-20 10:00', '2026-04-20 15:00', 'day');   // true（精度为天）
+isSame('2026-04-20 10:00', '2026-04-20 15:00'); // false（精确到毫秒）
+isSame('2026-04-20 10:00', '2026-04-20 15:00', 'day'); // true（精度为天）
 ```
 
 #### `isToday(date)` / `isYesterday(date)` / `isTomorrow(date)` → `boolean`
 
 ```ts
-isToday(new Date());                          // true
-isYesterday(subtractDate(new Date(), 1));     // true
-isTomorrow(addDate(new Date(), 1));           // true
+isToday(new Date()); // true
+isYesterday(subtractDate(new Date(), 1)); // true
+isTomorrow(addDate(new Date(), 1)); // true
 ```

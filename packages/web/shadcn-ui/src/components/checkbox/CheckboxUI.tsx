@@ -30,15 +30,31 @@ const CheckboxUI = forwardRef<HTMLDivElement, CheckboxProps>((props, ref) => {
   const controlId = propId || `${generatedId}-control`;
 
   return (
-    <CheckboxRoot className={className || classNames?.root} ref={ref} {...rootProps}>
-      <CheckboxControl className={classNames?.control} id={controlId} size={size} {...rest}>
-        <CheckboxIndicator className={classNames?.indicator} forceMount={forceMountIndicator} {...indicatorProps}>
+    <CheckboxRoot
+      className={className || classNames?.root}
+      ref={ref}
+      {...rootProps}
+    >
+      <CheckboxControl
+        className={classNames?.control}
+        id={controlId}
+        size={size}
+        {...rest}
+      >
+        <CheckboxIndicator
+          className={classNames?.indicator}
+          forceMount={forceMountIndicator}
+          {...indicatorProps}
+        >
           {isIndeterminate ? indeterminateIcon : checkedIcon}
         </CheckboxIndicator>
       </CheckboxControl>
 
       {children ? (
-        <CheckboxLabel className={classNames?.label} htmlFor={controlId}>
+        <CheckboxLabel
+          className={classNames?.label}
+          htmlFor={controlId}
+        >
           {children}
         </CheckboxLabel>
       ) : null}

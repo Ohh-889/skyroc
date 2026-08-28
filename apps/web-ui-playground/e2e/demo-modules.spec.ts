@@ -11,7 +11,9 @@ test.describe('demo module coverage', () => {
       await gotoDemo(page, demo.name);
 
       await Promise.all(
-        demo.titles.map(title => expect(page.locator('[data-slot="card-title"]').filter({ hasText: title }).first()).toBeVisible())
+        demo.titles.map(title =>
+          expect(page.locator('[data-slot="card-title"]').filter({ hasText: title }).first()).toBeVisible()
+        )
       );
 
       expectNoPageErrors(pageErrors);

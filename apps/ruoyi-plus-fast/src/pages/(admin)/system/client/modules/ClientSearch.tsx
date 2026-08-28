@@ -3,7 +3,6 @@ import type { TableSearchProps } from '@shell/ui/compose';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 import type { ClientListParams, ClientStatus } from '@/service/api/system-client';
 
-
 interface ClientSearchProps {
   /** 查询表单实例。 */
   form: TableSearchProps<ClientListParams>['form'];

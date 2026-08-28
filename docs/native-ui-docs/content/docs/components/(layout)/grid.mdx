@@ -119,13 +119,13 @@ import { Grid } from '@skyroc/native-ui';
 
 `Grid` 的 `className` 作用于根节点，其余部位走 `classNames`；单项还可以用 `item.classNames` 再覆盖一层。
 
-| slot      | 作用位置                                             |
-| --------- | ---------------------------------------------------- |
+| slot      | 作用位置                                              |
+| --------- | ----------------------------------------------------- |
 | `root`    | 根节点（`className` 与 `classNames.root` 都落在这里） |
-| `item`    | 格子外框，负责列宽、间距与分隔线                     |
-| `content` | 格子内的可视区域，负责内边距与图标文字排布           |
-| `icon`    | 图标容器（仅传了 `icon` 时渲染）                     |
-| `text`    | 文字（仅 `text` 为 `string` / `number` 时生效）      |
+| `item`    | 格子外框，负责列宽、间距与分隔线                      |
+| `content` | 格子内的可视区域，负责内边距与图标文字排布            |
+| `icon`    | 图标容器（仅传了 `icon` 时渲染）                      |
+| `text`    | 文字（仅 `text` 为 `string` / `number` 时生效）       |
 
 合并顺序为「变体类 → `Grid.classNames` → `item.classNames`」，后者优先。`item.classNames` 的可选 slot 是 `GridItemSlots`，比 `GridSlots` 少一个 `root` —— 根节点是整个宫格共有的，不该由某一项覆盖。
 
@@ -180,7 +180,11 @@ import { Grid } from '@skyroc/native-ui';
     },
     { name: 'className', description: 'Uniwind className，作用于根节点', type: 'string' },
     { name: 'classNames', description: '覆盖各 slot 的类名', type: 'SlotClassNames<GridSlots>' },
-    { name: 'style', description: '根节点内联样式；gutter > 0 时排在负外边距之后，可覆盖它', type: 'StyleProp<ViewStyle>' },
+    {
+      name: 'style',
+      description: '根节点内联样式；gutter > 0 时排在负外边距之后，可覆盖它',
+      type: 'StyleProp<ViewStyle>'
+    },
     { name: 'ref', description: '根节点的 ref，用于 measure / 滚动定位等命令式操作', type: 'Ref<View>' }
   ]}
 />
@@ -221,7 +225,12 @@ import type { GridDirection, GridItemData, GridItemSlots, GridProps, GridSlots }
       name: 'GridItemData',
       description: '单个宫格项的数据结构。',
       fields: [
-        { name: 'key', type: 'string', description: '唯一标识，用作列表 key；增删重排时靠它保持节点身份', required: true },
+        {
+          name: 'key',
+          type: 'string',
+          description: '唯一标识，用作列表 key；增删重排时靠它保持节点身份',
+          required: true
+        },
         { name: 'icon', type: 'ReactNode', description: '图标区域内容' },
         { name: 'text', type: 'ReactNode', description: '文字内容，string / number 自动包裹 Text' },
         { name: 'children', type: 'ReactNode', description: '自定义子元素，提供后忽略 icon 与 text' },

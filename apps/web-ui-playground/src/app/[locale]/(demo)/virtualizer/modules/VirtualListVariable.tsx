@@ -16,7 +16,10 @@ const data: ListItem[] = Array.from({ length: 5000 }, (_, i) => ({
 
 const VirtualListVariable = () => {
   return (
-    <Card split title="可变高度列表">
+    <Card
+      split
+      title="可变高度列表"
+    >
       <p className="text-muted-foreground mb-4 text-sm">每个项目的高度可以不同，支持动态计算</p>
 
       <VirtualList

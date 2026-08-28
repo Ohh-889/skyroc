@@ -18,7 +18,7 @@ import type { TooltipSlots } from './tooltip-variants';
  *     content: 'custom-tooltip-content',
  *     arrow: 'custom-arrow'
  *   };
- *   ```
+ *   ```;
  */
 export type TooltipClassNames = Partial<Record<TooltipSlots, ClassValue>>;
 
@@ -37,7 +37,7 @@ export interface TooltipArrowProps extends StyledComponentProps<_TooltipArrowPro
  *   <Tooltip content="Save your work" side="top" showArrow={true} classNames={{ content: 'dark-tooltip' }}>
  *     <button>Save</button>
  *   </Tooltip>;
- *   ```
+ *   ```;
  */
 export interface TooltipProps extends StyledComponentProps<_TooltipProps> {
   /** Props for the tooltip arrow component. */

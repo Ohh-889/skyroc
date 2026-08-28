@@ -54,10 +54,10 @@ export function normalizeNoticeSearchParams(params: Partial<NoticeListParams>): 
 export function hasNoticeFilters(params: Partial<NoticeListParams>) {
   return Boolean(
     params.beginTime ||
-      params.createByName ||
-      params.endTime ||
-      params.noticeTitle ||
-      params.noticeType ||
-      params.status
+    params.createByName ||
+    params.endTime ||
+    params.noticeTitle ||
+    params.noticeType ||
+    params.status
   );
 }

@@ -1,5 +1,5 @@
-import { Ellipsis } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { Ellipsis } from 'lucide-react';
 import { breadcrumbVariants } from './breadcrumb-variants';
 import type { BreadcrumbEllipsisProps } from './types';
 

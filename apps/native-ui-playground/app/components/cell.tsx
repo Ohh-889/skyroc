@@ -1,6 +1,6 @@
+import { NavBar } from '@skyroc/native-ui';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { NavBar } from '@skyroc/native-ui';
 import { CellDemo } from '@/src/demos/cell';
 
 const CellPage = () => {

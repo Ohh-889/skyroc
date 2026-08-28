@@ -18,28 +18,28 @@ import type { FormItemProps } from './types';
  * 除了 value 与变更回调，还会向子组件注入 `error`（当前字段是否校验失败）， Input 这类支持 error 变体的组件因此能自动变红。
  *
  * @example
- * ```tsx
- * // 文本输入
- * <FormItem name="phone" label="手机号" required rules={[{ pattern: /^1\d{10}$/ }]}>
+ *   ```tsx
+ *   // 文本输入
+ *   <FormItem name="phone" label="手机号" required rules={[{ pattern: /^1\d{10}$/ }]}>
  *   <Input placeholder="请输入手机号" />
- * </FormItem>
+ *   </FormItem>
  *
- * // 走 onChange(value) 的控件（RadioGroup / CheckboxGroup / Rate / Stepper）直接放进来即可
- * <FormItem name="gender" label="性别">
+ *   // 走 onChange(value) 的控件（RadioGroup / CheckboxGroup / Rate / Stepper）直接放进来即可
+ *   <FormItem name="gender" label="性别">
  *   <RadioGroup direction="horizontal">
- *     <Radio name="male">男</Radio>
- *     <Radio name="female">女</Radio>
+ *   <Radio name="male">男</Radio>
+ *   <Radio name="female">女</Radio>
  *   </RadioGroup>
- * </FormItem>
+ *   </FormItem>
  *
- * // 弹层类控件（Picker / DatePicker）值由 onConfirm 回传，改 trigger 即可；
- * // 弹层的 show 由页面持有，整行点击负责打开
- * <FormItem name="city" label="所在城市" showArrow trigger="onConfirm" onPress={() => setShow(true)}>
+ *   // 弹层类控件（Picker / DatePicker）值由 onConfirm 回传，改 trigger 即可；
+ *   // 弹层的 show 由页面持有，整行点击负责打开
+ *   <FormItem name="city" label="所在城市" showArrow trigger="onConfirm" onPress={() => setShow(true)}>
  *   <Picker columns={CITIES} show={show} onUpdateShow={setShow}>
- *     {args => <Text>{resolveLabel(args.value)}</Text>}
+ *   {args => <Text>{resolveLabel(args.value)}</Text>}
  *   </Picker>
- * </FormItem>
- * ```
+ *   </FormItem>
+ *   ```;
  */
 const FormItem = <Values = any,>(props: FormItemProps<Values>) => {
   const {

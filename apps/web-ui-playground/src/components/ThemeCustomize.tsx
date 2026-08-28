@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { builtinColorMap, builtinRadiuses } from '@skyroc/tailwind-plugin';
-import type { ThemeSize } from '@skyroc/web-ui';
 import { cn } from '@skyroc/utils';
+import type { ThemeSize } from '@skyroc/web-ui';
 import { Button, Icon, Label } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const sizes: ThemeSize[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 

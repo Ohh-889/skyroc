@@ -21,7 +21,7 @@ export interface MessageTypeMeta {
 /**
  * 每种消息类型的图标与配色，头像底色、类型标签、引用块都从这里取。
  *
- * ClassName 一律写成**完整字面量**：uniwind 在构建期扫源码里的字符串，``bg-${type}`` 拼出来的 类名它扫不到，运行时就是没有样式。
+ * ClassName 一律写成**完整字面量**：uniwind 在构建期扫源码里的字符串，`bg-${type}` 拼出来的 类名它扫不到，运行时就是没有样式。
  */
 export const MESSAGE_TYPE_META: Record<MessageType, MessageTypeMeta> = {
   comment: {

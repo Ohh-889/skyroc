@@ -91,7 +91,11 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
           <div className="text-11px text-tertiary flex items-center">保存后会刷新菜单列表和动态路由缓存</div>
           <Flex gap={8}>
             <Button onClick={onClose}>取消</Button>
-            <Button loading={loading} type="primary" onClick={() => form.submit()}>
+            <Button
+              loading={loading}
+              type="primary"
+              onClick={() => form.submit()}
+            >
               保存
             </Button>
           </Flex>
@@ -109,7 +113,11 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
       }
       onClose={onClose}
     >
-      <Form<MenuSavePayload> form={form} layout="vertical" onFinish={handleSubmit}>
+      <Form<MenuSavePayload>
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+      >
         <div className="text-14px font-700 mb-1">归属与类型</div>
         <div className="text-11px text-tertiary mb-12px">路由树只维护目录和菜单，按钮权限从对应菜单详情中新增。</div>
         <Row gutter={16}>
@@ -120,7 +128,12 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
               name="parentId"
               rules={[{ validator: validateParent, required: true }]}
             >
-              <Select showSearch optionFilterProp="label" options={parentOptions} placeholder="请选择上级菜单" />
+              <Select
+                showSearch
+                optionFilterProp="label"
+                options={parentOptions}
+                placeholder="请选择上级菜单"
+              />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -141,7 +154,10 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                     value={option.value}
                   >
                     <span className="flex items-center gap-8px text-left leading-normal">
-                      <SvgIcon className="shrink-0 text-19px" icon={getMenuTypeIcon(option.value)} />
+                      <SvgIcon
+                        className="shrink-0 text-19px"
+                        icon={getMenuTypeIcon(option.value)}
+                      />
                       <span>
                         <strong className="block text-12px">{option.label}</strong>
                         <small className="mt-2px block text-9px text-tertiary">{option.description}</small>
@@ -160,7 +176,10 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
         <div className="text-11px text-tertiary mb-12px">名称和排序用于节点识别与同级展示顺序。</div>
 
         <Row gutter={16}>
-          <Col md={12} span={24}>
+          <Col
+            md={12}
+            span={24}
+          >
             <Form.Item
               label="菜单名称"
               name="menuName"
@@ -169,17 +188,35 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                 { max: 50, message: '菜单名称不能超过 50 个字符' }
               ]}
             >
-              <Input allowClear placeholder="例如：菜单管理" />
+              <Input
+                allowClear
+                placeholder="例如：菜单管理"
+              />
             </Form.Item>
           </Col>
-          <Col md={12} span={24}>
-            <Form.Item label="显示排序" name="orderNum" rules={[{ message: '请输入显示排序', required: true }]}>
-              <InputNumber className="w-full" min={0} precision={0} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label="显示排序"
+              name="orderNum"
+              rules={[{ message: '请输入显示排序', required: true }]}
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+                precision={0}
+              />
             </Form.Item>
           </Col>
           {menuType !== 'F' ? (
             <Col span={24}>
-              <Form.Item label="菜单图标" className="mb-0" name="icon">
+              <Form.Item
+                label="菜单图标"
+                className="mb-0"
+                name="icon"
+              >
                 <Input
                   allowClear
                   placeholder="Iconify 图标，例如 ph:menu"
@@ -204,16 +241,28 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
               配置访问路径、打开方式和显示状态；菜单还需填写组件路径，可按需设置路由参数与页面缓存。
             </div>
             <Row gutter={16}>
-              <Col md={12} span={24}>
-                <Form.Item label="打开方式" name="isFrame">
+              <Col
+                md={12}
+                span={24}
+              >
+                <Form.Item
+                  label="打开方式"
+                  name="isFrame"
+                >
                   <Radio.Group>
                     <Radio value="1">内部路由</Radio>
                     <Radio value="0">外部链接</Radio>
                   </Radio.Group>
                 </Form.Item>
               </Col>
-              <Col md={12} span={24}>
-                <Form.Item label="显示状态" name="visible">
+              <Col
+                md={12}
+                span={24}
+              >
+                <Form.Item
+                  label="显示状态"
+                  name="visible"
+                >
                   <Radio.Group>
                     <Radio value="0">显示</Radio>
                     <Radio value="1">隐藏</Radio>
@@ -221,13 +270,23 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item label="路由地址" name="path" rules={[{ validator: validatePath }]}>
-                  <Input allowClear placeholder="例如 menu；外链需填写完整网址" />
+                <Form.Item
+                  label="路由地址"
+                  name="path"
+                  rules={[{ validator: validatePath }]}
+                >
+                  <Input
+                    allowClear
+                    placeholder="例如 menu；外链需填写完整网址"
+                  />
                 </Form.Item>
               </Col>
               {menuType === 'C' ? (
                 <>
-                  <Col md={12} span={24}>
+                  <Col
+                    md={12}
+                    span={24}
+                  >
                     <Form.Item
                       label="组件路径"
                       name="component"
@@ -236,16 +295,35 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                         { max: 255, message: '组件路径不能超过 255 个字符' }
                       ]}
                     >
-                      <Input allowClear placeholder="system/menu/index" />
+                      <Input
+                        allowClear
+                        placeholder="system/menu/index"
+                      />
                     </Form.Item>
                   </Col>
-                  <Col md={12} span={24}>
-                    <Form.Item label="路由参数" name="queryParam" rules={[{ validator: validateQueryParam }]}>
-                      <Input allowClear placeholder='例如 {"source":"menu"}' />
+                  <Col
+                    md={12}
+                    span={24}
+                  >
+                    <Form.Item
+                      label="路由参数"
+                      name="queryParam"
+                      rules={[{ validator: validateQueryParam }]}
+                    >
+                      <Input
+                        allowClear
+                        placeholder='例如 {"source":"menu"}'
+                      />
                     </Form.Item>
                   </Col>
-                  <Col md={12} span={24}>
-                    <Form.Item label="页面缓存" name="isCache">
+                  <Col
+                    md={12}
+                    span={24}
+                  >
+                    <Form.Item
+                      label="页面缓存"
+                      name="isCache"
+                    >
                       <Radio.Group>
                         <Radio value="0">缓存</Radio>
                         <Radio value="1">不缓存</Radio>
@@ -255,9 +333,18 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                 </>
               ) : null}
               {visible === '1' ? (
-                <Col md={12} span={24}>
-                  <Form.Item label="激活路由" name="remark">
-                    <Input allowClear placeholder="例如 /system/menu" />
+                <Col
+                  md={12}
+                  span={24}
+                >
+                  <Form.Item
+                    label="激活路由"
+                    name="remark"
+                  >
+                    <Input
+                      allowClear
+                      placeholder="例如 /system/menu"
+                    />
                   </Form.Item>
                 </Col>
               ) : null}
@@ -287,12 +374,18 @@ const MenuEditorDrawer = (props: MenuEditorDrawerProps) => {
                   }
                 ]}
               >
-                <Input allowClear placeholder="例如 system:menu:add" />
+                <Input
+                  allowClear
+                  placeholder="例如 system:menu:add"
+                />
               </Form.Item>
             </Col>
           ) : null}
           <Col span={24}>
-            <Form.Item label="节点状态" name="status">
+            <Form.Item
+              label="节点状态"
+              name="status"
+            >
               <Radio.Group>
                 <Radio value="0">正常</Radio>
                 <Radio value="1">停用</Radio>

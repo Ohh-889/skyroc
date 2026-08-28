@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Root } from '@radix-ui/react-slider';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { sliderVariants } from './slider-variants';
 import type { SliderRootProps } from './types';
 

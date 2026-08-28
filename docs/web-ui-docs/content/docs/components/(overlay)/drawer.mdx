@@ -36,28 +36,30 @@ import { Drawer, DrawerContent, type DrawerSide } from '@skyroc/web-ui';
 
 <Demo src="@playground/drawer/modules/Side" />
 
-| 方向     | 说明         | 适用场景             |
-| -------- | ------------ | -------------------- |
-| `right`  | 从右侧滑入   | 详情面板、属性编辑   |
-| `left`   | 从左侧滑入   | 导航目录、筛选面板   |
-| `top`    | 从顶部滑入   | 搜索、通知、全局提示 |
-| `bottom` | 从底部滑入   | 快捷操作、移动端入口 |
+| 方向     | 说明       | 适用场景             |
+| -------- | ---------- | -------------------- |
+| `right`  | 从右侧滑入 | 详情面板、属性编辑   |
+| `left`   | 从左侧滑入 | 导航目录、筛选面板   |
+| `top`    | 从顶部滑入 | 搜索、通知、全局提示 |
+| `bottom` | 从底部滑入 | 快捷操作、移动端入口 |
 
 左右方向的 Drawer 默认宽度为 `w-3/4`，在 `sm` 断点以上限制为 `max-w-sm`；上下方向的 Drawer 占满水平宽度。
 
 ```tsx
 const sides: DrawerSide[] = ['left', 'right', 'top', 'bottom'];
 
-{sides.map(side => (
-  <Drawer
-    key={side}
-    title="Drawer Title"
-    trigger={<Button>{side}</Button>}
-    contentProps={{ side }}
-  >
-    Drawer Content
-  </Drawer>
-))}
+{
+  sides.map(side => (
+    <Drawer
+      key={side}
+      title="Drawer Title"
+      trigger={<Button>{side}</Button>}
+      contentProps={{ side }}
+    >
+      Drawer Content
+    </Drawer>
+  ));
+}
 ```
 
 ## 可滚动内容
@@ -289,7 +291,11 @@ Drawer 透传 Radix Dialog Root 的 `open`、`defaultOpen`、`onOpenChange` 和 
         { name: 'onOpenAutoFocus', type: '(event: Event) => void', description: '打开时自动聚焦的回调。' },
         { name: 'onCloseAutoFocus', type: '(event: Event) => void', description: '关闭时自动聚焦的回调。' },
         { name: 'onEscapeKeyDown', type: '(event: KeyboardEvent) => void', description: '按下 Escape 键的回调。' },
-        { name: 'onPointerDownOutside', type: '(event: PointerDownOutsideEvent) => void', description: '在内容区外点击的回调。' },
+        {
+          name: 'onPointerDownOutside',
+          type: '(event: PointerDownOutsideEvent) => void',
+          description: '在内容区外点击的回调。'
+        },
         { name: 'onInteractOutside', type: '(event: Event) => void', description: '在内容区外交互的回调。' }
       ]
     },
@@ -304,37 +310,27 @@ Drawer 透传 Radix Dialog Root 的 `open`、`defaultOpen`、`onOpenChange` 和 
     {
       name: 'DialogCloseProps',
       description: '关闭按钮属性，继承 Radix Dialog Close 的所有属性。',
-      fields: [
-        { name: 'className', type: 'ClassValue', description: '自定义 class。' }
-      ]
+      fields: [{ name: 'className', type: 'ClassValue', description: '自定义 class。' }]
     },
     {
       name: 'DialogHeaderProps',
       description: '头部容器属性，继承原生 header 元素的所有属性。',
-      fields: [
-        { name: 'className', type: 'ClassValue', description: '自定义 class。' }
-      ]
+      fields: [{ name: 'className', type: 'ClassValue', description: '自定义 class。' }]
     },
     {
       name: 'DialogFooterProps',
       description: '页脚容器属性，继承原生 footer 元素的所有属性。',
-      fields: [
-        { name: 'className', type: 'ClassValue', description: '自定义 class。' }
-      ]
+      fields: [{ name: 'className', type: 'ClassValue', description: '自定义 class。' }]
     },
     {
       name: 'DialogTitleProps',
       description: '标题组件属性，继承 Radix Dialog Title 的所有属性。',
-      fields: [
-        { name: 'className', type: 'ClassValue', description: '自定义 class。' }
-      ]
+      fields: [{ name: 'className', type: 'ClassValue', description: '自定义 class。' }]
     },
     {
       name: 'DialogDescriptionProps',
       description: '描述组件属性，继承 Radix Dialog Description 的所有属性。',
-      fields: [
-        { name: 'className', type: 'ClassValue', description: '自定义 class。' }
-      ]
+      fields: [{ name: 'className', type: 'ClassValue', description: '自定义 class。' }]
     }
   ]}
 />

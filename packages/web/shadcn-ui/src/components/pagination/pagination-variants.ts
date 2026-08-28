@@ -21,31 +21,31 @@ export const paginationVariants = tv({
   },
   variants: {
     size: {
-      'xs': {
+      xs: {
         list: 'gap-0.75 text-2xs',
         ellipsis: 'size-6',
         button: 'size-6',
         navigationButton: 'h-6 px-1 gap-[0.1875rem]'
       },
-      'sm': {
+      sm: {
         list: 'gap-1 text-xs',
         ellipsis: 'size-7',
         button: 'size-7',
         navigationButton: 'h-7 px-1.5 gap-1'
       },
-      'md': {
+      md: {
         list: 'gap-1.25 text-sm',
         ellipsis: 'size-8',
         button: 'size-8',
         navigationButton: 'h-8 px-[0.46875rem] gap-1.5'
       },
-      'lg': {
+      lg: {
         list: 'gap-1.5 text-base',
         ellipsis: 'size-9',
         button: 'size-9',
         navigationButton: 'h-9 px-2 gap-2'
       },
-      'xl': {
+      xl: {
         list: 'gap-1.75 text-lg',
         ellipsis: 'size-10',
         button: 'size-10',
@@ -60,13 +60,16 @@ export const paginationVariants = tv({
     },
     variant: {
       pure: {
-        button: 'data-[selected]:border data-[selected]:border-border data-[selected]:bg-background data-[selected]:text-accent-foreground data-[selected]:hover:bg-accent/60 data-[selected]:active:bg-accent'
+        button:
+          'data-[selected]:border data-[selected]:border-border data-[selected]:bg-background data-[selected]:text-accent-foreground data-[selected]:hover:bg-accent/60 data-[selected]:active:bg-accent'
       },
       solid: {
-        button: 'data-[selected]:border-transparent data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:hover:bg-primary/80 data-[selected]:hover:text-primary-foreground data-[selected]:active:bg-primary-600'
+        button:
+          'data-[selected]:border-transparent data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:hover:bg-primary/80 data-[selected]:hover:text-primary-foreground data-[selected]:active:bg-primary-600'
       },
       outline: {
-        button: 'data-[selected]:border data-[selected]:border-primary data-[selected]:bg-background data-[selected]:text-primary data-[selected]:hover:bg-transparent'
+        button:
+          'data-[selected]:border data-[selected]:border-primary data-[selected]:bg-background data-[selected]:text-primary data-[selected]:hover:bg-transparent'
       },
       soft: {
         button: 'data-[selected]:bg-primary/10 data-[selected]:hover:bg-primary/10 data-[selected]:active:bg-primary/20'
@@ -93,28 +96,32 @@ export const paginationVariants = tv({
       variant: 'pure',
       actionAsSelected: true,
       class: {
-        navigationButton: 'data-[selected]:border data-[selected]:border-border data-[selected]:bg-background data-[selected]:text-accent-foreground data-[selected]:hover:bg-accent/60 data-[selected]:active:bg-accent'
+        navigationButton:
+          'data-[selected]:border data-[selected]:border-border data-[selected]:bg-background data-[selected]:text-accent-foreground data-[selected]:hover:bg-accent/60 data-[selected]:active:bg-accent'
       }
     },
     {
       variant: 'solid',
       actionAsSelected: true,
       class: {
-        navigationButton: 'data-[selected]:border-transparent data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:hover:bg-primary/80 data-[selected]:hover:text-primary-foreground data-[selected]:active:bg-primary-600'
+        navigationButton:
+          'data-[selected]:border-transparent data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:hover:bg-primary/80 data-[selected]:hover:text-primary-foreground data-[selected]:active:bg-primary-600'
       }
     },
     {
       variant: 'outline',
       actionAsSelected: true,
       class: {
-        navigationButton: 'data-[selected]:border data-[selected]:border-primary data-[selected]:bg-background data-[selected]:text-primary data-[selected]:hover:bg-transparent'
+        navigationButton:
+          'data-[selected]:border data-[selected]:border-primary data-[selected]:bg-background data-[selected]:text-primary data-[selected]:hover:bg-transparent'
       }
     },
     {
       variant: 'soft',
       actionAsSelected: true,
       class: {
-        navigationButton: 'data-[selected]:bg-primary/10 data-[selected]:hover:bg-primary/10 data-[selected]:active:bg-primary/20'
+        navigationButton:
+          'data-[selected]:bg-primary/10 data-[selected]:hover:bg-primary/10 data-[selected]:active:bg-primary/20'
       }
     }
   ],

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { useServerInsertedHTML } from "next/navigation";
-import { StyleSheet } from "react-native";
+import { useServerInsertedHTML } from 'next/navigation';
+import { useRef } from 'react';
+import { StyleSheet } from 'react-native';
 
 export function ReactNativeWebStyleSheet() {
   const hasInserted = useRef(false);
@@ -15,7 +15,7 @@ export function ReactNativeWebStyleSheet() {
     return (
       <style
         dangerouslySetInnerHTML={{
-          __html: sheet.textContent,
+          __html: sheet.textContent
         }}
         id={sheet.id}
       />

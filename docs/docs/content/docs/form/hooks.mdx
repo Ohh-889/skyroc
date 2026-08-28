@@ -5,19 +5,19 @@ description: useForm / useWatch / useSelector 等八个 hook 的签名与用途
 
 全部从 `@skyroc/form` 与 `@skyroc/form/react` 导出。
 
-| Hook | 用途 |
-| --- | --- |
-| `useForm<Values>()` | 创建 form 实例，返回 `FormInstance<Values>` |
-| `useWatch(name)` | 按路径订阅单字段或多字段 |
-| `useSelector(selector, { deps })` | 自定义选择器 + 显式依赖路径 |
-| `useFieldState(name)` | 字段 meta：touched / dirty / validating |
-| `useFieldError(names)` | 错误对象，形状由传入路径推导 |
-| `useArrayField(name)` | 数组字段操作：push / remove / insert / move |
-| `useEffectField(name, effect)` | 字段变化副作用 |
-| `useUndoRedo()` | 撤销 / 重做 |
+| Hook                              | 用途                                        |
+| --------------------------------- | ------------------------------------------- |
+| `useForm<Values>()`               | 创建 form 实例，返回 `FormInstance<Values>` |
+| `useWatch(name)`                  | 按路径订阅单字段或多字段                    |
+| `useSelector(selector, { deps })` | 自定义选择器 + 显式依赖路径                 |
+| `useFieldState(name)`             | 字段 meta：touched / dirty / validating     |
+| `useFieldError(names)`            | 错误对象，形状由传入路径推导                |
+| `useArrayField(name)`             | 数组字段操作：push / remove / insert / move |
+| `useEffectField(name, effect)`    | 字段变化副作用                              |
+| `useUndoRedo()`                   | 撤销 / 重做                                 |
 
 <Callout>
-文件名是 `useFieldArray.ts` / `useFieldEffect.ts`，**导出名是 `useArrayField` / `useEffectField`**。以导出名为准。
+  文件名是 `useFieldArray.ts` / `useFieldEffect.ts`，**导出名是 `useArrayField` / `useEffectField`**。以导出名为准。
 </Callout>
 
 ## useForm

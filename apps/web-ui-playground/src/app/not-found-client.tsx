@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Button, Icon } from '@skyroc/web-ui';
+import { useTranslations } from 'next-intl';
 import { Link } from '../i18n/navigation';
 
 const NotFoundClient = () => {
@@ -33,13 +33,9 @@ const NotFoundClient = () => {
           </div>
 
           {/* 标题和描述 */}
-          <h1 className="text-foreground mb-2 text-xl font-semibold tracking-tight">
-            {t('title')}
-          </h1>
+          <h1 className="text-foreground mb-2 text-xl font-semibold tracking-tight">{t('title')}</h1>
 
-          <p className="text-muted-foreground mx-auto mb-6 max-w-xs text-sm leading-relaxed">
-            {t('description')}
-          </p>
+          <p className="text-muted-foreground mx-auto mb-6 max-w-xs text-sm leading-relaxed">{t('description')}</p>
 
           {/* 操作按钮 */}
           <div className="flex flex-col gap-2.5 sm:flex-row sm:justify-center">
@@ -74,9 +70,7 @@ const NotFoundClient = () => {
 
         {/* 快捷链接 */}
         <div className="mt-10">
-          <p className="text-muted-foreground/70 mb-3 text-xs font-medium tracking-wider uppercase">
-            {t('quickNav')}
-          </p>
+          <p className="text-muted-foreground/70 mb-3 text-xs font-medium tracking-wider uppercase">{t('quickNav')}</p>
 
           <div className="flex flex-wrap justify-center gap-1.5">
             <Button

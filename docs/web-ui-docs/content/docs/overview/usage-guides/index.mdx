@@ -28,14 +28,14 @@ description: 表单、弹层、导航和反馈组件的组合原则
 
 弹层应只承载临时任务，不应成为页面主流程的替代品。
 
-| 场景 | 推荐组件 |
-| --- | --- |
-| 确认不可逆操作 | `AlertDialog` |
-| 编辑少量字段 | `Dialog` |
+| 场景               | 推荐组件                 |
+| ------------------ | ------------------------ |
+| 确认不可逆操作     | `AlertDialog`            |
+| 编辑少量字段       | `Dialog`                 |
 | 移动端或侧向任务流 | `Drawer` / `BottomSheet` |
-| 补充说明或轻量操作 | `Popover` |
-| 文本解释 | `Tooltip` / `HoverCard` |
-| 全局命令入口 | `Command` |
+| 补充说明或轻量操作 | `Popover`                |
+| 文本解释           | `Tooltip` / `HoverCard`  |
+| 全局命令入口       | `Command`                |
 
 弹层内创建资源或绑定事件时，必须有清晰关闭路径。多个弹层不要无必要嵌套，避免焦点管理复杂化。
 
@@ -53,17 +53,25 @@ description: 表单、弹层、导航和反馈组件的组合原则
 
 反馈要区分“状态展示”和“操作反馈”。
 
-| 类型 | 推荐组件 | 说明 |
-| --- | --- | --- |
-| 页面级提示 | `Alert` | 解释当前页面或流程状态 |
-| 操作结果 | `Sonner` | 成功、失败、异步任务结果 |
-| 加载占位 | `Skeleton` | 数据尚未返回时维持布局 |
-| 进度展示 | `Progress` | 可量化任务进度 |
-| 状态标记 | `Badge` / `Tag` | 展示对象状态或分类 |
+| 类型       | 推荐组件        | 说明                     |
+| ---------- | --------------- | ------------------------ |
+| 页面级提示 | `Alert`         | 解释当前页面或流程状态   |
+| 操作结果   | `Sonner`        | 成功、失败、异步任务结果 |
+| 加载占位   | `Skeleton`      | 数据尚未返回时维持布局   |
+| 进度展示   | `Progress`      | 可量化任务进度           |
+| 状态标记   | `Badge` / `Tag` | 展示对象状态或分类       |
 
 ## 下一步
 
 <Cards>
-  <Card title="组件选择指南" description="Button、Toggle、Segment、Tabs 等容易混用组件的判断方式" href="/overview/usage-guides/component-decisions" />
-  <Card title="场景示例" description="从登录、筛选、工具栏和确认流程理解组件组合" href="/overview/examples" />
+  <Card
+    title="组件选择指南"
+    description="Button、Toggle、Segment、Tabs 等容易混用组件的判断方式"
+    href="/overview/usage-guides/component-decisions"
+  />
+  <Card
+    title="场景示例"
+    description="从登录、筛选、工具栏和确认流程理解组件组合"
+    href="/overview/examples"
+  />
 </Cards>

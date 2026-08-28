@@ -28,29 +28,29 @@ WebAdminLayout
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 修改静态菜单来源或默认排序 | 路由 `staticData.menu`、`packages/web/admin-layouts/src/features/menus/menu-generator.tsx` |
-| 切换静态菜单和动态菜单 | `.env` 的 `VITE_AUTH_ROUTE_MODE`、`globalConfig.routeMode`、`setupAdminLayouts` |
-| 让后端动态菜单进入后台布局 | `loadDynamicRoutes`、`queryMenusOptions()`、后端 `BackendRoute.layout` |
-| 解释或调整 `menuCategories` | `apps/admin/src/features/menus/menu-category.ts` |
-| 增加分割线、固定入口或项目级菜单节点 | `apps/admin/src/features/menus/menu-config.ts`、`menuNodeCallback` |
-| 给菜单加业务扩展 UI | `apps/admin/src/features/menus/extras.ts`、`menu.extra` |
-| 调整 tabs 缓存、固定 tab 或多 tab | `staticData.tab`、`useAdminTab`、`storage.globalTabs` |
+| 场景                                 | 重点位置                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| 修改静态菜单来源或默认排序           | 路由 `staticData.menu`、`packages/web/admin-layouts/src/features/menus/menu-generator.tsx` |
+| 切换静态菜单和动态菜单               | `.env` 的 `VITE_AUTH_ROUTE_MODE`、`globalConfig.routeMode`、`setupAdminLayouts`            |
+| 让后端动态菜单进入后台布局           | `loadDynamicRoutes`、`queryMenusOptions()`、后端 `BackendRoute.layout`                     |
+| 解释或调整 `menuCategories`          | `apps/admin/src/features/menus/menu-category.ts`                                           |
+| 增加分割线、固定入口或项目级菜单节点 | `apps/admin/src/features/menus/menu-config.ts`、`menuNodeCallback`                         |
+| 给菜单加业务扩展 UI                  | `apps/admin/src/features/menus/extras.ts`、`menu.extra`                                    |
+| 调整 tabs 缓存、固定 tab 或多 tab    | `staticData.tab`、`useAdminTab`、`storage.globalTabs`                                      |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/bootstrap.tsx` | 调用 `setupAdminLayouts`，注入 route tree、菜单模式、动态菜单加载器、分类、扩展节点、extra 组件和缓存适配器。 |
-| `apps/admin/src/features/menus/menu-category.ts` | 定义当前应用的菜单分类。当前只有 `admin -> /(admin)`。 |
-| `apps/admin/src/features/menus/menu-config.ts` | 通过 `menuNodeCallback` 为后台顶层菜单追加 divider。 |
-| `apps/admin/src/features/menus/extras.ts` | 注册 `menu.extra` 可引用的业务组件。当前有 `ReleaseChannel`。 |
-| `apps/admin/src/types/router.d.ts` | 扩展 `Router.MenuExtraRegistry`，让 `menu.extra` 使用应用侧注册 key。 |
-| `apps/admin/src/features/auth/use-auth.ts` | 登录后调用 `initMenus(data)` 生成菜单；退出时清理菜单并缓存 tabs。 |
-| `apps/admin/src/features/auth/use-login.ts` | 用户切换时清理 `globalTabs`，避免把上一个用户的 tabs 带给新用户。 |
-| `packages/web/admin-layouts/src/features/menus/*` | 菜单生成、权限过滤、渲染、quick reference 和动态 badge。 |
-| `packages/web/admin-layouts/src/state/tabs/*` | tabs 初始化、添加、关闭、固定、切换和缓存。 |
+| 文件                                              | 职责                                                                                                          |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `apps/admin/src/bootstrap.tsx`                    | 调用 `setupAdminLayouts`，注入 route tree、菜单模式、动态菜单加载器、分类、扩展节点、extra 组件和缓存适配器。 |
+| `apps/admin/src/features/menus/menu-category.ts`  | 定义当前应用的菜单分类。当前只有 `admin -> /(admin)`。                                                        |
+| `apps/admin/src/features/menus/menu-config.ts`    | 通过 `menuNodeCallback` 为后台顶层菜单追加 divider。                                                          |
+| `apps/admin/src/features/menus/extras.ts`         | 注册 `menu.extra` 可引用的业务组件。当前有 `ReleaseChannel`。                                                 |
+| `apps/admin/src/types/router.d.ts`                | 扩展 `Router.MenuExtraRegistry`，让 `menu.extra` 使用应用侧注册 key。                                         |
+| `apps/admin/src/features/auth/use-auth.ts`        | 登录后调用 `initMenus(data)` 生成菜单；退出时清理菜单并缓存 tabs。                                            |
+| `apps/admin/src/features/auth/use-login.ts`       | 用户切换时清理 `globalTabs`，避免把上一个用户的 tabs 带给新用户。                                             |
+| `packages/web/admin-layouts/src/features/menus/*` | 菜单生成、权限过滤、渲染、quick reference 和动态 badge。                                                      |
+| `packages/web/admin-layouts/src/state/tabs/*`     | tabs 初始化、添加、关闭、固定、切换和缓存。                                                                   |
 
 ## 核心概念
 
@@ -75,18 +75,18 @@ setupAdminLayouts({
 
 这些配置不会直接渲染 UI。它们被保存为布局运行时选项，后续由菜单生成器、权限判断、tabs 状态和布局组件读取。
 
-| 配置 | 作用 |
-| --- | --- |
-| `defaultHome` | 静态模式默认首页；动态模式没有返回首页时也会回退到它。 |
-| `defaultIcon` | 路由或后端菜单没有配置 icon 时的兜底图标。 |
-| `routeMode` | 决定菜单由前端 route tree 生成，还是由 `loadDynamicRoutes` 返回的后端路由树生成。 |
-| `routeTree` | TanStack Router 生成的 route tree，静态菜单和路由边界都依赖它。 |
-| `loadDynamicRoutes` | 动态模式加载后端菜单和首页。当前通过 React Query 的 `queryMenusOptions()` 复用接口缓存。 |
-| `menuCategories` | 描述菜单分类和 layout route 的对应关系。 |
-| `menuNodeCallback` | 给指定 route 节点追加非路由声明的菜单节点。 |
-| `extras` | 注册 `menu.extra` 字符串到 React 组件的映射。 |
-| `permissionSuperRole` | 静态、动态权限校验中的超级角色标识。 |
-| `storage` | 读写 `globalTabs`、移动端布局备份、mix 菜单固定等布局缓存。 |
+| 配置                  | 作用                                                                                     |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `defaultHome`         | 静态模式默认首页；动态模式没有返回首页时也会回退到它。                                   |
+| `defaultIcon`         | 路由或后端菜单没有配置 icon 时的兜底图标。                                               |
+| `routeMode`           | 决定菜单由前端 route tree 生成，还是由 `loadDynamicRoutes` 返回的后端路由树生成。        |
+| `routeTree`           | TanStack Router 生成的 route tree，静态菜单和路由边界都依赖它。                          |
+| `loadDynamicRoutes`   | 动态模式加载后端菜单和首页。当前通过 React Query 的 `queryMenusOptions()` 复用接口缓存。 |
+| `menuCategories`      | 描述菜单分类和 layout route 的对应关系。                                                 |
+| `menuNodeCallback`    | 给指定 route 节点追加非路由声明的菜单节点。                                              |
+| `extras`              | 注册 `menu.extra` 字符串到 React 组件的映射。                                            |
+| `permissionSuperRole` | 静态、动态权限校验中的超级角色标识。                                                     |
+| `storage`             | 读写 `globalTabs`、移动端布局备份、mix 菜单固定等布局缓存。                              |
 
 ### `menuCategories` 是 layout 到菜单分类的映射
 
@@ -103,11 +103,11 @@ export const menuCategories = {
 
 它不是业务菜单数据，也不是一级菜单分组。它只回答一个问题：哪一个 layout route 下面的菜单属于哪一个菜单分类。
 
-| 模式 | `menuCategories` 的作用 |
-| --- | --- |
+| 模式     | `menuCategories` 的作用                                                                                     |
+| -------- | ----------------------------------------------------------------------------------------------------------- |
 | 静态模式 | 通过 `layout: '/(admin)'` 找到 TanStack Router 的后台 layout route，只扫描它下面的子路由生成 `admin` 菜单。 |
-| 动态模式 | 后端顶层 `BackendRoute.layout` 可以写分类 key，例如 `admin`，布局包据此把菜单归入对应分类。 |
-| 布局渲染 | `WebAdminLayout` 默认读取第一个分类；多后台壳时可传 `categoryKey` 读取指定分类。 |
+| 动态模式 | 后端顶层 `BackendRoute.layout` 可以写分类 key，例如 `admin`，布局包据此把菜单归入对应分类。                 |
+| 布局渲染 | `WebAdminLayout` 默认读取第一个分类；多后台壳时可传 `categoryKey` 读取指定分类。                            |
 
 `globalConfig.genMenuLayouts` 从 `menuCategoryKeys` 派生，避免它和 `setupAdminLayouts({ menuCategories })` 手写两份后发生漂移。
 
@@ -132,20 +132,20 @@ export const Route = createFileRoute('/(admin)/manage/user/')({
 
 生成器会做几件事：
 
-| 步骤 | 行为 |
-| --- | --- |
-| 找 layout route | 从 `menuCategories` 找到 `/(admin)`，扫描它的子路由。 |
-| 读取 `staticData` | 没有 `staticData` 或无权限的 route 不进入菜单。 |
+| 步骤               | 行为                                                              |
+| ------------------ | ----------------------------------------------------------------- |
+| 找 layout route    | 从 `menuCategories` 找到 `/(admin)`，扫描它的子路由。             |
+| 读取 `staticData`  | 没有 `staticData` 或无权限的 route 不进入菜单。                   |
 | 写 quick reference | 隐藏路由也会写入 `quickReferenceMenus`，用于权限、选中态和 tabs。 |
-| 处理 `menu.hide` | 隐藏菜单不渲染菜单项，但路由仍然可被索引。 |
-| 排序和补充节点 | 用 `menu.order` 排序，并追加 `menuNodeCallback` 返回的节点。 |
+| 处理 `menu.hide`   | 隐藏菜单不渲染菜单项，但路由仍然可被索引。                        |
+| 排序和补充节点     | 用 `menu.order` 排序，并追加 `menuNodeCallback` 返回的节点。      |
 
 ### 动态菜单来自后端路由树
 
 动态模式由 `.env` 中的 `VITE_AUTH_ROUTE_MODE=dynamic` 控制。此时 `initMenus()` 会调用 `loadDynamicRoutes`，当前实现是：
 
 ```ts
-loadDynamicRoutes: loadAdminDynamicRoutes
+loadDynamicRoutes: loadAdminDynamicRoutes;
 ```
 
 `loadAdminDynamicRoutes()` 会先通过 `queryMenusOptions()` 读取真实后端菜单响应，再适配成布局包需要的动态菜单结构。动态菜单返回的 `routes` 会被归一成和静态菜单相同的 `GeneratedMenu` 与 `quickReferenceMenus`。关键点是：动态菜单只改变菜单、首页和授权数据来源，不会在运行时创建新的 React 页面组件。
@@ -187,11 +187,11 @@ export const menuNodeCallback: MenuNodeCallback = routeId => {
 
 它适合补充不属于普通页面路由的节点：
 
-| 适合 | 不适合 |
-| --- | --- |
-| divider、固定入口、项目级聚合菜单 | 普通页面菜单 |
-| 静态和动态模式都需要的补充节点 | 某个页面自己的 title、icon、permissions |
-| 需要按 route 节点追加的手写菜单 | 后端已经能返回的普通业务菜单 |
+| 适合                              | 不适合                                  |
+| --------------------------------- | --------------------------------------- |
+| divider、固定入口、项目级聚合菜单 | 普通页面菜单                            |
+| 静态和动态模式都需要的补充节点    | 某个页面自己的 title、icon、permissions |
+| 需要按 route 节点追加的手写菜单   | 后端已经能返回的普通业务菜单            |
 
 没有节点时返回 `[]`。不要用 `undefined` 表示 no-op，这样调用方和读者都更清楚。
 
@@ -232,12 +232,12 @@ staticData: {
 
 选择标准 badge 还是 extra 时，可以按下面判断：
 
-| 场景 | 推荐 |
-| --- | --- |
-| 数字、红点、`new`、`hot`、简单状态文本 | `menu.badge` |
-| 后端动态菜单也需要复用的通用状态 | `menu.badge` |
-| 需要订阅统一动态值表 | `badge.valueKey` + `useAdminMenuBadges` |
-| 需要复杂样式、组合内容或组件内部逻辑 | `menu.extra` |
+| 场景                                   | 推荐                                    |
+| -------------------------------------- | --------------------------------------- |
+| 数字、红点、`new`、`hot`、简单状态文本 | `menu.badge`                            |
+| 后端动态菜单也需要复用的通用状态       | `menu.badge`                            |
+| 需要订阅统一动态值表                   | `badge.valueKey` + `useAdminMenuBadges` |
+| 需要复杂样式、组合内容或组件内部逻辑   | `menu.extra`                            |
 
 ### Tabs 来源于 quick reference menus
 
@@ -252,10 +252,10 @@ quickReferenceMenus[path]
 
 `staticData.tab` 可以影响 tab 行为：
 
-| 字段 | 作用 |
-| --- | --- |
-| `tab.fixedIndex` | 固定 tab 的排序位置。首页在初始化时默认固定为 `0`。 |
-| `tab.multi` | 同一路由是否允许按完整 URL 生成多个 tab。适合详情页或带查询参数的页面。 |
+| 字段             | 作用                                                                    |
+| ---------------- | ----------------------------------------------------------------------- |
+| `tab.fixedIndex` | 固定 tab 的排序位置。首页在初始化时默认固定为 `0`。                     |
+| `tab.multi`      | 同一路由是否允许按完整 URL 生成多个 tab。适合详情页或带查询参数的页面。 |
 
 普通页面不需要手动添加 tab。路由变化后，`AdminTab` 会调用 `addTab(route.fullPath, route.originPath)`。
 
@@ -265,10 +265,10 @@ tabs 缓存由主题设置中的 `tab.cache` 控制。启用时，`initTabStore(
 
 缓存写入发生在两个位置：
 
-| 位置 | 行为 |
-| --- | --- |
-| `AdminTabEffect` | 页面卸载前调用 `cacheTabs()`，写入 `storage.globalTabs`。 |
-| `useAuth().logout()` | 退出登录时先缓存当前 tabs，再清理菜单和认证状态。 |
+| 位置                 | 行为                                                      |
+| -------------------- | --------------------------------------------------------- |
+| `AdminTabEffect`     | 页面卸载前调用 `cacheTabs()`，写入 `storage.globalTabs`。 |
+| `useAuth().logout()` | 退出登录时先缓存当前 tabs，再清理菜单和认证状态。         |
 
 登录用户切换时，`use-login.ts` 会比较 `lastLoginUserId`。如果不是同一个用户，会删除 `globalTabs`，避免新用户恢复上一个用户的标签页。
 
@@ -376,34 +376,34 @@ export const Route = createFileRoute('/(admin)/manage/user/$id')({
 
 ## 排查顺序
 
-| 现象 | 先检查 |
-| --- | --- |
-| 菜单完全为空 | `setupAdminLayouts` 是否早于 `App` 渲染，`menuCategories` 是否包含当前 layout，登录后 `initMenus()` 是否执行。 |
-| 静态菜单缺某个页面 | 页面是否在 `(admin)` 下，是否有 `staticData`，当前用户是否满足 `permissions`。 |
-| 动态菜单出现但点击 404 | 后端 `path` 是否对应前端真实 TanStack Route。动态菜单不会创建页面组件。 |
-| divider 不出现 | `menuNodeCallback` 的 `routeId` 是否匹配 `menuCategories.admin.layout`，是否返回了 `[]` 之外的节点。 |
-| `menu.extra` 没渲染 | key 是否注册到 `menuExtras`，类型扩展是否来自 `apps/admin/src/types/router.d.ts`，`setupAdminLayouts` 是否传入 `extras`。 |
-| tabs 不恢复 | 主题设置中的 `tab.cache` 是否开启，`storage.globalTabs` 是否被用户切换逻辑清理，缓存中的路由是否仍存在。 |
-| 详情页菜单不选中父级 | 隐藏详情页是否配置了 `menu.activeMenu`。 |
+| 现象                   | 先检查                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 菜单完全为空           | `setupAdminLayouts` 是否早于 `App` 渲染，`menuCategories` 是否包含当前 layout，登录后 `initMenus()` 是否执行。            |
+| 静态菜单缺某个页面     | 页面是否在 `(admin)` 下，是否有 `staticData`，当前用户是否满足 `permissions`。                                            |
+| 动态菜单出现但点击 404 | 后端 `path` 是否对应前端真实 TanStack Route。动态菜单不会创建页面组件。                                                   |
+| divider 不出现         | `menuNodeCallback` 的 `routeId` 是否匹配 `menuCategories.admin.layout`，是否返回了 `[]` 之外的节点。                      |
+| `menu.extra` 没渲染    | key 是否注册到 `menuExtras`，类型扩展是否来自 `apps/admin/src/types/router.d.ts`，`setupAdminLayouts` 是否传入 `extras`。 |
+| tabs 不恢复            | 主题设置中的 `tab.cache` 是否开启，`storage.globalTabs` 是否被用户切换逻辑清理，缓存中的路由是否仍存在。                  |
+| 详情页菜单不选中父级   | 隐藏详情页是否配置了 `menu.activeMenu`。                                                                                  |
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 把 `menuCategories` 当成一级菜单配置 | 它是 layout route 到菜单分类的映射，不是业务菜单树。 |
-| 用 `menuNodeCallback` 写普通页面菜单 | 普通页面菜单写在 route `staticData.menu` 或后端 `BackendRoute.menu`。 |
-| 动态菜单模式下认为后端能下发任意 React 页面 | 后端只能下发菜单和路由元信息，页面组件仍来自前端 route tree。 |
-| 标准数字徽标也写成 `menu.extra` | 数字、红点和文本状态优先用 `menu.badge`，复杂业务 UI 才用 `menu.extra`。 |
-| 退出登录时只清 token，不处理菜单和 tabs | 当前 `logout` 会清 Query、认证存储、菜单，并缓存 tabs；用户切换时还会清 `globalTabs`。 |
-| 在页面组件里手动维护 tabs 列表 | 普通路由变化由 `AdminTab` 自动处理，页面只在明确需要时调用 tabs hook。 |
+| 误区                                        | 正确做法                                                                               |
+| ------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 把 `menuCategories` 当成一级菜单配置        | 它是 layout route 到菜单分类的映射，不是业务菜单树。                                   |
+| 用 `menuNodeCallback` 写普通页面菜单        | 普通页面菜单写在 route `staticData.menu` 或后端 `BackendRoute.menu`。                  |
+| 动态菜单模式下认为后端能下发任意 React 页面 | 后端只能下发菜单和路由元信息，页面组件仍来自前端 route tree。                          |
+| 标准数字徽标也写成 `menu.extra`             | 数字、红点和文本状态优先用 `menu.badge`，复杂业务 UI 才用 `menu.extra`。               |
+| 退出登录时只清 token，不处理菜单和 tabs     | 当前 `logout` 会清 Query、认证存储、菜单，并缓存 tabs；用户切换时还会清 `globalTabs`。 |
+| 在页面组件里手动维护 tabs 列表              | 普通路由变化由 `AdminTab` 自动处理，页面只在明确需要时调用 tabs hook。                 |
 
 ## 相关链接
 
-| 内容 | 位置 |
-| --- | --- |
-| 主布局如何组装 | [布局系统](./overview) |
-| 启动时为什么先调用 `setupAdminLayouts` | [启动流程](../architecture/bootstrap) |
-| route `staticData.menu`、`menu.badge`、`menu.extra` | [路由元信息](../routing/route-meta) |
-| 静态和动态路由模式 | [路由概览](../routing/overview) |
-| 权限和动态授权 | [权限](../routing/permission) |
-| 共享布局包菜单与 tabs API | [菜单系统](/docs/web/admin-layouts/menus)、[状态与页签](/docs/web/admin-layouts/state-tabs) |
+| 内容                                                | 位置                                                                                        |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 主布局如何组装                                      | [布局系统](./overview)                                                                      |
+| 启动时为什么先调用 `setupAdminLayouts`              | [启动流程](../architecture/bootstrap)                                                       |
+| route `staticData.menu`、`menu.badge`、`menu.extra` | [路由元信息](../routing/route-meta)                                                         |
+| 静态和动态路由模式                                  | [路由概览](../routing/overview)                                                             |
+| 权限和动态授权                                      | [权限](../routing/permission)                                                               |
+| 共享布局包菜单与 tabs API                           | [菜单系统](/docs/web/admin-layouts/menus)、[状态与页签](/docs/web/admin-layouts/state-tabs) |

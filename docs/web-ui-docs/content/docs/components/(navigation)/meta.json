@@ -2,12 +2,5 @@
   "title": "导航",
   "defaultOpen": true,
   "collapsible": false,
-  "pages": [
-    "tabs",
-    "segment",
-    "breadcrumb",
-    "pagination",
-    "navigation-menu",
-    "menubar"
-  ]
+  "pages": ["tabs", "segment", "breadcrumb", "pagination", "navigation-menu", "menubar"]
 }

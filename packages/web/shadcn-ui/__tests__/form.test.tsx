@@ -1,7 +1,7 @@
+import { fireEvent } from '@testing-library/react';
 // oxlint-disable no-template-curly-in-string
 import type { ComponentPropsWithoutRef } from 'react';
 import { useState } from 'react';
-import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Form, FormComputedField, FormList, useForm, useSelector, useWatch } from '../src/components/form';
 import FormDescription from '../src/components/form/FormDescription';
@@ -225,7 +225,7 @@ const WatchSelectorDemo = () => {
   const username = useWatch('username', { form });
   const info = useWatch('info', { form, includeChildren: true });
   const passwordsMatch = useSelector(
-    (get) => {
+    get => {
       const password = get('password');
       const confirmPassword = get('confirmPassword');
 
@@ -412,10 +412,7 @@ describe('FormField', () => {
       expect(screen.getByRole('switch', { name: 'Remember me' })).toHaveAttribute('aria-checked', 'true');
       expect(screen.getByLabelText('Phone input')).toHaveValue('123');
     });
-    expect(onValuesChange).toHaveBeenCalledWith(
-      { phone: '123' },
-      { gender: 'female', phone: '123', remember: true }
-    );
+    expect(onValuesChange).toHaveBeenCalledWith({ phone: '123' }, { gender: 'female', phone: '123', remember: true });
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit custom controls' }));
 

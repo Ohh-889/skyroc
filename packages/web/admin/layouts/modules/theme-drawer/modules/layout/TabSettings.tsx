@@ -48,23 +48,41 @@ const TabSettings = () => {
   return (
     <div className="flex-col-stretch gap-12px">
       <SettingItem label={t('theme.layout.tab.visible')}>
-        <ASwitch checked={tab.visible} onChange={handleTabVisibleChange} />
+        <ASwitch
+          checked={tab.visible}
+          onChange={handleTabVisibleChange}
+        />
       </SettingItem>
 
-      <AnimatedCollapse className="flex-col-stretch gap-12px" visible={tab.visible}>
+      <AnimatedCollapse
+        className="flex-col-stretch gap-12px"
+        visible={tab.visible}
+      >
         <SettingItem
           label={t('theme.layout.tab.cache')}
           suffix={
             <ATooltip title={t('theme.layout.tab.cacheTip')}>
-              <SvgIcon className="text-icon-info" icon="mdi:information-outline" />
+              <SvgIcon
+                className="text-icon-info"
+                icon="mdi:information-outline"
+              />
             </ATooltip>
           }
         >
-          <ASwitch checked={tab.cache} onChange={handleTabCacheChange} />
+          <ASwitch
+            checked={tab.cache}
+            onChange={handleTabCacheChange}
+          />
         </SettingItem>
 
         <SettingItem label={t('theme.layout.tab.height')}>
-          <AInputNumber className="w-120px" min={0} step={1} value={tab.height} onChange={handleTabHeightChange} />
+          <AInputNumber
+            className="w-120px"
+            min={0}
+            step={1}
+            value={tab.height}
+            onChange={handleTabHeightChange}
+          />
         </SettingItem>
 
         <SettingItem label={t('theme.layout.tab.mode.title')}>
@@ -81,11 +99,17 @@ const TabSettings = () => {
           label={t('theme.layout.tab.closeByMiddleClick')}
           suffix={
             <ATooltip title={t('theme.layout.tab.closeByMiddleClickTip')}>
-              <SvgIcon className="text-icon-info" icon="mdi:information-outline" />
+              <SvgIcon
+                className="text-icon-info"
+                icon="mdi:information-outline"
+              />
             </ATooltip>
           }
         >
-          <ASwitch checked={tab.closeTabByMiddleClick} onChange={handleCloseTabByMiddleClickChange} />
+          <ASwitch
+            checked={tab.closeTabByMiddleClick}
+            onChange={handleCloseTabByMiddleClickChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
     </div>

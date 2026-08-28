@@ -11,12 +11,12 @@ const { baseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
 export const request = createAppRequest({
   adapter: antdAdapter,
   axiosConfig: {
-    baseURL,
+    baseURL
   },
   codes: {
-    expiredToken: import.meta.env.VITE_SERVICE_EXPIRED_TOKEN_CODES.split(',') ,
-    logout: import.meta.env.VITE_SERVICE_LOGOUT_CODES.split(',') ,
-    modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES.split(',') ,
+    expiredToken: import.meta.env.VITE_SERVICE_EXPIRED_TOKEN_CODES.split(','),
+    logout: import.meta.env.VITE_SERVICE_LOGOUT_CODES.split(','),
+    modalLogout: import.meta.env.VITE_SERVICE_MODAL_LOGOUT_CODES.split(','),
     success: import.meta.env.VITE_SERVICE_SUCCESS_CODE
   },
   // 加密器由调用方注入：node-forge 只会进真正用到它的端的包

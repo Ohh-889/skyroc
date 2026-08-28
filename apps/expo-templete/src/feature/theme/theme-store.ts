@@ -15,8 +15,7 @@ export const THEME_MODES: readonly ThemeMode[] = ['system', 'light', 'dark'];
  *
  * 存的是**偏好**而不是最终生效的明暗：存 `dark` 和存「跟随系统、此刻系统是暗色」是两件事， 只落最终值的话，用户在系统里切回浅色后 App 会固执地继续暗着。
  *
- * 落盘走 `MMKV_STORAGE`：MMKV 的读是同步的，冷启动第一帧就能拿到偏好，不会先按系统色画一帧再跳成用户选的色。
- * 换成 AsyncStorage 这类异步存储就做不到，第一帧只能拿默认值。
+ * 落盘走 `MMKV_STORAGE`：MMKV 的读是同步的，冷启动第一帧就能拿到偏好，不会先按系统色画一帧再跳成用户选的色。 换成 AsyncStorage 这类异步存储就做不到，第一帧只能拿默认值。
  */
 export const themeModeAtom = createAtomWithStorage<ThemeMode>(THEME_STORAGE_KEY, 'system', {
   storageName: MMKV_STORAGE,
@@ -31,9 +30,8 @@ export function getThemeMode() {
 /**
  * 切主题。写偏好和通知 Uniwind 必须绑在一起，别在页面里分开调。
  *
- * `Uniwind.setTheme` 在原生端会一路调到 `Appearance.setColorScheme`，所以这一次调用同时改掉了
- * 三样东西：uniwind 的 className 取值、React Navigation 的 `ThemeProvider`、以及 `StatusBar style="auto"`
- * ——它们读的都是 `useColorScheme()`。也因此这些地方**不需要**再各自订阅一遍主题。
+ * `Uniwind.setTheme` 在原生端会一路调到 `Appearance.setColorScheme`，所以这一次调用同时改掉了 三样东西：uniwind 的 className 取值、React Navigation 的
+ * `ThemeProvider`、以及 `StatusBar style="auto"` ——它们读的都是 `useColorScheme()`。也因此这些地方**不需要**再各自订阅一遍主题。
  */
 export function setThemeMode(mode: ThemeMode) {
   setAtomValue(themeModeAtom, mode);

@@ -1,9 +1,9 @@
 'use client';
 
-import { forwardRef, useRef } from 'react';
-import { X } from 'lucide-react';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { cn } from '@skyroc/utils';
+import { X } from 'lucide-react';
+import { forwardRef, useRef } from 'react';
 import { inputVariants } from './input-variants';
 import type { InputProps } from './types';
 
@@ -59,15 +59,13 @@ const InputUI = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         {...rest}
       />
 
-      {clearable
-        ? (
-          <X
-            className={mergedClearableCls}
-            data-slot="input-clearable"
-            onClick={handleClear}
-          />
-        )
-        : null}
+      {clearable ? (
+        <X
+          className={mergedClearableCls}
+          data-slot="input-clearable"
+          onClick={handleClear}
+        />
+      ) : null}
 
       {trailing}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Password } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const PasswordControlled = () => {
   const [visible, setVisible] = useState(false);
@@ -15,11 +15,7 @@ const PasswordControlled = () => {
         onVisibleChange={setVisible}
       />
 
-      <p className="text-muted-foreground mt-2 text-sm">
-        Visible:
-        {' '}
-        {String(visible)}
-      </p>
+      <p className="text-muted-foreground mt-2 text-sm">Visible: {String(visible)}</p>
     </div>
   );
 };

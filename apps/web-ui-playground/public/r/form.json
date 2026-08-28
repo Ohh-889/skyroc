@@ -3,9 +3,7 @@
   "name": "form",
   "type": "registry:block",
   "title": "Form",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/form/FormComputedField.tsx",

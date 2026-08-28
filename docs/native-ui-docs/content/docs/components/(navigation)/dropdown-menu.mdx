@@ -87,19 +87,19 @@ import { DropdownMenu } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖。
 
-| slot           | 作用位置                                                    |
-| -------------- | ----------------------------------------------------------- |
-| `root`         | 根容器 View（展开时会被加上 `z-[100]`）                      |
-| `bar`          | 标题栏容器                                                  |
-| `title`        | 单个标题的 Pressable                                        |
-| `titleText`    | 标题文字                                                    |
-| `arrow`        | 标题箭头的 `colorClassName`，只接受 `accent-*` 颜色类         |
-| `overlay`      | 背景遮罩                                                    |
-| `content`      | 面板内容的 ScrollView                                       |
-| `option`       | 单个选项的 Pressable                                        |
-| `optionText`   | 选项文字                                                    |
-| `selectedIcon` | 选中勾选图标的 `colorClassName`，只接受 `accent-*` 颜色类     |
-| `divider`      | 选项之间的分隔线                                            |
+| slot           | 作用位置                                                  |
+| -------------- | --------------------------------------------------------- |
+| `root`         | 根容器 View（展开时会被加上 `z-[100]`）                   |
+| `bar`          | 标题栏容器                                                |
+| `title`        | 单个标题的 Pressable                                      |
+| `titleText`    | 标题文字                                                  |
+| `arrow`        | 标题箭头的 `colorClassName`，只接受 `accent-*` 颜色类     |
+| `overlay`      | 背景遮罩                                                  |
+| `content`      | 面板内容的 ScrollView                                     |
+| `option`       | 单个选项的 Pressable                                      |
+| `optionText`   | 选项文字                                                  |
+| `selectedIcon` | 选中勾选图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
+| `divider`      | 选项之间的分隔线                                          |
 
 <Demo src="@playground/dropdown-menu/DropdownMenuStyles" />
 
@@ -167,8 +167,7 @@ import { DropdownMenu } from '@skyroc/native-ui';
     { name: 'className', description: '根容器类名，合并到变体样式之后', type: 'string' },
     {
       name: 'classNames',
-      description:
-        '各 slot 的类名覆盖，arrow / selectedIcon 作用于矢量图标的 colorClassName，只接受 accent-* 颜色类',
+      description: '各 slot 的类名覆盖，arrow / selectedIcon 作用于矢量图标的 colorClassName，只接受 accent-* 颜色类',
       type: 'SlotClassNames<DropdownMenuSlots>'
     },
     {

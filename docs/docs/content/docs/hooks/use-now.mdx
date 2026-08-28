@@ -11,10 +11,10 @@ function useNow(options?: { immediate?: boolean; interval?: number }): {
 };
 ```
 
-| 参数 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
+| 参数        | 类型      | 默认   | 说明                   |
+| ----------- | --------- | ------ | ---------------------- |
 | `immediate` | `boolean` | `true` | 是否挂载后立即开始计时 |
-| `interval` | `number` | `1000` | 更新间隔（毫秒） |
+| `interval`  | `number`  | `1000` | 更新间隔（毫秒）       |
 
 ```tsx
 import { useNow } from '@skyroc/hooks';
@@ -25,8 +25,18 @@ const Clock = () => {
   return (
     <>
       <time>{now.toLocaleTimeString()}</time>
-      <button type="button" onClick={pause}>暂停</button>
-      <button type="button" onClick={resume}>继续</button>
+      <button
+        type="button"
+        onClick={pause}
+      >
+        暂停
+      </button>
+      <button
+        type="button"
+        onClick={resume}
+      >
+        继续
+      </button>
     </>
   );
 };
@@ -51,7 +61,8 @@ const now = useStore(store);
 `resume` 内部先判空再建定时器，重复调用不会叠加多个 `setInterval`；`pause` 清掉后置 `null`，也可以安全重复调用。
 
 <Callout type="warn">
-`interval` 通过 `useCreation(..., [])` 传入，**只在首次渲染生效**。运行时改这个值不会重建定时器。需要变频就换个 `key` 让组件重挂载。
+  `interval` 通过 `useCreation(..., [])` 传入，**只在首次渲染生效**。运行时改这个值不会重建定时器。需要变频就换个 `key`
+  让组件重挂载。
 </Callout>
 
 初始值是 `new Date()`（构造 store 时取），所以首帧就有正确时间，不会先渲染一个空值再跳。

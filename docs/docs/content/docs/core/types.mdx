@@ -1,16 +1,16 @@
 ---
-title: "@skyroc/types"
-description: "全局类型声明包，零运行时依赖，通过 declare global 注入 Api / Common / Menu / Router 等命名空间"
+title: '@skyroc/types'
+description: '全局类型声明包，零运行时依赖，通过 declare global 注入 Api / Common / Menu / Router 等命名空间'
 ---
 
 ## 概述
 
 `@skyroc/types` **没有任何运行时值导出**。它通过 `declare global` 注入全局命名空间，所有包和应用都能直接使用这些类型，**无需 import**。
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/types` |
-| 依赖 | 无（零依赖） |
+| 项     | 值                                  |
+| ------ | ----------------------------------- |
+| 包名   | `@skyroc/types`                     |
+| 依赖   | 无（零依赖）                        |
 | 子入口 | `.`、`./types`（指向 `index.d.ts`） |
 
 ## 目录结构
@@ -37,20 +37,20 @@ src/
 
 ## 全局命名空间
 
-| 命名空间 | 主要类型 | 用途 |
-| --- | --- | --- |
-| `Api.Auth` | `LoginParams`、`LoginToken`、`UserInfo` | 登录与用户信息 |
-| `Api.Common` | `PaginatingQueryRecord<T>`、`CommonRecord<T>`、`EnableStatus` | 分页与通用记录 |
-| `Api.Route` | `BackendRoute`、`BackendRouteResponse` | 后端动态路由 |
-| `Api.Service` | `Response<T>`、`ServiceConfig` | 后端响应信封、多 baseURL 配置 |
-| `Api.SystemManage` | `Role`、`User`、`Menu`、`MenuTree` | 系统管理实体 |
-| `Common` | `Option<K, M>`、`YesOrNo`、`EnableStatus`、`RecordNullable<T>`、`StrategicPattern` | 前端通用工具类型 |
-| `App.Global` | `Tab`、`AntdMenu`、`AdminLayout.HeaderProps` | 应用全局 |
-| `Menu` | `CommonMenu`、`QuickReferenceMenu`、`Menus` | 菜单数据结构 |
-| `Router` | `RoutePath`、`RouteId`、`Meta`、`MenuBadge`、`MenuCategoryKey` | 路由（可扩展注册表） |
-| `StorageType` | `Local`、`Session` | 本地存储 key（纯扩展点，本包内为空） |
-| `UnionKey` | `ThemeLayoutMode`、`LoginModule`、`ThemeScrollMode` 等 | 联合字面量 |
-| `I18n` | `Schema`、`I18nKey`、`LangType`、`$T` | i18n 类型推导 |
+| 命名空间           | 主要类型                                                                           | 用途                                 |
+| ------------------ | ---------------------------------------------------------------------------------- | ------------------------------------ |
+| `Api.Auth`         | `LoginParams`、`LoginToken`、`UserInfo`                                            | 登录与用户信息                       |
+| `Api.Common`       | `PaginatingQueryRecord<T>`、`CommonRecord<T>`、`EnableStatus`                      | 分页与通用记录                       |
+| `Api.Route`        | `BackendRoute`、`BackendRouteResponse`                                             | 后端动态路由                         |
+| `Api.Service`      | `Response<T>`、`ServiceConfig`                                                     | 后端响应信封、多 baseURL 配置        |
+| `Api.SystemManage` | `Role`、`User`、`Menu`、`MenuTree`                                                 | 系统管理实体                         |
+| `Common`           | `Option<K, M>`、`YesOrNo`、`EnableStatus`、`RecordNullable<T>`、`StrategicPattern` | 前端通用工具类型                     |
+| `App.Global`       | `Tab`、`AntdMenu`、`AdminLayout.HeaderProps`                                       | 应用全局                             |
+| `Menu`             | `CommonMenu`、`QuickReferenceMenu`、`Menus`                                        | 菜单数据结构                         |
+| `Router`           | `RoutePath`、`RouteId`、`Meta`、`MenuBadge`、`MenuCategoryKey`                     | 路由（可扩展注册表）                 |
+| `StorageType`      | `Local`、`Session`                                                                 | 本地存储 key（纯扩展点，本包内为空） |
+| `UnionKey`         | `ThemeLayoutMode`、`LoginModule`、`ThemeScrollMode` 等                             | 联合字面量                           |
+| `I18n`             | `Schema`、`I18nKey`、`LangType`、`$T`                                              | i18n 类型推导                        |
 
 ## 可扩展的注册表模式
 
@@ -74,9 +74,7 @@ declare global {
 推导规则统一是「注册表为空则退化为 `string`」：
 
 ```ts
-type RoutePath = keyof RoutePathRegistry extends never
-  ? string
-  : Extract<keyof RoutePathRegistry, string>;
+type RoutePath = keyof RoutePathRegistry extends never ? string : Extract<keyof RoutePathRegistry, string>;
 ```
 
 **好处**：没注册的应用照样能编译（退化成 `string`，不会到处报错）；注册了的应用立刻获得字面量收窄和自动补全。

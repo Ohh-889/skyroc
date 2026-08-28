@@ -114,21 +114,21 @@
 
 ### 技术栈版本
 
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| React | 19.1.0 | 核心框架（含 React Compiler） |
-| TanStack Router | ^1.140.0 | 文件式类型安全路由 |
-| TanStack Query | ^5.90.12 | 数据获取和缓存 |
-| Jotai | ^2.16.0 | 原子化状态管理 |
-| Ant Design | ^6.1.0 | UI 组件库 |
-| Vite | ^8.0.14 | 构建工具 |
-| TypeScript | ^6.0.3 | 类型系统 |
-| UnoCSS | ^66.5.10 | 原子化 CSS |
-| Tailwind CSS | ^4.1.18 | 实用优先 CSS 框架 |
-| Motion | ^12.23.26 | 动画库 |
-| i18next | 25.7.2 | 国际化框架 |
-| pnpm | 10.4.1 | 包管理器 |
-| Turborepo | ^2.7.1 | Monorepo 任务编排 |
+| 技术            | 版本      | 说明                          |
+| --------------- | --------- | ----------------------------- |
+| React           | 19.1.0    | 核心框架（含 React Compiler） |
+| TanStack Router | ^1.140.0  | 文件式类型安全路由            |
+| TanStack Query  | ^5.90.12  | 数据获取和缓存                |
+| Jotai           | ^2.16.0   | 原子化状态管理                |
+| Ant Design      | ^6.1.0    | UI 组件库                     |
+| Vite            | ^8.0.14   | 构建工具                      |
+| TypeScript      | ^6.0.3    | 类型系统                      |
+| UnoCSS          | ^66.5.10  | 原子化 CSS                    |
+| Tailwind CSS    | ^4.1.18   | 实用优先 CSS 框架             |
+| Motion          | ^12.23.26 | 动画库                        |
+| i18next         | 25.7.2    | 国际化框架                    |
+| pnpm            | 10.4.1    | 包管理器                      |
+| Turborepo       | ^2.7.1    | Monorepo 任务编排             |
 
 ### 在线预览
 
@@ -305,18 +305,18 @@ pnpm release
 
 在仓库根目录，Turborepo 提供统一的任务编排命令：
 
-| 命令 | 说明 |
-|------|------|
-| `pnpm dev` | 启动所有应用/包的开发模式 |
-| `pnpm build` | 构建全部包与应用 |
-| `pnpm lint` | 运行 oxlint 代码检查 |
-| `pnpm format` | 使用 oxfmt 格式化代码 |
-| `pnpm format:check` | 校验代码格式 |
-| `pnpm typecheck` | 全量 TypeScript 类型检查 |
-| `pnpm test` | 运行单元测试（Vitest） |
-| `pnpm test:e2e` | 运行端到端测试（Playwright） |
-| `pnpm test:ui` | 启动 Vitest UI |
-| `pnpm clean` | 清理构建产物 |
+| 命令                | 说明                         |
+| ------------------- | ---------------------------- |
+| `pnpm dev`          | 启动所有应用/包的开发模式    |
+| `pnpm build`        | 构建全部包与应用             |
+| `pnpm lint`         | 运行 oxlint 代码检查         |
+| `pnpm format`       | 使用 oxfmt 格式化代码        |
+| `pnpm format:check` | 校验代码格式                 |
+| `pnpm typecheck`    | 全量 TypeScript 类型检查     |
+| `pnpm test`         | 运行单元测试（Vitest）       |
+| `pnpm test:e2e`     | 运行端到端测试（Playwright） |
+| `pnpm test:ui`      | 启动 Vitest UI               |
+| `pnpm clean`        | 清理构建产物                 |
 | `pnpm create:admin` | 通过 CLI 创建新的 admin 项目 |
 
 ## 核心功能
@@ -430,13 +430,13 @@ const LoginPage = () => {
 
 项目提供多个独立文档站点（均位于 `docs/`，基于 Fumadocs 构建）：
 
-| 文档站点 | 说明 |
-|---------|------|
-| **project-docs** | 项目总览与整体架构 |
-| **admin-docs** | `apps/admin` 的启动、路由、菜单、权限与请求服务 |
-| **core-docs** | `@core` 基础设施层各包的用途与边界 |
-| **web-kit-docs** | 应用壳、主题、布局材料与 Ant Design 适配 |
-| **web-ui-docs** | `@skyroc/web-ui` 组件库使用与设计系统 |
+| 文档站点         | 说明                                            |
+| ---------------- | ----------------------------------------------- |
+| **project-docs** | 项目总览与整体架构                              |
+| **admin-docs**   | `apps/admin` 的启动、路由、菜单、权限与请求服务 |
+| **core-docs**    | `@core` 基础设施层各包的用途与边界              |
+| **web-kit-docs** | 应用壳、主题、布局材料与 Ant Design 适配        |
+| **web-ui-docs**  | `@skyroc/web-ui` 组件库使用与设计系统           |
 
 启动任一文档站点：
 
@@ -464,8 +464,8 @@ pnpm --filter web-ui-docs dev
 推荐使用最新版的 Chrome 浏览器进行开发，以获得更好的体验。
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png" alt="IE" width="24px" height="24px"  />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) |
-| --- | --- | --- | --- | --- |
-| not support | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| not support                                                                                                                                                                                                                             | last 2 versions                                                                                                                                                                               | last 2 versions                                                                                                                                                                                       | last 2 versions                                                                                                                                                                                    | last 2 versions                                                                                                                                                                                    |
 
 ## 开源作者
 

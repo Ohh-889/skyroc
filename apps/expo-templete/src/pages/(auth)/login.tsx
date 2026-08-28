@@ -138,7 +138,7 @@ const PasswordLoginScreen = () => {
             className="py-2 active:opacity-60"
             onPress={handleForgotPassword}
           >
-            <Text  className="text-sm text-muted-foreground">忘记密码？</Text>
+            <Text className="text-sm text-muted-foreground">忘记密码？</Text>
           </Pressable>
         </View>
       </View>

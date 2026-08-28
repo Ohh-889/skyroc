@@ -31,7 +31,10 @@ const GlobalSider = memo(() => {
   const hasLogo = Boolean(logo || logoComponent || logoTitle);
 
   return (
-    <DarkModeContainer className="size-full flex-col-stretch shadow-sider" inverted={darkMenu}>
+    <DarkModeContainer
+      className="size-full flex-col-stretch shadow-sider"
+      inverted={darkMenu}
+    >
       {showLogo && hasLogo ? (
         <LayoutLogo
           logo={logo}
@@ -42,7 +45,10 @@ const GlobalSider = memo(() => {
           to={logoTo}
         />
       ) : null}
-      <div className={menuWrapperClass} id={GLOBAL_SIDER_MENU_ID} />
+      <div
+        className={menuWrapperClass}
+        id={GLOBAL_SIDER_MENU_ID}
+      />
     </DarkModeContainer>
   );
 });

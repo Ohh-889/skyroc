@@ -206,9 +206,7 @@ describe('pagination primitive branches', () => {
           icon={<span>Custom gap icon</span>}
         />
 
-        <PaginationEllipsis data-testid="ellipsis-children">
-          Custom gap children
-        </PaginationEllipsis>
+        <PaginationEllipsis data-testid="ellipsis-children">Custom gap children</PaginationEllipsis>
 
         <PaginationEllipsis data-testid="ellipsis-fallback" />
       </div>

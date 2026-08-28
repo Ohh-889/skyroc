@@ -4,15 +4,15 @@
 
 ## 入口一览
 
-| 入口 | 导入路径 | 适用环境 | 说明 |
-| --- | --- | --- | --- |
-| 主入口 | `@skyroc/utils` | Node / 浏览器 / React Native | 平台无关核心 |
-| 样式合并 | `@skyroc/utils/cn` | 同上 | 只要 `cn` 时用它，避免拉进整个 barrel |
-| 加密 | `@skyroc/utils/crypto` | 同上 | 单独出口，crypto-js 体积较大 |
-| 路径读写 | `@skyroc/utils/path` | 同上 | `deepGet` / `deepSet` / 路径归一 |
-| 任务调度 | `@skyroc/utils/scheduler` | 同上 | `TaskHub`：单心跳统一管理 init / periodic / listener 任务 |
-| 类型工具 | `@skyroc/utils/type` | 同上 | 零运行时的 TS 工具类型，深度路径推导等 |
-| 浏览器 | `@skyroc/utils/web` | **仅浏览器** | 下载、BOM、Storage、UA 探测、表单元素类型 |
+| 入口     | 导入路径                  | 适用环境                     | 说明                                                      |
+| -------- | ------------------------- | ---------------------------- | --------------------------------------------------------- |
+| 主入口   | `@skyroc/utils`           | Node / 浏览器 / React Native | 平台无关核心                                              |
+| 样式合并 | `@skyroc/utils/cn`        | 同上                         | 只要 `cn` 时用它，避免拉进整个 barrel                     |
+| 加密     | `@skyroc/utils/crypto`    | 同上                         | 单独出口，crypto-js 体积较大                              |
+| 路径读写 | `@skyroc/utils/path`      | 同上                         | `deepGet` / `deepSet` / 路径归一                          |
+| 任务调度 | `@skyroc/utils/scheduler` | 同上                         | `TaskHub`：单心跳统一管理 init / periodic / listener 任务 |
+| 类型工具 | `@skyroc/utils/type`      | 同上                         | 零运行时的 TS 工具类型，深度路径推导等                    |
+| 浏览器   | `@skyroc/utils/web`       | **仅浏览器**                 | 下载、BOM、Storage、UA 探测、表单元素类型                 |
 
 ### 平台边界是编译器强制的，不是靠自觉
 
@@ -37,36 +37,36 @@ import { downloadFileFromUrl, openWindow, createStorage } from '@skyroc/utils/we
 
 ## 模块一览
 
-| 模块 | 入口 | 主要导出 | 说明 |
-| --- | --- | --- | --- |
-| `cn` | `.` / `./cn` | `cn` | Tailwind class 合并（clsx + tailwind-merge） |
-| `crypto` | `./crypto` | `AesCrypto` | AES 对称加密/解密类 |
-| `nanoid` | `.` | `nanoid` | URL 安全唯一 ID 生成 |
-| `klona` | `.` | `jsonClone` | JSON 安全深拷贝 |
-| `date` | `.` | `formatDate`、`addDate` 等 30+ 函数 | 分层日期工具（格式化/运算/边界/比较） |
-| `path` | `.` / `./path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` | 不可变深路径读写 |
-| `array` | `.` | `toArray`、`arraysEqual` | 数组规范化与无序等价比较 |
-| `reg` | `.` | `REG_USER_NAME` 等 8 个正则 | 常用表单校验正则常量 |
-| `object` | `.` | `shallowEqual`、`diffObject` 等 | 对象浅比较与递归 diff |
-| `utils` | `.` | `isNil`、`microtask` 等 | 基础类型守卫与微任务调度 |
-| `emitter` | `.` | `Emitter` | 轻量级类型安全事件总线 |
-| `createSubject` | `.` | `createSubject` | 轻量 RxJS Subject 实现 |
-| `priority-queue` | `.` | `PriorityQueue` | 有序集合（ID 去重 + 变更订阅） |
-| `singleflight` | `.` | `Singleflight`、`createSingleflight` | 合并同 key 的并发请求 |
-| `query` | `.` | `parseQuery`、`stringifyQuery` | Query string 解析/序列化 |
-| `radash` | `.` | 类型守卫族 + `assign` | radash 白名单转出，**非全量** |
-| `scheduler` | `./scheduler` | `TaskHub` | 协作式任务调度中枢（零运行时依赖） |
-| `web/download` | `./web` | `downloadFileFromUrl` 等 | 多策略文件下载 |
-| `web/storage` | `./web` | `createStorage`、`createLocalforage` | 类型安全存储封装 |
-| `web/env` | `./web` | `isMacOs`、`isPC` 等 | UA 环境探测 |
-| `web/window` | `./web` | `openWindow` | 安全新窗口打开 |
-| `web/class` | `./web` | `toggleHtmlClass` | HTML class 切换 |
-| `web/form` | `./web` | `FieldElement`、`CustomElement` | 表单元素类型（依赖 DOM lib） |
-| `type/path` | `./type` | `LeafPaths`、`AllPaths`、`PathValue` 等 | 深度路径类型推导 |
-| `type/object` | `./type` | `DeepPartial`、`Prettify`、`MergeUnion` 等 | 对象与联合类型变换 |
-| `type/fn` | `./type` | `Fn`、`Noop`、`FunctionKeys` 等 | 函数类型提取 |
-| `type/primitive` | `./type` | `Primitive`、`Atomic`、`IsAny`、`IsTuple` | 原始类型与判定 |
-| `type/misc` | `./type` | `MaybeArray` | 零散工具类型 |
+| 模块             | 入口           | 主要导出                                       | 说明                                         |
+| ---------------- | -------------- | ---------------------------------------------- | -------------------------------------------- |
+| `cn`             | `.` / `./cn`   | `cn`                                           | Tailwind class 合并（clsx + tailwind-merge） |
+| `crypto`         | `./crypto`     | `AesCrypto`                                    | AES 对称加密/解密类                          |
+| `nanoid`         | `.`            | `nanoid`                                       | URL 安全唯一 ID 生成                         |
+| `klona`          | `.`            | `jsonClone`                                    | JSON 安全深拷贝                              |
+| `date`           | `.`            | `formatDate`、`addDate` 等 30+ 函数            | 分层日期工具（格式化/运算/边界/比较）        |
+| `path`           | `.` / `./path` | `deepGet`、`deepSet`、`deepUnset`、`unflatten` | 不可变深路径读写                             |
+| `array`          | `.`            | `toArray`、`arraysEqual`                       | 数组规范化与无序等价比较                     |
+| `reg`            | `.`            | `REG_USER_NAME` 等 8 个正则                    | 常用表单校验正则常量                         |
+| `object`         | `.`            | `shallowEqual`、`diffObject` 等                | 对象浅比较与递归 diff                        |
+| `utils`          | `.`            | `isNil`、`microtask` 等                        | 基础类型守卫与微任务调度                     |
+| `emitter`        | `.`            | `Emitter`                                      | 轻量级类型安全事件总线                       |
+| `createSubject`  | `.`            | `createSubject`                                | 轻量 RxJS Subject 实现                       |
+| `priority-queue` | `.`            | `PriorityQueue`                                | 有序集合（ID 去重 + 变更订阅）               |
+| `singleflight`   | `.`            | `Singleflight`、`createSingleflight`           | 合并同 key 的并发请求                        |
+| `query`          | `.`            | `parseQuery`、`stringifyQuery`                 | Query string 解析/序列化                     |
+| `radash`         | `.`            | 类型守卫族 + `assign`                          | radash 白名单转出，**非全量**                |
+| `scheduler`      | `./scheduler`  | `TaskHub`                                      | 协作式任务调度中枢（零运行时依赖）           |
+| `web/download`   | `./web`        | `downloadFileFromUrl` 等                       | 多策略文件下载                               |
+| `web/storage`    | `./web`        | `createStorage`、`createLocalforage`           | 类型安全存储封装                             |
+| `web/env`        | `./web`        | `isMacOs`、`isPC` 等                           | UA 环境探测                                  |
+| `web/window`     | `./web`        | `openWindow`                                   | 安全新窗口打开                               |
+| `web/class`      | `./web`        | `toggleHtmlClass`                              | HTML class 切换                              |
+| `web/form`       | `./web`        | `FieldElement`、`CustomElement`                | 表单元素类型（依赖 DOM lib）                 |
+| `type/path`      | `./type`       | `LeafPaths`、`AllPaths`、`PathValue` 等        | 深度路径类型推导                             |
+| `type/object`    | `./type`       | `DeepPartial`、`Prettify`、`MergeUnion` 等     | 对象与联合类型变换                           |
+| `type/fn`        | `./type`       | `Fn`、`Noop`、`FunctionKeys` 等                | 函数类型提取                                 |
+| `type/primitive` | `./type`       | `Primitive`、`Atomic`、`IsAny`、`IsTuple`      | 原始类型与判定                               |
+| `type/misc`      | `./type`       | `MaybeArray`                                   | 零散工具类型                                 |
 
 ---
 
@@ -130,8 +130,8 @@ if (result.ok) {
 ```ts
 import { nanoid } from '@skyroc/utils';
 
-nanoid();    // 'V1StGXR8_Z5jdHi6B-myT'（默认 21 位）
-nanoid(10);  // 'IRFa-VaY2b'（指定长度）
+nanoid(); // 'V1StGXR8_Z5jdHi6B-myT'（默认 21 位）
+nanoid(10); // 'IRFa-VaY2b'（指定长度）
 ```
 
 ---
@@ -164,18 +164,17 @@ import { deepGet, deepSet, deepUnset, unflatten } from '@skyroc/utils';
 路径支持三种写法，统一由 `toSegments` 归一：
 
 ```ts
-'user.addresses[0].city'   // 点号 + 方括号，数字段自动转 number
-['user', 'addresses', 0]   // 元组
-'name'                     // 单段
-undefined                  // → []（表示"没有路径"，所有操作原样返回）
+'user.addresses[0].city'[('user', 'addresses', 0)]; // 点号 + 方括号，数字段自动转 number // 元组
+('name'); // 单段
+undefined; // → []（表示"没有路径"，所有操作原样返回）
 ```
 
 ### deepGet(obj, path, def?)
 
 ```ts
-deepGet({ user: { name: 'Alex' } }, 'user.name');        // 'Alex'
-deepGet({ user: {} }, 'user.name', 'fallback');          // 'fallback'
-deepGet({ list: [{ id: 1 }] }, 'list[0].id');            // 1
+deepGet({ user: { name: 'Alex' } }, 'user.name'); // 'Alex'
+deepGet({ user: {} }, 'user.name', 'fallback'); // 'fallback'
+deepGet({ list: [{ id: 1 }] }, 'list[0].id'); // 1
 ```
 
 返回 `unknown`，调用方自行断言 —— 路径是运行期字符串，类型系统无从推导实际值的类型。
@@ -183,26 +182,28 @@ deepGet({ list: [{ id: 1 }] }, 'list[0].id');            // 1
 ### deepSet / deepUnset — 永不改原对象
 
 ```ts
-deepSet({ a: { b: 1 } }, 'a.c', 2);        // { a: { b: 1, c: 2 } }，原对象不变
-deepSet({}, 'list[0].name', 'x');          // { list: [{ name: 'x' }] }，容器按段类型自动创建
-deepUnset({ list: [1, 2, 3] }, 'list.1');  // { list: [1, 3] }，数组用 splice 收缩
+deepSet({ a: { b: 1 } }, 'a.c', 2); // { a: { b: 1, c: 2 } }，原对象不变
+deepSet({}, 'list[0].name', 'x'); // { list: [{ name: 'x' }] }，容器按段类型自动创建
+deepUnset({ list: [1, 2, 3] }, 'list.1'); // { list: [1, 3] }，数组用 splice 收缩
 ```
 
 **穿过非 plain object 时保留原型：**
 
 ```ts
-class User { name = 'alex'; }
+class User {
+  name = 'alex';
+}
 
 const next = deepSet({ user: new User() }, 'user.age', 30);
-next.user.name;                  // 'alex'（不会被丢掉）
-next.user instanceof User;       // true
+next.user.name; // 'alex'（不会被丢掉）
+next.user instanceof User; // true
 ```
 
 **原型污染防护默认开启：**
 
 ```ts
-deepSet({}, '__proto__.polluted', 1);                      // 原样返回，不写入
-deepSet({}, '__proto__.x', 1, { safeKeys: false });        // 显式关闭才会写
+deepSet({}, '__proto__.polluted', 1); // 原样返回，不写入
+deepSet({}, '__proto__.x', 1, { safeKeys: false }); // 显式关闭才会写
 ```
 
 拦截的键：`__proto__`、`constructor`、`prototype`。
@@ -216,15 +217,15 @@ unflatten({ 'a.b': 1, 'a.c': 2, 'list[0]': 'x' });
 
 ### 路径工具
 
-| 函数 | 说明 |
-| --- | --- |
-| `toSegments(path)` | 归一成段数组，`undefined` → `[]` |
-| `toPathArray(str)` | 解析点号/方括号字符串，数字段转 `number` |
-| `keyOfName(path)` | 归一成点号形式的字符串 key |
-| `toArrayIndex(key)` | 解析合法数组下标，非法返回 `null` |
-| `isUnderPrefix(key, prefix)` | 判断 key 是否在 prefix 之下（`''` / `'*'` 匹配一切） |
-| `collectDeepKeys(obj)` | 递归收集全部叶子路径 |
-| `isPlainObject` / `isObjectLike` / `isUnsafeKey` | 形状与安全键判定 |
+| 函数                                             | 说明                                                 |
+| ------------------------------------------------ | ---------------------------------------------------- |
+| `toSegments(path)`                               | 归一成段数组，`undefined` → `[]`                     |
+| `toPathArray(str)`                               | 解析点号/方括号字符串，数字段转 `number`             |
+| `keyOfName(path)`                                | 归一成点号形式的字符串 key                           |
+| `toArrayIndex(key)`                              | 解析合法数组下标，非法返回 `null`                    |
+| `isUnderPrefix(key, prefix)`                     | 判断 key 是否在 prefix 之下（`''` / `'*'` 匹配一切） |
+| `collectDeepKeys(obj)`                           | 递归收集全部叶子路径                                 |
+| `isPlainObject` / `isObjectLike` / `isUnsafeKey` | 形状与安全键判定                                     |
 
 ---
 
@@ -274,10 +275,10 @@ const data = await cache.getItem('dashboardData'); // CacheStorage['dashboardDat
 
 **选型建议：**
 
-| 场景 | 推荐 |
-| --- | --- |
-| 同步读写，数据量小 | `createStorage('local', ...)` |
-| 仅当前 tab 生命周期 | `createStorage('session', ...)` |
+| 场景                | 推荐                             |
+| ------------------- | -------------------------------- |
+| 同步读写，数据量小  | `createStorage('local', ...)`    |
+| 仅当前 tab 生命周期 | `createStorage('session', ...)`  |
 | 大体积数据（> 5MB） | `createLocalforage('indexedDB')` |
 
 ---
@@ -307,11 +308,11 @@ compare.ts  → 返回 boolean，用于条件判断
 ```ts
 import { DATE_FORMAT } from '@skyroc/utils';
 
-DATE_FORMAT.DATE             // 'YYYY-MM-DD'
-DATE_FORMAT.DATE_TIME        // 'YYYY-MM-DD HH:mm:ss'
-DATE_FORMAT.DATE_TIME_MINUTE // 'YYYY-MM-DD HH:mm'
-DATE_FORMAT.TIME             // 'HH:mm:ss'
-DATE_FORMAT.DATE_CN          // 'YYYY年MM月DD日'
+DATE_FORMAT.DATE; // 'YYYY-MM-DD'
+DATE_FORMAT.DATE_TIME; // 'YYYY-MM-DD HH:mm:ss'
+DATE_FORMAT.DATE_TIME_MINUTE; // 'YYYY-MM-DD HH:mm'
+DATE_FORMAT.TIME; // 'HH:mm:ss'
+DATE_FORMAT.DATE_CN; // 'YYYY年MM月DD日'
 ```
 
 ### format — 格式化
@@ -319,13 +320,13 @@ DATE_FORMAT.DATE_CN          // 'YYYY年MM月DD日'
 ```ts
 import { formatDate, formatDateTime, formatTime, fromTimestamp, formatDuration, humanizeDuration } from '@skyroc/utils';
 
-formatDate(new Date());                          // '2026-04-22'
-formatDateTime(new Date());                      // '2026-04-22 14:30:00'
-formatTime(new Date());                          // '14:30:00'
-fromTimestamp(1745000000);                       // 秒级自动转毫秒
-fromTimestamp(1745000000000);                    // 毫秒级直接使用
-formatDuration(3661000);                         // '01:01:01'
-humanizeDuration(86400000);                      // 'a day'
+formatDate(new Date()); // '2026-04-22'
+formatDateTime(new Date()); // '2026-04-22 14:30:00'
+formatTime(new Date()); // '14:30:00'
+fromTimestamp(1745000000); // 秒级自动转毫秒
+fromTimestamp(1745000000000); // 毫秒级直接使用
+formatDuration(3661000); // '01:01:01'
+humanizeDuration(86400000); // 'a day'
 ```
 
 ### calc — 运算
@@ -333,28 +334,34 @@ humanizeDuration(86400000);                      // 'a day'
 ```ts
 import { toTimestamp, toUnixTimestamp, addDate, subtractDate, diffDate, fromNow, toNow } from '@skyroc/utils';
 
-toTimestamp('2026-04-22');                       // 毫秒级时间戳
-toUnixTimestamp('2026-04-22');                   // 秒级时间戳
-addDate('2026-04-22', 7).format('YYYY-MM-DD');  // '2026-04-29'
-subtractDate('2026-04-22', 1, 'month');          // 上个月同日
-diffDate('2026-04-22', '2026-04-01');            // 21（天）
-fromNow('2026-04-19');                           // '3 days ago'
+toTimestamp('2026-04-22'); // 毫秒级时间戳
+toUnixTimestamp('2026-04-22'); // 秒级时间戳
+addDate('2026-04-22', 7).format('YYYY-MM-DD'); // '2026-04-29'
+subtractDate('2026-04-22', 1, 'month'); // 上个月同日
+diffDate('2026-04-22', '2026-04-01'); // 21（天）
+fromNow('2026-04-19'); // '3 days ago'
 ```
 
 ### boundary — 边界与范围
 
 ```ts
 import {
-  startOfDay, endOfDay,
-  startOfWeek, endOfWeek,
-  startOfMonth, endOfMonth,
-  getTodayRange, getYesterdayRange,
-  getThisWeekRange, getThisMonthRange,
-  getThisYearRange, getLastDaysRange,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  getTodayRange,
+  getYesterdayRange,
+  getThisWeekRange,
+  getThisMonthRange,
+  getThisYearRange,
+  getLastDaysRange
 } from '@skyroc/utils';
 
 const [start, end] = getThisMonthRange(); // 本月起止
-const [from, to] = getLastDaysRange(7);   // 最近 7 天
+const [from, to] = getLastDaysRange(7); // 最近 7 天
 ```
 
 ### compare — 比较
@@ -362,10 +369,10 @@ const [from, to] = getLastDaysRange(7);   // 最近 7 天
 ```ts
 import { isValidDate, isBefore, isAfter, isSame, isToday, isYesterday, isTomorrow } from '@skyroc/utils';
 
-isValidDate('2026-04-22');                           // true
-isBefore('2026-04-01', '2026-04-22');               // true
+isValidDate('2026-04-22'); // true
+isBefore('2026-04-01', '2026-04-22'); // true
 isSame('2026-04-22 10:00', '2026-04-22 15:00', 'day'); // true
-isToday(new Date());                                 // true
+isToday(new Date()); // true
 ```
 
 ---
@@ -379,11 +386,11 @@ isToday(new Date());                                 // true
 ```ts
 import { toArray } from '@skyroc/utils';
 
-toArray('hello');    // ['hello']
+toArray('hello'); // ['hello']
 toArray(['a', 'b']); // ['a', 'b']
-toArray(null);       // []
-toArray(undefined);  // []
-toArray(0);          // [0]（非 nil 的 falsy 值也会被包裹）
+toArray(null); // []
+toArray(undefined); // []
+toArray(0); // [0]（非 nil 的 falsy 值也会被包裹）
 ```
 
 ### arraysEqual
@@ -395,7 +402,7 @@ import { arraysEqual } from '@skyroc/utils';
 
 arraysEqual([1, 2, 3], [3, 2, 1]); // true（顺序无关）
 arraysEqual([1, 1, 2], [1, 2, 2]); // false（计数不同）
-arraysEqual([], []);                // true
+arraysEqual([], []); // true
 ```
 
 ---
@@ -406,21 +413,27 @@ arraysEqual([], []);                // true
 
 ```ts
 import {
-  REG_USER_NAME, REG_PHONE, REG_PWD, REG_PWD_STRONG,
-  REG_EMAIL, REG_CODE_SIX, REG_CODE_FOUR, REG_URL,
+  REG_USER_NAME,
+  REG_PHONE,
+  REG_PWD,
+  REG_PWD_STRONG,
+  REG_EMAIL,
+  REG_CODE_SIX,
+  REG_CODE_FOUR,
+  REG_URL
 } from '@skyroc/utils';
 ```
 
-| 常量 | 规则 | 合法示例 |
-| --- | --- | --- |
-| `REG_USER_NAME` | 4-16 位：中文/英文/数字/`_`/`-` | `alice_01`、`张三` |
-| `REG_PHONE` | 中国大陆手机号 `1[3-9]` + 9 位 | `13812345678` |
-| `REG_PWD` | 6-18 位：字母/数字/`_`（宽松，**禁符号**） | `pass_123` |
-| `REG_PWD_STRONG` | 8-32 位，需含大小写字母+数字，允许符号 | `Abcdef12!` |
-| `REG_EMAIL` | 标准邮箱格式 | `user@example.com` |
-| `REG_CODE_SIX` | 恰好 6 位纯数字 | `123456` |
-| `REG_CODE_FOUR` | 恰好 4 位纯数字 | `1234` |
-| `REG_URL` | HTTP(S) / 协议相对 URL | `https://example.com/path?q=1` |
+| 常量             | 规则                                       | 合法示例                       |
+| ---------------- | ------------------------------------------ | ------------------------------ |
+| `REG_USER_NAME`  | 4-16 位：中文/英文/数字/`_`/`-`            | `alice_01`、`张三`             |
+| `REG_PHONE`      | 中国大陆手机号 `1[3-9]` + 9 位             | `13812345678`                  |
+| `REG_PWD`        | 6-18 位：字母/数字/`_`（宽松，**禁符号**） | `pass_123`                     |
+| `REG_PWD_STRONG` | 8-32 位，需含大小写字母+数字，允许符号     | `Abcdef12!`                    |
+| `REG_EMAIL`      | 标准邮箱格式                               | `user@example.com`             |
+| `REG_CODE_SIX`   | 恰好 6 位纯数字                            | `123456`                       |
+| `REG_CODE_FOUR`  | 恰好 4 位纯数字                            | `1234`                         |
+| `REG_URL`        | HTTP(S) / 协议相对 URL                     | `https://example.com/path?q=1` |
 
 **几点说明：**
 
@@ -434,7 +447,7 @@ import {
 // 与 Zod 配合使用
 const loginSchema = z.object({
   phone: z.string().regex(REG_PHONE, '手机号格式不正确'),
-  password: z.string().regex(REG_PWD_STRONG, '密码需 8-32 位且包含大小写字母与数字'),
+  password: z.string().regex(REG_PWD_STRONG, '密码需 8-32 位且包含大小写字母与数字')
 });
 ```
 
@@ -451,7 +464,7 @@ import { shallowEqual, diffObject, isObjectType, isEventObject } from '@skyroc/u
 浅比较：先用 `Object.is` 判断引用，再逐键用 `Object.is` 比较一级属性值。
 
 ```ts
-shallowEqual({ a: 1, b: 2 }, { a: 1, b: 2 });             // true
+shallowEqual({ a: 1, b: 2 }, { a: 1, b: 2 }); // true
 shallowEqual({ a: 1, b: { c: 3 } }, { a: 1, b: { c: 3 } }); // false（嵌套对象引用不同）
 ```
 
@@ -467,13 +480,13 @@ diffObject({ name: 'Alice', age: 30 }, { name: 'Alice', age: 31 });
 ### isObjectType / isEventObject
 
 ```ts
-isObjectType({});      // true
-isObjectType([]);      // true
-isObjectType(null);    // false —— 类型谓词必须排除 null，否则下游属性访问会炸
+isObjectType({}); // true
+isObjectType([]); // true
+isObjectType(null); // false —— 类型谓词必须排除 null，否则下游属性访问会炸
 
-isEventObject({ target: input });  // true（表单取值：区分「事件」与「裸值」）
-isEventObject(new Date());         // false
-isEventObject([1, 2]);             // false
+isEventObject({ target: input }); // true（表单取值：区分「事件」与「裸值」）
+isEventObject(new Date()); // false
+isEventObject([1, 2]); // false
 ```
 
 ---
@@ -484,13 +497,13 @@ isEventObject([1, 2]);             // false
 import { noop, isNil, isHttpUrl, omitUndefined, microtask } from '@skyroc/utils';
 ```
 
-| 函数 | 说明 |
-| --- | --- |
-| `noop()` | 空函数，用作可选回调的默认值 |
-| `isNil(val)` | 类型守卫：`null \| undefined` |
-| `isHttpUrl(url)` | 判断是否以 `http://` 或 `https://` 开头 |
-| `omitUndefined(obj)` | 浅层过滤值为 `undefined` 的字段 |
-| `microtask(cb)` | 排入微任务队列，宿主无 `queueMicrotask` 时回退 Promise |
+| 函数                 | 说明                                                   |
+| -------------------- | ------------------------------------------------------ |
+| `noop()`             | 空函数，用作可选回调的默认值                           |
+| `isNil(val)`         | 类型守卫：`null \| undefined`                          |
+| `isHttpUrl(url)`     | 判断是否以 `http://` 或 `https://` 开头                |
+| `omitUndefined(obj)` | 浅层过滤值为 `undefined` 的字段                        |
+| `microtask(cb)`      | 排入微任务队列，宿主无 `queueMicrotask` 时回退 Promise |
 
 > UA / 环境探测（`isWindow`、`isMacOs`、`isWindowsOs`、`isPC`）在 `@skyroc/utils/web`。
 
@@ -528,10 +541,10 @@ off(); // 取消订阅
 
 ```ts
 const bus = new Emitter<AppEvents>({ stickyLimit: 100 }); // 调整上限
-const bus = new Emitter<AppEvents>({ stickyLimit: 0 });   // 完全关闭粘性
+const bus = new Emitter<AppEvents>({ stickyLimit: 0 }); // 完全关闭粘性
 
 bus.clearSticky('login'); // 只清某个事件的粘性缓存
-bus.clearSticky();        // 清空全部粘性缓存，保留监听器
+bus.clearSticky(); // 清空全部粘性缓存，保留监听器
 ```
 
 > 上限存在的意义：粘性缓存只增不减会变成内存泄漏 —— 一个从没人订阅的事件持续 `emit`，缓存就会无限增长。
@@ -539,22 +552,22 @@ bus.clearSticky();        // 清空全部粘性缓存，保留监听器
 **键控事件（Map 模式）：** `onMap / emitMap` 在事件名之外再加一层 `key` 隔离，适合同一事件按实例区分的场景。
 
 ```ts
-bus.onMap('update', 'panel-A', (data) => {});
+bus.onMap('update', 'panel-A', data => {});
 bus.emitMap('update', 'panel-A', { value: 1 }); // 只触发 panel-A
 ```
 
 ### API 汇总
 
-| 方法 | 说明 |
-| --- | --- |
-| `emit(event, ...args)` | 触发事件 |
-| `emitMap(event, key, ...args)` | 触发键控事件 |
-| `on(event, fn)` | 注册监听器，返回取消订阅函数 |
-| `onMap(event, key, fn)` | 注册键控监听器 |
-| `off(event, fn?)` | 移除指定监听器；不传 `fn` 则移除该事件全部监听器 |
-| `offMap(event, key, fn)` | 移除键控监听器 |
-| `offAll()` | 清除所有监听器和粘性事件缓存 |
-| `clearSticky(event?)` | 只清粘性缓存，保留监听器 |
+| 方法                           | 说明                                             |
+| ------------------------------ | ------------------------------------------------ |
+| `emit(event, ...args)`         | 触发事件                                         |
+| `emitMap(event, key, ...args)` | 触发键控事件                                     |
+| `on(event, fn)`                | 注册监听器，返回取消订阅函数                     |
+| `onMap(event, key, fn)`        | 注册键控监听器                                   |
+| `off(event, fn?)`              | 移除指定监听器；不传 `fn` 则移除该事件全部监听器 |
+| `offMap(event, key, fn)`       | 移除键控监听器                                   |
+| `offAll()`                     | 清除所有监听器和粘性事件缓存                     |
+| `clearSticky(event?)`          | 只清粘性缓存，保留监听器                         |
 
 `off` / `offMap` 传入 `fn` 时严格按引用匹配 —— 传一个没注册过的函数不会误删任何东西。
 
@@ -576,15 +589,15 @@ sub.unsubscribe();
 subject.complete(); // 关闭，之后 next() 无效
 ```
 
-| 方法 | 说明 |
-| --- | --- |
-| `next(value)` | 向所有活跃订阅者推送值 |
+| 方法                        | 说明                               |
+| --------------------------- | ---------------------------------- |
+| `next(value)`               | 向所有活跃订阅者推送值             |
 | `subscribe(fn \| observer)` | 注册订阅者，返回 `{ unsubscribe }` |
-| `unsubscribe()` | 移除所有订阅者（不关闭） |
-| `complete()` | 关闭 Subject |
-| `hasObservers()` | 是否有活跃订阅者 |
-| `closed` | 是否已关闭（只读） |
-| `size` | 当前订阅者数量（只读） |
+| `unsubscribe()`             | 移除所有订阅者（不关闭）           |
+| `complete()`                | 关闭 Subject                       |
+| `hasObservers()`            | 是否有活跃订阅者                   |
+| `closed`                    | 是否已关闭（只读）                 |
+| `size`                      | 当前订阅者数量（只读）             |
 
 **与 Emitter 的选择：** 需要多个不同具名事件 → `Emitter`；只需一条单类型数据流 → `createSubject`。
 
@@ -601,7 +614,7 @@ type Task = { taskId: string; priority: number; createdAt: number };
 
 const queue = new PriorityQueue<Task>({
   getId: t => t.taskId,
-  compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt,
+  compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt
 });
 
 queue.enqueue({ taskId: '1', priority: 2, createdAt: 1000 });
@@ -609,43 +622,43 @@ queue.enqueue({ taskId: '2', priority: 1, createdAt: 2000 });
 queue.enqueue({ taskId: '1', priority: 2, createdAt: 1000 }); // 重复，被忽略
 
 queue.peek()?.taskId; // '2'（priority 1 优先）
-queue.dequeue();      // 取出 taskId='2'
+queue.dequeue(); // 取出 taskId='2'
 ```
 
 > ⚠️ **复杂度：它不是二叉堆。** 内部是 `Map` + 有序数组缓存，每次写操作都会**全量重排**：
 >
-> | 操作 | 复杂度 |
-> | --- | --- |
-> | `enqueue` / `remove` / `update` | `O(n log n)` |
-> | `enqueueMany` / `removeBy` / `updateBy` | 整批只排一次，`O(n log n)` |
-> | `peek` / `get` / `has` / `toArray` / `size` | `O(1)` |
+> | 操作                                        | 复杂度                     |
+> | ------------------------------------------- | -------------------------- |
+> | `enqueue` / `remove` / `update`             | `O(n log n)`               |
+> | `enqueueMany` / `removeBy` / `updateBy`     | 整批只排一次，`O(n log n)` |
+> | `peek` / `get` / `has` / `toArray` / `size` | `O(1)`                     |
 >
 > 逐条插入 n 个元素是 `O(n² log n)`。适用场景是**读多写少、n 较小**（通知中心、Banner 队列这类几十条量级）。
 > 高频入队请用 `enqueueMany` 批量提交，或换成真正的堆实现。
 
 ### 写操作
 
-| 方法 | 说明 | 返回 |
-| --- | --- | --- |
-| `enqueue(item)` | 单条入队（幂等，id 存在则跳过） | `boolean` |
-| `enqueueMany(items)` | 批量入队，触发一次排序 | `number`（实际入队数） |
-| `dequeue()` | 移除并返回队首 | `T \| undefined` |
-| `remove(id)` | 按 id 移除 | `boolean` |
-| `removeBy(predicate)` | 按条件批量移除 | `number`（实际移除数） |
-| `update(id, updater)` | 原地更新，`updater` 原样返回入参则不通知 | `boolean` |
-| `updateBy(predicate, updater)` | 按条件批量更新 | `number` |
-| `setCapacity(n)` | 改容量上限，调小时立即裁剪并通知 | `void` |
-| `clear()` | 清空队列 | `void` |
+| 方法                           | 说明                                     | 返回                   |
+| ------------------------------ | ---------------------------------------- | ---------------------- |
+| `enqueue(item)`                | 单条入队（幂等，id 存在则跳过）          | `boolean`              |
+| `enqueueMany(items)`           | 批量入队，触发一次排序                   | `number`（实际入队数） |
+| `dequeue()`                    | 移除并返回队首                           | `T \| undefined`       |
+| `remove(id)`                   | 按 id 移除                               | `boolean`              |
+| `removeBy(predicate)`          | 按条件批量移除                           | `number`（实际移除数） |
+| `update(id, updater)`          | 原地更新，`updater` 原样返回入参则不通知 | `boolean`              |
+| `updateBy(predicate, updater)` | 按条件批量更新                           | `number`               |
+| `setCapacity(n)`               | 改容量上限，调小时立即裁剪并通知         | `void`                 |
+| `clear()`                      | 清空队列                                 | `void`                 |
 
 ### 读操作与订阅
 
 ```ts
-queue.peek();        // 查看队首，不移除
-queue.has('id');     // 是否存在
-queue.get('id');     // 按 id 获取
-queue.toArray();     // 完整有序快照（readonly）
-queue.size;          // 数量
-queue.isEmpty;       // 是否为空
+queue.peek(); // 查看队首，不移除
+queue.has('id'); // 是否存在
+queue.get('id'); // 按 id 获取
+queue.toArray(); // 完整有序快照（readonly）
+queue.size; // 数量
+queue.isEmpty; // 是否为空
 
 // 变更订阅（适配 Jotai / Zustand）
 const unsub = queue.subscribe(sorted => {
@@ -671,9 +684,7 @@ class UserService {
   private sf = new Singleflight();
 
   fetchProfile(id: string) {
-    return this.sf.do(`profile:${id}`, () =>
-      fetch(`/api/users/${id}/profile`).then(r => r.json())
-    );
+    return this.sf.do(`profile:${id}`, () => fetch(`/api/users/${id}/profile`).then(r => r.json()));
   }
 }
 
@@ -681,7 +692,7 @@ class UserService {
 const [a, b, c] = await Promise.all([
   service.fetchProfile('alice'),
   service.fetchProfile('alice'),
-  service.fetchProfile('alice'),
+  service.fetchProfile('alice')
 ]);
 ```
 
@@ -699,11 +710,11 @@ async function fetchConfig() {
 
 ### API
 
-| 方法 | 说明 |
-| --- | --- |
+| 方法             | 说明                                                       |
+| ---------------- | ---------------------------------------------------------- |
 | `sf.do(key, fn)` | 执行 fn，相同 key 飞行期间共享 Promise，落定后缓存自动清除 |
-| `sf.forget(key)` | 手动清除某 key 的缓存，强制下次重新执行 |
-| `sf.reset()` | 清除所有缓存 |
+| `sf.forget(key)` | 手动清除某 key 的缓存，强制下次重新执行                    |
+| `sf.reset()`     | 清除所有缓存                                               |
 
 ---
 
@@ -714,15 +725,15 @@ async function fetchConfig() {
 ```ts
 import { parseQuery, stringifyQuery } from '@skyroc/utils';
 
-parseQuery('?a=1&b=2&b=3');   // { a: '1', b: ['2', '3'] }
-parseQuery('?flag');          // { flag: null }（无 = 的键值为 null）
+parseQuery('?a=1&b=2&b=3'); // { a: '1', b: ['2', '3'] }
+parseQuery('?flag'); // { flag: null }（无 = 的键值为 null）
 
-stringifyQuery({ a: 1, b: ['2', '3'] });  // '?a=1&b=2&b=3'
-stringifyQuery({ a: undefined });         // ''（undefined 被跳过）
+stringifyQuery({ a: 1, b: ['2', '3'] }); // '?a=1&b=2&b=3'
+stringifyQuery({ a: undefined }); // ''（undefined 被跳过）
 ```
 
 编码策略与 vue-router 一致：空格编码为 `+`、字面 `+` 转 `%2B`、`[]{}|^\`` 保持不编码。
-解析结果基于 `Object.create(null)` 且用 `Object.hasOwn` 判重，不存在原型污染风险。
+解析结果基于 `Object.create(null)`且用`Object.hasOwn` 判重，不存在原型污染风险。
 
 ---
 
@@ -733,8 +744,19 @@ stringifyQuery({ a: undefined });         // ''（undefined 被跳过）
 ```ts
 import {
   assign,
-  isArray, isDate, isEmpty, isEqual, isFloat, isFunction,
-  isInt, isNumber, isObject, isPrimitive, isPromise, isString, isSymbol,
+  isArray,
+  isDate,
+  isEmpty,
+  isEqual,
+  isFloat,
+  isFunction,
+  isInt,
+  isNumber,
+  isObject,
+  isPrimitive,
+  isPromise,
+  isString,
+  isSymbol
 } from '@skyroc/utils';
 ```
 
@@ -790,7 +812,7 @@ await downloadFileFromUrl({ source: 'https://example.com/report.pdf' });
 
 await downloadFileFromUrl({
   source: 'https://example.com/export?id=123',
-  fileName: '月度报表.xlsx',
+  fileName: '月度报表.xlsx'
 });
 ```
 
@@ -800,7 +822,7 @@ await downloadFileFromUrl({
 // Base64 / DataURL
 downloadFileFromBase64({
   source: 'data:application/pdf;base64,JVBERi0x...',
-  fileName: 'document.pdf',
+  fileName: 'document.pdf'
 });
 
 // Blob（配合 axios responseType: 'blob'）
@@ -817,9 +839,9 @@ await downloadFileFromImageUrl({ source: 'https://cdn.example.com/avatar.png', f
 ### openWindow — 安全新窗口
 
 ```ts
-openWindow('https://docs.example.com');                    // 新 tab（默认）
-openWindow('/settings', { target: '_self' });              // 当前 tab
-openWindow('https://external.com', { secure: false });     // 关闭安全策略
+openWindow('https://docs.example.com'); // 新 tab（默认）
+openWindow('/settings', { target: '_self' }); // 当前 tab
+openWindow('https://external.com', { secure: false }); // 关闭安全策略
 ```
 
 默认开启 `noopener,noreferrer` 防止 opener 劫持。
@@ -831,7 +853,7 @@ openWindow('https://external.com', { secure: false });     // 关闭安全策略
 ```ts
 const dark = toggleHtmlClass('dark');
 
-dark.add();    // <html class="dark">
+dark.add(); // <html class="dark">
 dark.remove(); // <html class="">
 ```
 
@@ -862,7 +884,7 @@ withClassName(<Icon className="size-4" />, 'text-red-500');
 ```ts
 import { getEventValue } from '@skyroc/utils/web';
 
-getEventValue('value', event);       // checkbox 取 checked，其余取 target[valuePropName]
+getEventValue('value', event); // checkbox 取 checked，其余取 target[valuePropName]
 getEventValue('value', 'raw-value'); // 非事件对象原样返回
 ```
 
@@ -889,12 +911,12 @@ import type { LeafPaths, PathValue, DeepPartial } from '@skyroc/utils/type';
 
 ### 原始类型与判定
 
-| 类型         | 说明                                                                                                                                    |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `Primitive`  | 真正的 JS 原始类型：`string \| number \| boolean \| bigint \| symbol \| null \| undefined`。                                            |
+| 类型         | 说明                                                                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `Primitive`  | 真正的 JS 原始类型：`string \| number \| boolean \| bigint \| symbol \| null \| undefined`。                                              |
 | `Atomic`     | 递归终止集合：`Primitive` 加上 `Date`、`RegExp`、`Error`、`Map`、`Set`、`WeakMap`、`WeakSet` 以及任意函数。本入口所有深度工具都停在这里。 |
-| `IsAny<T>`   | 只有 `any` 为 `true`。                                                                                                                  |
-| `IsTuple<T>` | 定长元组为 `true`，变长数组为 `false`。                                                                                                 |
+| `IsAny<T>`   | 只有 `any` 为 `true`。                                                                                                                    |
+| `IsTuple<T>` | 定长元组为 `true`，变长数组为 `false`。                                                                                                   |
 
 `Primitive` 刻意保持狭义。想表达「不要再往里递归」的，用 `Atomic`。
 
@@ -1085,17 +1107,17 @@ type Q = AllPaths<TreeNode, '', 3>; // 更浅，编译更快
 
 ### 导入路径变更
 
-| 3.x | 4.0 |
-| --- | --- |
-| `import type { LeafPaths } from '@skyroc/type-utils'` | `from '@skyroc/utils/type'` |
-| `import type { FieldElement } from '@skyroc/type-utils/web'` | `from '@skyroc/utils/web'` |
+| 3.x                                                          | 4.0                         |
+| ------------------------------------------------------------ | --------------------------- |
+| `import type { LeafPaths } from '@skyroc/type-utils'`        | `from '@skyroc/utils/type'` |
+| `import type { FieldElement } from '@skyroc/type-utils/web'` | `from '@skyroc/utils/web'`  |
 
 类型本身的名字、签名、语义都没有变，只换导入路径。
 
 ### 新增
 
-| 类型 | 入口 | 来源 |
-| --- | --- | --- |
+| 类型            | 入口     | 来源                                                             |
+| --------------- | -------- | ---------------------------------------------------------------- |
 | `MaybeArray<T>` | `./type` | 原 `@skyroc/ui-types`，它和 `DeepPartial` 是同类，归到类型工具下 |
 
 ---
@@ -1106,39 +1128,39 @@ type Q = AllPaths<TreeNode, '', 3>; // 更浅，编译更快
 
 ### 导入路径变更
 
-| 2.x | 3.0 | 原因 |
-| --- | --- | --- |
-| `import { createStorage } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 `window.localStorage` |
-| `import { createLocalforage } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 IndexedDB |
-| `import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils'` | `from '@skyroc/utils/web'` | 依赖 `navigator` |
-| `import { Crypto } from '@skyroc/utils'` | `import { AesCrypto } from '@skyroc/utils/crypto'` | 见下 |
-| `import { group, unique, ... } from '@skyroc/utils'` | `from 'radash'` | 不再全量转出 |
+| 2.x                                                                    | 3.0                                                | 原因                       |
+| ---------------------------------------------------------------------- | -------------------------------------------------- | -------------------------- |
+| `import { createStorage } from '@skyroc/utils'`                        | `from '@skyroc/utils/web'`                         | 依赖 `window.localStorage` |
+| `import { createLocalforage } from '@skyroc/utils'`                    | `from '@skyroc/utils/web'`                         | 依赖 IndexedDB             |
+| `import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils'` | `from '@skyroc/utils/web'`                         | 依赖 `navigator`           |
+| `import { Crypto } from '@skyroc/utils'`                               | `import { AesCrypto } from '@skyroc/utils/crypto'` | 见下                       |
+| `import { group, unique, ... } from '@skyroc/utils'`                   | `from 'radash'`                                    | 不再全量转出               |
 
 ### 重命名与移除
 
-| 变更 | 说明 |
-| --- | --- |
-| `Crypto` → `AesCrypto` | 原名遮蔽全局 DOM `Crypto` 类型；`secret` 字段改为 `private readonly` |
-| `deepGet<T, D>(...)` → `deepGet(obj, path, def?)` | 原签名返回 `unknown \| D` 会塌缩成 `unknown`，泛型 `D` 从未生效 |
-| 移除 `flagOn` / `flagOff` / `isOn` / `anyOn` / `allOn` | 表单状态簿记，已下沉到 `@skyroc/form` 的 `form-core/flag-set` |
-| 移除 `collectChangedLeafPaths` / `unionPaths` | 全仓库无调用方，且前者会把数组下标转成字符串，与 `deepSet` 的容器推断不一致 |
-| `microtask` 从 `path-utils` 移到 `utils` | 它是通用调度工具，与路径无关 |
-| 新增 `REG_PWD_STRONG` | `REG_PWD` 保留但标注为宽松策略 |
+| 变更                                                   | 说明                                                                        |
+| ------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `Crypto` → `AesCrypto`                                 | 原名遮蔽全局 DOM `Crypto` 类型；`secret` 字段改为 `private readonly`        |
+| `deepGet<T, D>(...)` → `deepGet(obj, path, def?)`      | 原签名返回 `unknown \| D` 会塌缩成 `unknown`，泛型 `D` 从未生效             |
+| 移除 `flagOn` / `flagOff` / `isOn` / `anyOn` / `allOn` | 表单状态簿记，已下沉到 `@skyroc/form` 的 `form-core/flag-set`               |
+| 移除 `collectChangedLeafPaths` / `unionPaths`          | 全仓库无调用方，且前者会把数组下标转成字符串，与 `deepSet` 的容器推断不一致 |
+| `microtask` 从 `path-utils` 移到 `utils`               | 它是通用调度工具，与路径无关                                                |
+| 新增 `REG_PWD_STRONG`                                  | `REG_PWD` 保留但标注为宽松策略                                              |
 
 ### 行为变更（无需改代码，但语义变了）
 
-| 位置 | 2.x | 3.0 |
-| --- | --- | --- |
-| `Emitter.off(event, fn)` | 只有一个监听器时**无视 `fn` 直接整条删** | 严格按引用匹配，不会误删 |
-| `Emitter.offMap(event, key, fn)` | 同上 | 同上 |
-| `Emitter` 粘性事件 | 存在任意 `on('*')` 就不再产生粘性事件 | 通配符不影响粘性；每事件默认上限 32 条 |
-| `deepSet(obj, undefined, v)` | 写出字面量 `"undefined"` 键 | 原样返回 |
-| `deepSet` 穿过类实例 | 节点被替换成 `{}`，原有字段静默丢失 | 保留原型浅拷贝 |
-| `deepUnset(arr, '非法下标')` | `splice(NaN, 1)` 删掉第一个元素 | 原样返回 |
-| `isObjectType(null)` | `true`（把 `null` 收窄成 `object`） | `false` |
-| `REG_PHONE` | 枚举运营商号段白名单 | `/^1[3-9]\d{9}$/` |
-| `REG_URL` | 相邻字符类重叠，失配时可能灾难性回溯 | 重写为非回溯形状 |
-| `sideEffects` | `false`（对 `date/dayjs.ts` 是错的） | 白名单，保护 dayjs 插件注册 |
+| 位置                             | 2.x                                      | 3.0                                    |
+| -------------------------------- | ---------------------------------------- | -------------------------------------- |
+| `Emitter.off(event, fn)`         | 只有一个监听器时**无视 `fn` 直接整条删** | 严格按引用匹配，不会误删               |
+| `Emitter.offMap(event, key, fn)` | 同上                                     | 同上                                   |
+| `Emitter` 粘性事件               | 存在任意 `on('*')` 就不再产生粘性事件    | 通配符不影响粘性；每事件默认上限 32 条 |
+| `deepSet(obj, undefined, v)`     | 写出字面量 `"undefined"` 键              | 原样返回                               |
+| `deepSet` 穿过类实例             | 节点被替换成 `{}`，原有字段静默丢失      | 保留原型浅拷贝                         |
+| `deepUnset(arr, '非法下标')`     | `splice(NaN, 1)` 删掉第一个元素          | 原样返回                               |
+| `isObjectType(null)`             | `true`（把 `null` 收窄成 `object`）      | `false`                                |
+| `REG_PHONE`                      | 枚举运营商号段白名单                     | `/^1[3-9]\d{9}$/`                      |
+| `REG_URL`                        | 相邻字符类重叠，失配时可能灾难性回溯     | 重写为非回溯形状                       |
+| `sideEffects`                    | `false`（对 `date/dayjs.ts` 是错的）     | 白名单，保护 dayjs 插件注册            |
 
 ---
 

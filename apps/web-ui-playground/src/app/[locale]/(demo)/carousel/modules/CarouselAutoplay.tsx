@@ -1,7 +1,7 @@
 'use client';
 
-import Autoplay from 'embla-carousel-autoplay';
 import { Card, Carousel } from '@skyroc/web-ui';
+import Autoplay from 'embla-carousel-autoplay';
 
 const CarouselAutoplay = () => {
   return (
@@ -14,9 +14,7 @@ const CarouselAutoplay = () => {
       >
         {index => (
           <Card className="h-[200px]">
-            <div className="flex-center size-full text-4xl font-semibold">
-              {index + 1}
-            </div>
+            <div className="flex-center size-full text-4xl font-semibold">{index + 1}</div>
           </Card>
         )}
       </Carousel>

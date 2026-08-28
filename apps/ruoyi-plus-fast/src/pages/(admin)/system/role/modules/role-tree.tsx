@@ -31,14 +31,22 @@ export function buildRoleTreeData(nodes: RoleTreeNode[]): RoleTreeDataNode[] {
     menuType: node.menuType,
     rawLabel: node.label,
     title: (
-      <Flex align="center" className="min-w-0" gap={7}>
+      <Flex
+        align="center"
+        className="min-w-0"
+        gap={7}
+      >
         <SvgIcon
           className={node.menuType === 'F' ? 'text-warning' : 'text-primary'}
           icon={resolveTreeIcon(node.menuType)}
         />
         <Typography.Text className="min-w-0 flex-1 truncate">{node.label}</Typography.Text>
         {node.menuType ? (
-          <Tag className="m-0 text-10px" color={node.menuType === 'F' ? 'orange' : undefined} variant="filled">
+          <Tag
+            className="m-0 text-10px"
+            color={node.menuType === 'F' ? 'orange' : undefined}
+            variant="filled"
+          >
             {resolveTreeTypeLabel(node.menuType)}
           </Tag>
         ) : null}

@@ -1,7 +1,7 @@
 import type BScroll from '@better-scroll/core';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type { DependencyList, ElementType, ReactNode } from 'react';
 import { createRef } from 'react';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -171,16 +171,19 @@ vi.mock('motion/react', async () => {
     });
   }
 
-  motionMocks.animate.mockImplementation((_from: number, to: number, options?: { onUpdate?: (latest: number) => void }) => {
-    options?.onUpdate?.(to);
+  motionMocks.animate.mockImplementation(
+    (_from: number, to: number, options?: { onUpdate?: (latest: number) => void }) => {
+      options?.onUpdate?.(to);
 
-    return {
-      cancel: motionMocks.cancel
-    };
-  });
+      return {
+        cancel: motionMocks.cancel
+      };
+    }
+  );
 
   return {
-    AnimatePresence: (props: { children: ReactNode }) => ReactModule.createElement(ReactModule.Fragment, null, props.children),
+    AnimatePresence: (props: { children: ReactNode }) =>
+      ReactModule.createElement(ReactModule.Fragment, null, props.children),
     LazyMotion: (props: { children: ReactNode; features: () => Promise<unknown> }) => {
       ReactModule.useEffect(() => {
         props.features().then(features => {
@@ -207,7 +210,11 @@ vi.mock('react-i18next', async () => {
 
   return {
     Translation: (props: { children: (t: (key: string) => string) => ReactNode }) =>
-      ReactModule.createElement(ReactModule.Fragment, null, props.children(key => `translated:${key}`))
+      ReactModule.createElement(
+        ReactModule.Fragment,
+        null,
+        props.children(key => `translated:${key}`)
+      )
   };
 });
 
@@ -273,7 +280,11 @@ describe('BetterScroll', () => {
     const ref = createRef<BScroll>();
 
     const { container } = render(
-      <BetterScroll className="custom-scroll" options={options} ref={ref}>
+      <BetterScroll
+        className="custom-scroll"
+        options={options}
+        ref={ref}
+      >
         <span>Scrollable content</span>
       </BetterScroll>
     );
@@ -295,7 +306,10 @@ describe('BetterScroll', () => {
     const ref = createRef<BScroll>();
 
     const { rerender } = render(
-      <BetterScroll options={{ scrollY: false }} ref={ref}>
+      <BetterScroll
+        options={{ scrollY: false }}
+        ref={ref}
+      >
         <span>Initial content</span>
       </BetterScroll>
     );
@@ -308,7 +322,10 @@ describe('BetterScroll', () => {
     ahooksMocks.contentSize = { height: 100, width: 180 };
 
     rerender(
-      <BetterScroll options={{ scrollY: false }} ref={ref}>
+      <BetterScroll
+        options={{ scrollY: false }}
+        ref={ref}
+      >
         <span>Updated content</span>
       </BetterScroll>
     );
@@ -327,7 +344,10 @@ describe('BetterScroll', () => {
     const ref = createRef<BScroll>();
 
     render(
-      <BetterScroll options={{}} ref={ref}>
+      <BetterScroll
+        options={{}}
+        ref={ref}
+      >
         <span>Early mount content</span>
       </BetterScroll>
     );
@@ -339,7 +359,11 @@ describe('BetterScroll', () => {
 describe('DarkModeContainer', () => {
   it('renders children with base, inverted, and custom classes', () => {
     render(
-      <DarkModeContainer className="custom-container" data-testid="container" inverted>
+      <DarkModeContainer
+        className="custom-container"
+        data-testid="container"
+        inverted
+      >
         Content
       </DarkModeContainer>
     );
@@ -357,7 +381,14 @@ describe('DarkModeContainer', () => {
 
 describe('FlipText', () => {
   it('splits the word into animated letter elements', () => {
-    const { container } = render(<FlipText className="letter" delayMultiple={0.2} duration={1} word="UI" />);
+    const { container } = render(
+      <FlipText
+        className="letter"
+        delayMultiple={0.2}
+        duration={1}
+        word="UI"
+      />
+    );
 
     const letters = Array.from(container.querySelectorAll('span'));
 
@@ -421,7 +452,15 @@ describe('NumberTicker', () => {
   it('updates the displayed value after the configured delay', () => {
     vi.useFakeTimers();
 
-    render(<NumberTicker decimalPlaces={1} delay={0.1} prefix="$" suffix="USD" value={1234.56} />);
+    render(
+      <NumberTicker
+        decimalPlaces={1}
+        delay={0.1}
+        prefix="$"
+        suffix="USD"
+        value={1234.56}
+      />
+    );
 
     const ticker = screen.getByText('$ 0 USD');
 
@@ -436,7 +475,13 @@ describe('NumberTicker', () => {
     vi.useFakeTimers();
     motionMocks.useInView.mockReturnValue(false);
 
-    render(<NumberTicker delay={0.1} prefix="Hidden" value={10} />);
+    render(
+      <NumberTicker
+        delay={0.1}
+        prefix="Hidden"
+        value={10}
+      />
+    );
 
     const ticker = screen.getByText('Hidden 0');
 
@@ -450,7 +495,12 @@ describe('NumberTicker', () => {
   it('ignores delayed spring updates after unmount', () => {
     vi.useFakeTimers();
 
-    const { unmount } = render(<NumberTicker delay={0.1} value={12} />);
+    const { unmount } = render(
+      <NumberTicker
+        delay={0.1}
+        value={12}
+      />
+    );
 
     unmount();
 
@@ -462,7 +512,13 @@ describe('NumberTicker', () => {
   });
 
   it('uses a duration-based animation when duration is provided', () => {
-    const { container } = render(<NumberTicker duration={0.2} prefix="Total" value={42} />);
+    const { container } = render(
+      <NumberTicker
+        duration={0.2}
+        prefix="Total"
+        value={42}
+      />
+    );
 
     expect(motionMocks.animate).toHaveBeenCalledWith(
       0,
@@ -476,7 +532,14 @@ describe('NumberTicker', () => {
   });
 
   it('animates down from the value to zero when direction is down', () => {
-    const { container } = render(<NumberTicker direction="down" duration={0.2} suffix="left" value={8} />);
+    const { container } = render(
+      <NumberTicker
+        direction="down"
+        duration={0.2}
+        suffix="left"
+        value={8}
+      />
+    );
 
     expect(motionMocks.animate).toHaveBeenCalledWith(
       8,
@@ -493,7 +556,10 @@ describe('NumberTicker', () => {
 describe('Portal', () => {
   it('renders fallback content before a target element is found', () => {
     render(
-      <Portal container="#missing-target" fallback={<span>Missing target</span>}>
+      <Portal
+        container="#missing-target"
+        fallback={<span>Missing target</span>}
+      >
         <span>Portal content</span>
       </Portal>
     );
@@ -504,7 +570,10 @@ describe('Portal', () => {
 
   it('renders fallback content when the runtime target value is unsupported', () => {
     render(
-      <Portal container={null as unknown as HTMLElement} fallback={<span>Unsupported target</span>}>
+      <Portal
+        container={null as unknown as HTMLElement}
+        fallback={<span>Unsupported target</span>}
+      >
         <span>Portal content</span>
       </Portal>
     );
@@ -562,7 +631,11 @@ describe('Portal', () => {
 
   it('auto-creates and cleans up the target element', async () => {
     const { unmount } = render(
-      <Portal autoCreate container="#created-target" tagName="section">
+      <Portal
+        autoCreate
+        container="#created-target"
+        tagName="section"
+      >
         <span>Created portal</span>
       </Portal>
     );
@@ -578,7 +651,10 @@ describe('Portal', () => {
 
   it('auto-creates a plain string target without a hash prefix', async () => {
     const { unmount } = render(
-      <Portal autoCreate container="plain-created-target">
+      <Portal
+        autoCreate
+        container="plain-created-target"
+      >
         <span>Plain created portal</span>
       </Portal>
     );
@@ -595,7 +671,12 @@ describe('Portal', () => {
 
 describe('SvgIcon', () => {
   it('renders local svg icons and normalizes empty local names', () => {
-    const { container, rerender } = render(<SvgIcon className="local-icon" localIcon="home" />);
+    const { container, rerender } = render(
+      <SvgIcon
+        className="local-icon"
+        localIcon="home"
+      />
+    );
 
     expect(container.querySelector('svg')).toHaveClass('local-icon');
     expect(container.querySelector('use')).toHaveAttribute('href', '#icon-local-home');
@@ -606,7 +687,12 @@ describe('SvgIcon', () => {
   });
 
   it('renders Iconify icons when no local icon is provided', () => {
-    render(<SvgIcon className="remote-icon" icon="mdi:home" />);
+    render(
+      <SvgIcon
+        className="remote-icon"
+        icon="mdi:home"
+      />
+    );
 
     expect(screen.getByRole('img')).toHaveAttribute('data-icon', 'mdi:home');
     expect(screen.getByRole('img')).toHaveClass('remote-icon');
@@ -618,7 +704,12 @@ describe('TypingAnimation', () => {
     vi.useFakeTimers();
 
     const { container } = render(
-      <TypingAnimation as="p" className="typed-text" delay={20} duration={10}>
+      <TypingAnimation
+        as="p"
+        className="typed-text"
+        delay={20}
+        duration={10}
+      >
         Hey
       </TypingAnimation>
     );
@@ -643,7 +734,10 @@ describe('TypingAnimation', () => {
     vi.useFakeTimers();
 
     const { container } = render(
-      <TypingAnimation duration={10} startOnView>
+      <TypingAnimation
+        duration={10}
+        startOnView
+      >
         View
       </TypingAnimation>
     );
@@ -674,7 +768,10 @@ describe('TypingAnimation', () => {
 
   it('does not observe when the motion element renders without a DOM node', () => {
     render(
-      <TypingAnimation as={EmptyComponent} startOnView>
+      <TypingAnimation
+        as={EmptyComponent}
+        startOnView
+      >
         Hidden
       </TypingAnimation>
     );

@@ -1,8 +1,8 @@
 'use client';
 
-import { useContext } from 'react';
-import { OTPInputContext } from 'input-otp';
 import { cn } from '@skyroc/utils';
+import { OTPInputContext } from 'input-otp';
+import { useContext } from 'react';
 import { inputOTPVariants } from './input-otp-variants';
 import type { InputOTPSlotProps } from './types';
 
@@ -30,13 +30,11 @@ const InputOTPSlot = (props: InputOTPSlotProps) => {
     >
       {mask && char ? '●' : char}
 
-      {hasFakeCaret
-        ? (
-          <div className="absolute inset-0 flex cursor-not-allowed items-center justify-center">
-            <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
-          </div>
-        )
-        : null}
+      {hasFakeCaret ? (
+        <div className="absolute inset-0 flex cursor-not-allowed items-center justify-center">
+          <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
+        </div>
+      ) : null}
     </div>
   );
 };

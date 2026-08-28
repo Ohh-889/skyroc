@@ -3,9 +3,7 @@
   "name": "collapsible",
   "type": "registry:block",
   "title": "Collapsible",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/collapsible/Collapsible.tsx",

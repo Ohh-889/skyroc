@@ -12,7 +12,7 @@ const Size = () => {
       title="Size"
     >
       <div className="flex flex-col gap-4">
-        {sizes.map((size) => (
+        {sizes.map(size => (
           <div
             className="flex flex-col gap-2"
             key={size}
@@ -33,4 +33,3 @@ const Size = () => {
 };
 
 export default Size;
-

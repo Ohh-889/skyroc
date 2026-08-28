@@ -55,13 +55,13 @@
 
 每个平台需要实现的 5 类能力：
 
-| 能力       | 方法                                                     | 说明                             |
-| ---------- | -------------------------------------------------------- | -------------------------------- |
-| UI 反馈    | `showErrorMessage` / `showErrorModal`                    | 错误提示的展示方式               |
-| Auth       | `getToken` / `getRefreshToken` / `setAuth` / `resetAuth` | 认证信息的存取，全部同步         |
+| 能力       | 方法                                                     | 说明                               |
+| ---------- | -------------------------------------------------------- | ---------------------------------- |
+| UI 反馈    | `showErrorMessage` / `showErrorModal`                    | 错误提示的展示方式                 |
+| Auth       | `getToken` / `getRefreshToken` / `setAuth` / `resetAuth` | 认证信息的存取，全部同步           |
 | Token 刷新 | `fetchRefreshToken` / `refreshTokenUrl`                  | 换取新 token，以及它走的是哪个 url |
-| 导航       | `getCurrentPath` / `redirectToLogin`                     | 路由跳转                         |
-| i18n       | `t`                                                      | 国际化翻译                       |
+| 导航       | `getCurrentPath` / `redirectToLogin`                     | 路由跳转                           |
+| i18n       | `t`                                                      | 国际化翻译                         |
 
 `refreshTokenUrl` 用来识别「拿到过期码的是续签请求自己」。这种请求绝不能再去续签，否则它会
 `await` 自己那次还没完成的刷新，把自己和所有等着刷新的请求一起永久挂起——不是报错，是转圈不动。
@@ -342,37 +342,37 @@ interface CreateQueryClientOptions {
 const queryClient = createQueryClient({
   defaultOptions: {
     queries: { staleTime: 60_000, retry: 3 },
-    mutations: { retry: 2 },
+    mutations: { retry: 2 }
   },
   queryCache: {
-    onError: (error) => console.error('Query error:', error),
-  },
+    onError: error => console.error('Query error:', error)
+  }
 });
 ```
 
 #### 默认 Query 配置
 
-| 配置项                 | 默认值 | 说明 |
-| ---------------------- | ------ | ---- |
-| `gcTime`               | `600000`（10 分钟） | 垃圾回收时间 |
-| `staleTime`            | `30000`（30 秒） | 数据过期时间 |
-| `retry`                | `2` | 失败重试次数 |
+| 配置项                 | 默认值               | 说明                     |
+| ---------------------- | -------------------- | ------------------------ |
+| `gcTime`               | `600000`（10 分钟）  | 垃圾回收时间             |
+| `staleTime`            | `30000`（30 秒）     | 数据过期时间             |
+| `retry`                | `2`                  | 失败重试次数             |
 | `retryDelay`           | 指数退避，上限 30 秒 | `min(1000 × 2^n, 30000)` |
-| `refetchOnMount`       | `true` | 组件挂载时重新获取 |
-| `refetchOnReconnect`   | `true` | 网络恢复时重新获取 |
-| `refetchOnWindowFocus` | `false` | 窗口聚焦时不重新获取 |
-| `throwOnError`         | `false` | 不向上抛出错误 |
-| `networkMode`          | `'online'` | 仅在线时发起请求 |
+| `refetchOnMount`       | `true`               | 组件挂载时重新获取       |
+| `refetchOnReconnect`   | `true`               | 网络恢复时重新获取       |
+| `refetchOnWindowFocus` | `false`              | 窗口聚焦时不重新获取     |
+| `throwOnError`         | `false`              | 不向上抛出错误           |
+| `networkMode`          | `'online'`           | 仅在线时发起请求         |
 
 #### 默认 Mutation 配置
 
-| 配置项       | 默认值 | 说明 |
-| ------------ | ------ | ---- |
-| `gcTime`     | `60000`（1 分钟） | 垃圾回收时间 |
-| `retry`      | `1` | 失败重试次数 |
-| `retryDelay` | 指数退避，上限 10 秒 | `min(1000 × 2^n, 10000)` |
-| `throwOnError` | `false` | 不向上抛出错误 |
-| `networkMode` | `'online'` | 仅在线时发起请求 |
+| 配置项         | 默认值               | 说明                     |
+| -------------- | -------------------- | ------------------------ |
+| `gcTime`       | `60000`（1 分钟）    | 垃圾回收时间             |
+| `retry`        | `1`                  | 失败重试次数             |
+| `retryDelay`   | 指数退避，上限 10 秒 | `min(1000 × 2^n, 10000)` |
+| `throwOnError` | `false`              | 不向上抛出错误           |
+| `networkMode`  | `'online'`           | 仅在线时发起请求         |
 
 ### 公开导出
 

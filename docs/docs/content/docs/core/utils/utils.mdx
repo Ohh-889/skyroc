@@ -1,6 +1,6 @@
 ---
-title: "工具函数"
-description: "基础工具函数：空操作占位、nil 判断、URL 检测、undefined 剔除、微任务调度，以及 web 子入口的环境检测"
+title: '工具函数'
+description: '基础工具函数：空操作占位、nil 判断、URL 检测、undefined 剔除、微任务调度，以及 web 子入口的环境检测'
 ---
 
 ## 概述
@@ -15,15 +15,15 @@ import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils/web';
 
 一组轻量的基础工具函数，按入口分成两拨：
 
-| 入口 | 函数 | 场景 |
-| --- | --- | --- |
-| `@skyroc/utils` | `noop` | 回调占位 |
-| `@skyroc/utils` | `isNil` | 类型守卫，收窄 `null` / `undefined` |
-| `@skyroc/utils` | `isHttpUrl` | 判断是否为 http(s) 链接 |
-| `@skyroc/utils` | `omitUndefined` | 剔除对象里值为 `undefined` 的键 |
-| `@skyroc/utils` | `microtask` | 微任务调度 |
-| `@skyroc/utils/web` | `isWindow` | 类型守卫，判断是否为 `Window` |
-| `@skyroc/utils/web` | `isMacOs` / `isWindowsOs` / `isPC` | 操作系统与设备检测 |
+| 入口                | 函数                               | 场景                                |
+| ------------------- | ---------------------------------- | ----------------------------------- |
+| `@skyroc/utils`     | `noop`                             | 回调占位                            |
+| `@skyroc/utils`     | `isNil`                            | 类型守卫，收窄 `null` / `undefined` |
+| `@skyroc/utils`     | `isHttpUrl`                        | 判断是否为 http(s) 链接             |
+| `@skyroc/utils`     | `omitUndefined`                    | 剔除对象里值为 `undefined` 的键     |
+| `@skyroc/utils`     | `microtask`                        | 微任务调度                          |
+| `@skyroc/utils/web` | `isWindow`                         | 类型守卫，判断是否为 `Window`       |
+| `@skyroc/utils/web` | `isMacOs` / `isWindowsOs` / `isPC` | 操作系统与设备检测                  |
 
 <Callout>
   后四个读的是 `window` / `navigator`，属于宿主全局，因此在 [`@skyroc/utils/web`](/docs/core/utils/web) 而不是主入口——
@@ -37,7 +37,7 @@ import { isWindow, isMacOs, isWindowsOs, isPC } from '@skyroc/utils/web';
 ### 签名
 
 ```ts
-function noop(): void
+function noop(): void;
 ```
 
 ### 说明
@@ -77,7 +77,7 @@ interface EventEmitter {
 }
 
 const emitter: EventEmitter = {
-  onError: noop, // 当前不需要处理错误，但接口要求必须传
+  onError: noop // 当前不需要处理错误，但接口要求必须传
 };
 ```
 
@@ -98,7 +98,7 @@ useEffect(() => {
 ### 签名
 
 ```ts
-function isNil(val: unknown): val is null | undefined
+function isNil(val: unknown): val is null | undefined;
 ```
 
 ### 说明
@@ -108,7 +108,7 @@ function isNil(val: unknown): val is null | undefined
 与 `== null` 的等价关系：
 
 ```ts
-isNil(val) === (val == null) // 始终为 true
+isNil(val) === (val == null); // 始终为 true
 ```
 
 区别在于 `isNil` 是类型守卫，在 TypeScript 中会进行类型收窄。
@@ -119,13 +119,13 @@ isNil(val) === (val == null) // 始终为 true
 import { isNil } from '@skyroc/utils';
 
 // 基础判断
-isNil(null);      // true
+isNil(null); // true
 isNil(undefined); // true
-isNil(0);         // false
-isNil('');        // false
-isNil(false);     // false
-isNil([]);        // false
-isNil({});        // false
+isNil(0); // false
+isNil(''); // false
+isNil(false); // false
+isNil([]); // false
+isNil({}); // false
 
 // 作为类型守卫使用
 function processValue(val: string | null | undefined) {
@@ -142,23 +142,23 @@ function processValue(val: string | null | undefined) {
 
 ```ts
 // isNil：null 和 undefined 都为 true，有类型守卫
-isNil(null);         // true
-isNil(undefined);    // true
+isNil(null); // true
+isNil(undefined); // true
 
 // 双等号：与 isNil 等价，但无类型守卫
-null == null;        // true
-undefined == null;   // true
+null == null; // true
+undefined == null; // true
 
 // 三等号：只判断 null
-null === null;       // true
-undefined === null;  // false ❌
+null === null; // true
+undefined === null; // false ❌
 
 // Boolean 转换：null / undefined / 0 / '' / false 都为 false
-Boolean(null);       // false
-Boolean(0);          // false（过于宽泛）
+Boolean(null); // false
+Boolean(0); // false（过于宽泛）
 
 // 可选链：isNil 的一个替代用法
-val?.toUpperCase() ?? '';  // 与 isNil 配合使用效果相同
+val?.toUpperCase() ?? ''; // 与 isNil 配合使用效果相同
 ```
 
 ### 常用场景
@@ -188,7 +188,7 @@ return isNil(value) ? <Empty /> : <DataView data={value} />;
 ### 签名
 
 ```ts
-function isHttpUrl(url?: string): boolean
+function isHttpUrl(url?: string): boolean;
 ```
 
 ### 说明
@@ -200,14 +200,14 @@ function isHttpUrl(url?: string): boolean
 ```ts
 import { isHttpUrl } from '@skyroc/utils';
 
-isHttpUrl('https://example.com');        // true
-isHttpUrl('http://example.com/path');    // true
-isHttpUrl('HTTP://EXAMPLE.COM');         // true（不区分大小写）
-isHttpUrl('//example.com');              // false（协议相对 URL）
-isHttpUrl('/api/user');                  // false（相对路径）
-isHttpUrl('ftp://example.com');          // false（非 http/https）
-isHttpUrl('');                           // false
-isHttpUrl(undefined);                    // false
+isHttpUrl('https://example.com'); // true
+isHttpUrl('http://example.com/path'); // true
+isHttpUrl('HTTP://EXAMPLE.COM'); // true（不区分大小写）
+isHttpUrl('//example.com'); // false（协议相对 URL）
+isHttpUrl('/api/user'); // false（相对路径）
+isHttpUrl('ftp://example.com'); // false（非 http/https）
+isHttpUrl(''); // false
+isHttpUrl(undefined); // false
 ```
 
 ### 常用场景
@@ -255,7 +255,7 @@ function validateUrl(value: string): string | null {
 ### 签名
 
 ```ts
-function isWindow(value: any): value is Window
+function isWindow(value: any): value is Window;
 ```
 
 ### 说明
@@ -267,10 +267,10 @@ function isWindow(value: any): value is Window
 ```ts
 import { isWindow } from '@skyroc/utils/web';
 
-isWindow(window);        // true（浏览器环境）
-isWindow(globalThis);    // false（非 window 对象）
-isWindow(null);          // false
-isWindow({});            // false
+isWindow(window); // true（浏览器环境）
+isWindow(globalThis); // false（非 window 对象）
+isWindow(null); // false
+isWindow({}); // false
 ```
 
 常用于需要区分"是否传入的是 window 对象"的场景，例如封装支持 `Element | Window` 的事件监听工具。
@@ -282,7 +282,7 @@ isWindow({});            // false
 ### 签名
 
 ```ts
-function isMacOs(): boolean
+function isMacOs(): boolean;
 ```
 
 ### 说明
@@ -305,7 +305,7 @@ isMacOs(); // false（Windows / Linux / iOS）
 ### 签名
 
 ```ts
-function isWindowsOs(): boolean
+function isWindowsOs(): boolean;
 ```
 
 ### 说明
@@ -326,7 +326,7 @@ isWindowsOs(); // false（macOS / Linux / iOS / Android）
 ### 签名
 
 ```ts
-function isPC(): boolean
+function isPC(): boolean;
 ```
 
 ### 说明
@@ -355,11 +355,7 @@ import { isMacOs } from '@skyroc/utils/web';
 const ShortcutHint = () => {
   const mac = isMacOs();
 
-  return (
-    <span>
-      {mac ? '⌘' : 'Ctrl'} + K 搜索
-    </span>
-  );
+  return <span>{mac ? '⌘' : 'Ctrl'} + K 搜索</span>;
 };
 ```
 
@@ -395,7 +391,7 @@ const Layout = () => {
 ### 签名
 
 ```ts
-function omitUndefined<T extends object>(obj: T): Partial<T>
+function omitUndefined<T extends object>(obj: T): Partial<T>;
 ```
 
 浅层剔除值为 `undefined` 的键。注意 `null` **会**被保留——它是一个明确的「置空」意图，和「没传」不是一回事。
@@ -410,7 +406,7 @@ omitUndefined({ page: 1, keyword: undefined, status: null });
 ```ts
 return request<Api.UserList>({
   url: '/api/users',
-  params: omitUndefined({ page, size, keyword, status }),
+  params: omitUndefined({ page, size, keyword, status })
 });
 ```
 
@@ -421,7 +417,7 @@ return request<Api.UserList>({
 ### 签名
 
 ```ts
-function microtask(cb: () => void): void
+function microtask(cb: () => void): void;
 ```
 
 把回调排到微任务队列：在当前同步代码结束后、下一个宏任务之前执行。
@@ -448,14 +444,14 @@ function schedule(notify: () => void) {
 
 ## 函数汇总
 
-| 函数 | 入口 | 返回类型 | 是否类型守卫 |
-| --- | --- | --- | --- |
-| `noop` | `@skyroc/utils` | `void` | — |
-| `isNil` | `@skyroc/utils` | `boolean` | ✅ `val is null \| undefined` |
-| `isHttpUrl` | `@skyroc/utils` | `boolean` | 否 |
-| `omitUndefined` | `@skyroc/utils` | `Partial<T>` | — |
-| `microtask` | `@skyroc/utils` | `void` | — |
-| `isWindow` | `@skyroc/utils/web` | `boolean` | ✅ `value is Window` |
-| `isMacOs` | `@skyroc/utils/web` | `boolean` | 否 |
-| `isWindowsOs` | `@skyroc/utils/web` | `boolean` | 否 |
-| `isPC` | `@skyroc/utils/web` | `boolean` | 否 |
+| 函数            | 入口                | 返回类型     | 是否类型守卫                  |
+| --------------- | ------------------- | ------------ | ----------------------------- |
+| `noop`          | `@skyroc/utils`     | `void`       | —                             |
+| `isNil`         | `@skyroc/utils`     | `boolean`    | ✅ `val is null \| undefined` |
+| `isHttpUrl`     | `@skyroc/utils`     | `boolean`    | 否                            |
+| `omitUndefined` | `@skyroc/utils`     | `Partial<T>` | —                             |
+| `microtask`     | `@skyroc/utils`     | `void`       | —                             |
+| `isWindow`      | `@skyroc/utils/web` | `boolean`    | ✅ `value is Window`          |
+| `isMacOs`       | `@skyroc/utils/web` | `boolean`    | 否                            |
+| `isWindowsOs`   | `@skyroc/utils/web` | `boolean`    | 否                            |
+| `isPC`          | `@skyroc/utils/web` | `boolean`    | 否                            |

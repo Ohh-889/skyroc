@@ -4,8 +4,7 @@ import type { ViewStyle } from 'react-native';
 /**
  * Base props for styled RN components.
  *
- * Unlike Web's className-based StyledComponentProps, this supports
- * both NativeWind className and native style prop.
+ * Unlike Web's className-based StyledComponentProps, this supports both NativeWind className and native style prop.
  */
 export interface StyledNativeComponentProps {
   /** NativeWind class name */

@@ -26,7 +26,10 @@ export function deleteModal(options: DeleteModalOptions): ReturnType<typeof show
     content,
     icon: (
       <div className="mr-2.5 rounded-full bg-error-bg p-8px">
-        <SvgIcon className="text-error text-18px" localIcon="menu-delete-warning" />
+        <SvgIcon
+          className="text-error text-18px"
+          localIcon="menu-delete-warning"
+        />
       </div>
     ),
     okButtonProps: { danger: true, ghost: true },

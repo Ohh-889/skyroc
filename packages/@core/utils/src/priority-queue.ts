@@ -30,8 +30,7 @@
  * - `enqueueMany` / `removeBy` / `updateBy`：整批只排一次，O(n log n)
  * - `peek` / `get` / `has` / `toArray`：O(1)
  *
- * 也就是说逐条插入 n 个元素是 O(n² log n)。适用场景是 **读多写少、n 较小** （通知中心、Banner 队列这类几十条量级）；高频入队请批量调用 `enqueueMany`，
- * 或换成真正的堆实现。
+ * 也就是说逐条插入 n 个元素是 O(n² log n)。适用场景是 **读多写少、n 较小** （通知中心、Banner 队列这类几十条量级）；高频入队请批量调用 `enqueueMany`， 或换成真正的堆实现。
  *
  * @example
  *   ```ts

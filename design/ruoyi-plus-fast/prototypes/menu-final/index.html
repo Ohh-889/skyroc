@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 菜单管理最终版</title>
     <style>
       :root {
@@ -1496,85 +1502,237 @@
     </style>
   </head>
   <body>
-    <svg width="0" height="0" style="position: absolute">
-      <symbol id="i-grid" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-grid"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="3"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
       </symbol>
-      <symbol id="i-home" viewBox="0 0 24 24">
+      <symbol
+        id="i-home"
+        viewBox="0 0 24 24"
+      >
         <path d="m3 11 9-8 9 8" />
         <path d="M5 10v10h14V10M9 20v-6h6v6" />
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
       </symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" />
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        />
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09a1.7 1.7 0 0 0-1.1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.64 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.5 4.64a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.36.7.64.96.3.28.69.43 1.1.44H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
         />
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
         <path d="m9 12 2 2 4-4" />
       </symbol>
-      <symbol id="i-file" viewBox="0 0 24 24">
+      <symbol
+        id="i-file"
+        viewBox="0 0 24 24"
+      >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
         <path d="M14 2v6h6M8 13h8M8 17h6" />
       </symbol>
-      <symbol id="i-folder" viewBox="0 0 24 24">
+      <symbol
+        id="i-folder"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
       </symbol>
-      <symbol id="i-key" viewBox="0 0 24 24">
-        <circle cx="8" cy="15" r="4" />
+      <symbol
+        id="i-key"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="8"
+          cy="15"
+          r="4"
+        />
         <path d="m11 12 9-9M17 6l2 2M14 9l2 2" />
       </symbol>
-      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8" />
+      <symbol
+        id="i-chevron"
+        viewBox="0 0 24 24"
+      >
+        <path d="m9 18 6-6-6-6" />
+      </symbol>
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="8"
+        />
         <path d="m21 21-4.35-4.35" />
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
-      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" /></symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol
+        id="i-trash"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" />
+      </symbol>
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
         <path d="M20 11a8 8 0 1 0-2.34 5.66L20 14" />
         <path d="M20 7v4h-4" />
       </symbol>
-      <symbol id="i-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4" />
+      <symbol
+        id="i-sun"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="4"
+        />
         <path
           d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
         />
       </symbol>
-      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" /></symbol>
-      <symbol id="i-copy" viewBox="0 0 24 24">
-        <rect x="9" y="9" width="12" height="12" rx="2" />
+      <symbol
+        id="i-moon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+      </symbol>
+      <symbol
+        id="i-copy"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="9"
+          y="9"
+          width="12"
+          height="12"
+          rx="2"
+        />
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
       </symbol>
-      <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12" /></symbol>
-      <symbol id="i-info" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" />
+      <symbol
+        id="i-close"
+        viewBox="0 0 24 24"
+      >
+        <path d="m18 6-12 12M6 6l12 12" />
+      </symbol>
+      <symbol
+        id="i-info"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
         <path d="M12 16v-4M12 8h.01" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5" /></symbol>
-      <symbol id="i-edit" viewBox="0 0 24 24">
+      <symbol
+        id="i-check"
+        viewBox="0 0 24 24"
+      >
+        <path d="m20 6-11 11-5-5" />
+      </symbol>
+      <symbol
+        id="i-edit"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 20h9" />
         <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
       </symbol>
-      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></symbol>
-      <symbol id="i-columns" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
+      <symbol
+        id="i-menu"
+        viewBox="0 0 24 24"
+      >
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </symbol>
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        />
         <path d="M9 4v16M15 4v16" />
       </symbol>
-      <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 5l-4 14" /></symbol>
+      <symbol
+        id="i-code"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 5l-4 14" />
+      </symbol>
     </svg>
 
     <div class="app">
-      <aside class="sidebar" aria-label="主导航">
+      <aside
+        class="sidebar"
+        aria-label="主导航"
+      >
         <div class="brand">
           <div class="brand-mark">
             <svg class="icon"><use href="#i-grid" /></svg>
@@ -1593,7 +1751,10 @@
           <button class="nav-item">
             <svg class="icon"><use href="#i-shield" /></svg><span>角色管理</span>
           </button>
-          <button class="nav-item active" aria-current="page">
+          <button
+            class="nav-item active"
+            aria-current="page"
+          >
             <svg class="icon"><use href="#i-menu" /></svg><span>菜单管理</span>
           </button>
           <button class="nav-item">
@@ -1616,17 +1777,35 @@
           <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>菜单管理</strong></div>
           <div class="top-actions">
             <span class="tenant-pill">XXX 有限公司</span>
-            <button class="icon-button" id="densityButton" title="切换密度" aria-label="切换密度">
+            <button
+              class="icon-button"
+              id="densityButton"
+              title="切换密度"
+              aria-label="切换密度"
+            >
               <svg class="icon"><use href="#i-columns" /></svg>
             </button>
-            <button class="icon-button" id="themeButton" title="切换主题" aria-label="切换主题">
-              <svg class="icon"><use id="themeIcon" href="#i-moon" /></svg>
+            <button
+              class="icon-button"
+              id="themeButton"
+              title="切换主题"
+              aria-label="切换主题"
+            >
+              <svg class="icon">
+                <use
+                  id="themeIcon"
+                  href="#i-moon"
+                />
+              </svg>
             </button>
             <div class="avatar">WS</div>
           </div>
         </header>
 
-        <div class="page-tabs" aria-label="已打开页面">
+        <div
+          class="page-tabs"
+          aria-label="已打开页面"
+        >
           <button class="page-tab">
             <svg class="icon"><use href="#i-home" /></svg>首页
           </button>
@@ -1638,11 +1817,19 @@
 
         <div class="content">
           <div class="workspace">
-            <section class="card menu-panel" aria-label="菜单列表">
+            <section
+              class="card menu-panel"
+              aria-label="菜单列表"
+            >
               <div class="panel-head">
                 <div class="panel-title"><strong>菜单列表</strong><small>目录与页面路由</small></div>
                 <div class="toolbar">
-                  <button class="icon-button" id="addRootButton" title="新增根节点" aria-label="新增根节点">
+                  <button
+                    class="icon-button"
+                    id="addRootButton"
+                    title="新增根节点"
+                    aria-label="新增根节点"
+                  >
                     <svg class="icon"><use href="#i-plus" /></svg>
                   </button>
                   <button
@@ -1653,17 +1840,30 @@
                   >
                     <svg class="icon"><use href="#i-trash" /></svg>
                   </button>
-                  <button class="icon-button" id="refreshButton" title="刷新菜单树" aria-label="刷新菜单树">
+                  <button
+                    class="icon-button"
+                    id="refreshButton"
+                    title="刷新菜单树"
+                    aria-label="刷新菜单树"
+                  >
                     <svg class="icon"><use href="#i-refresh" /></svg>
                   </button>
                 </div>
               </div>
               <div class="tree-search">
                 <svg class="icon"><use href="#i-search" /></svg
-                ><input id="treeSearch" placeholder="搜索菜单名称或路由" autocomplete="off" />
+                ><input
+                  id="treeSearch"
+                  placeholder="搜索菜单名称或路由"
+                  autocomplete="off"
+                />
               </div>
               <p class="tree-guide">选择菜单后查看详情和按钮权限</p>
-              <div class="menu-tree" id="menuTree" role="tree"></div>
+              <div
+                class="menu-tree"
+                id="menuTree"
+                role="tree"
+              ></div>
             </section>
 
             <div class="right-pane">
@@ -1673,26 +1873,45 @@
                     <strong>菜单详情</strong><small id="detailPath">系统管理 / 租户管理</small>
                   </div>
                   <div class="toolbar">
-                    <button class="button small" id="editButton">
+                    <button
+                      class="button small"
+                      id="editButton"
+                    >
                       <svg class="icon"><use href="#i-edit" /></svg>编辑
                     </button>
-                    <button class="button small danger" id="deleteDetailButton">
+                    <button
+                      class="button small danger"
+                      id="deleteDetailButton"
+                    >
                       <svg class="icon"><use href="#i-trash" /></svg>删除
                     </button>
                   </div>
                 </div>
-                <div class="detail-body" id="detailBody"></div>
+                <div
+                  class="detail-body"
+                  id="detailBody"
+                ></div>
               </section>
 
-              <section class="card resource-card" id="resourceCard">
+              <section
+                class="card resource-card"
+                id="resourceCard"
+              >
                 <div class="panel-head">
                   <div class="panel-title">
                     <strong id="resourceTitle">按钮权限列表</strong
                     ><small id="resourceSubtitle">选中页面菜单后显示其操作权限</small>
                   </div>
                   <div class="toolbar">
-                    <span class="section-note" id="resourceNote"><span class="dot"></span>权限变更会影响角色授权</span>
-                    <button class="button small primary" id="addResourceButton">
+                    <span
+                      class="section-note"
+                      id="resourceNote"
+                      ><span class="dot"></span>权限变更会影响角色授权</span
+                    >
+                    <button
+                      class="button small primary"
+                      id="addResourceButton"
+                    >
                       <svg class="icon"><use href="#i-plus" /></svg><span id="addResourceText">新增按钮</span>
                     </button>
                   </div>
@@ -1705,15 +1924,28 @@
       </main>
     </div>
 
-    <div class="overlay" id="overlay"></div>
+    <div
+      class="overlay"
+      id="overlay"
+    ></div>
 
-    <aside class="drawer" id="editorDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <aside
+      class="drawer"
+      id="editorDrawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawerTitle"
+    >
       <div class="drawer-head">
         <div>
           <h2 id="drawerTitle">新增菜单</h2>
           <p id="drawerSubtitle">上级：主类目</p>
         </div>
-        <button class="icon-button" data-close="drawer" aria-label="关闭">
+        <button
+          class="icon-button"
+          data-close="drawer"
+          aria-label="关闭"
+        >
           <svg class="icon"><use href="#i-close" /></svg>
         </button>
       </div>
@@ -1732,15 +1964,24 @@
             <div class="field span-2">
               <span class="field-label required">节点类型</span>
               <div class="type-tabs">
-                <button class="type-tab active" data-type="M">
+                <button
+                  class="type-tab active"
+                  data-type="M"
+                >
                   <svg class="icon"><use href="#i-folder" /></svg
                   ><span><strong>目录</strong><small>导航分组</small></span>
                 </button>
-                <button class="type-tab" data-type="C">
+                <button
+                  class="type-tab"
+                  data-type="C"
+                >
                   <svg class="icon"><use href="#i-file" /></svg
                   ><span><strong>菜单</strong><small>页面路由</small></span>
                 </button>
-                <button class="type-tab" data-type="F">
+                <button
+                  class="type-tab"
+                  data-type="F"
+                >
                   <svg class="icon"><use href="#i-key" /></svg><span><strong>按钮</strong><small>操作权限</small></span>
                 </button>
               </div>
@@ -1754,17 +1995,34 @@
           </div>
           <div class="form-grid">
             <div class="field">
-              <label class="required" for="formName">名称</label
-              ><input id="formName" maxlength="50" placeholder="例如：菜单管理" />
+              <label
+                class="required"
+                for="formName"
+                >名称</label
+              ><input
+                id="formName"
+                maxlength="50"
+                placeholder="例如：菜单管理"
+              />
             </div>
             <div class="field">
-              <label class="required" for="formOrder">显示排序</label
-              ><input id="formOrder" type="number" min="0" value="1" />
+              <label
+                class="required"
+                for="formOrder"
+                >显示排序</label
+              ><input
+                id="formOrder"
+                type="number"
+                min="0"
+                value="1"
+              />
             </div>
             <div class="field span-2 conditional route-field">
               <label>菜单图标</label
               ><button class="fake-select">
-                <span class="inline" style="gap: 8px"
+                <span
+                  class="inline"
+                  style="gap: 8px"
                   ><svg class="icon"><use href="#i-menu" /></svg>menu-2-line</span
                 ><svg class="icon"><use href="#i-chevron" /></svg>
               </button>
@@ -1780,34 +2038,88 @@
             <div class="field">
               <span class="field-label">显示状态</span>
               <div class="radio-row">
-                <label><input type="radio" name="visible" value="0" checked />显示</label
-                ><label><input type="radio" name="visible" value="1" />隐藏</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="visible"
+                    value="0"
+                    checked
+                  />显示</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="visible"
+                    value="1"
+                  />隐藏</label
+                >
               </div>
             </div>
             <div class="field">
               <span class="field-label">打开方式</span>
               <div class="radio-row">
-                <label><input type="radio" name="frame" value="1" checked />内部</label
-                ><label><input type="radio" name="frame" value="0" />外链</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="frame"
+                    value="1"
+                    checked
+                  />内部</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="frame"
+                    value="0"
+                  />外链</label
+                >
               </div>
             </div>
             <div class="field span-2">
-              <label class="required" for="formPath">路由地址</label
-              ><input id="formPath" maxlength="200" placeholder="例如：menu；外链需以 http(s):// 开头" />
+              <label
+                class="required"
+                for="formPath"
+                >路由地址</label
+              ><input
+                id="formPath"
+                maxlength="200"
+                placeholder="例如：menu；外链需以 http(s):// 开头"
+              />
             </div>
             <div class="field conditional menu-only">
-              <label class="required" for="formComponent">组件路径</label
-              ><input id="formComponent" maxlength="255" placeholder="system/menu/index" />
+              <label
+                class="required"
+                for="formComponent"
+                >组件路径</label
+              ><input
+                id="formComponent"
+                maxlength="255"
+                placeholder="system/menu/index"
+              />
             </div>
             <div class="field conditional menu-only">
               <label for="formQuery">路由参数</label
-              ><input id="formQuery" maxlength="255" placeholder='例如：{"source":"menu"}' />
+              ><input
+                id="formQuery"
+                maxlength="255"
+                placeholder='例如：{"source":"menu"}'
+              />
             </div>
             <div class="field conditional menu-only">
               <span class="field-label">页面缓存</span>
               <div class="radio-row">
-                <label><input type="radio" name="cache" value="0" checked />缓存</label
-                ><label><input type="radio" name="cache" value="1" />不缓存</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="cache"
+                    value="0"
+                    checked
+                  />缓存</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="cache"
+                    value="1"
+                  />不缓存</label
+                >
               </div>
             </div>
           </div>
@@ -1819,15 +2131,34 @@
           </div>
           <div class="form-grid">
             <div class="field span-2 conditional permission-field hidden">
-              <label id="permissionLabel" for="formPermission">权限字符</label
-              ><input id="formPermission" maxlength="100" placeholder="例如：system:menu:add" />
+              <label
+                id="permissionLabel"
+                for="formPermission"
+                >权限字符</label
+              ><input
+                id="formPermission"
+                maxlength="100"
+                placeholder="例如：system:menu:add"
+              />
               <div class="help">建议使用“模块:资源:动作”格式。</div>
             </div>
             <div class="field span-2">
               <span class="field-label">节点状态</span>
               <div class="radio-row">
-                <label><input type="radio" name="nodeStatus" value="normal" checked />正常</label
-                ><label><input type="radio" name="nodeStatus" value="disabled" />停用</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="nodeStatus"
+                    value="normal"
+                    checked
+                  />正常</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="nodeStatus"
+                    value="disabled"
+                  />停用</label
+                >
               </div>
             </div>
             <div class="info-callout span-2">
@@ -1840,16 +2171,35 @@
       <div class="drawer-footer">
         <small id="drawerMeta">原型不会提交真实数据</small>
         <div class="drawer-actions">
-          <button class="button" data-close="drawer">取消</button
-          ><button class="button primary" id="saveButton">保存</button>
+          <button
+            class="button"
+            data-close="drawer"
+          >
+            取消</button
+          ><button
+            class="button primary"
+            id="saveButton"
+          >
+            保存
+          </button>
         </div>
       </div>
     </aside>
 
-    <section class="modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <section
+      class="modal"
+      id="deleteModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deleteTitle"
+    >
       <div class="modal-head">
         <h2 id="deleteTitle">删除菜单</h2>
-        <button class="icon-button" data-close="modal" aria-label="关闭">
+        <button
+          class="icon-button"
+          data-close="modal"
+          aria-label="关闭"
+        >
           <svg class="icon"><use href="#i-close" /></svg>
         </button>
       </div>
@@ -1860,13 +2210,26 @@
       <div class="modal-footer">
         <span></span>
         <div class="toolbar">
-          <button class="button" data-close="modal">取消</button
-          ><button class="button danger" id="deleteConfirm">确认删除</button>
+          <button
+            class="button"
+            data-close="modal"
+          >
+            取消</button
+          ><button
+            class="button danger"
+            id="deleteConfirm"
+          >
+            确认删除
+          </button>
         </div>
       </div>
     </section>
 
-    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+    <div
+      class="toast-stack"
+      id="toastStack"
+      aria-live="polite"
+    ></div>
 
     <script>
       const nodes = [

@@ -192,10 +192,19 @@ export const App = () => {
 
   return (
     <main className="login-page">
-      <img className="security-art" src="/assets/security-illustration.png" alt="" aria-hidden="true" />
+      <img
+        className="security-art"
+        src="/assets/security-illustration.png"
+        alt=""
+        aria-hidden="true"
+      />
 
       <header className="brand-header">
-        <img className="brand-logo" src="/assets/skyroc-logo.svg" alt="" />
+        <img
+          className="brand-logo"
+          src="/assets/skyroc-logo.svg"
+          alt=""
+        />
         <span>{t.systemName}</span>
       </header>
 
@@ -220,35 +229,59 @@ export const App = () => {
         </button>
       </div>
 
-      <section className="brand-story" aria-labelledby="brand-value">
+      <section
+        className="brand-story"
+        aria-labelledby="brand-value"
+      >
         <h1 id="brand-value">{t.value}</h1>
         <ul>
           <li>
-            <span className="feature-icon"><ShieldCheck size={23} weight="fill" /></span>
+            <span className="feature-icon">
+              <ShieldCheck
+                size={23}
+                weight="fill"
+              />
+            </span>
             {t.featurePermission}
           </li>
           <li>
-            <span className="feature-icon"><ClockCounterClockwise size={23} /></span>
+            <span className="feature-icon">
+              <ClockCounterClockwise size={23} />
+            </span>
             {t.featureAudit}
           </li>
           <li>
-            <span className="feature-icon"><CheckCircle size={23} weight="fill" /></span>
+            <span className="feature-icon">
+              <CheckCircle
+                size={23}
+                weight="fill"
+              />
+            </span>
             {t.featureSecure}
           </li>
         </ul>
       </section>
 
-      <section className="auth-panel" aria-labelledby="login-heading">
+      <section
+        className="auth-panel"
+        aria-labelledby="login-heading"
+      >
         <header className="auth-heading">
           <h2 id="login-heading">{t.title}</h2>
           <p>{t.subtitle}</p>
         </header>
 
-        <form noValidate onSubmit={handleSubmit}>
+        <form
+          noValidate
+          onSubmit={handleSubmit}
+        >
           <div className={`field-group ${errors.account ? 'has-error' : ''}`}>
             <label htmlFor="account">{t.account}</label>
             <div className="input-shell">
-              <User size={21} aria-hidden="true" />
+              <User
+                size={21}
+                aria-hidden="true"
+              />
               <input
                 id="account"
                 name="account"
@@ -262,13 +295,21 @@ export const App = () => {
                 onChange={updateField}
               />
             </div>
-            <span className="field-error" id="account-error">{errors.account || '\u00a0'}</span>
+            <span
+              className="field-error"
+              id="account-error"
+            >
+              {errors.account || '\u00a0'}
+            </span>
           </div>
 
           <div className={`field-group ${errors.password ? 'has-error' : ''}`}>
             <label htmlFor="password">{t.password}</label>
             <div className="input-shell">
-              <Lock size={21} aria-hidden="true" />
+              <Lock
+                size={21}
+                aria-hidden="true"
+              />
               <input
                 id="password"
                 name="password"
@@ -290,7 +331,12 @@ export const App = () => {
                 {passwordVisible ? <EyeSlash size={21} /> : <Eye size={21} />}
               </button>
             </div>
-            <span className="field-error" id="password-error">{errors.password || '\u00a0'}</span>
+            <span
+              className="field-error"
+              id="password-error"
+            >
+              {errors.password || '\u00a0'}
+            </span>
           </div>
 
           <div className={`field-group ${errors.captcha ? 'has-error' : ''}`}>
@@ -311,61 +357,126 @@ export const App = () => {
                   onChange={updateField}
                 />
               </div>
-              <canvas ref={captchaRef} className="captcha-image" width="128" height="52" aria-label="图形验证码" />
-              <button className="refresh-button" type="button" onClick={refreshCaptcha}>
+              <canvas
+                ref={captchaRef}
+                className="captcha-image"
+                width="128"
+                height="52"
+                aria-label="图形验证码"
+              />
+              <button
+                className="refresh-button"
+                type="button"
+                onClick={refreshCaptcha}
+              >
                 <ArrowClockwise size={19} />
                 <span>{t.refresh}</span>
               </button>
             </div>
-            <span className="field-error" id="captcha-error">{errors.captcha || '\u00a0'}</span>
+            <span
+              className="field-error"
+              id="captcha-error"
+            >
+              {errors.captcha || '\u00a0'}
+            </span>
           </div>
 
           <div className="form-options">
             <label className="remember-option">
-              <input type="checkbox" checked={remember} onChange={event => setRemember(event.target.checked)} />
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={event => setRemember(event.target.checked)}
+              />
               <span>{t.remember}</span>
             </label>
-            <button type="button" className="link-button" onClick={() => handleSecondaryAction(t.forgot)}>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => handleSecondaryAction(t.forgot)}
+            >
               {t.forgot}
             </button>
           </div>
 
-          <button className="login-button" type="submit" disabled={submitting}>
+          <button
+            className="login-button"
+            type="submit"
+            disabled={submitting}
+          >
             {submitting ? t.loggingIn : t.login}
           </button>
 
-          <button type="button" className="mode-switch" onClick={() => handleSecondaryAction(t.codeLogin)}>
+          <button
+            type="button"
+            className="mode-switch"
+            onClick={() => handleSecondaryAction(t.codeLogin)}
+          >
             {t.codeLogin}
           </button>
 
-          <div className="divider"><span>{t.otherLogin}</span></div>
+          <div className="divider">
+            <span>{t.otherLogin}</span>
+          </div>
 
           <div className="social-actions">
-            <button type="button" onClick={() => handleSecondaryAction(t.wechat)}>
-              <WechatLogo size={22} weight="fill" />{t.wechat}
+            <button
+              type="button"
+              onClick={() => handleSecondaryAction(t.wechat)}
+            >
+              <WechatLogo
+                size={22}
+                weight="fill"
+              />
+              {t.wechat}
             </button>
-            <button type="button" onClick={() => handleSecondaryAction(t.feishu)}>
-              <PaperPlaneTilt size={22} weight="fill" />{t.feishu}
+            <button
+              type="button"
+              onClick={() => handleSecondaryAction(t.feishu)}
+            >
+              <PaperPlaneTilt
+                size={22}
+                weight="fill"
+              />
+              {t.feishu}
             </button>
           </div>
 
           <p className="admin-hint">
-            <Info size={16} /><span>{t.adminHint}</span>
+            <Info size={16} />
+            <span>{t.adminHint}</span>
           </p>
         </form>
 
         <footer className="auth-footer">
-          <button type="button" onClick={() => handleSecondaryAction(t.privacy)}>{t.privacy}</button>
+          <button
+            type="button"
+            onClick={() => handleSecondaryAction(t.privacy)}
+          >
+            {t.privacy}
+          </button>
           <span>·</span>
-          <button type="button" onClick={() => handleSecondaryAction(t.terms)}>{t.terms}</button>
+          <button
+            type="button"
+            onClick={() => handleSecondaryAction(t.terms)}
+          >
+            {t.terms}
+          </button>
           <span>·</span>
           <span>{t.copyright}</span>
         </footer>
       </section>
 
       {toast ? (
-        <div className="toast" role="status">
-          <CheckCircle size={20} weight="fill" />{toast}
+        <div
+          className="toast"
+          role="status"
+        >
+          <CheckCircle
+            size={20}
+            weight="fill"
+          />
+          {toast}
         </div>
       ) : null}
     </main>

@@ -1,18 +1,18 @@
 ---
-title: "动态路由菜单生成"
-description: "从真实后端菜单响应适配到 Admin Layouts 动态菜单运行时"
+title: '动态路由菜单生成'
+description: '从真实后端菜单响应适配到 Admin Layouts 动态菜单运行时'
 ---
 
 动态模式不是把后端 JSON 直接塞给布局包。真实后端返回的是业务菜单响应，当前项目再把它适配成 `AdminLayoutsDynamicRoutes`，最后由 `@skyroc/web-admin-layouts` 生成菜单树、快速索引和首页。
 
 当前边界是：
 
-| 层级 | 数据形状 | 职责 |
-| --- | --- | --- |
-| 后端接口 | `BackendRouteResponse` | 返回用户首页和授权菜单树，字段接近 `name/path/component/handle`。 |
-| `apps/admin` 适配层 | `AdminLayoutsDynamicRoutes` | 规范化路径、过滤不存在的前端页面、把 `handle` 映射成布局 meta。 |
-| `@skyroc/web-admin-layouts` | `Api.Route.BackendRoute[]` | 生成 `GeneratedMenu`、`quickReferenceMenus` 和动态首页。 |
-| TanStack Router | `routeTree` | 提供真实 React 页面组件和 route match。 |
+| 层级                        | 数据形状                    | 职责                                                              |
+| --------------------------- | --------------------------- | ----------------------------------------------------------------- |
+| 后端接口                    | `BackendRouteResponse`      | 返回用户首页和授权菜单树，字段接近 `name/path/component/handle`。 |
+| `apps/admin` 适配层         | `AdminLayoutsDynamicRoutes` | 规范化路径、过滤不存在的前端页面、把 `handle` 映射成布局 meta。   |
+| `@skyroc/web-admin-layouts` | `Api.Route.BackendRoute[]`  | 生成 `GeneratedMenu`、`quickReferenceMenus` 和动态首页。          |
+| TanStack Router             | `routeTree`                 | 提供真实 React 页面组件和 route match。                           |
 
 ## 启动接入
 
@@ -38,7 +38,7 @@ setupAdminLayouts({
 `loadAdminDynamicRoutes()` 内部才会调用：
 
 ```ts
-queryClient.ensureQueryData(queryMenusOptions())
+queryClient.ensureQueryData(queryMenusOptions());
 ```
 
 这样 `queryMenusOptions()` 仍然表示真实后端接口缓存，`loadDynamicRoutes` 表示布局运行时需要的动态菜单数据。
@@ -141,27 +141,27 @@ interface BackendRoute extends Router.Meta {
 
 `apps/admin` 的适配规则：
 
-| 后端字段 | 适配后字段 |
-| --- | --- |
-| `home` | `home`，但只保留当前 `routeTree` 中存在的路径。 |
-| `path` | `path`，会去掉尾部 `/`，并把 `:id` 转成 TanStack Router 的 `$id`。 |
-| `name` / `id` | `id`，优先后端 `id`，否则使用 `name`，最后回退到 `path`。 |
-| `layout` | `layout`，如果后端返回，按菜单分类 key 处理，例如 `admin`。 |
-| `handle.title` | `title`。 |
-| `handle.i18nKey` | `i18nKey`。 |
-| `handle.roles` | `permissions`。 |
-| `handle.href` | `href`。 |
-| `handle.url` | `url`。 |
-| `handle.keepAlive` | `keepAlive`。 |
-| `handle.fixedIndexInTab` | `tab.fixedIndex`。 |
-| `handle.multiTab` | `tab.multi`。 |
-| `handle.icon` | `menu.icon`。 |
-| `handle.localIcon` | `menu.localIcon`。 |
-| `handle.order` | `menu.order`。 |
-| `handle.hideInMenu` | `menu.hide`。 |
-| `handle.activeMenu` | `menu.activeMenu`，同样要能匹配当前 `routeTree`。 |
-| `handle.badge` | `menu.badge`。 |
-| `handle.extra` | `menu.extra`，必须是已注册的 extra key。 |
+| 后端字段                 | 适配后字段                                                         |
+| ------------------------ | ------------------------------------------------------------------ |
+| `home`                   | `home`，但只保留当前 `routeTree` 中存在的路径。                    |
+| `path`                   | `path`，会去掉尾部 `/`，并把 `:id` 转成 TanStack Router 的 `$id`。 |
+| `name` / `id`            | `id`，优先后端 `id`，否则使用 `name`，最后回退到 `path`。          |
+| `layout`                 | `layout`，如果后端返回，按菜单分类 key 处理，例如 `admin`。        |
+| `handle.title`           | `title`。                                                          |
+| `handle.i18nKey`         | `i18nKey`。                                                        |
+| `handle.roles`           | `permissions`。                                                    |
+| `handle.href`            | `href`。                                                           |
+| `handle.url`             | `url`。                                                            |
+| `handle.keepAlive`       | `keepAlive`。                                                      |
+| `handle.fixedIndexInTab` | `tab.fixedIndex`。                                                 |
+| `handle.multiTab`        | `tab.multi`。                                                      |
+| `handle.icon`            | `menu.icon`。                                                      |
+| `handle.localIcon`       | `menu.localIcon`。                                                 |
+| `handle.order`           | `menu.order`。                                                     |
+| `handle.hideInMenu`      | `menu.hide`。                                                      |
+| `handle.activeMenu`      | `menu.activeMenu`，同样要能匹配当前 `routeTree`。                  |
+| `handle.badge`           | `menu.badge`。                                                     |
+| `handle.extra`           | `menu.extra`，必须是已注册的 extra key。                           |
 
 后端 `component` 不会被布局包直接渲染。当前项目的 React 页面仍然来自前端 `apps/admin/src/pages` 和生成的 `routeTree`。
 
@@ -169,13 +169,13 @@ interface BackendRoute extends Router.Meta {
 
 动态菜单能不能工作，关键看 `path` 是否能匹配前端 route。
 
-| 后端可能返回 | 适配后 | 前端需要存在 |
-| --- | --- | --- |
-| `/home` | `/home` | `apps/admin/src/pages/(admin)/home/index.tsx` |
-| `/manage/user` | `/manage/user` | `apps/admin/src/pages/(admin)/manage/user/index.tsx` |
-| `/manage/user/:id` | `/manage/user/$id` | `apps/admin/src/pages/(admin)/manage/user/$id.tsx` |
-| `/manage/user/1` | 不应作为菜单协议返回 | 这是实际 URL，不是 route pattern。 |
-| `/(admin)/home` | 不应返回 | `(admin)` 是前端 route group，不进入 URL。 |
+| 后端可能返回       | 适配后               | 前端需要存在                                         |
+| ------------------ | -------------------- | ---------------------------------------------------- |
+| `/home`            | `/home`              | `apps/admin/src/pages/(admin)/home/index.tsx`        |
+| `/manage/user`     | `/manage/user`       | `apps/admin/src/pages/(admin)/manage/user/index.tsx` |
+| `/manage/user/:id` | `/manage/user/$id`   | `apps/admin/src/pages/(admin)/manage/user/$id.tsx`   |
+| `/manage/user/1`   | 不应作为菜单协议返回 | 这是实际 URL，不是 route pattern。                   |
+| `/(admin)/home`    | 不应返回             | `(admin)` 是前端 route group，不进入 URL。           |
 
 适配层会过滤不在当前 `routeTree` 中的节点。原因是动态菜单只决定“哪些已存在的前端页面可见、可访问”，不能让后端临时创造一个 React 页面。
 
@@ -232,12 +232,12 @@ useMenus().initMenus(userInfo)
 
 ## 排查清单
 
-| 现象 | 优先检查 |
-| --- | --- |
-| 菜单为空 | 后端返回的节点是否都不在当前 `routeTree` 中。 |
+| 现象               | 优先检查                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| 菜单为空           | 后端返回的节点是否都不在当前 `routeTree` 中。                                      |
 | 详情页直接访问 403 | 后端是否返回 route pattern，例如 `/manage/user/:id`，适配后是 `/manage/user/$id`。 |
-| 菜单点击 404 | 对应前端页面文件是否存在，`routeTree.gen.ts` 是否已更新。 |
-| 菜单分类不对 | 后端顶层 `layout` 是否写成菜单分类 key，例如 `admin`。 |
-| 左侧菜单不高亮 | `handle.activeMenu` 是否指向存在的可见菜单路径。 |
-| roles 不生效 | 后端字段应是 `handle.roles`，适配后才会变成 `permissions`。 |
-| extra 不显示 | `handle.extra` 是否是 `setupAdminLayouts({ extras })` 已注册的 key。 |
+| 菜单点击 404       | 对应前端页面文件是否存在，`routeTree.gen.ts` 是否已更新。                          |
+| 菜单分类不对       | 后端顶层 `layout` 是否写成菜单分类 key，例如 `admin`。                             |
+| 左侧菜单不高亮     | `handle.activeMenu` 是否指向存在的可见菜单路径。                                   |
+| roles 不生效       | 后端字段应是 `handle.roles`，适配后才会变成 `permissions`。                        |
+| extra 不显示       | `handle.extra` 是否是 `setupAdminLayouts({ extras })` 已注册的 key。               |

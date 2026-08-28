@@ -4,7 +4,7 @@ import type { MDXComponents } from 'mdx/types';
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
-    ...components,
+    ...components
   } satisfies MDXComponents;
 }
 

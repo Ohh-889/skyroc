@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 用户管理原型</title>
     <style>
       :root {
@@ -1360,94 +1366,217 @@
     </style>
   </head>
   <body>
-    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
-      <symbol id="i-logo" viewBox="0 0 24 24">
+    <svg
+      width="0"
+      height="0"
+      aria-hidden="true"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-logo"
+        viewBox="0 0 24 24"
+      >
         <path d="m5 16 7-11 7 11-7 4-7-4Z" />
         <path d="m8.5 14 3.5-5 3.5 5-3.5 2-3.5-2Z" />
       </symbol>
-      <symbol id="i-home" viewBox="0 0 24 24">
+      <symbol
+        id="i-home"
+        viewBox="0 0 24 24"
+      >
         <path d="m3 10 9-7 9 7" />
         <path d="M5 9v11h14V9M9 20v-7h6v7" />
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
       </symbol>
-      <symbol id="i-building" viewBox="0 0 24 24">
+      <symbol
+        id="i-building"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 21h18M6 21V5l6-2v18M18 21V9l-6-2M9 8h.01M9 12h.01M9 16h.01M15 12h.01M15 16h.01" />
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
         <path d="m9 12 2 2 4-4" />
       </symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" />
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        />
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.5-1H3v-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3h4v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z"
         />
       </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        />
         <path d="m20 20-4-4" />
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24">
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 5v14M5 12h14" />
       </symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
         <path d="M20 6v5h-5M4 18v-5h5" />
         <path d="M18.5 9A7 7 0 0 0 6 6.5L4 9M5.5 15A7 7 0 0 0 18 17.5l2-2.5" />
       </symbol>
-      <symbol id="i-columns" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        />
         <path d="M9 4v16M15 4v16" />
       </symbol>
-      <symbol id="i-chevron" viewBox="0 0 24 24">
+      <symbol
+        id="i-chevron"
+        viewBox="0 0 24 24"
+      >
         <path d="m9 18 6-6-6-6" />
       </symbol>
-      <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
-      <symbol id="i-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4" />
+      <symbol
+        id="i-down"
+        viewBox="0 0 24 24"
+      >
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol
+        id="i-sun"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="4"
+        />
         <path
           d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
         />
       </symbol>
-      <symbol id="i-bell" viewBox="0 0 24 24">
+      <symbol
+        id="i-bell"
+        viewBox="0 0 24 24"
+      >
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
       </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
+      <symbol
+        id="i-x"
+        viewBox="0 0 24 24"
+      >
         <path d="m6 6 12 12M18 6 6 18" />
       </symbol>
-      <symbol id="i-edit" viewBox="0 0 24 24">
+      <symbol
+        id="i-edit"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
       </symbol>
-      <symbol id="i-key" viewBox="0 0 24 24">
-        <circle cx="8" cy="15" r="4" />
+      <symbol
+        id="i-key"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="8"
+          cy="15"
+          r="4"
+        />
         <path d="m11 12 9-9M17 6l3 3M14 9l3 3" />
       </symbol>
-      <symbol id="i-trash" viewBox="0 0 24 24">
+      <symbol
+        id="i-trash"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v5M14 11v5" />
       </symbol>
-      <symbol id="i-more" viewBox="0 0 24 24">
-        <circle cx="5" cy="12" r="1" />
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="19" cy="12" r="1" />
+      <symbol
+        id="i-more"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="5"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+        />
+        <circle
+          cx="19"
+          cy="12"
+          r="1"
+        />
       </symbol>
-      <symbol id="i-alert" viewBox="0 0 24 24">
+      <symbol
+        id="i-alert"
+        viewBox="0 0 24 24"
+      >
         <path d="M10.3 3.6 2.1 18a2 2 0 0 0 1.7 3h16.4a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z" />
         <path d="M12 9v4M12 17h.01" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
+      <symbol
+        id="i-check"
+        viewBox="0 0 24 24"
+      >
         <path d="m5 12 4 4L19 6" />
       </symbol>
-      <symbol id="i-filter" viewBox="0 0 24 24">
+      <symbol
+        id="i-filter"
+        viewBox="0 0 24 24"
+      >
         <path d="M4 4h16l-6 7v6l-4 2v-8Z" />
       </symbol>
-      <symbol id="i-download" viewBox="0 0 24 24">
+      <symbol
+        id="i-download"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
       </symbol>
-      <symbol id="i-lock" viewBox="0 0 24 24">
-        <rect x="4" y="10" width="16" height="11" rx="2" />
+      <symbol
+        id="i-lock"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="4"
+          y="10"
+          width="16"
+          height="11"
+          rx="2"
+        />
         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
       </symbol>
     </svg>
@@ -1462,28 +1591,49 @@
         </div>
         <nav class="nav">
           <div class="nav-label">工作台</div>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-home"></use></svg><span>首页</span>
           </button>
           <div class="nav-label">管理中心</div>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-users"></use></svg><span>组织与用户</span
             ><svg class="icon chevron"><use href="#i-down"></use></svg>
           </button>
-          <button class="nav-item child active" type="button">
+          <button
+            class="nav-item child active"
+            type="button"
+          >
             <span>用户管理</span>
           </button>
-          <button class="nav-item child" type="button">
+          <button
+            class="nav-item child"
+            type="button"
+          >
             <span>部门管理</span>
           </button>
-          <button class="nav-item child" type="button">
+          <button
+            class="nav-item child"
+            type="button"
+          >
             <span>岗位管理</span>
           </button>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-shield"></use></svg><span>角色与权限</span
             ><svg class="icon chevron"><use href="#i-chevron"></use></svg>
           </button>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-settings"></use></svg><span>系统设置</span
             ><svg class="icon chevron"><use href="#i-chevron"></use></svg>
           </button>
@@ -1498,10 +1648,19 @@
         <header class="topbar">
           <div class="breadcrumbs"><span>组织与用户</span><span>/</span><strong>用户管理</strong></div>
           <div class="top-actions">
-            <button class="icon-button" id="themeButton" type="button" aria-label="切换明暗主题">
+            <button
+              class="icon-button"
+              id="themeButton"
+              type="button"
+              aria-label="切换明暗主题"
+            >
               <svg class="icon"><use href="#i-sun"></use></svg>
             </button>
-            <button class="icon-button" type="button" aria-label="通知">
+            <button
+              class="icon-button"
+              type="button"
+              aria-label="通知"
+            >
               <svg class="icon"><use href="#i-bell"></use></svg>
             </button>
           </div>
@@ -1516,61 +1675,139 @@
             <span class="context-pill"><span class="context-dot"></span>当前租户：Skyroc 科技</span>
           </div>
 
-          <section class="workspace" id="workspace">
+          <section
+            class="workspace"
+            id="workspace"
+          >
             <aside class="dept-panel">
               <div class="dept-collapsed-control">
-                <button class="icon-button" id="openDept" type="button" aria-label="展开部门筛选">
+                <button
+                  class="icon-button"
+                  id="openDept"
+                  type="button"
+                  aria-label="展开部门筛选"
+                >
                   <svg class="icon"><use href="#i-building"></use></svg>
                 </button>
               </div>
               <div class="dept-head">
                 <strong>部门</strong
-                ><button class="icon-button" id="refreshDept" type="button" aria-label="刷新部门">
+                ><button
+                  class="icon-button"
+                  id="refreshDept"
+                  type="button"
+                  aria-label="刷新部门"
+                >
                   <svg class="icon"><use href="#i-refresh"></use></svg>
                 </button>
               </div>
               <div class="dept-search">
                 <svg class="icon"><use href="#i-search"></use></svg
-                ><input class="control" id="deptSearch" type="search" placeholder="搜索部门" />
+                ><input
+                  class="control"
+                  id="deptSearch"
+                  type="search"
+                  placeholder="搜索部门"
+                />
               </div>
-              <div class="scope-switch" aria-label="部门查询范围">
-                <button type="button" data-scope="current">仅当前部门</button>
-                <button class="active" type="button" data-scope="children">包含下级</button>
+              <div
+                class="scope-switch"
+                aria-label="部门查询范围"
+              >
+                <button
+                  type="button"
+                  data-scope="current"
+                >
+                  仅当前部门
+                </button>
+                <button
+                  class="active"
+                  type="button"
+                  data-scope="children"
+                >
+                  包含下级
+                </button>
               </div>
-              <div class="dept-tree" id="deptTree">
-                <button class="tree-item active" type="button" data-dept="all">
+              <div
+                class="dept-tree"
+                id="deptTree"
+              >
+                <button
+                  class="tree-item active"
+                  type="button"
+                  data-dept="all"
+                >
                   <svg class="icon"><use href="#i-users"></use></svg><span>全部用户</span><span class="count">128</span>
                 </button>
-                <button class="tree-item" type="button" data-dept="Skyroc 集团">
+                <button
+                  class="tree-item"
+                  type="button"
+                  data-dept="Skyroc 集团"
+                >
                   <svg class="icon"><use href="#i-down"></use></svg
                   ><svg class="icon"><use href="#i-building"></use></svg><span>Skyroc 集团</span
                   ><span class="count">86</span>
                 </button>
-                <button class="tree-item child-1" type="button" data-dept="产品中心">
+                <button
+                  class="tree-item child-1"
+                  type="button"
+                  data-dept="产品中心"
+                >
                   <svg class="icon"><use href="#i-down"></use></svg><span>产品中心</span><span class="count">24</span>
                 </button>
-                <button class="tree-item child-2" type="button" data-dept="产品部">
+                <button
+                  class="tree-item child-2"
+                  type="button"
+                  data-dept="产品部"
+                >
                   <span>产品部</span><span class="count">14</span>
                 </button>
-                <button class="tree-item child-2" type="button" data-dept="设计部">
+                <button
+                  class="tree-item child-2"
+                  type="button"
+                  data-dept="设计部"
+                >
                   <span>设计部</span><span class="count">10</span>
                 </button>
-                <button class="tree-item child-1" type="button" data-dept="技术中心">
+                <button
+                  class="tree-item child-1"
+                  type="button"
+                  data-dept="技术中心"
+                >
                   <svg class="icon"><use href="#i-down"></use></svg><span>技术中心</span><span class="count">42</span>
                 </button>
-                <button class="tree-item child-2" type="button" data-dept="前端研发部">
+                <button
+                  class="tree-item child-2"
+                  type="button"
+                  data-dept="前端研发部"
+                >
                   <span>前端研发部</span><span class="count">16</span>
                 </button>
-                <button class="tree-item child-2" type="button" data-dept="平台研发部">
+                <button
+                  class="tree-item child-2"
+                  type="button"
+                  data-dept="平台研发部"
+                >
                   <span>平台研发部</span><span class="count">18</span>
                 </button>
-                <button class="tree-item" type="button" data-dept="华东区域中心">
+                <button
+                  class="tree-item"
+                  type="button"
+                  data-dept="华东区域中心"
+                >
                   <svg class="icon"><use href="#i-building"></use></svg><span>华东区域中心</span
-                  ><span class="tree-status" title="部门已停用"></span>
+                  ><span
+                    class="tree-status"
+                    title="部门已停用"
+                  ></span>
                 </button>
               </div>
               <div class="dept-footer">
-                <button class="collapse-dept" id="collapseDept" type="button">
+                <button
+                  class="collapse-dept"
+                  id="collapseDept"
+                  type="button"
+                >
                   <svg class="icon"><use href="#i-chevron"></use></svg><span>收起部门栏</span>
                 </button>
               </div>
@@ -1580,29 +1817,61 @@
               <div class="filter-bar">
                 <div class="search-control">
                   <svg class="icon"><use href="#i-search"></use></svg
-                  ><input class="control" id="keyword" type="search" placeholder="搜索姓名、账号、手机号或邮箱" />
+                  ><input
+                    class="control"
+                    id="keyword"
+                    type="search"
+                    placeholder="搜索姓名、账号、手机号或邮箱"
+                  />
                 </div>
-                <select id="statusFilter" aria-label="账号状态">
+                <select
+                  id="statusFilter"
+                  aria-label="账号状态"
+                >
                   <option value="">全部状态</option>
                   <option value="正常">正常</option>
                   <option value="停用">停用</option>
                 </select>
                 <div class="toolbar filter-actions">
-                  <button class="button" id="moreFilters" type="button">
+                  <button
+                    class="button"
+                    id="moreFilters"
+                    type="button"
+                  >
                     <svg class="icon"><use href="#i-filter"></use></svg>更多筛选
                   </button>
-                  <button class="button primary" id="searchButton" type="button">查询</button>
-                  <button class="button" id="resetButton" type="button">重置</button>
+                  <button
+                    class="button primary"
+                    id="searchButton"
+                    type="button"
+                  >
+                    查询
+                  </button>
+                  <button
+                    class="button"
+                    id="resetButton"
+                    type="button"
+                  >
+                    重置
+                  </button>
                 </div>
               </div>
 
               <div class="list-header">
                 <div class="section-title"><strong>用户列表</strong><small id="resultCount">共 128 位用户</small></div>
                 <div class="toolbar">
-                  <button class="button primary" id="addUserButton" type="button">
+                  <button
+                    class="button primary"
+                    id="addUserButton"
+                    type="button"
+                  >
                     <svg class="icon"><use href="#i-plus"></use></svg>新增用户
                   </button>
-                  <button class="button" id="batchButton" type="button">
+                  <button
+                    class="button"
+                    id="batchButton"
+                    type="button"
+                  >
                     批量操作<svg class="icon"><use href="#i-down"></use></svg>
                   </button>
                   <button
@@ -1612,7 +1881,12 @@
                   >
                     <svg class="icon"><use href="#i-download"></use></svg>导出
                   </button>
-                  <button class="icon-button" id="refreshUsers" type="button" aria-label="刷新用户">
+                  <button
+                    class="icon-button"
+                    id="refreshUsers"
+                    type="button"
+                    aria-label="刷新用户"
+                  >
                     <svg class="icon"><use href="#i-refresh"></use></svg>
                   </button>
                   <button
@@ -1626,13 +1900,31 @@
                 </div>
               </div>
 
-              <div class="selection-bar" id="selectionBar">
+              <div
+                class="selection-bar"
+                id="selectionBar"
+              >
                 <span>已选择 <strong id="selectedCount">0</strong> 位用户</span>
                 <div class="toolbar">
-                  <button class="button" type="button" data-message="批量调整部门将在正式接口具备后开放。">
+                  <button
+                    class="button"
+                    type="button"
+                    data-message="批量调整部门将在正式接口具备后开放。"
+                  >
                     调整部门</button
-                  ><button class="button" id="batchDisable" type="button">批量停用</button
-                  ><button class="button text" id="clearSelection" type="button">取消选择</button>
+                  ><button
+                    class="button"
+                    id="batchDisable"
+                    type="button"
+                  >
+                    批量停用</button
+                  ><button
+                    class="button text"
+                    id="clearSelection"
+                    type="button"
+                  >
+                    取消选择
+                  </button>
                 </div>
               </div>
 
@@ -1641,7 +1933,11 @@
                   <thead>
                     <tr>
                       <th style="width: 44px">
-                        <input id="selectAll" type="checkbox" aria-label="选择当前页用户" />
+                        <input
+                          id="selectAll"
+                          type="checkbox"
+                          aria-label="选择当前页用户"
+                        />
                       </th>
                       <th>用户</th>
                       <th>部门</th>
@@ -1665,13 +1961,21 @@
                       data-protected="true"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择王敏" disabled />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择王敏"
+                          disabled
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar">王</span>
                           <div>
-                            <button class="user-name-button" type="button">
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
                               王敏
                               <span class="tag protected">当前账号</span></button
                             ><span class="username">wangmin</span>
@@ -1691,9 +1995,21 @@
                       <td>2 小时前<span class="cell-secondary">2026-08-05 14:32</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1710,13 +2026,21 @@
                       data-email="chenchen@skyroc.cn"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择陈晨" />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择陈晨"
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar green">陈</span>
                           <div>
-                            <button class="user-name-button" type="button">陈晨</button
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
+                              陈晨</button
                             ><span class="username">chenchen</span>
                           </div>
                         </div>
@@ -1734,9 +2058,21 @@
                       <td>昨天<span class="cell-secondary">2026-08-04 17:10</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1753,13 +2089,21 @@
                       data-email="linshan@skyroc.cn"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择林珊" />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择林珊"
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar pink">林</span>
                           <div>
-                            <button class="user-name-button" type="button">林珊</button
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
+                              林珊</button
                             ><span class="username">linshan</span>
                           </div>
                         </div>
@@ -1777,9 +2121,21 @@
                       <td>30 天前<span class="cell-secondary">2026-07-06 09:41</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1796,13 +2152,21 @@
                       data-email="liyan@skyroc.cn"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择李岩" />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择李岩"
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar blue">李</span>
                           <div>
-                            <button class="user-name-button" type="button">李岩</button
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
+                              李岩</button
                             ><span class="username">liyan</span>
                           </div>
                         </div>
@@ -1820,9 +2184,21 @@
                       <td>3 天前<span class="cell-secondary">2026-08-02 11:20</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1839,13 +2215,21 @@
                       data-email="zhaoke@skyroc.cn"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择赵可" />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择赵可"
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar orange">赵</span>
                           <div>
-                            <button class="user-name-button" type="button">赵可</button
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
+                              赵可</button
                             ><span class="username">zhaoke</span>
                           </div>
                         </div>
@@ -1863,9 +2247,21 @@
                       <td>从未登录<span class="cell-secondary">—</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1882,13 +2278,21 @@
                       data-email="songyuan@skyroc.cn"
                     >
                       <td>
-                        <input class="row-check" type="checkbox" aria-label="选择宋远" />
+                        <input
+                          class="row-check"
+                          type="checkbox"
+                          aria-label="选择宋远"
+                        />
                       </td>
                       <td>
                         <div class="user-cell">
                           <span class="avatar">宋</span>
                           <div>
-                            <button class="user-name-button" type="button">宋远</button
+                            <button
+                              class="user-name-button"
+                              type="button"
+                            >
+                              宋远</button
                             ><span class="username">songyuan</span>
                           </div>
                         </div>
@@ -1906,9 +2310,21 @@
                       <td>5 天前<span class="cell-secondary">2026-07-31 19:05</span></td>
                       <td>
                         <div class="row-actions">
-                          <button class="button text view-user" type="button">查看</button
-                          ><button class="button text edit-user" type="button">编辑</button
-                          ><button class="icon-button more-user" type="button" aria-label="更多操作">
+                          <button
+                            class="button text view-user"
+                            type="button"
+                          >
+                            查看</button
+                          ><button
+                            class="button text edit-user"
+                            type="button"
+                          >
+                            编辑</button
+                          ><button
+                            class="icon-button more-user"
+                            type="button"
+                            aria-label="更多操作"
+                          >
                             <svg class="icon"><use href="#i-more"></use></svg>
                           </button>
                         </div>
@@ -1920,11 +2336,35 @@
               <div class="table-footer">
                 <span>已显示 6 条示例数据</span>
                 <div class="pagination">
-                  <span>20 条/页</span><button class="page-button" type="button" aria-label="上一页">‹</button
-                  ><button class="page-button active" type="button">1</button
-                  ><button class="page-button" type="button">2</button
-                  ><button class="page-button" type="button">3</button
-                  ><button class="page-button" type="button" aria-label="下一页">›</button>
+                  <span>20 条/页</span
+                  ><button
+                    class="page-button"
+                    type="button"
+                    aria-label="上一页"
+                  >
+                    ‹</button
+                  ><button
+                    class="page-button active"
+                    type="button"
+                  >
+                    1</button
+                  ><button
+                    class="page-button"
+                    type="button"
+                  >
+                    2</button
+                  ><button
+                    class="page-button"
+                    type="button"
+                  >
+                    3</button
+                  ><button
+                    class="page-button"
+                    type="button"
+                    aria-label="下一页"
+                  >
+                    ›
+                  </button>
                 </div>
               </div>
             </div>
@@ -1933,29 +2373,67 @@
       </div>
     </div>
 
-    <div class="menu" id="rowMenu">
-      <button id="menuRole" type="button">
+    <div
+      class="menu"
+      id="rowMenu"
+    >
+      <button
+        id="menuRole"
+        type="button"
+      >
         <svg class="icon"><use href="#i-shield"></use></svg>分配角色
       </button>
-      <button id="menuPassword" type="button">
+      <button
+        id="menuPassword"
+        type="button"
+      >
         <svg class="icon"><use href="#i-key"></use></svg>重置密码
       </button>
-      <button id="menuStatus" type="button">
+      <button
+        id="menuStatus"
+        type="button"
+      >
         <svg class="icon"><use href="#i-lock"></use></svg><span>停用用户</span>
       </button>
-      <button class="danger-text" id="menuDelete" type="button">
+      <button
+        class="danger-text"
+        id="menuDelete"
+        type="button"
+      >
         <svg class="icon"><use href="#i-trash"></use></svg>删除用户
       </button>
     </div>
 
-    <div class="drawer-mask" id="formMask">
-      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div
+      class="drawer-mask"
+      id="formMask"
+    >
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="formTitle"
+      >
         <header class="drawer-header">
           <div>
-            <div class="drawer-title" id="formTitle">新增用户</div>
-            <div class="drawer-subtitle" id="formSubtitle">创建账号并设置组织关系</div>
+            <div
+              class="drawer-title"
+              id="formTitle"
+            >
+              新增用户
+            </div>
+            <div
+              class="drawer-subtitle"
+              id="formSubtitle"
+            >
+              创建账号并设置组织关系
+            </div>
           </div>
-          <button class="icon-button close-form" type="button" aria-label="关闭">
+          <button
+            class="icon-button close-form"
+            type="button"
+            aria-label="关闭"
+          >
             <svg class="icon"><use href="#i-x"></use></svg>
           </button>
         </header>
@@ -1965,26 +2443,67 @@
               <div class="form-section-title">账号信息</div>
               <div class="form-grid">
                 <div class="field">
-                  <label class="required" for="formUsername">用户账号</label
-                  ><input class="control" id="formUsername" maxlength="30" required placeholder="请输入登录账号" />
+                  <label
+                    class="required"
+                    for="formUsername"
+                    >用户账号</label
+                  ><input
+                    class="control"
+                    id="formUsername"
+                    maxlength="30"
+                    required
+                    placeholder="请输入登录账号"
+                  />
                 </div>
                 <div class="field">
-                  <label class="required" for="formNickname">用户昵称</label
-                  ><input class="control" id="formNickname" maxlength="64" required placeholder="请输入用户昵称" />
+                  <label
+                    class="required"
+                    for="formNickname"
+                    >用户昵称</label
+                  ><input
+                    class="control"
+                    id="formNickname"
+                    maxlength="64"
+                    required
+                    placeholder="请输入用户昵称"
+                  />
                 </div>
-                <div class="field span-2" id="passwordModeField">
+                <div
+                  class="field span-2"
+                  id="passwordModeField"
+                >
                   <label class="required">初始密码</label>
                   <div class="choice-group">
-                    <button class="choice-card active" data-password-mode="generated" type="button">
+                    <button
+                      class="choice-card active"
+                      data-password-mode="generated"
+                      type="button"
+                    >
                       <strong>系统生成</strong><small>创建后仅显示一次临时密码</small></button
-                    ><button class="choice-card" data-password-mode="manual" type="button">
+                    ><button
+                      class="choice-card"
+                      data-password-mode="manual"
+                      type="button"
+                    >
                       <strong>管理员设置</strong><small>兼容方案，请通过安全渠道交付</small>
                     </button>
                   </div>
                 </div>
-                <div class="field span-2" id="manualPasswordField" hidden>
-                  <label class="required" for="manualPassword">初始密码</label
-                  ><input class="control" id="manualPassword" type="password" placeholder="请输入初始密码" />
+                <div
+                  class="field span-2"
+                  id="manualPasswordField"
+                  hidden
+                >
+                  <label
+                    class="required"
+                    for="manualPassword"
+                    >初始密码</label
+                  ><input
+                    class="control"
+                    id="manualPassword"
+                    type="password"
+                    placeholder="请输入初始密码"
+                  />
                   <p class="field-help">密码不会出现在普通消息、URL 或操作日志中。</p>
                 </div>
               </div>
@@ -1994,11 +2513,22 @@
               <div class="form-grid">
                 <div class="field">
                   <label for="formPhone">手机号码</label
-                  ><input class="control" id="formPhone" maxlength="11" placeholder="请输入手机号码" />
+                  ><input
+                    class="control"
+                    id="formPhone"
+                    maxlength="11"
+                    placeholder="请输入手机号码"
+                  />
                 </div>
                 <div class="field">
                   <label for="formEmail">邮箱</label
-                  ><input class="control" id="formEmail" maxlength="50" type="email" placeholder="name@example.com" />
+                  ><input
+                    class="control"
+                    id="formEmail"
+                    maxlength="50"
+                    type="email"
+                    placeholder="name@example.com"
+                  />
                 </div>
                 <div class="field">
                   <label for="formSex">性别</label
@@ -2045,7 +2575,11 @@
                 </div>
                 <div class="field span-2">
                   <label for="formRoles">角色</label
-                  ><select id="formRoles" multiple size="3">
+                  ><select
+                    id="formRoles"
+                    multiple
+                    size="3"
+                  >
                     <option>企业管理员</option>
                     <option>产品运营</option>
                     <option>研发成员</option>
@@ -2054,42 +2588,85 @@
                 </div>
                 <div class="field span-2">
                   <label for="formRemark">备注</label
-                  ><textarea id="formRemark" maxlength="500" placeholder="填写必要的业务说明"></textarea>
+                  ><textarea
+                    id="formRemark"
+                    maxlength="500"
+                    placeholder="填写必要的业务说明"
+                  ></textarea>
                 </div>
               </div>
             </section>
           </form>
         </div>
         <footer class="drawer-footer">
-          <button class="button close-form" type="button">取消</button
-          ><button class="button primary" id="saveUser" type="button">保存用户</button>
+          <button
+            class="button close-form"
+            type="button"
+          >
+            取消</button
+          ><button
+            class="button primary"
+            id="saveUser"
+            type="button"
+          >
+            保存用户
+          </button>
         </footer>
       </aside>
     </div>
 
-    <div class="drawer-mask" id="detailMask">
-      <aside class="drawer detail-drawer" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div
+      class="drawer-mask"
+      id="detailMask"
+    >
+      <aside
+        class="drawer detail-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+      >
         <header class="drawer-header">
           <div>
-            <div class="drawer-title" id="detailTitle">用户详情</div>
+            <div
+              class="drawer-title"
+              id="detailTitle"
+            >
+              用户详情
+            </div>
             <div class="drawer-subtitle">查看资料、组织权限与最近登录</div>
           </div>
           <div class="drawer-actions">
-            <button class="button" id="editFromDetail" type="button">
+            <button
+              class="button"
+              id="editFromDetail"
+              type="button"
+            >
               <svg class="icon"><use href="#i-edit"></use></svg>编辑资料</button
-            ><button class="icon-button close-detail" type="button" aria-label="关闭">
+            ><button
+              class="icon-button close-detail"
+              type="button"
+              aria-label="关闭"
+            >
               <svg class="icon"><use href="#i-x"></use></svg>
             </button>
           </div>
         </header>
         <div class="drawer-body">
           <div class="detail-hero">
-            <span class="avatar" id="detailAvatar">陈</span>
+            <span
+              class="avatar"
+              id="detailAvatar"
+              >陈</span
+            >
             <div>
               <h2 id="detailName">陈晨</h2>
               <p id="detailUsername">chenchen · 用户 ID 1002</p>
             </div>
-            <span class="status" id="detailStatus"><span class="status-dot"></span><span>正常</span></span>
+            <span
+              class="status"
+              id="detailStatus"
+              ><span class="status-dot"></span><span>正常</span></span
+            >
           </div>
           <section class="detail-section">
             <h3>基本资料</h3>
@@ -2156,33 +2733,78 @@
           </section>
         </div>
         <footer class="drawer-footer">
-          <button class="button" id="roleFromDetail" type="button">分配角色</button
-          ><button class="button" id="passwordFromDetail" type="button">重置密码</button
-          ><button class="button close-detail" type="button">关闭</button>
+          <button
+            class="button"
+            id="roleFromDetail"
+            type="button"
+          >
+            分配角色</button
+          ><button
+            class="button"
+            id="passwordFromDetail"
+            type="button"
+          >
+            重置密码</button
+          ><button
+            class="button close-detail"
+            type="button"
+          >
+            关闭
+          </button>
         </footer>
       </aside>
     </div>
 
-    <div class="drawer-mask" id="roleMask">
-      <aside class="drawer detail-drawer" role="dialog" aria-modal="true" aria-labelledby="roleTitle">
+    <div
+      class="drawer-mask"
+      id="roleMask"
+    >
+      <aside
+        class="drawer detail-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roleTitle"
+      >
         <header class="drawer-header">
           <div>
-            <div class="drawer-title" id="roleTitle">分配角色</div>
-            <div class="drawer-subtitle" id="roleSubtitle">为陈晨调整角色权限</div>
+            <div
+              class="drawer-title"
+              id="roleTitle"
+            >
+              分配角色
+            </div>
+            <div
+              class="drawer-subtitle"
+              id="roleSubtitle"
+            >
+              为陈晨调整角色权限
+            </div>
           </div>
-          <button class="icon-button close-role" type="button" aria-label="关闭">
+          <button
+            class="icon-button close-role"
+            type="button"
+            aria-label="关闭"
+          >
             <svg class="icon"><use href="#i-x"></use></svg>
           </button>
         </header>
         <div class="drawer-body">
-          <div class="search-control" style="margin-bottom: 14px">
+          <div
+            class="search-control"
+            style="margin-bottom: 14px"
+          >
             <svg class="icon"><use href="#i-search"></use></svg
-            ><input class="control" type="search" placeholder="搜索角色名称或编码" />
+            ><input
+              class="control"
+              type="search"
+              placeholder="搜索角色名称或编码"
+            />
           </div>
           <label class="role-option checked"
-            ><input type="checkbox" checked /><span
-              ><strong>产品运营</strong><small>product_operator · 数据范围：本部门及下级</small></span
-            ></label
+            ><input
+              type="checkbox"
+              checked
+            /><span><strong>产品运营</strong><small>product_operator · 数据范围：本部门及下级</small></span></label
           >
           <label class="role-option"
             ><input type="checkbox" /><span
@@ -2195,23 +2817,46 @@
             ></label
           >
           <label class="role-option"
-            ><input type="checkbox" disabled /><span
+            ><input
+              type="checkbox"
+              disabled
+            /><span
               ><strong>企业管理员 <span class="tag protected">不可分配</span></strong
               ><small>需要更高等级授权，当前账号无权分配此角色</small></span
             ></label
           >
         </div>
         <footer class="drawer-footer">
-          <button class="button close-role" type="button">取消</button
-          ><button class="button primary" id="saveRoles" type="button">保存角色</button>
+          <button
+            class="button close-role"
+            type="button"
+          >
+            取消</button
+          ><button
+            class="button primary"
+            id="saveRoles"
+            type="button"
+          >
+            保存角色
+          </button>
         </footer>
       </aside>
     </div>
 
-    <div class="modal-mask" id="actionMask">
-      <section class="modal" role="alertdialog" aria-modal="true" aria-labelledby="actionTitle">
+    <div
+      class="modal-mask"
+      id="actionMask"
+    >
+      <section
+        class="modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="actionTitle"
+      >
         <div class="modal-content">
-          <span class="danger-icon" id="actionIcon"
+          <span
+            class="danger-icon"
+            id="actionIcon"
             ><svg class="icon"><use href="#i-alert"></use></svg
           ></span>
           <div>
@@ -2219,20 +2864,46 @@
             <p id="actionMessage">停用后，该用户将无法继续登录。当前在线会话将按系统安全策略失效。</p>
           </div>
         </div>
-        <div class="modal-field" id="passwordField" hidden>
-          <label for="resetPassword" style="display: block; margin-bottom: 7px; color: var(--text-secondary)"
+        <div
+          class="modal-field"
+          id="passwordField"
+          hidden
+        >
+          <label
+            for="resetPassword"
+            style="display: block; margin-bottom: 7px; color: var(--text-secondary)"
             >新密码</label
-          ><input class="control" id="resetPassword" type="password" placeholder="留空则由系统生成临时密码" />
+          ><input
+            class="control"
+            id="resetPassword"
+            type="password"
+            placeholder="留空则由系统生成临时密码"
+          />
           <p class="field-help">系统生成的临时密码只会在成功后显示一次。</p>
         </div>
         <div class="modal-footer">
-          <button class="button" id="cancelAction" type="button">取消</button
-          ><button class="button danger" id="confirmAction" type="button">停用用户</button>
+          <button
+            class="button"
+            id="cancelAction"
+            type="button"
+          >
+            取消</button
+          ><button
+            class="button danger"
+            id="confirmAction"
+            type="button"
+          >
+            停用用户
+          </button>
         </div>
       </section>
     </div>
 
-    <div class="toast" id="toast" role="status">
+    <div
+      class="toast"
+      id="toast"
+      role="status"
+    >
       <svg class="icon"><use href="#i-check"></use></svg><span id="toastText">操作成功</span>
     </div>
     <aside class="prototype-note">

@@ -12,7 +12,10 @@ const items: ToggleGroupProps['items'] = [
 
 const ToggleGroupMulti = () => {
   return (
-    <Card split title="Multi">
+    <Card
+      split
+      title="Multi"
+    >
       <ToggleGroup
         items={items}
         type="multiple"

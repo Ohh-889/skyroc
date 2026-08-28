@@ -47,9 +47,16 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
     <Drawer
       destroyOnHidden
       footer={
-        <Flex gap={8} justify="flex-end">
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
           <Button onClick={onClose}>关闭</Button>
-          <Button disabled={!role || role.superAdmin} type="primary" onClick={onEdit}>
+          <Button
+            disabled={!role || role.superAdmin}
+            type="primary"
+            onClick={onEdit}
+          >
             编辑角色
           </Button>
         </Flex>
@@ -58,10 +65,17 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
       size={620}
       title={
         <div>
-          <Flex align="center" gap={8}>
+          <Flex
+            align="center"
+            gap={8}
+          >
             <span className="text-17px font-600">角色详情</span>
             {role?.superAdmin ? (
-              <Tag className="m-0" color="gold" variant="filled">
+              <Tag
+                className="m-0"
+                color="gold"
+                variant="filled"
+              >
                 系统保护
               </Tag>
             ) : null}
@@ -76,7 +90,10 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
       {detailQuery.isError || menuTreeQuery.isError ? (
         <Alert
           action={
-            <Button size="small" onClick={() => Promise.all([detailQuery.refetch(), menuTreeQuery.refetch()])}>
+            <Button
+              size="small"
+              onClick={() => Promise.all([detailQuery.refetch(), menuTreeQuery.refetch()])}
+            >
               重试
             </Button>
           }
@@ -89,7 +106,10 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
       <Spin spinning={loading}>
         {role ? (
           <div className="grid gap-16px">
-            <Card size="small" title="基本信息">
+            <Card
+              size="small"
+              title="基本信息"
+            >
               <Descriptions
                 column={2}
                 items={[
@@ -140,30 +160,54 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
 
             <div className="grid grid-cols-2 gap-12px">
               <Card size="small">
-                <Flex align="center" gap={10}>
+                <Flex
+                  align="center"
+                  gap={10}
+                >
                   <span className="size-36px grid place-items-center rounded-9px bg-primary-50 text-primary">
-                    <SvgIcon className="text-19px" icon="ph:browser" />
+                    <SvgIcon
+                      className="text-19px"
+                      icon="ph:browser"
+                    />
                   </span>
                   <div>
-                    <Typography.Text className="block text-12px" type="secondary">
+                    <Typography.Text
+                      className="block text-12px"
+                      type="secondary"
+                    >
                       已授权菜单
                     </Typography.Text>
-                    <Typography.Text className="text-20px" strong>
+                    <Typography.Text
+                      className="text-20px"
+                      strong
+                    >
                       {permissionCount.menus} 项
                     </Typography.Text>
                   </div>
                 </Flex>
               </Card>
               <Card size="small">
-                <Flex align="center" gap={10}>
+                <Flex
+                  align="center"
+                  gap={10}
+                >
                   <span className="size-36px grid place-items-center rounded-9px bg-warning-bg text-warning">
-                    <SvgIcon className="text-19px" icon="ph:cursor-click" />
+                    <SvgIcon
+                      className="text-19px"
+                      icon="ph:cursor-click"
+                    />
                   </span>
                   <div>
-                    <Typography.Text className="block text-12px" type="secondary">
+                    <Typography.Text
+                      className="block text-12px"
+                      type="secondary"
+                    >
                       已授权按钮
                     </Typography.Text>
-                    <Typography.Text className="text-20px" strong>
+                    <Typography.Text
+                      className="text-20px"
+                      strong
+                    >
                       {permissionCount.buttons} 项
                     </Typography.Text>
                   </div>
@@ -171,8 +215,14 @@ const RoleDetailDrawer = (props: RoleDetailDrawerProps) => {
               </Card>
             </div>
 
-            <Card size="small" title="备注">
-              <Typography.Paragraph className="mb-0!" type={role.remark ? undefined : 'secondary'}>
+            <Card
+              size="small"
+              title="备注"
+            >
+              <Typography.Paragraph
+                className="mb-0!"
+                type={role.remark ? undefined : 'secondary'}
+              >
                 {role.remark || '暂无备注'}
               </Typography.Paragraph>
             </Card>

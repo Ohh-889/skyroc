@@ -80,15 +80,15 @@ low        小时级，可进摘要
 
 因为现实里这些组合都存在，而单一 `type` 字段表达不了：
 
-| 场景 | intent | reason | urgency |
-| --- | --- | --- | --- |
-| 支付成功 | transactional | direct | high |
-| 有人在文档里 @ 你 | informational | direct | normal |
-| 你订阅的文档被改了 | informational | watching | low |
-| 分配给你的审批待办 | actionable | assigned | normal |
-| 生产环境服务挂了 | alerting | team | **critical** |
-| 你的密码被修改 | transactional | system | high |
-| 全员放假通知 | informational | broadcast | low |
+| 场景               | intent        | reason    | urgency      |
+| ------------------ | ------------- | --------- | ------------ |
+| 支付成功           | transactional | direct    | high         |
+| 有人在文档里 @ 你  | informational | direct    | normal       |
+| 你订阅的文档被改了 | informational | watching  | low          |
+| 分配给你的审批待办 | actionable    | assigned  | normal       |
+| 生产环境服务挂了   | alerting      | team      | **critical** |
+| 你的密码被修改     | transactional | system    | high         |
+| 全员放假通知       | informational | broadcast | low          |
 
 注意第 5 行：`alerting + team + critical`。用单一 `type='alert'` 表达不了"这是给团队的、要升级、不能合并"。而这三个属性各自驱动不同的下游子系统——`intent` 驱动聚合器，`reason` 驱动偏好解析，`urgency` 驱动渠道与升级。
 
@@ -149,13 +149,13 @@ low        小时级，可进摘要
 
 写在最前面，后面所有设计都不许违反：
 
-| # | 不变式 | 违反的后果 |
-| --- | --- | --- |
-| **I1** | 幂等落在数据库唯一约束上，不落在应用逻辑里 | 并发下重复通知，且不可复现 |
-| **I2** | 任何外发动作（推送、邮件、短信）都晚于事务提交 | 事务回滚后用户收到不存在的通知 |
-| **I3** | 站内收件箱是唯一真相，其他渠道都是它的投影 | 各渠道状态发散，"已读"无法统一 |
+| #      | 不变式                                           | 违反的后果                         |
+| ------ | ------------------------------------------------ | ---------------------------------- |
+| **I1** | 幂等落在数据库唯一约束上，不落在应用逻辑里       | 并发下重复通知，且不可复现         |
+| **I2** | 任何外发动作（推送、邮件、短信）都晚于事务提交   | 事务回滚后用户收到不存在的通知     |
+| **I3** | 站内收件箱是唯一真相，其他渠道都是它的投影       | 各渠道状态发散，"已读"无法统一     |
 | **I4** | 每用户的变更序号单调，且取号序 = 提交序 = 可见序 | 偶发丢消息，无日志，排查成本以月计 |
-| **I5** | 每个管线阶段的决策必须留痕 | 回答不了 §2 的两个问题 |
+| **I5** | 每个管线阶段的决策必须留痕                       | 回答不了 §2 的两个问题             |
 
 I4 的完整论证在 §13.2——那是全文唯一一个"设计错了没法靠改代码补救"的地方。
 
@@ -204,6 +204,7 @@ class DocCommentCreated(BaseModel):
 **但这引出一个真实的张力**：渲染时（阶段⑧）要回查业务库拿完整内容。如果那时对象已被删除/权限已变，就渲染不出来了。
 
 解法：**渲染后的内容快照落在 message 上**（`title`/`summary`/`body`），而不是每次读取时重新渲染。也就是：
+
 - 事件载荷 = 引用（可长期保留，无 PII）
 - message 内容 = 一次性渲染的快照（有 PII，按留存策略清理）
 - 读接口 = 直接读快照，不回查业务库
@@ -258,31 +259,31 @@ audience:
   - author(doc, event.doc_id)                   as author
   - watchers(doc, event.doc_id)                 as watching
 exclude:
-  - event.actor_id                              # 不通知自己
-  - muted(doc, event.doc_id)                    # 对象级静音
+  - event.actor_id # 不通知自己
+  - muted(doc, event.doc_id) # 对象级静音
 
 # 三条正交轴（§3）
 intent: informational
 urgency:
-  direct: normal                                # 按 reason 分别设定
+  direct: normal # 按 reason 分别设定
   default: low
 
 # 疲劳控制
 collapse:
-  key: "doc:{{event.doc_id}}"
+  key: 'doc:{{event.doc_id}}'
   window: 5m
-  template: doc.comment.collapsed               # 合并后用另一个模板
+  template: doc.comment.collapsed # 合并后用另一个模板
 
 template: doc.comment.created
 
 # 渠道：系统建议值，最终结果要和用户偏好求交（§8）
 channels:
-  direct:  [inapp, push, email]
+  direct: [inapp, push, email]
   default: [inapp]
 
 # 运维开关
 enabled: true
-sample_rate: 1.0                                # 灰度：只对 x% 的收件人生效
+sample_rate: 1.0 # 灰度：只对 x% 的收件人生效
 ```
 
 ### 7.2 三个必须有的能力
@@ -366,13 +367,13 @@ RULES: list[NotificationRule] = [
 
 它**仍然是声明式的**——是数据，只是有类型的数据。换来五件事：
 
-| 收益 | 说明 |
-| --- | --- |
-| 静态检查 | mypy/pyright 抓拼错的 reason、漏掉的字段、类型不对的 window |
-| 可跳转、可重构 | 改 `Watchers` 签名，所有用处立刻报错 |
+| 收益                   | 说明                                                                    |
+| ---------------------- | ----------------------------------------------------------------------- |
+| 静态检查               | mypy/pyright 抓拼错的 reason、漏掉的字段、类型不对的 window             |
+| 可跳转、可重构         | 改 `Watchers` 签名，所有用处立刻报错                                    |
 | **不用发明表达式语言** | `when=` 是真 Python。省掉的是"设计 + 文档化 + 调试一门 DSL"这整块工作量 |
-| 启动即校验 | Pydantic 在 import 期炸，不是某条消息触发时才炸 |
-| 模拟/回放/版本化不变 | git 就是版本，`simulate` 照样能跑（§7.2） |
+| 启动即校验             | Pydantic 在 import 期炸，不是某条消息触发时才炸                         |
+| 模拟/回放/版本化不变   | git 就是版本，`simulate` 照样能跑（§7.2）                               |
 
 代价是**改规则要发版**。这恰好符合 §7.3 划的界——受众怎么算是工程语义。
 
@@ -380,11 +381,11 @@ RULES: list[NotificationRule] = [
 
 那份 YAML 把三种变更频率、三类作者、三种生效要求混在一个文件里：
 
-| 层 | 存哪 | 谁改 | 频率 | 生效要求 |
-| --- | --- | --- | --- | --- |
-| **规则**（受众、intent、collapse 逻辑） | 类型化 Python，git | 工程 | 低 | 发版 |
-| **模板文案** | 数据库（版本化 + 预览 + 灰度） | 运营/产品 | **高** | 分钟级 |
-| **开关、阈值、`sample_rate`、kill switch** | 数据库/配置中心 | 运维 | 中 | **秒级** |
+| 层                                         | 存哪                           | 谁改      | 频率   | 生效要求 |
+| ------------------------------------------ | ------------------------------ | --------- | ------ | -------- |
+| **规则**（受众、intent、collapse 逻辑）    | 类型化 Python，git             | 工程      | 低     | 发版     |
+| **模板文案**                               | 数据库（版本化 + 预览 + 灰度） | 运营/产品 | **高** | 分钟级   |
+| **开关、阈值、`sample_rate`、kill switch** | 数据库/配置中心                | 运维      | 中     | **秒级** |
 
 混在一起的具体后果：**改一个错别字要走发版流程，而 kill switch 又必须不发版就生效**——这两个需求在同一个文件里没法同时满足。§7.2 说 kill switch 必须是地基能力（"需要它的时候正在发疯，没时间发版"），那它就不能和规则同源。
 
@@ -463,15 +464,15 @@ def resolve_watchers(target_type: str, target_id: str) -> Iterator[UserId]:
 
 ```json
 {
-  "userId": "u1", "reason": "watching", "intent": "informational",
+  "userId": "u1",
+  "reason": "watching",
+  "intent": "informational",
   "proposed": ["inapp", "push", "email"],
   "decisions": [
-    {"layer":"system",  "action":"keep", "result":["inapp","push","email"]},
-    {"layer":"tenant",  "action":"drop", "channel":"push",
-     "detail":"tenant.push_enabled=false"},
-    {"layer":"user",    "action":"drop", "channel":"email",
-     "detail":"pref[informational][watching].email=false"},
-    {"layer":"mute",    "action":"keep"}
+    { "layer": "system", "action": "keep", "result": ["inapp", "push", "email"] },
+    { "layer": "tenant", "action": "drop", "channel": "push", "detail": "tenant.push_enabled=false" },
+    { "layer": "user", "action": "drop", "channel": "email", "detail": "pref[informational][watching].email=false" },
+    { "layer": "mute", "action": "keep" }
   ],
   "final": ["inapp"]
 }
@@ -509,14 +510,14 @@ alerting/team         ✓     ✓     ✓      ✓
 
 "模板"是两种东西粘在一起了，它们该待在不同地方：
 
-| | **变量契约** | **文案本体** |
-| --- | --- | --- |
-| 内容 | 需要哪些变量、什么类型 | title / body / subject 的实际文字 |
-| 谁改 | 工程 | 运营 / 产品 / 法务 |
-| 频率 | 跟事件契约一起变，低 | **最高** |
-| 生效 | 发版 | **分钟级** |
-| 要静态检查 | **要**（必须和事件 payload 对得上） | 不要 |
-| **该在哪** | **代码（Pydantic）** | **数据库** |
+|            | **变量契约**                        | **文案本体**                      |
+| ---------- | ----------------------------------- | --------------------------------- |
+| 内容       | 需要哪些变量、什么类型              | title / body / subject 的实际文字 |
+| 谁改       | 工程                                | 运营 / 产品 / 法务                |
+| 频率       | 跟事件契约一起变，低                | **最高**                          |
+| 生效       | 发版                                | **分钟级**                        |
+| 要静态检查 | **要**（必须和事件 payload 对得上） | 不要                              |
+| **该在哪** | **代码（Pydantic）**                | **数据库**                        |
 
 按 §7.5 划的界，**文案放在 git 里是违规的**——它要分钟级生效、作者不是工程师、要预览灰度回滚，这些 git 都给不了。
 
@@ -551,28 +552,28 @@ git:  templates/email/contract-expiring.mjml   骨架 · 布局 · 按钮 · 暗
 ```yaml
 key: doc.comment.created
 version: 5
-variables:                        # 变量 schema，渲染前校验
-  actorName:   {type: string, required: true}
-  docTitle:    {type: string, required: true}
-  excerpt:     {type: string, required: false, maxLength: 120}
-  docUrl:      {type: url,    required: true}
+variables: # 变量 schema，渲染前校验
+  actorName: { type: string, required: true }
+  docTitle: { type: string, required: true }
+  excerpt: { type: string, required: false, maxLength: 120 }
+  docUrl: { type: url, required: true }
 
 variants:
   inapp:
     zh-CN:
-      title:   "{{actorName}} 评论了《{{docTitle}}》"
-      summary: "{{excerpt}}"
+      title: '{{actorName}} 评论了《{{docTitle}}》'
+      summary: '{{excerpt}}'
     en-US:
-      title:   "{{actorName}} commented on {{docTitle}}"
-      summary: "{{excerpt}}"
+      title: '{{actorName}} commented on {{docTitle}}'
+      summary: '{{excerpt}}'
   push:
     zh-CN:
-      title:   "{{actorName}} 评论了《{{docTitle}}》"
-      body:    "{{excerpt}}"       # push 有长度限制，单独写而不是截断 inapp 的
+      title: '{{actorName}} 评论了《{{docTitle}}》'
+      body: '{{excerpt}}' # push 有长度限制，单独写而不是截断 inapp 的
   email:
     zh-CN:
-      subject: "[{{docTitle}}] {{actorName}} 的新评论"
-      html:    "@include: email/doc-comment.zh-CN.mjml"
+      subject: '[{{docTitle}}] {{actorName}} 的新评论'
+      html: '@include: email/doc-comment.zh-CN.mjml'
 ```
 
 ### 9.2 三条硬规则
@@ -622,6 +623,7 @@ CREATE INDEX idx_agg_flush ON aggregation_window (flush_at);
 ```
 
 两种窗口语义，规则里选：
+
 - **固定窗口**：第一条到达后 5 分钟冲刷。延迟可预测
 - **滑动窗口（debounce）**：每来一条重置 5 分钟，最长等 30 分钟。适合"等这一波改完再通知"
 
@@ -632,6 +634,7 @@ CREATE INDEX idx_agg_flush ON aggregation_window (flush_at);
 用户偏好里选了"摘要"的那些，不实时发，攒到每天/每周固定时间发一封。
 
 关键细节：**摘要的发送时间是收件人本地时间**。"每天早上 9 点"对北京和纽约的用户是两个不同的 UTC 时刻。这要求：
+
 - 设备/用户表记录 `timezone`
 - 调度器按时区分片跑（每个整点跑一次，处理"当地时间正好 9 点"的那批用户）
 
@@ -672,18 +675,19 @@ CREATE INDEX idx_agg_flush ON aggregation_window (flush_at);
 
 需要一个**延迟队列**（不是 cron），支持：
 
-| 用途 | 延迟量级 |
-| --- | --- |
-| collapse 窗口冲刷 | 秒~分钟 |
-| 免打扰结束后投递 | 小时 |
-| snooze | 小时~天 |
-| 定时公告 | 天~月 |
-| 升级阶梯的下一步（§12.3） | 分钟 |
-| 投递重试退避 | 秒~小时 |
+| 用途                      | 延迟量级 |
+| ------------------------- | -------- |
+| collapse 窗口冲刷         | 秒~分钟  |
+| 免打扰结束后投递          | 小时     |
+| snooze                    | 小时~天  |
+| 定时公告                  | 天~月    |
+| 升级阶梯的下一步（§12.3） | 分钟     |
+| 投递重试退避              | 秒~小时  |
 
 实现选择：`(fire_at, task)` 表 + 索引 + 抢占式领取。够用且可查询可取消。用 Redis ZSET 更快但可观测性差、重启要恢复。
 
 **免打扰的两种语义要分清**（规则里选）：
+
 - **抑制（suppress）**：免打扰期间不发，**过后也不补**。适合 informational
 - **延迟（defer）**：攒到免打扰结束一起发。适合 actionable
 - **穿透（bypass）**：`urgency=critical` 和 `intent=transactional` 无视免打扰
@@ -742,6 +746,7 @@ stop_when: [acknowledged, resolved]
 ```
 
 要点：
+
 - **停止条件是"已确认（acknowledged）"，不是"已读"**。已读可能是误触，确认是显式动作
 - 每一步是延迟队列里的一个任务，`stop_when` 满足时取消后续任务
 - **升级可以换人**（`on_call_backup`、`team_lead`），这需要值班表（on-call schedule）——一个独立子系统，但接口很窄：`resolve_oncall(team, at_time) → user_id`
@@ -758,6 +763,7 @@ token = sign({
 ```
 
 三条安全要求：
+
 1. **单次使用**（nonce 落库，用过即废）——邮件会被转发
 2. **有过期时间**
 3. **敏感动作不允许一键完成**，令牌只用于"跳转到已登录的确认页"，不直接执行
@@ -802,6 +808,7 @@ RETURNING next_seq - 1 AS seq;
 ```
 
 论证：
+
 1. 该语句对这一行取**行级排他锁**，锁持有到事务结束
 2. 同一用户的第二个事务取号必须**等第一个提交或回滚**
 3. 因此对同一用户：**取号序 = 提交序 = 可见序**
@@ -843,6 +850,7 @@ superseded_by msg_id  被另一条消息取代
 ```
 
 三种语义要分开：
+
 - **修订（revise）**：内容变了，`revision+1`，seq 推进。客户端替换
 - **撤回（retract）**：不该发，标记后客户端移除。**push 也要撤回**（§13.6）
 - **取代（supersede）**："服务已恢复"取代"服务异常"，两条合并显示为一条已解决
@@ -933,11 +941,11 @@ inbox_entry.category / priority / intent / reason / published_at
 
 ## 15. 扇出策略：三档
 
-| 受众规模 | 策略 | 机制 |
-| --- | --- | --- |
-| ≤ 1000 | **写扩散** | 逐个插 `inbox_entry`，分块 500，`ON CONFLICT DO NOTHING` |
-| 全员（`all`） | **读扩散** | 不插行，`message.bcast_seq` + 用户水位 + `broadcast_state` 惰性记录 |
-| 超大 + 高频（万人以上的活跃对象） | **混合时间线** | 写扩散给活跃用户，非活跃用户读扩散 |
+| 受众规模                          | 策略           | 机制                                                                |
+| --------------------------------- | -------------- | ------------------------------------------------------------------- |
+| ≤ 1000                            | **写扩散**     | 逐个插 `inbox_entry`，分块 500，`ON CONFLICT DO NOTHING`            |
+| 全员（`all`）                     | **读扩散**     | 不插行，`message.bcast_seq` + 用户水位 + `broadcast_state` 惰性记录 |
+| 超大 + 高频（万人以上的活跃对象） | **混合时间线** | 写扩散给活跃用户，非活跃用户读扩散                                  |
 
 **为什么读扩散只给 `all`**：读扩散最麻烦的是"查询时判断这条是否命中我"。`all` 时这个判断恒真，谓词消失，未读数一条便宜 SQL 就出来。一旦允许 `roles`/`depts` 读扩散，每次查列表都要带用户的角色/部门树做集合运算，而且"用户换部门后历史公告的可见性"会变成一个说不清的死结（部门调整是常规操作，不是假想）。
 
@@ -948,15 +956,18 @@ inbox_entry.category / priority / intent / reason / published_at
 三个必须想清楚的失控场景：
 
 **场景一：某个规则受众解析出 bug，一分钟 50 万条。**
+
 - 防线 1：每规则每分钟扇出上限，超过自动熔断并告警
 - 防线 2：kill switch（§7.2）
 - 防线 3：扇出队列和普通队列隔离，别把验证码堵死
 
 **场景二：某个用户是 1000 个对象的订阅者，每秒收到几十条。**
+
 - `inbox_cursor` 那一行成为热点（§13.2 的行锁）
 - 对策：**同一批次内合并**——一次扇出给同一用户的多条消息，一个事务里一次取号取 N 个（`next_seq += N`），而不是 N 次取号
 
 **场景三：供应商挂了，重试队列雪崩。**
+
 - 指数退避 + 抖动 + 每渠道并发上限
 - 熔断：失败率超阈值直接停止投递，消息留在队列（**不丢，因为收件箱已经有了**）
 
@@ -966,18 +977,18 @@ inbox_entry.category / priority / intent / reason / published_at
 
 汇总散落在各处的机制，方便 review 时逐条检查：
 
-| 环节 | 机制 |
-| --- | --- |
-| 事件重复摄入 | `uk_event_dedupe` + `ON CONFLICT DO NOTHING` |
+| 环节         | 机制                                                 |
+| ------------ | ---------------------------------------------------- |
+| 事件重复摄入 | `uk_event_dedupe` + `ON CONFLICT DO NOTHING`         |
 | 扇出重复执行 | `PK(user_id, message_id)` + `ON CONFLICT DO NOTHING` |
-| 扇出中断续跑 | `message.fanout_cursor`，按 user_id 升序推进 |
-| 扇出死锁 | **所有路径统一按 user_id 升序加锁** + 分块独立事务 |
-| 投递重复发送 | `uk_delivery(message_id, user_id, channel)` |
-| 外发早于提交 | outbox：业务事务只写两行，外发全在 worker 新事务 |
-| seq 顺序倒挂 | 每用户计数器行 + 行锁到提交（§13.2） |
-| 计数器漂移 | 与 seq 同事务维护 + 定时对账 + `unread_drift` 指标 |
-| 客户端丢消息 | `sync?since=` 增量对账 + `truncated` 全量兜底 |
-| 动作令牌重放 | nonce 单次使用 + 过期时间 |
+| 扇出中断续跑 | `message.fanout_cursor`，按 user_id 升序推进         |
+| 扇出死锁     | **所有路径统一按 user_id 升序加锁** + 分块独立事务   |
+| 投递重复发送 | `uk_delivery(message_id, user_id, channel)`          |
+| 外发早于提交 | outbox：业务事务只写两行，外发全在 worker 新事务     |
+| seq 顺序倒挂 | 每用户计数器行 + 行锁到提交（§13.2）                 |
+| 计数器漂移   | 与 seq 同事务维护 + 定时对账 + `unread_drift` 指标   |
+| 客户端丢消息 | `sync?since=` 增量对账 + `truncated` 全量兜底        |
+| 动作令牌重放 | nonce 单次使用 + 过期时间                            |
 
 ## 18. 可观测、可解释、可运维
 
@@ -1007,17 +1018,17 @@ trace_id: t_8f3a...  (= event_id)
 
 ### 18.2 关键指标
 
-| 指标 | 为什么它重要 |
-| --- | --- |
-| `outbox_lag_seconds` | worker 挂了的第一信号 |
-| **`unread_drift`** | 计数器对账差值。**最重要的健康信号**：非零稳定=正常，开始增长=刚上线的改动破坏了计数器 |
-| `sync_truncated_total` | 应接近 0。升高说明客户端在大面积落后 |
-| `cursor_lock_wait_ms` | §13.2 的行锁等待。持续上升才考虑逃生方案 |
-| `fanout_rate{rule}` | 突增 = 某规则受众解析出问题 |
-| **`unsubscribe_rate{rule,reason}`** | **唯一能告诉你哪条规则在伤害用户的数据** |
-| `open_rate{rule,channel}` | 低开启率 = 这条通知没价值，该删规则 |
-| `escalation_triggered` | 升级被触发的次数。高说明第一跳渠道不可靠 |
-| `render_failure{template}` | 模板变量缺失，一定要告警 |
+| 指标                                | 为什么它重要                                                                           |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `outbox_lag_seconds`                | worker 挂了的第一信号                                                                  |
+| **`unread_drift`**                  | 计数器对账差值。**最重要的健康信号**：非零稳定=正常，开始增长=刚上线的改动破坏了计数器 |
+| `sync_truncated_total`              | 应接近 0。升高说明客户端在大面积落后                                                   |
+| `cursor_lock_wait_ms`               | §13.2 的行锁等待。持续上升才考虑逃生方案                                               |
+| `fanout_rate{rule}`                 | 突增 = 某规则受众解析出问题                                                            |
+| **`unsubscribe_rate{rule,reason}`** | **唯一能告诉你哪条规则在伤害用户的数据**                                               |
+| `open_rate{rule,channel}`           | 低开启率 = 这条通知没价值，该删规则                                                    |
+| `escalation_triggered`              | 升级被触发的次数。高说明第一跳渠道不可靠                                               |
+| `render_failure{template}`          | 模板变量缺失，一定要告警                                                               |
 
 `unsubscribe_rate` 和 `open_rate` 这两个是**反哺规则设计**的。没有它们，通知规则只会单调增加，因为每个业务团队都觉得自己的通知很重要。
 
@@ -1045,6 +1056,7 @@ GET  /admin/why?user=&msg=          "他为什么没收到" 的直接答案
 **时区**：所有存储 UTC，所有展示和调度用户本地。摘要/免打扰/定时公告都依赖它。
 
 **合规**：
+
 - 邮件必须有退订链接和 `suppression_list`（退信/投诉自动加黑，再发就是违规）
 - 事件表无 PII（§6.2），message 内容按留存策略清理
 - 删除用户时：`inbox_entry` 删、`message` 保留（可能多人收）、`event` 保留（审计）、PII 字段脱敏
@@ -1052,14 +1064,14 @@ GET  /admin/why?user=&msg=          "他为什么没收到" 的直接答案
 
 ## 20. 留存与容量
 
-| 表 | 留存 | 理由 |
-| --- | --- | --- |
-| `event` | 永久（冷存归档） | 审计源，量级远小于 inbox |
-| `message` | 永久 | 同上 |
-| `inbox_entry` | 已读 180 天后删；**未读不删**；`security` 不删 | 删未读会让用户发现未读数少了 |
-| `delivery` + `receipt` | 90 天 | 量最大，价值随时间衰减最快 |
-| `trace` | transactional/alerting 90 天，其他 7 天 | 全量留会超过消息本身 |
-| `aggregation_window` | 冲刷即删 | 临时状态 |
+| 表                     | 留存                                           | 理由                         |
+| ---------------------- | ---------------------------------------------- | ---------------------------- |
+| `event`                | 永久（冷存归档）                               | 审计源，量级远小于 inbox     |
+| `message`              | 永久                                           | 同上                         |
+| `inbox_entry`          | 已读 180 天后删；**未读不删**；`security` 不删 | 删未读会让用户发现未读数少了 |
+| `delivery` + `receipt` | 90 天                                          | 量最大，价值随时间衰减最快   |
+| `trace`                | transactional/alerting 90 天，其他 7 天        | 全量留会超过消息本身         |
+| `aggregation_window`   | 冲刷即删                                       | 临时状态                     |
 
 `inbox_entry` 是唯一无限膨胀的表。分区用 **`HASH(user_id)`** 而不是 `RANGE(time)`——所有热查询都带 `user_id`，按时间分区会让每次 sync 扫所有分区。代价是归档要跑分块 DELETE 而不是 `DETACH PARTITION`。
 
@@ -1167,13 +1179,13 @@ GET /admin/notification-catalog
 
 这条判据从头到尾一致，可以直接拿去判断任何一块配置：
 
-| | **代码（Python）** | **数据库** | **git 文件** |
-| --- | --- | --- | --- |
-| 谁改 | 工程 | 运营 / 运维 | 工程 |
-| 生效 | 发版 | 秒~分钟 | 发版 |
-| 要静态检查 | ✅ | ✗（运行时校验） | 视情况 |
-| 要预览/灰度/回滚 | git 够了 | **需要运行时能力** | git 够了 |
-| 例子 | 事件契约、规则、resolver、变量 schema | **文案**、开关、阈值、kill switch、`sample_rate` | 邮件 MJML 骨架、seed 数据、i18n 兜底 |
+|                  | **代码（Python）**                    | **数据库**                                       | **git 文件**                         |
+| ---------------- | ------------------------------------- | ------------------------------------------------ | ------------------------------------ |
+| 谁改             | 工程                                  | 运营 / 运维                                      | 工程                                 |
+| 生效             | 发版                                  | 秒~分钟                                          | 发版                                 |
+| 要静态检查       | ✅                                    | ✗（运行时校验）                                  | 视情况                               |
+| 要预览/灰度/回滚 | git 够了                              | **需要运行时能力**                               | git 够了                             |
+| 例子             | 事件契约、规则、resolver、变量 schema | **文案**、开关、阈值、kill switch、`sample_rate` | 邮件 MJML 骨架、seed 数据、i18n 兜底 |
 
 ### 22.3 什么适合放 YAML / 文件——按接受程度看
 
@@ -1181,13 +1193,13 @@ GET /admin/notification-catalog
 
 > **YAML 承载"纯数据、不引用代码符号、不表达条件"的东西，大家都觉得正常。一旦要引用代码符号或表达逻辑，就开始被质疑。**
 
-| 放 YAML 大家觉得正常 | 放 YAML 会被质疑 |
-| --- | --- |
-| 多语言文案 | `when:` 条件表达式 |
-| 大块表格 / 矩阵数据 | 引用 resolver 名（`dept_managers(...)`） |
-| seed / fixtures | 引用类型名（`event: contract.expiring@1`） |
-| 邮件模板骨架（MJML） | 需要和 payload 对齐的变量 schema |
-| CI / 编排 / 部署 | 需要 mypy 检查的契约 |
+| 放 YAML 大家觉得正常 | 放 YAML 会被质疑                           |
+| -------------------- | ------------------------------------------ |
+| 多语言文案           | `when:` 条件表达式                         |
+| 大块表格 / 矩阵数据  | 引用 resolver 名（`dept_managers(...)`）   |
+| seed / fixtures      | 引用类型名（`event: contract.expiring@1`） |
+| 邮件模板骨架（MJML） | 需要和 payload 对齐的变量 schema           |
+| CI / 编排 / 部署     | 需要 mypy 检查的契约                       |
 
 §7.1 那份 YAML 里右边那列占了大半——问题不是"用了 YAML"，是**用 YAML 干了它不擅长的事**。
 
@@ -1196,13 +1208,13 @@ GET /admin/notification-catalog
 ```yaml
 defaults:
   transactional:
-    "*":        {inapp: locked, push: locked, email: locked, sms: off}
+    '*': { inapp: locked, push: locked, email: locked, sms: off }
   actionable:
-    assigned:   {inapp: on, push: on,  email: on,     sms: off}
-    team:       {inapp: on, push: on,  email: off,    sms: off}
+    assigned: { inapp: on, push: on, email: on, sms: off }
+    team: { inapp: on, push: on, email: off, sms: off }
   informational:
-    direct:     {inapp: on, push: on,  email: off,    sms: off}
-    watching:   {inapp: on, push: off, email: digest, sms: off}
+    direct: { inapp: on, push: on, email: off, sms: off }
+    watching: { inapp: on, push: off, email: digest, sms: off }
 ```
 
 YAML + 加载时 Pydantic 校验枚举合法性，可读性和安全性都拿到。
@@ -1229,16 +1241,16 @@ YAML + 加载时 Pydantic 校验枚举合法性，可读性和安全性都拿到
 
 ### 22.5 落到本项目的具体选择
 
-| 东西 | 放哪 | 格式 | 理由 |
-| --- | --- | --- | --- |
-| 事件契约、规则、resolver | 代码 | Pydantic | 要类型检查、要引用符号 |
-| 变量契约 | 代码 | Pydantic | 要和 event payload 对齐 |
-| **文案基线** | git 文件 | **JSON，按 locale 分目录** | **对齐现有 `admin-i18n` 约定**，翻译工具吃这个 |
-| 文案覆盖层 | 数据库 | — | 运营改文案不等发版（P1） |
-| 邮件骨架 | git 文件 | MJML | 是代码，要编译要测客户端兼容 |
-| 偏好默认矩阵 | git 文件 | **YAML** | 大表格，YAML 可读性明显更好 |
-| 开关 / 阈值 / `sample_rate` / kill switch | 数据库 | — | **要秒级生效**，不能发版 |
-| 初始数据 | git 文件 | YAML | seed |
+| 东西                                      | 放哪     | 格式                       | 理由                                           |
+| ----------------------------------------- | -------- | -------------------------- | ---------------------------------------------- |
+| 事件契约、规则、resolver                  | 代码     | Pydantic                   | 要类型检查、要引用符号                         |
+| 变量契约                                  | 代码     | Pydantic                   | 要和 event payload 对齐                        |
+| **文案基线**                              | git 文件 | **JSON，按 locale 分目录** | **对齐现有 `admin-i18n` 约定**，翻译工具吃这个 |
+| 文案覆盖层                                | 数据库   | —                          | 运营改文案不等发版（P1）                       |
+| 邮件骨架                                  | git 文件 | MJML                       | 是代码，要编译要测客户端兼容                   |
+| 偏好默认矩阵                              | git 文件 | **YAML**                   | 大表格，YAML 可读性明显更好                    |
+| 开关 / 阈值 / `sample_rate` / kill switch | 数据库   | —                          | **要秒级生效**，不能发版                       |
+| 初始数据                                  | git 文件 | YAML                       | seed                                           |
 
 两个"随项目约定"而非个人偏好的选择：
 
@@ -1263,18 +1275,18 @@ await notify.emit(ContractExpiring(...), dedupe_key=f"contract.expiring:{cid}:{d
 
 好设计要有边界。这些我明确不做，理由不是"没时间"：
 
-| 不做 | 理由 |
-| --- | --- |
-| **图灵完备的规则语言** | 会变成没有调试器、没有类型检查、跑在关键路径上的编程语言。这不是扩展性，是把复杂度藏到更糟的地方（§7.3） |
-| **可视化规则编排器** | 拖拉拽出来的规则一样难懂，还多一个不敢改的 UI。声明式 YAML + 模拟 + diff 已经够了 |
-| **规则里调外部服务** | 通知管线的关键路径上不能有不可控的网络调用。要富化数据就在事件里带上 |
-| **通用工作流引擎** | 通知里的 action 只做"跳转"和"调一个幂等接口"。审批流是别的系统的事 |
-| **IM / 评论 / 回复** | 通知是单向广播。做成双向就是 IM，那是完全不同的系统（在线状态、消息顺序、群成员、历史漫游） |
-| **富文本编辑器 + 任意 HTML** | 受限 Markdown 白名单渲染。任意 HTML = XSS 面 + 邮件客户端兼容地狱 |
-| **通知的通知**（"你有 5 条未读"的提醒） | 用户已经忽略了 5 条，第 6 条不会改变什么。该做的是降低前 5 条的数量 |
-| **强制弹窗 / 不可关闭的模态** | 用户会训练出无脑点关闭的肌肉记忆，反而降低**所有**通知的效力 |
-| **客户端全量离线缓存** | 只缓存最近 N 条用于秒开，`truncated` 时直接丢。做全量同步的复杂度换不来价值 |
-| **ML 智能排序 / 智能免打扰** | 在没有 `unsubscribe_rate` 和 `open_rate` 数据之前谈这个是本末倒置。先把反馈闭环（§10.5）做出来 |
+| 不做                                    | 理由                                                                                                     |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **图灵完备的规则语言**                  | 会变成没有调试器、没有类型检查、跑在关键路径上的编程语言。这不是扩展性，是把复杂度藏到更糟的地方（§7.3） |
+| **可视化规则编排器**                    | 拖拉拽出来的规则一样难懂，还多一个不敢改的 UI。声明式 YAML + 模拟 + diff 已经够了                        |
+| **规则里调外部服务**                    | 通知管线的关键路径上不能有不可控的网络调用。要富化数据就在事件里带上                                     |
+| **通用工作流引擎**                      | 通知里的 action 只做"跳转"和"调一个幂等接口"。审批流是别的系统的事                                       |
+| **IM / 评论 / 回复**                    | 通知是单向广播。做成双向就是 IM，那是完全不同的系统（在线状态、消息顺序、群成员、历史漫游）              |
+| **富文本编辑器 + 任意 HTML**            | 受限 Markdown 白名单渲染。任意 HTML = XSS 面 + 邮件客户端兼容地狱                                        |
+| **通知的通知**（"你有 5 条未读"的提醒） | 用户已经忽略了 5 条，第 6 条不会改变什么。该做的是降低前 5 条的数量                                      |
+| **强制弹窗 / 不可关闭的模态**           | 用户会训练出无脑点关闭的肌肉记忆，反而降低**所有**通知的效力                                             |
+| **客户端全量离线缓存**                  | 只缓存最近 N 条用于秒开，`truncated` 时直接丢。做全量同步的复杂度换不来价值                              |
+| **ML 智能排序 / 智能免打扰**            | 在没有 `unsubscribe_rate` 和 `open_rate` 数据之前谈这个是本末倒置。先把反馈闭环（§10.5）做出来           |
 
 ## 24. 落地路径：什么必须一次做对
 
@@ -1282,16 +1294,16 @@ await notify.emit(ContractExpiring(...), dedupe_key=f"contract.expiring:{cid}:{d
 
 ### 地基（必须一开始就对，后改代价极大）
 
-| 项 | 为什么不能后加 |
-| --- | --- |
+| 项                                       | 为什么不能后加                                                                                     |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | **`intent` / `reason` / `urgency` 三轴** | 它们是所有下游子系统的输入参数。后加等于所有历史数据没有这三个值，且每个子系统都已经写了 if 来绕过 |
-| **`seq` 语义（§13.2）** | 改它 = 所有客户端的 lastSeq 失效 + 对账机制重写。而且错的症状是偶发丢消息 |
-| **幂等的唯一约束（§17）** | 后加要先清理已有重复数据，而重复数据可能已经被用户看到了 |
-| **outbox（I2）** | 后加要把所有外发点从业务事务里拆出来，那是全量重构 |
-| **三张核心表的分离** | event / message / inbox 合并了再拆，是数据迁移 + 全部读写路径重写 |
-| **事件 schema 注册表** | 后加时已经有 40 个来源不明的 payload 键，没人敢动 |
-| **kill switch** | 需要它的时候（正在发疯）没时间发版 |
-| **trace 的埋点位置** | 每阶段留痕要在写这个阶段时就做，事后补等于重读所有代码 |
+| **`seq` 语义（§13.2）**                  | 改它 = 所有客户端的 lastSeq 失效 + 对账机制重写。而且错的症状是偶发丢消息                          |
+| **幂等的唯一约束（§17）**                | 后加要先清理已有重复数据，而重复数据可能已经被用户看到了                                           |
+| **outbox（I2）**                         | 后加要把所有外发点从业务事务里拆出来，那是全量重构                                                 |
+| **三张核心表的分离**                     | event / message / inbox 合并了再拆，是数据迁移 + 全部读写路径重写                                  |
+| **事件 schema 注册表**                   | 后加时已经有 40 个来源不明的 payload 键，没人敢动                                                  |
+| **kill switch**                          | 需要它的时候（正在发疯）没时间发版                                                                 |
+| **trace 的埋点位置**                     | 每阶段留痕要在写这个阶段时就做，事后补等于重读所有代码                                             |
 
 ### 装修（可以后加，不影响地基）
 
@@ -1320,20 +1332,20 @@ await notify.emit(ContractExpiring(...), dedupe_key=f"contract.expiring:{cid}:{d
 
 ## 25. 决策清单
 
-| # | 问题 | 建议 |
-| --- | --- | --- |
-| P1 | 三轴（intent/reason/urgency）是否接受？ | **接受**。这是全文最核心的设计，也是唯一没法后加的抽象 |
-| P2 | 规则配置化到什么程度？ | 声明式 YAML + 受限表达式；解析器是代码（§7.3） |
-| P3 | `seq` 用每用户计数器还是全局+水位线？ | 每用户计数器（§13.2），先埋锁等待指标 |
-| P4 | 读扩散只给 `all`？ | 是。允许 roles/depts 读扩散会引入换部门后可见性的死结 |
-| P5 | 站内是否绝对第一公民？ | 是（I3）。这换来"外部渠道全挂也不丢消息" |
-| P6 | 偏好维度是 `intent × reason × channel` 三维？ | 是。但 UI 默认只展开 intent 一维 |
-| P7 | 摘要（digest）是不是 P0？ | **不是 P0，但偏好里的"摘要"档位要先存在**——否则用户只能在吵和聋之间选，会直接关掉 |
-| P8 | 升级阶梯（escalation）要不要？ | 有 oncall/告警场景才要。没有就别做，它拖着一个值班表子系统 |
-| P9 | trace 采样率？ | transactional/alerting 全量，informational 1% |
-| P10 | 事件载荷放 PII 吗？ | 不放（§6.2）。代价是内容快照落在 message 上，接受 |
-| P11 | 延迟队列用表还是 Redis ZSET？ | **表**。可查询、可取消、重启不丢。慢是可以接受的 |
-| P12 | ~~实时通道保留几条？~~ | **问题问错了，已修正 → 见 `infra.md` §1。** 注册表按 user_id 聚合、不区分传输，"两条通道"实际是"一个用户 N 条连接"。WS 和 SSE 都是一等公民，不做降级；信号幂等由 seq 保证，与连接数无关；同浏览器多标签页在前端用 BroadcastChannel 选主 |
+| #   | 问题                                          | 建议                                                                                                                                                                                                                                    |
+| --- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1  | 三轴（intent/reason/urgency）是否接受？       | **接受**。这是全文最核心的设计，也是唯一没法后加的抽象                                                                                                                                                                                  |
+| P2  | 规则配置化到什么程度？                        | 声明式 YAML + 受限表达式；解析器是代码（§7.3）                                                                                                                                                                                          |
+| P3  | `seq` 用每用户计数器还是全局+水位线？         | 每用户计数器（§13.2），先埋锁等待指标                                                                                                                                                                                                   |
+| P4  | 读扩散只给 `all`？                            | 是。允许 roles/depts 读扩散会引入换部门后可见性的死结                                                                                                                                                                                   |
+| P5  | 站内是否绝对第一公民？                        | 是（I3）。这换来"外部渠道全挂也不丢消息"                                                                                                                                                                                                |
+| P6  | 偏好维度是 `intent × reason × channel` 三维？ | 是。但 UI 默认只展开 intent 一维                                                                                                                                                                                                        |
+| P7  | 摘要（digest）是不是 P0？                     | **不是 P0，但偏好里的"摘要"档位要先存在**——否则用户只能在吵和聋之间选，会直接关掉                                                                                                                                                       |
+| P8  | 升级阶梯（escalation）要不要？                | 有 oncall/告警场景才要。没有就别做，它拖着一个值班表子系统                                                                                                                                                                              |
+| P9  | trace 采样率？                                | transactional/alerting 全量，informational 1%                                                                                                                                                                                           |
+| P10 | 事件载荷放 PII 吗？                           | 不放（§6.2）。代价是内容快照落在 message 上，接受                                                                                                                                                                                       |
+| P11 | 延迟队列用表还是 Redis ZSET？                 | **表**。可查询、可取消、重启不丢。慢是可以接受的                                                                                                                                                                                        |
+| P12 | ~~实时通道保留几条？~~                        | **问题问错了，已修正 → 见 `infra.md` §1。** 注册表按 user_id 聚合、不区分传输，"两条通道"实际是"一个用户 N 条连接"。WS 和 SSE 都是一等公民，不做降级；信号幂等由 seq 保证，与连接数无关；同浏览器多标签页在前端用 BroadcastChannel 选主 |
 
 ---
 

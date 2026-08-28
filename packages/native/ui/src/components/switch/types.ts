@@ -6,8 +6,8 @@ import type { SlotClassNames } from '../../types';
 /**
  * Switch 组件可覆盖的 slot 名称。
  *
- * `root` 是轨道本体（同时承载未选中底色），`checkedOverlay` 是叠在上面的选中色层，
- * `indicator` 作用于 loading 指示器的 `colorClassName`，只接受 `accent-*` 颜色类。
+ * `root` 是轨道本体（同时承载未选中底色），`checkedOverlay` 是叠在上面的选中色层， `indicator` 作用于 loading 指示器的 `colorClassName`，只接受 `accent-*`
+ * 颜色类。
  */
 export type SwitchSlots = 'checkedOverlay' | 'indicator' | 'root' | 'thumb';
 

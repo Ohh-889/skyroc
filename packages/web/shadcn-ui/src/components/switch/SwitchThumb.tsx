@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Thumb } from '@radix-ui/react-switch';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { switchVariants } from './switch-varianst';
 import type { SwitchThumbProps } from './types';
 

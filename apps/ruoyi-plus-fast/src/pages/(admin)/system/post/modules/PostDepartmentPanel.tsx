@@ -37,7 +37,10 @@ const PostDepartmentPanel = (props: PostDepartmentPanelProps) => {
       return (
         <Alert
           action={
-            <Button size="small" onClick={refresh}>
+            <Button
+              size="small"
+              onClick={refresh}
+            >
               重试
             </Button>
           }
@@ -49,7 +52,10 @@ const PostDepartmentPanel = (props: PostDepartmentPanelProps) => {
     }
     if (treeData.length === 0) {
       return (
-        <Empty description={keyword ? '没有找到符合条件的部门' : '暂无部门'} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <Empty
+          description={keyword ? '没有找到符合条件的部门' : '暂无部门'}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       );
     }
 
@@ -77,7 +83,10 @@ const PostDepartmentPanel = (props: PostDepartmentPanelProps) => {
         />
       }
       title={
-        <Flex align="center" gap={8}>
+        <Flex
+          align="center"
+          gap={8}
+        >
           <SvgIcon icon="ph:buildings" />
           组织部门
         </Flex>
@@ -88,7 +97,12 @@ const PostDepartmentPanel = (props: PostDepartmentPanelProps) => {
         allowClear
         className="mb-10px"
         placeholder="搜索部门"
-        prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+        prefix={
+          <SvgIcon
+            className="text-tertiary"
+            icon="ph:magnifying-glass"
+          />
+        }
         value={keyword}
         onChange={event => setKeyword(event.target.value)}
       />
@@ -123,11 +137,21 @@ function createDepartmentTreeData(nodes: PostDeptTreeNode[], keyword: string): T
         children,
         key: String(node.id),
         title: (
-          <Flex align="center" gap={6}>
-            <SvgIcon className="shrink-0 text-tertiary" icon="ph:buildings" />
+          <Flex
+            align="center"
+            gap={6}
+          >
+            <SvgIcon
+              className="shrink-0 text-tertiary"
+              icon="ph:buildings"
+            />
             <span className="min-w-0 flex-1 truncate">{node.label}</span>
             {node.disabled ? (
-              <Tag variant="filled" className="m-0 text-11px" color="warning">
+              <Tag
+                variant="filled"
+                className="m-0 text-11px"
+                color="warning"
+              >
                 停用
               </Tag>
             ) : null}

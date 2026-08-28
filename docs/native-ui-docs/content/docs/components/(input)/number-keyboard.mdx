@@ -75,12 +75,12 @@ import { NumberKeyboard } from '@skyroc/native-ui';
 
 ## 事件回调
 
-| 回调       | 时机                                             |
-| ---------- | ------------------------------------------------ |
+| 回调       | 时机                                              |
+| ---------- | ------------------------------------------------- |
 | `onInput`  | 按下数字键或额外键（受 `maxLength` 限制）         |
-| `onDelete` | 按下删除键                                       |
-| `onChange` | 值变化，参数是算好的完整新值                     |
-| `onClose`  | 点击关闭 / 完成按钮                              |
+| `onDelete` | 按下删除键                                        |
+| `onChange` | 值变化，参数是算好的完整新值                      |
+| `onClose`  | 点击关闭 / 完成按钮                               |
 | `onBlur`   | 点击键盘外部，或点击关闭按钮（在 `onClose` 之后） |
 
 <Demo src="@playground/number-keyboard/NumberKeyboardEvents" />
@@ -111,22 +111,22 @@ import { NumberKeyboard } from '@skyroc/native-ui';
 
 `className` 追加到面板根节点上，`classNames` 按 slot 细粒度覆盖，`style` 提供原生样式兜底：
 
-| slot              | 作用位置                                        |
-| ----------------- | ----------------------------------------------- |
-| `root`            | 面板根节点（底部圆角、背景、内边距）            |
-| `header`          | 标题栏                                          |
-| `headerSide`      | 标题栏左右等宽区域                              |
-| `title`           | 标题文字                                        |
-| `closeBtn`        | 标题栏关闭按钮文字                              |
-| `body`            | 按键区与侧边栏的横向容器                        |
-| `keys`            | 按键网格容器                                    |
-| `keyWrapper`      | 单个按键的外包层（只负责占格与沟槽）            |
-| `key`             | 单个按键本体（圆角、背景、按下态）              |
-| `keyText`         | 数字键文字                                      |
-| `sidebar`         | `custom` 主题的右侧功能区                        |
-| `deleteKey`       | 侧边栏删除键                                    |
-| `confirmKey`      | 侧边栏完成键                                    |
-| `functionKeyText` | 删除 / 完成等功能键的文字                        |
+| slot              | 作用位置                             |
+| ----------------- | ------------------------------------ |
+| `root`            | 面板根节点（底部圆角、背景、内边距） |
+| `header`          | 标题栏                               |
+| `headerSide`      | 标题栏左右等宽区域                   |
+| `title`           | 标题文字                             |
+| `closeBtn`        | 标题栏关闭按钮文字                   |
+| `body`            | 按键区与侧边栏的横向容器             |
+| `keys`            | 按键网格容器                         |
+| `keyWrapper`      | 单个按键的外包层（只负责占格与沟槽） |
+| `key`             | 单个按键本体（圆角、背景、按下态）   |
+| `keyText`         | 数字键文字                           |
+| `sidebar`         | `custom` 主题的右侧功能区            |
+| `deleteKey`       | 侧边栏删除键                         |
+| `confirmKey`      | 侧边栏完成键                         |
+| `functionKeyText` | 删除 / 完成等功能键的文字            |
 
 <Demo src="@playground/number-keyboard/NumberKeyboardStyles" />
 

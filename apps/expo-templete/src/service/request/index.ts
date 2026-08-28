@@ -9,8 +9,8 @@ const RETRY_DELAY = 1_000;
 /**
  * 全局请求实例。
  *
- * 用法和 web 端完全一致：`request<T>({ url, method, data })` 返回的已经是拆过信封的业务数据，
- * 失败会 reject（并已弹过提示），所以 TanStack Query 能直接拿它当 queryFn。
+ * 用法和 web 端完全一致：`request<T>({ url, method, data })` 返回的已经是拆过信封的业务数据， 失败会 reject（并已弹过提示），所以 TanStack Query 能直接拿它当
+ * queryFn。
  *
  * 接口定义不写在这里，按域放在 `src/service/api/<域>/`。
  */

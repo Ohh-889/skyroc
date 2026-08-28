@@ -39,15 +39,13 @@ import type { CSSProperties } from 'react';
 /**
  * `@expo/vector-icons` 的 web 替身。
  *
- * 真包在 Next + Turbopack 下跑不起来：它经 expo-font 依赖 expo-modules-core 的原生桥
- * （react-native-web 没有 TurboModuleRegistry），而 expo-font 的 web 实现又 import 了
- * node:async_hooks —— 那是给 Expo Router 的 SSR 分包用的，Metro 会拆 server/client，Next 不会，
- * 于是 node 内建模块被塞进浏览器 chunk，Turbopack 直接 panic。
+ * 真包在 Next + Turbopack 下跑不起来：它经 expo-font 依赖 expo-modules-core 的原生桥 （react-native-web 没有 TurboModuleRegistry），而
+ * expo-font 的 web 实现又 import 了 node:async_hooks —— 那是给 Expo Router 的 SSR 分包用的，Metro 会拆 server/client，Next 不会， 于是 node
+ * 内建模块被塞进浏览器 chunk，Turbopack 直接 panic。
  *
- * 文档站只需要图标的视觉占位，所以统一用 lucide-react 渲染等价字形。
- * next.config.mjs 里把 AntDesign / Feather / FontAwesome / Ionicons / MaterialIcons / Octicons
- * 六个入口都 alias 到本文件。少 alias 一个都会把真包拖回来：它的 createIconSet.js 在 node_modules
- * 里直接发未编译的 JSX，next build 走到 chunk 拼装时会以 "Expected ';', got 'ident'" panic。
+ * 文档站只需要图标的视觉占位，所以统一用 lucide-react 渲染等价字形。 next.config.mjs 里把 AntDesign / Feather / FontAwesome / Ionicons /
+ * MaterialIcons / Octicons 六个入口都 alias 到本文件。少 alias 一个都会把真包拖回来：它的 createIconSet.js 在 node_modules 里直接发未编译的 JSX，next
+ * build 走到 chunk 拼装时会以 "Expected ';', got 'ident'" panic。
  *
  * 注意：这里只覆盖 @skyroc/native-ui 当前用到的图标名，新增图标要同步补 ICON_MAP。
  */
@@ -107,7 +105,7 @@ interface ExpoVectorIconProps {
   /** 字形边长，单位 px */
   size?: number;
 
-  /** react-native-web 透传下来的行内样式 */
+  /** React-native-web 透传下来的行内样式 */
   style?: CSSProperties;
 }
 

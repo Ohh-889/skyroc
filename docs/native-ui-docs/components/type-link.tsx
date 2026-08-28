@@ -29,11 +29,9 @@ function resolveSamePageAnchorId(registryHref?: string) {
 /**
  * 类型链接。
  *
- * 优先级：当前页存在同名锚点 → 页内平滑滚动；否则 → 注册表的跨页地址；
- * 两者都没有 → 退化成纯文本，不给一个点了会 404 或没反应的链接。
+ * 优先级：当前页存在同名锚点 → 页内平滑滚动；否则 → 注册表的跨页地址； 两者都没有 → 退化成纯文本，不给一个点了会 404 或没反应的链接。
  *
- * 「当前页有没有这个锚点」只能挂载后查 DOM，所以 SSR 先按页内锚点渲染
- * （绝大多数类型都定义在本页），挂载后发现锚点不存在再降级。
+ * 「当前页有没有这个锚点」只能挂载后查 DOM，所以 SSR 先按页内锚点渲染 （绝大多数类型都定义在本页），挂载后发现锚点不存在再降级。
  */
 export const TypeLink = (props: TypeLinkProps) => {
   const { anchorId, name, registryHref } = props;

@@ -4,8 +4,7 @@ export type WechatAuthScope = 'snsapi_userinfo' | 'snsapi_base' | (string & {});
 /**
  * 响应种类。
  *
- * 微信的原生回调只有一个口子，且响应里带不回请求 id，只能按响应子类型区分，
- * 所以每接一个新功能就在这里加一个成员（支付 → 'pay'）。
+ * 微信的原生回调只有一个口子，且响应里带不回请求 id，只能按响应子类型区分， 所以每接一个新功能就在这里加一个成员（支付 → 'pay'）。
  */
 export type WechatRespKind = 'auth' | 'share';
 
@@ -33,8 +32,7 @@ export type WechatResponsePayload = WechatAuthResponse | WechatShareResponse;
 /**
  * 失败原因。
  *
- * 前六个来自微信自己的 `WXErrCode`（见 SDK 头文件 `WXApiObject.h:17`），
- * 其余是本模块在请求发出之前就能判定的情况。
+ * 前六个来自微信自己的 `WXErrCode`（见 SDK 头文件 `WXApiObject.h:17`）， 其余是本模块在请求发出之前就能判定的情况。
  */
 export type WechatResultCode =
   /** 用户拒绝授权（微信 errCode -4） */
@@ -47,7 +45,7 @@ export type WechatResultCode =
   | 'ERR_WECHAT_INVALID_OPTIONS'
   /** 远程媒体下载失败 */
   | 'ERR_WECHAT_MEDIA_DOWNLOAD_FAILED'
-  /** data: URI 解析失败 */
+  /** Data: URI 解析失败 */
   | 'ERR_WECHAT_MEDIA_INVALID'
   /** 本地媒体文件读取失败 */
   | 'ERR_WECHAT_MEDIA_READ_FAILED'
@@ -56,12 +54,11 @@ export type WechatResultCode =
   /**
    * 从微信返回后，在宽限期内没等到任何回调。
    *
-   * 多半是用户按 Home / 划掉微信放弃了操作，UI 上和取消一样静默处理即可。
-   * 但如果线上大量出现，要去查 Universal Link 配置——回调丢失也会走到这里。
-   * 宽限期用 `configureWechat({ resumeGraceMs })` 调整。
+   * 多半是用户按 Home / 划掉微信放弃了操作，UI 上和取消一样静默处理即可。 但如果线上大量出现，要去查 Universal Link 配置——回调丢失也会走到这里。 宽限期用 `configureWechat({
+   * resumeGraceMs })` 调整。
    */
   | 'ERR_WECHAT_NO_RESPONSE'
-  /** app.config.ts 里的 wechat 插件没配 AppID / UniversalLink */
+  /** App.config.ts 里的 wechat 插件没配 AppID / UniversalLink */
   | 'ERR_WECHAT_NOT_CONFIGURED'
   /** 没装微信客户端 */
   | 'ERR_WECHAT_NOT_INSTALLED'
@@ -85,20 +82,18 @@ export type WechatResultCode =
 /**
  * 一次微信交互的结果。**所有方法都 resolve 成这个形状，永远不会 reject**。
  *
- * 「用户点了取消」是正常的流程分支而不是异常，逼调用方 try/catch 再比字符串是错的；
- * 而且 Expo 的 `Promise.reject` 会把 message 吞掉（JS 侧只剩 `undefined reason`）。
+ * 「用户点了取消」是正常的流程分支而不是异常，逼调用方 try/catch 再比字符串是错的； 而且 Expo 的 `Promise.reject` 会把 message 吞掉（JS 侧只剩 `undefined reason`）。
  *
- * 这是个**闭合的判别联合**：两个分支字段完全一致，缺的那些是 `null` 而不是不存在。
- * 所以既能直接解构 / `JSON.stringify` 上报，
- * 又能靠 `if (result.ok)` 收窄——收窄之后 `payload` 不再是可空的，不用写 `!`：
+ * 这是个**闭合的判别联合**：两个分支字段完全一致，缺的那些是 `null` 而不是不存在。 所以既能直接解构 / `JSON.stringify` 上报， 又能靠 `if (result.ok)` 收窄——收窄之后
+ * `payload` 不再是可空的，不用写 `!`：
  *
  * ```ts
  * const result = await sendWechatAuth();
  * if (!result.ok) {
- *   console.warn(result.code, result.message);  // 这里 code / message 必然有值
+ *   console.warn(result.code, result.message); // 这里 code / message 必然有值
  *   return;
  * }
- * await exchangeToken(result.payload.code);     // 这里 payload 必然存在
+ * await exchangeToken(result.payload.code); // 这里 payload 必然存在
  * ```
  */
 export type WechatResult<T extends WechatResponsePayload = WechatResponsePayload> =
@@ -116,8 +111,7 @@ export type WechatModuleEvents = {
   /**
    * 请求已送达微信、App 即将切走。**只表示唤起成功，不是分享/登录的结果**。
    *
-   * 到这一刻为止的耗时是「本地准备」——下载媒体、压缩缩略图；
-   * 之后的耗时才是「用户在微信里操作」。上层可以据此切换 loading 文案。
+   * 到这一刻为止的耗时是「本地准备」——下载媒体、压缩缩略图； 之后的耗时才是「用户在微信里操作」。上层可以据此切换 loading 文案。
    */
   onRequestSent: (event: WechatRequestSentEvent) => void;
   /**
@@ -130,10 +124,7 @@ export type WechatModuleEvents = {
 
 // ------------------------------------------------- Universal Link 自检
 
-/**
- * 自检步骤，顺序即执行顺序。
- * `launchWechat` 和 `backToCurrentApp` 两步会真的把微信拉起来再跳回来。
- */
+/** 自检步骤，顺序即执行顺序。 `launchWechat` 和 `backToCurrentApp` 两步会真的把微信拉起来再跳回来。 */
 export type WechatUniversalLinkStep =
   /** 由微信返回当前 App 检测 */
   | 'backToCurrentApp'
@@ -176,10 +167,8 @@ export type WechatShareScene = 'favorite' | 'session' | 'timeline';
 export type WechatMiniProgramType = 'preview' | 'release' | 'test';
 
 /**
- * 媒体来源，支持四种写法：
- * - `https://…` / `http://…` 远程地址（原生下载）
- * - `file://…` 或裸绝对路径（expo-file-system、相册导出的临时文件）
- * - `data:image/png;base64,…`
+ * 媒体来源，支持四种写法： - `https://…` / `http://…` 远程地址（原生下载） - `file://…` 或裸绝对路径（expo-file-system、相册导出的临时文件） -
+ * `data:image/png;base64,…`
  */
 export type WechatMediaSource = string;
 

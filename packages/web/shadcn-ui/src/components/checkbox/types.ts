@@ -65,7 +65,7 @@ export interface CheckboxRootProps extends HTMLComponentProps<'div'> {}
  *     checkedIcon={<CustomCheckIcon />}
  *     indeterminateIcon={<CustomMinusIcon />}
  *   />;
- *   ```
+ *   ```;
  */
 export interface CheckboxProps extends CheckboxControlProps {
   /** Custom icon to display when checkbox is checked. Defaults to a check mark icon. */
@@ -113,7 +113,7 @@ export type CheckboxItemProps = Omit<CheckboxProps, 'children' | 'value'> & {
  *     defaultValue={['option1']}
  *     onValueChange={values => console.log(values)}
  *   />;
- *   ```
+ *   ```;
  */
 export interface CheckboxGroupProps extends Pick<
   CheckboxItemProps,
@@ -159,7 +159,7 @@ export interface CheckboxGroupCardItem extends CheckboxItemProps {
  *     shape="rounded"
  *     checkboxPosition="right"
  *   />;
- *   ```
+ *   ```;
  */
 export interface CheckboxGroupCardProps extends Omit<CheckboxGroupProps, 'items'> {
   /**
@@ -189,7 +189,7 @@ export interface CheckboxGroupCardProps extends Omit<CheckboxGroupProps, 'items'
  *     description="This is a description"
  *     checkboxPosition="right"
  *   />;
- *   ```
+ *   ```;
  */
 export interface CheckboxCardProps extends CheckboxControlProps {
   /**

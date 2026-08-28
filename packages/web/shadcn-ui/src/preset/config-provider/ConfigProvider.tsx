@@ -70,13 +70,7 @@ const ConfigProvider = (props: ConfigProviderProps) => {
     );
   }, [direction, size, rest, theme.color]);
 
-  return (
-    <ConfigContext.Provider value={componentConfig}>
-
-      {children}
-
-    </ConfigContext.Provider>
-  );
+  return <ConfigContext.Provider value={componentConfig}>{children}</ConfigContext.Provider>;
 };
 
 export default ConfigProvider;

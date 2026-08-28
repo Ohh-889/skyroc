@@ -19,7 +19,6 @@ export const skeletonContainerVariants = tv({
         // Hide all fill/stroke colors for SVG (except in excluded elements)
         '[&_svg:not([data-skeleton-exclude]_svg)]:!fill-transparent',
         '[&_svg:not([data-skeleton-exclude]_svg)]:!stroke-transparent'
-
       ],
       false: ''
     }

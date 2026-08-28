@@ -52,7 +52,10 @@ Toggle 会根据 Radix 的 `data-state="on"` 显示按下态。仅使用图标�
 ```tsx
 const [pressed, setPressed] = useState(false);
 
-<Toggle pressed={pressed} onPressedChange={setPressed} />;
+<Toggle
+  pressed={pressed}
+  onPressedChange={setPressed}
+/>;
 ```
 
 ## 尺寸

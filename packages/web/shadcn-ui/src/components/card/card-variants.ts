@@ -24,7 +24,7 @@ export const cardVariants = tv({
         title: 'text-xl',
         titleRoot: 'gap-3.5'
       },
-      'lg': {
+      lg: {
         content: 'px-5 py-4',
         footer: 'px-5 py-5',
         header: 'px-5 py-4',
@@ -32,7 +32,7 @@ export const cardVariants = tv({
         title: 'text-lg',
         titleRoot: 'gap-2.5'
       },
-      'md': {
+      md: {
         content: 'px-4 py-3',
         footer: 'px-4 py-3',
         header: 'px-4 py-3',
@@ -40,7 +40,7 @@ export const cardVariants = tv({
         title: 'text-base',
         titleRoot: 'gap-2'
       },
-      'sm': {
+      sm: {
         content: 'px-3 py-2',
         footer: 'px-3 py-2',
         header: 'px-3 py-2',
@@ -48,7 +48,7 @@ export const cardVariants = tv({
         title: 'text-sm',
         titleRoot: 'gap-1.75'
       },
-      'xl': {
+      xl: {
         content: 'px-6 py-5',
         footer: 'px-6 py-6',
         header: 'px-6 py-5',
@@ -56,7 +56,7 @@ export const cardVariants = tv({
         title: 'text-lg',
         titleRoot: 'gap-3'
       },
-      'xs': {
+      xs: {
         content: 'px-2 py-1.5',
         footer: 'px-2 py-1.5',
         header: 'px-2 py-1.5',

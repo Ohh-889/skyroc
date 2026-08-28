@@ -30,14 +30,21 @@ const CopyDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:content-copy"
         resources={[{ label: 'Clipboard API', url: 'https://developer.mozilla.org/docs/Web/API/Clipboard_API' }]}
         tags={['Browser API', 'React State']}
         title="剪贴板示例"
       />
-      <ExamplePanel icon="mdi:content-copy" title="文本复制">
+      <ExamplePanel
+        icon="mdi:content-copy"
+        title="文本复制"
+      >
         <Space.Compact className="w-full">
           <Input
             placeholder="请输入要复制的内容"
@@ -45,11 +52,17 @@ const CopyDemo = () => {
             onChange={handleSourceChange}
             onPressEnter={handleCopy}
           />
-          <Button type="primary" onClick={handleCopy}>
+          <Button
+            type="primary"
+            onClick={handleCopy}
+          >
             复制
           </Button>
         </Space.Compact>
-        <Typography.Paragraph className="mb-0 mt-12px" type="secondary">
+        <Typography.Paragraph
+          className="mb-0 mt-12px"
+          type="secondary"
+        >
           {source}
         </Typography.Paragraph>
       </ExamplePanel>

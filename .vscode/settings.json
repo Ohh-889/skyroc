@@ -35,18 +35,10 @@
     "ListHeaderComponentClassName"
   ],
   "tailwindCSS.experimental.classRegex": [
-    [
-      "cva\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
-    ],
-    [
-      "tv\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
-    ]
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
-  "tailwindCSS.classFunctions": [
-    "useResolveClassNames"
-  ],
+  "tailwindCSS.classFunctions": ["useResolveClassNames"],
 
   // workbench
   "workbench.list.smoothScrolling": true,
@@ -57,7 +49,6 @@
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.perEditorGroup": true,
   "workbench.editor.limit.value": 5,
-
 
   // editor
   "editor.acceptSuggestionOnEnter": "smart",
@@ -83,7 +74,6 @@
   "editor.suggestSelection": "recentlyUsedByPrefix",
   "editor.tabSize": 2,
   "editor.wordSeparators": "`~!@#%^&*()=+[{]}\\|;:'\",.<>/?",
-
 
   // lint && format
   "editor.codeActionsOnSave": {
@@ -111,10 +101,8 @@
   "oxc.enable.oxlint": true,
   "prettier.enable": false,
 
-
   // extensions
   "extensions.ignoreRecommendations": true,
-
 
   // terminal
   "terminal.integrated.cursorBlinking": true,
@@ -122,7 +110,6 @@
   "terminal.integrated.tabs.enabled": true,
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.stickyScroll.enabled": true,
-
 
   // 控制相关文件嵌套展示
   "explorer.fileNesting.enabled": true,
@@ -134,38 +121,24 @@
     "README.md": "README*,LICENSE,CHANGELOG*,vercel.json"
   },
 
-
   // i18n-ally
-  "i18n-ally.localesPaths": [
-    "packages/web/admin/i18n/langs"
-  ],
+  "i18n-ally.localesPaths": ["packages/web/admin/i18n/langs"],
   "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
   "i18n-ally.namespace": true,
   "i18n-ally.keystyle": "nested",
   "i18n-ally.sourceLanguage": "zh-cn",
   "i18n-ally.displayLanguage": "zh-cn",
-  "i18n-ally.enabledFrameworks": [
-    "react-i18next"
-  ],
-  "i18n-ally.enabledParsers": [
-    "ts",
-    "json"
-  ],
+  "i18n-ally.enabledFrameworks": ["react-i18next"],
+  "i18n-ally.enabledParsers": ["ts", "json"],
   "i18n-ally.editor.preferEditor": true,
   "i18n-ally.extract.targetPickingStrategy": "most-similar",
-  "i18n-ally.ignoreFiles": [
-    "**/index.ts"
-  ],
-  "i18n-ally.translate.engines": [
-    "deepl",
-    "google"
-  ],
+  "i18n-ally.ignoreFiles": ["**/index.ts"],
+  "i18n-ally.translate.engines": ["deepl", "google"],
   "i18n-ally.parsers.typescript.compilerOptions": {
     "ignoreDeprecations": "6.0",
     "moduleResolution": "node",
     "target": "ES2020"
   },
-
 
   // 控制相关文件只读
   "files.eol": "\n",
@@ -209,7 +182,6 @@
     "**/yarn.lock": true
   },
 
-
   // search
   "search.searchEditor.singleClickBehaviour": "peekDefinition",
   "search.followSymlinks": false,
@@ -242,13 +214,7 @@
   },
 
   // typescript
-  "typescript.tsserver.exclude": [
-    "**/node_modules",
-    "**/dist",
-    "**/.turbo",
-    "**/.next",
-    "**/coverage"
-  ],
+  "typescript.tsserver.exclude": ["**/node_modules", "**/dist", "**/.turbo", "**/.next", "**/coverage"],
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "js/ts.tsserver.maxMemory": 4096,
   // 详细日志会持续写入几十 MB 文件并明显拖慢 tsserver，只在排查问题时临时打开
@@ -256,19 +222,15 @@
   // 关闭 @types 自动获取，monorepo 里依赖已由 pnpm 管理，避免额外的解析开销
   "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
 
-
   "vitest.configSearchPatternExclude": "**/packages/**",
 
-  "unocss.root": [
-    "./apps/admin"
-  ],
+  "unocss.root": ["./apps/admin"],
 
   // debug
   "debug.onTaskErrors": "debugAnyway",
   "diffEditor.ignoreTrimWhitespace": false,
   "npm.packageManager": "pnpm",
 
-
-  "errorLens.enabledDiagnosticLevels": [ "warning", "error" ],
-  "errorLens.excludeBySource": [ "cSpell", "Grammarly" ]
+  "errorLens.enabledDiagnosticLevels": ["warning", "error"],
+  "errorLens.excludeBySource": ["cSpell", "Grammarly"]
 }

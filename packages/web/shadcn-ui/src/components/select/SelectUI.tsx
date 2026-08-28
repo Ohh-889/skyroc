@@ -1,8 +1,8 @@
 'use client';
 
+import { Root } from '@radix-ui/react-select';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { Root } from '@radix-ui/react-select';
 import SelectContent from './SelectContent';
 import SelectOption from './SelectOption';
 import SelectTrigger from './SelectTrigger';

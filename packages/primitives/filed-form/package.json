@@ -2,7 +2,6 @@
   "name": "@skyroc/form",
   "version": "0.0.2",
   "private": false,
-  "type": "module",
   "description": "Advanced form handling library with type-safe field management for React applications",
   "keywords": [
     "field-management",
@@ -12,27 +11,28 @@
     "skyroc",
     "typescript"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/primitives/filed-form",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/primitives/filed-form"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "sideEffects": false,
   "files": [
     "dist",
     "README.md",
     "README.zh.md"
   ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./src/index.ts",
@@ -48,11 +48,7 @@
     "./react": "./src/react/index.ts"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -66,7 +62,11 @@
           "default": "./dist/react/index.js"
         }
       }
-    }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "tsdown",
@@ -78,20 +78,6 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit --skipLibCheck"
-  },
-  "peerDependencies": {
-    "@types/react": "*",
-    "@types/react-dom": "*",
-    "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-  },
-  "peerDependenciesMeta": {
-    "@types/react": {
-      "optional": true
-    },
-    "@types/react-dom": {
-      "optional": true
-    }
   },
   "dependencies": {
     "@radix-ui/react-slot": "catalog:ui-shared",
@@ -109,5 +95,19 @@
     "rimraf": "catalog:dev",
     "tsdown": "catalog:dev",
     "typescript": "catalog:core"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
   }
 }

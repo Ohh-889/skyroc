@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import LayoutUI from '../../components/layout/LayoutUI';
 import type { LayoutProps } from '../../components/layout/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Layout = (props: LayoutProps) => {
   const config = useComponentConfig('layout');
@@ -12,11 +12,7 @@ const Layout = (props: LayoutProps) => {
     ...props
   };
 
-  return (
-    <LayoutUI
-      {...mergedProps}
-    />
-  );
+  return <LayoutUI {...mergedProps} />;
 };
 
 Layout.displayName = 'Layout';

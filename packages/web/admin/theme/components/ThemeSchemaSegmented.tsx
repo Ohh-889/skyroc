@@ -11,7 +11,10 @@ const OPTIONS = Object.values(ThemeMode).map(item => {
   return {
     label: (
       <div className="w-[70px] flex justify-center">
-        <SvgIcon className="text-icon-small h-28px" icon={icons[key]} />
+        <SvgIcon
+          className="text-icon-small h-28px"
+          icon={icons[key]}
+        />
       </div>
     ),
     value: item
@@ -21,7 +24,14 @@ const OPTIONS = Object.values(ThemeMode).map(item => {
 const ThemeSchemaSegmented = () => {
   const { setThemeScheme, themeScheme } = useTheme();
 
-  return <Segmented className="bg-layout" options={OPTIONS} value={themeScheme} onChange={setThemeScheme} />;
+  return (
+    <Segmented
+      className="bg-layout"
+      options={OPTIONS}
+      value={themeScheme}
+      onChange={setThemeScheme}
+    />
+  );
 };
 
 export default ThemeSchemaSegmented;

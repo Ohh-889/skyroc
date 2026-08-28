@@ -13,10 +13,8 @@ export type QueueStage = 'called' | 'done' | 'upcoming' | 'waiting';
  *
  * 这个对象会被 `JSON.stringify` 后交给 ActivityKit，因此有三条硬约束：
  *
- * 1. **只能放能 JSON 化的标量**。`Date` 会被序列化成字符串再送进 widget 进程，两边类型对不上，
- *    所以时间一律以 ISO 字符串传递，由 widget 侧 `new Date(...)` 还原。
- * 2. **整体不能超过 4KB**（ActivityKit 对 content state 的上限），别把整个订单/病历塞进来，
- *    只放这一屏要渲染的字段。
+ * 1. **只能放能 JSON 化的标量**。`Date` 会被序列化成字符串再送进 widget 进程，两边类型对不上， 所以时间一律以 ISO 字符串传递，由 widget 侧 `new Date(...)` 还原。
+ * 2. **整体不能超过 4KB**（ActivityKit 对 content state 的上限），别把整个订单/病历塞进来， 只放这一屏要渲染的字段。
  * 3. **每次 update 都是全量覆盖**，没有增量补丁，所以字段要能独立描述当前状态。
  */
 export interface QueueActivityProps {

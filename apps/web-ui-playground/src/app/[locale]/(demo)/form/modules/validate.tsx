@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Button, Form, FormField, useFieldError, useForm } from '@skyroc/web-ui';
+import { useEffect } from 'react';
 import { DemoInput } from './DemoComponents';
 import { showToastCode } from './toast';
 
@@ -42,10 +42,10 @@ const Validate = () => {
     <Form
       className="w-[480px] space-y-4 max-sm:w-full"
       form={form}
-      onFinish={(values) => {
+      onFinish={values => {
         showToastCode('You submitted the following values success Validate', values);
       }}
-      onFinishFailed={(errInfo) => {
+      onFinishFailed={errInfo => {
         showToastCode('You failed to submit the form failed Validate', errInfo);
       }}
     >

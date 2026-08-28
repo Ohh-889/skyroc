@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import CheckboxUI from '../../components/checkbox/CheckboxUI';
 import type { CheckboxProps } from '../../components/checkbox/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>((props, ref) => {
   const config = useComponentConfig('checkbox');

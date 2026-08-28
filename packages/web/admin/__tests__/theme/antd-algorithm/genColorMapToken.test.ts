@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import {
   ANTD_INDEXES,
   FUNCTIONAL_SEMANTIC_CONFIG,
@@ -8,6 +7,7 @@ import {
   genSemanticColors
 } from '@shell/theme/antd-algorithm/shared/genColorMapToken';
 import type { ColorMap } from '@shell/theme/antd-algorithm/types';
+import { describe, expect, it } from 'vitest';
 
 /** 构造测试用 ColorMap（antd 1-10 + tailwind 50-950） */
 function makeColorMap(): ColorMap {

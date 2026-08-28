@@ -53,7 +53,7 @@ export const navigationMenuVariants = tv({
   },
   variants: {
     size: {
-      'xs': {
+      xs: {
         viewport: 'mt-1.75',
         list: 'gap-1 text-2xs',
         subList: 'gap-1.5 p-1.5 text-2xs',
@@ -66,7 +66,7 @@ export const navigationMenuVariants = tv({
         linkIcon: 'size-2 -ml-1',
         subLinkDescription: 'mt-1.25'
       },
-      'sm': {
+      sm: {
         viewport: 'mt-2',
         list: 'gap-1.25 text-xs',
         subList: 'gap-1.75 p-1.75 text-xs',
@@ -79,7 +79,7 @@ export const navigationMenuVariants = tv({
         linkIcon: 'size-2.5 -ml-1.5',
         subLinkDescription: 'mt-1.25'
       },
-      'md': {
+      md: {
         viewport: 'mt-2.5',
         list: 'gap-1.5 text-sm',
         subList: 'gap-2 p-2 text-sm',
@@ -92,7 +92,7 @@ export const navigationMenuVariants = tv({
         linkIcon: 'size-3 -ml-2',
         subLinkDescription: 'mt-1.5'
       },
-      'lg': {
+      lg: {
         viewport: 'mt-3',
         list: 'gap-1.75 text-base',
         subList: 'gap-2.5 p-2.5 text-base',
@@ -105,7 +105,7 @@ export const navigationMenuVariants = tv({
         linkIcon: 'size-3.5 -ml-2.5',
         subLinkDescription: 'mt-1.75'
       },
-      'xl': {
+      xl: {
         viewport: 'mt-3.5',
         list: 'gap-2 text-lg',
         subList: 'gap-3 p-3 text-lg',

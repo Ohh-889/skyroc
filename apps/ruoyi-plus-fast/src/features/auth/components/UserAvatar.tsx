@@ -50,7 +50,10 @@ const UserAvatar = () => {
       key: 'logout',
       label: (
         <div className="flex-center gap-8px">
-          <SvgIcon className="text-lg" icon="ph:sign-out" />
+          <SvgIcon
+            className="text-lg"
+            icon="ph:sign-out"
+          />
           {t('common.logout')}
         </div>
       )
@@ -59,10 +62,17 @@ const UserAvatar = () => {
 
   if (isLoggedIn) {
     return (
-      <ADropdown menu={{ items, onClick }} placement="bottomRight" trigger={['click']}>
+      <ADropdown
+        menu={{ items, onClick }}
+        placement="bottomRight"
+        trigger={['click']}
+      >
         <div>
           <ButtonIcon className="px-12px">
-            <SvgIcon className="text-2xl" icon="ph:user-circle" />
+            <SvgIcon
+              className="text-2xl"
+              icon="ph:user-circle"
+            />
             <span className="text-md font-medium">{userInfo?.userName}</span>
           </ButtonIcon>
         </div>

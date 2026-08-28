@@ -7,10 +7,10 @@ description: 数组状态 hook，返回 [state, store]，store 上带 14 个按 
 function useArray<T, K extends keyof T>(initState: T[], key?: K): [T[], ArrayStore<T, K>];
 ```
 
-| 参数 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `initState` | `T[]` | — | 初始数组，同时作为 `reset()` 的目标 |
-| `key` | `K extends keyof T` | `'id'` | 用于唯一标识元素的字段名 |
+| 参数        | 类型                | 默认   | 说明                                |
+| ----------- | ------------------- | ------ | ----------------------------------- |
+| `initState` | `T[]`               | —      | 初始数组，同时作为 `reset()` 的目标 |
+| `key`       | `K extends keyof T` | `'id'` | 用于唯一标识元素的字段名            |
 
 返回 `[当前数组, ArrayStore 实例]`。操作方法都挂在 store 上，不在返回值第一项里。
 
@@ -30,11 +30,24 @@ const TodoList = () => {
       {todos.map(todo => (
         <div key={todo.id}>
           {todo.title}
-          <button type="button" onClick={() => store.remove(todo.id)}>删除</button>
-          <button type="button" onClick={() => store.up(todo.id)}>上移</button>
+          <button
+            type="button"
+            onClick={() => store.remove(todo.id)}
+          >
+            删除
+          </button>
+          <button
+            type="button"
+            onClick={() => store.up(todo.id)}
+          >
+            上移
+          </button>
         </div>
       ))}
-      <button type="button" onClick={() => store.push({ id: crypto.randomUUID(), title: '新任务' })}>
+      <button
+        type="button"
+        onClick={() => store.push({ id: crypto.randomUUID(), title: '新任务' })}
+      >
         新增
       </button>
     </>
@@ -46,34 +59,34 @@ const TodoList = () => {
 
 ### 增删
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `push` | `(...items: T[]) => void` | 尾部追加，**按 key 去重** |
-| `unshift` | `(...items: T[]) => void` | 头部追加，**按 key 去重** |
-| `remove` | `(itemKey: T[K]) => void` | 按 key 移除 |
-| `pop` | `() => void` | 移除末尾 |
-| `shift` | `() => void` | 移除首部 |
-| `splice` | `(start: number, deleteCount?: number, ...items: T[]) => void` | 按下标增删 |
-| `clear` | `() => void` | 清空 |
-| `reset` | `() => void` | 恢复到 `initState` |
+| 方法      | 签名                                                           | 说明                      |
+| --------- | -------------------------------------------------------------- | ------------------------- |
+| `push`    | `(...items: T[]) => void`                                      | 尾部追加，**按 key 去重** |
+| `unshift` | `(...items: T[]) => void`                                      | 头部追加，**按 key 去重** |
+| `remove`  | `(itemKey: T[K]) => void`                                      | 按 key 移除               |
+| `pop`     | `() => void`                                                   | 移除末尾                  |
+| `shift`   | `() => void`                                                   | 移除首部                  |
+| `splice`  | `(start: number, deleteCount?: number, ...items: T[]) => void` | 按下标增删                |
+| `clear`   | `() => void`                                                   | 清空                      |
+| `reset`   | `() => void`                                                   | 恢复到 `initState`        |
 
 `push` / `unshift` 的去重是**保留先出现的那个**：合并后按 key 做 `findIndex` 过滤，所以重复 key 的新元素会被丢弃，而不是覆盖旧元素。
 
 ### 排序
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `up` | `(itemKey: T[K]) => void` | 与前一个元素交换；已是首个则不动 |
-| `down` | `(itemKey: T[K]) => void` | 与后一个元素交换；已是末个或不存在则不动 |
-| `reverse` | `() => void` | 反转（`toReversed`，不改原数组） |
-| `sort` | `(compareFn?: (a: T, b: T) => number) => void` | 排序（`toSorted`，不改原数组） |
+| 方法      | 签名                                           | 说明                                     |
+| --------- | ---------------------------------------------- | ---------------------------------------- |
+| `up`      | `(itemKey: T[K]) => void`                      | 与前一个元素交换；已是首个则不动         |
+| `down`    | `(itemKey: T[K]) => void`                      | 与后一个元素交换；已是末个或不存在则不动 |
+| `reverse` | `() => void`                                   | 反转（`toReversed`，不改原数组）         |
+| `sort`    | `(compareFn?: (a: T, b: T) => number) => void` | 排序（`toSorted`，不改原数组）           |
 
 ### 读取与整体替换
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `findItem` | `(elementKey: T[K]) => T \| undefined` | 按 key 查找，**直接读 class 内部状态**，不受 React 渲染周期影响 |
-| `updateState` | `(next: T[] \| ((prev: T[]) => T[])) => void` | 整体替换 |
+| 方法          | 签名                                          | 说明                                                            |
+| ------------- | --------------------------------------------- | --------------------------------------------------------------- |
+| `findItem`    | `(elementKey: T[K]) => T \| undefined`        | 按 key 查找，**直接读 class 内部状态**，不受 React 渲染周期影响 |
+| `updateState` | `(next: T[] \| ((prev: T[]) => T[])) => void` | 整体替换                                                        |
 
 `findItem` 读的是 store 当前值而非本次渲染闭包里的 `todos`，所以在事件回调里连续操作时拿到的一定是最新数据。
 

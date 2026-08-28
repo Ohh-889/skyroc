@@ -11,7 +11,14 @@ const ScrollAreaScrollbar = (props: ScrollAreaScrollbarProps) => {
 
   const mergedCls = cn(scrollbar(), className);
 
-  return <Scrollbar className={mergedCls} data-slot="scroll-area-scrollbar" orientation={orientation} {...rest} />;
+  return (
+    <Scrollbar
+      className={mergedCls}
+      data-slot="scroll-area-scrollbar"
+      orientation={orientation}
+      {...rest}
+    />
+  );
 };
 
 ScrollAreaScrollbar.displayName = 'ScrollAreaScrollbar';

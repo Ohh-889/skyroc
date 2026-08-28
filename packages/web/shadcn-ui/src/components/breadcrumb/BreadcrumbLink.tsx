@@ -1,6 +1,6 @@
-import { forwardRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
 import { breadcrumbVariants } from './breadcrumb-variants';
 import type { BreadcrumbLinkProps } from './types';
 

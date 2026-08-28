@@ -32,14 +32,14 @@ import { Dialog, closeDialog, showConfirmDialog, showDialog } from '@skyroc/nati
 
 底部操作区由 `showCancelButton` / `showConfirmButton` 决定，文案、颜色与禁用态各自独立：
 
-| 属性                    | 说明                                              | 默认值      |
-| ----------------------- | ------------------------------------------------- | ----------- |
-| `showConfirmButton`     | 是否显示确认按钮                                  | `true`      |
+| 属性                    | 说明                                                  | 默认值      |
+| ----------------------- | ----------------------------------------------------- | ----------- |
+| `showConfirmButton`     | 是否显示确认按钮                                      | `true`      |
 | `showCancelButton`      | 是否显示取消按钮（`showConfirmDialog` 自动置 `true`） | `false`     |
-| `confirmButtonText`     | 确认按钮文案                                      | `'确定'`    |
-| `cancelButtonText`      | 取消按钮文案                                      | `'取消'`    |
-| `confirmButtonColor`    | 确认按钮语义色，`destructive` 显示为红色          | `'primary'` |
-| `confirmButtonDisabled` | 禁用确认按钮                                      | `false`     |
+| `confirmButtonText`     | 确认按钮文案                                          | `'确定'`    |
+| `cancelButtonText`      | 取消按钮文案                                          | `'取消'`    |
+| `confirmButtonColor`    | 确认按钮语义色，`destructive` 显示为红色              | `'primary'` |
+| `confirmButtonDisabled` | 禁用确认按钮                                          | `false`     |
 
 <Demo src="@playground/dialog/DialogButtons" />
 
@@ -57,10 +57,10 @@ import { Dialog, closeDialog, showConfirmDialog, showDialog } from '@skyroc/nati
 
 `theme` 决定底部操作区的形态：
 
-| 主题             | 表现                                                                     |
-| ---------------- | ------------------------------------------------------------------------ |
-| `default`        | 通栏文字按钮（高 `48`），与正文之间、两个按钮之间都由分割线隔开           |
-| `round-button`   | 胶囊按钮（高 `44`），带 `gap-3` 间距和 `px-6 pb-6` 的内边距               |
+| 主题           | 表现                                                            |
+| -------------- | --------------------------------------------------------------- |
+| `default`      | 通栏文字按钮（高 `48`），与正文之间、两个按钮之间都由分割线隔开 |
+| `round-button` | 胶囊按钮（高 `44`），带 `gap-3` 间距和 `px-6 pb-6` 的内边距     |
 
 <Demo src="@playground/dialog/DialogTheme" />
 
@@ -94,10 +94,10 @@ import { Dialog, closeDialog, showConfirmDialog, showDialog } from '@skyroc/nati
 
 ## 关闭方式
 
-| 属性 / 方法            | 关闭路径              | 默认值  |
-| ---------------------- | --------------------- | ------- |
-| `closeOnBackdropPress` | 点击遮罩              | `false` |
-| `closeOnBackPress`     | Android 硬件返回键    | `true`  |
+| 属性 / 方法            | 关闭路径               | 默认值  |
+| ---------------------- | ---------------------- | ------- |
+| `closeOnBackdropPress` | 点击遮罩               | `false` |
+| `closeOnBackPress`     | Android 硬件返回键     | `true`  |
 | `closeDialog()`        | 代码主动关闭当前对话框 | —       |
 
 <Demo src="@playground/dialog/DialogCloseMode" />
@@ -126,17 +126,17 @@ Dialog 的进出场动画时长为 0（含遮罩过渡），弹出与关闭都�
 
 `className` 覆盖卡片根节点，`classNames` 按 slot 细粒度覆盖：
 
-| slot            | 作用位置                                            |
-| --------------- | --------------------------------------------------- |
+| slot            | 作用位置                                                     |
+| --------------- | ------------------------------------------------------------ |
 | `popup`         | 外层弹出容器，控制宽度与定位（默认 `w-[85%] max-w-[320px]`） |
-| `root`          | 卡片本身，圆角、底色与 `overflow-hidden` 都在这里    |
-| `header`        | 标题容器                                            |
-| `title`         | 标题文字                                            |
-| `body`          | 正文容器（正文、输入框、`children` 都在里面）        |
-| `message`       | 正文文字                                            |
-| `footer`        | 底部操作区容器                                      |
-| `cancelButton`  | 取消按钮                                            |
-| `confirmButton` | 确认按钮                                            |
+| `root`          | 卡片本身，圆角、底色与 `overflow-hidden` 都在这里            |
+| `header`        | 标题容器                                                     |
+| `title`         | 标题文字                                                     |
+| `body`          | 正文容器（正文、输入框、`children` 都在里面）                |
+| `message`       | 正文文字                                                     |
+| `footer`        | 底部操作区容器                                               |
+| `cancelButton`  | 取消按钮                                                     |
+| `confirmButton` | 确认按钮                                                     |
 
 <Demo src="@playground/dialog/DialogStyles" />
 
@@ -310,8 +310,7 @@ import type {
     },
     {
       name: 'DialogOptions',
-      description:
-        "命令式调用的入参，等价于 Omit<DialogProps, 'onClosed' | 'onUpdateShow' | 'show'> 再加上 callback。",
+      description: "命令式调用的入参，等价于 Omit<DialogProps, 'onClosed' | 'onUpdateShow' | 'show'> 再加上 callback。",
       fields: [
         {
           name: 'callback',

@@ -3,9 +3,7 @@
   "name": "tree",
   "type": "registry:block",
   "title": "Tree",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/tree/Tree.tsx",

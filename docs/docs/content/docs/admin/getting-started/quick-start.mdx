@@ -9,11 +9,11 @@ description: 安装依赖、启动 apps/admin、构建预览，并理解当前 M
 
 ## 环境要求
 
-| 工具 | 要求 | 来源 |
-| --- | --- | --- |
-| Node.js | 仓库根要求 `>=20` | 根 `package.json` |
-| pnpm | `10.4.1` | 根 `package.json`、`apps/admin/package.json` |
-| workspace | 使用 pnpm workspace | `pnpm-workspace.yaml` |
+| 工具      | 要求                | 来源                                         |
+| --------- | ------------------- | -------------------------------------------- |
+| Node.js   | 仓库根要求 `>=20`   | 根 `package.json`                            |
+| pnpm      | `10.4.1`            | 根 `package.json`、`apps/admin/package.json` |
+| workspace | 使用 pnpm workspace | `pnpm-workspace.yaml`                        |
 
 `apps/admin/package.json` 自身声明了 `node >=18.12.0`、`pnpm >=8.7.0`，但在当前 monorepo 中应按仓库根配置使用 Node 20+ 和 pnpm 10.4.1。
 
@@ -186,31 +186,31 @@ VITE_OTHER_SERVICE_BASE_URL= `{
 
 ## 脚本速查
 
-| 命令 | 作用 |
-| --- | --- |
-| `pnpm --filter skyroc-admin dev` | 以 test mode 启动开发服务。 |
-| `pnpm --filter skyroc-admin dev:prod` | 以 prod mode 启动开发服务。 |
-| `pnpm --filter skyroc-admin build` | 以 prod mode 构建生产包。 |
-| `pnpm --filter skyroc-admin build:test` | 以 test mode 构建测试包。 |
-| `pnpm --filter skyroc-admin preview` | 预览 Vite 构建产物。 |
-| `pnpm --filter skyroc-admin typecheck` | 对 `apps/admin` 执行 TypeScript 检查。 |
-| `pnpm --filter skyroc-admin lint` | 对 `apps/admin` 执行 oxlint 修复。 |
-| `pnpm --filter skyroc-admin build:admin-vite` | 构建共享包 `@skyroc/web-admin-vite`。 |
+| 命令                                          | 作用                                   |
+| --------------------------------------------- | -------------------------------------- |
+| `pnpm --filter skyroc-admin dev`              | 以 test mode 启动开发服务。            |
+| `pnpm --filter skyroc-admin dev:prod`         | 以 prod mode 启动开发服务。            |
+| `pnpm --filter skyroc-admin build`            | 以 prod mode 构建生产包。              |
+| `pnpm --filter skyroc-admin build:test`       | 以 test mode 构建测试包。              |
+| `pnpm --filter skyroc-admin preview`          | 预览 Vite 构建产物。                   |
+| `pnpm --filter skyroc-admin typecheck`        | 对 `apps/admin` 执行 TypeScript 检查。 |
+| `pnpm --filter skyroc-admin lint`             | 对 `apps/admin` 执行 oxlint 修复。     |
+| `pnpm --filter skyroc-admin build:admin-vite` | 构建共享包 `@skyroc/web-admin-vite`。  |
 
 ## 常见卡点
 
-| 现象 | 先检查 |
-| --- | --- |
+| 现象                                             | 先检查                                                                                                  |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | 启动时找不到 `@skyroc/web-admin-vite` 的构建产物 | 是否执行了 `pnpm --filter skyroc-admin dev`，或手动执行 `pnpm --filter skyroc-admin build:admin-vite`。 |
-| 请求地址不是预期后端 | 当前 mode 是否正确，以及 `.env.test` / `.env.prod` 中的 `VITE_SERVICE_BASE_URL` 是否覆盖了公共 `.env`。 |
-| 代理没有生效 | `.env` 中 `VITE_HTTP_PROXY` 是否为 `Y`，请求是否走 `/proxy-default` 或 `/proxy-{key}`。 |
-| 代理日志太多 | `.env` 中 `VITE_PROXY_LOG` 控制是否打印代理目标。 |
-| 修改 env 后没有变化 | 重新启动 Vite 开发服务。Vite env 在启动时读取，不是运行时热更新配置。 |
+| 请求地址不是预期后端                             | 当前 mode 是否正确，以及 `.env.test` / `.env.prod` 中的 `VITE_SERVICE_BASE_URL` 是否覆盖了公共 `.env`。 |
+| 代理没有生效                                     | `.env` 中 `VITE_HTTP_PROXY` 是否为 `Y`，请求是否走 `/proxy-default` 或 `/proxy-{key}`。                 |
+| 代理日志太多                                     | `.env` 中 `VITE_PROXY_LOG` 控制是否打印代理目标。                                                       |
+| 修改 env 后没有变化                              | 重新启动 Vite 开发服务。Vite env 在启动时读取，不是运行时热更新配置。                                   |
 
 ## 下一步
 
-| 目标 | 继续阅读 |
-| --- | --- |
-| 配好编辑器、格式化、i18n Ally 和 UnoCSS 提示 | [开发工具配置](./editor-setup) |
-| 看懂 `apps/admin/src` 目录职责和 app/package 边界 | [项目结构](./project-structure) |
-| 修改 env、代理、Vite preset 或部署 base | [环境变量与 Vite](../configuration/env-and-vite) |
+| 目标                                              | 继续阅读                                         |
+| ------------------------------------------------- | ------------------------------------------------ |
+| 配好编辑器、格式化、i18n Ally 和 UnoCSS 提示      | [开发工具配置](./editor-setup)                   |
+| 看懂 `apps/admin/src` 目录职责和 app/package 边界 | [项目结构](./project-structure)                  |
+| 修改 env、代理、Vite preset 或部署 base           | [环境变量与 Vite](../configuration/env-and-vite) |

@@ -6,7 +6,7 @@ import type { ListProps, ListStatus, PageParams, PageResult } from './types';
 
 const DEFAULT_PAGE_SIZE = 10;
 
-/** useInfiniteList 配置 */
+/** UseInfiniteList 配置 */
 export interface UseInfiniteListOptions<TItem, TParams extends object> {
   /** 是否发起请求，false 时挂起；依赖别的数据才能查询时用 */
   enabled?: boolean;
@@ -38,7 +38,7 @@ export type InfiniteListProps<TItem> = Required<
  * 相比手写的 pageNum + items 累加，这里几件事是白拿的：
  *
  * - 是否还有下一页由 `getNextPageParam` 决定，不再有「总页数还没回来就把 isEnd 判成 true」
- * - params 进 queryKey，切筛选条件自动重置到第一页，也不会出现旧参数的响应后到覆盖新数据
+ * - Params 进 queryKey，切筛选条件自动重置到第一页，也不会出现旧参数的响应后到覆盖新数据
  * - 页数据由缓存持有，不需要手写 `[...state.items, ...data.items]`，重复追加和竞态一起消失
  * - 请求状态由库维护，不存在某个错误分支忘了关 loading 就把整个列表卡死
  */
@@ -74,8 +74,8 @@ export function useInfiniteList<TItem, TParams extends object = Record<string, n
   /**
    * 下拉刷新。
    *
-   * v5 拿掉了 `refetch({ refetchPage })`，直接 refetch 会把已加载的每一页都重拉一遍 —— 翻到第 8 页再下拉就是 8 个并发请求。
-   * 这里先把缓存截断到第一页再 refetch：只发一个请求，且第一页数据全程可见，不会闪一下空列表。
+   * V5 拿掉了 `refetch({ refetchPage })`，直接 refetch 会把已加载的每一页都重拉一遍 —— 翻到第 8 页再下拉就是 8 个并发请求。 这里先把缓存截断到第一页再
+   * refetch：只发一个请求，且第一页数据全程可见，不会闪一下空列表。
    *
    * 不用 `maxPages` 限制页数，那个选项会在往下翻时把最前面的页丢掉，列表顶部的数据会凭空消失。
    */
@@ -160,5 +160,5 @@ export function useInfiniteList<TItem, TParams extends object = Record<string, n
   };
 }
 
-/** useInfiniteList 返回值 */
+/** UseInfiniteList 返回值 */
 export type UseInfiniteListResult<TItem> = ReturnType<typeof useInfiniteList<TItem>>;

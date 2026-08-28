@@ -26,15 +26,15 @@ import { CountDown } from '@skyroc/native-ui';
 
 `format` 支持以下占位符，其余字符原样输出：
 
-| 占位符 | 含义         | 补零     |
-| ------ | ------------ | -------- |
-| `DD`   | 天           | 2 位     |
-| `HH`   | 小时         | 2 位     |
-| `mm`   | 分钟         | 2 位     |
-| `ss`   | 秒           | 2 位     |
-| `SSS`  | 毫秒         | 3 位     |
-| `SS`   | 百分秒       | 2 位     |
-| `S`    | 十分秒       | 1 位     |
+| 占位符 | 含义   | 补零 |
+| ------ | ------ | ---- |
+| `DD`   | 天     | 2 位 |
+| `HH`   | 小时   | 2 位 |
+| `mm`   | 分钟   | 2 位 |
+| `ss`   | 秒     | 2 位 |
+| `SSS`  | 毫秒   | 3 位 |
+| `SS`   | 百分秒 | 2 位 |
+| `S`    | 十分秒 | 1 位 |
 
 <Demo src="@playground/count-down/CountDownFormat" />
 
@@ -50,10 +50,10 @@ import { CountDown } from '@skyroc/native-ui';
 
 `className` 覆盖根容器，`classNames` 按 slot 细粒度覆盖，冲突时 `className` 优先级更高。
 
-| slot   | 作用位置                                        |
-| ------ | ----------------------------------------------- |
-| `root` | 根容器 View                                     |
-| `text` | 默认渲染的时间文本，被 `children` 接管后不生效  |
+| slot   | 作用位置                                       |
+| ------ | ---------------------------------------------- |
+| `root` | 根容器 View                                    |
+| `text` | 默认渲染的时间文本，被 `children` 接管后不生效 |
 
 <Demo src="@playground/count-down/CountDownStyles" />
 
@@ -69,12 +69,12 @@ import { CountDown } from '@skyroc/native-ui';
 
 `autoStart={false}` 时挂载后不自动开始，交给 ref 驱动：
 
-| 方法                  | 说明                                                             |
-| --------------------- | ---------------------------------------------------------------- |
-| `start()`             | 开始或从暂停处继续；已在计时时是空操作                           |
-| `pause()`             | 暂停，保留当前剩余时间                                           |
-| `reset()`             | 回到 `time` 的时长                                               |
-| `reset(totalTime)`    | 重置为指定时长（毫秒）                                           |
+| 方法               | 说明                                   |
+| ------------------ | -------------------------------------- |
+| `start()`          | 开始或从暂停处继续；已在计时时是空操作 |
+| `pause()`          | 暂停，保留当前剩余时间                 |
+| `reset()`          | 回到 `time` 的时长                     |
+| `reset(totalTime)` | 重置为指定时长（毫秒）                 |
 
 <Demo src="@playground/count-down/CountDownManual" />
 
@@ -104,8 +104,18 @@ import { CountDown } from '@skyroc/native-ui';
 
 <PropsTable
   data={[
-    { name: 'time', description: '倒计时总时长（毫秒），计时过程中改变会按新时长重新开始', type: 'number', default: '0' },
-    { name: 'format', description: '时间格式，支持 DD / HH / mm / ss / S / SS / SSS', type: 'string', default: "'HH:mm:ss'" },
+    {
+      name: 'time',
+      description: '倒计时总时长（毫秒），计时过程中改变会按新时长重新开始',
+      type: 'number',
+      default: '0'
+    },
+    {
+      name: 'format',
+      description: '时间格式，支持 DD / HH / mm / ss / S / SS / SSS',
+      type: 'string',
+      default: "'HH:mm:ss'"
+    },
     {
       name: 'autoStart',
       description: '是否挂载后自动开始，同时决定 reset() 之后是否自动重新开始',

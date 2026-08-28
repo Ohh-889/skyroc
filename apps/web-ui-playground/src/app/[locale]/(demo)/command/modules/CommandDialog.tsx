@@ -63,14 +63,24 @@ const CommandDialogDemo = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Card split title="Dialog Command">
+    <Card
+      split
+      title="Dialog Command"
+    >
       <div className="flex items-center gap-3">
         <Button onClick={() => setOpen(true)}>Open command</Button>
         <Kbd value={['command', 'j']} />
       </div>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <Command empty="No option found" inputProps={{ placeholder: 'Type a command or search...' }} items={items} />
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+      >
+        <Command
+          empty="No option found"
+          inputProps={{ placeholder: 'Type a command or search...' }}
+          items={items}
+        />
       </CommandDialog>
     </Card>
   );

@@ -45,22 +45,51 @@ const Request = () => {
   }
 
   return (
-    <ASpace className="w-full" direction="vertical" size={16}>
-      <ACard className="card-wrapper" size="small" title={t('request.logout')} variant="borderless">
+    <ASpace
+      className="w-full"
+      direction="vertical"
+      size={16}
+    >
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('request.logout')}
+        variant="borderless"
+      >
         <AButton onClick={() => logout()}>{t('common.trigger')}</AButton>
       </ACard>
 
-      <ACard className="card-wrapper" size="small" title={t('request.logoutWithModal')} variant="borderless">
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('request.logoutWithModal')}
+        variant="borderless"
+      >
         <AButton onClick={() => logoutWithModal()}>{t('common.trigger')}</AButton>
       </ACard>
 
-      <ACard className="card-wrapper" size="small" title={t('request.refreshToken')} variant="borderless">
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('request.refreshToken')}
+        variant="borderless"
+      >
         <AButton onClick={() => refreshToken()}>{t('common.trigger')}</AButton>
       </ACard>
 
-      <ACard className="card-wrapper" size="small" title={t('page.function.request.repeatedErrorOccurOnce')} variant="borderless">
-        <AButton onClick={() => handleRepeatedMessageError()}>{t('page.function.request.repeatedError')} (Message)</AButton>
-        <AButton className="ml-12px" onClick={() => handleRepeatedModalError()}>
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('page.function.request.repeatedErrorOccurOnce')}
+        variant="borderless"
+      >
+        <AButton onClick={() => handleRepeatedMessageError()}>
+          {t('page.function.request.repeatedError')} (Message)
+        </AButton>
+        <AButton
+          className="ml-12px"
+          onClick={() => handleRepeatedModalError()}
+        >
           {t('page.function.request.repeatedError')}(Modal)
         </AButton>
       </ACard>

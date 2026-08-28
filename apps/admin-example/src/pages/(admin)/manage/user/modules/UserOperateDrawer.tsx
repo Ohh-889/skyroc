@@ -42,7 +42,10 @@ const UserOperateDrawer = (props: UserOperateDrawerProps) => {
       footer={
         <Flex justify="space-between">
           <Button onClick={onClose}>{t('common.cancel')}</Button>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+          >
             {t('common.confirm')}
           </Button>
         </Flex>
@@ -51,44 +54,76 @@ const UserOperateDrawer = (props: UserOperateDrawerProps) => {
       title={operateType === 'add' ? t('page.manage.user.addUser') : t('page.manage.user.editUser')}
       onClose={onClose}
     >
-      <Form form={form} layout="vertical">
-        <Form.Item label={t('page.manage.user.userName')} name="userName" rules={[requiredRule]}>
+      <Form
+        form={form}
+        layout="vertical"
+      >
+        <Form.Item
+          label={t('page.manage.user.userName')}
+          name="userName"
+          rules={[requiredRule]}
+        >
           <Input placeholder={t('page.manage.user.form.userName')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.userGender')} name="userGender">
+        <Form.Item
+          label={t('page.manage.user.userGender')}
+          name="userGender"
+        >
           <Radio.Group>
             {userGenderOptions.map(item => (
-              <Radio key={item.value} value={item.value}>
+              <Radio
+                key={item.value}
+                value={item.value}
+              >
                 {t(item.label)}
               </Radio>
             ))}
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.nickName')} name="nickName">
+        <Form.Item
+          label={t('page.manage.user.nickName')}
+          name="nickName"
+        >
           <Input placeholder={t('page.manage.user.form.nickName')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.userPhone')} name="userPhone">
+        <Form.Item
+          label={t('page.manage.user.userPhone')}
+          name="userPhone"
+        >
           <Input placeholder={t('page.manage.user.form.userPhone')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.userEmail')} name="userEmail">
+        <Form.Item
+          label={t('page.manage.user.userEmail')}
+          name="userEmail"
+        >
           <Input placeholder={t('page.manage.user.form.userEmail')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.userStatus')} name="status" rules={[requiredRule]}>
+        <Form.Item
+          label={t('page.manage.user.userStatus')}
+          name="status"
+          rules={[requiredRule]}
+        >
           <Radio.Group>
             {enableStatusOptions.map(item => (
-              <Radio key={item.value} value={item.value}>
+              <Radio
+                key={item.value}
+                value={item.value}
+              >
                 {t(item.label)}
               </Radio>
             ))}
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item label={t('page.manage.user.userRole')} name="userRoles">
+        <Form.Item
+          label={t('page.manage.user.userRole')}
+          name="userRoles"
+        >
           <Select
             loading={isFetching}
             mode="multiple"

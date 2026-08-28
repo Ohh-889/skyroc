@@ -1,6 +1,6 @@
 ---
-title: "TaskHub"
-description: "协作式任务调度中枢，用单一心跳统一管理应用启动时的初始化链、定时任务和监听器，支持依赖声明、指数退避重试与完整生命周期控制"
+title: 'TaskHub'
+description: '协作式任务调度中枢，用单一心跳统一管理应用启动时的初始化链、定时任务和监听器，支持依赖声明、指数退避重试与完整生命周期控制'
 ---
 
 ## 概述
@@ -56,10 +56,10 @@ TaskHub.dispose()  →  stop() 之后再清空注册表
 
 ### 三种任务类型
 
-| 类型 | 行为 | 典型场景 |
-| --- | --- | --- |
-| `init` | 依赖满足后执行**一次** | 认证、加载配置、初始化路由 |
-| `periodic` | 依赖满足后按 `interval` **周期执行** | 心跳、数据上报、token 刷新 |
+| 类型       | 行为                                          | 典型场景                     |
+| ---------- | --------------------------------------------- | ---------------------------- |
+| `init`     | 依赖满足后执行**一次**                        | 认证、加载配置、初始化路由   |
+| `periodic` | 依赖满足后按 `interval` **周期执行**          | 心跳、数据上报、token 刷新   |
 | `listener` | 依赖满足后注册**一次**，`stop` 时自动 cleanup | resize、网络状态、页面可见性 |
 
 ### 任务状态流转
@@ -85,9 +85,9 @@ blocked ─ 上游恢复（重新注册、被移除） ─→ pending（可恢�
 
 ### onReady / onSettled 触发时机
 
-| 回调 | 触发条件 |
-| --- | --- |
-| `onReady()` | 所有 `init` 任务均为 `done`。无 init 任务时在 `start` 后立即触发；只触发一次 |
+| 回调                | 触发条件                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| `onReady()`         | 所有 `init` 任务均为 `done`。无 init 任务时在 `start` 后立即触发；只触发一次                   |
 | `onSettled(result)` | 所有 `init` 任务均到达终态（`done` / 终态 `failed` / `blocked`），**无论成功与否**；只触发一次 |
 
 ```ts
@@ -135,7 +135,7 @@ hub.register({
   name: 'permissions',
   type: 'init',
   priority: 2,
-  deps: ['auth'],           // auth 完成后才执行
+  deps: ['auth'], // auth 完成后才执行
   run: async () => {
     await permissionService.load();
   }
@@ -156,7 +156,7 @@ hub.register({
   name: 'heartbeat',
   type: 'periodic',
   interval: 30_000,
-  deps: ['auth'],           // auth 完成后才开始心跳
+  deps: ['auth'], // auth 完成后才开始心跳
   run: () => {
     api.heartbeat();
   }
@@ -252,19 +252,17 @@ interface PeriodicTaskDef extends BaseTaskDef {
 
 **注册期校验**（全部**抛错**而非静默跳过）：
 
-| 情况 | 结果 |
-| --- | --- |
-| `name` 为空 / 缺 `run` | 抛错 |
-| 同名任务重复注册 | 抛错 `Task "x" is already registered.` |
-| `periodic` 的 `interval <= 0` | 抛错 |
-| 依赖自己 / 形成循环依赖 | 抛错 |
-| hub 已启动后追加、且依赖尚未注册 | 抛错（否则同样会静默挂起） |
+| 情况                             | 结果                                   |
+| -------------------------------- | -------------------------------------- |
+| `name` 为空 / 缺 `run`           | 抛错                                   |
+| 同名任务重复注册                 | 抛错 `Task "x" is already registered.` |
+| `periodic` 的 `interval <= 0`    | 抛错                                   |
+| 依赖自己 / 形成循环依赖          | 抛错                                   |
+| hub 已启动后追加、且依赖尚未注册 | 抛错（否则同样会静默挂起）             |
 
 ```ts
 // 链式注册
-hub
-  .register({ name: 'a', type: 'init', run: initA })
-  .register({ name: 'b', type: 'init', deps: ['a'], run: initB });
+hub.register({ name: 'a', type: 'init', run: initA }).register({ name: 'b', type: 'init', deps: ['a'], run: initB });
 
 // 批量注册
 hub.registerAll([taskA, taskB, taskC]);
@@ -272,11 +270,11 @@ hub.registerAll([taskA, taskB, taskC]);
 
 ### `.start()` / `.stop()` / `.dispose()`
 
-| 方法 | 说明 |
-| --- | --- |
-| `start()` | 先统一校验依赖引用完整性（拼错的依赖名在这里抛错），再推进一轮并按需拉起心跳；重复调用无副作用 |
-| `stop()` | 中断在途任务，按逆优先级顺序调用所有 `cleanup`，任务状态归零，`onReady` / `onSettled` 重新武装。**注册表被保留** |
-| `dispose()` | `stop()` 之后再清空注册表 |
+| 方法        | 说明                                                                                                             |
+| ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| `start()`   | 先统一校验依赖引用完整性（拼错的依赖名在这里抛错），再推进一轮并按需拉起心跳；重复调用无副作用                   |
+| `stop()`    | 中断在途任务，按逆优先级顺序调用所有 `cleanup`，任务状态归零，`onReady` / `onSettled` 重新武装。**注册表被保留** |
+| `dispose()` | `stop()` 之后再清空注册表                                                                                        |
 
 <Callout>
   `stop()` 保留注册表，再次 `start()` 会从头重跑一遍——因此 `init` / `listener` 的 `run` 应当写成幂等的。
@@ -285,10 +283,10 @@ hub.registerAll([taskA, taskB, taskC]);
 
 ### `.pause()` / `.resume()`
 
-| 方法 | 说明 |
-| --- | --- |
-| `pause()` | 暂停调度，保留全部任务状态**以及退避重试的剩余时间** |
-| `resume()` | 恢复调度，退避计时从暂停时的剩余时间接着走 |
+| 方法       | 说明                                                 |
+| ---------- | ---------------------------------------------------- |
+| `pause()`  | 暂停调度，保留全部任务状态**以及退避重试的剩余时间** |
+| `resume()` | 恢复调度，退避计时从暂停时的剩余时间接着走           |
 
 适合页面切到后台时暂停、切回前台时恢复的场景。
 
@@ -388,17 +386,17 @@ const hub = new TaskHub({
 
 ## 与传统方式对比
 
-| 维度 | N 个 `setInterval` | `TaskHub` |
-| --- | --- | --- |
-| 依赖关系 | 无法表达 | `deps` 天然支持 DAG |
-| 执行顺序 | 靠代码位置，容易出错 | `priority` + 依赖自动保证 |
-| 清理 | 逐一保存 timer id，容易遗漏 | `stop()` 一次清理全部 |
-| 暂停/恢复 | 需自行维护状态 | `pause()` / `resume()` |
-| 状态观测 | 无 | `snapshot()` 随时看全貌 |
-| Timer 数量 | 随业务线性膨胀 | 至多 1 个（没有周期任务时为 0） |
-| 错误处理 | 各自为政 | 统一 `onTaskError` / `onTaskBlocked` |
-| 重试 | 需手动实现 | 指数退避，开箱即用 |
-| 中断长耗时任务 | 需自行透传 signal | `run(ctx)` 直接给 `ctx.signal` |
+| 维度           | N 个 `setInterval`          | `TaskHub`                            |
+| -------------- | --------------------------- | ------------------------------------ |
+| 依赖关系       | 无法表达                    | `deps` 天然支持 DAG                  |
+| 执行顺序       | 靠代码位置，容易出错        | `priority` + 依赖自动保证            |
+| 清理           | 逐一保存 timer id，容易遗漏 | `stop()` 一次清理全部                |
+| 暂停/恢复      | 需自行维护状态              | `pause()` / `resume()`               |
+| 状态观测       | 无                          | `snapshot()` 随时看全貌              |
+| Timer 数量     | 随业务线性膨胀              | 至多 1 个（没有周期任务时为 0）      |
+| 错误处理       | 各自为政                    | 统一 `onTaskError` / `onTaskBlocked` |
+| 重试           | 需手动实现                  | 指数退避，开箱即用                   |
+| 中断长耗时任务 | 需自行透传 signal           | `run(ctx)` 直接给 `ctx.signal`       |
 
 ## 在 React 中使用
 

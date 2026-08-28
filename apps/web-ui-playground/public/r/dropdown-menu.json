@@ -3,9 +3,7 @@
   "name": "dropdown-menu",
   "type": "registry:block",
   "title": "Dropdown Menu",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/dropdown-menu/DropdownMenu.tsx",

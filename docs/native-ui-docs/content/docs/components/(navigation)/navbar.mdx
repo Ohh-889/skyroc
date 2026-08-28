@@ -54,13 +54,13 @@ import { NavBar } from '@skyroc/native-ui';
 
 `backColor` 单独指定返回箭头颜色（缺省时箭头包在 `Text` 里，继承主题前景色、跟随明暗模式）。`className` 落在导航栏主体上，`classNames` 按 slot 细粒度覆盖：
 
-| slot        | 作用位置                                        |
-| ----------- | ----------------------------------------------- |
-| `container` | 最外层容器，承载顶部安全区内边距                |
-| `root`      | 导航栏主体（高度、横向内边距、下边框）          |
-| `left`      | 左侧按钮区                                      |
-| `title`     | 标题区（绝对定位居中）                          |
-| `right`     | 右侧按钮区                                      |
+| slot        | 作用位置                               |
+| ----------- | -------------------------------------- |
+| `container` | 最外层容器，承载顶部安全区内边距       |
+| `root`      | 导航栏主体（高度、横向内边距、下边框） |
+| `left`      | 左侧按钮区                             |
+| `title`     | 标题区（绝对定位居中）                 |
+| `right`     | 右侧按钮区                             |
 
 <Demo src="@playground/navbar/NavBarStyles" />
 
@@ -95,7 +95,11 @@ import { NavBar } from '@skyroc/native-ui';
     { name: 'border', description: '是否显示下边框', type: 'boolean', default: 'true' },
     { name: 'safeAreaTop', description: '是否使用顶部安全区内边距', type: 'boolean', default: 'true' },
     { name: 'className', description: '导航栏主体类名', type: 'string' },
-    { name: 'classNames', description: '各 slot 的类名覆盖，见「颜色与样式覆盖」一节', type: 'SlotClassNames<NavBarSlots>' },
+    {
+      name: 'classNames',
+      description: '各 slot 的类名覆盖，见「颜色与样式覆盖」一节',
+      type: 'SlotClassNames<NavBarSlots>'
+    },
     {
       name: 'ref',
       description: '最外层容器的 ref，可用于 measure 导航栏实际高度（含安全区）',

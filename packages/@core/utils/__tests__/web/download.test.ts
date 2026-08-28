@@ -6,7 +6,7 @@ import {
   downloadFileFromImageUrl,
   downloadFileFromUrl,
   triggerDownload,
-  urlToBase64,
+  urlToBase64
 } from '../../src/web/download';
 
 // ==================== mock DOM ====================
@@ -19,7 +19,7 @@ function createMockLink() {
     href: '',
     rel: '',
     remove: vi.fn(),
-    style: { display: '' },
+    style: { display: '' }
   };
   return link;
 }
@@ -43,22 +43,14 @@ function emitMockImageEvent(image: MockImageInstance, type: string) {
   });
 }
 
-function addMockImageEventListener(
-  this: MockImageInstance,
-  type: string,
-  listener: (event: Event) => void
-) {
+function addMockImageEventListener(this: MockImageInstance, type: string, listener: (event: Event) => void) {
   const listeners = this.__listeners.get(type) ?? new Set();
 
   listeners.add(listener);
   this.__listeners.set(type, listeners);
 }
 
-function removeMockImageEventListener(
-  this: MockImageInstance,
-  type: string,
-  listener: (event: Event) => void
-) {
+function removeMockImageEventListener(this: MockImageInstance, type: string, listener: (event: Event) => void) {
   this.__listeners.get(type)?.delete(listener);
 }
 
@@ -67,7 +59,7 @@ function createMockImage(overrides: Record<string, any> = {}) {
     crossOrigin: '',
     naturalHeight: 100,
     naturalWidth: 200,
-    ...overrides,
+    ...overrides
   };
 
   function MockImage(this: MockImageInstance) {
@@ -91,7 +83,7 @@ function createMockImage(overrides: Record<string, any> = {}) {
           emitMockImageEvent(self, 'load');
         }
       }, 0);
-    },
+    }
   });
 
   return MockImage;
@@ -174,7 +166,7 @@ describe('downloadFileFromBase64', () => {
 
     downloadFileFromBase64({
       fileName: 'test.pdf',
-      source: 'data:application/pdf;base64,AAAA',
+      source: 'data:application/pdf;base64,AAAA'
     });
 
     expect(link.href).toBe('data:application/pdf;base64,AAAA');
@@ -273,7 +265,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -289,7 +281,7 @@ describe('downloadFileFromUrl', () => {
 
     const mockBlob = new Blob(['content']);
     const mockHeaders = new Headers({
-      'content-disposition': "attachment; filename*=UTF-8''report%202024.pdf",
+      'content-disposition': "attachment; filename*=UTF-8''report%202024.pdf"
     });
 
     vi.stubGlobal(
@@ -298,7 +290,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -313,7 +305,7 @@ describe('downloadFileFromUrl', () => {
 
     const mockBlob = new Blob(['content']);
     const mockHeaders = new Headers({
-      'content-disposition': 'attachment; filename="data.csv"',
+      'content-disposition': 'attachment; filename="data.csv"'
     });
 
     vi.stubGlobal(
@@ -322,7 +314,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -337,7 +329,7 @@ describe('downloadFileFromUrl', () => {
 
     const mockBlob = new Blob(['content']);
     const mockHeaders = new Headers({
-      'content-disposition': 'attachment; filename=report.pdf',
+      'content-disposition': 'attachment; filename=report.pdf'
     });
 
     vi.stubGlobal(
@@ -346,7 +338,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -368,7 +360,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -383,7 +375,7 @@ describe('downloadFileFromUrl', () => {
 
     const mockBlob = new Blob(['content']);
     const mockHeaders = new Headers({
-      'content-disposition': 'inline',
+      'content-disposition': 'inline'
     });
 
     vi.stubGlobal(
@@ -392,7 +384,7 @@ describe('downloadFileFromUrl', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -408,7 +400,7 @@ describe('downloadFileFromUrl', () => {
       'fetch',
       vi.fn().mockResolvedValue({
         ok: false,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
@@ -424,7 +416,7 @@ describe('downloadFileFromUrl', () => {
       'fetch',
       vi.fn().mockResolvedValue({
         ok: true,
-        type: 'opaque',
+        type: 'opaque'
       })
     );
 
@@ -450,7 +442,7 @@ describe('downloadFileFromUrl', () => {
 
     Object.defineProperty(navigator, 'userAgent', {
       configurable: true,
-      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)'
     });
 
     await downloadFileFromUrl({ source: 'https://example.com/file.txt' });
@@ -460,7 +452,7 @@ describe('downloadFileFromUrl', () => {
 
     Object.defineProperty(navigator, 'userAgent', {
       configurable: true,
-      value: '',
+      value: ''
     });
   });
 
@@ -471,11 +463,11 @@ describe('downloadFileFromUrl', () => {
 
     Object.defineProperty(navigator, 'platform', {
       configurable: true,
-      value: 'MacIntel',
+      value: 'MacIntel'
     });
     Object.defineProperty(navigator, 'maxTouchPoints', {
       configurable: true,
-      value: 5,
+      value: 5
     });
 
     await downloadFileFromUrl({ source: 'https://example.com/file.txt' });
@@ -485,11 +477,11 @@ describe('downloadFileFromUrl', () => {
 
     Object.defineProperty(navigator, 'platform', {
       configurable: true,
-      value: '',
+      value: ''
     });
     Object.defineProperty(navigator, 'maxTouchPoints', {
       configurable: true,
-      value: 0,
+      value: 0
     });
   });
 });
@@ -514,7 +506,7 @@ describe('downloadFileFromImageUrl', () => {
           getContext: () => mockCtx,
           height: 0,
           toDataURL: () => fakeDataURL,
-          width: 0,
+          width: 0
         } as any;
       }
       return link as any;
@@ -525,7 +517,7 @@ describe('downloadFileFromImageUrl', () => {
 
     await downloadFileFromImageUrl({
       fileName: 'photo.png',
-      source: 'https://example.com/photo.png',
+      source: 'https://example.com/photo.png'
     });
 
     expect(link.click).toHaveBeenCalled();
@@ -551,7 +543,7 @@ describe('urlToBase64', () => {
       getContext: () => mockCtx,
       height: 0,
       toDataURL: () => fakeDataURL,
-      width: 0,
+      width: 0
     } as any);
 
     vi.stubGlobal('Image', createMockImage());
@@ -569,7 +561,7 @@ describe('urlToBase64', () => {
       getContext: () => ({ drawImage: vi.fn() }),
       height: 0,
       toDataURL: toDataURLSpy,
-      width: 0,
+      width: 0
     } as any);
 
     vi.stubGlobal('Image', createMockImage());
@@ -583,7 +575,7 @@ describe('urlToBase64', () => {
     vi.spyOn(document, 'createElement').mockReturnValue({
       getContext: () => null,
       height: 0,
-      width: 0,
+      width: 0
     } as any);
 
     vi.stubGlobal('Image', createMockImage());
@@ -595,7 +587,7 @@ describe('urlToBase64', () => {
     vi.spyOn(document, 'createElement').mockReturnValue({
       getContext: () => ({}),
       height: 0,
-      width: 0,
+      width: 0
     } as any);
 
     vi.stubGlobal('Image', createMockImage({ failOnLoad: true }));
@@ -612,14 +604,12 @@ describe('urlToBase64', () => {
       toDataURL: () => {
         throw new Error('canvas tainted');
       },
-      width: 0,
+      width: 0
     } as any);
 
     vi.stubGlobal('Image', createMockImage());
 
-    await expect(urlToBase64('https://example.com/img.png')).rejects.toThrow(
-      'Failed to convert image to base64.'
-    );
+    await expect(urlToBase64('https://example.com/img.png')).rejects.toThrow('Failed to convert image to base64.');
   });
 });
 
@@ -633,7 +623,7 @@ describe('download 边界分支', () => {
       blob: () => Promise.resolve(new Blob(['content'])),
       headers: new Headers(),
       ok: true,
-      type: 'cors',
+      type: 'cors'
     });
 
     vi.stubGlobal('fetch', fetchMock);
@@ -675,21 +665,24 @@ describe('download 边界分支', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 
-    vi.stubGlobal('URL', class extends originalURL {
-      constructor(input: string | URL, base?: string | URL) {
-        callCount += 1;
-        if (callCount > 1 && typeof input === 'string' && input.includes('bad-path')) {
-          throw new Error('Invalid URL');
+    vi.stubGlobal(
+      'URL',
+      class extends originalURL {
+        constructor(input: string | URL, base?: string | URL) {
+          callCount += 1;
+          if (callCount > 1 && typeof input === 'string' && input.includes('bad-path')) {
+            throw new Error('Invalid URL');
+          }
+          super(input, base);
         }
-        super(input, base);
+        static override createObjectURL = originalURL.createObjectURL;
+        static override revokeObjectURL = originalURL.revokeObjectURL;
       }
-      static override createObjectURL = originalURL.createObjectURL;
-      static override revokeObjectURL = originalURL.revokeObjectURL;
-    });
+    );
 
     await downloadFileFromUrl({ source: 'https://example.com/bad-path/file.txt' });
 
@@ -704,7 +697,7 @@ describe('download 边界分支', () => {
 
     const mockBlob = new Blob(['content']);
     const mockHeaders = new Headers({
-      'content-disposition': "attachment; filename*=UTF-8''%ZZbad%file",
+      'content-disposition': "attachment; filename*=UTF-8''%ZZbad%file"
     });
 
     vi.stubGlobal(
@@ -713,7 +706,7 @@ describe('download 边界分支', () => {
         blob: () => Promise.resolve(mockBlob),
         headers: mockHeaders,
         ok: true,
-        type: 'cors',
+        type: 'cors'
       })
     );
 

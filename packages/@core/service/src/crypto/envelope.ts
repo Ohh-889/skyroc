@@ -1,17 +1,15 @@
 /**
  * 接口传输加密的信封：RSA 包住一次性 AES 密钥，AES-GCM 包住 body。
  *
- * 分两层是因为非对称算法有明文长度上限而且慢，只能拿来传密钥；body 的大小不设上限，
- * 必须走对称算法。
+ * 分两层是因为非对称算法有明文长度上限而且慢，只能拿来传密钥；body 的大小不设上限， 必须走对称算法。
  *
  * 报文格式和后端 `app/core/crypto/envelope.py` 是同一份契约：
  *
  *     密钥头  base64( RSA-OAEP-SHA256(服务端公钥, aesKey) )
  *     body    base64( nonce(12B) ‖ AES-256-GCM(aesKey, 明文) ‖ tag(16B) )
  *
- * 走 node-forge 而不是 WebCrypto，是因为 `crypto.subtle` 只在安全上下文里存在：
- * 用 http + 局域网 IP 访问开发服务器时整条加密链路直接不可用，手机和同事的电脑都进不来。
- * forge 是纯 JS 实现，不挑上下文，代价是约 90KB gzip 和慢一些的 RSA（一次登录几十毫秒）。
+ * 走 node-forge 而不是 WebCrypto，是因为 `crypto.subtle` 只在安全上下文里存在： 用 http + 局域网 IP 访问开发服务器时整条加密链路直接不可用，手机和同事的电脑都进不来。 forge 是纯
+ * JS 实现，不挑上下文，代价是约 90KB gzip 和慢一些的 RSA（一次登录几十毫秒）。
  *
  * 这个模块只做加密：不认识 axios、不读环境变量，公钥由调用方传进来。
  */

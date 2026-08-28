@@ -1,6 +1,6 @@
 import { hasAuthorizedRoutePath, hasMatchedRoutePermission, normalizePath } from '@shell/layouts';
 import { redirect } from '@tanstack/react-router';
-import type {MakeRouteMatchUnion, ParsedLocation} from '@tanstack/react-router'
+import type { MakeRouteMatchUnion, ParsedLocation } from '@tanstack/react-router';
 
 export interface AdminRouteGuardOptions {
   context: Router.RouterContext;
@@ -8,8 +8,6 @@ export interface AdminRouteGuardOptions {
   matches: MakeRouteMatchUnion[];
   preload?: boolean;
 }
-
-
 
 function getLoginRedirectSearch(location: ParsedLocation, context: Router.RouterContext) {
   const homeRoute = normalizePath(context.homeRoute || context.getHomeRoute());
@@ -47,25 +45,21 @@ function getRouteSwitchFallbackPath(context: Router.RouterContext, currentRouteP
   return '/404';
 }
 
-
-async  function resolveUserInfo(context: Router.RouterContext) {
+async function resolveUserInfo(context: Router.RouterContext) {
   if (context.isAuthInitialized && context.userInfo) {
     return context.userInfo;
   }
 
- return  context.initAuth();
+  return context.initAuth();
 }
 
-async function guardResolvedUserInfo(
-  options: AdminRouteGuardOptions,
-  userInfo: Api.Auth.UserInfo | null
-){
+async function guardResolvedUserInfo(options: AdminRouteGuardOptions, userInfo: Api.Auth.UserInfo | null) {
   const { context, location, matches, preload } = options;
 
   if (!userInfo) {
     // 等登出走完再跳：/login 的守卫会重新读 token，没清完就跳过去会被当成还登录着。
     // 只有 initAuth 落空才走到这里，那条路本来就是异步的，下面 isPromise 那条同步快路不受影响。
-    await context.logout()
+    await context.logout();
 
     throw redirect({ to: '/login', search: getLoginRedirectSearch(location, context) });
   }
@@ -98,7 +92,7 @@ export async function guardAdminRoute(options: AdminRouteGuardOptions) {
 
   const userInfo = await resolveUserInfo(context);
 
-  console.log('userInfo',userInfo);
+  console.log('userInfo', userInfo);
 
   return await guardResolvedUserInfo(options, userInfo);
 }

@@ -1,4 +1,13 @@
-import { DialogClose, DialogContent, DialogDescription, DialogHeader, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from '../dialog';
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle
+} from '../dialog';
 import type { CommandDialogProps } from './types';
 
 const CommandDialog = (props: CommandDialogProps) => {

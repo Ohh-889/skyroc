@@ -48,10 +48,10 @@ export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   plugins: [
     skyrocUIPlugin({
-      color: 'blue',     // 12 套内置主题之一
-      radius: 0.75,      // 圆角基准（rem）
-      platform: 'web',   // 'web' | 'native'
-      globals: true,     // 是否注入 *.borderColor、body 全局样式
+      color: 'blue', // 12 套内置主题之一
+      radius: 0.75, // 圆角基准（rem）
+      platform: 'web', // 'web' | 'native'
+      globals: true, // 是否注入 *.borderColor、body 全局样式
       darkSelector: '.dark'
     })
   ]
@@ -62,9 +62,7 @@ export default {
 
 ```tsx
 <div className="bg-background text-foreground">
-  <button className="bg-primary text-primary-foreground rounded-md px-4 py-2">
-    主要按钮
-  </button>
+  <button className="bg-primary text-primary-foreground rounded-md px-4 py-2">主要按钮</button>
 
   <div className="bg-card border border-border rounded-lg p-4">
     <p className="text-muted-foreground">次要文字</p>
@@ -113,9 +111,9 @@ src/
 
 ## 子入口
 
-| 导入路径 | 内容 |
-|----------|------|
-| `@skyroc/tailwind-plugin` | 插件本体与配置类型 |
+| 导入路径                     | 内容                                                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------- |
+| `@skyroc/tailwind-plugin`    | 插件本体与配置类型                                                                     |
 | `@skyroc/tailwind-plugin/ui` | `ThemeColor` / `ThemeSize` / `ThemeAlign` / `ThemeOrientation` / `ThemeSide` / `Value` |
 
 `./ui` 是给 `@skyroc/web-ui`、`@skyroc/native-ui` 这类组件库用的纯类型入口，零 import，
@@ -127,17 +125,17 @@ src/
 
 ## API 速览
 
-| 导出 | 类型 | 说明 |
-|------|------|------|
-| `skyrocUIPlugin(options?)` | plugin | 主插件，同时完成 `addBase` + `addUtilities` + `theme.extend` |
-| `skyrocUITheme(options)` | function | 返回 `addBase` 输入对象（CSS 变量 + 全局样式 + 字号档 + keyframes）|
-| `presetSkyrocUI()` | function | 返回 `addUtilities` 输入对象（`flex-*` / `i-flex-*` / `animate-*`）|
-| `generateCSSVars(theme, onlyOne?, native?)` | function | 底层 CSS 变量生成器，可在 SSR / 服务端单独使用 |
-| `generateGlobalStyles()` | function | 返回 `*` / `body` / `.lucide` 全局样式片段 |
-| `builtinColors` | const | 12 套内置颜色名数组 |
-| `builtinColorMap` | const | 颜色名 → 主色 hsl 字符串映射 |
-| `builtinRadiuses` | const | 可用圆角枚举 `[0, 0.3, 0.5, 0.75, 1]` |
-| `SkyrocUIPluginOptions` / `ThemeOptions` / `ThemeConfig` / `ThemeColorKey` 等 | type | 完整类型导出 |
+| 导出                                                                          | 类型     | 说明                                                                |
+| ----------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------- |
+| `skyrocUIPlugin(options?)`                                                    | plugin   | 主插件，同时完成 `addBase` + `addUtilities` + `theme.extend`        |
+| `skyrocUITheme(options)`                                                      | function | 返回 `addBase` 输入对象（CSS 变量 + 全局样式 + 字号档 + keyframes） |
+| `presetSkyrocUI()`                                                            | function | 返回 `addUtilities` 输入对象（`flex-*` / `i-flex-*` / `animate-*`） |
+| `generateCSSVars(theme, onlyOne?, native?)`                                   | function | 底层 CSS 变量生成器，可在 SSR / 服务端单独使用                      |
+| `generateGlobalStyles()`                                                      | function | 返回 `*` / `body` / `.lucide` 全局样式片段                          |
+| `builtinColors`                                                               | const    | 12 套内置颜色名数组                                                 |
+| `builtinColorMap`                                                             | const    | 颜色名 → 主色 hsl 字符串映射                                        |
+| `builtinRadiuses`                                                             | const    | 可用圆角枚举 `[0, 0.3, 0.5, 0.75, 1]`                               |
+| `SkyrocUIPluginOptions` / `ThemeOptions` / `ThemeConfig` / `ThemeColorKey` 等 | type     | 完整类型导出                                                        |
 
 完整 API 文档（含字段说明、token 表格、设计取舍、Web/Native 差异）：见 [`apps/web-kit-docs/content/docs/tailwind-plugin.mdx`](../../../apps/web-kit-docs/content/docs/tailwind-plugin.mdx)。
 

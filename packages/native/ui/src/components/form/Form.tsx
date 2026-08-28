@@ -12,15 +12,24 @@ import type { FormProps } from './types';
  * 需要自由布局（ScrollView 容器、自定义间距）时用 FieldGroup + FieldItem。
  *
  * @example
- * ```tsx
- * const [form] = useForm<{ name: string }>();
+ *   ```tsx
+ *   const [form] = useForm<{ name: string }>();
  *
- * <Form inset title="基本信息" form={form} onFinish={(values) => console.log(values)}>
- *   <FormItem name="name" label="姓名" required>
- *     <Input placeholder="请输入姓名" />
- *   </FormItem>
- * </Form>
- * ```
+ *   <Form
+ *     inset
+ *     title="基本信息"
+ *     form={form}
+ *     onFinish={values => console.log(values)}
+ *   >
+ *     <FormItem
+ *       name="name"
+ *       label="姓名"
+ *       required
+ *     >
+ *       <Input placeholder="请输入姓名" />
+ *     </FormItem>
+ *   </Form>;
+ *   ```;
  */
 const Form = <Values = any,>(props: FormProps<Values>) => {
   const { children, ref, ...rest } = props;

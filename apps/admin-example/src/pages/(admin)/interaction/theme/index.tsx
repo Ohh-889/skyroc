@@ -46,7 +46,10 @@ const fontSizes = [
 function RouteComponent() {
   return (
     <div className="min-h-full p-6">
-      <div className="mx-auto space-y-10" style={{ maxWidth: '1280px' }}>
+      <div
+        className="mx-auto space-y-10"
+        style={{ maxWidth: '1280px' }}
+      >
         {/* Hero Section */}
         <section className="py-12 text-center">
           <div className="mb-6 h-20 w-20 inline-flex items-center justify-center rounded-2xl from-indigo-500 to-purple-600 bg-gradient-to-br shadow-indigo-500/25 shadow-xl">
@@ -55,7 +58,10 @@ function RouteComponent() {
           <h1 className="mb-4 from-indigo-600 via-purple-600 to-pink-600 bg-gradient-to-r bg-clip-text text-4xl text-transparent font-black tracking-tight md:text-5xl">
             UnoCSS Design System
           </h1>
-          <p className="mx-auto text-slate-600 text-base md:text-lg dark:text-slate-400" style={{ maxWidth: '672px' }}>
+          <p
+            className="mx-auto text-slate-600 text-base md:text-lg dark:text-slate-400"
+            style={{ maxWidth: '672px' }}
+          >
             专为 Ant Design 打造的 UnoCSS 预设主题系统，提供完整的颜色体系、组件样式和设计规范
           </p>
         </section>
@@ -77,7 +83,10 @@ function RouteComponent() {
               >
                 <div className="mb-3 flex items-center justify-between">
                   <h3 className="text-lg text-slate-800 font-bold dark:text-slate-200">{name}</h3>
-                  <span className={`${icon} text-xl`} style={{ color: `var(--${key})` }} />
+                  <span
+                    className={`${icon} text-xl`}
+                    style={{ color: `var(--${key})` }}
+                  />
                 </div>
 
                 {/* 主色展示 */}

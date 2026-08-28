@@ -14,19 +14,19 @@ export const avatarVariants = tv({
       '2xl': {
         root: 'size-16'
       },
-      'lg': {
+      lg: {
         root: 'size-12'
       },
-      'md': {
+      md: {
         root: 'size-10'
       },
-      'sm': {
+      sm: {
         root: 'size-8'
       },
-      'xl': {
+      xl: {
         root: 'size-14'
       },
-      'xs': {
+      xs: {
         root: 'size-6'
       }
     }

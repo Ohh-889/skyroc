@@ -51,9 +51,7 @@ describe('ScrollArea', () => {
         className="primitive-scroll-root"
         type="always"
       >
-        <ScrollAreaViewport className="primitive-scroll-viewport">
-          Primitive content
-        </ScrollAreaViewport>
+        <ScrollAreaViewport className="primitive-scroll-viewport">Primitive content</ScrollAreaViewport>
         <ScrollAreaScrollbar
           className="primitive-scrollbar"
           orientation="vertical"

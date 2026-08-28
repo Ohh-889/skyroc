@@ -4,10 +4,8 @@ import { tv } from 'tailwind-variants';
 /**
  * 步进器样式变体。
  *
- * `input` 槽的字号走 `text-(length:--text-*)` 而不是 `text-sm` 简写：简写会连带输出 `line-height`，
- * Uniwind 换算成绝对 lineHeight 传给 RN，iOS 的 NSParagraphStyle 在强制行高时把多出的空间全加在
- * 文字上方，表现为输入框里数字偏下。单行数值不需要行高，只给 fontSize 让其按控件高度自然居中。
- * 同 `input-variants.ts`。
+ * `input` 槽的字号走 `text-(length:--text-*)` 而不是 `text-sm` 简写：简写会连带输出 `line-height`， Uniwind 换算成绝对 lineHeight 传给 RN，iOS 的
+ * NSParagraphStyle 在强制行高时把多出的空间全加在 文字上方，表现为输入框里数字偏下。单行数值不需要行高，只给 fontSize 让其按控件高度自然居中。 同 `input-variants.ts`。
  */
 const stepperVariants = tv({
   slots: {

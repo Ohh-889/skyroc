@@ -1,22 +1,13 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "../../internal/config/oxlint/next.json"
-  ],
+  "extends": ["../../internal/config/oxlint/next.json"],
   "settings": {
     "react": {
       "version": "19.2.5"
     },
     "tailwindcss": {
-      "callees": [
-        "clsx",
-        "cva",
-        "cn"
-      ]
+      "callees": ["clsx", "cva", "cn"]
     }
   },
-  "ignorePatterns": [
-    "node_modules/",
-    "dist/"
-  ]
+  "ignorePatterns": ["node_modules/", "dist/"]
 }

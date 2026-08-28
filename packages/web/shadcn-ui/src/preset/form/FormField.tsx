@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import FormFieldUI from '../../components/form/FormFieldUI';
 import type { FormFieldProps } from '../../components/form/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const FormField = <Values = any,>(props: FormFieldProps<Values>) => {
   const config = useComponentConfig('formField');
@@ -12,11 +12,7 @@ const FormField = <Values = any,>(props: FormFieldProps<Values>) => {
     ...props
   };
 
-  return (
-    <FormFieldUI
-      {...mergedProps}
-    />
-  );
+  return <FormFieldUI {...mergedProps} />;
 };
 
 FormField.displayName = 'FormField';

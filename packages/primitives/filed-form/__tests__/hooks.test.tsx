@@ -46,10 +46,9 @@ const WatchSelectorEffectPanel = (props: WatchSelectorEffectPanelProps) => {
     'email' | 'name'
   >;
   const values = useWatch<HookValues>() as HookValues;
-  const total = useSelector<HookValues, number>(
-    get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0),
-    { deps: ['quantity', 'unitPrice'] }
-  );
+  const total = useSelector<HookValues, number>(get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0), {
+    deps: ['quantity', 'unitPrice']
+  });
 
   useEffectField<HookValues>(['name'], get => {
     onEffect(String(get('name')));
@@ -78,10 +77,16 @@ const ArrayFieldPanel = (props: ArrayFieldPanelProps) => {
   return (
     <>
       <output aria-label="Item count">{items.length}</output>
-      <button type="button" onClick={() => ops.insert(items.length, { title })}>
+      <button
+        type="button"
+        onClick={() => ops.insert(items.length, { title })}
+      >
         Add item
       </button>
-      <button type="button" onClick={() => ops.remove(0)}>
+      <button
+        type="button"
+        onClick={() => ops.remove(0)}
+      >
         Remove first
       </button>
     </>
@@ -140,10 +145,10 @@ const ExternalInitialValuesObserver = () => {
   const [form] = useForm<HookValues>();
   const name = useWatch<HookValues, 'name'>('name', { form });
   const values = useWatch<HookValues>(form);
-  const total = useSelector<HookValues, number>(
-    get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0),
-    { deps: ['quantity', 'unitPrice'], form }
-  );
+  const total = useSelector<HookValues, number>(get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0), {
+    deps: ['quantity', 'unitPrice'],
+    form
+  });
 
   return (
     <>
@@ -226,10 +231,16 @@ const ErrorSummaryExample = () => {
         unitPrice: 1
       }}
     >
-      <Field name="errorEmail" rules={[{ debounceMs: 0, message: 'Email required', required: true }]}>
+      <Field
+        name="errorEmail"
+        rules={[{ debounceMs: 0, message: 'Email required', required: true }]}
+      >
         <input aria-label="Error email" />
       </Field>
-      <Field name="errorName" rules={[{ debounceMs: 0, message: 'Name required', required: true }]}>
+      <Field
+        name="errorName"
+        rules={[{ debounceMs: 0, message: 'Name required', required: true }]}
+      >
         <input aria-label="Error name" />
       </Field>
       <NamedErrors />
@@ -258,10 +269,18 @@ const UndoControls = (props: UndoControlsProps) => {
 
   return (
     <>
-      <button disabled={!canUndo} type="button" onClick={undo}>
+      <button
+        disabled={!canUndo}
+        type="button"
+        onClick={undo}
+      >
         Undo
       </button>
-      <button disabled={!canRedo} type="button" onClick={redo}>
+      <button
+        disabled={!canRedo}
+        type="button"
+        onClick={redo}
+      >
         Redo
       </button>
     </>
@@ -278,7 +297,10 @@ const UndoExample = (props: UndoExampleProps) => {
   const [form] = useForm<UndoValues>();
 
   return (
-    <Form form={form} initialValues={{ items: [{ title: 'A' }], title: initialTitle }}>
+    <Form
+      form={form}
+      initialValues={{ items: [{ title: 'A' }], title: initialTitle }}
+    >
       <Field name="title">
         <input aria-label="Title" />
       </Field>
@@ -286,7 +308,10 @@ const UndoExample = (props: UndoExampleProps) => {
         {(fields, ops) => (
           <>
             <output aria-label="Undo item count">{fields.length}</output>
-            <button type="button" onClick={() => ops.insert(fields.length, { title: 'B' })}>
+            <button
+              type="button"
+              onClick={() => ops.insert(fields.length, { title: 'B' })}
+            >
               Add undo item
             </button>
           </>
@@ -324,16 +349,28 @@ const UndoArrayExample = () => {
       <List name="items">
         {(_, ops) => (
           <>
-            <button type="button" onClick={() => ops.remove(1)}>
+            <button
+              type="button"
+              onClick={() => ops.remove(1)}
+            >
               Remove middle
             </button>
-            <button type="button" onClick={() => ops.move(2, 0)}>
+            <button
+              type="button"
+              onClick={() => ops.move(2, 0)}
+            >
               Move last first
             </button>
-            <button type="button" onClick={() => ops.swap(0, 2)}>
+            <button
+              type="button"
+              onClick={() => ops.swap(0, 2)}
+            >
               Swap ends
             </button>
-            <button type="button" onClick={() => ops.replace(1, { title: 'X' })}>
+            <button
+              type="button"
+              onClick={() => ops.replace(1, { title: 'X' })}
+            >
               Replace middle
             </button>
           </>
@@ -350,17 +387,29 @@ const ForceUndoRedoExample = () => {
   const hooks = (form as any).getInternalHooks();
 
   return (
-    <Form form={form} initialValues={{ items: [], title: 'Draft' }}>
+    <Form
+      form={form}
+      initialValues={{ items: [], title: 'Draft' }}
+    >
       <Field name="title">
         <input aria-label="Bulk title" />
       </Field>
-      <button type="button" onClick={() => form.setFieldsValue({ title: 'Bulk' } as any)}>
+      <button
+        type="button"
+        onClick={() => form.setFieldsValue({ title: 'Bulk' } as any)}
+      >
         Bulk title
       </button>
-      <button type="button" onClick={undo}>
+      <button
+        type="button"
+        onClick={undo}
+      >
         Force undo
       </button>
-      <button type="button" onClick={redo}>
+      <button
+        type="button"
+        onClick={redo}
+      >
         Force redo
       </button>
       <button
@@ -371,7 +420,13 @@ const ForceUndoRedoExample = () => {
       </button>
       <button
         type="button"
-        onClick={() => hooks.dispatch({ args: { index: 0, item: { title: 'Ghost' }, op: 'insert' }, name: 'missing', type: 'arrayOp' } as any)}
+        onClick={() =>
+          hooks.dispatch({
+            args: { index: 0, item: { title: 'Ghost' }, op: 'insert' },
+            name: 'missing',
+            type: 'arrayOp'
+          } as any)
+        }
       >
         Missing array op
       </button>
@@ -412,7 +467,10 @@ describe('form hooks', () => {
           <input aria-label="Name" />
         </Field>
         <Field name="quantity">
-          <input aria-label="Quantity" type="number" />
+          <input
+            aria-label="Quantity"
+            type="number"
+          />
         </Field>
         <WatchSelectorEffectPanel onEffect={onEffect} />
       </Form>
@@ -531,9 +589,9 @@ describe('form hooks', () => {
   });
 
   it('should throw context errors from field effect, field state, and selector hooks', () => {
-    expect(() =>
-      renderHook(() => useEffectField<HookValues>(['name'], () => undefined))
-    ).toThrow('Can not find FormContext. Please make sure you wrap Field under Form or provide a form instance.');
+    expect(() => renderHook(() => useEffectField<HookValues>(['name'], () => undefined))).toThrow(
+      'Can not find FormContext. Please make sure you wrap Field under Form or provide a form instance.'
+    );
     expect(() => renderHook(() => useFieldState<HookValues, 'name'>('name'))).toThrow(
       'Can not find FormContext. Please make sure you wrap Field under Form or provide a form instance.'
     );

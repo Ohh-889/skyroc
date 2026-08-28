@@ -1,8 +1,8 @@
 'use client';
 
-import { type ComponentRef, forwardRef } from 'react';
-import { OTPInput } from 'input-otp';
 import { cn } from '@skyroc/utils';
+import { OTPInput } from 'input-otp';
+import { type ComponentRef, forwardRef } from 'react';
 import { inputOTPVariants } from './input-otp-variants';
 import type { InputOTPRootProps } from './types';
 

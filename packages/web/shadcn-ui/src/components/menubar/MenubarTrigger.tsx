@@ -1,10 +1,10 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { Trigger } from '@radix-ui/react-menubar';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
-import MenuShortcut from '../menu/MenuShortcut';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import { menuVariants } from '../menu/menu-variants';
+import MenuShortcut from '../menu/MenuShortcut';
 import type { MenubarTriggerProps } from './types';
 
 const MenubarTrigger = forwardRef<ComponentRef<typeof Trigger>, MenubarTriggerProps>((props, ref) => {
@@ -24,15 +24,13 @@ const MenubarTrigger = forwardRef<ComponentRef<typeof Trigger>, MenubarTriggerPr
       {children}
       {trailing}
 
-      {shortcut
-        ? (
-          <MenuShortcut
-            className={classNames?.shortcut}
-            size={size}
-            value={shortcut}
-          />
-        )
-        : null}
+      {shortcut ? (
+        <MenuShortcut
+          className={classNames?.shortcut}
+          size={size}
+          value={shortcut}
+        />
+      ) : null}
     </Trigger>
   );
 });

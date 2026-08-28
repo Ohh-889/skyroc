@@ -21,7 +21,6 @@ const groups: SelectOptionData[] = [
 
 const GroupOption = () => {
   return (
-
     <div className="lt-sm:w-auto w-[240px]">
       <Select
         items={groups}
@@ -30,7 +29,6 @@ const GroupOption = () => {
         }}
       />
     </div>
-
   );
 };
 

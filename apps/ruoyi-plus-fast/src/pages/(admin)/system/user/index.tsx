@@ -1,8 +1,8 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { showConfirmModal } from '@shell/theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi, useLocation, useNavigate } from '@tanstack/react-router';
 import {
@@ -37,17 +37,9 @@ import {
   useUpdateUserRolesMutation,
   useUpdateUserStatusMutation
 } from '@/service/api/system-user';
-import type {
-  UserId,
-  UserListItem,
-  UserListPage,
-  UserSavePayload,
-  UserStatus
-} from '@/service/api/system-user';
+import type { UserId, UserListItem, UserListPage, UserSavePayload, UserStatus } from '@/service/api/system-user';
 import { downloadUserImportTemplate, exportUsers } from '@/service/api/system-user/api';
 
-import UserDepartmentPanel from './modules/UserDepartmentPanel';
-import type { UserEditorMode } from './modules/UserEditorDrawer';
 import {
   UserSearchSchema,
   getUserSearchInitialParams,
@@ -58,6 +50,8 @@ import {
   useUserTableQuery
 } from './modules/shared';
 import type { UserTableParams } from './modules/shared';
+import UserDepartmentPanel from './modules/UserDepartmentPanel';
+import type { UserEditorMode } from './modules/UserEditorDrawer';
 import UserSearch from './modules/UserSearch';
 
 const UserDetailDrawer = lazy(() => import('./modules/UserDetailDrawer'));

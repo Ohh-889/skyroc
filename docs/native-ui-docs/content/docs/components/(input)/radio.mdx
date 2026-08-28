@@ -28,16 +28,16 @@ import { Radio, RadioCard, RadioGroup, RadioGroupCard } from '@skyroc/native-ui'
 
 `color` 提供 8 种主题色，取值与全局 `ThemeColor` 一致。`round` 选中时是「同色描边 + 同色圆点」，`square` 选中时是「填充背景 + `{color}-foreground` 色的勾」。
 
-| 颜色          | 选中表现（round / square）             | 语义               |
-| ------------- | -------------------------------------- | ------------------ |
-| `primary`     | `border-primary` / `bg-primary`         | 常规选择（默认）   |
-| `destructive` | `border-destructive` / `bg-destructive` | 危险项             |
-| `success`     | `border-success` / `bg-success`         | 成功、推荐项       |
-| `warning`     | `border-warning` / `bg-warning`         | 需要注意的选项     |
-| `info`        | `border-info` / `bg-info`               | 信息性选项         |
-| `accent`      | `border-accent` / `bg-accent`           | 强调色             |
-| `carbon`      | `border-carbon` / `bg-carbon`           | 中性深色           |
-| `secondary`   | `border-secondary` / `bg-secondary`     | 次级、弱化选项     |
+| 颜色          | 选中表现（round / square）              | 语义             |
+| ------------- | --------------------------------------- | ---------------- |
+| `primary`     | `border-primary` / `bg-primary`         | 常规选择（默认） |
+| `destructive` | `border-destructive` / `bg-destructive` | 危险项           |
+| `success`     | `border-success` / `bg-success`         | 成功、推荐项     |
+| `warning`     | `border-warning` / `bg-warning`         | 需要注意的选项   |
+| `info`        | `border-info` / `bg-info`               | 信息性选项       |
+| `accent`      | `border-accent` / `bg-accent`           | 强调色           |
+| `carbon`      | `border-carbon` / `bg-carbon`           | 中性深色         |
+| `secondary`   | `border-secondary` / `bg-secondary`     | 次级、弱化选项   |
 
 <Demo src="@playground/radio/RadioColor" />
 
@@ -114,19 +114,19 @@ import { Radio, RadioCard, RadioGroup, RadioGroupCard } from '@skyroc/native-ui'
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖；`RadioGroupCard` 的卡片由组件内部渲染，只能通过 `itemClassNames` 统一透传。
 
-| slot            | 归属                       | 作用位置                                              |
-| --------------- | -------------------------- | ----------------------------------------------------- |
-| `root`          | `Radio` / `RadioCard`      | 根容器（`Radio` 是 `View`，`RadioCard` 是 `Pressable`） |
-| `control`       | `Radio`                    | 包住指示器的可点区域                                  |
-| `labelWrapper`  | `Radio`                    | 包住标签的可点区域                                    |
-| `label`         | `Radio` / `RadioCard`      | 标签文字                                              |
-| `indicator`     | `Radio` / `RadioCard`      | 指示器外圈（边框、背景、形状）                        |
-| `dot`           | `Radio` / `RadioCard`      | `round` 选中态的内圆点                                |
-| `indicatorIcon` | `Radio` / `RadioCard`      | `square` 内置勾的 `colorClassName`，只接受 `accent-*`  |
-| `content`       | `RadioCard`                | 图标 + 文本的横向容器                                 |
-| `icon`          | `RadioCard`                | 卡片图标的容器                                        |
-| `texts`         | `RadioCard`                | 标题 + 描述的纵向容器                                 |
-| `description`   | `RadioCard`                | 描述文字                                              |
+| slot            | 归属                  | 作用位置                                                |
+| --------------- | --------------------- | ------------------------------------------------------- |
+| `root`          | `Radio` / `RadioCard` | 根容器（`Radio` 是 `View`，`RadioCard` 是 `Pressable`） |
+| `control`       | `Radio`               | 包住指示器的可点区域                                    |
+| `labelWrapper`  | `Radio`               | 包住标签的可点区域                                      |
+| `label`         | `Radio` / `RadioCard` | 标签文字                                                |
+| `indicator`     | `Radio` / `RadioCard` | 指示器外圈（边框、背景、形状）                          |
+| `dot`           | `Radio` / `RadioCard` | `round` 选中态的内圆点                                  |
+| `indicatorIcon` | `Radio` / `RadioCard` | `square` 内置勾的 `colorClassName`，只接受 `accent-*`   |
+| `content`       | `RadioCard`           | 图标 + 文本的横向容器                                   |
+| `icon`          | `RadioCard`           | 卡片图标的容器                                          |
+| `texts`         | `RadioCard`           | 标题 + 描述的纵向容器                                   |
+| `description`   | `RadioCard`           | 描述文字                                                |
 
 <Demo src="@playground/radio/RadioStyles" />
 
@@ -459,7 +459,12 @@ import type {
       name: 'RadioGroupContextValue',
       description: 'RadioGroup 通过 context 下发给子项的配置与选中态操作，一般不需要直接使用。',
       fields: [
-        { name: 'isChecked', type: '(name: string | number) => boolean', description: '判断某个 name 是否被选中。', required: true },
+        {
+          name: 'isChecked',
+          type: '(name: string | number) => boolean',
+          description: '判断某个 name 是否被选中。',
+          required: true
+        },
         { name: 'select', type: '(name: string | number) => void', description: '选中某个 name。', required: true },
         {
           name: 'color',

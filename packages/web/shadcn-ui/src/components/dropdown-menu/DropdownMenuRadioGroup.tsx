@@ -1,8 +1,8 @@
 'use client';
 
+import { RadioGroup } from '@radix-ui/react-dropdown-menu';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { RadioGroup } from '@radix-ui/react-dropdown-menu';
 import MenuRadioGroup from '../menu/MenuRadioGroup';
 import DropdownMenuLabel from './DropdownMenuLabel';
 import DropdownMenuRadioItem from './DropdownMenuRadioItem';

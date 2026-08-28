@@ -3,13 +3,13 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { getAntdColumns, useTable } from '@shell/ui/compose/table/use-table';
 import type {
   PaginatingQueryRecord,
   TableColumn,
   TableDataWithIndex,
   TableQueryHookOptions
 } from '@shell/ui/compose/table/types';
+import { getAntdColumns, useTable } from '@shell/ui/compose/table/use-table';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -192,9 +192,7 @@ async function createEmptyUserResponse(params: UserSearchParams): Promise<Pagina
   };
 }
 
-function createUserQueryHook(
-  apiFn: (params: UserSearchParams) => Promise<PaginatingQueryRecord<UserRecord>>
-) {
+function createUserQueryHook(apiFn: (params: UserSearchParams) => Promise<PaginatingQueryRecord<UserRecord>>) {
   return function useUserQuery<Data = PaginatingQueryRecord<UserRecord>>(
     params: UserSearchParams,
     options?: TableQueryHookOptions<PaginatingQueryRecord<UserRecord>, Data>

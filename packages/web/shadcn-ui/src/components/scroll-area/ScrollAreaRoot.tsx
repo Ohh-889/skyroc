@@ -11,7 +11,13 @@ const ScrollAreaRoot = (props: ScrollAreaRootProps) => {
 
   const mergedCls = cn(root(), className);
 
-  return <Root className={mergedCls} data-slot="scroll-area-root" {...rest} />;
+  return (
+    <Root
+      className={mergedCls}
+      data-slot="scroll-area-root"
+      {...rest}
+    />
+  );
 };
 
 export default ScrollAreaRoot;

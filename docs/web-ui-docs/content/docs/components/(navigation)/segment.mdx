@@ -261,7 +261,11 @@ import { Segment } from '@skyroc/web-ui';
       description: '内部列表属性，基于 Radix Tabs List，并增加项目样式变体。',
       fields: [
         { name: 'className', type: 'ClassValue', description: '列表 class。' },
-        { name: 'classNames', type: "Pick<TabsUi, 'indicator' | 'indicatorRoot'>", description: '指示器相关 slot class。' },
+        {
+          name: 'classNames',
+          type: "Pick<TabsUi, 'indicator' | 'indicatorRoot'>",
+          description: '指示器相关 slot class。'
+        },
         { name: 'enableIndicator', type: 'boolean', description: '是否显示滑动指示器。' },
         { name: 'orientation', type: "'horizontal' | 'vertical'", description: '排列方向。' },
         { name: 'shape', type: "'square' | 'rounded'", description: '圆角形状。' },
@@ -283,4 +287,8 @@ import { Segment } from '@skyroc/web-ui';
   ]}
 />
 
-<UnionType name="ClassValue" description="CSS 类名类型" type="string | null | undefined | Record<string, boolean> | ClassValue[]" />
+<UnionType
+  name="ClassValue"
+  description="CSS 类名类型"
+  type="string | null | undefined | Record<string, boolean> | ClassValue[]"
+/>

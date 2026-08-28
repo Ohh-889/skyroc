@@ -164,132 +164,188 @@ Avatar 也导出基础结构组件，适合需要手动组合 Root、Image、Fal
 
 ## 类型
 
-<TypeTable data={[
-  {
-    name: 'AvatarProps',
-    description: '主组件属性。继承 AvatarImageProps 和 AvatarFallbackProps 中的 delayMs，并额外提供 fallback、classNames、rootProps 和 fallbackProps。',
-    fields: [
-      { name: 'alt', type: 'string', description: '头像图片替代文本。来自 img 元素属性。' },
-      { name: 'className', type: 'ClassValue', description: '图片元素的 class。来自 StyledComponentProps。' },
-      { name: 'classNames', type: 'AvatarUi', description: '各 slot 的自定义 class。' },
-      { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。来自 AvatarFallbackProps。' },
-      { name: 'fallback', type: 'React.ReactNode', description: '图片不可用时展示的回退内容。' },
-      { name: 'fallbackProps', type: 'AvatarFallbackProps', description: '传递给 AvatarFallback 的额外属性。' },
-      { name: 'onLoadingStatusChange', type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`, description: '图片加载状态变化回调。来自 Radix Avatar Image props。' },
-      { name: 'ref', type: 'Ref<HTMLImageElement>', description: '转发到底层图片元素的 ref。' },
-      { name: 'rootProps', type: 'AvatarRootProps', description: '传递给 AvatarRoot 的额外属性。' },
-      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '头像尺寸。来自 StyledComponentProps。' },
-      { name: 'src', type: 'string', description: '头像图片地址。来自 img 元素属性。' },
-      { name: '...React.ImgHTMLAttributes<HTMLImageElement>', type: 'React.ImgHTMLAttributes<HTMLImageElement>', description: '支持其余标准 img 属性。' }
-    ]
-  },
-  {
-    name: 'AvatarUi',
-    description: 'Avatar 各 slot 的自定义 class 配置。',
-    fields: [
-      { name: 'root', type: 'ClassValue', description: '根容器的 class。' },
-      { name: 'image', type: 'ClassValue', description: '图片元素的 class。' },
-      { name: 'fallback', type: 'ClassValue', description: '回退内容的 class。' }
-    ]
-  },
-  {
-    name: 'AvatarRootProps',
-    description: '根容器属性。继承 Radix Avatar Root props，并通过 StyledComponentProps 增加 className 和 size。',
-    fields: [
-      { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
-      { name: 'children', type: 'React.ReactNode', description: '根容器子节点，通常是 AvatarImage 和 AvatarFallback。' },
-      { name: 'className', type: 'ClassValue', description: '根容器 class。' },
-      { name: 'id', type: 'string', description: 'DOM id。来自 span 元素属性。' },
-      { name: 'ref', type: 'Ref<HTMLSpanElement>', description: '转发到底层 span 元素的 ref。' },
-      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '头像尺寸，影响根容器大小。' }
-    ]
-  },
-  {
-    name: 'AvatarImageProps',
-    description: '图片属性。继承 Radix Avatar Image props，并通过 StyledComponentProps 增加 className 和 size。',
-    fields: [
-      { name: 'alt', type: 'string', description: '图片替代文本。' },
-      { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
-      { name: 'className', type: 'ClassValue', description: '图片 class。' },
-      { name: 'height', type: 'number | string', description: '图片高度。来自 img 元素属性。' },
-      { name: 'onLoadingStatusChange', type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`, description: '图片加载状态变化回调。' },
-      { name: 'ref', type: 'Ref<HTMLImageElement>', description: '转发到底层 img 元素的 ref。' },
-      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '尺寸属性会被接收；当前图片样式主要依赖根容器尺寸。' },
-      { name: 'src', type: 'string', description: '图片地址。' },
-      { name: 'width', type: 'number | string', description: '图片宽度。来自 img 元素属性。' },
-      { name: '...React.ImgHTMLAttributes<HTMLImageElement>', type: 'React.ImgHTMLAttributes<HTMLImageElement>', description: '支持其余标准 img 属性与事件。' }
-    ]
-  },
-  {
-    name: 'AvatarFallbackProps',
-    description: '回退内容属性。继承 Radix Avatar Fallback props，并通过 StyledComponentProps 增加 className 和 size。',
-    fields: [
-      { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
-      { name: 'children', type: 'React.ReactNode', description: '回退内容。' },
-      { name: 'className', type: 'ClassValue', description: '回退内容 class。' },
-      { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。' },
-      { name: 'id', type: 'string', description: 'DOM id。来自 span 元素属性。' },
-      { name: 'ref', type: 'Ref<HTMLSpanElement>', description: '转发到底层 span 元素的 ref。' },
-      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '尺寸属性会被接收；当前回退内容样式主要依赖根容器尺寸。' }
-    ]
-  },
-  {
-    name: 'StyledComponentProps<T>',
-    description: '项目内用于包装 Radix props 的通用类型。',
-    fields: [
-      { name: '...T', type: 'Omit<T, \"className\">', description: '继承原始组件属性，但重新定义 className。' },
-      { name: 'className', type: 'ClassValue', description: '组件 class。' },
-      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '项目统一尺寸类型。' }
-    ]
-  },
-  {
-    name: 'RadixAvatarRootProps',
-    description: 'Radix Avatar Root 原始属性。',
-    fields: [
-      { name: '...PrimitiveSpanProps', type: 'PrimitiveSpanProps', description: '继承 Radix Primitive span 属性。' }
-    ]
-  },
-  {
-    name: 'RadixAvatarImageProps',
-    description: 'Radix Avatar Image 原始属性。',
-    fields: [
-      { name: '...PrimitiveImageProps', type: 'PrimitiveImageProps', description: '继承 Radix Primitive img 属性。' },
-      { name: 'onLoadingStatusChange', type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`, description: '图片加载状态变化回调。' }
-    ]
-  },
-  {
-    name: 'RadixAvatarFallbackProps',
-    description: 'Radix Avatar Fallback 原始属性。',
-    fields: [
-      { name: '...PrimitiveSpanProps', type: 'PrimitiveSpanProps', description: '继承 Radix Primitive span 属性。' },
-      { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。' }
-    ]
-  },
-  {
-    name: 'PrimitiveSpanProps',
-    description: 'Radix Primitive span 属性。',
-    fields: [
-      { name: '...React.ComponentPropsWithoutRef<typeof Primitive.span>', type: 'React.ComponentPropsWithoutRef<typeof Primitive.span>', description: '继承 Primitive.span 的无 ref 属性。' }
-    ]
-  },
-  {
-    name: 'PrimitiveImageProps',
-    description: 'Radix Primitive img 属性。',
-    fields: [
-      { name: '...React.ComponentPropsWithoutRef<typeof Primitive.img>', type: 'React.ComponentPropsWithoutRef<typeof Primitive.img>', description: '继承 Primitive.img 的无 ref 属性。' }
-    ]
-  },
-  {
-    name: 'PrimitivePropsWithRef<E>',
-    description: 'Radix Primitive 通用属性类型。',
-    fields: [
-      { name: '...React.ComponentPropsWithRef<E>', type: 'React.ComponentPropsWithRef<E>', description: '继承指定元素的原生属性和 ref。' },
-      { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。' }
-    ]
-  }
-]} />
+<TypeTable
+  data={[
+    {
+      name: 'AvatarProps',
+      description:
+        '主组件属性。继承 AvatarImageProps 和 AvatarFallbackProps 中的 delayMs，并额外提供 fallback、classNames、rootProps 和 fallbackProps。',
+      fields: [
+        { name: 'alt', type: 'string', description: '头像图片替代文本。来自 img 元素属性。' },
+        { name: 'className', type: 'ClassValue', description: '图片元素的 class。来自 StyledComponentProps。' },
+        { name: 'classNames', type: 'AvatarUi', description: '各 slot 的自定义 class。' },
+        { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。来自 AvatarFallbackProps。' },
+        { name: 'fallback', type: 'React.ReactNode', description: '图片不可用时展示的回退内容。' },
+        { name: 'fallbackProps', type: 'AvatarFallbackProps', description: '传递给 AvatarFallback 的额外属性。' },
+        {
+          name: 'onLoadingStatusChange',
+          type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`,
+          description: '图片加载状态变化回调。来自 Radix Avatar Image props。'
+        },
+        { name: 'ref', type: 'Ref<HTMLImageElement>', description: '转发到底层图片元素的 ref。' },
+        { name: 'rootProps', type: 'AvatarRootProps', description: '传递给 AvatarRoot 的额外属性。' },
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '头像尺寸。来自 StyledComponentProps。'
+        },
+        { name: 'src', type: 'string', description: '头像图片地址。来自 img 元素属性。' },
+        {
+          name: '...React.ImgHTMLAttributes<HTMLImageElement>',
+          type: 'React.ImgHTMLAttributes<HTMLImageElement>',
+          description: '支持其余标准 img 属性。'
+        }
+      ]
+    },
+    {
+      name: 'AvatarUi',
+      description: 'Avatar 各 slot 的自定义 class 配置。',
+      fields: [
+        { name: 'root', type: 'ClassValue', description: '根容器的 class。' },
+        { name: 'image', type: 'ClassValue', description: '图片元素的 class。' },
+        { name: 'fallback', type: 'ClassValue', description: '回退内容的 class。' }
+      ]
+    },
+    {
+      name: 'AvatarRootProps',
+      description: '根容器属性。继承 Radix Avatar Root props，并通过 StyledComponentProps 增加 className 和 size。',
+      fields: [
+        { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
+        {
+          name: 'children',
+          type: 'React.ReactNode',
+          description: '根容器子节点，通常是 AvatarImage 和 AvatarFallback。'
+        },
+        { name: 'className', type: 'ClassValue', description: '根容器 class。' },
+        { name: 'id', type: 'string', description: 'DOM id。来自 span 元素属性。' },
+        { name: 'ref', type: 'Ref<HTMLSpanElement>', description: '转发到底层 span 元素的 ref。' },
+        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '头像尺寸，影响根容器大小。' }
+      ]
+    },
+    {
+      name: 'AvatarImageProps',
+      description: '图片属性。继承 Radix Avatar Image props，并通过 StyledComponentProps 增加 className 和 size。',
+      fields: [
+        { name: 'alt', type: 'string', description: '图片替代文本。' },
+        { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
+        { name: 'className', type: 'ClassValue', description: '图片 class。' },
+        { name: 'height', type: 'number | string', description: '图片高度。来自 img 元素属性。' },
+        {
+          name: 'onLoadingStatusChange',
+          type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`,
+          description: '图片加载状态变化回调。'
+        },
+        { name: 'ref', type: 'Ref<HTMLImageElement>', description: '转发到底层 img 元素的 ref。' },
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '尺寸属性会被接收；当前图片样式主要依赖根容器尺寸。'
+        },
+        { name: 'src', type: 'string', description: '图片地址。' },
+        { name: 'width', type: 'number | string', description: '图片宽度。来自 img 元素属性。' },
+        {
+          name: '...React.ImgHTMLAttributes<HTMLImageElement>',
+          type: 'React.ImgHTMLAttributes<HTMLImageElement>',
+          description: '支持其余标准 img 属性与事件。'
+        }
+      ]
+    },
+    {
+      name: 'AvatarFallbackProps',
+      description:
+        '回退内容属性。继承 Radix Avatar Fallback props，并通过 StyledComponentProps 增加 className 和 size。',
+      fields: [
+        { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。来自 Radix Primitive。' },
+        { name: 'children', type: 'React.ReactNode', description: '回退内容。' },
+        { name: 'className', type: 'ClassValue', description: '回退内容 class。' },
+        { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。' },
+        { name: 'id', type: 'string', description: 'DOM id。来自 span 元素属性。' },
+        { name: 'ref', type: 'Ref<HTMLSpanElement>', description: '转发到底层 span 元素的 ref。' },
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '尺寸属性会被接收；当前回退内容样式主要依赖根容器尺寸。'
+        }
+      ]
+    },
+    {
+      name: 'StyledComponentProps<T>',
+      description: '项目内用于包装 Radix props 的通用类型。',
+      fields: [
+        { name: '...T', type: 'Omit<T, \"className\">', description: '继承原始组件属性，但重新定义 className。' },
+        { name: 'className', type: 'ClassValue', description: '组件 class。' },
+        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '项目统一尺寸类型。' }
+      ]
+    },
+    {
+      name: 'RadixAvatarRootProps',
+      description: 'Radix Avatar Root 原始属性。',
+      fields: [
+        { name: '...PrimitiveSpanProps', type: 'PrimitiveSpanProps', description: '继承 Radix Primitive span 属性。' }
+      ]
+    },
+    {
+      name: 'RadixAvatarImageProps',
+      description: 'Radix Avatar Image 原始属性。',
+      fields: [
+        { name: '...PrimitiveImageProps', type: 'PrimitiveImageProps', description: '继承 Radix Primitive img 属性。' },
+        {
+          name: 'onLoadingStatusChange',
+          type: `(status: 'idle' | 'loading' | 'loaded' | 'error') => void`,
+          description: '图片加载状态变化回调。'
+        }
+      ]
+    },
+    {
+      name: 'RadixAvatarFallbackProps',
+      description: 'Radix Avatar Fallback 原始属性。',
+      fields: [
+        { name: '...PrimitiveSpanProps', type: 'PrimitiveSpanProps', description: '继承 Radix Primitive span 属性。' },
+        { name: 'delayMs', type: 'number', description: '延迟显示 fallback 的毫秒数。' }
+      ]
+    },
+    {
+      name: 'PrimitiveSpanProps',
+      description: 'Radix Primitive span 属性。',
+      fields: [
+        {
+          name: '...React.ComponentPropsWithoutRef<typeof Primitive.span>',
+          type: 'React.ComponentPropsWithoutRef<typeof Primitive.span>',
+          description: '继承 Primitive.span 的无 ref 属性。'
+        }
+      ]
+    },
+    {
+      name: 'PrimitiveImageProps',
+      description: 'Radix Primitive img 属性。',
+      fields: [
+        {
+          name: '...React.ComponentPropsWithoutRef<typeof Primitive.img>',
+          type: 'React.ComponentPropsWithoutRef<typeof Primitive.img>',
+          description: '继承 Primitive.img 的无 ref 属性。'
+        }
+      ]
+    },
+    {
+      name: 'PrimitivePropsWithRef<E>',
+      description: 'Radix Primitive 通用属性类型。',
+      fields: [
+        {
+          name: '...React.ComponentPropsWithRef<E>',
+          type: 'React.ComponentPropsWithRef<E>',
+          description: '继承指定元素的原生属性和 ref。'
+        },
+        { name: 'asChild', type: 'boolean', description: '将渲染委托给子元素。' }
+      ]
+    }
+  ]}
+/>
 
-<UnionType name="AvatarSlots" description="Avatar 可配置 classNames 的 slot" type="'fallback' | 'image' | 'root'" />
+<UnionType
+  name="AvatarSlots"
+  description="Avatar 可配置 classNames 的 slot"
+  type="'fallback' | 'image' | 'root'"
+/>
 
 <UnionType
   name="ClassValue"

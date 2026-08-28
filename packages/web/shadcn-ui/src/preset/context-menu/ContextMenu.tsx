@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import ContextMenuUI from '../../components/context-menu/ContextMenuUI';
 import type { ContextMenuProps } from '../../components/context-menu/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const ContextMenu = (props: ContextMenuProps) => {
   const config = useComponentConfig('contextMenu');
@@ -12,11 +12,7 @@ const ContextMenu = (props: ContextMenuProps) => {
     ...props
   };
 
-  return (
-    <ContextMenuUI
-      {...mergedProps}
-    />
-  );
+  return <ContextMenuUI {...mergedProps} />;
 };
 
 ContextMenu.displayName = 'ContextMenu';

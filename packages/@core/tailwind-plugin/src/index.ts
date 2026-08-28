@@ -17,8 +17,7 @@ function toRem(value: number) {
 /**
  * 设计令牌（原 `@skyroc/ui-tokens`）。
  *
- * 色值由本插件自己消费；spacing / borderRadius / fontSize / fontWeight 是尺度基准表，
- * 供需要以 JS 形式读取尺度的场景使用（miniapp 主题、设计稿对表等）。
+ * 色值由本插件自己消费；spacing / borderRadius / fontSize / fontWeight 是尺度基准表， 供需要以 JS 形式读取尺度的场景使用（miniapp 主题、设计稿对表等）。
  */
 export {
   borderRadius,

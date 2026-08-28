@@ -7,8 +7,7 @@ import { atom } from 'jotai';
  *
  * 刻意只放内存不落盘：它表达的是「用户刚刚点了这条链接」，冷启动后再重放一条上周的推送很怪。
  *
- * 用 atom 而不是模块级变量，是为了和 authAtom 一样能在 React 之外同步读写——
- * `+native-intent.ts` 在导航器挂载之前就跑了，那里没有 React。
+ * 用 atom 而不是模块级变量，是为了和 authAtom 一样能在 React 之外同步读写—— `+native-intent.ts` 在导航器挂载之前就跑了，那里没有 React。
  */
 const pendingLinkAtom = atom<Href | null>(null);
 

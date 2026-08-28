@@ -8,9 +8,7 @@ const PopoverBasic = () => {
       <div className="space-y-2">
         <h4 className="font-medium">Popover Title</h4>
 
-        <p className="text-muted-foreground text-sm">
-          This is a basic popover content. You can put any content here.
-        </p>
+        <p className="text-muted-foreground text-sm">This is a basic popover content. You can put any content here.</p>
       </div>
     </Popover>
   );

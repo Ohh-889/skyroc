@@ -4,13 +4,12 @@ import { tv } from 'tailwind-variants';
 /**
  * Divider 分割线样式变体。
  *
- * 线条粗细这里只给 1dp 的类名兜底：真正的 hairline 是 0.5/0.33dp，Tailwind 没有能表达的工具类，
- * 由组件用 `StyleSheet.hairlineWidth` 注入 style 完成。
+ * 线条粗细这里只给 1dp 的类名兜底：真正的 hairline 是 0.5/0.33dp，Tailwind 没有能表达的工具类， 由组件用 `StyleSheet.hairlineWidth` 注入 style 完成。
  *
  * `border` 为 dashed/dotted 时线条改用边框绘制，所以要按方向把 `h-px bg-border` 换成 `h-0 border-t`。
  *
- * `lineLeading` / `lineTrailing` 只在有内容时挂到两侧线条上，`align` 为 start/end 时把短的那侧压到 10%，
- * 需要别的比例时由使用方通过 `classNames.lineLeading` 覆盖。
+ * `lineLeading` / `lineTrailing` 只在有内容时挂到两侧线条上，`align` 为 start/end 时把短的那侧压到 10%， 需要别的比例时由使用方通过 `classNames.lineLeading`
+ * 覆盖。
  *
  * 竖向分割线用 `self-stretch` 跟随父级：父容器必须是横向布局且有确定高度，否则线条高度为 0（看不见）。
  */

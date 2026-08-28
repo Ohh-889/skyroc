@@ -34,7 +34,7 @@ export function isDefaultConfig(config: OssConfigItem) {
   return config.status === '0';
 }
 
-/** endpoint 不含协议，协议由 isHttps 决定，拼起来才是真正的访问地址。 */
+/** Endpoint 不含协议，协议由 isHttps 决定，拼起来才是真正的访问地址。 */
 export function buildEndpointUrl(config: Pick<OssConfigItem, 'endpoint' | 'isHttps'>) {
   if (!config.endpoint) return '';
 
@@ -58,7 +58,7 @@ export function maskAccessKey(accessKey: null | string | undefined) {
 /** 配置名规则：字母开头，往后只允许字母、数字、下划线和连字符。 */
 export const CONFIG_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
 
-/** endpoint 带协议时后端会返回 422，这里先在字段级拦下来。 */
+/** Endpoint 带协议时后端会返回 422，这里先在字段级拦下来。 */
 export function hasProtocolPrefix(endpoint: string) {
   return /^https?:\/\//i.test(endpoint.trim());
 }

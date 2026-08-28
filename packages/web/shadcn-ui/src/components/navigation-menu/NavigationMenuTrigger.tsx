@@ -1,6 +1,6 @@
 import { Trigger } from '@radix-ui/react-navigation-menu';
-import { ChevronDown } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { ChevronDown } from 'lucide-react';
 import { navigationMenuVariants } from './navigation-menu';
 import type { NavigationMenuTriggerProps } from './types';
 

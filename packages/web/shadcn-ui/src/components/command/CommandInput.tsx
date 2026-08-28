@@ -1,5 +1,5 @@
-import { CommandInput as _CommandInput } from 'cmdk';
 import { cn } from '@skyroc/utils';
+import { CommandInput as _CommandInput } from 'cmdk';
 import { Icon } from '../icon';
 import { commandVariants } from './command-variants';
 import type { CommandInputProps } from './types';

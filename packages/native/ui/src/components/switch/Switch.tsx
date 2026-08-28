@@ -80,8 +80,7 @@ const Switch = (props: SwitchProps) => {
   /**
    * 滑块内容：loading 优先，其次才是自定义 children。
    *
-   * iOS 的 ActivityIndicator 忽略数字 size（只会撑大外框，指示器本身仍是固有尺寸），
-   * 因此统一用 `small` 再按滑块尺寸做 scale，两端表现才一致。
+   * IOS 的 ActivityIndicator 忽略数字 size（只会撑大外框，指示器本身仍是固有尺寸）， 因此统一用 `small` 再按滑块尺寸做 scale，两端表现才一致。
    */
   function renderThumbContent() {
     if (loading) {

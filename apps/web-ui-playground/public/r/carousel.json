@@ -3,13 +3,8 @@
   "name": "carousel",
   "type": "registry:block",
   "title": "Carousel",
-  "dependencies": [
-    "embla-carousel-react"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json",
-    "https://ui-play.skyroc.me/r/button.json"
-  ],
+  "dependencies": ["embla-carousel-react"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json", "https://ui-play.skyroc.me/r/button.json"],
   "files": [
     {
       "path": "src/components/carousel/Carousel.tsx",

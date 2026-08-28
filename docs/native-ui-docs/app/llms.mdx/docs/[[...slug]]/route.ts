@@ -1,5 +1,5 @@
-import { getLLMText, getPageMarkdownUrl, source } from '@/lib/source';
 import { notFound } from 'next/navigation';
+import { getLLMText, getPageMarkdownUrl, source } from '@/lib/source';
 
 export const revalidate = false;
 
@@ -10,14 +10,14 @@ export async function GET(_req: Request, { params }: RouteContext<'/llms.mdx/doc
 
   return new Response(await getLLMText(page), {
     headers: {
-      'Content-Type': 'text/markdown',
-    },
+      'Content-Type': 'text/markdown'
+    }
   });
 }
 
 export function generateStaticParams() {
-  return source.getPages().map((page) => ({
+  return source.getPages().map(page => ({
     lang: page.locale,
-    slug: getPageMarkdownUrl(page).segments,
+    slug: getPageMarkdownUrl(page).segments
   }));
 }

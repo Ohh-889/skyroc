@@ -6,8 +6,8 @@ import { emptyContainer, isObjectLike, isPlainObject, isUnsafeKey, toArrayIndex,
  * 是否为「普通对象」——— plain object、`Object.create(null)`、以及用户类的实例。
  *
  * 用 toString tag 而不是 `typeof === 'object'`：后者会把 Map / Set / RegExp / Promise 这些 **内建 exotic
- * 对象**也算进来，而它们的行为依赖引擎内部槽（internal slot）， 用 `Object.create` + 属性描述符是拷不出来的 —— 拷出来的东西 `instanceof Map`
- * 为真， 但一调 `.get()` 就抛 `TypeError: called on incompatible receiver`。 造一个「谎报类型且一用就炸」的对象，比直接换成 `{}` 更坏。
+ * 对象**也算进来，而它们的行为依赖引擎内部槽（internal slot）， 用 `Object.create` + 属性描述符是拷不出来的 —— 拷出来的东西 `instanceof Map` 为真， 但一调 `.get()` 就抛
+ * `TypeError: called on incompatible receiver`。 造一个「谎报类型且一用就炸」的对象，比直接换成 `{}` 更坏。
  */
 const isOrdinaryObject = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === '[object Object]';
@@ -15,8 +15,8 @@ const isOrdinaryObject = (value: unknown): value is Record<string, unknown> =>
 /**
  * 为写入准备一个新容器（不改原对象）。
  *
- * 数组 → slice，plain object → 展开。 类实例 / `Object.create(null)` 保留原型做浅拷贝：直接换成 `{}` 会让节点上原有的字段静默消失。
- * 其余（原始值、Date、Map 等内建对象）视为叶子，按目标段类型新建容器覆盖 —— 与改动前行为一致。
+ * 数组 → slice，plain object → 展开。 类实例 / `Object.create(null)` 保留原型做浅拷贝：直接换成 `{}` 会让节点上原有的字段静默消失。 其余（原始值、Date、Map
+ * 等内建对象）视为叶子，按目标段类型新建容器覆盖 —— 与改动前行为一致。
  */
 function cloneContainer(node: unknown, key: Key): any {
   if (Array.isArray(node)) return node.slice();

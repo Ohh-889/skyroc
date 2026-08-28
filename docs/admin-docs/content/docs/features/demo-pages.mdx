@@ -9,36 +9,36 @@ description: 区分 apps/admin 当前页面中的真实开发入口、演示页�
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 判断某个现有页面能不能直接复用 | `apps/admin/src/pages/(admin)` |
-| 准备把 demo 页面替换成真实业务页 | `features/table`、`service/api/system-manage` |
-| 给菜单加真实列表、详情或编辑页 | `routing/overview`、`routing/route-meta`、`features/table-and-form` |
-| 排查菜单标题、权限和页面内容不一致 | 每个 route 文件的 `staticData` 和组件正文 |
+| 场景                               | 重点位置                                                            |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| 判断某个现有页面能不能直接复用     | `apps/admin/src/pages/(admin)`                                      |
+| 准备把 demo 页面替换成真实业务页   | `features/table`、`service/api/system-manage`                       |
+| 给菜单加真实列表、详情或编辑页     | `routing/overview`、`routing/route-meta`、`features/table-and-form` |
+| 排查菜单标题、权限和页面内容不一致 | 每个 route 文件的 `staticData` 和组件正文                           |
 
 ## 当前实现位置
 
-| 文件 | 当前职责 |
-| --- | --- |
-| `apps/admin/src/pages/(admin)/home/index.tsx` | 后台首页和 dashboard 示例，包含菜单 badge、卡片、图表和项目动态模块。 |
-| `apps/admin/src/pages/(admin)/manage/user/index.tsx` | 通知系统演示页，使用 `useNotificationContext()` 和 mock 通知数据。 |
-| `apps/admin/src/pages/(admin)/manage/menu/index.tsx` | Ant Design message、notification、modal 的测试页面。 |
-| `apps/admin/src/pages/(admin)/manage/role/index.tsx` | UnoCSS Design System 和主题色展示页面。 |
-| `apps/admin/src/pages/(admin)/manage/user/$id.tsx` | 用户详情动态路由示例，用于展示 `activeMenu` 一类路由元信息。 |
-| `apps/admin/src/pages/(admin)/soybean-docs.tsx` | 外链路由示例，使用 `href`。 |
-| `apps/admin/src/pages/(admin)/soybean-docs-iframe.tsx` | iframe 路由示例，使用 `url`。 |
+| 文件                                                   | 当前职责                                                              |
+| ------------------------------------------------------ | --------------------------------------------------------------------- |
+| `apps/admin/src/pages/(admin)/home/index.tsx`          | 后台首页和 dashboard 示例，包含菜单 badge、卡片、图表和项目动态模块。 |
+| `apps/admin/src/pages/(admin)/manage/user/index.tsx`   | 通知系统演示页，使用 `useNotificationContext()` 和 mock 通知数据。    |
+| `apps/admin/src/pages/(admin)/manage/menu/index.tsx`   | Ant Design message、notification、modal 的测试页面。                  |
+| `apps/admin/src/pages/(admin)/manage/role/index.tsx`   | UnoCSS Design System 和主题色展示页面。                               |
+| `apps/admin/src/pages/(admin)/manage/user/$id.tsx`     | 用户详情动态路由示例，用于展示 `activeMenu` 一类路由元信息。          |
+| `apps/admin/src/pages/(admin)/soybean-docs.tsx`        | 外链路由示例，使用 `href`。                                           |
+| `apps/admin/src/pages/(admin)/soybean-docs-iframe.tsx` | iframe 路由示例，使用 `url`。                                         |
 
 ## 页面现状清单
 
-| 路由 | 可以学什么 | 不要误解成 |
-| --- | --- | --- |
-| `/home` | 后台首页布局、图表模块、菜单 badge、Dashboard 卡片组合 | 完整的数据看板产品实现 |
-| `/manage/user` | 通知上下文、通知配置、浏览器通知权限、声音开关 | 用户管理列表页 |
-| `/manage/menu` | Ant Design 全局 message、notification、modal 包装函数 | 菜单管理 CRUD |
-| `/manage/role` | UnoCSS 主题色、色阶、设计系统展示 | 角色管理 CRUD |
-| `/manage/user/$id` | 动态路由、隐藏详情页、菜单激活关系 | 完整用户详情业务流 |
-| `/soybean-docs` | 外链菜单配置 | 内嵌页面 |
-| `/soybean-docs-iframe` | iframe 菜单配置 | 普通 React 页面 |
+| 路由                   | 可以学什么                                             | 不要误解成             |
+| ---------------------- | ------------------------------------------------------ | ---------------------- |
+| `/home`                | 后台首页布局、图表模块、菜单 badge、Dashboard 卡片组合 | 完整的数据看板产品实现 |
+| `/manage/user`         | 通知上下文、通知配置、浏览器通知权限、声音开关         | 用户管理列表页         |
+| `/manage/menu`         | Ant Design 全局 message、notification、modal 包装函数  | 菜单管理 CRUD          |
+| `/manage/role`         | UnoCSS 主题色、色阶、设计系统展示                      | 角色管理 CRUD          |
+| `/manage/user/$id`     | 动态路由、隐藏详情页、菜单激活关系                     | 完整用户详情业务流     |
+| `/soybean-docs`        | 外链菜单配置                                           | 内嵌页面               |
+| `/soybean-docs-iframe` | iframe 菜单配置                                        | 普通 React 页面        |
 
 这里的关键点是：路由名称、菜单名称和页面真实内容并不总是同一个阶段的产物。文档和二次开发应以当前页面源码为准，而不是只看菜单名称。
 
@@ -70,22 +70,22 @@ apps/admin/src/pages/(admin)/manage/user/
 
 当前外链与 iframe 是两种不同路由形态：
 
-| 形态 | 配置重点 | 行为 |
-| --- | --- | --- |
-| 外链 | `staticData.href` | 守卫识别后打开新窗口，当前页面不承载内容。 |
-| iframe | `staticData.url` | 菜单进入应用内 iframe 页面，tabs 和菜单仍在后台壳内。 |
+| 形态   | 配置重点          | 行为                                                  |
+| ------ | ----------------- | ----------------------------------------------------- |
+| 外链   | `staticData.href` | 守卫识别后打开新窗口，当前页面不承载内容。            |
+| iframe | `staticData.url`  | 菜单进入应用内 iframe 页面，tabs 和菜单仍在后台壳内。 |
 
 新增这类页面时，优先看 [路由元信息](../routing/route-meta) 的 `href`、`url`、`activeMenu` 说明，不要把 iframe 页面写成普通业务组件。
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 看到 `/manage/user` 就按用户列表文档写说明 | 先看源码。当前它是通知 demo。 |
-| 直接复制 `manage/menu` 的测试按钮作为业务页骨架 | 只把消息、弹窗 API 的用法迁移出来，业务页重新按表格/表单结构写。 |
-| 把 `manage/role` 当成角色管理最佳实践 | 它主要展示 UnoCSS 和主题色，不处理角色接口。 |
-| 在 demo 页里追加真实业务逻辑 | 先拆清 demo 和业务页面边界，再迁移或替换。 |
-| 只改菜单标题，不改权限和 i18n | `staticData.permissions`、`i18nKey`、语言文件和菜单显示要一起对齐。 |
+| 误区                                            | 正确做法                                                            |
+| ----------------------------------------------- | ------------------------------------------------------------------- |
+| 看到 `/manage/user` 就按用户列表文档写说明      | 先看源码。当前它是通知 demo。                                       |
+| 直接复制 `manage/menu` 的测试按钮作为业务页骨架 | 只把消息、弹窗 API 的用法迁移出来，业务页重新按表格/表单结构写。    |
+| 把 `manage/role` 当成角色管理最佳实践           | 它主要展示 UnoCSS 和主题色，不处理角色接口。                        |
+| 在 demo 页里追加真实业务逻辑                    | 先拆清 demo 和业务页面边界，再迁移或替换。                          |
+| 只改菜单标题，不改权限和 i18n                   | `staticData.permissions`、`i18nKey`、语言文件和菜单显示要一起对齐。 |
 
 ## 相关链接
 

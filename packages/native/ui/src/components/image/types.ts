@@ -12,8 +12,7 @@ export type ImageSlots = 'error' | 'image' | 'indicator' | 'loading' | 'root';
 /**
  * 图片源。
  *
- * 直接复用 expo-image 的 source 全量能力（多分辨率数组、blurhash、`sf:` 符号、带 headers 的鉴权图等）， 额外接受裸字符串作为语法糖，内部包装成
- * `{ uri }`。
+ * 直接复用 expo-image 的 source 全量能力（多分辨率数组、blurhash、`sf:` 符号、带 headers 的鉴权图等）， 额外接受裸字符串作为语法糖，内部包装成 `{ uri }`。
  */
 export type ImageSource = NonNullable<EXImageProps['source']> | string;
 

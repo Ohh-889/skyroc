@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
 import { cn } from '@skyroc/utils';
+import { useMemo } from 'react';
 import { useTreeRootContext } from './context';
 import { flattenChildren, handleAndDispatchCustomEvent, recurseCheckChildren } from './shared';
 import { getIndentStyle } from './tree-variants';
@@ -11,7 +11,20 @@ const TREE_SELECT = 'tree.select';
 const TREE_TOGGLE = 'tree.toggle';
 
 const TreeItem = (props: TreeItemProps) => {
-  const { children, className, disabled: itemDisabled, disabledSelect, disabledToggle, indentSize, level, onSelect, onToggle, style, value, ...rest } = props;
+  const {
+    children,
+    className,
+    disabled: itemDisabled,
+    disabledSelect,
+    disabledToggle,
+    indentSize,
+    level,
+    onSelect,
+    onToggle,
+    style,
+    value,
+    ...rest
+  } = props;
 
   const {
     bubbleSelect,
@@ -46,8 +59,7 @@ const TreeItem = (props: TreeItemProps) => {
       const someSelected = childItems.some(child => selectedKeys.includes(child.value));
       const allSelected = childItems.every(child => selectedKeys.includes(child.value));
       return someSelected && !allSelected;
-    }
-    else if (propagateSelect && isSelected) {
+    } else if (propagateSelect && isSelected) {
       return !childItems.every(child => selectedKeys.includes(child.value));
     }
     return undefined;
@@ -69,8 +81,7 @@ const TreeItem = (props: TreeItemProps) => {
   };
 
   function handleToggleCustomEvent(event?: MouseEvent) {
-    if (disabledToggle || !event)
-      return;
+    if (disabledToggle || !event) return;
 
     const eventDetail = {
       originalEvent: event,
@@ -82,8 +93,7 @@ const TreeItem = (props: TreeItemProps) => {
   }
 
   function handleSelectCustomEvent(event?: MouseEvent) {
-    if (disabledSelect || !event)
-      return;
+    if (disabledSelect || !event) return;
 
     const eventDetail = {
       originalEvent: event,

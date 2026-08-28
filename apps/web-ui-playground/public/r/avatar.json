@@ -3,12 +3,8 @@
   "name": "avatar",
   "type": "registry:block",
   "title": "Avatar",
-  "dependencies": [
-    "@radix-ui/react-avatar"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "dependencies": ["@radix-ui/react-avatar"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/avatar/Avatar.tsx",

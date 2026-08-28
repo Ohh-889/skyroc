@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import {
   FONT_SIZES,
   LINE_HEIGHTS,
@@ -7,6 +6,7 @@ import {
   getLineHeightRatio,
   remToPx
 } from '@shell/theme/antd-algorithm/shared/genFontMapToken';
+import { describe, expect, it } from 'vitest';
 
 describe('remToPx', () => {
   it('默认 baseFontSize=16 时应正确转换', () => {

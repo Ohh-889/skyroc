@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { Card } from '@skyroc/web-ui';
+import type { Metadata } from 'next';
 import { generateComponentMetadata } from '../components-meta';
 import BreadcrumbBasic from './modules/BreadcrumbBasic';
 import BreadcrumbCustomEllipsis from './modules/BreadcrumbCustomEllipsis';
@@ -72,7 +72,6 @@ const BreadcrumbPage = () => {
       >
         <BreadcrumbSize />
       </Card>
-
     </div>
   );
 };

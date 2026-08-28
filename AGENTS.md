@@ -220,36 +220,36 @@ const findTargetElement = () => { ... };
 
 ### 文件命名
 
-| 类型 | 格式 | 示例 |
-| --- | --- | --- |
-| 组件文件 | **PascalCase** | `TreeRoot.tsx`, `CheckboxGroup.tsx` |
-| 测试文件 | kebab-case + `.test` | `button-group.test.tsx` |
-| Hook 文件 | kebab-case，`use-` 前缀 | `use-auth.ts` |
-| 类型文件 | kebab-case | `types.ts`, `types.d.ts` |
-| 常量 / 工具文件 | kebab-case | `service-config.ts`, `atom-with-storage.ts` |
+| 类型            | 格式                    | 示例                                        |
+| --------------- | ----------------------- | ------------------------------------------- |
+| 组件文件        | **PascalCase**          | `TreeRoot.tsx`, `CheckboxGroup.tsx`         |
+| 测试文件        | kebab-case + `.test`    | `button-group.test.tsx`                     |
+| Hook 文件       | kebab-case，`use-` 前缀 | `use-auth.ts`                               |
+| 类型文件        | kebab-case              | `types.ts`, `types.d.ts`                    |
+| 常量 / 工具文件 | kebab-case              | `service-config.ts`, `atom-with-storage.ts` |
 
 > 组件文件是 PascalCase，**与文件内导出的组件名一致**；只有测试和非组件模块用 kebab-case。
 
 ### 导出命名
 
-| 类型 | 格式 | 示例 |
-| --- | --- | --- |
-| 组件 | PascalCase | `Button`, `PasswordInput` |
-| Hook | camelCase，`use` 前缀 | `useAuth`, `useLoginMutation` |
-| 常量 | UPPER_SNAKE_CASE | `AUTH_URLS`, `SERVICE_CODES` |
-| 类型 / 接口 | PascalCase | `AuthTokens`, `LoginParams` |
-| 工具函数 | camelCase | `createAppRequest`, `getAtomValue` |
+| 类型        | 格式                  | 示例                               |
+| ----------- | --------------------- | ---------------------------------- |
+| 组件        | PascalCase            | `Button`, `PasswordInput`          |
+| Hook        | camelCase，`use` 前缀 | `useAuth`, `useLoginMutation`      |
+| 常量        | UPPER_SNAKE_CASE      | `AUTH_URLS`, `SERVICE_CODES`       |
+| 类型 / 接口 | PascalCase            | `AuthTokens`, `LoginParams`        |
+| 工具函数    | camelCase             | `createAppRequest`, `getAtomValue` |
 
 ### API 相关命名
 
-| 类型 | 规则 | 示例 |
-| --- | --- | --- |
-| URL 常量 | `MODULE_URLS` | `AUTH_URLS`, `MONITOR_CACHE_URLS` |
-| Query Keys | `MODULE_QUERY_KEYS` | `AUTH_QUERY_KEYS` |
-| Mutation Keys | `MODULE_MUTATION_KEYS` | `AUTH_MUTATION_KEYS` |
-| Fetch 函数 | `fetchXxx` | `fetchLogin`, `fetchCaptcha` |
-| Query Hook | `useXxxQuery` | `useCacheInfoQuery` |
-| Mutation Hook | `useXxxMutation` | `useAssignRoleMembersMutation` |
+| 类型          | 规则                   | 示例                              |
+| ------------- | ---------------------- | --------------------------------- |
+| URL 常量      | `MODULE_URLS`          | `AUTH_URLS`, `MONITOR_CACHE_URLS` |
+| Query Keys    | `MODULE_QUERY_KEYS`    | `AUTH_QUERY_KEYS`                 |
+| Mutation Keys | `MODULE_MUTATION_KEYS` | `AUTH_MUTATION_KEYS`              |
+| Fetch 函数    | `fetchXxx`             | `fetchLogin`, `fetchCaptcha`      |
+| Query Hook    | `useXxxQuery`          | `useCacheInfoQuery`               |
+| Mutation Hook | `useXxxMutation`       | `useAssignRoleMembersMutation`    |
 
 ### API 类型
 

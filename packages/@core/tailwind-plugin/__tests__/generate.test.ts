@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { generateCSSVars, generateGlobalStyles } from '../src/generate';
-import type {
-  FeedbackColorOfThemeCssVarsVariant,
-  SidebarColorOfThemeCssVarsVariant,
-  ThemeCSSVars
-} from '../src/types';
+import type { FeedbackColorOfThemeCssVarsVariant, SidebarColorOfThemeCssVarsVariant, ThemeCSSVars } from '../src/types';
 
 const sampleLight: ThemeCSSVars = {
   accent: '0 0% 0%',

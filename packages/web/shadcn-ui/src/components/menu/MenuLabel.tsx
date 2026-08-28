@@ -1,8 +1,8 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { Label as _Label } from '@radix-ui/react-menu';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import { menuVariants } from './menu-variants';
 import type { MenuLabelProps } from './types';
 

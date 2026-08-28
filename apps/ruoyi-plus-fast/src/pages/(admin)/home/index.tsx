@@ -168,11 +168,7 @@ const HomeNotifications = (props: HomeNotificationsProps) => {
           <h2>最新通知</h2>
           <p>与你相关的最近消息</p>
         </div>
-        <AButton
-          type="link"
-        >
-          查看全部
-        </AButton>
+        <AButton type="link">查看全部</AButton>
       </header>
       <div className="skyroc-home-notice-list">
         {isLoading ? (

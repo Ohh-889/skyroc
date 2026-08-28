@@ -1,6 +1,6 @@
 ---
-title: "Theme 系统概述"
-description: "基于 OKLCH + Ant Design 的三层主题架构 — 颜色算法、React 状态管理与应用级集成"
+title: 'Theme 系统概述'
+description: '基于 OKLCH + Ant Design 的三层主题架构 — 颜色算法、React 状态管理与应用级集成'
 ---
 
 ## 概述
@@ -70,10 +70,10 @@ themeSettingsAtom 更新
 
 ## 包关系一览
 
-| 包名 | 职责 | 核心依赖 |
-|------|------|----------|
-| `@skyroc/adapter-antd-theme` | OKLCH 算法 + Ant Design token 生成 | `@skyroc/color`, `antd` (peer) |
-| `@skyroc/web-admin-theme` | React 状态、组件、预设、副作用 | `adapter-antd-theme`, `jotai`, `antd` |
-| `apps/admin` | 应用消费层，业务 UI | `web-admin-theme`, `antd` |
+| 包名                         | 职责                               | 核心依赖                              |
+| ---------------------------- | ---------------------------------- | ------------------------------------- |
+| `@skyroc/adapter-antd-theme` | OKLCH 算法 + Ant Design token 生成 | `@skyroc/color`, `antd` (peer)        |
+| `@skyroc/web-admin-theme`    | React 状态、组件、预设、副作用     | `adapter-antd-theme`, `jotai`, `antd` |
+| `apps/admin`                 | 应用消费层，业务 UI                | `web-admin-theme`, `antd`             |
 
 两个包独立版本控制，`adapter-antd-theme` 不依赖任何 React API，可在非 React 环境中单独使用。

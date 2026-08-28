@@ -4,8 +4,8 @@ import DropdownMenuContent from './DropdownMenuContent';
 import type { DropdownMenuCheckboxProps } from './types';
 
 const DropdownMenuCheckbox = (props: DropdownMenuCheckboxProps) => {
-  const { children, className, classNames, contentProps, defaultOpen, dir, modal, onOpenChange, open, size, ...rest }
-    = props;
+  const { children, className, classNames, contentProps, defaultOpen, dir, modal, onOpenChange, open, size, ...rest } =
+    props;
 
   return (
     <Root

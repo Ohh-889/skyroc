@@ -12,13 +12,11 @@ export function fetchOssListByIds(ids: OssId[]) {
   return request<OssItem[]>({ method: 'get', url: SYSTEM_OSS_URLS.LIST_BY_IDS(ids) });
 }
 
-
 /**
  * 必须显式声明 multipart/form-data。
  *
- * 请求实例的默认头是 application/json，axios 的 transformRequest 撞上它会把 FormData 转成
- * 普通 JSON（File 没有可枚举属性，序列化后是 `{}`），后端拿不到 multipart 字段直接 422。
- * 这里写的值不带 boundary，发出前由浏览器覆盖成带 boundary 的那一个。
+ * 请求实例的默认头是 application/json，axios 的 transformRequest 撞上它会把 FormData 转成 普通 JSON（File 没有可枚举属性，序列化后是 `{}`），后端拿不到
+ * multipart 字段直接 422。 这里写的值不带 boundary，发出前由浏览器覆盖成带 boundary 的那一个。
  */
 export function uploadOssFile(file: File) {
   const data = new FormData();

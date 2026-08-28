@@ -20,13 +20,20 @@ const IconGrid = (props: IconGridProps) => {
   return (
     <div className="grid grid-cols-4 gap-3 md:grid-cols-8 lg:grid-cols-10">
       {icons.map(icon => (
-        <Card className="text-center" key={icon} size="small">
+        <Card
+          className="text-center"
+          key={icon}
+          size="small"
+        >
           <SvgIcon
             className="mx-auto text-28px text-primary"
             icon={local ? undefined : icon}
             localIcon={local ? icon : undefined}
           />
-          <Typography.Text className="mt-2 block text-xs" ellipsis>
+          <Typography.Text
+            className="mt-2 block text-xs"
+            ellipsis
+          >
             {icon}
           </Typography.Text>
         </Card>
@@ -39,18 +46,31 @@ const IconDemo = () => {
   const [selectedIcon, setSelectedIcon] = useState(pluginIcons[0]);
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:emoticon"
         resources={[{ label: 'Iconify', url: 'https://icon-sets.iconify.design/' }]}
         tags={['@iconify/react', '@shell/ui/compose']}
         title="图标示例"
       />
-      <ExamplePanel icon="mdi:emoticon" title="Iconify 图标">
+      <ExamplePanel
+        icon="mdi:emoticon"
+        title="Iconify 图标"
+      >
         <IconGrid icons={pluginIcons} />
       </ExamplePanel>
-      <ExamplePanel icon="mdi:form-select" title="图标选择器">
-        <Space className="w-full" orientation="vertical">
+      <ExamplePanel
+        icon="mdi:form-select"
+        title="图标选择器"
+      >
+        <Space
+          className="w-full"
+          orientation="vertical"
+        >
           <Select
             className="w-full max-w-360px"
             options={pluginIcons.map(icon => ({ label: icon, value: icon }))}
@@ -59,12 +79,21 @@ const IconDemo = () => {
             onChange={setSelectedIcon}
           />
           <div className="h-90px flex items-center justify-center rounded-lg bg-layout">
-            <SvgIcon className="text-52px text-primary" icon={selectedIcon} />
+            <SvgIcon
+              className="text-52px text-primary"
+              icon={selectedIcon}
+            />
           </div>
         </Space>
       </ExamplePanel>
-      <ExamplePanel icon="mdi:image-filter-center-focus" title="本地图标">
-        <IconGrid icons={localIcons} local />
+      <ExamplePanel
+        icon="mdi:image-filter-center-focus"
+        title="本地图标"
+      >
+        <IconGrid
+          icons={localIcons}
+          local
+        />
       </ExamplePanel>
     </Space>
   );

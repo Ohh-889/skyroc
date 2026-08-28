@@ -1,9 +1,9 @@
 'use client';
 
-import { forwardRef, useId } from 'react';
 import { Item } from '@radix-ui/react-radio-group';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@skyroc/utils';
+import { forwardRef, useId } from 'react';
 import RadioLabel from '../label/LabelUI';
 import { radioVariants } from './radio-variants';
 import RadioIndicator from './RadioIndicator';
@@ -29,51 +29,25 @@ const RadioCard = forwardRef<HTMLButtonElement, RadioCardProps>((props, ref) => 
 
   const id = useId();
 
-  const {
-    card,
-    cardContent,
-    cardDescription,
-    cardLabel,
-    cardTextContent,
-    control,
-    indicator
-  } = radioVariants({ color, size, variant });
+  const { card, cardContent, cardDescription, cardLabel, cardTextContent, control, indicator } = radioVariants({
+    color,
+    size,
+    variant
+  });
 
-  const mergedCls = cn(
-    card(),
-    disabled && 'cursor-not-allowed opacity-50',
-    className || classNames?.card
-  );
+  const mergedCls = cn(card(), disabled && 'cursor-not-allowed opacity-50', className || classNames?.card);
 
-  const labelCls = cn(
-    cardLabel(),
-    classNames?.cardLabel
-  );
+  const labelCls = cn(cardLabel(), classNames?.cardLabel);
 
-  const descriptionCls = cn(
-    cardDescription(),
-    classNames?.cardDescription
-  );
+  const descriptionCls = cn(cardDescription(), classNames?.cardDescription);
 
-  const contentCls = cn(
-    cardContent(),
-    classNames?.cardContent
-  );
+  const contentCls = cn(cardContent(), classNames?.cardContent);
 
-  const textContentCls = cn(
-    cardTextContent(),
-    classNames?.cardTextContent
-  );
+  const textContentCls = cn(cardTextContent(), classNames?.cardTextContent);
 
-  const controlCls = cn(
-    control(),
-    classNames?.control
-  );
+  const controlCls = cn(control(), classNames?.control);
 
-  const indicatorCls = cn(
-    indicator(),
-    classNames?.indicator
-  );
+  const indicatorCls = cn(indicator(), classNames?.indicator);
 
   const radioElement = (
     <Item
@@ -97,21 +71,9 @@ const RadioCard = forwardRef<HTMLButtonElement, RadioCardProps>((props, ref) => 
       {icon ? <Slot className="shrink-0 text-lg">{icon}</Slot> : null}
 
       <div className={textContentCls}>
-        {label
-          ? (
-            <span className={labelCls}>
-              {label}
-            </span>
-          )
-          : null}
+        {label ? <span className={labelCls}>{label}</span> : null}
 
-        {description
-          ? (
-            <p className={descriptionCls}>
-              {description}
-            </p>
-          )
-          : null}
+        {description ? <p className={descriptionCls}>{description}</p> : null}
       </div>
     </div>
   );

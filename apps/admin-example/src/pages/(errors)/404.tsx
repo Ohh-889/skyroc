@@ -4,7 +4,12 @@ import { createFileRoute } from '@tanstack/react-router';
 const NotFound = () => {
   const { t } = useTranslation();
 
-  return <ExceptionBase buttonText={t('common.backToHome')} type="404" />;
+  return (
+    <ExceptionBase
+      buttonText={t('common.backToHome')}
+      type="404"
+    />
+  );
 };
 
 export const Route = createFileRoute('/(errors)/404')({

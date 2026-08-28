@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
 import { Button, Command, Popover, cn } from '@skyroc/web-ui';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 
 const ComboboxDemo = () => {
   const [value, setValue] = useState('');
@@ -48,7 +48,7 @@ const ComboboxDemo = () => {
   return (
     <Popover
       classNames={{ content: 'p-0' }}
-      trigger={(
+      trigger={
         <Button
           className="w-full justify-between md:max-w-[200px]"
           role="combobox"
@@ -57,7 +57,7 @@ const ComboboxDemo = () => {
           {value ? frameworks.find(item => item.value === value)?.label : 'Select framework...'}
           <ChevronsUpDown className="text-muted-foreground" />
         </Button>
-      )}
+      }
     >
       <Command
         items={frameworks}

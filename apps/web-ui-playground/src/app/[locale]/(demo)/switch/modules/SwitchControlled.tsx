@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Switch } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const SwitchControlled = () => {
   const [checked, setChecked] = useState(false);
@@ -13,9 +13,7 @@ const SwitchControlled = () => {
         aria-label="Sync account"
         onCheckedChange={setChecked}
       />
-      <span className="text-sm text-muted-foreground">
-        {checked ? 'Sync enabled' : 'Sync disabled'}
-      </span>
+      <span className="text-sm text-muted-foreground">{checked ? 'Sync enabled' : 'Sync disabled'}</span>
     </div>
   );
 };

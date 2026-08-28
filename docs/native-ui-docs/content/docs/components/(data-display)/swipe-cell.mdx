@@ -52,10 +52,10 @@ import { SwipeCell } from '@skyroc/native-ui';
 
 `ref` 暴露两个方法：
 
-| 方法          | 说明                                                     |
-| ------------- | -------------------------------------------------------- |
-| `open(side)`  | 展开指定一侧；该侧宽度为 0 时不生效                       |
-| `close()`     | 收起，会经过 `beforeClose`                                |
+| 方法         | 说明                                |
+| ------------ | ----------------------------------- |
+| `open(side)` | 展开指定一侧；该侧宽度为 0 时不生效 |
+| `close()`    | 收起，会经过 `beforeClose`          |
 
 <Demo src="@playground/swipe-cell/SwipeCellImperative" />
 
@@ -75,13 +75,13 @@ import { SwipeCell } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot       | 作用位置                                             |
-| ---------- | ---------------------------------------------------- |
-| `root`     | 根容器（`overflow-hidden`，裁掉两侧操作区）           |
+| slot       | 作用位置                                               |
+| ---------- | ------------------------------------------------------ |
+| `root`     | 根容器（`overflow-hidden`，裁掉两侧操作区）            |
 | `content`  | 主体内容容器（默认 `bg-card`，必须有底色才盖得住下层） |
-| `leading`  | 左侧操作区容器                                       |
-| `trailing` | 右侧操作区容器                                       |
-| `overlay`  | 展开态盖在主体上的透明遮罩，点击即收起                |
+| `leading`  | 左侧操作区容器                                         |
+| `trailing` | 右侧操作区容器                                         |
+| `overlay`  | 展开态盖在主体上的透明遮罩，点击即收起                 |
 
 <Demo src="@playground/swipe-cell/SwipeCellStyles" />
 

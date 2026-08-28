@@ -105,20 +105,33 @@ const RoleDataScopeModal = (props: RoleDataScopeModalProps) => {
         showIcon
         type="warning"
       />
-      <Radio.Group className="w-full" value={dataScope} onChange={event => setDataScope(event.target.value)}>
+      <Radio.Group
+        className="w-full"
+        value={dataScope}
+        onChange={event => setDataScope(event.target.value)}
+      >
         <div className="grid grid-cols-2 gap-8px lt-sm:grid-cols-1">
           {DATA_SCOPE_OPTIONS.map(option => (
             <label
               className={`cursor-pointer rounded-8px border p-12px transition-colors ${dataScope === option.value ? 'border-primary bg-primary-50' : 'border-border-secondary'}`}
               key={option.value}
             >
-              <Flex align="flex-start" gap={8}>
+              <Flex
+                align="flex-start"
+                gap={8}
+              >
                 <Radio value={option.value} />
                 <div>
-                  <Typography.Text className="block" strong>
+                  <Typography.Text
+                    className="block"
+                    strong
+                  >
                     {option.label}
                   </Typography.Text>
-                  <Typography.Text className="text-12px" type="secondary">
+                  <Typography.Text
+                    className="text-12px"
+                    type="secondary"
+                  >
                     {option.description}
                   </Typography.Text>
                 </div>
@@ -130,16 +143,30 @@ const RoleDataScopeModal = (props: RoleDataScopeModalProps) => {
 
       {dataScope === '2' ? (
         <div className="mt-16px rounded-8px border border-border-secondary p-12px">
-          <Flex align="center" className="mb-10px" gap={8} justify="space-between" wrap>
+          <Flex
+            align="center"
+            className="mb-10px"
+            gap={8}
+            justify="space-between"
+            wrap
+          >
             <Input
               allowClear
               className="max-w-320px"
               placeholder="搜索部门"
-              prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+              prefix={
+                <SvgIcon
+                  className="text-tertiary"
+                  icon="ph:magnifying-glass"
+                />
+              }
               value={keyword}
               onChange={event => setKeyword(event.target.value)}
             />
-            <Checkbox checked={deptCheckStrictly} onChange={event => setDeptCheckStrictly(event.target.checked)}>
+            <Checkbox
+              checked={deptCheckStrictly}
+              onChange={event => setDeptCheckStrictly(event.target.checked)}
+            >
               父子联动
             </Checkbox>
           </Flex>

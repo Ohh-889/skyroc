@@ -6,13 +6,7 @@ description: 用于在同一区域内切换多组内容面板
 Tabs 用于在同一上下文中切换不同内容面板。组件基于 Radix Tabs 封装，提供数据驱动的 `Tabs` 主组件，也导出 Root、List、Trigger、Content 等结构组件用于手动组合。
 
 ```tsx
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsRoot,
-  TabsTrigger
-} from '@skyroc/web-ui';
+import { Tabs, TabsContent, TabsList, TabsRoot, TabsTrigger } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -113,7 +107,10 @@ import {
 <Tabs
   items={items}
   renderTrigger={({ active, item }) => (
-    <span>{item.label}{active ? ' *' : ''}</span>
+    <span>
+      {item.label}
+      {active ? ' *' : ''}
+    </span>
   )}
   renderContent={({ item }) => item.children}
 />
@@ -282,8 +279,16 @@ import {
         { name: 'listProps', type: 'TabsListProps', description: '列表属性。' },
         { name: 'triggerProps', type: 'Partial<TabsTriggerProps>', description: '触发项属性。' },
         { name: 'contentProps', type: 'TabsContentProps', description: '内容面板属性。' },
-        { name: 'renderTrigger', type: '(props: { active: boolean; item: TabsOptionData }) => ReactNode', description: '触发项渲染函数。' },
-        { name: 'renderContent', type: '(props: { active: boolean; item: TabsOptionData }) => ReactNode', description: '内容渲染函数。' }
+        {
+          name: 'renderTrigger',
+          type: '(props: { active: boolean; item: TabsOptionData }) => ReactNode',
+          description: '触发项渲染函数。'
+        },
+        {
+          name: 'renderContent',
+          type: '(props: { active: boolean; item: TabsOptionData }) => ReactNode',
+          description: '内容渲染函数。'
+        }
       ]
     },
     {
@@ -335,7 +340,11 @@ import {
         { name: 'type', type: "'pill' | 'line'", description: '样式类型。' },
         { name: 'enableIndicator', type: 'boolean', description: '是否显示滑动指示器。' },
         { name: 'className', type: 'ClassValue', description: '列表 class。' },
-        { name: 'classNames', type: "Pick<TabsUi, 'indicator' | 'indicatorRoot'>", description: '指示器相关 slot class。' }
+        {
+          name: 'classNames',
+          type: "Pick<TabsUi, 'indicator' | 'indicatorRoot'>",
+          description: '指示器相关 slot class。'
+        }
       ]
     },
     {
@@ -374,4 +383,8 @@ import {
   ]}
 />
 
-<UnionType name="ClassValue" description="CSS 类名类型" type="string | null | undefined | Record<string, boolean> | ClassValue[]" />
+<UnionType
+  name="ClassValue"
+  description="CSS 类名类型"
+  type="string | null | undefined | Record<string, boolean> | ClassValue[]"
+/>

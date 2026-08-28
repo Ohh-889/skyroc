@@ -5,11 +5,11 @@ import {
   stepCountIs,
   streamText,
   tool,
-  toUIMessageStream,
+  toUIMessageStream
 } from 'ai';
+import { Document, type DocumentData } from 'flexsearch';
 import { z } from 'zod';
 import { source } from '@/lib/source';
-import { Document, type DocumentData } from 'flexsearch';
 import { ChatUIMessage, SearchTool } from '../../../components/ai/search';
 
 interface CustomDocument extends DocumentData {
@@ -25,21 +25,21 @@ async function createSearchServer() {
     document: {
       id: 'url',
       index: ['title', 'description', 'content'],
-      store: true,
-    },
+      store: true
+    }
   });
 
   const docs = await chunkedAll(
-    source.getPages().map(async (page) => {
+    source.getPages().map(async page => {
       if (!('getText' in page.data)) return null;
 
       return {
         title: page.data.title,
         description: page.data.description,
         url: page.url,
-        content: await page.data.getText('processed'),
+        content: await page.data.getText('processed')
       } as CustomDocument;
-    }),
+    })
   );
 
   for (const doc of docs) {
@@ -59,7 +59,7 @@ async function chunkedAll<O>(promises: Promise<O>[]): Promise<O[]> {
 }
 
 const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY
 });
 
 /** System prompt, you can update it to provide more specific information */
@@ -67,17 +67,17 @@ const systemPrompt = [
   'You are an AI assistant for a documentation site.',
   'Use the `search` tool to retrieve relevant docs context before answering when needed.',
   'The `search` tool returns raw JSON results from documentation. Use those results to ground your answer and cite sources as markdown links using the document `url` field when available.',
-  'If you cannot find the answer in search results, say you do not know and suggest a better search query.',
+  'If you cannot find the answer in search results, say you do not know and suggest a better search query.'
 ].join('\n');
 
-export async function POST(req: Request, ctx: RouteContext<"/api/chat">) {
+export async function POST(req: Request, ctx: RouteContext<'/api/chat'>) {
   const reqJson = await req.json();
 
   const result = streamText({
     model: openrouter.chat(process.env.OPENROUTER_MODEL ?? 'anthropic/claude-3.5-sonnet'),
     stopWhen: stepCountIs(5),
     tools: {
-      search: searchTool,
+      search: searchTool
     },
     messages: [
       { role: 'system', content: systemPrompt },
@@ -86,16 +86,16 @@ export async function POST(req: Request, ctx: RouteContext<"/api/chat">) {
           if (part.type === 'data-client')
             return {
               type: 'text',
-              text: `[Client Context: ${JSON.stringify(part.data)}]`,
+              text: `[Client Context: ${JSON.stringify(part.data)}]`
             };
-        },
-      })),
+        }
+      }))
     ],
-    toolChoice: 'auto',
+    toolChoice: 'auto'
   });
 
   return createUIMessageStreamResponse({
-    stream: toUIMessageStream({ stream: result.stream }),
+    stream: toUIMessageStream({ stream: result.stream })
   });
 }
 
@@ -103,10 +103,10 @@ const searchTool = tool({
   description: 'Search the docs content and return raw JSON results.',
   inputSchema: z.object({
     query: z.string(),
-    limit: z.number().int().min(1).max(100).default(10),
+    limit: z.number().int().min(1).max(100).default(10)
   }),
   async execute({ query, limit }) {
     const search = await searchServer;
     return await search.searchAsync(query, { limit, merge: true, enrich: true });
-  },
+  }
 }) satisfies SearchTool;

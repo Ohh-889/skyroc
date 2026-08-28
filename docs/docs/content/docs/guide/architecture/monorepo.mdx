@@ -51,10 +51,10 @@ packages:
 ### 其他关键配置
 
 ```yaml
-strictPeerDependencies: false   # 不强制 peer 依赖（多端 peer 差异大）
-ignoreWorkspaceRootCheck: true  # 允许在根装一些工具依赖
+strictPeerDependencies: false # 不强制 peer 依赖（多端 peer 差异大）
+ignoreWorkspaceRootCheck: true # 允许在根装一些工具依赖
 
-overrides:                       # 强制全仓库统一这些版本
+overrides: # 强制全仓库统一这些版本
   '@types/react': ^19.2.7
   '@types/react-dom': ^19.2.3
   typescript: ^6.0.3
@@ -64,11 +64,11 @@ overrides:                       # 强制全仓库统一这些版本
 
 ## 三种包的角色
 
-| 类型 | 目录 | 是否发布 | 例子 |
-| --- | --- | --- | --- |
-| **应用** | `apps/*` | 否 | `skyroc-admin` |
-| **能力包** | `packages/**` | 多数可发布（`@skyroc/*`） | `@skyroc/axios`、`@skyroc/web-ui` |
-| **内部配置** | `internal/*` | 否（`private: true`） | `@skyroc/tsconfig`、`@skyroc/config` |
+| 类型         | 目录          | 是否发布                  | 例子                                 |
+| ------------ | ------------- | ------------------------- | ------------------------------------ |
+| **应用**     | `apps/*`      | 否                        | `skyroc-admin`                       |
+| **能力包**   | `packages/**` | 多数可发布（`@skyroc/*`） | `@skyroc/axios`、`@skyroc/web-ui`    |
+| **内部配置** | `internal/*`  | 否（`private: true`）     | `@skyroc/tsconfig`、`@skyroc/config` |
 
 ## 延伸阅读
 

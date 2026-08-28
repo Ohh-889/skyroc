@@ -81,11 +81,7 @@ describe('Card', () => {
   });
 
   it('renders React node titles directly', () => {
-    render(
-      <Card title={<span data-testid="node-title">Node title</span>}>
-        Node title body
-      </Card>
-    );
+    render(<Card title={<span data-testid="node-title">Node title</span>}>Node title body</Card>);
 
     expect(screen.getByTestId('node-title')).toHaveTextContent('Node title');
     expect(screen.getByText('Node title body')).toHaveAttribute('data-slot', 'card-content');

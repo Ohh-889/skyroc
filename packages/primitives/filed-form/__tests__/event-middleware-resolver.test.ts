@@ -228,9 +228,7 @@ describe('standard schema resolver', () => {
       }
     } as const;
 
-    await expect(extractSchemaValidator(noPathSchema)?.({})).resolves.toEqual([
-      { message: 'Invalid form', path: [] }
-    ]);
+    await expect(extractSchemaValidator(noPathSchema)?.({})).resolves.toEqual([{ message: 'Invalid form', path: [] }]);
     await expect(extractSchemaValidator(undefinedIssuesSchema as any)?.({})).resolves.toEqual([]);
   });
 

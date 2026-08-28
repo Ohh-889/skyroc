@@ -3,23 +3,14 @@
     "incremental": true,
     "target": "ES2017",
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "../../packages/web/shadcn-ui/src/*"
-      ]
+      "@/*": ["../../packages/web/shadcn-ui/src/*"]
     },
     "resolveJsonModule": true,
-    "types": [
-      "./cloudflare-env.d.ts",
-      "node"
-    ],
+    "types": ["./cloudflare-env.d.ts", "node"],
     "allowJs": true,
     "strict": true,
     "noEmit": true,
@@ -32,14 +23,6 @@
       }
     ]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -6,13 +6,7 @@ description: 用于验证码、一次性密码和分段短码输入的 OTP 输�
 InputOTP 用于输入固定长度的一次性密码、短信验证码、邮箱验证码或短码。组件基于 `input-otp` 封装，默认渲染 6 个输入槽，并提供分隔符、掩码、受控值和完成回调。
 
 ```tsx
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-  InputOtpRoot
-} from '@skyroc/web-ui';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, InputOtpRoot } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -226,8 +220,7 @@ import {
   data={[
     {
       name: 'InputOTPProps',
-      description:
-        '主组件属性。基于 input-otp 根输入属性，移除 maxLength，并通过 inputCount 自动生成输入槽。',
+      description: '主组件属性。基于 input-otp 根输入属性，移除 maxLength，并通过 inputCount 自动生成输入槽。',
       fields: [
         { name: 'className', type: 'ClassValue', description: '根节点 class。' },
         { name: 'classNames', type: 'InputOTPClassNames', description: '各 slot 的自定义 class。' },
@@ -315,7 +308,11 @@ import {
       name: 'InputOTPSeparatorProps',
       description: '分隔符容器属性。继承 div 元素属性。',
       fields: [
-        { name: 'children', type: 'ReactNode', description: '自定义分隔符。当前只有 React element 会替换默认 Minus 图标。' },
+        {
+          name: 'children',
+          type: 'ReactNode',
+          description: '自定义分隔符。当前只有 React element 会替换默认 Minus 图标。'
+        },
         { name: 'className', type: 'ClassValue', description: '分隔符 class。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '组件尺寸。' }
       ]

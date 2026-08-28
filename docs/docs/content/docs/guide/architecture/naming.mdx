@@ -7,14 +7,14 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 
 ## 包命名规则
 
-| 包类别 | 规则 | 示例 |
-| --- | --- | --- |
-| 跨端共享（纯数据/类型） | 不带平台前缀 | `@skyroc/types`、`@skyroc/form` |
-| 跨端共享（基础设施/构建工具） | 不带平台前缀 | `@skyroc/color`、`@skyroc/tailwind-plugin` |
-| Web 端 UI | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-ui-compose`、`@skyroc/web-ui-antd` |
-| Web 端主题/工具 | `@skyroc/web-*` 或保留专名 | `@skyroc/web-admin-theme`、`@skyroc/materials` |
-| Native 端 | `@skyroc/native-*` | `@skyroc/native-ui`、`@skyroc/native-theme` |
-| 小程序端（将来） | `@skyroc/miniapp-*` | `@skyroc/miniapp-ui` |
+| 包类别                        | 规则                       | 示例                                                              |
+| ----------------------------- | -------------------------- | ----------------------------------------------------------------- |
+| 跨端共享（纯数据/类型）       | 不带平台前缀               | `@skyroc/types`、`@skyroc/form`                                   |
+| 跨端共享（基础设施/构建工具） | 不带平台前缀               | `@skyroc/color`、`@skyroc/tailwind-plugin`                        |
+| Web 端 UI                     | `@skyroc/web-*`            | `@skyroc/web-ui`、`@skyroc/web-ui-compose`、`@skyroc/web-ui-antd` |
+| Web 端主题/工具               | `@skyroc/web-*` 或保留专名 | `@skyroc/web-admin-theme`、`@skyroc/materials`                    |
+| Native 端                     | `@skyroc/native-*`         | `@skyroc/native-ui`、`@skyroc/native-theme`                       |
+| 小程序端（将来）              | `@skyroc/miniapp-*`        | `@skyroc/miniapp-ui`                                              |
 
 > **不要起 `@skyroc/ui` 这种「裸名包」**——多端并存时无法判断它属于哪一端。
 
@@ -22,25 +22,25 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 
 包名和目录名不一定一致，常见的映射：
 
-| 目录 | 包名 |
-| --- | --- |
-| `packages/web/shadcn-ui` | `@skyroc/web-ui` |
-| `packages/web/antd-theme` | `@skyroc/adapter-antd-theme` |
-| `packages/@core/state` | `@skyroc/core-state` |
-| `packages/primitives/filed-form` | `@skyroc/form` |
-| `internal/uno-config` | `@skyroc/uno-config` |
+| 目录                             | 包名                         |
+| -------------------------------- | ---------------------------- |
+| `packages/web/shadcn-ui`         | `@skyroc/web-ui`             |
+| `packages/web/antd-theme`        | `@skyroc/adapter-antd-theme` |
+| `packages/@core/state`           | `@skyroc/core-state`         |
+| `packages/primitives/filed-form` | `@skyroc/form`               |
+| `internal/uno-config`            | `@skyroc/uno-config`         |
 
 ## 纯类型该放哪里
 
 **先找已有的归属包，不要为几十行类型单开一个包。** 独立发一个纯类型包要长期支付版本、README、构建与发布的成本，而收益通常只是「看起来更整齐」。
 
-| 内容 | 归属 |
-| --- | --- |
-| 通用 TS 工具类型（路径推导、递归变换、函数类型） | [`@skyroc/utils/type`](/docs/core/utils/type) |
-| 依赖 DOM 的类型（`FieldElement`…） | [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型) |
+| 内容                                                 | 归属                                                              |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
+| 通用 TS 工具类型（路径推导、递归变换、函数类型）     | [`@skyroc/utils/type`](/docs/core/utils/type)                     |
+| 依赖 DOM 的类型（`FieldElement`…）                   | [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型)          |
 | 设计令牌与三端组件词汇（`ThemeColor`、`ThemeSize`…） | [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口) |
-| 只有一个 UI 包在用的类型（`WithClassName`…） | 该包自己的 `types/shared.ts` |
-| 全局命名空间声明（`Api`、`Router`…） | [`@skyroc/types`](/docs/core/types) |
+| 只有一个 UI 包在用的类型（`WithClassName`…）         | 该包自己的 `types/shared.ts`                                      |
+| 全局命名空间声明（`Api`、`Router`…）                 | [`@skyroc/types`](/docs/core/types)                               |
 
 这条规则是踩过坑之后写下的：`packages/shared/` 曾经装着 `@skyroc/ui-types` 与 `@skyroc/type-utils`，前者的 `ThemeColor` 和 `@skyroc/tailwind-plugin` 里 `tokens.ts` 的 `SemanticColorName` 长成了一字不差的两份定义——**类型离它的真正来源越远，越容易长出第二份**。两个包现已并入上表的归属，`packages/shared/` 删除。
 
@@ -54,10 +54,10 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 // @skyroc/utils
 {
   "exports": {
-    ".": "./src/index.ts",            // 平台无关
-    "./path": "./src/path.ts",        // 路径工具
-    "./type": "./src/type/index.ts",  // 零运行时类型工具
-    "./web": "./src/web/index.ts"     // 仅浏览器（download/openWindow…）
+    ".": "./src/index.ts", // 平台无关
+    "./path": "./src/path.ts", // 路径工具
+    "./type": "./src/type/index.ts", // 零运行时类型工具
+    "./web": "./src/web/index.ts" // 仅浏览器（download/openWindow…）
   }
 }
 ```
@@ -66,7 +66,7 @@ description: 包命名规则、目录与包名的映射、shared 层准入标准
 // @skyroc/hooks
 {
   "exports": {
-    ".": "./src/index.ts",        // RN 安全
+    ".": "./src/index.ts", // RN 安全
     "./web": "./src/web/index.ts" // useCopy / useSystemTheme + 主出口
   }
 }

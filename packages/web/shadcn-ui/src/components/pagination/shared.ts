@@ -2,17 +2,13 @@ import type { PaginationPageItem, PaginationPages } from './types';
 
 const ELLIPSIS = 'ellipsis' as const;
 
-/**
- * Creates a range of numbers from start to end (inclusive)
- */
+/** Creates a range of numbers from start to end (inclusive) */
 function range(start: number, end: number): number[] {
   const length = end - start + 1;
   return Array.from({ length }, (_, idx) => idx + start);
 }
 
-/**
- * Transforms an array of numbers and ellipsis markers into PaginationPages format
- */
+/** Transforms an array of numbers and ellipsis markers into PaginationPages format */
 export function transform(items: (string | number)[]): PaginationPages {
   return items.map((value): PaginationPageItem => {
     if (typeof value === 'number') {
@@ -46,31 +42,30 @@ export function getRange(
 
   if (showEdges) {
     /**
-     * `2 * siblingCount + 5` explanation:
-     * - 2 * siblingCount for left/right siblings
-     * - 5 for: 2x left/right ellipsis, 2x first/last page + 1x current page
+     * `2 * siblingCount + 5` explanation: - 2 * siblingCount for left/right siblings - 5 for: 2x left/right ellipsis,
+     * 2x first/last page + 1x current page
      *
-     * For some page counts (e.g. totalPages: 8, siblingCount: 2),
-     * calculated max page is higher than total pages, so we need to take the minimum of both.
+     * For some page counts (e.g. totalPages: 8, siblingCount: 2), calculated max page is higher than total pages, so we
+     * need to take the minimum of both.
      */
     const totalPageNumbers = Math.min(2 * siblingCount + 5, pageCount);
     const itemCount = totalPageNumbers - 2; // 2 stands for one ellipsis and either first or last page
 
-    const showLeftEllipsis
+    const showLeftEllipsis =
       // default condition
-      = leftSiblingIndex > firstPageIndex + 2
+      leftSiblingIndex > firstPageIndex + 2 &&
       // if the current page is towards the end of the list
-        && Math.abs(lastPageIndex - itemCount - firstPageIndex + 1) > 2
+      Math.abs(lastPageIndex - itemCount - firstPageIndex + 1) > 2 &&
       // if the current page is towards the middle of the list
-        && Math.abs(leftSiblingIndex - firstPageIndex) > 2;
+      Math.abs(leftSiblingIndex - firstPageIndex) > 2;
 
-    const showRightEllipsis
+    const showRightEllipsis =
       // default condition
-      = rightSiblingIndex < lastPageIndex - 2
+      rightSiblingIndex < lastPageIndex - 2 &&
       // if the current page is towards the start of the list
-        && Math.abs(lastPageIndex - itemCount) > 2
+      Math.abs(lastPageIndex - itemCount) > 2 &&
       // if the current page is towards the middle of the list
-        && Math.abs(lastPageIndex - rightSiblingIndex) > 2;
+      Math.abs(lastPageIndex - rightSiblingIndex) > 2;
 
     if (!showLeftEllipsis && showRightEllipsis) {
       const leftRange = range(1, itemCount);
@@ -95,20 +90,16 @@ export function getRange(
 
   if (pageCount < itemCount) {
     return range(1, lastPageIndex);
-  }
-  else if (currentPage <= siblingCount + 1) {
+  } else if (currentPage <= siblingCount + 1) {
     return range(firstPageIndex, itemCount);
-  }
-  else if (pageCount - currentPage <= siblingCount) {
+  } else if (pageCount - currentPage <= siblingCount) {
     return range(pageCount - itemCount + 1, lastPageIndex);
   }
 
   return range(leftSiblingIndex, rightSiblingIndex);
 }
 
-/**
- * Calculates the total number of pages
- */
+/** Calculates the total number of pages */
 export function getPageCount(total: number, itemsPerPage: number): number {
   return Math.max(1, Math.ceil(total / (itemsPerPage || 1)));
 }

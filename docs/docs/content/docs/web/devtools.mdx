@@ -1,17 +1,17 @@
 ---
-title: "@shell/devtools"
-description: "Admin Shell 内置的开发期调试模块，聚合 TanStack Query / Router 与 Jotai 三套 DevTools"
+title: '@shell/devtools'
+description: 'Admin Shell 内置的开发期调试模块，聚合 TanStack Query / Router 与 Jotai 三套 DevTools'
 ---
 
 ## 概述
 
-| 项 | 值 |
-| --- | --- |
-| 模块 | `@shell/devtools` |
-| 目录 | `packages/web/admin/devtools` |
-| 分发 | 随 Admin Shell 源码复制进生成项目，不独立发布 |
+| 项   | 值                                                                                                                |
+| ---- | ----------------------------------------------------------------------------------------------------------------- |
+| 模块 | `@shell/devtools`                                                                                                 |
+| 目录 | `packages/web/admin/devtools`                                                                                     |
+| 分发 | 随 Admin Shell 源码复制进生成项目，不独立发布                                                                     |
 | 依赖 | `@tanstack/react-devtools`、`@tanstack/react-query-devtools`、`@tanstack/react-router-devtools`、`jotai-devtools` |
-| 入口 | `@shell/devtools`、`@shell/devtools/jotai` |
+| 入口 | `@shell/devtools`、`@shell/devtools/jotai`                                                                        |
 
 三套 DevTools 各自都会往页面右下角塞一个浮动按钮。这个模块把它们收进一个 `TanStackDevtools` 壳里：Query 和 Router 作为壳的两个 plugin 面板，Jotai 单独渲染但共用同一份主题和一套位置配置。
 
@@ -48,9 +48,9 @@ import { AdminDevtools } from '@shell/devtools';
 
 ## 主入口导出
 
-| 类别 | 符号 |
-| --- | --- |
-| 组件 | `AdminDevtools` |
+| 类别 | 符号                                                                                                       |
+| ---- | ---------------------------------------------------------------------------------------------------------- |
+| 组件 | `AdminDevtools`                                                                                            |
 | 类型 | `AdminDevtoolsConfig`、`AdminDevtoolsProps`、`AdminJotaiDevtoolsConfig`、`AdminJotaiDevtoolsTriggerOffset` |
 
 ## 配置项
@@ -94,11 +94,11 @@ interface AdminJotaiDevtoolsTriggerOffset {
 
 几个容易踩的默认值语义：
 
-| 字段 | 判定方式 | 结果 |
-| --- | --- | --- |
-| `enabled` | `=== false` 才关 | 不传即渲染 |
-| `query` / `router` | `!== false` 即开 | 但还要对应实例存在 |
-| `jotai` | `=== false` 才关 | 传 `true` 等价于传 `{}` |
+| 字段                 | 判定方式         | 结果                          |
+| -------------------- | ---------------- | ----------------------------- |
+| `enabled`            | `=== false` 才关 | 不传即渲染                    |
+| `query` / `router`   | `!== false` 即开 | 但还要对应实例存在            |
+| `jotai`              | `=== false` 才关 | 传 `true` 等价于传 `{}`       |
 | `panel` / `timeline` | `!== false` 即开 | 两个都关掉时整块 Jotai 不渲染 |
 
 `theme` 只在根配置上，不在 `jotai` 里——Jotai 面板的主题是从根配置继承下去的。
@@ -151,7 +151,12 @@ const Devtools = () => {
 
   return (
     <Suspense fallback={null}>
-      <AdminDevtools config={config} queryClient={queryClient} router={router} store={globalStore} />
+      <AdminDevtools
+        config={config}
+        queryClient={queryClient}
+        router={router}
+        store={globalStore}
+      />
     </Suspense>
   );
 };

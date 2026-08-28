@@ -16,5 +16,4 @@ export const ListContent = (props: ListContentProps) => {
       {children}
     </div>
   );
-}
-;
+};

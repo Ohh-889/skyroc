@@ -1,11 +1,11 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import type { Content } from '@radix-ui/react-alert-dialog';
 import { AlertDialog as AlertDialogRoot, Portal, Trigger } from '@radix-ui/react-alert-dialog';
 import { Slot } from '@radix-ui/react-slot';
 import { CircleAlert, CircleCheck, CircleX, Info } from 'lucide-react';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import AlertDialogAction from './AlertDialogAction';
 import AlertDialogCancel from './AlertDialogCancel';
 import AlertDialogContent from './AlertDialogContent';
@@ -92,7 +92,6 @@ const AlertDialogUI = forwardRef<ComponentRef<typeof Content>, AlertDialogProps>
             >
               {description}
             </AlertDialogDescription>
-
           </AlertDialogHeader>
 
           {children}
@@ -105,16 +104,14 @@ const AlertDialogUI = forwardRef<ComponentRef<typeof Content>, AlertDialogProps>
             >
               {footer || (
                 <>
-                  {showCancel
-                    ? (
-                      <AlertDialogCancel
-                        onClick={onCancel}
-                        {...cancelButtonProps}
-                      >
-                        {cancelText}
-                      </AlertDialogCancel>
-                    )
-                    : null}
+                  {showCancel ? (
+                    <AlertDialogCancel
+                      onClick={onCancel}
+                      {...cancelButtonProps}
+                    >
+                      {cancelText}
+                    </AlertDialogCancel>
+                  ) : null}
 
                   <AlertDialogAction
                     onClick={onOk}

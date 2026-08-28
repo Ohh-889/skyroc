@@ -72,23 +72,23 @@ export const inputOTPVariants = tv({
         input: `h-12 w-12 text-xl`,
         separator: `text-xl`
       },
-      'lg': {
+      lg: {
         input: `h-9 w-9 text-base`,
         separator: `text-base`
       },
-      'md': {
+      md: {
         input: `h-8 w-8 text-sm`,
         separator: `text-sm`
       },
-      'sm': {
+      sm: {
         input: `h-7 w-7 text-xs`,
         separator: `text-xs`
       },
-      'xl': {
+      xl: {
         input: `h-10 w-10 text-lg`,
         separator: `text-lg`
       },
-      'xs': {
+      xs: {
         input: `h-6 w-6 text-2xs`,
         separator: `text-2xs`
       }

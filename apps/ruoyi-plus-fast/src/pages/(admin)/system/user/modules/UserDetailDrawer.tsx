@@ -30,8 +30,15 @@ const UserDetailDrawer = (props: UserDetailDrawerProps) => {
       <Spin spinning={query.isLoading}>
         {user ? (
           <>
-            <Flex align="center" className="mb-20px" gap={12}>
-              <Avatar className="bg-primary text-white" size={48}>
+            <Flex
+              align="center"
+              className="mb-20px"
+              gap={12}
+            >
+              <Avatar
+                className="bg-primary text-white"
+                size={48}
+              >
                 {(user.nickName || user.userName).slice(0, 1)}
               </Avatar>
               <div>
@@ -40,7 +47,10 @@ const UserDetailDrawer = (props: UserDetailDrawerProps) => {
                   {user.userName} · 用户 ID {user.userId}
                 </div>
               </div>
-              <Tag className="ml-auto" color={user.status === '0' ? 'success' : 'warning'}>
+              <Tag
+                className="ml-auto"
+                color={user.status === '0' ? 'success' : 'warning'}
+              >
                 {user.status === '0' ? '正常' : '停用'}
               </Tag>
             </Flex>

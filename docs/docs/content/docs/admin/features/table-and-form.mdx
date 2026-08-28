@@ -15,39 +15,34 @@ description: 使用 @skyroc/web-ui-compose 的 useTable / useTableOperate / useT
 
 ## 适用场景
 
-| 场景 | 重点能力 |
-| --- | --- |
-| 写一个带搜索条件的后台列表页 | `useTable()` + Ant Design `Form` + `Table` |
-| 接 React Query 分页接口 | `queryHook`、`transformParams`、`apiParams` |
-| 让分页、排序、筛选触发重新请求 | `tableProps.onChange`、`updateSearchParams()` |
-| 查询与重置表单 | `searchProps.search()`、`searchProps.reset()` |
-| 搜索条件与浏览器 URL 双向同步 | `routeSearch`、`onSearchParamsChange`、`validateSearch` |
-| 列显隐与列拖拽排序 | `TableHeaderOperation`、`columnChecks`、`setColumnChecks` |
-| 新增、编辑、批量删除抽屉 | `useTableOperate()`、`generalPopupOperation`、`rowSelection` |
-| 表格容器自适应滚动高度 | `useTableScroll()` |
+| 场景                           | 重点能力                                                     |
+| ------------------------------ | ------------------------------------------------------------ |
+| 写一个带搜索条件的后台列表页   | `useTable()` + Ant Design `Form` + `Table`                   |
+| 接 React Query 分页接口        | `queryHook`、`transformParams`、`apiParams`                  |
+| 让分页、排序、筛选触发重新请求 | `tableProps.onChange`、`updateSearchParams()`                |
+| 查询与重置表单                 | `searchProps.search()`、`searchProps.reset()`                |
+| 搜索条件与浏览器 URL 双向同步  | `routeSearch`、`onSearchParamsChange`、`validateSearch`      |
+| 列显隐与列拖拽排序             | `TableHeaderOperation`、`columnChecks`、`setColumnChecks`    |
+| 新增、编辑、批量删除抽屉       | `useTableOperate()`、`generalPopupOperation`、`rowSelection` |
+| 表格容器自适应滚动高度         | `useTableScroll()`                                           |
 
 ## 实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `packages/web/ui/compose/src/table/use-table.ts` | 面向页面的 `useTable()`，组合 Form、URL 初始查询、分页、列管理，输出 `tableProps` 与 `searchProps`。 |
-| `packages/web/ui/compose/src/table/hooks.ts` | 核心数据 hook `useHookTable()`，维护 `data`、`loading`、`searchParams`、分页和列状态，并接 React Query。 |
-| `packages/web/ui/compose/src/table/use-table-operate.ts` | `useTableOperate()`，管理新增/编辑抽屉、行选择和删除回调。 |
-| `packages/web/ui/compose/src/table/use-table-scroll.ts` | `useTableScroll()`，根据容器尺寸算出表格滚动区域。 |
-| `packages/web/ui/compose/src/table/TableHeaderOperation.tsx` | 表头操作栏：添加、批量删除、刷新、列设置入口。 |
-| `packages/web/ui/compose/src/table/DragContent.tsx` | 列设置弹层，基于 DnD Kit 做显隐切换、固定和拖拽排序。 |
-| `packages/web/ui/compose/src/table/types.ts` | `TableConfig`、`TableColumn`、`TableSearchProps`、`GeneralPopupOperationProps` 等类型。 |
-| `apps/admin-example/src/service/api/system-manage/*` | 系统管理接口（`api.ts`）和 React Query hooks（`hooks.ts`）。 |
+| 文件                                                         | 职责                                                                                                     |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `packages/web/ui/compose/src/table/use-table.ts`             | 面向页面的 `useTable()`，组合 Form、URL 初始查询、分页、列管理，输出 `tableProps` 与 `searchProps`。     |
+| `packages/web/ui/compose/src/table/hooks.ts`                 | 核心数据 hook `useHookTable()`，维护 `data`、`loading`、`searchParams`、分页和列状态，并接 React Query。 |
+| `packages/web/ui/compose/src/table/use-table-operate.ts`     | `useTableOperate()`，管理新增/编辑抽屉、行选择和删除回调。                                               |
+| `packages/web/ui/compose/src/table/use-table-scroll.ts`      | `useTableScroll()`，根据容器尺寸算出表格滚动区域。                                                       |
+| `packages/web/ui/compose/src/table/TableHeaderOperation.tsx` | 表头操作栏：添加、批量删除、刷新、列设置入口。                                                           |
+| `packages/web/ui/compose/src/table/DragContent.tsx`          | 列设置弹层，基于 DnD Kit 做显隐切换、固定和拖拽排序。                                                    |
+| `packages/web/ui/compose/src/table/types.ts`                 | `TableConfig`、`TableColumn`、`TableSearchProps`、`GeneralPopupOperationProps` 等类型。                  |
+| `apps/admin-example/src/service/api/system-manage/*`         | 系统管理接口（`api.ts`）和 React Query hooks（`hooks.ts`）。                                             |
 
 所有表格相关 API 都从 `@skyroc/web-ui-compose` 统一导出：
 
 ```ts
-import {
-  TableHeaderOperation,
-  useTable,
-  useTableOperate,
-  useTableScroll
-} from '@skyroc/web-ui-compose';
+import { TableHeaderOperation, useTable, useTableOperate, useTableScroll } from '@skyroc/web-ui-compose';
 import type { TableColumn, TableDataWithIndex, TableSearchProps } from '@skyroc/web-ui-compose';
 ```
 
@@ -75,7 +70,7 @@ import type { TableColumn, TableDataWithIndex, TableSearchProps } from '@skyroc/
 `useHookTable` 会在 `select` 阶段给每行补一个连续序号 `index`：
 
 ```ts
-index: (pageNum - 1) * pageSize + rowIndex + 1
+index: (pageNum - 1) * pageSize + rowIndex + 1;
 ```
 
 所以列定义里通常会有一列 `{ dataIndex: 'index', key: 'index' }` 直接展示序号，页面不需要自己计算。
@@ -84,31 +79,31 @@ index: (pageNum - 1) * pageSize + rowIndex + 1
 
 `useTable(config)` 接收 `TableConfig`，常用字段如下（其余未列出的属性会原样透传到 `tableProps`，例如 `defaultExpandAllRows`、`size` 等）：
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
-| `queryHook` | `(params, options) => UseQueryResult` | **必填**。页面提供的 React Query 查询 hook。 |
-| `columns` | `() => TableColumn[]` | **必填**。列工厂；每次重建列时调用，方便按权限或 i18n 重新生成。 |
-| `apiParams` | `Partial<Params>` | 默认查询参数，同时作为 `reset()` 的目标值。 |
-| `transformer` | `(response) => PaginationData` | 响应转换；默认 `defaultTableTransformer`。 |
-| `transformParams` | `(params) => params` | 请求前的参数规范化（常配合 zod schema）。 |
-| `routeSearch` | `string` | 路由 search 字符串，用于首次进入时从 URL 恢复查询条件。 |
-| `isChangeURL` | `boolean` | 默认 `true`。开启后查询参数提交时触发 `onSearchParamsChange`。 |
-| `onSearchParamsChange` | `(params) => void` | 查询参数提交后的回调，用来把条件写回路由 search。 |
-| `isMobile` | `boolean` | 移动端使用 `simple` 简洁分页。 |
-| `pagination` | `false \| TablePaginationConfig` | 分页配置；传 `false` 关闭分页（树形数据常用）。 |
-| `immediate` | `boolean` | 默认 `true`，挂载后立即请求。 |
-| `enabled` | `boolean` | 外部业务是否允许发起查询。 |
-| `showTotal` | `boolean` | 默认 `true`，分页展示总数文案。 |
-| `getColumnVisible` | `(column) => boolean` | 控制列是否出现在列设置面板。 |
-| `onChange` | `(pagination, filters, sorter) => Partial<Params> \| void` | 自定义分页/排序/筛选的参数转换。 |
-| `onFetched` | `(data) => void` | 请求完成后的业务回调。 |
+| 字段                   | 类型                                                       | 说明                                                             |
+| ---------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| `queryHook`            | `(params, options) => UseQueryResult`                      | **必填**。页面提供的 React Query 查询 hook。                     |
+| `columns`              | `() => TableColumn[]`                                      | **必填**。列工厂；每次重建列时调用，方便按权限或 i18n 重新生成。 |
+| `apiParams`            | `Partial<Params>`                                          | 默认查询参数，同时作为 `reset()` 的目标值。                      |
+| `transformer`          | `(response) => PaginationData`                             | 响应转换；默认 `defaultTableTransformer`。                       |
+| `transformParams`      | `(params) => params`                                       | 请求前的参数规范化（常配合 zod schema）。                        |
+| `routeSearch`          | `string`                                                   | 路由 search 字符串，用于首次进入时从 URL 恢复查询条件。          |
+| `isChangeURL`          | `boolean`                                                  | 默认 `true`。开启后查询参数提交时触发 `onSearchParamsChange`。   |
+| `onSearchParamsChange` | `(params) => void`                                         | 查询参数提交后的回调，用来把条件写回路由 search。                |
+| `isMobile`             | `boolean`                                                  | 移动端使用 `simple` 简洁分页。                                   |
+| `pagination`           | `false \| TablePaginationConfig`                           | 分页配置；传 `false` 关闭分页（树形数据常用）。                  |
+| `immediate`            | `boolean`                                                  | 默认 `true`，挂载后立即请求。                                    |
+| `enabled`              | `boolean`                                                  | 外部业务是否允许发起查询。                                       |
+| `showTotal`            | `boolean`                                                  | 默认 `true`，分页展示总数文案。                                  |
+| `getColumnVisible`     | `(column) => boolean`                                      | 控制列是否出现在列设置面板。                                     |
+| `onChange`             | `(pagination, filters, sorter) => Partial<Params> \| void` | 自定义分页/排序/筛选的参数转换。                                 |
+| `onFetched`            | `(data) => void`                                           | 请求完成后的业务回调。                                           |
 
 `useTable()` 返回值分三类：
 
-| 返回值 | 用途 |
-| --- | --- |
-| `searchProps`（`form` / `search` / `reset` / `searchParams`） | 直接展开传给搜索表单组件。 |
-| `tableProps`（`columns` / `dataSource` / `loading` / `onChange` / `pagination` / `rowKey`） | 直接展开传给 Ant Design `Table`。 |
+| 返回值                                                                                      | 用途                                                    |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `searchProps`（`form` / `search` / `reset` / `searchParams`）                               | 直接展开传给搜索表单组件。                              |
+| `tableProps`（`columns` / `dataSource` / `loading` / `onChange` / `pagination` / `rowKey`） | 直接展开传给 Ant Design `Table`。                       |
 | `columnChecks` / `setColumnChecks` / `getData` / `data` / `total` / `updateSearchParams` 等 | 表头操作栏、列设置、以及配合 `useTableOperate()` 使用。 |
 
 ## 完整列表页示例
@@ -195,11 +190,22 @@ const UserManage = () => {
         key: 'operate',
         render: (_, record) => (
           <div className="flex-center gap-8px">
-            <Button ghost size="small" type="primary" onClick={() => handleEdit(record.id)}>
+            <Button
+              ghost
+              size="small"
+              type="primary"
+              onClick={() => handleEdit(record.id)}
+            >
               {t('common.edit')}
             </Button>
-            <Popconfirm title={t('common.confirmDelete')} onConfirm={onDeleted}>
-              <Button danger size="small">
+            <Popconfirm
+              title={t('common.confirmDelete')}
+              onConfirm={onDeleted}
+            >
+              <Button
+                danger
+                size="small"
+              >
                 {t('common.delete')}
               </Button>
             </Popconfirm>
@@ -220,7 +226,10 @@ const UserManage = () => {
         items={[{ children: <UserSearch {...searchProps} />, key: '1', label: t('common.search') }]}
       />
 
-      <div className="min-h-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -237,7 +246,12 @@ const UserManage = () => {
           title={t('page.manage.user.title')}
           variant="borderless"
         >
-          <Table rowSelection={rowSelection} scroll={scrollConfig} size="small" {...tableProps} />
+          <Table
+            rowSelection={rowSelection}
+            scroll={scrollConfig}
+            size="small"
+            {...tableProps}
+          />
           <Suspense fallback={null}>
             <UserOperateDrawer {...generalPopupOperation} />
           </Suspense>
@@ -256,10 +270,10 @@ const UserManage = () => {
 
 ```ts
 interface TableSearchProps<T> {
-  form: FormInstance<T>;        // useTable 内部创建的 Form 实例
-  reset: () => void;            // 重置表单并恢复到 apiParams
+  form: FormInstance<T>; // useTable 内部创建的 Form 实例
+  reset: () => void; // 重置表单并恢复到 apiParams
   search: (isResetCurrent?: boolean) => Promise<void>; // 提交查询
-  searchParams: T;              // 当前已提交的查询参数（用作表单 initialValues）
+  searchParams: T; // 当前已提交的查询参数（用作表单 initialValues）
 }
 ```
 
@@ -270,12 +284,21 @@ const UserSearch = (props: TableSearchProps<Api.SystemManage.UserSearchParams>) 
   const { form, reset, search, searchParams } = props;
 
   return (
-    <Form form={form} initialValues={searchParams}>
-      <Form.Item label="用户名" name="userName">
+    <Form
+      form={form}
+      initialValues={searchParams}
+    >
+      <Form.Item
+        label="用户名"
+        name="userName"
+      >
         <Input allowClear />
       </Form.Item>
       <Button onClick={reset}>重置</Button>
-      <Button type="primary" onClick={() => search()}>
+      <Button
+        type="primary"
+        onClick={() => search()}
+      >
         查询
       </Button>
     </Form>
@@ -319,7 +342,11 @@ useTable({
 export const UserSearchSchema = z.object({
   current: z.coerce.number().positive().catch(1).default(1),
   size: z.coerce.number().positive().catch(10).default(10),
-  userName: z.string().nullish().catch(null).transform(v => v || null)
+  userName: z
+    .string()
+    .nullish()
+    .catch(null)
+    .transform(v => v || null)
   // ...其余字段
 });
 
@@ -340,25 +367,25 @@ export const Route = createFileRoute('/(admin)/manage/user/')({
 
 列设置由三层组成：
 
-| 层 | 作用 |
-| --- | --- |
-| `columns` 工厂 | 定义完整列。 |
-| `columnChecks` | 记录列的显隐、固定位置和顺序。 |
+| 层                     | 作用                                                      |
+| ---------------------- | --------------------------------------------------------- |
+| `columns` 工厂         | 定义完整列。                                              |
+| `columnChecks`         | 记录列的显隐、固定位置和顺序。                            |
 | `TableHeaderOperation` | 提供列设置按钮，弹出 `DragContent` 做显隐切换和拖拽排序。 |
 
 `useTable()` 根据列的 `key` 生成 `columnChecks`，所以**每个可配置列必须有稳定的 `key`**，没有 `key` 的列不会进入列设置面板（但仍会渲染）。需要在权限或语言变化后重建列设置且保留用户偏好时，调用 `reloadColumns()`。
 
 `TableHeaderOperation` 主要 props：
 
-| prop | 说明 |
-| --- | --- |
-| `columns` | 列设置项，即 `columnChecks`。 |
-| `setColumnChecks` | 更新列设置的回调。 |
-| `refresh` | 刷新按钮事件，通常传 `getData`。 |
-| `loading` | 刷新图标是否旋转。 |
-| `add` / `onDelete` | 添加与批量删除按钮事件；不传则不渲染对应按钮。 |
-| `disabledDelete` | 是否禁用批量删除。 |
-| `prefix` / `suffix` / `children` | 自定义插槽内容。 |
+| prop                             | 说明                                           |
+| -------------------------------- | ---------------------------------------------- |
+| `columns`                        | 列设置项，即 `columnChecks`。                  |
+| `setColumnChecks`                | 更新列设置的回调。                             |
+| `refresh`                        | 刷新按钮事件，通常传 `getData`。               |
+| `loading`                        | 刷新图标是否旋转。                             |
+| `add` / `onDelete`               | 添加与批量删除按钮事件；不传则不渲染对应按钮。 |
+| `disabledDelete`                 | 是否禁用批量删除。                             |
+| `prefix` / `suffix` / `children` | 自定义插槽内容。                               |
 
 ## 新增、编辑与行选择
 
@@ -366,14 +393,14 @@ export const Route = createFileRoute('/(admin)/manage/user/')({
 
 ```tsx
 const {
-  checkedRowKeys,        // 当前选中行 key
-  rowSelection,          // 直接传给 Table 的行选择配置
+  checkedRowKeys, // 当前选中行 key
+  rowSelection, // 直接传给 Table 的行选择配置
   generalPopupOperation, // 传给新增/编辑抽屉的 props
-  handleAdd,             // 打开新增抽屉
-  handleEdit,            // 打开编辑抽屉，入参可以是 id 或整行数据
-  onDeleted,             // 单条删除后的成功提示 + 刷新
-  onBatchDeleted,        // 批量删除后清空选中 + 刷新
-  editingData            // 当前编辑的行数据
+  handleAdd, // 打开新增抽屉
+  handleEdit, // 打开编辑抽屉，入参可以是 id 或整行数据
+  onDeleted, // 单条删除后的成功提示 + 刷新
+  onBatchDeleted, // 批量删除后清空选中 + 刷新
+  editingData // 当前编辑的行数据
 } = useTableOperate<UserTableRecord>(data, getData);
 ```
 
@@ -381,11 +408,11 @@ const {
 
 ```ts
 interface GeneralPopupOperationProps<T> {
-  form: FormInstance<T>;          // 与 useTableOperate 共享的表单实例
+  form: FormInstance<T>; // 与 useTableOperate 共享的表单实例
   handleSubmit: () => Promise<void>; // 校验并提交，成功后关闭抽屉 + 刷新
-  onClose: () => void;            // 关闭抽屉并重置表单
-  open: boolean;                  // 抽屉是否打开
-  operateType: 'add' | 'edit';    // 当前操作类型
+  onClose: () => void; // 关闭抽屉并重置表单
+  open: boolean; // 抽屉是否打开
+  operateType: 'add' | 'edit'; // 当前操作类型
 }
 ```
 
@@ -416,8 +443,11 @@ const { scrollConfig, tableWrapperRef } = useTableScroll(1132);
 
 // 容器 ref 包裹表格
 <div ref={tableWrapperRef}>
-  <Table scroll={scrollConfig} {...tableProps} />
-</div>
+  <Table
+    scroll={scrollConfig}
+    {...tableProps}
+  />
+</div>;
 ```
 
 - `scrollX` 是表格横向最小宽度，列总宽超过容器时出现横向滚动。
@@ -441,15 +471,15 @@ useTable({
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 在页面里维护 `current` / `pageSize` / `loading` / `dataSource` | 交给 `useTable()`，页面只处理搜索条件和业务按钮。 |
-| 在 `queryHook` 里写 `enabled` 或 `select` | 这两项由 `useTable()` 注入，页面只声明 `queryKey` 和 `queryFn`。 |
-| `queryKey` 没有包含 `params` | 必须包含，否则搜索参数变化不会触发重新请求。 |
-| 列配置缺少 `key` | 给每个可显示列补稳定 `key`，否则列设置面板无法识别。 |
-| 后端字段不是 `records/current/size/total` | 传入自定义 `transformer` 转换成 `PaginationData`。 |
-| 把接口 URL 写在页面里 | 在 `service/api/{module}` 里定义接口和查询 hook，页面只消费。 |
-| 从 `@/features/table` 导入 | 表格能力已迁移到 `@skyroc/web-ui-compose` 统一导出。 |
+| 误区                                                           | 正确做法                                                         |
+| -------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 在页面里维护 `current` / `pageSize` / `loading` / `dataSource` | 交给 `useTable()`，页面只处理搜索条件和业务按钮。                |
+| 在 `queryHook` 里写 `enabled` 或 `select`                      | 这两项由 `useTable()` 注入，页面只声明 `queryKey` 和 `queryFn`。 |
+| `queryKey` 没有包含 `params`                                   | 必须包含，否则搜索参数变化不会触发重新请求。                     |
+| 列配置缺少 `key`                                               | 给每个可显示列补稳定 `key`，否则列设置面板无法识别。             |
+| 后端字段不是 `records/current/size/total`                      | 传入自定义 `transformer` 转换成 `PaginationData`。               |
+| 把接口 URL 写在页面里                                          | 在 `service/api/{module}` 里定义接口和查询 hook，页面只消费。    |
+| 从 `@/features/table` 导入                                     | 表格能力已迁移到 `@skyroc/web-ui-compose` 统一导出。             |
 
 ## 相关链接
 

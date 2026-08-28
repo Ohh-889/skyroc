@@ -39,54 +39,54 @@ type Patch = SetPatch | ArrayPatch;
  *   ```tsx
  *   // Basic usage with undo/redo buttons
  *   function EditableForm() {
- *     const [form] = useForm();
- *     const { canUndo, canRedo, undo, redo } = useUndoRedo(form);
+ *   const [form] = useForm();
+ *   const { canUndo, canRedo, undo, redo } = useUndoRedo(form);
  *
- *     return (
- *       <Form
- *         form={form}
- *         initialValues={{
- *           title: 'Document Title',
- *           content: 'Document content...',
- *           tags: ['react', 'form']
- *         }}
- *       >
- *         <div className="toolbar">
- *           <button type="button" onClick={undo} disabled={!canUndo} className={`btn ${!canUndo ? 'disabled' : ''}`}>
- *             ↶ Undo
- *           </button>
- *           <button type="button" onClick={redo} disabled={!canRedo} className={`btn ${!canRedo ? 'disabled' : ''}`}>
- *             ↷ Redo
- *           </button>
- *         </div>
+ *   return (
+ *   <Form
+ *   form={form}
+ *   initialValues={{
+ *   title: 'Document Title',
+ *   content: 'Document content...',
+ *   tags: ['react', 'form']
+ *   }}
+ *   >
+ *   <div className="toolbar">
+ *   <button type="button" onClick={undo} disabled={!canUndo} className={`btn ${!canUndo ? 'disabled' : ''}`}>
+ *   ↶ Undo
+ *   </button>
+ *   <button type="button" onClick={redo} disabled={!canRedo} className={`btn ${!canRedo ? 'disabled' : ''}`}>
+ *   ↷ Redo
+ *   </button>
+ *   </div>
  *
- *         <Field name="title" rules={[{ required: true }]}>
- *           <Input placeholder="Document title" />
- *         </Field>
+ *   <Field name="title" rules={[{ required: true }]}>
+ *   <Input placeholder="Document title" />
+ *   </Field>
  *
- *         <Field name="content">
- *           <TextArea rows={6} placeholder="Document content" />
- *         </Field>
+ *   <Field name="content">
+ *   <TextArea rows={6} placeholder="Document content" />
+ *   </Field>
  *
- *         <List name="tags">
- *           {(fields, { add, remove }) => (
- *             <>
- *               {fields.map(field => (
- *                 <div key={field.key} className="tag-item">
- *                   <Field name={field.name}>
- *                     <Input placeholder="Tag" />
- *                   </Field>
- *                   <button onClick={() => remove(field.name)}>Remove</button>
- *                 </div>
- *               ))}
- *               <button onClick={() => add('')}>Add Tag</button>
- *             </>
- *           )}
- *         </List>
+ *   <List name="tags">
+ *   {(fields, { add, remove }) => (
+ *   <>
+ *   {fields.map(field => (
+ *   <div key={field.key} className="tag-item">
+ *   <Field name={field.name}>
+ *   <Input placeholder="Tag" />
+ *   </Field>
+ *   <button onClick={() => remove(field.name)}>Remove</button>
+ *   </div>
+ *   ))}
+ *   <button onClick={() => add('')}>Add Tag</button>
+ *   </>
+ *   )}
+ *   </List>
  *
- *         <button type="submit">Save Document</button>
- *       </Form>
- *     );
+ *   <button type="submit">Save Document</button>
+ *   </Form>
+ *   );
  *   }
  *   ```
  */

@@ -1,8 +1,6 @@
 import { type Key, type NamePath, isObjectRecord, toSegments } from './path-utils';
 
-/**
- * Safely read a deep value.
- */
+/** Safely read a deep value. */
 export function deepGet<T, D = undefined>(obj: T, path: NamePath | null, def?: D): unknown | D {
   if (path === null || path === undefined) return def as D;
 

@@ -48,7 +48,10 @@ setupTheme({
 import { AntdProvider } from '@shell/theme';
 
 const AppProvider = ({ children }) => (
-  <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+  <AntdProvider
+    locale={antdLocales[locale]}
+    userName={userInfo?.userName}
+  >
     {children}
   </AntdProvider>
 );
@@ -129,25 +132,25 @@ src/
 
 ## API 速览
 
-| 导出 | 类型 | 说明 |
-|------|------|------|
-| `setupTheme(options)` | function | 初始化主题：默认配置、缓存读取、版本覆盖、atom 写入 |
-| `defineThemeOverrides(overrides)` | function | 类型安全的覆盖配置定义辅助 |
-| `useTheme()` | hook | 主题读写入口，返回所有字段 + 派生值 + mutation 函数 |
-| `themeSettingsAtom` | atom | 主题状态唯一数据源（Jotai） |
-| `themeUserNameAtom` | atom | 水印用户名 atom，由 `AntdProvider` 写入 |
-| `AntdProvider` | component | 桥接主题与 Ant Design `ConfigProvider` |
-| `ThemeEffect` | component | 副作用组件（渲染为 `null`） |
-| `ThemeSchemaSwitch` | component | light / dark / auto 循环切换按钮 |
-| `ThemeSchemaSegmented` | component | 三态分段式选择控件 |
-| `getAntdTheme(colors, dark, settings)` | function | 状态转 Ant Design `theme` 配置 |
-| `getAllPresets()` / `getPreset(name)` | function | 预设系统访问 |
-| `presets` / `defaultPreset` / `dark` / `azir` / `compact` / `shadcn` | const | 预设具名导出 |
-| `mergeThemeSettings` / `getThemeColors` / `getDefaultThemeSettings` | function | 配置工具 |
-| `toggleCssDarkMode` / `isDarkModeClass` | function | DOM dark class 操作 |
-| `toggleAuxiliaryColorModes` / `clearAuxiliaryColorModes` | function | 灰度 / 色弱滤镜 |
-| `defaultThemeSettings` / `themeSchemeIcons` | const | 默认配置与图标映射 |
-| `showMessage` / `showModal` / `showNotification` 系列 | function | Ant Design UI 单例工具 |
+| 导出                                                                 | 类型      | 说明                                                |
+| -------------------------------------------------------------------- | --------- | --------------------------------------------------- |
+| `setupTheme(options)`                                                | function  | 初始化主题：默认配置、缓存读取、版本覆盖、atom 写入 |
+| `defineThemeOverrides(overrides)`                                    | function  | 类型安全的覆盖配置定义辅助                          |
+| `useTheme()`                                                         | hook      | 主题读写入口，返回所有字段 + 派生值 + mutation 函数 |
+| `themeSettingsAtom`                                                  | atom      | 主题状态唯一数据源（Jotai）                         |
+| `themeUserNameAtom`                                                  | atom      | 水印用户名 atom，由 `AntdProvider` 写入             |
+| `AntdProvider`                                                       | component | 桥接主题与 Ant Design `ConfigProvider`              |
+| `ThemeEffect`                                                        | component | 副作用组件（渲染为 `null`）                         |
+| `ThemeSchemaSwitch`                                                  | component | light / dark / auto 循环切换按钮                    |
+| `ThemeSchemaSegmented`                                               | component | 三态分段式选择控件                                  |
+| `getAntdTheme(colors, dark, settings)`                               | function  | 状态转 Ant Design `theme` 配置                      |
+| `getAllPresets()` / `getPreset(name)`                                | function  | 预设系统访问                                        |
+| `presets` / `defaultPreset` / `dark` / `azir` / `compact` / `shadcn` | const     | 预设具名导出                                        |
+| `mergeThemeSettings` / `getThemeColors` / `getDefaultThemeSettings`  | function  | 配置工具                                            |
+| `toggleCssDarkMode` / `isDarkModeClass`                              | function  | DOM dark class 操作                                 |
+| `toggleAuxiliaryColorModes` / `clearAuxiliaryColorModes`             | function  | 灰度 / 色弱滤镜                                     |
+| `defaultThemeSettings` / `themeSchemeIcons`                          | const     | 默认配置与图标映射                                  |
+| `showMessage` / `showModal` / `showNotification` 系列                | function  | Ant Design UI 单例工具                              |
 
 完整 API 文档（含字段说明、类型定义、设计取舍）：见 [`apps/web-kit-docs/content/docs/theme/admin-theme.mdx`](../../../apps/web-kit-docs/content/docs/theme/admin-theme.mdx)。
 

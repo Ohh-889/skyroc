@@ -54,7 +54,11 @@ const AppTree = <T extends TreeDataNode = TreeDataNode>(props: AppTreeProps<T>) 
 
   return (
     <ConfigProvider theme={APP_TREE_THEME}>
-      <Tree<T> classNames={resolveClassNames()} switcherIcon={switcherIcon} {...treeProps} />
+      <Tree<T>
+        classNames={resolveClassNames()}
+        switcherIcon={switcherIcon}
+        {...treeProps}
+      />
     </ConfigProvider>
   );
 };

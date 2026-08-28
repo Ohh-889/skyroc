@@ -1,6 +1,6 @@
+import { Content, Portal } from '@radix-ui/react-context-menu';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { Content, Portal } from '@radix-ui/react-context-menu';
 import MenuContent from '../menu/MenuContent';
 import ContextMenuArrow from './ContextMenuArrow';
 import type { ContextMenuContentProps } from './types';

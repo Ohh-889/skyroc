@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import TagUI from '../../components/tag/TagUI';
 import type { TagProps } from '../../components/tag/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Tag = (props: TagProps) => {
   const config = useComponentConfig('tag');
@@ -12,11 +12,7 @@ const Tag = (props: TagProps) => {
     ...props
   };
 
-  return (
-    <TagUI
-      {...mergedProps}
-    />
-  );
+  return <TagUI {...mergedProps} />;
 };
 
 Tag.displayName = 'Tag';

@@ -61,10 +61,10 @@ const styles = StyleSheet.create({ container: { flex: 1 } });
 `foreground` `muted-foreground` `border` `carbon`
 
 ```tsx
-className="text-primary"           // 主色文字
-className="text-muted-foreground"  // 辅助文字
-className="bg-secondary"           // 次要背景
-className="border-border"          // 边框色
+className = 'text-primary'; // 主色文字
+className = 'text-muted-foreground'; // 辅助文字
+className = 'bg-secondary'; // 次要背景
+className = 'border-border'; // 边框色
 ```
 
 ### 色阶 50–950
@@ -74,16 +74,16 @@ Native 与 Web 一样拥有完整色阶（由 `colorScale()` 生成，
 
 ```tsx
 // ✅ 色阶
-className="bg-primary-50"
-className="text-primary-700"
-className="border-warning-200"
+className = 'bg-primary-50';
+className = 'text-primary-700';
+className = 'border-warning-200';
 
 // ✅ 或 opacity 修饰符
-className="bg-primary/10"
-className="text-primary/30"
+className = 'bg-primary/10';
+className = 'text-primary/30';
 
 // ❌ 不要手写近似色
-className="bg-[#343C610D]"
+className = 'bg-[#343C610D]';
 ```
 
 ### ⚠️ style 场景的变量写法与 Web 不同
@@ -93,10 +93,10 @@ Native 的 CSS 变量存的是 **hex**，Web 存的是 HSL 三元组
 
 ```tsx
 // ✅ Native：直接引用，不要包 hsl()
-placeholderTextColor="var(--primary)"
+placeholderTextColor = 'var(--primary)';
 
 // ❌ Native 上无效（hsl() 不能接受 hex）
-placeholderTextColor="hsl(var(--primary) / 0.3)"   // 这是 Web 的写法
+placeholderTextColor = 'hsl(var(--primary) / 0.3)'; // 这是 Web 的写法
 ```
 
 需要透明度时优先用 className 的 opacity 修饰符，而不是手写变量。
@@ -105,13 +105,13 @@ placeholderTextColor="hsl(var(--primary) / 0.3)"   // 这是 Web 的写法
 
 遇到这些设计稿色值**必须**用对应 token，不得写死 hex：
 
-| 设计稿色值 | Token |
-| --- | --- |
-| `#343C61` | `primary` |
-| `#343C61` 60% | `muted-foreground` |
-| `#FFA929` | `warning` |
-| `#F7F8FA` | `secondary` / `muted` |
-| 边框灰 | `border` |
+| 设计稿色值    | Token                 |
+| ------------- | --------------------- |
+| `#343C61`     | `primary`             |
+| `#343C61` 60% | `muted-foreground`    |
+| `#FFA929`     | `warning`             |
+| `#F7F8FA`     | `secondary` / `muted` |
+| 边框灰        | `border`              |
 
 ### 优先级
 
@@ -164,13 +164,13 @@ RN 的 `Text` 缺少主题和字体集成；分隔线不要手写 `<View classNa
 
 ## 禁止事项
 
-| 禁止 | 替代 |
-| --- | --- |
-| `StyleSheet.create` | Uniwind `className` |
-| Tamagui 样式 props（`paddingInline`、`backgroundColor`） | Uniwind `className` |
-| 内联 `style` 写静态值 | Uniwind `className` |
-| 手写分隔线 | `<Divider />` |
-| `Box` 组件 | RN 的 `View` |
-| RN 的 `Text` | `@skyroc/native-ui` 的 `Text` |
-| 写死已有 token 的 hex（`text-[#343C61]`） | 语义色 token（`text-primary`） |
-| `hsl(var(--x))` | Native 用 `var(--x)` |
+| 禁止                                                     | 替代                           |
+| -------------------------------------------------------- | ------------------------------ |
+| `StyleSheet.create`                                      | Uniwind `className`            |
+| Tamagui 样式 props（`paddingInline`、`backgroundColor`） | Uniwind `className`            |
+| 内联 `style` 写静态值                                    | Uniwind `className`            |
+| 手写分隔线                                               | `<Divider />`                  |
+| `Box` 组件                                               | RN 的 `View`                   |
+| RN 的 `Text`                                             | `@skyroc/native-ui` 的 `Text`  |
+| 写死已有 token 的 hex（`text-[#343C61]`）                | 语义色 token（`text-primary`） |
+| `hsl(var(--x))`                                          | Native 用 `var(--x)`           |

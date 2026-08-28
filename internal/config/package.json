@@ -10,27 +10,27 @@
     "typescript",
     "vitest"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/internal/config",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "internal/config"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "sideEffects": false,
   "files": [
     "dist",
     "oxlint"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     "./oxlint/base.json": "./oxlint/base.json",
     "./oxlint/next.json": "./oxlint/next.json",

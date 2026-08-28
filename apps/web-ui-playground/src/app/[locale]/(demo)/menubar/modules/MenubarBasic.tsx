@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Menubar } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const fileMenu = [
   { label: 'New Tab', shortcut: '⌘T' },
@@ -11,11 +11,7 @@ const fileMenu = [
   {
     type: 'sub' as const,
     label: 'Share',
-    children: [
-      { label: 'Email link' },
-      { label: 'Messages' },
-      { label: 'Notes' }
-    ]
+    children: [{ label: 'Email link' }, { label: 'Messages' }, { label: 'Notes' }]
   },
   { type: 'separator' as const },
   { label: 'Print...', shortcut: '⌘P' }

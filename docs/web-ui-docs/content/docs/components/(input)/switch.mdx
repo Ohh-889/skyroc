@@ -6,11 +6,7 @@ description: 用于在开/关两种状态之间切换的开关组件
 开关（Switch）用于在两种互斥状态之间切换，常见于设置面板中的功能启停。基于 Radix UI Switch 封装，支持主题颜色、多种尺寸和无障碍键盘操作。
 
 ```tsx
-import {
-  Switch,
-  SwitchRoot,
-  SwitchThumb
-} from '@skyroc/web-ui';
+import { Switch, SwitchRoot, SwitchThumb } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -42,7 +38,11 @@ import {
 ```tsx
 const [checked, setChecked] = useState(false);
 
-<Switch checked={checked} onCheckedChange={setChecked} aria-label="开启通知" />
+<Switch
+  checked={checked}
+  onCheckedChange={setChecked}
+  aria-label="开启通知"
+/>;
 ```
 
 ## 颜色
@@ -68,14 +68,14 @@ const [checked, setChecked] = useState(false);
 
 <Demo src="@playground/switch/modules/SwitchSize" />
 
-| 尺寸  | 轨道尺寸   | 滑块尺寸 | 适用场景           |
-| ----- | ---------- | -------- | ------------------ |
-| `xs`  | 28×16px    | 12px     | 紧凑列表、表格内嵌 |
-| `sm`  | 32×18px    | 14px     | 侧边栏设置项       |
-| `md`  | 36×20px    | 16px     | 常规场景（默认）   |
-| `lg`  | 40×22px    | 18px     | 强调设置项         |
-| `xl`  | 44×24px    | 20px     | 大号设置面板       |
-| `2xl` | 52×28px    | 24px     | 首屏重要开关       |
+| 尺寸  | 轨道尺寸 | 滑块尺寸 | 适用场景           |
+| ----- | -------- | -------- | ------------------ |
+| `xs`  | 28×16px  | 12px     | 紧凑列表、表格内嵌 |
+| `sm`  | 32×18px  | 14px     | 侧边栏设置项       |
+| `md`  | 36×20px  | 16px     | 常规场景（默认）   |
+| `lg`  | 40×22px  | 18px     | 强调设置项         |
+| `xl`  | 44×24px  | 20px     | 大号设置面板       |
+| `2xl` | 52×28px  | 24px     | 首屏重要开关       |
 
 ```tsx
 <Switch size="xs" defaultChecked />
@@ -276,7 +276,11 @@ const [checked, setChecked] = useState(false);
         { name: 'checked', type: 'boolean', description: '受控开关状态。' },
         { name: 'className', type: 'ClassValue', description: '轨道 class。' },
         { name: 'classNames', type: 'ClassNames', description: '各 slot 的自定义 class。' },
-        { name: 'color', type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'carbon' | 'secondary' | 'accent'", description: '主题颜色。' },
+        {
+          name: 'color',
+          type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'carbon' | 'secondary' | 'accent'",
+          description: '主题颜色。'
+        },
         { name: 'children', type: 'ReactNode', description: '滑块内部内容。' },
         { name: 'defaultChecked', type: 'boolean', description: '非受控默认状态。' },
         { name: 'disabled', type: 'boolean', description: '是否禁用。' },
@@ -294,7 +298,11 @@ const [checked, setChecked] = useState(false);
         { name: 'checked', type: 'boolean', description: '受控开关状态。' },
         { name: 'defaultChecked', type: 'boolean', description: '非受控默认状态。' },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', description: '状态变化回调。' },
-        { name: 'color', type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'carbon' | 'secondary' | 'accent'", description: '主题颜色。' },
+        {
+          name: 'color',
+          type: "'primary' | 'destructive' | 'success' | 'warning' | 'info' | 'carbon' | 'secondary' | 'accent'",
+          description: '主题颜色。'
+        },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '轨道尺寸。' },
         { name: 'disabled', type: 'boolean', description: '是否禁用。' },
         { name: 'required', type: 'boolean', description: '是否必填。' },

@@ -17,23 +17,23 @@ export const inputVariants = tv({
   },
   variants: {
     size: {
-      'xs': {
+      xs: {
         root: 'h-6 px-1.5 text-2xs gap-1',
         control: 'file:py-1.25'
       },
-      'sm': {
+      sm: {
         root: 'h-7 px-2 text-xs gap-1.5',
         control: 'file:py-1.25'
       },
-      'md': {
+      md: {
         root: 'h-8 px-2.5 text-sm gap-2',
         control: 'file:py-1.25'
       },
-      'lg': {
+      lg: {
         root: 'h-9 px-3 text-base gap-2.5',
         control: 'file:py-1.25'
       },
-      'xl': {
+      xl: {
         root: 'h-10 px-3.5 text-lg gap-3',
         control: 'file:py-1.25'
       },

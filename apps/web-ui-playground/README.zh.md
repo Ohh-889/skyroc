@@ -27,12 +27,12 @@ pnpm dev
 
 ## 可用脚本
 
-| 命令 | 描述 |
-|------|------|
-| `pnpm dev` | 启动开发服务器 |
-| `pnpm build` | 构建生产版本 |
+| 命令         | 描述           |
+| ------------ | -------------- |
+| `pnpm dev`   | 启动开发服务器 |
+| `pnpm build` | 构建生产版本   |
 | `pnpm start` | 启动生产服务器 |
-| `pnpm lint` | 运行 ESLint |
+| `pnpm lint`  | 运行 ESLint    |
 
 ## 项目结构
 
@@ -118,4 +118,3 @@ pnpm build
 ## 许可证
 
 MIT 许可证 © 2024-至今 [Ohh](https://github.com/Ohh-889)
-

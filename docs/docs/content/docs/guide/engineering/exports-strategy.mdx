@@ -19,11 +19,11 @@ description: package.json exports / 子入口 / 平台分支的统一规范
 ```jsonc
 {
   "type": "module",
-  "main":  "./dist/index.mjs",
+  "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types":   "./dist/index.d.mts",
+      "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
@@ -118,12 +118,12 @@ description: package.json exports / 子入口 / 平台分支的统一规范
 
 ## peerDependencies 与 external 的协同
 
-| 项 | 含义 |
-| --- | --- |
-| `dependencies` | 直接依赖，被 npm 安装；tsdown 默认 external |
-| `peerDependencies` | 由消费方提供（React、antd 等） |
-| `devDependencies` | 仅本包开发用，不影响下游 |
-| tsdown `external` 显式列表 | 必要时手动追加 |
+| 项                         | 含义                                        |
+| -------------------------- | ------------------------------------------- |
+| `dependencies`             | 直接依赖，被 npm 安装；tsdown 默认 external |
+| `peerDependencies`         | 由消费方提供（React、antd 等）              |
+| `devDependencies`          | 仅本包开发用，不影响下游                    |
+| tsdown `external` 显式列表 | 必要时手动追加                              |
 
 **约定**：
 
@@ -139,11 +139,11 @@ description: package.json exports / 子入口 / 平台分支的统一规范
 "sideEffects": ["*.css", "*.scss", "*.svg"]    // 仅样式 / 资源有副作用
 ```
 
-| 包类型 | sideEffects |
-| --- | --- |
-| 纯函数 / 类型 / Hook | `false` |
-| 注入 CSS / 全局副作用（runtime / styles / theme） | 数组列出 |
-| 应用 | 不需要 |
+| 包类型                                            | sideEffects |
+| ------------------------------------------------- | ----------- |
+| 纯函数 / 类型 / Hook                              | `false`     |
+| 注入 CSS / 全局副作用（runtime / styles / theme） | 数组列出    |
+| 应用                                              | 不需要      |
 
 错误的 `sideEffects: false` 会让 bundler 把 CSS 摇掉，导致样式丢失。
 
@@ -192,10 +192,10 @@ description: package.json exports / 子入口 / 平台分支的统一规范
 
 ## 调试 exports 错误
 
-| 错误 | 原因 |
-| --- | --- |
-| `ERR_PACKAGE_PATH_NOT_EXPORTED` | exports 没暴露子路径 |
-| TS 找不到类型 | `types` 字段缺失或顺序错误 |
-| 产物找不到 | tsdown entry 没列 |
-| 双 ESM 实例 | 该包没把 `@skyroc/*` 标 external |
-| RN 报 DOM API 错 | 错把 web-only 代码放进主入口 |
+| 错误                            | 原因                             |
+| ------------------------------- | -------------------------------- |
+| `ERR_PACKAGE_PATH_NOT_EXPORTED` | exports 没暴露子路径             |
+| TS 找不到类型                   | `types` 字段缺失或顺序错误       |
+| 产物找不到                      | tsdown entry 没列                |
+| 双 ESM 实例                     | 该包没把 `@skyroc/*` 标 external |
+| RN 报 DOM API 错                | 错把 web-only 代码放进主入口     |

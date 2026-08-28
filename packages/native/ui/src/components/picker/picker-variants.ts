@@ -9,8 +9,8 @@ export const DEFAULT_VISIBLE_COUNT = 5;
 /**
  * Picker 多 slot 样式变体。
  *
- * 只有真正依赖运行时数值的属性才留在 style 里——列容器的高度、单项高度、 指示线的 top，都由 itemHeight / visibleCount 算出；其余静态样式一律走 className，
- * 颜色统一取语义色 token，不写死 hex。
+ * 只有真正依赖运行时数值的属性才留在 style 里——列容器的高度、单项高度、 指示线的 top，都由 itemHeight / visibleCount 算出；其余静态样式一律走 className， 颜色统一取语义色
+ * token，不写死 hex。
  */
 export const pickerVariants = tv({
   slots: {

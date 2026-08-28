@@ -5,9 +5,7 @@ import { Button, message } from '@skyroc/web-ui';
 const Message = () => {
   return (
     <div className="flex-c gap-4">
-      <p className="text-muted-foreground text-sm">
-        Lightweight global tips, with only icons and a single sentence
-      </p>
+      <p className="text-muted-foreground text-sm">Lightweight global tips, with only icons and a single sentence</p>
 
       <div className="flex flex-wrap gap-3">
         <Button
@@ -65,7 +63,7 @@ const Message = () => {
           onClick={() => {
             message.promise(
               new Promise((resolve, reject) => {
-                setTimeout(() => Math.random() > 0.3 ? resolve('data') : reject(new Error('Failed')), 2000);
+                setTimeout(() => (Math.random() > 0.3 ? resolve('data') : reject(new Error('Failed'))), 2000);
               }),
               {
                 loading: 'Loading data...',

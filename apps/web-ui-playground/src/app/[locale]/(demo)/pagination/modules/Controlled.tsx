@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Pagination } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const Controlled = () => {
   const [page, setPage] = useState(5);
@@ -13,9 +13,7 @@ const Controlled = () => {
     >
       <div className="flex flex-col gap-4">
         <span className="text-muted-foreground text-sm">
-          Current Page:
-          {' '}
-          <strong className="text-foreground">{page}</strong>
+          Current Page: <strong className="text-foreground">{page}</strong>
         </span>
 
         <Pagination

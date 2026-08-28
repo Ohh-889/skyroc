@@ -5,8 +5,8 @@ import MenubarTrigger from './MenubarTrigger';
 import type { MenubarMenuComposedProps } from './types';
 
 /**
- * MenubarMenuComposed - Composed menu with built-in trigger and content
- * Used internally by MenubarUI for data-driven rendering
+ * MenubarMenuComposed - Composed menu with built-in trigger and content Used internally by MenubarUI for data-driven
+ * rendering
  */
 const MenubarMenuComposed = (props: MenubarMenuComposedProps) => {
   const { children, className, classNames, size, trigger, value, ...rest } = props;

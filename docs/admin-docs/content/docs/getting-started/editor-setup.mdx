@@ -7,28 +7,28 @@ description: 对齐当前 .vscode、OXC/Oxlint、i18n Ally、UnoCSS 和生成文
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 第一次打开仓库，想装必要插件 | `.vscode/extensions.json` |
-| 保存时格式化、修复和排序行为不符合预期 | `.vscode/settings.json` 的 lint 与 format 配置 |
-| i18n Ally 找不到语言资源 | `packages/web/admin-i18n/src/langs` 和 `{locale}/{namespace}.json` |
-| UnoCSS/Tailwind 类名提示不工作 | `unocss.root`、`tailwindCSS.classAttributes`、`tailwindCSS.experimental.classRegex` |
-| 路由生成文件被误改 | `files.readonlyInclude`、`files.watcherExclude` 中的 `routeTree.gen.ts` |
+| 场景                                   | 重点位置                                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------------------- |
+| 第一次打开仓库，想装必要插件           | `.vscode/extensions.json`                                                           |
+| 保存时格式化、修复和排序行为不符合预期 | `.vscode/settings.json` 的 lint 与 format 配置                                      |
+| i18n Ally 找不到语言资源               | `packages/web/admin-i18n/src/langs` 和 `{locale}/{namespace}.json`                  |
+| UnoCSS/Tailwind 类名提示不工作         | `unocss.root`、`tailwindCSS.classAttributes`、`tailwindCSS.experimental.classRegex` |
+| 路由生成文件被误改                     | `files.readonlyInclude`、`files.watcherExclude` 中的 `routeTree.gen.ts`             |
 
 ## 推荐插件
 
 当前推荐列表由 `.vscode/extensions.json` 管理。打开仓库后，如果 VS Code 没有自动提示安装，可以按下面分类手动确认：
 
-| 类型 | 插件 |
-| --- | --- |
-| 代码质量 | `oxc.oxc-vscode` |
-| 样式与类名提示 | `antfu.unocss`、`naumovs.color-highlight` |
-| 图标和 Iconify | `antfu.iconify`、`afzalsayed96.icones` |
-| 国际化 | `lokalise.i18n-ally` |
-| env 与基础编辑体验 | `mikestead.dotenv`、`editorconfig.editorconfig` |
-| JSX/HTML 辅助 | `formulahendry.auto-close-tag`、`formulahendry.auto-complete-tag`、`formulahendry.auto-rename-tag`、`dsznajder.es7-react-js-snippets` |
-| Git 与文件展示 | `mhutchie.git-graph`、`pkief.material-icon-theme` |
-| 个人效率 | `whtouche.vscode-js-console-utils`、`zhuangtongfa.material-theme`、`alibaba-cloud.tongyi-lingma` |
+| 类型               | 插件                                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 代码质量           | `oxc.oxc-vscode`                                                                                                                      |
+| 样式与类名提示     | `antfu.unocss`、`naumovs.color-highlight`                                                                                             |
+| 图标和 Iconify     | `antfu.iconify`、`afzalsayed96.icones`                                                                                                |
+| 国际化             | `lokalise.i18n-ally`                                                                                                                  |
+| env 与基础编辑体验 | `mikestead.dotenv`、`editorconfig.editorconfig`                                                                                       |
+| JSX/HTML 辅助      | `formulahendry.auto-close-tag`、`formulahendry.auto-complete-tag`、`formulahendry.auto-rename-tag`、`dsznajder.es7-react-js-snippets` |
+| Git 与文件展示     | `mhutchie.git-graph`、`pkief.material-icon-theme`                                                                                     |
+| 个人效率           | `whtouche.vscode-js-console-utils`、`zhuangtongfa.material-theme`、`alibaba-cloud.tongyi-lingma`                                      |
 
 `extensions.json` 是当前仓库的插件清单，不代表每个插件都影响构建。真正会改变代码产物或校验结果的配置，要以脚本和 `.vscode/settings.json` 为准。
 
@@ -139,13 +139,13 @@ Tailwind CSS 插件也被配置成识别常见 class 字段和 `cva()`、`tv()` 
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 按旧 quick-start 安装 Prettier 并设成默认 formatter | 当前仓库默认 formatter 是 `oxc.oxc-vscode`，Prettier 已禁用。 |
-| i18n Ally 仍然指向 `apps/admin/src/locales/langs` | 当前语言 JSON 在 `packages/web/admin-i18n/src/langs`。 |
-| 把 `routeTree.gen.ts` 当作普通源码修改 | 改 `apps/admin/src/pages`，让路由插件重新生成。 |
-| 只看插件列表判断代码质量链路 | 以 `apps/admin/package.json` 的脚本、根脚本和 `.vscode/settings.json` 为准。 |
-| 为了提示扩大 `unocss.root` 到整个仓库 | 先确认目标页面是否属于 `apps/admin`，避免污染其他 workspace 包。 |
+| 误区                                                | 正确做法                                                                     |
+| --------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 按旧 quick-start 安装 Prettier 并设成默认 formatter | 当前仓库默认 formatter 是 `oxc.oxc-vscode`，Prettier 已禁用。                |
+| i18n Ally 仍然指向 `apps/admin/src/locales/langs`   | 当前语言 JSON 在 `packages/web/admin-i18n/src/langs`。                       |
+| 把 `routeTree.gen.ts` 当作普通源码修改              | 改 `apps/admin/src/pages`，让路由插件重新生成。                              |
+| 只看插件列表判断代码质量链路                        | 以 `apps/admin/package.json` 的脚本、根脚本和 `.vscode/settings.json` 为准。 |
+| 为了提示扩大 `unocss.root` 到整个仓库               | 先确认目标页面是否属于 `apps/admin`，避免污染其他 workspace 包。             |
 
 ## 相关链接
 

@@ -17,7 +17,10 @@ const shortcuts: Record<string, string> = {
 
 const ToggleGroupCustom = () => {
   return (
-    <Card split title="Custom">
+    <Card
+      split
+      title="Custom"
+    >
       <ToggleGroup
         items={items}
         type="multiple"

@@ -50,17 +50,33 @@ const WatermarkSettings = () => {
   return (
     <div className="flex-col-stretch gap-12px">
       <SettingItem label={t('theme.general.watermark.visible')}>
-        <ASwitch checked={watermark.visible} onChange={handleVisibleChange} />
+        <ASwitch
+          checked={watermark.visible}
+          onChange={handleVisibleChange}
+        />
       </SettingItem>
 
-      <AnimatePresence initial={false} mode="popLayout">
-        <AnimatedItem className="flex-col-stretch gap-12px" key="enableCustomText" visible={watermark.visible}>
+      <AnimatePresence
+        initial={false}
+        mode="popLayout"
+      >
+        <AnimatedItem
+          className="flex-col-stretch gap-12px"
+          key="enableCustomText"
+          visible={watermark.visible}
+        >
           <SettingItem label={t('theme.general.watermark.enableCustomText')}>
-            <ASwitch checked={watermark.enableCustomText} onChange={handleEnableCustomTextChange} />
+            <ASwitch
+              checked={watermark.enableCustomText}
+              onChange={handleEnableCustomTextChange}
+            />
           </SettingItem>
         </AnimatedItem>
 
-        <AnimatedItem key="text" visible={watermark.visible && watermark.enableCustomText}>
+        <AnimatedItem
+          key="text"
+          visible={watermark.visible && watermark.enableCustomText}
+        >
           <SettingItem label={t('theme.general.watermark.text')}>
             <AInput
               className="w-120px"
@@ -72,19 +88,35 @@ const WatermarkSettings = () => {
           </SettingItem>
         </AnimatedItem>
 
-        <AnimatedItem className="flex-col-stretch gap-12px" key="enableUserName" visible={watermark.visible}>
+        <AnimatedItem
+          className="flex-col-stretch gap-12px"
+          key="enableUserName"
+          visible={watermark.visible}
+        >
           <SettingItem label={t('theme.general.watermark.enableUserName')}>
-            <ASwitch checked={watermark.enableUserName} onChange={handleEnableUserNameChange} />
+            <ASwitch
+              checked={watermark.enableUserName}
+              onChange={handleEnableUserNameChange}
+            />
           </SettingItem>
         </AnimatedItem>
 
-        <AnimatedItem key="enableTime" visible={watermark.visible}>
+        <AnimatedItem
+          key="enableTime"
+          visible={watermark.visible}
+        >
           <SettingItem label={t('theme.general.watermark.enableTime')}>
-            <ASwitch checked={watermark.enableTime} onChange={handleEnableTimeChange} />
+            <ASwitch
+              checked={watermark.enableTime}
+              onChange={handleEnableTimeChange}
+            />
           </SettingItem>
         </AnimatedItem>
 
-        <AnimatedItem key="timeFormat" visible={watermark.visible && watermark.enableTime}>
+        <AnimatedItem
+          key="timeFormat"
+          visible={watermark.visible && watermark.enableTime}
+        >
           <SettingItem label={t('theme.general.watermark.timeFormat')}>
             <ASelect
               className="w-210px"

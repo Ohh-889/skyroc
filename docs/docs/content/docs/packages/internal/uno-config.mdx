@@ -1,19 +1,19 @@
 ---
-title: "@skyroc/uno-config"
+title: '@skyroc/uno-config'
 description: UnoCSS 预设：18 色调色板 CSS 变量、shortcuts、动画规则、字号 / 间距 / 圆角 / 阴影 token
 ---
 
 ## 概览
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/uno-config` |
-| 目录 | `internal/uno-config` |
-| 版本 | 1.0.0 |
-| private | ❌（带 `publishConfig`，可发布） |
-| 入口 | `exports["."] → ./src/index.ts`（源码直出，由消费方的 Vite 编译） |
-| 发布入口 | `publishConfig` 覆盖为 `dist/index.js` + `dist/index.d.ts` |
-| 命名说明 | 历史遗留 `@sa` 而非 `@skyroc` |
+| 项       | 值                                                                |
+| -------- | ----------------------------------------------------------------- |
+| 包名     | `@skyroc/uno-config`                                              |
+| 目录     | `internal/uno-config`                                             |
+| 版本     | 1.0.0                                                             |
+| private  | ❌（带 `publishConfig`，可发布）                                  |
+| 入口     | `exports["."] → ./src/index.ts`（源码直出，由消费方的 Vite 编译） |
+| 发布入口 | `publishConfig` 覆盖为 `dist/index.js` + `dist/index.d.ts`        |
+| 命名说明 | 历史遗留 `@sa` 而非 `@skyroc`                                     |
 
 `presetSoybeanAdmin()` 提供 admin 应用的 UnoCSS 预设——调色板 CSS 变量、常用 shortcuts、`radius-*` / `text-*` 规则、进场与折叠动画、以及一整套 design token。
 
@@ -48,7 +48,7 @@ export default defineConfig({
 
 ```ts
 import {
-  presetSoybeanAdmin,                 // 也是 default 导出
+  presetSoybeanAdmin, // 也是 default 导出
   allShortcuts,
   flexShortcuts,
   positionShortcuts,
@@ -88,42 +88,42 @@ border-primary-hover → var(--primary-300)
 
 除数字档位外还有一层**语义别名**：
 
-| 别名 | 映射 | 用途 |
-| --- | --- | --- |
-| `DEFAULT` | `var(--primary)` | 主色 |
-| `bg` / `bg-hover` | 50 / 100 | 背景与背景悬停 |
-| `border` / `border-hover` | 200 / 300 | 边框与边框悬停 |
-| `hover` / `active` | 400 / 600 | 交互状态（浅=即将激活，深=已按下） |
-| `lightest` / `lighter` / `light` | 50 / 100 / 200 | 由浅到深的浅色区 |
-| `text` / `text-hover` / `text-active` | 500 / 400 / 700 | 文字三态 |
+| 别名                                  | 映射             | 用途                               |
+| ------------------------------------- | ---------------- | ---------------------------------- |
+| `DEFAULT`                             | `var(--primary)` | 主色                               |
+| `bg` / `bg-hover`                     | 50 / 100         | 背景与背景悬停                     |
+| `border` / `border-hover`             | 200 / 300        | 边框与边框悬停                     |
+| `hover` / `active`                    | 400 / 600        | 交互状态（浅=即将激活，深=已按下） |
+| `lightest` / `lighter` / `light`      | 50 / 100 / 200   | 由浅到深的浅色区                   |
+| `text` / `text-hover` / `text-active` | 500 / 400 / 700  | 文字三态                           |
 
 `theme.colors` 里另有一组布局色，不走调色板：`base-text`、`base-bg`、`mask`、`blur`、`inverted`、`layout`、`nprogress`，以及 `link`（DEFAULT / hover / active）、`border`（DEFAULT / secondary / disabled）、`container`（DEFAULT / disabled）。
 
 ### shortcuts
 
-| 分组 | 内容 |
-| --- | --- |
-| `flexShortcuts` | `flex-center`、`flex-x-center`、`flex-y-center`、`flex-col`、`flex-col-center`、`flex-col-stretch`、`flex-1-hidden`，以及对应的 `i-` 内联版本 |
-| `positionShortcuts` | `absolute-lt` / `absolute-rt` / `absolute-lb` / `absolute-rb`（含 `tl` / `tr` / `bl` / `br` 别名）、`absolute-center`，以及 `fixed-*` 同款 |
-| `textShortcuts` | `nowrap-hidden`、`ellipsis-text` |
-| `commonShortcuts` | `card`、`card-sm`、`card-lg`（bg-container + 圆角 + 阴影 + 纵向 flex + 内边距）、`card-wrapper` |
+| 分组                | 内容                                                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flexShortcuts`     | `flex-center`、`flex-x-center`、`flex-y-center`、`flex-col`、`flex-col-center`、`flex-col-stretch`、`flex-1-hidden`，以及对应的 `i-` 内联版本 |
+| `positionShortcuts` | `absolute-lt` / `absolute-rt` / `absolute-lb` / `absolute-rb`（含 `tl` / `tr` / `bl` / `br` 别名）、`absolute-center`，以及 `fixed-*` 同款    |
+| `textShortcuts`     | `nowrap-hidden`、`ellipsis-text`                                                                                                              |
+| `commonShortcuts`   | `card`、`card-sm`、`card-lg`（bg-container + 圆角 + 阴影 + 纵向 flex + 内边距）、`card-wrapper`                                               |
 
 `allShortcuts` 是四组的合并，预设直接用它。
 
 ### 自定义规则
 
-| 规则 | 生成 |
-| --- | --- |
-| `text-base` | `color: var(--color-text)` |
-| `text-secondary` / `tertiary` / `quaternary` / `placeholder` / `disabled` / `heading` / `label` / `description` / `light-solid` | `color: var(--color-text-<variant>)` |
-| `radius` | `border-radius: var(--border-radius)` |
-| `radius-md` / `radius-DEFAULT` | `border-radius: var(--radius)` |
-| `radius-none` | `border-radius: 0` |
-| `radius-xs` … `radius-4xl` / `radius-full` | `border-radius: var(--radius-<variant>)` |
-| `animate-accordion-down` / `-up` | Radix accordion 折叠展开（0.2s ease-out） |
-| `animate-collapsible-down` / `-up` | Radix collapsible 展开 |
-| `enter-x:nth-child(n)` / `enter-y:nth-child(n)` | 逐项进场动画，第 n 项延迟 `0.1 × n` 秒 |
-| `-enter-x:nth-child(n)` / `-enter-y:nth-child(n)` | 反方向进场 |
+| 规则                                                                                                                            | 生成                                      |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `text-base`                                                                                                                     | `color: var(--color-text)`                |
+| `text-secondary` / `tertiary` / `quaternary` / `placeholder` / `disabled` / `heading` / `label` / `description` / `light-solid` | `color: var(--color-text-<variant>)`      |
+| `radius`                                                                                                                        | `border-radius: var(--border-radius)`     |
+| `radius-md` / `radius-DEFAULT`                                                                                                  | `border-radius: var(--radius)`            |
+| `radius-none`                                                                                                                   | `border-radius: 0`                        |
+| `radius-xs` … `radius-4xl` / `radius-full`                                                                                      | `border-radius: var(--radius-<variant>)`  |
+| `animate-accordion-down` / `-up`                                                                                                | Radix accordion 折叠展开（0.2s ease-out） |
+| `animate-collapsible-down` / `-up`                                                                                              | Radix collapsible 展开                    |
+| `enter-x:nth-child(n)` / `enter-y:nth-child(n)`                                                                                 | 逐项进场动画，第 n 项延迟 `0.1 × n` 秒    |
+| `-enter-x:nth-child(n)` / `-enter-y:nth-child(n)`                                                                               | 反方向进场                                |
 
 进场动画常用于列表 / 卡片：
 
@@ -141,36 +141,36 @@ border-primary-hover → var(--primary-300)
 
 ### theme token
 
-| token | 说明 |
-| --- | --- |
-| `fontSize` | `xs` … `9xl`，每档是 `[var(--text-*), var(--line-height-*)]` 二元组 |
-| `lineHeight` | `xs`(18px) … `9xl`(136px) 的固定 rem 值 |
-| `spacing` | `DEFAULT` / `3xs` / `2xs` / `xs` / `md` … `9xl`（0.25rem → 9rem） |
-| `width` / `height` / `maxWidth` / `maxHeight` / `minWidth` / `minHeight` | 与 `spacing` 同一套档位 |
-| `borderRadius` | `none` / `xs`(2px) / `sm`(4px) / `md`(6px，DEFAULT) / `lg`(8px) / `xl`(12px) / `2xl`(16px) / `3xl`(24px) / `4xl`(32px) / `full` |
-| `boxShadow` | `float`（三层浮层阴影）、`header` / `sider` / `tab`（读 CSS 变量） |
+| token                                                                    | 说明                                                                                                                            |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `fontSize`                                                               | `xs` … `9xl`，每档是 `[var(--text-*), var(--line-height-*)]` 二元组                                                             |
+| `lineHeight`                                                             | `xs`(18px) … `9xl`(136px) 的固定 rem 值                                                                                         |
+| `spacing`                                                                | `DEFAULT` / `3xs` / `2xs` / `xs` / `md` … `9xl`（0.25rem → 9rem）                                                               |
+| `width` / `height` / `maxWidth` / `maxHeight` / `minWidth` / `minHeight` | 与 `spacing` 同一套档位                                                                                                         |
+| `borderRadius`                                                           | `none` / `xs`(2px) / `sm`(4px) / `md`(6px，DEFAULT) / `lg`(8px) / `xl`(12px) / `2xl`(16px) / `3xl`(24px) / `4xl`(32px) / `full` |
+| `boxShadow`                                                              | `float`（三层浮层阴影）、`header` / `sider` / `tab`（读 CSS 变量）                                                              |
 
 注意尺寸档位（`spacing` / `width` / `height` / `min*` / `max*`）里**没有 `sm`**，从 `xs`(0.75rem) 直接跳到 `md`(1rem)；写 `p-sm` 会落回 `presetWind3` 的默认值而不是这套 token。
 
 ## 工具函数
 
-| 导出 | 签名 | 作用 |
-| --- | --- | --- |
-| `createColorsPalette(name)` | `(name: string) => Record<string, string>` | 给**单个**色键生成 `{ 50…950, DEFAULT, bg, border, hover, active, text… }` 映射 |
-| `createColorPaletteVars()` | `() => Record<string, Record<string, string>>` | 遍历 `themeColorKeys`，一次生成**全部**色键的 palette |
-| `colorPaletteVars` | 常量 | `createColorPaletteVars()` 的执行结果，预设 `theme.colors` 直接展开它 |
-| `themeColorKeys` | `readonly string[]` | 18 个色键 |
-| `colorPaletteNumbers` | `readonly number[]` | 11 个色阶 |
-| `textVariants` | `string[]` | 10 个文字样式名，用于生成 `text-*` 规则 |
-| `builtinRadiuses` | `readonly [0, 0.3, 0.5, 0.75, 1]` | 主题设置面板里可选的内置圆角值（单位 rem） |
+| 导出                        | 签名                                           | 作用                                                                            |
+| --------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- |
+| `createColorsPalette(name)` | `(name: string) => Record<string, string>`     | 给**单个**色键生成 `{ 50…950, DEFAULT, bg, border, hover, active, text… }` 映射 |
+| `createColorPaletteVars()`  | `() => Record<string, Record<string, string>>` | 遍历 `themeColorKeys`，一次生成**全部**色键的 palette                           |
+| `colorPaletteVars`          | 常量                                           | `createColorPaletteVars()` 的执行结果，预设 `theme.colors` 直接展开它           |
+| `themeColorKeys`            | `readonly string[]`                            | 18 个色键                                                                       |
+| `colorPaletteNumbers`       | `readonly number[]`                            | 11 个色阶                                                                       |
+| `textVariants`              | `string[]`                                     | 10 个文字样式名，用于生成 `text-*` 规则                                         |
+| `builtinRadiuses`           | `readonly [0, 0.3, 0.5, 0.75, 1]`              | 主题设置面板里可选的内置圆角值（单位 rem）                                      |
 
 ## 与 `@skyroc/tailwind-plugin` 的关系
 
-| 维度 | `@skyroc/uno-config` | [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) |
-| --- | --- | --- |
-| 服务对象 | admin 应用的业务页面 | `@skyroc/web-ui` 组件库 |
-| 工具 | UnoCSS（`presetWind3` + 本预设） | Tailwind 4 |
-| 范围 | 应用样式 | 设计系统层 token 注入 |
+| 维度     | `@skyroc/uno-config`             | [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) |
+| -------- | -------------------------------- | ------------------------------------------------------- |
+| 服务对象 | admin 应用的业务页面             | `@skyroc/web-ui` 组件库                                 |
+| 工具     | UnoCSS（`presetWind3` + 本预设） | Tailwind 4                                              |
+| 范围     | 应用样式                         | 设计系统层 token 注入                                   |
 
 两者**互不冲突**：admin 页面用 UnoCSS 按需生成；引入的 web-ui 组件自带 Tailwind 编译产物（`style.css`）。共同点是都消费同一套 CSS 变量，因此换主题色时两边同步生效。
 

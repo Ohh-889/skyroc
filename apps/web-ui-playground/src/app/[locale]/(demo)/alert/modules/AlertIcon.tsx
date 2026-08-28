@@ -1,7 +1,7 @@
 'use client';
 
-import { Rocket } from 'lucide-react';
 import { Alert } from '@skyroc/web-ui';
+import { Rocket } from 'lucide-react';
 
 const AlertWithIcon = () => {
   return (

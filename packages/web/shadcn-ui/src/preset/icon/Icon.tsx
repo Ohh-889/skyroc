@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import IconUI from '../../components/icon/IconUI';
 import type { IconProps } from '../../components/icon/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Icon = (props: IconProps) => {
   const config = useComponentConfig('icon');

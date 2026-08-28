@@ -52,11 +52,20 @@ const DictTypePanel = (props: DictTypePanelProps) => {
       dataIndex: 'dictName',
       key: 'dictName',
       render: (value, item) => (
-        <div className="min-w-0" onClick={() => onSelect(item)}>
-          <Typography.Text className="block truncate" strong>
+        <div
+          className="min-w-0"
+          onClick={() => onSelect(item)}
+        >
+          <Typography.Text
+            className="block truncate"
+            strong
+          >
             {value}
           </Typography.Text>
-          <Typography.Text className="block truncate text-11px" type="secondary">
+          <Typography.Text
+            className="block truncate text-11px"
+            type="secondary"
+          >
             {item.dictType}
           </Typography.Text>
         </div>
@@ -131,7 +140,14 @@ const DictTypePanel = (props: DictTypePanelProps) => {
         onChange={event => onSearch(event.target.value)}
       />
 
-      {tableProps.error ? <Alert className="mb-12px" title="字典类型加载失败" showIcon type="error" /> : null}
+      {tableProps.error ? (
+        <Alert
+          className="mb-12px"
+          title="字典类型加载失败"
+          showIcon
+          type="error"
+        />
+      ) : null}
 
       <div className="min-h-0 flex-1 overflow-auto">
         <Table<DictTypeTableRecord>
@@ -140,7 +156,12 @@ const DictTypePanel = (props: DictTypePanelProps) => {
           columns={columns}
           dataSource={tableProps.dataSource ?? []}
           locale={{
-            emptyText: <Empty description="暂无字典类型" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            emptyText: (
+              <Empty
+                description="暂无字典类型"
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
+            )
           }}
           rowClassName={item => (String(item.dictId) === String(selectedTypeId) ? 'bg-primary-50' : '')}
           rowKey={item => String(item.dictId)}

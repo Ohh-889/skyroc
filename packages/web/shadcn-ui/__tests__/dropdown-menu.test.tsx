@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import { DropdownMenuCheckbox, DropdownMenuRadio } from '../src/components/dropdown-menu';
 import { DropdownMenu } from '../src/preset/dropdown-menu';
-import {
-  DropdownMenuCheckbox,
-  DropdownMenuRadio
-} from '../src/components/dropdown-menu';
 import { render, screen, setupUser, waitFor } from './helpers/render';
 
 describe('DropdownMenu', () => {
@@ -40,18 +37,13 @@ describe('DropdownMenu', () => {
           { disabled: true, label: 'Delete' },
           { type: 'separator' },
           {
-            children: [
-              { label: 'Archive', onSelect: onArchive },
-              { label: 'Duplicate' }
-            ],
+            children: [{ label: 'Archive', onSelect: onArchive }, { label: 'Duplicate' }],
             leading: <span aria-hidden="true">M</span>,
             label: 'More actions',
             type: 'sub'
           },
           {
-            children: [
-              { label: 'Inspect' }
-            ],
+            children: [{ label: 'Inspect' }],
             label: 'More details',
             type: 'sub'
           }

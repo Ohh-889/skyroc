@@ -22,12 +22,19 @@ const ProjectsEditId = () => {
   }
 
   return (
-    <ACard className="h-full card-wrapper" size="small" variant="borderless">
+    <ACard
+      className="h-full card-wrapper"
+      size="small"
+      variant="borderless"
+    >
       <div className="h-full flex flex-col items-center justify-center">
         <div className="w-full">
           <div className="overflow-hidden border border-border rounded-8px bg-container">
             <div className="bg-primary px-24px py-20px">
-              <Typography.Title className="m-0! text-white!" level={4}>
+              <Typography.Title
+                className="m-0! text-white!"
+                level={4}
+              >
                 项目编辑
               </Typography.Title>
               <Typography.Text className="text-white/75">正在编辑项目的详细信息</Typography.Text>
@@ -59,7 +66,10 @@ const ProjectsEditId = () => {
               <ASpace className="mt-24px">
                 <AButton onClick={goProjects}>返回项目入口</AButton>
                 <AButton onClick={goProjectDetail}>返回项目详情</AButton>
-                <AButton type="primary" onClick={goProjectDetail}>
+                <AButton
+                  type="primary"
+                  onClick={goProjectDetail}
+                >
                   保存并返回详情
                 </AButton>
               </ASpace>

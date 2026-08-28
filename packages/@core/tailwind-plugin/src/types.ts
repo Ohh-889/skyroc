@@ -3,7 +3,7 @@ import type { PluginCreator } from 'tailwindcss/plugin';
 
 export type HslColorString = `${number} ${number}% ${number}%`;
 
-/** tailwindcss 未导出 addBase 接受的 CSS-in-JS 结构，这里按需声明一份等价类型 */
+/** Tailwindcss 未导出 addBase 接受的 CSS-in-JS 结构，这里按需声明一份等价类型 */
 export interface CssInJsLike {
   [key: string]: CssInJsLike | CssInJsLike[] | string | string[];
 }

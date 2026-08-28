@@ -68,9 +68,8 @@ describe('ResponseType', () => {
   /**
    * 这条是本文件里最重要的断言
    *
-   * responseType 会被原样赋给 `XMLHttpRequest.responseType`，只要和 axios 的字面量差一个字符
-   * （历史上是 'arrayBuffer' vs 'arraybuffer'），类型上看着没问题，运行时浏览器按非法枚举值忽略，
-   * 拿回来的是文本。
+   * ResponseType 会被原样赋给 `XMLHttpRequest.responseType`，只要和 axios 的字面量差一个字符 （历史上是 'arrayBuffer' vs
+   * 'arraybuffer'），类型上看着没问题，运行时浏览器按非法枚举值忽略， 拿回来的是文本。
    */
   it('应与 axios 的 ResponseType 完全一致', () => {
     expectTypeOf<ResponseType>().toEqualTypeOf<AxiosResponseType>();
@@ -223,8 +222,8 @@ describe('createRequest / createFlatRequest 的类型参数', () => {
   /**
    * ApiData 默认值必须是 unknown 而不是 any
    *
-   * `<T extends ApiData>` 这条约束让 ApiData 一旦是具体类型，`request<Api.UserInfo>()` 就过不去；
-   * 用 unknown 解开约束的同时，不写 T 时拿到的是 unknown 而不是一路默默滑过去的 any。
+   * `<T extends ApiData>` 这条约束让 ApiData 一旦是具体类型，`request<Api.UserInfo>()` 就过不去； 用 unknown 解开约束的同时，不写 T 时拿到的是 unknown
+   * 而不是一路默默滑过去的 any。
    */
   it('未指定接口返回类型时应得到 unknown 而不是 any', () => {
     const request = createRequest<BackendResponse>();

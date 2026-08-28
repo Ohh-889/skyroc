@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { ButtonIcon, Icon, Popover, Tooltip } from '@skyroc/web-ui';
+import { useTranslations } from 'next-intl';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import ThemeCustomize from '../../components/ThemeCustomize';
 import ThemeSchemaToggler from '../../components/ThemeSchemaToggler';
@@ -33,14 +33,14 @@ const HeaderActions = () => {
         align="end"
         classNames={{ content: 'z-15' }}
         side="bottom"
-        trigger={(
+        trigger={
           <ButtonIcon
             aria-label={t('customizeTheme')}
             icon="lucide:palette"
             size="lg"
             variant="ghost"
           />
-        )}
+        }
       >
         <ThemeCustomize />
       </Popover>

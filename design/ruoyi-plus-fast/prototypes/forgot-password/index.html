@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc 管理系统 - 忘记密码原型</title>
     <style>
       :root {
@@ -886,32 +892,72 @@
   </head>
   <body>
     <main class="auth-shell">
-      <aside class="brand-panel" aria-label="Skyroc 品牌介绍">
-        <div class="brand-grid" aria-hidden="true"></div>
-        <div class="orbit" aria-hidden="true">
+      <aside
+        class="brand-panel"
+        aria-label="Skyroc 品牌介绍"
+      >
+        <div
+          class="brand-grid"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="orbit"
+          aria-hidden="true"
+        >
           <span class="orbit-dot one"></span>
           <span class="orbit-dot two"></span>
           <span class="orbit-dot three"></span>
         </div>
-        <div class="glass-shape" aria-hidden="true"></div>
+        <div
+          class="glass-shape"
+          aria-hidden="true"
+        ></div>
 
         <header class="brand-header">
-          <svg class="brand-logo" aria-hidden="true" viewBox="0 0 160 160">
-            <path fill="#fff" d="M24 28h45l23 24H48v56H24z" opacity=".96" />
-            <path fill="#fff" d="M92 52h44v80H91l-23-24h44V76H92z" opacity=".72" />
+          <svg
+            class="brand-logo"
+            aria-hidden="true"
+            viewBox="0 0 160 160"
+          >
+            <path
+              fill="#fff"
+              d="M24 28h45l23 24H48v56H24z"
+              opacity=".96"
+            />
+            <path
+              fill="#fff"
+              d="M92 52h44v80H91l-23-24h44V76H92z"
+              opacity=".72"
+            />
           </svg>
-          <p class="brand-name" data-i18n="brandName">Skyroc 管理系统</p>
+          <p
+            class="brand-name"
+            data-i18n="brandName"
+          >
+            Skyroc 管理系统
+          </p>
         </header>
 
         <section class="brand-copy">
-          <h1 class="brand-title" data-i18n="brandTitle">安全找回账号，继续高效工作</h1>
-          <p class="brand-description" data-i18n="brandDescription">
+          <h1
+            class="brand-title"
+            data-i18n="brandTitle"
+          >
+            安全找回账号，继续高效工作
+          </h1>
+          <p
+            class="brand-description"
+            data-i18n="brandDescription"
+          >
             通过已绑定的手机或邮箱验证身份，重新设置你的登录密码。
           </p>
           <ul class="brand-features">
             <li class="brand-feature">
               <span class="feature-icon">
-                <svg fill="none" viewBox="0 0 24 24">
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     d="M12 3 5 6v5c0 4.5 2.8 8 7 10 4.2-2 7-5.5 7-10V6l-7-3Z"
                     stroke="currentColor"
@@ -923,16 +969,31 @@
             </li>
             <li class="brand-feature">
               <span class="feature-icon">
-                <svg fill="none" viewBox="0 0 24 24">
-                  <path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6z" stroke="currentColor" stroke-width="1.8" />
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
                 </svg>
               </span>
               <span data-i18n="featureTwo">验证码限时且仅可使用一次</span>
             </li>
             <li class="brand-feature">
               <span class="feature-icon">
-                <svg fill="none" viewBox="0 0 24 24">
-                  <path d="m7 12 3 3 7-7" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="m7 12 3 3 7-7"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-width="2"
+                  />
                 </svg>
               </span>
               <span data-i18n="featureThree">重置后自动退出其他会话</span>
@@ -945,12 +1006,36 @@
 
       <section class="auth-panel">
         <div class="header-actions">
-          <button class="icon-button" id="themeToggle" type="button" aria-label="切换主题" title="切换主题">
-            <svg class="moon-icon" fill="none" viewBox="0 0 24 24">
-              <path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" stroke="currentColor" stroke-width="1.7" />
+          <button
+            class="icon-button"
+            id="themeToggle"
+            type="button"
+            aria-label="切换主题"
+            title="切换主题"
+          >
+            <svg
+              class="moon-icon"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
             </svg>
-            <svg class="sun-icon" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.7" />
+            <svg
+              class="sun-icon"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="3.5"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
               <path
                 d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
                 stroke="currentColor"
@@ -960,9 +1045,24 @@
             </svg>
           </button>
           <div class="language-wrap">
-            <button class="icon-button" id="languageToggle" type="button" aria-label="切换语言" title="切换语言">
-              <svg fill="none" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" />
+            <button
+              class="icon-button"
+              id="languageToggle"
+              type="button"
+              aria-label="切换语言"
+              title="切换语言"
+            >
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
                 <path
                   d="M3.5 12h17M12 3c2.2 2.5 3.3 5.5 3.3 9S14.2 18.5 12 21M12 3C9.8 5.5 8.7 8.5 8.7 12s1.1 6.5 3.3 9"
                   stroke="currentColor"
@@ -970,17 +1070,42 @@
                 />
               </svg>
             </button>
-            <div class="language-menu" id="languageMenu" role="menu">
-              <button class="language-option active" data-lang="zh-CN" type="button">中文</button>
-              <button class="language-option" data-lang="en-US" type="button">English</button>
+            <div
+              class="language-menu"
+              id="languageMenu"
+              role="menu"
+            >
+              <button
+                class="language-option active"
+                data-lang="zh-CN"
+                type="button"
+              >
+                中文
+              </button>
+              <button
+                class="language-option"
+                data-lang="en-US"
+                type="button"
+              >
+                English
+              </button>
             </div>
           </div>
         </div>
 
         <div class="mobile-logo">
-          <svg aria-hidden="true" viewBox="0 0 160 160">
-            <path fill="#5b5ff5" d="M24 28h45l23 24H48v56H24z" />
-            <path fill="#8184ff" d="M92 52h44v80H91l-23-24h44V76H92z" />
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 160 160"
+          >
+            <path
+              fill="#5b5ff5"
+              d="M24 28h45l23 24H48v56H24z"
+            />
+            <path
+              fill="#8184ff"
+              d="M92 52h44v80H91l-23-24h44V76H92z"
+            />
           </svg>
           <span data-i18n="brandName">Skyroc 管理系统</span>
         </div>
@@ -988,14 +1113,32 @@
         <div class="recovery-content">
           <div id="recoveryView">
             <header class="auth-header">
-              <h2 class="auth-title" data-i18n="title">找回密码</h2>
-              <p class="auth-subtitle" data-i18n="subtitle">验证身份后重新设置密码</p>
+              <h2
+                class="auth-title"
+                data-i18n="title"
+              >
+                找回密码
+              </h2>
+              <p
+                class="auth-subtitle"
+                data-i18n="subtitle"
+              >
+                验证身份后重新设置密码
+              </p>
             </header>
 
-            <form id="recoveryForm" novalidate>
+            <form
+              id="recoveryForm"
+              novalidate
+            >
               <div class="form-stack">
                 <div class="field">
-                  <label class="field-label" for="account" data-i18n="accountLabel">账号</label>
+                  <label
+                    class="field-label"
+                    for="account"
+                    data-i18n="accountLabel"
+                    >账号</label
+                  >
                   <input
                     class="input-control"
                     id="account"
@@ -1004,20 +1147,46 @@
                     data-i18n-placeholder="accountPlaceholder"
                     placeholder="请输入用户名、手机号或邮箱"
                   />
-                  <span class="field-error" id="accountError" data-i18n="accountError">请输入账号</span>
+                  <span
+                    class="field-error"
+                    id="accountError"
+                    data-i18n="accountError"
+                    >请输入账号</span
+                  >
                 </div>
 
-                <div class="channel-tabs" role="radiogroup" aria-label="验证方式">
-                  <button class="channel-tab active" data-channel="sms" role="radio" aria-checked="true" type="button">
+                <div
+                  class="channel-tabs"
+                  role="radiogroup"
+                  aria-label="验证方式"
+                >
+                  <button
+                    class="channel-tab active"
+                    data-channel="sms"
+                    role="radio"
+                    aria-checked="true"
+                    type="button"
+                  >
                     <span data-i18n="smsChannel">手机验证</span>
                   </button>
-                  <button class="channel-tab" data-channel="email" role="radio" aria-checked="false" type="button">
+                  <button
+                    class="channel-tab"
+                    data-channel="email"
+                    role="radio"
+                    aria-checked="false"
+                    type="button"
+                  >
                     <span data-i18n="emailChannel">邮箱验证</span>
                   </button>
                 </div>
 
                 <div class="field">
-                  <label class="field-label" for="captcha" data-i18n="captchaLabel">图形验证码</label>
+                  <label
+                    class="field-label"
+                    for="captcha"
+                    data-i18n="captchaLabel"
+                    >图形验证码</label
+                  >
                   <div class="captcha-row">
                     <input
                       class="input-control"
@@ -1028,15 +1197,34 @@
                       data-i18n-placeholder="captchaPlaceholder"
                       placeholder="请输入图中字符"
                     />
-                    <button class="captcha-box" id="captchaBox" type="button" aria-label="换一张图形验证码">
-                      <span class="captcha-value" id="captchaValue">7K9P</span>
+                    <button
+                      class="captcha-box"
+                      id="captchaBox"
+                      type="button"
+                      aria-label="换一张图形验证码"
+                    >
+                      <span
+                        class="captcha-value"
+                        id="captchaValue"
+                        >7K9P</span
+                      >
                     </button>
                   </div>
-                  <span class="field-error" id="captchaError" data-i18n="captchaError">请输入图形验证码</span>
+                  <span
+                    class="field-error"
+                    id="captchaError"
+                    data-i18n="captchaError"
+                    >请输入图形验证码</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label class="field-label" for="verificationCode" data-i18n="codeLabel">身份验证码</label>
+                  <label
+                    class="field-label"
+                    for="verificationCode"
+                    data-i18n="codeLabel"
+                    >身份验证码</label
+                  >
                   <div class="code-row">
                     <input
                       class="input-control"
@@ -1048,24 +1236,60 @@
                       data-i18n-placeholder="codePlaceholder"
                       placeholder="请输入 6 位验证码"
                     />
-                    <button class="secondary-button" id="sendCodeButton" type="button" data-i18n="sendCode">
+                    <button
+                      class="secondary-button"
+                      id="sendCodeButton"
+                      type="button"
+                      data-i18n="sendCode"
+                    >
                       获取验证码
                     </button>
                   </div>
-                  <span class="field-error" id="codeError" data-i18n="codeError">请输入 6 位验证码</span>
+                  <span
+                    class="field-error"
+                    id="codeError"
+                    data-i18n="codeError"
+                    >请输入 6 位验证码</span
+                  >
                 </div>
 
-                <div class="notice" id="sendNotice" role="status">
-                  <svg fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
-                    <path d="M12 10v6m0-9h.01" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+                <div
+                  class="notice"
+                  id="sendNotice"
+                  role="status"
+                >
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                    <path
+                      d="M12 10v6m0-9h.01"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                    />
                   </svg>
                   <span data-i18n="sendNotice">如果账号信息匹配，验证码将发送至绑定的手机或邮箱。</span>
                 </div>
 
-                <div class="password-section" id="passwordSection">
+                <div
+                  class="password-section"
+                  id="passwordSection"
+                >
                   <div class="field">
-                    <label class="field-label" for="newPassword" data-i18n="passwordLabel">新密码</label>
+                    <label
+                      class="field-label"
+                      for="newPassword"
+                      data-i18n="passwordLabel"
+                      >新密码</label
+                    >
                     <div class="input-wrap">
                       <input
                         class="input-control has-suffix"
@@ -1082,21 +1306,40 @@
                         type="button"
                         aria-label="显示密码"
                       >
-                        <svg fill="none" viewBox="0 0 24 24">
+                        <svg
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
                             stroke="currentColor"
                             stroke-width="1.7"
                           />
-                          <circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.7" />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="2.4"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                          />
                         </svg>
                       </button>
                     </div>
-                    <span class="field-error" id="passwordError" data-i18n="passwordError">新密码不符合安全要求</span>
+                    <span
+                      class="field-error"
+                      id="passwordError"
+                      data-i18n="passwordError"
+                      >新密码不符合安全要求</span
+                    >
                   </div>
 
                   <div class="field">
-                    <label class="field-label" for="confirmPassword" data-i18n="confirmLabel">确认新密码</label>
+                    <label
+                      class="field-label"
+                      for="confirmPassword"
+                      data-i18n="confirmLabel"
+                      >确认新密码</label
+                    >
                     <div class="input-wrap">
                       <input
                         class="input-control has-suffix"
@@ -1113,53 +1356,107 @@
                         type="button"
                         aria-label="显示密码"
                       >
-                        <svg fill="none" viewBox="0 0 24 24">
+                        <svg
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
                             stroke="currentColor"
                             stroke-width="1.7"
                           />
-                          <circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.7" />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="2.4"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                          />
                         </svg>
                       </button>
                     </div>
-                    <span class="field-error" id="confirmError" data-i18n="confirmError">两次输入的密码不一致</span>
+                    <span
+                      class="field-error"
+                      id="confirmError"
+                      data-i18n="confirmError"
+                      >两次输入的密码不一致</span
+                    >
                   </div>
 
-                  <div class="password-rules" aria-label="密码规则">
-                    <div class="rule" id="lengthRule">
+                  <div
+                    class="password-rules"
+                    aria-label="密码规则"
+                  >
+                    <div
+                      class="rule"
+                      id="lengthRule"
+                    >
                       <span class="rule-dot">✓</span><span data-i18n="lengthRule">至少 8 位</span>
                     </div>
-                    <div class="rule" id="upperRule">
+                    <div
+                      class="rule"
+                      id="upperRule"
+                    >
                       <span class="rule-dot">✓</span><span data-i18n="upperRule">包含英文大写</span>
                     </div>
-                    <div class="rule" id="lowerRule">
+                    <div
+                      class="rule"
+                      id="lowerRule"
+                    >
                       <span class="rule-dot">✓</span><span data-i18n="lowerRule">包含英文小写</span>
                     </div>
-                    <div class="rule" id="numberRule">
+                    <div
+                      class="rule"
+                      id="numberRule"
+                    >
                       <span class="rule-dot">✓</span><span data-i18n="numberRule">包含数字</span>
                     </div>
                   </div>
 
-                  <button class="primary-button" type="submit" data-i18n="resetButton">重置密码</button>
+                  <button
+                    class="primary-button"
+                    type="submit"
+                    data-i18n="resetButton"
+                  >
+                    重置密码
+                  </button>
                 </div>
               </div>
             </form>
 
             <div class="form-footer">
-              <a class="text-button" href="../login/index.html">
+              <a
+                class="text-button"
+                href="../login/index.html"
+              >
                 <span aria-hidden="true">←</span>
                 <span data-i18n="backLogin">返回登录</span>
               </a>
-              <span class="admin-help" data-i18n="adminHelp">无法验证？请联系管理员</span>
+              <span
+                class="admin-help"
+                data-i18n="adminHelp"
+                >无法验证？请联系管理员</span
+              >
             </div>
-            <p class="legal" data-i18n="legal">继续操作即表示你同意服务条款和隐私政策</p>
+            <p
+              class="legal"
+              data-i18n="legal"
+            >
+              继续操作即表示你同意服务条款和隐私政策
+            </p>
           </div>
 
-          <section class="success-view" id="successView" aria-live="polite">
+          <section
+            class="success-view"
+            id="successView"
+            aria-live="polite"
+          >
             <div class="success-content">
               <div class="success-icon">
-                <svg fill="none" viewBox="0 0 24 24">
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     d="m6.5 12.5 3.5 3.5 7.5-8"
                     stroke="currentColor"
@@ -1169,8 +1466,16 @@
                   />
                 </svg>
               </div>
-              <h2 class="success-title" data-i18n="successTitle">密码已重置</h2>
-              <p class="success-description" data-i18n="successDescription">
+              <h2
+                class="success-title"
+                data-i18n="successTitle"
+              >
+                密码已重置
+              </h2>
+              <p
+                class="success-description"
+                data-i18n="successDescription"
+              >
                 你现在可以使用新密码登录。为了保障账号安全，其他已登录会话已经退出。
               </p>
               <a

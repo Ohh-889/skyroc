@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { AlertDialog, Button } from '@skyroc/web-ui';
+import React from 'react';
 
 const AlertDialogDestructive = () => {
   return (
@@ -10,14 +10,14 @@ const AlertDialogDestructive = () => {
       okButtonProps={{ color: 'destructive' }}
       title="Are you sure delete?"
       type="destructive"
-      trigger={(
+      trigger={
         <Button
           color="destructive"
           variant="outline"
         >
           Show Dialog
         </Button>
-      )}
+      }
     />
   );
 };

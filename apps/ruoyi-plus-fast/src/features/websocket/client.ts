@@ -29,7 +29,8 @@ const DEFAULT_PING_FRAME = 'ping';
  *
  * 不含业务逻辑。协议相关的两件事（怎么认出就绪消息、怎么认出心跳响应）由选项注入， 换后端协议不用改这个文件。
  *
- * 连接状态由 `Store<ConnectionState>` 托管：subscribe / getSnapshot 都来自基类，React 侧 用 `useStore(client)` 直接订阅，不需要另建一个模块转发状态 —— 那样会多出一份和这里同步 不上的镜像。业务事件另有一套监听表，两者互不干扰。
+ * 连接状态由 `Store<ConnectionState>` 托管：subscribe / getSnapshot 都来自基类，React 侧 用 `useStore(client)` 直接订阅，不需要另建一个模块转发状态 ——
+ * 那样会多出一份和这里同步 不上的镜像。业务事件另有一套监听表，两者互不干扰。
  */
 export class WebSocketClient<TReady = unknown> extends Store<ConnectionState> {
   /** 心跳发送定时器，非 null 表示心跳正在跑。 */
@@ -59,7 +60,7 @@ export class WebSocketClient<TReady = unknown> extends Store<ConnectionState> {
   /**
    * 最近一次就绪负载，null 表示当前没有就绪的连接。
    *
-   * ready 是瞬时事件，但它带的连接信息在整条连接活着期间一直有效。留一份在这里，晚挂载 的订阅方（比如联调页）才答得上「当前连接是哪一条」—— 否则它只能等下一次重连。
+   * Ready 是瞬时事件，但它带的连接信息在整条连接活着期间一直有效。留一份在这里，晚挂载 的订阅方（比如联调页）才答得上「当前连接是哪一条」—— 否则它只能等下一次重连。
    */
   private readyPayload: TReady | null = null;
 

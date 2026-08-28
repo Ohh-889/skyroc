@@ -15,8 +15,7 @@ import type { QueueActivityProps } from './types';
 /**
  * 门诊排队叫号的 Live Activity。
  *
- * 名字 `ClinicQueue` 是这类活动的标识，`start` 出来的每个实例都挂在它下面；改名等于换了一种活动，
- * 已经在运行的旧卡片会失联，所以上线之后别动。
+ * 名字 `ClinicQueue` 是这类活动的标识，`start` 出来的每个实例都挂在它下面；改名等于换了一种活动， 已经在运行的旧卡片会失联，所以上线之后别动。
  *
  * 返回值的槽位分别对应 iOS 的四种展示位：
  *
@@ -74,9 +73,7 @@ export const ClinicQueueActivity = createLiveActivity<QueueActivityProps>('Clini
   // 否则每过一分钟就得从 App update 一次，白白吃掉 ActivityKit 的更新预算，
   // 而且 App 被系统挂起时根本发不出这次 update，数字就停在那不动了。
   const countdown =
-    props.calledAt && props.deadlineAt
-      ? { lower: new Date(props.calledAt), upper: new Date(props.deadlineAt) }
-      : null;
+    props.calledAt && props.deadlineAt ? { lower: new Date(props.calledAt), upper: new Date(props.deadlineAt) } : null;
 
   const progress = props.totalAhead > 0 ? (props.totalAhead - props.aheadCount) / props.totalAhead : 1;
 

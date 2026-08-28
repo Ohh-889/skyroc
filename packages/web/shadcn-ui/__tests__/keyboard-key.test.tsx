@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Kbd } from '../src/preset/keyboard-key';
 import { useKeyboardKey } from '../src/components/keyboard-key';
 import type { KbdValue } from '../src/components/keyboard-key';
+import { Kbd } from '../src/preset/keyboard-key';
 import { render, screen, waitFor } from './helpers/render';
 
 interface KeyboardKeyHookProbeProps {

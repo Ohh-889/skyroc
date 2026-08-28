@@ -3,8 +3,7 @@ import type { RouterConfig } from './index';
 /**
  * - 路由实例引用
  * - 用于在非组件模块（如请求适配器 adapter.ts）中惰性访问 router
- * - 目的：避免这些模块静态 import `./index`，从而切断
- *   `request → adapter → router → routeTree.gen → 路由模块` 的加载期循环依赖
+ * - 目的：避免这些模块静态 import `./index`，从而切断 `request → adapter → router → routeTree.gen → 路由模块` 的加载期循环依赖
  * - 仅做运行时引用存取，本模块无任何运行时依赖
  */
 let routerRef: RouterConfig | null = null;

@@ -24,7 +24,7 @@ const SelectorEffect = ({ form }: { form: FormInstance<Inputs> }) => {
 
   // 2. Multi-field combination: watch password & confirmPassword
   const passwordsMatch = useSelector(
-    (get) => {
+    get => {
       const pass = get('password');
       const confirm = get('confirmPassword');
       return pass && confirm && pass === confirm;

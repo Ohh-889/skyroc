@@ -114,8 +114,7 @@ function splitTypeParts(typeText: string): TypePart[] {
 /**
  * 注册表里的跨页地址，只有目标页面真的存在时才返回。
  *
- * 类型先在注册表登记、对应组件文档还没写的情况很常见（如 ImageProps / InputProps），
- * 这时候链过去就是 404，不如不链。
+ * 类型先在注册表登记、对应组件文档还没写的情况很常见（如 ImageProps / InputProps）， 这时候链过去就是 404，不如不链。
  */
 function resolveRegistryHref(typeName: string): string | undefined {
   const target = TYPE_REGISTRY[typeName];

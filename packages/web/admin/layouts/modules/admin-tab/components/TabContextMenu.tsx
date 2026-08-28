@@ -33,7 +33,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
     {
       key: 'closeCurrent',
       label: t('dropdown.closeCurrent'),
-      icon: <SvgIcon className="text-icon" icon="ant-design:close-outlined" />,
+      icon: (
+        <SvgIcon
+          className="text-icon"
+          icon="ant-design:close-outlined"
+        />
+      ),
       disabled: disabledKeys.includes('closeCurrent'),
       onClick: () => {
         removeTab(tabId);
@@ -42,7 +47,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
     {
       key: 'closeOther',
       label: t('dropdown.closeOther'),
-      icon: <SvgIcon className="text-icon" icon="ant-design:column-width-outlined" />,
+      icon: (
+        <SvgIcon
+          className="text-icon"
+          icon="ant-design:column-width-outlined"
+        />
+      ),
       onClick: () => {
         clearTabs([tabId]);
       }
@@ -50,7 +60,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
     {
       key: 'closeLeft',
       label: t('dropdown.closeLeft'),
-      icon: <SvgIcon className="text-icon" icon="mdi:format-horizontal-align-left" />,
+      icon: (
+        <SvgIcon
+          className="text-icon"
+          icon="mdi:format-horizontal-align-left"
+        />
+      ),
       disabled: disabledKeys.includes('closeLeft'),
       onClick: () => {
         clearLeftTabs(tabId);
@@ -59,7 +74,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
     {
       key: 'closeRight',
       label: t('dropdown.closeRight'),
-      icon: <SvgIcon className="text-icon" icon="mdi:format-horizontal-align-right" />,
+      icon: (
+        <SvgIcon
+          className="text-icon"
+          icon="mdi:format-horizontal-align-right"
+        />
+      ),
       disabled: disabledKeys.includes('closeRight'),
       onClick: () => {
         clearRightTabs(tabId);
@@ -68,7 +88,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
     {
       key: 'closeAll',
       label: t('dropdown.closeAll'),
-      icon: <SvgIcon className="text-icon" icon="ant-design:line-outlined" />,
+      icon: (
+        <SvgIcon
+          className="text-icon"
+          icon="ant-design:line-outlined"
+        />
+      ),
       onClick: () => {
         clearTabs();
       }
@@ -80,7 +105,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
       ? {
           key: 'unfixTab',
           label: t('dropdown.unpin'),
-          icon: <SvgIcon className="text-icon" icon="mdi:pin-off-outline" />,
+          icon: (
+            <SvgIcon
+              className="text-icon"
+              icon="mdi:pin-off-outline"
+            />
+          ),
           onClick: () => {
             unfixTab(tabId);
           }
@@ -88,7 +118,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
       : {
           key: 'fixTab',
           label: t('dropdown.pin'),
-          icon: <SvgIcon className="text-icon" icon="mdi:pin-outline" />,
+          icon: (
+            <SvgIcon
+              className="text-icon"
+              icon="mdi:pin-outline"
+            />
+          ),
           onClick: () => {
             fixTab(tabId);
           }
@@ -100,7 +135,12 @@ export const TabContextMenu = (props: TabContextMenuProps) => {
   }
 
   return (
-    <ADropdown menu={{ items }} open={open} trigger={['contextMenu']} onOpenChange={setOpen}>
+    <ADropdown
+      menu={{ items }}
+      open={open}
+      trigger={['contextMenu']}
+      onOpenChange={setOpen}
+    >
       {children}
     </ADropdown>
   );

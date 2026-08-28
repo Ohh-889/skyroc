@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": [ "./react.json" ],
+  "extends": ["./react.json"],
   "globals": {
     "__DEV__": "readonly",
     "__turboModuleProxy": "readonly",

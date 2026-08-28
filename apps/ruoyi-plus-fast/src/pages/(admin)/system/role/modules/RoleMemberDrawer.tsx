@@ -122,9 +122,16 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
           {(member.nickName || member.userName).slice(0, 1)}
         </Avatar>
         <div className="min-w-0 flex-1">
-          <Flex align="center" gap={7} wrap>
+          <Flex
+            align="center"
+            gap={7}
+            wrap
+          >
             <Typography.Text strong>{member.nickName || member.userName}</Typography.Text>
-            <Tag className="m-0 font-mono text-11px" variant="filled">
+            <Tag
+              className="m-0 font-mono text-11px"
+              variant="filled"
+            >
               {member.userName}
             </Tag>
             <Badge
@@ -132,7 +139,10 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
               text={member.status === '0' ? '正常' : '停用'}
             />
           </Flex>
-          <Typography.Text className="mt-3px block truncate text-12px" type="secondary">
+          <Typography.Text
+            className="mt-3px block truncate text-12px"
+            type="secondary"
+          >
             {member.deptName || '未分配部门'} · {maskPhone(member.phonenumber) || '未填写手机号'}
           </Typography.Text>
         </div>
@@ -144,7 +154,10 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
             title="移除角色成员？"
             onConfirm={() => handleCancelMember(member)}
           >
-            <Button danger size="small">
+            <Button
+              danger
+              size="small"
+            >
               移除
             </Button>
           </Popconfirm>
@@ -179,15 +192,27 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
       onClose={onClose}
     >
       <div className="mb-14px rounded-10px bg-layout p-14px">
-        <Flex align="center" gap={12}>
+        <Flex
+          align="center"
+          gap={12}
+        >
           <span className="size-38px grid shrink-0 place-items-center rounded-9px bg-primary-50 text-primary">
-            <SvgIcon className="text-20px" icon="ph:users-three" />
+            <SvgIcon
+              className="text-20px"
+              icon="ph:users-three"
+            />
           </span>
           <div>
-            <Typography.Text className="block" strong>
+            <Typography.Text
+              className="block"
+              strong
+            >
               {role?.roleName}
             </Typography.Text>
-            <Typography.Text className="text-12px" type="secondary">
+            <Typography.Text
+              className="text-12px"
+              type="secondary"
+            >
               查看已分配成员，或从当前租户用户中继续添加。
             </Typography.Text>
           </div>
@@ -201,16 +226,27 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
         ]}
         onChange={handleTabChange}
       />
-      <Flex className="mb-12px" gap={8}>
+      <Flex
+        className="mb-12px"
+        gap={8}
+      >
         <Input
           allowClear
           placeholder="搜索用户名或姓名"
-          prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+          prefix={
+            <SvgIcon
+              className="text-tertiary"
+              icon="ph:magnifying-glass"
+            />
+          }
           value={keyword}
           onChange={event => setKeyword(event.target.value)}
           onPressEnter={handleSearch}
         />
-        <Button type="primary" onClick={handleSearch}>
+        <Button
+          type="primary"
+          onClick={handleSearch}
+        >
           查询
         </Button>
       </Flex>
@@ -223,7 +259,10 @@ const RoleMemberDrawer = (props: RoleMemberDrawerProps) => {
           )}
         </div>
       </Spin>
-      <Flex className="mt-14px" justify="flex-end">
+      <Flex
+        className="mt-14px"
+        justify="flex-end"
+      >
         <Pagination
           current={current}
           pageSize={8}

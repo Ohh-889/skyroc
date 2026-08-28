@@ -1,7 +1,7 @@
 import { Root } from '@radix-ui/react-radio-group';
 import { cn } from '@skyroc/utils';
-import Radio from './RadioUI';
 import { radioVariants } from './radio-variants';
+import Radio from './RadioUI';
 import type { RadioGroupProps } from './types';
 
 const RadioGroup = (props: RadioGroupProps) => {

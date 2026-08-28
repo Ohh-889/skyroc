@@ -54,7 +54,10 @@ const RoleOperateDrawer = (props: RoleOperateDrawerProps) => {
       footer={
         <Flex justify="space-between">
           <Button onClick={onClose}>{t('common.cancel')}</Button>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+          >
             {t('common.confirm')}
           </Button>
         </Flex>
@@ -63,26 +66,47 @@ const RoleOperateDrawer = (props: RoleOperateDrawerProps) => {
       title={operateType === 'add' ? t('page.manage.role.addRole') : t('page.manage.role.editRole')}
       onClose={onClose}
     >
-      <Form form={form} layout="vertical">
-        <Form.Item label={t('page.manage.role.roleName')} name="roleName" rules={[requiredRule]}>
+      <Form
+        form={form}
+        layout="vertical"
+      >
+        <Form.Item
+          label={t('page.manage.role.roleName')}
+          name="roleName"
+          rules={[requiredRule]}
+        >
           <Input placeholder={t('page.manage.role.form.roleName')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.role.roleCode')} name="roleCode" rules={[requiredRule]}>
+        <Form.Item
+          label={t('page.manage.role.roleCode')}
+          name="roleCode"
+          rules={[requiredRule]}
+        >
           <Input placeholder={t('page.manage.role.form.roleCode')} />
         </Form.Item>
 
-        <Form.Item label={t('page.manage.role.roleStatus')} name="status" rules={[requiredRule]}>
+        <Form.Item
+          label={t('page.manage.role.roleStatus')}
+          name="status"
+          rules={[requiredRule]}
+        >
           <Radio.Group>
             {enableStatusOptions.map(item => (
-              <Radio key={item.value} value={item.value}>
+              <Radio
+                key={item.value}
+                value={item.value}
+              >
                 {t(item.label)}
               </Radio>
             ))}
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item label={t('page.manage.role.roleDesc')} name="roleDesc">
+        <Form.Item
+          label={t('page.manage.role.roleDesc')}
+          name="roleDesc"
+        >
           <Input placeholder={t('page.manage.role.form.roleDesc')} />
         </Form.Item>
       </Form>
@@ -90,10 +114,18 @@ const RoleOperateDrawer = (props: RoleOperateDrawerProps) => {
       {operateType === 'edit' && (
         <Space>
           <Button onClick={openMenuAuthModal}>{t('page.manage.role.menuAuth')}</Button>
-          <MenuAuthModal open={menuAuthVisible} roleId={rowId} onClose={closeMenuAuthModal} />
+          <MenuAuthModal
+            open={menuAuthVisible}
+            roleId={rowId}
+            onClose={closeMenuAuthModal}
+          />
 
           <Button onClick={openButtonAuthModal}>{t('page.manage.role.buttonAuth')}</Button>
-          <ButtonAuthModal open={buttonAuthVisible} roleId={rowId} onClose={closeButtonAuthModal} />
+          <ButtonAuthModal
+            open={buttonAuthVisible}
+            roleId={rowId}
+            onClose={closeButtonAuthModal}
+          />
         </Space>
       )}
     </Drawer>

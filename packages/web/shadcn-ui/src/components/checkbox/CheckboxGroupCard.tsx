@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { useCallback, useMemo } from 'react';
 import { checkboxVariants } from './checkbox-variants';
+import CheckboxCard from './CheckboxCard';
 import { CheckboxGroupProvider } from './CheckboxGroupContext';
 import type { CheckboxGroupCardProps } from './types';
-import CheckboxCard from './CheckboxCard';
 
 const CheckboxGroupCard = (props: CheckboxGroupCardProps) => {
   const {
@@ -39,16 +39,11 @@ const CheckboxGroupCard = (props: CheckboxGroupCardProps) => {
 
   const { groupRoot } = checkboxVariants({ orientation, size });
 
-  const mergedCls = cn(
-    groupRoot(),
-    className || classNames?.groupRoot
-  );
+  const mergedCls = cn(groupRoot(), className || classNames?.groupRoot);
 
   const handleValueChange = useCallback(
     (itemValue: string, checked: boolean) => {
-      const newValue = checked
-        ? [...value, itemValue]
-        : value.filter(v => v !== itemValue);
+      const newValue = checked ? [...value, itemValue] : value.filter(v => v !== itemValue);
 
       if (!isControlled) {
         setUncontrolledValue(newValue);
@@ -77,7 +72,7 @@ const CheckboxGroupCard = (props: CheckboxGroupCardProps) => {
         data-slot="checkbox-group-card"
         role="group"
       >
-        {items.map((item) => {
+        {items.map(item => {
           const isChecked = value.includes(item.value);
           const isDisabled = disabled || item.disabled;
 
@@ -92,7 +87,7 @@ const CheckboxGroupCard = (props: CheckboxGroupCardProps) => {
               key={item.value}
               shape={shape}
               size={size}
-              onCheckedChange={(checked) => {
+              onCheckedChange={checked => {
                 if (checked !== 'indeterminate') {
                   handleValueChange(item.value, checked);
                 }

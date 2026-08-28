@@ -3,9 +3,7 @@ title: useCopy
 description: 剪贴板复制 hook，Clipboard API 优先，非安全上下文自动降级
 ---
 
-<Callout>
-仅 `./web` 子入口导出：`import { useCopy } from '@skyroc/hooks/web'`。RN 端不可用。
-</Callout>
+<Callout>仅 `./web` 子入口导出：`import {useCopy} from '@skyroc/hooks/web'`。RN 端不可用。</Callout>
 
 ```ts
 function useCopy(): {
@@ -15,11 +13,11 @@ function useCopy(): {
 };
 ```
 
-| 返回 | 类型 | 说明 |
-| --- | --- | --- |
-| `copied` | `boolean` | 最近一次是否复制成功 |
-| `copiedText` | `string` | 最近一次成功复制的文本 |
-| `copy` | `(text: string) => Promise<boolean>` | 执行复制，返回是否成功 |
+| 返回         | 类型                                 | 说明                   |
+| ------------ | ------------------------------------ | ---------------------- |
+| `copied`     | `boolean`                            | 最近一次是否复制成功   |
+| `copiedText` | `string`                             | 最近一次成功复制的文本 |
+| `copy`       | `(text: string) => Promise<boolean>` | 执行复制，返回是否成功 |
 
 ```tsx
 import { useCopy } from '@skyroc/hooks/web';
@@ -61,11 +59,11 @@ if (navigator.clipboard && window.isSecureContext) {
 
 ## 行为约定
 
-| 情况 | 结果 |
-| --- | --- |
-| `text` 为空串 | 直接返回 `false`，不改状态 |
-| 复制成功 | `copied = true`，`copiedText = text`，返回 `true` |
-| 复制失败 | `copied = false`，`copiedText = ''`，返回 `false` |
+| 情况          | 结果                                              |
+| ------------- | ------------------------------------------------- |
+| `text` 为空串 | 直接返回 `false`，不改状态                        |
+| 复制成功      | `copied = true`，`copiedText = text`，返回 `true` |
+| 复制失败      | `copied = false`，`copiedText = ''`，返回 `false` |
 
 `copied` **不会自动复位**。要做「已复制」两秒后恢复的效果，业务自己起定时器，或直接用返回的 boolean 触发一次性提示。
 

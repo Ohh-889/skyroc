@@ -11,15 +11,15 @@
 `DocsLayout` 的 `tabs` 默认就是 `getLayoutTabs(tree)`，会自动把每个 root 变成顶部切换器的一项，
 `app/docs/layout.tsx` 无需改动。七个 root 共用同一个应用、同一份搜索索引、同一次构建。
 
-| root                | URL 前缀          | 篇数 | 读者意图                             |
-| ------------------- | ----------------- | ---- | ------------------------------------ |
-| 指南 `guide/`       | `/docs/guide/`    | 23   | 「这项目怎么跑、怎么组织、怎么协作」 |
-| Admin 应用 `admin/` | `/docs/admin/`    | 39   | 「我要改 admin 的某个功能」          |
-| 跨端核心 `core/`    | `/docs/core/`     | 23   | 「`@core/*` 的这个 API 怎么用」      |
-| 跨端 Hooks `hooks/` | `/docs/hooks/`    | 10   | 「这个 hook 的签名和行为是什么」     |
+| root                | URL 前缀          | 篇数 | 读者意图                               |
+| ------------------- | ----------------- | ---- | -------------------------------------- |
+| 指南 `guide/`       | `/docs/guide/`    | 23   | 「这项目怎么跑、怎么组织、怎么协作」   |
+| Admin 应用 `admin/` | `/docs/admin/`    | 39   | 「我要改 admin 的某个功能」            |
+| 跨端核心 `core/`    | `/docs/core/`     | 23   | 「`@core/*` 的这个 API 怎么用」        |
+| 跨端 Hooks `hooks/` | `/docs/hooks/`    | 10   | 「这个 hook 的签名和行为是什么」       |
 | 表单原语 `form/`    | `/docs/form/`     | 9    | 「表单怎么写、怎么校验、怎么不重渲染」 |
-| Web 端包 `web/`     | `/docs/web/`      | 21   | 「`web/*` 的这个 API 怎么用」        |
-| 包总览 `packages/`  | `/docs/packages/` | 9    | 「31 个包都有啥、这个能力在哪个包」  |
+| Web 端包 `web/`     | `/docs/web/`      | 21   | 「`web/*` 的这个 API 怎么用」          |
+| 包总览 `packages/`  | `/docs/packages/` | 9    | 「31 个包都有啥、这个能力在哪个包」    |
 
 原来五棵包树全挂在 `packages/` 下面，`core` + `web` 就占 44 篇，把侧边栏压垮了。
 四棵各自提为 root：`core/` 与 `web/` 本来就是从 core-docs / web-kit-docs 两个独立站整站搬来的，提上来是还原原本形态，
@@ -166,11 +166,22 @@ content/docs/
   "description": "packages/web 下 14 个 Web 平台包：设计系统、主题、布局、运行时与构建",
   "pages": [
     "index",
-    "---设计系统---", "ui",
-    "---主题---", "tailwind-plugin", "theme",
-    "---布局与样式---", "materials", "admin-layouts", "admin-styles",
-    "---运行时---", "admin-runtime", "admin-i18n", "admin-notification", "devtools",
-    "---构建---", "admin-vite"
+    "---设计系统---",
+    "ui",
+    "---主题---",
+    "tailwind-plugin",
+    "theme",
+    "---布局与样式---",
+    "materials",
+    "admin-layouts",
+    "admin-styles",
+    "---运行时---",
+    "admin-runtime",
+    "admin-i18n",
+    "admin-notification",
+    "devtools",
+    "---构建---",
+    "admin-vite"
   ]
 }
 ```
@@ -205,11 +216,11 @@ content/docs/
 
 `web/` 这三篇搬过来时发现短版已经落后于代码，已按源码修正：
 
-| 页面 | 落后点 |
-| --- | --- |
-| `web/devtools` | 缺 `AdminDevtoolsConfig.enabled`；`jotai` 实为 `boolean \| AdminJotaiDevtoolsConfig`（旧文档写成 `\| false`）；`theme` 在根配置而非 `jotai` 内；`triggerOffset` 值是 `number \| string`，补上四个 CSS 变量与默认值判定表 |
+| 页面                     | 落后点                                                                                                                                                                                                                                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `web/devtools`           | 缺 `AdminDevtoolsConfig.enabled`；`jotai` 实为 `boolean \| AdminJotaiDevtoolsConfig`（旧文档写成 `\| false`）；`theme` 在根配置而非 `jotai` 内；`triggerOffset` 值是 `number \| string`，补上四个 CSS 变量与默认值判定表                                                                      |
 | `web/admin-notification` | 整个通知模型写错（`description`/`time`/`data` 实为 `content`/`timestamp`/`meta`，`type` 五种、`priority` 四档）；漏掉 `NotificationStore` 与 `DEFAULT_NOTIFICATION_CONFIG` 两个导出、五个语义快捷方法、优先级排序规则、免打扰、浏览器原生通知与 React 树外投递；依赖表写了并不存在的 `nanoid` |
-| `web/admin-styles` | `global.css` 自己 `@import` 了另外两个文件，旧文档教人三个都引；各文件作用描述过泛，已按实际 CSS 补细节 |
+| `web/admin-styles`       | `global.css` 自己 `@import` 了另外两个文件，旧文档教人三个都引；各文件作用描述过泛，已按实际 CSS 补细节                                                                                                                                                                                       |
 
 `web/admin-vite` 是详版，配置面写得完整，但没有公共导出速查，已补一节 `## 公共导出`（`defineConfig` 之外的 9 个 helper 与 8 个插件工厂）。其余 web-kit-docs 迁过来的详版逐个核对过导出符号，与源码一致。
 
@@ -239,18 +250,18 @@ content/docs/
 
 ## 三、`docs/docs` 代码侧要改的文件
 
-| 文件                       | 改动                                                                                                                                                                                                                                           |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `content/docs/test.mdx`    | 删除（脚手架残留）                                                                                                                                                                                                                             |
-| `content/docs/index.mdx`   | 重写，去掉 Fumadocs/Next.js 官方 Cards                                                                                                                                                                                                         |
-| `content/docs/meta.json`   | 新建，见上                                                                                                                                                                                                                                     |
-| `lib/shared.ts`            | ✅ 已改 `gitConfig.branch: 'main'` → `'master'`（远端默认分支就是 master，之前所有"编辑此页"链接 404）；`repo: 'skyroc'` 是对的——仓库已从 `skyroc-admin` 改名                                                                                                             |
-| `app/docs/DocsGlassHeader.tsx` | ✅ 中间导航改为「指南 / Admin / 包文档」三项（见下）；GitHub 图标去重。跨站链接待域名定稿后以「生态 ▾」下拉补在 GitHub 图标左侧，六站共用同一份                                                                                                                 |
-| `next.config.mjs`          | 加 `redirects()`：旧站路径 → 新路径永久跳转，见下                                                                                                                                                                                              |
-| `package.json`             | `name: "docs"` → `"@skyroc/docs"`；`dev` 固定端口（接管 project-docs 的 `--port 8848`）                                                                                                                                                        |
-| `app/(home)/1.md`          | 移出 `app/`（这是诊断记录，不该留在路由目录），归入 `docs/internal/` 或删除                                                                                                                                                                    |
-| `app/(home)/modules/*.tsx` | ✅ `DocumentationMapSection`、`ReadingPathsSection`、`HomeHeroSection` 的死链已全部改成真实路径；`#documentation-map` 这类锚点占位仍在 |
-| `app/api/search/route.ts`  | 后续接跨站索引：主站搜索结果里带上 Web UI / Native UI，并标注来源站点                                                                                                                                                                          |
+| 文件                           | 改动                                                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content/docs/test.mdx`        | 删除（脚手架残留）                                                                                                                                            |
+| `content/docs/index.mdx`       | 重写，去掉 Fumadocs/Next.js 官方 Cards                                                                                                                        |
+| `content/docs/meta.json`       | 新建，见上                                                                                                                                                    |
+| `lib/shared.ts`                | ✅ 已改 `gitConfig.branch: 'main'` → `'master'`（远端默认分支就是 master，之前所有"编辑此页"链接 404）；`repo: 'skyroc'` 是对的——仓库已从 `skyroc-admin` 改名 |
+| `app/docs/DocsGlassHeader.tsx` | ✅ 中间导航改为「指南 / Admin / 包文档」三项（见下）；GitHub 图标去重。跨站链接待域名定稿后以「生态 ▾」下拉补在 GitHub 图标左侧，六站共用同一份               |
+| `next.config.mjs`              | 加 `redirects()`：旧站路径 → 新路径永久跳转，见下                                                                                                             |
+| `package.json`                 | `name: "docs"` → `"@skyroc/docs"`；`dev` 固定端口（接管 project-docs 的 `--port 8848`）                                                                       |
+| `app/(home)/1.md`              | 移出 `app/`（这是诊断记录，不该留在路由目录），归入 `docs/internal/` 或删除                                                                                   |
+| `app/(home)/modules/*.tsx`     | ✅ `DocumentationMapSection`、`ReadingPathsSection`、`HomeHeroSection` 的死链已全部改成真实路径；`#documentation-map` 这类锚点占位仍在                        |
+| `app/api/search/route.ts`      | 后续接跨站索引：主站搜索结果里带上 Web UI / Native UI，并标注来源站点                                                                                         |
 
 ### 重定向映射（`next.config.mjs`）
 
@@ -284,12 +295,12 @@ project-docs 全站 /:slug*   → 按上面三条 root 规则分流
 ## 四、跨站引流（三层，六站统一）
 
 1. **顶部导航**分两块，按「站内定位」与「跨站跳转」切开：
-
    - **中间三项（站内）**：指南 | Admin | 包文档。7 个 root 在侧栏切换器里是折叠的（可见 DOM 只渲染当前项），
      header 是唯一常驻可见的站内导航但塞不下 7 项，所以按读者意图收敛成三组；
      「包文档」落到 `/docs/packages`，那页开头的分流表负责把人送到 core / hooks / form / web 四棵包树。
    - **右侧（跨站）**：官网 | Web UI | Native UI | Playground | GitHub，六站共用同一份。
      域名还是 `.xxx` 占位，定稿后以「生态 ▾」下拉挂在 GitHub 图标左侧，不占横向宽度。
+
 2. **上下游链接**（写在页面正文固定位置）：
    - 架构页 → 对应包的详细 API
    - `core/*`、`hooks/*`、`form/*`、`web/*` → "在 Admin 中如何使用"（`/docs/admin/...`）

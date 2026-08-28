@@ -1,6 +1,6 @@
 ---
-title: "AesCrypto"
-description: "基于 AES 的对称加密类，用于本地存储数据的混淆保护"
+title: 'AesCrypto'
+description: '基于 AES 的对称加密类，用于本地存储数据的混淆保护'
 ---
 
 ## 概述
@@ -13,10 +13,9 @@ import { AesCrypto } from '@skyroc/utils/crypto';
 
 <Callout type="warn">
   **它不是安全边界。** crypto-js 的 passphrase 模式走的是 OpenSSL `EVP_BytesToKey`（MD5 单轮派生），
-  密钥强度取决于口令本身，**不适合**用来保护真正的机密。
-  它的合理用途是本地存储混淆——让 localStorage / 缓存里的内容不可直接肉眼读取。
-  需要真实加密强度时请改用 Web Crypto（`crypto.subtle`）或服务端加密；
-  接口传输加密用 [`@skyroc/service` 的信封加密](/docs/core/service#接口传输加密)。
+  密钥强度取决于口令本身，**不适合**用来保护真正的机密。 它的合理用途是本地存储混淆——让 localStorage /
+  缓存里的内容不可直接肉眼读取。 需要真实加密强度时请改用 Web Crypto（`crypto.subtle`）或服务端加密； 接口传输加密用
+  [`@skyroc/service` 的信封加密](/docs/core/service#接口传输加密)。
 </Callout>
 
 它只在 `@skyroc/utils/crypto` 子入口导出，**不在主入口**——不用加密的应用不必把 crypto-js 拉进包里。
@@ -40,7 +39,7 @@ const crypto = new AesCrypto<TokenPayload>('your-secret-key');
 const cipher = crypto.encrypt({
   accessToken: 'eyJhbGci...',
   refreshToken: 'dGhpcyBp...',
-  expiresAt: Date.now() + 3600_000,
+  expiresAt: Date.now() + 3600_000
 });
 // 'U2FsdGVkX1+...'（密文字符串，可安全存储）
 
@@ -71,8 +70,8 @@ AES 采用 crypto-js 默认模式（CBC + PKCS7 填充），密钥长度取决�
 const crypto = new AesCrypto<MyDataType>('your-secret-key');
 ```
 
-| 参数 | 类型 | 说明 |
-| --- | --- | --- |
+| 参数     | 类型     | 说明                                                   |
+| -------- | -------- | ------------------------------------------------------ |
 | `secret` | `string` | 加密密钥，建议使用足够复杂的字符串，不要硬编码在代码中 |
 
 `secret` 是 `private readonly` 的，构造之后不可更换。需要换密钥就新建一个实例。
@@ -125,22 +124,20 @@ if (data === null) {
 需要区分失败原因时用它，`decrypt` 就是它的薄封装：
 
 ```ts
-type TryDecryptResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; reason: 'decrypt' | 'parse' };
+type TryDecryptResult<T> = { ok: true; data: T } | { ok: false; reason: 'decrypt' | 'parse' };
 ```
 
-| `reason` | 含义 | 典型处置 |
-| --- | --- | --- |
-| `'decrypt'` | 密钥不匹配，或密文损坏 / 被篡改 | 清掉这条缓存并重新登录 |
-| `'parse'` | 解得开，但明文本身不是合法 JSON | 多半是换过数据结构的旧缓存，丢弃即可 |
+| `reason`    | 含义                            | 典型处置                             |
+| ----------- | ------------------------------- | ------------------------------------ |
+| `'decrypt'` | 密钥不匹配，或密文损坏 / 被篡改 | 清掉这条缓存并重新登录               |
+| `'parse'`   | 解得开，但明文本身不是合法 JSON | 多半是换过数据结构的旧缓存，丢弃即可 |
 
 ```ts
 const result = crypto.tryDecrypt(cipher);
 
 if (!result.ok) {
   if (result.reason === 'decrypt') redirectToLogin();
-  else storage.remove('tokenCipher');   // 旧结构的残留，静默丢弃
+  else storage.remove('tokenCipher'); // 旧结构的残留，静默丢弃
   return null;
 }
 
@@ -156,7 +153,7 @@ import { AesCrypto } from '@skyroc/utils/crypto';
 import { createStorage } from '@skyroc/utils/web';
 
 type AppStorage = {
-  tokenCipher: string;  // 存储密文
+  tokenCipher: string; // 存储密文
 };
 
 const storage = createStorage<AppStorage>('local', 'app__');
@@ -192,12 +189,12 @@ const crypto = new AesCrypto(import.meta.env.VITE_CRYPTO_SECRET);
 
 `AesCrypto` 适合**本地存储数据的混淆加密**，不适合替代 HTTPS 传输层加密：
 
-| 场景 | 适用？ | 说明 |
-| --- | --- | --- |
-| localStorage 加密存储 | ✅ | 防止普通用户直接读取 |
-| Cookie 加密存储 | ✅ | 同上 |
-| 客户端到服务端传输 | ❌ | 应使用 HTTPS，不应在前端加密 |
-| 替代 JWT 验签 | ❌ | AES 是对称加密，无法实现签名验证 |
+| 场景                  | 适用？ | 说明                             |
+| --------------------- | ------ | -------------------------------- |
+| localStorage 加密存储 | ✅     | 防止普通用户直接读取             |
+| Cookie 加密存储       | ✅     | 同上                             |
+| 客户端到服务端传输    | ❌     | 应使用 HTTPS，不应在前端加密     |
+| 替代 JWT 验签         | ❌     | AES 是对称加密，无法实现签名验证 |
 
 **关于"安全强度"：**
 

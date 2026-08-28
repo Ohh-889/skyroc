@@ -27,15 +27,15 @@ App.tsx
 
 ## 快速索引
 
-| 现象 | 先看哪里 |
-| --- | --- |
-| 菜单不显示 | `VITE_AUTH_ROUTE_MODE`、`setupAdminLayouts`、`useAuth().initAuth()`、页面 `staticData.menu` |
-| 动态路由点击后 404 | 后端路由 `path` 是否有前端页面文件和 `routeTree.gen.ts` 对应 |
-| 刷新页面 404 | 生产静态服务是否配置 history rewrite |
-| 代理失败 | `VITE_HTTP_PROXY`、`VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL`、是否重启 Vite |
-| token 异常 | `localStg`、`setAuth()`、请求 adapter、业务 code 配置 |
-| 启动时 Vite 预设未构建 | `predev` / `prebuild` 是否执行了 `build:admin-vite` |
-| devtools 或 NProgress 顺序异常 | `main.tsx`、`bootstrap.tsx`、`setupAdminPlugins()` 的执行顺序 |
+| 现象                           | 先看哪里                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| 菜单不显示                     | `VITE_AUTH_ROUTE_MODE`、`setupAdminLayouts`、`useAuth().initAuth()`、页面 `staticData.menu` |
+| 动态路由点击后 404             | 后端路由 `path` 是否有前端页面文件和 `routeTree.gen.ts` 对应                                |
+| 刷新页面 404                   | 生产静态服务是否配置 history rewrite                                                        |
+| 代理失败                       | `VITE_HTTP_PROXY`、`VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL`、是否重启 Vite    |
+| token 异常                     | `localStg`、`setAuth()`、请求 adapter、业务 code 配置                                       |
+| 启动时 Vite 预设未构建         | `predev` / `prebuild` 是否执行了 `build:admin-vite`                                         |
+| devtools 或 NProgress 顺序异常 | `main.tsx`、`bootstrap.tsx`、`setupAdminPlugins()` 的执行顺序                               |
 
 ## 菜单不显示
 
@@ -49,15 +49,15 @@ VITE_AUTH_ROUTE_MODE=static
 
 ### 静态模式排查
 
-| 检查项 | 说明 |
-| --- | --- |
-| 页面位置 | 后台页面应放在 `apps/admin/src/pages/(admin)` 下。 |
-| 路由生成 | `apps/admin/src/features/router/routeTree.gen.ts` 是否包含新页面。 |
-| 元信息 | 页面 `createFileRoute()` 是否配置了 `staticData`。 |
-| 菜单配置 | `staticData.menu` 是否存在，且没有被设为隐藏。 |
-| 权限 | `staticData.permissions` 是否允许当前用户角色，或当前用户是否有 `VITE_STATIC_SUPER_ROLE`。 |
-| 分类 | 当前 `menuCategories` 只有 `admin -> /(admin)`，页面是否挂在这个后台 layout 下。 |
-| 初始化 | 登录后是否成功执行 `useAuth().initAuth()`，并调用 `initMenus(data)`。 |
+| 检查项   | 说明                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------ |
+| 页面位置 | 后台页面应放在 `apps/admin/src/pages/(admin)` 下。                                         |
+| 路由生成 | `apps/admin/src/features/router/routeTree.gen.ts` 是否包含新页面。                         |
+| 元信息   | 页面 `createFileRoute()` 是否配置了 `staticData`。                                         |
+| 菜单配置 | `staticData.menu` 是否存在，且没有被设为隐藏。                                             |
+| 权限     | `staticData.permissions` 是否允许当前用户角色，或当前用户是否有 `VITE_STATIC_SUPER_ROLE`。 |
+| 分类     | 当前 `menuCategories` 只有 `admin -> /(admin)`，页面是否挂在这个后台 layout 下。           |
+| 初始化   | 登录后是否成功执行 `useAuth().initAuth()`，并调用 `initMenus(data)`。                      |
 
 最小页面结构参考：
 
@@ -92,13 +92,13 @@ export const Route = createFileRoute('/(admin)/demo')({
 
 相关实现位置：
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/service/api/route/api.ts` | `fetchGetBackendRoutes()` 请求 `/route/getReactUserRoutes`。 |
-| `packages/@core/types/src/api/route.d.ts` | 定义后端原始路由响应和适配后的动态路由结构。 |
+| 文件                                              | 职责                                                                         |
+| ------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `apps/admin/src/service/api/route/api.ts`         | `fetchGetBackendRoutes()` 请求 `/route/getReactUserRoutes`。                 |
+| `packages/@core/types/src/api/route.d.ts`         | 定义后端原始路由响应和适配后的动态路由结构。                                 |
 | `apps/admin/src/features/menus/dynamic-routes.ts` | 把后端 `name/path/component/handle` 响应适配成布局运行时需要的动态菜单数据。 |
-| `apps/admin/src/bootstrap.tsx` | 通过 `loadDynamicRoutes` 把 `loadAdminDynamicRoutes()` 注入布局运行时。 |
-| `packages/web/admin-layouts/src/features/menus/*` | 根据动态路由、权限和 route tree 生成菜单。 |
+| `apps/admin/src/bootstrap.tsx`                    | 通过 `loadDynamicRoutes` 把 `loadAdminDynamicRoutes()` 注入布局运行时。      |
+| `packages/web/admin-layouts/src/features/menus/*` | 根据动态路由、权限和 route tree 生成菜单。                                   |
 
 后端返回的 `path` 必须能和前端 `apps/admin/src/pages` 生成的 route tree 对上。只返回菜单数据但前端没有对应页面文件，点击后仍然会 404。
 
@@ -106,12 +106,12 @@ export const Route = createFileRoute('/(admin)/demo')({
 
 动态路由失效通常不是一个单点问题，要按四层看：
 
-| 层级 | 关键问题 |
-| --- | --- |
-| env | `VITE_AUTH_ROUTE_MODE` 是否为 `dynamic`。 |
-| 接口 | `/route/getReactUserRoutes` 是否返回当前用户的路由树。 |
-| 前端页面 | `apps/admin/src/pages` 下是否存在对应 `path` 的页面。 |
-| 权限 | `permissions`、用户角色、`hasAuthorizedRoutePath()` 是否允许访问。 |
+| 层级     | 关键问题                                                           |
+| -------- | ------------------------------------------------------------------ |
+| env      | `VITE_AUTH_ROUTE_MODE` 是否为 `dynamic`。                          |
+| 接口     | `/route/getReactUserRoutes` 是否返回当前用户的路由树。             |
+| 前端页面 | `apps/admin/src/pages` 下是否存在对应 `path` 的页面。              |
+| 权限     | `permissions`、用户角色、`hasAuthorizedRoutePath()` 是否允许访问。 |
 
 如果菜单展示了，但点击进入 404，优先检查后端返回的 `path` 和前端路由路径是否一致。动态菜单不是运行时动态加载任意页面，它只是决定“哪些已存在的前端页面可见、可访问”。
 
@@ -180,24 +180,24 @@ VITE_OTHER_SERVICE_BASE_URL={ demo: "http://localhost:9528" }
 
 常见检查项：
 
-| 现象 | 检查 |
-| --- | --- |
-| 请求没有走 `/proxy-default` | 当前是否是 dev 环境，`VITE_HTTP_PROXY` 是否为 `Y`。 |
-| 终端没有代理日志 | `VITE_PROXY_LOG` 是否为 `Y`。 |
-| 其他服务代理不存在 | `VITE_OTHER_SERVICE_BASE_URL` 是否是合法 JSON5，key 是否和请求实例使用的 key 一致。 |
-| 改 env 后仍旧请求旧地址 | Vite env 启动时读取，改完要重启 dev server。 |
-| 生产环境 `/proxy-default` 404 | 生产没有 Vite dev server proxy，改 `.env.prod` 或配置 Nginx 反向代理。 |
+| 现象                          | 检查                                                                                |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| 请求没有走 `/proxy-default`   | 当前是否是 dev 环境，`VITE_HTTP_PROXY` 是否为 `Y`。                                 |
+| 终端没有代理日志              | `VITE_PROXY_LOG` 是否为 `Y`。                                                       |
+| 其他服务代理不存在            | `VITE_OTHER_SERVICE_BASE_URL` 是否是合法 JSON5，key 是否和请求实例使用的 key 一致。 |
+| 改 env 后仍旧请求旧地址       | Vite env 启动时读取，改完要重启 dev server。                                        |
+| 生产环境 `/proxy-default` 404 | 生产没有 Vite dev server proxy，改 `.env.prod` 或配置 Nginx 反向代理。              |
 
 ## token 异常
 
 当前认证状态分为三块：
 
-| 位置 | 职责 |
-| --- | --- |
-| `apps/admin/src/features/auth/use-auth.ts` | Jotai auth state，登录后保存 token，退出时清理状态和菜单。 |
-| `apps/admin/src/features/auth/shared.ts` | 从 `localStg` 读取和清理 token。 |
-| `apps/admin/src/service/adapter.ts` | 请求 adapter，提供 `getToken()`、`getRefreshToken()`、`setAuth()`、`resetAuth()`、`redirectToLogin()`。 |
-| `packages/@core/service/src/request/*` | 统一添加 `Authorization`，处理登出码、弹窗登出码和 token 过期刷新。 |
+| 位置                                       | 职责                                                                                                    |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `apps/admin/src/features/auth/use-auth.ts` | Jotai auth state，登录后保存 token，退出时清理状态和菜单。                                              |
+| `apps/admin/src/features/auth/shared.ts`   | 从 `localStg` 读取和清理 token。                                                                        |
+| `apps/admin/src/service/adapter.ts`        | 请求 adapter，提供 `getToken()`、`getRefreshToken()`、`setAuth()`、`resetAuth()`、`redirectToLogin()`。 |
+| `packages/@core/service/src/request/*`     | 统一添加 `Authorization`，处理登出码、弹窗登出码和 token 过期刷新。                                     |
 
 登录成功后会执行：
 
@@ -221,14 +221,14 @@ Authorization: Bearer {token}
 
 如果登录后马上又回到登录页，先检查：
 
-| 检查项 | 说明 |
-| --- | --- |
-| 登录接口返回 | 是否包含 `token` 和 `refreshToken`。 |
-| 用户信息接口 | `initAuth()` 内的 `queryUserInfoOptions()` 是否成功。 |
-| 存储前缀 | `VITE_STORAGE_PREFIX` 是否变化，导致读写的 localStorage key 不一致。 |
-| 业务 code | `VITE_SERVICE_SUCCESS_CODE` 是否和后端成功 code 一致。 |
-| 登出 code | `VITE_SERVICE_LOGOUT_CODES`、`VITE_SERVICE_MODAL_LOGOUT_CODES` 是否误命中。 |
-| 过期 code | `VITE_SERVICE_EXPIRED_TOKEN_CODES` 是否和后端 token 过期 code 一致。 |
+| 检查项       | 说明                                                                        |
+| ------------ | --------------------------------------------------------------------------- |
+| 登录接口返回 | 是否包含 `token` 和 `refreshToken`。                                        |
+| 用户信息接口 | `initAuth()` 内的 `queryUserInfoOptions()` 是否成功。                       |
+| 存储前缀     | `VITE_STORAGE_PREFIX` 是否变化，导致读写的 localStorage key 不一致。        |
+| 业务 code    | `VITE_SERVICE_SUCCESS_CODE` 是否和后端成功 code 一致。                      |
+| 登出 code    | `VITE_SERVICE_LOGOUT_CODES`、`VITE_SERVICE_MODAL_LOGOUT_CODES` 是否误命中。 |
+| 过期 code    | `VITE_SERVICE_EXPIRED_TOKEN_CODES` 是否和后端 token 过期 code 一致。        |
 
 如果刷新后变成未登录，检查浏览器 localStorage 中对应 `VITE_STORAGE_PREFIX` 下的 `token` 是否存在。
 
@@ -268,11 +268,11 @@ pnpm --filter skyroc-admin build:admin-vite
 
 当前入口顺序是有意设计的：
 
-| 阶段 | 位置 | 作用 |
-| --- | --- | --- |
-| 1 | `main.tsx` | 开发环境先加载 `@shell/devtools/jotai`，再进入 `bootstrap.tsx`。 |
-| 2 | `bootstrap.tsx` | 初始化 theme、layout runtime、plugins、i18n。 |
-| 3 | `App.tsx` | 挂载 Query、Jotai、AdminDevtools、Antd、Notification、Router。 |
+| 阶段 | 位置            | 作用                                                             |
+| ---- | --------------- | ---------------------------------------------------------------- |
+| 1    | `main.tsx`      | 开发环境先加载 `@shell/devtools/jotai`，再进入 `bootstrap.tsx`。 |
+| 2    | `bootstrap.tsx` | 初始化 theme、layout runtime、plugins、i18n。                    |
+| 3    | `App.tsx`       | 挂载 Query、Jotai、AdminDevtools、Antd、Notification、Router。   |
 
 如果 devtools、Jotai 面板或 Router 面板异常，先确认是否改动了入口顺序。`@shell/devtools/jotai` 需要在应用 Provider 挂载前加载，否则 Jotai 调试能力可能拿不到正确上下文。
 
@@ -296,13 +296,13 @@ nprogress is not initialized, please call initNProgress function first
 
 ## 相关链接
 
-| 内容 | 页面 |
-| --- | --- |
-| 启动和构建命令 | [快速开始](./getting-started/quick-start) |
-| env 与 Vite 配置 | [环境变量与 Vite](./configuration/env-and-vite) |
-| 路由文件和 route tree | [路由概览](./routing/overview) |
-| 路由元信息和菜单字段 | [路由元信息](./routing/route-meta) |
-| 登录守卫 | [路由守卫](./routing/guards) |
-| 权限和 403 | [权限](./routing/permission) |
-| 错误页、404 和 loading | [错误与加载页](./routing/error-loading-and-exception) |
-| 部署、base 和 Nginx rewrite | [构建部署](./deployment/build-and-deploy) |
+| 内容                        | 页面                                                  |
+| --------------------------- | ----------------------------------------------------- |
+| 启动和构建命令              | [快速开始](./getting-started/quick-start)             |
+| env 与 Vite 配置            | [环境变量与 Vite](./configuration/env-and-vite)       |
+| 路由文件和 route tree       | [路由概览](./routing/overview)                        |
+| 路由元信息和菜单字段        | [路由元信息](./routing/route-meta)                    |
+| 登录守卫                    | [路由守卫](./routing/guards)                          |
+| 权限和 403                  | [权限](./routing/permission)                          |
+| 错误页、404 和 loading      | [错误与加载页](./routing/error-loading-and-exception) |
+| 部署、base 和 Nginx rewrite | [构建部署](./deployment/build-and-deploy)             |

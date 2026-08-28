@@ -75,15 +75,15 @@ import { TreeSelect } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 覆盖本组件的 slot，左栏内部的 slot 走 `sidebarClassNames`：
 
-| slot              | 归属                 | 作用位置                                               |
-| ----------------- | -------------------- | ------------------------------------------------------ |
-| `root`            | `classNames`         | 根容器（横向排布、高度）                               |
-| `sidebar`         | `classNames`         | 左侧导航的根节点（默认 `w-24`，调宽窄从这里改）         |
-| `content`         | `classNames`         | 右侧滚动区                                             |
-| `contentItem`     | `classNames`         | 单个子项容器                                           |
-| `contentItemText` | `classNames`         | 子项文字（选中态加粗变主题色）                          |
-| `selectedIcon`    | `classNames`         | 选中勾的 `colorClassName`，只接受 `accent-*` 颜色类      |
-| —                 | `sidebarClassNames`  | 左侧 `Sidebar` 的各内部 slot                            |
+| slot              | 归属                | 作用位置                                            |
+| ----------------- | ------------------- | --------------------------------------------------- |
+| `root`            | `classNames`        | 根容器（横向排布、高度）                            |
+| `sidebar`         | `classNames`        | 左侧导航的根节点（默认 `w-24`，调宽窄从这里改）     |
+| `content`         | `classNames`        | 右侧滚动区                                          |
+| `contentItem`     | `classNames`        | 单个子项容器                                        |
+| `contentItemText` | `classNames`        | 子项文字（选中态加粗变主题色）                      |
+| `selectedIcon`    | `classNames`        | 选中勾的 `colorClassName`，只接受 `accent-*` 颜色类 |
+| —                 | `sidebarClassNames` | 左侧 `Sidebar` 的各内部 slot                        |
 
 <Demo src="@playground/tree-select/TreeSelectCustomSlots" />
 

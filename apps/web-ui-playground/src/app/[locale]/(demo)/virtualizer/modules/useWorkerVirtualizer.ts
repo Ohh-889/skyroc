@@ -8,10 +8,7 @@ export function useGenerateSentences(count: number) {
   const [sentences, setSentences] = useState<string[] | null>(null);
 
   useEffect(() => {
-    const worker = new Worker(
-      new URL('./generateSentences.worker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    const worker = new Worker(new URL('./generateSentences.worker.ts', import.meta.url), { type: 'module' });
 
     workerRef.current = worker;
 
@@ -28,7 +25,7 @@ export function useGenerateSentences(count: number) {
       worker.removeEventListener('message', handleMessage);
       worker.terminate();
     };
-  // oxlint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return sentences; // null = loading

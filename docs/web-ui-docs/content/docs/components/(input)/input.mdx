@@ -162,7 +162,8 @@ Input 支持受控和非受控用法，常见原生 input 属性会透传到底�
   data={[
     {
       name: 'InputProps',
-      description: 'Input 组件属性。继承原生 input 属性，移除原生 size，并增加项目尺寸、插槽、清空按钮和 slot class 配置。',
+      description:
+        'Input 组件属性。继承原生 input 属性，移除原生 size，并增加项目尺寸、插槽、清空按钮和 slot class 配置。',
       fields: [
         { name: 'autoComplete', type: 'string', description: '浏览器自动完成策略。' },
         { name: 'autoFocus', type: 'boolean', description: '是否自动聚焦。' },
@@ -202,7 +203,11 @@ Input 支持受控和非受控用法，常见原生 input 属性会透传到底�
       name: 'StyledComponentProps<T>',
       description: '项目内用于包装组件 props 的通用类型。',
       fields: [
-        { name: '...sourceProps', type: 'inherited props without className', description: '继承原始组件属性，但重新定义 className。' },
+        {
+          name: '...sourceProps',
+          type: 'inherited props without className',
+          description: '继承原始组件属性，但重新定义 className。'
+        },
         { name: 'className', type: 'ClassValue', description: '组件 class。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '项目统一尺寸类型。' }
       ]

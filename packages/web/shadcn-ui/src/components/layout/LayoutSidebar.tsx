@@ -1,7 +1,7 @@
 import { cn } from '@skyroc/utils';
-import LayoutMobile from './LayoutMobile';
 import { useLayoutContext } from './context';
 import { layoutVariants } from './layout-variants';
+import LayoutMobile from './LayoutMobile';
 import type { LayoutSidebarProps } from './types';
 
 const LayoutSidebar = ({
@@ -30,30 +30,28 @@ const LayoutSidebar = ({
 
   const renderChildren = typeof children === 'function' ? children(childrenProps) : children;
 
-  return isMobile
-    ? (
-      <LayoutMobile
-        className={className}
-        rootClassName={ui?.mobileRoot}
-        side={side}
-      >
-        {renderChildren}
-      </LayoutMobile>
-    )
-    : (
-      <div className={mergedCls.root}>
-        <div className={mergedCls.gapHandler} />
+  return isMobile ? (
+    <LayoutMobile
+      className={className}
+      rootClassName={ui?.mobileRoot}
+      side={side}
+    >
+      {renderChildren}
+    </LayoutMobile>
+  ) : (
+    <div className={mergedCls.root}>
+      <div className={mergedCls.gapHandler} />
 
-        <div className={mergedCls.wrapper}>
-          <div
-            className={mergedCls.cls}
-            data-sidebar="sidebar"
-          >
-            {renderChildren}
-          </div>
+      <div className={mergedCls.wrapper}>
+        <div
+          className={mergedCls.cls}
+          data-sidebar="sidebar"
+        >
+          {renderChildren}
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default LayoutSidebar;

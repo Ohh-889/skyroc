@@ -103,11 +103,11 @@ import { Button } from '@skyroc/native-ui';
 
 `className` 追加到根容器（Pressable）上，`classNames` 按 slot 细粒度覆盖，两者都会与内置变体合并，冲突时以你传入的类名为准。
 
-| slot        | 作用位置                                                       |
-| ----------- | -------------------------------------------------------------- |
-| `root`      | 根容器 Pressable                                               |
-| `text`      | 文字类名，通过 `TextClassContext` 下发给子 `Text`              |
-| `indicator` | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 颜色类   |
+| slot        | 作用位置                                                      |
+| ----------- | ------------------------------------------------------------- |
+| `root`      | 根容器 Pressable                                              |
+| `text`      | 文字类名，通过 `TextClassContext` 下发给子 `Text`             |
+| `indicator` | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 颜色类 |
 
 <Demo src="@playground/button/ButtonStyles" />
 
@@ -202,14 +202,7 @@ import { Button } from '@skyroc/native-ui';
 ## 类型
 
 ```ts
-import type {
-  ButtonColor,
-  ButtonProps,
-  ButtonShape,
-  ButtonSize,
-  ButtonSlots,
-  ButtonVariant
-} from '@skyroc/native-ui';
+import type { ButtonColor, ButtonProps, ButtonShape, ButtonSize, ButtonSlots, ButtonVariant } from '@skyroc/native-ui';
 ```
 
 `ButtonVariant` / `ButtonColor` / `ButtonSize` / `ButtonShape` 均由 `buttonVariants` 推导，与上面的 Props 表一一对应。

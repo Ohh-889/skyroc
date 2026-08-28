@@ -26,14 +26,21 @@ const TypeitDemo = () => {
   }, []);
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:typewriter"
         resources={[{ label: 'TypeIt', url: 'https://www.typeitjs.com/docs/vanilla/usage/' }]}
         tags={['typeit', 'DOM integration']}
         title="打字机示例"
       />
-      <ExamplePanel icon="mdi:typewriter" title="基本示例">
+      <ExamplePanel
+        icon="mdi:typewriter"
+        title="基本示例"
+      >
         <div className="min-h-120px flex items-center rounded-lg bg-layout px-6 text-20px font-medium">
           <span ref={textRef} />
         </div>

@@ -26,27 +26,27 @@ export const numberInputVariants = tv({
   },
   variants: {
     size: {
-      'xs': {
+      xs: {
         root: 'h-6 px-1.5 text-2xs gap-1',
         decrement: 'p-0.75',
         increment: 'p-0.75'
       },
-      'sm': {
+      sm: {
         root: 'h-7 px-2 text-xs gap-1.5',
         decrement: 'p-1',
         increment: 'p-1'
       },
-      'md': {
+      md: {
         root: 'h-8 px-2.5 text-sm gap-2',
         decrement: 'p-1.25',
         increment: 'p-1.25'
       },
-      'lg': {
+      lg: {
         root: 'h-9 px-3 text-base gap-2.5',
         decrement: 'p-1.5',
         increment: 'p-1.5'
       },
-      'xl': {
+      xl: {
         root: 'h-10 px-3.5 text-lg gap-3',
         decrement: 'p-1.75',
         increment: 'p-1.75'

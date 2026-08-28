@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { AlertDialog, Button } from '@skyroc/web-ui';
+import React from 'react';
 
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
 
@@ -15,14 +15,14 @@ const AlertDialogSize = () => {
           size={size}
           title="Dialog Title"
           type="info"
-          trigger={(
+          trigger={
             <Button
               color="info"
               variant="outline"
             >
               {size}
             </Button>
-          )}
+          }
         />
       ))}
     </div>

@@ -1,8 +1,8 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { showConfirmModal, showSuccessMessage } from '@shell/theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
@@ -122,12 +122,22 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
       {
         key: 'environment',
         render: (_value, record) => (
-          <Flex align="center" vertical>
-            <Flex align="center" gap={6}>
+          <Flex
+            align="center"
+            vertical
+          >
+            <Flex
+              align="center"
+              gap={6}
+            >
               <SvgIcon icon={getBrowserIcon(record.browser)} />
               <span>{record.browser || '未知浏览器'}</span>
             </Flex>
-            <Flex align="center" className="text-12px text-tertiary" gap={6}>
+            <Flex
+              align="center"
+              className="text-12px text-tertiary"
+              gap={6}
+            >
               <SvgIcon icon={getOsIcon(record.os)} />
               <span>{record.os || '未知系统'}</span>
             </Flex>
@@ -139,7 +149,12 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
       {
         dataIndex: 'status',
         key: 'status',
-        render: value => <Badge status={value === '0' ? 'success' : 'error'} text={getStatusLabel(value)} />,
+        render: value => (
+          <Badge
+            status={value === '0' ? 'success' : 'error'}
+            text={getStatusLabel(value)}
+          />
+        ),
         title: '登录状态',
         width: 110
       },
@@ -154,11 +169,21 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
         fixed: 'right',
         key: 'actions',
         render: (_value, record) => (
-          <Flex align="center" gap={8} justify="center">
-            <Button size="small" onClick={() => setDetailRecord(record)}>
+          <Flex
+            align="center"
+            gap={8}
+            justify="center"
+          >
+            <Button
+              size="small"
+              onClick={() => setDetailRecord(record)}
+            >
               详情
             </Button>
-            <Button size="small" onClick={() => handleUnlock(record)}>
+            <Button
+              size="small"
+              onClick={() => handleUnlock(record)}
+            >
               解锁
             </Button>
           </Flex>
@@ -239,7 +264,10 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
         defaultActiveKey={isMobile ? undefined : '1'}
         items={[{ children: <LoginInfoSearch {...searchProps} />, key: '1', label: '查询条件' }]}
       />
-      <div ref={tableWrapperRef} className="min-h-0 min-w-0 flex flex-1 flex-col">
+      <div
+        ref={tableWrapperRef}
+        className="min-h-0 min-w-0 flex flex-1 flex-col"
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -257,14 +285,23 @@ const LoginInfoManagement = (props: LoginInfoManagementProps) => {
               setColumnChecks={setColumnChecks}
               onDelete={handleBatchDelete}
               suffix={
-                <Button danger ghost size="small" onClick={handleClean}>
+                <Button
+                  danger
+                  ghost
+                  size="small"
+                  onClick={handleClean}
+                >
                   清空
                 </Button>
               }
             />
           }
           title={
-            <Flex align="center" gap={8} wrap="wrap">
+            <Flex
+              align="center"
+              gap={8}
+              wrap="wrap"
+            >
               <Typography.Text strong>登录日志列表</Typography.Text>
               <Typography.Text type="secondary">共 {total} 条</Typography.Text>
               {selectedRowKeys.length ? <Tag color="blue">已选 {selectedRowKeys.length} 项</Tag> : null}

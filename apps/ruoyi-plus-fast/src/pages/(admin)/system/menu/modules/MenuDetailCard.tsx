@@ -26,8 +26,15 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
 
   if (!menu) {
     return (
-      <Card className="card-wrapper" title="菜单详情" variant="borderless">
-        <Empty description="请从左侧选择目录或菜单" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      <Card
+        className="card-wrapper"
+        title="菜单详情"
+        variant="borderless"
+      >
+        <Empty
+          description="请从左侧选择目录或菜单"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       </Card>
     );
   }
@@ -39,10 +46,19 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
       className="card-wrapper"
       extra={
         <Flex gap={8}>
-          <Button icon={<SvgIcon icon="ph:pencil-simple" />} size="small" onClick={onEdit}>
+          <Button
+            icon={<SvgIcon icon="ph:pencil-simple" />}
+            size="small"
+            onClick={onEdit}
+          >
             编辑
           </Button>
-          <Button danger icon={<SvgIcon icon="ph:trash" />} size="small" onClick={onDelete}>
+          <Button
+            danger
+            icon={<SvgIcon icon="ph:trash" />}
+            size="small"
+            onClick={onDelete}
+          >
             删除
           </Button>
         </Flex>
@@ -73,12 +89,20 @@ const MenuDetailCard = (props: MenuDetailCardProps) => {
               : `页面路由 · ${menu.component || '未配置组件路径'}`}
           </div>
         </div>
-        <Tag variant="filled" color={menu.menuType === 'M' ? 'geekblue' : 'blue'}>
+        <Tag
+          variant="filled"
+          color={menu.menuType === 'M' ? 'geekblue' : 'blue'}
+        >
           {getMenuTypeLabel(menu.menuType)}
         </Tag>
       </div>
 
-      <Descriptions bordered column={{ lg: 4, md: 2, sm: 2, xs: 1 }} items={descriptionItems} size="small" />
+      <Descriptions
+        bordered
+        column={{ lg: 4, md: 2, sm: 2, xs: 1 }}
+        items={descriptionItems}
+        size="small"
+      />
     </Card>
   );
 };
@@ -134,7 +158,12 @@ function getCacheLabel(menu: MenuItem) {
 }
 
 function renderStatus(status: MenuItem['status']) {
-  return <Badge status={status === '0' ? 'success' : 'warning'} text={status === '0' ? '正常' : '停用'} />;
+  return (
+    <Badge
+      status={status === '0' ? 'success' : 'warning'}
+      text={status === '0' ? '正常' : '停用'}
+    />
+  );
 }
 
 function renderCode(value: string | null) {

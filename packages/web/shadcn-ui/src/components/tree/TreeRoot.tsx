@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useMemo, useRef } from 'react';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { useCallback, useMemo, useRef } from 'react';
 import { TreeRootProvider } from './context';
+import { useAutoAnimate } from './hooks';
 import { findParentPath, flattenChildren, flattenItems } from './shared';
 import type { FlattenedItem, TreeItemData, TreeRootProps } from './types';
-import { useAutoAnimate } from './hooks';
 
 const TreeRoot = <T extends TreeItemData = TreeItemData>(props: TreeRootProps<T>) => {
   const {
@@ -58,118 +58,145 @@ const TreeRoot = <T extends TreeItemData = TreeItemData>(props: TreeRootProps<T>
     if (multiple && Array.isArray(modelValue)) {
       return modelValue;
     }
-    return modelValue ? [modelValue] as string[] : [];
+    return modelValue ? ([modelValue] as string[]) : [];
   }, [multiple, modelValue]);
 
   const expandedItems = flattenItems(items, expanded);
 
   // eslint-disable-next-line complexity
-  const onSelect = useCallback((value: string) => {
-    if (disabled) {
-      return;
-    }
-
-    const item = expandedItems.find(i => i.value === value);
-
-    if (item?.hasChildren && !allowParentSelect) {
-      return;
-    }
-
-    let newValue: string | string[];
-
-    if (multiple && Array.isArray(modelValue)) {
-      if (selectionBehavior === 'replace') {
-        newValue = [value];
-        firstValue.current = value;
+  const onSelect = useCallback(
+    (value: string) => {
+      if (disabled) {
+        return;
       }
-      else {
-        const index = modelValue.findIndex(v => v === value);
-        newValue = index !== -1 ? modelValue.filter(v => v !== value) : [...modelValue, value];
+
+      const item = expandedItems.find(i => i.value === value);
+
+      if (item?.hasChildren && !allowParentSelect) {
+        return;
       }
-    }
-    else if (selectionBehavior === 'replace') {
-      newValue = value;
-    }
-    else if (!Array.isArray(modelValue) && modelValue === value) {
-      newValue = '';
-    }
-    else {
-      newValue = value;
-    }
 
-    if (bubbleSelect && multiple && Array.isArray(newValue) && item) {
-      const bubbleUp = (currentItem: FlattenedItem<TreeItemData>) => {
-        if (!currentItem.parent) {
-          return;
-        }
-        const parentItem = expandedItems.find(i => i.value === currentItem.parent?.value);
-        if (!parentItem) {
-          return;
-        }
-        const isAllSelected = parentItem.data.children?.every(child => (newValue as string[]).includes(child.value));
-        if (isAllSelected) {
-          newValue = [...newValue as string[], parentItem.data.value];
-        }
-        else {
-          newValue = (newValue as string[]).filter(v => v !== parentItem.data.value);
-        }
-        bubbleUp(parentItem);
-      };
-      bubbleUp(item);
-    }
+      let newValue: string | string[];
 
-    if (propagateSelect && multiple && Array.isArray(newValue) && item) {
-      const childItems = flattenChildren(item.data.children);
-      const isSelected = newValue.includes(value);
-      if (isSelected) {
-        newValue = newValue.filter(v => !childItems.some(child => child.value === v));
+      if (multiple && Array.isArray(modelValue)) {
+        if (selectionBehavior === 'replace') {
+          newValue = [value];
+          firstValue.current = value;
+        } else {
+          const index = modelValue.findIndex(v => v === value);
+          newValue = index !== -1 ? modelValue.filter(v => v !== value) : [...modelValue, value];
+        }
+      } else if (selectionBehavior === 'replace') {
+        newValue = value;
+      } else if (!Array.isArray(modelValue) && modelValue === value) {
+        newValue = '';
+      } else {
+        newValue = value;
       }
-      else {
-        newValue = [...newValue, ...childItems.map(child => child.value)];
+
+      if (bubbleSelect && multiple && Array.isArray(newValue) && item) {
+        const bubbleUp = (currentItem: FlattenedItem<TreeItemData>) => {
+          if (!currentItem.parent) {
+            return;
+          }
+          const parentItem = expandedItems.find(i => i.value === currentItem.parent?.value);
+          if (!parentItem) {
+            return;
+          }
+          const isAllSelected = parentItem.data.children?.every(child => (newValue as string[]).includes(child.value));
+          if (isAllSelected) {
+            newValue = [...(newValue as string[]), parentItem.data.value];
+          } else {
+            newValue = (newValue as string[]).filter(v => v !== parentItem.data.value);
+          }
+          bubbleUp(parentItem);
+        };
+        bubbleUp(item);
       }
-    }
 
-    setModelValue(newValue);
-  }, [disabled, expandedItems, allowParentSelect, multiple, modelValue, selectionBehavior, bubbleSelect, propagateSelect, setModelValue]);
+      if (propagateSelect && multiple && Array.isArray(newValue) && item) {
+        const childItems = flattenChildren(item.data.children);
+        const isSelected = newValue.includes(value);
+        if (isSelected) {
+          newValue = newValue.filter(v => !childItems.some(child => child.value === v));
+        } else {
+          newValue = [...newValue, ...childItems.map(child => child.value)];
+        }
+      }
 
-  const onToggle = useCallback((value: string) => {
-    if (disabled) {
-      return;
-    }
-    const item = expandedItems.find(i => i.value === value);
-    if (!item?.data?.children) {
-      return;
-    }
-    if (expanded.includes(value)) {
-      setExpanded(expanded.filter(v => v !== value));
-      return;
-    }
-    if (toggleBehavior === 'single') {
-      const parentPath = findParentPath(value, items);
-      setExpanded(parentPath ? [...parentPath, value] : [value]);
-    }
-    else {
-      setExpanded([...expanded, value]);
-    }
-  }, [disabled, expandedItems, expanded, toggleBehavior, items, setExpanded]);
+      setModelValue(newValue);
+    },
+    [
+      disabled,
+      expandedItems,
+      allowParentSelect,
+      multiple,
+      modelValue,
+      selectionBehavior,
+      bubbleSelect,
+      propagateSelect,
+      setModelValue
+    ]
+  );
 
-  const contextValue = useMemo(() => ({
-    modelValue,
-    expanded,
-    selectedKeys,
-    expandedItems,
-    items,
-    multiple,
-    disabled,
-    selectionBehavior,
-    propagateSelect,
-    bubbleSelect,
-    allowParentSelect,
-    isVirtual: false,
-    size,
-    onSelect,
-    onToggle
-  }), [modelValue, selectedKeys, expanded, expandedItems, items, multiple, disabled, selectionBehavior, propagateSelect, bubbleSelect, allowParentSelect, size, onSelect, onToggle]);
+  const onToggle = useCallback(
+    (value: string) => {
+      if (disabled) {
+        return;
+      }
+      const item = expandedItems.find(i => i.value === value);
+      if (!item?.data?.children) {
+        return;
+      }
+      if (expanded.includes(value)) {
+        setExpanded(expanded.filter(v => v !== value));
+        return;
+      }
+      if (toggleBehavior === 'single') {
+        const parentPath = findParentPath(value, items);
+        setExpanded(parentPath ? [...parentPath, value] : [value]);
+      } else {
+        setExpanded([...expanded, value]);
+      }
+    },
+    [disabled, expandedItems, expanded, toggleBehavior, items, setExpanded]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      modelValue,
+      expanded,
+      selectedKeys,
+      expandedItems,
+      items,
+      multiple,
+      disabled,
+      selectionBehavior,
+      propagateSelect,
+      bubbleSelect,
+      allowParentSelect,
+      isVirtual: false,
+      size,
+      onSelect,
+      onToggle
+    }),
+    [
+      modelValue,
+      selectedKeys,
+      expanded,
+      expandedItems,
+      items,
+      multiple,
+      disabled,
+      selectionBehavior,
+      propagateSelect,
+      bubbleSelect,
+      allowParentSelect,
+      size,
+      onSelect,
+      onToggle
+    ]
+  );
 
   return (
     <TreeRootProvider value={contextValue}>

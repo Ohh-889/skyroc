@@ -6,8 +6,7 @@ import { localStg } from '@/utils/storage';
 /**
  * 登录页要选哪个租户
  *
- * 密码登录和验证码登录都用它：登录要带 tenantId，发短信/邮箱验证码也要带，只在其中一页选
- * 的话另一页会拿着默认租户去查账号，查不到。
+ * 密码登录和验证码登录都用它：登录要带 tenantId，发短信/邮箱验证码也要带，只在其中一页选 的话另一页会拿着默认租户去查账号，查不到。
  */
 export function useLoginTenant() {
   const { data, isFetching } = useLoginTenantsQuery();

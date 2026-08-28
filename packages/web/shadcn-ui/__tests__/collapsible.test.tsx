@@ -72,6 +72,8 @@ describe('Collapsible', () => {
     );
 
     expect(screen.getByText('Mounted details').parentElement).toHaveAttribute('data-state', 'closed');
-    expect(screen.getByText('Mounted details').closest('[data-slot="collapsible-root"]')).toHaveClass('configured-root');
+    expect(screen.getByText('Mounted details').closest('[data-slot="collapsible-root"]')).toHaveClass(
+      'configured-root'
+    );
   });
 });

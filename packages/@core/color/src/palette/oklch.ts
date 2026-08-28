@@ -118,8 +118,8 @@ function toOklch(color: string): Oklch | undefined {
 /**
  * 计算两个 OKLCH 颜色的感知距离（ΔEOK）
  *
- * 必须先把极坐标的 (c, h) 投影回 OKLab 的直角坐标 (a, b) 再算欧氏距离：直接对 l / c / h 三个分量做欧氏距离是错的——三者量纲不同（0-1 /
- * 0-0.4 / 0-360），且色相差是环形量，-4° 与 356° 等价。
+ * 必须先把极坐标的 (c, h) 投影回 OKLab 的直角坐标 (a, b) 再算欧氏距离：直接对 l / c / h 三个分量做欧氏距离是错的——三者量纲不同（0-1 / 0-0.4 / 0-360），且色相差是环形量，-4° 与
+ * 356° 等价。
  */
 function getOklchDistance(color1: Oklch, color2: Oklch): number {
   const c1 = color1.c ?? 0;
@@ -361,9 +361,7 @@ export function generateOklchPaletteAdvanced(color: string, options: OklchPalett
   const { appleHueShift = true, chromaCompensation = true, forceStep, lightnessCurve } = options;
 
   if (lightnessCurve && lightnessCurve.length !== PALETTE_STEP_COUNT) {
-    throw new Error(
-      `Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`
-    );
+    throw new Error(`Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`);
   }
 
   const { chroma, hue, lightness } = parseInputColor(color);
@@ -492,9 +490,7 @@ export function generateOklchPaletteAnchored(
   const { lightnessCurve } = options;
 
   if (lightnessCurve && lightnessCurve.length !== PALETTE_STEP_COUNT) {
-    throw new Error(
-      `Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`
-    );
+    throw new Error(`Invalid lightnessCurve: expected ${PALETTE_STEP_COUNT} values, received ${lightnessCurve.length}`);
   }
 
   const { chroma, hex: inputHex, hue, lightness } = parseInputColor(color);
@@ -673,8 +669,7 @@ export function generateOklchPaletteWithContrast(color: string): PaletteContrast
 /**
  * Dark mode optimized lightness curve
  *
- * 明度整体压暗以适配深色背景，但档位语义与 {@link PALETTE_CONFIG} 保持一致——50 依然最亮、950 依然最暗。深色主题中需要深色背景时应取 900/950，
- * 而不是依赖档位号被翻转。
+ * 明度整体压暗以适配深色背景，但档位语义与 {@link PALETTE_CONFIG} 保持一致——50 依然最亮、950 依然最暗。深色主题中需要深色背景时应取 900/950， 而不是依赖档位号被翻转。
  */
 const DARK_MODE_LIGHTNESS: number[] = [
   0.96, // 50 - lightest

@@ -65,10 +65,17 @@ const SortableItem = (props: SortableItemProps) => {
       {...attributes}
     >
       <div className="min-w-0 flex flex-1 items-center">
-        <span className="mr-8px h-full flex cursor-move items-center text-icon" {...listeners}>
+        <span
+          className="mr-8px h-full flex cursor-move items-center text-icon"
+          {...listeners}
+        >
           <SvgIcon icon="mdi:drag" />
         </span>
-        <Checkbox checked={item.checked} className="min-w-0 flex-1" onChange={handleCheckChange}>
+        <Checkbox
+          checked={item.checked}
+          className="min-w-0 flex-1"
+          onChange={handleCheckChange}
+        >
           <span className="block truncate">{renderColumnTitle(item.title, item.key)}</span>
         </Checkbox>
       </div>
@@ -172,8 +179,14 @@ const DragContent = (props: DragContentProps) => {
       </div>
       <Divider className="!my-4px" />
       <div className="max-h-240px overflow-y-auto">
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <SortableContext items={visibleColumns.map(item => item.key)} strategy={verticalListSortingStrategy}>
+        <DndContext
+          sensors={sensors}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={visibleColumns.map(item => item.key)}
+            strategy={verticalListSortingStrategy}
+          >
             {visibleColumns.map(item => (
               <SortableItem
                 item={item}
@@ -228,7 +241,12 @@ function renderColumnTitle(title: TableColumnCheck['title'], fallback: string): 
 
 function renderFixedIcon(fixed: TableColumnFixed) {
   if (fixed === 'left') {
-    return <SvgIcon className="rotate-270" icon="octicon:pin-16" />;
+    return (
+      <SvgIcon
+        className="rotate-270"
+        icon="octicon:pin-16"
+      />
+    );
   }
 
   if (fixed === 'right') {

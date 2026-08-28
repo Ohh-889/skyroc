@@ -28,17 +28,32 @@ const MarkdownEditorDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:language-markdown-outline"
         resources={[{ label: '@uiw/react-md-editor', url: 'https://uiwjs.github.io/react-md-editor/' }]}
         tags={['React Markdown Editor', 'Controlled Value']}
         title="Markdown 编辑器示例"
       />
-      <ExamplePanel icon="mdi:language-markdown-outline" title="Markdown 编辑器">
+      <ExamplePanel
+        icon="mdi:language-markdown-outline"
+        title="Markdown 编辑器"
+      >
         <div data-color-mode="light">
-          <MDEditor height={420} value={value} preview="edit" onChange={handleMarkdownChange} />
-          <MDEditor.Markdown className="mt-4 rounded-lg border border-border p-4" source={value} />
+          <MDEditor
+            height={420}
+            value={value}
+            preview="edit"
+            onChange={handleMarkdownChange}
+          />
+          <MDEditor.Markdown
+            className="mt-4 rounded-lg border border-border p-4"
+            source={value}
+          />
         </div>
       </ExamplePanel>
     </Space>

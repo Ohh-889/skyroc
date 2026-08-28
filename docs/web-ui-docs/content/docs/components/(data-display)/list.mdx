@@ -6,15 +6,7 @@ description: 用于展示标题、描述、前后插槽和补充内容的列表�
 List 用于展示一组结构一致的内容项。每一项可以包含前置内容、标题、描述、主体内容、后置内容和分隔线，适合通知、设置入口、消息列表等场景。
 
 ```tsx
-import {
-  List,
-  ListContent,
-  ListDescription,
-  ListItem,
-  ListItemUI,
-  ListRoot,
-  ListTitle
-} from '@skyroc/web-ui';
+import { List, ListContent, ListDescription, ListItem, ListItemUI, ListRoot, ListTitle } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -131,7 +123,11 @@ import {
   data={[
     { name: 'ListRoot', description: '列表根容器，渲染 ul', type: 'ListRootProps' },
     { name: 'ListItem', description: '列表项容器，渲染 li', type: 'ListItemProps' },
-    { name: 'ListItemUI', description: '复合列表项，组合 leading / content / trailing / divider', type: 'ListItemUIProps' },
+    {
+      name: 'ListItemUI',
+      description: '复合列表项，组合 leading / content / trailing / divider',
+      type: 'ListItemUIProps'
+    },
     { name: 'ListContent', description: '列表项内容容器', type: 'ListContentProps' },
     { name: 'ListTitle', description: '列表项标题', type: 'ListTitleProps' },
     { name: 'ListDescription', description: '列表项描述文本', type: 'ListDescriptionProps' }
@@ -167,7 +163,11 @@ import {
         { name: 'contentProps', type: 'ListContentProps', description: '内容容器属性。' },
         { name: 'description', type: 'ReactNode', description: '描述内容。' },
         { name: 'descriptionProps', type: 'ListDescriptionProps', description: '描述组件属性。' },
-        { name: 'divider', type: 'ReactNode | boolean', description: '分隔线配置。React element 会作为自定义分隔线渲染。' },
+        {
+          name: 'divider',
+          type: 'ReactNode | boolean',
+          description: '分隔线配置。React element 会作为自定义分隔线渲染。'
+        },
         { name: 'leading', type: 'ReactNode', description: '前置插槽。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '组件尺寸。' },
         { name: 'title', type: 'ReactNode', description: '标题内容。' },

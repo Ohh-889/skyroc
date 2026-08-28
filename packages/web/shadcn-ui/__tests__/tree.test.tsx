@@ -1,8 +1,6 @@
 import type { CSSProperties } from 'react';
 import { createRef } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ConfigProvider } from '../src/preset/config-provider';
-import { Tree } from '../src/preset/tree';
 import {
   TreeItem,
   TreeRoot,
@@ -12,10 +10,17 @@ import {
   flattenItems,
   recurseCheckChildren
 } from '../src/components/tree';
+import type { TreeItemData, TreeVirtualizerRef } from '../src/components/tree';
 import { useTreeRootContext } from '../src/components/tree/context';
 import { useAutoAnimate } from '../src/components/tree/hooks';
-import { findValuesBetween, getActiveElement, handleAndDispatchCustomEvent, isNullish } from '../src/components/tree/shared';
-import type { TreeItemData, TreeVirtualizerRef } from '../src/components/tree';
+import {
+  findValuesBetween,
+  getActiveElement,
+  handleAndDispatchCustomEvent,
+  isNullish
+} from '../src/components/tree/shared';
+import { ConfigProvider } from '../src/preset/config-provider';
+import { Tree } from '../src/preset/tree';
 import { render, screen, setupUser, within } from './helpers/render';
 
 interface IconifyMockProps {
@@ -51,22 +56,34 @@ const treeVirtualizerMock = vi.hoisted(() => {
   return {
     state,
     scrollToIndex,
-    useVirtualizer: vi.fn((options: { count: number; estimateSize: (index: number) => number; getScrollElement: () => HTMLDivElement | null; onChange?: (instance: { scrollOffset?: number }) => void }) => {
-      options.getScrollElement();
-      options.onChange?.({ scrollOffset: state.scrollOffset });
+    useVirtualizer: vi.fn(
+      (options: {
+        count: number;
+        estimateSize: (index: number) => number;
+        getScrollElement: () => HTMLDivElement | null;
+        onChange?: (instance: { scrollOffset?: number }) => void;
+      }) => {
+        options.getScrollElement();
+        options.onChange?.({ scrollOffset: state.scrollOffset });
 
-      return {
-        getTotalSize: () => Array.from({ length: options.count }).reduce<number>((total, _, index) => total + options.estimateSize(index), 0),
-        getVirtualItems: () => Array.from({ length: options.count }, (_, index) => ({
-          index,
-          key: index,
-          size: options.estimateSize(index),
-          start: index * options.estimateSize(index)
-        })),
-        scrollOffset: 18,
-        scrollToIndex
-      };
-    })
+        return {
+          getTotalSize: () =>
+            Array.from({ length: options.count }).reduce<number>(
+              (total, _, index) => total + options.estimateSize(index),
+              0
+            ),
+          getVirtualItems: () =>
+            Array.from({ length: options.count }, (_, index) => ({
+              index,
+              key: index,
+              size: options.estimateSize(index),
+              start: index * options.estimateSize(index)
+            })),
+          scrollOffset: 18,
+          scrollToIndex
+        };
+      }
+    )
   };
 });
 
@@ -164,16 +181,12 @@ describe('Tree', () => {
         defaultValue="invoices"
         indentSize={20}
         items={treeItems}
-        renderItem={(props) => {
+        renderItem={props => {
           const { hasChildren, isSelected, item } = props;
 
           return (
             <span>
-              {item.label}
-              {' '}
-              {isSelected ? 'selected' : 'idle'}
-              {' '}
-              {hasChildren ? 'branch' : 'leaf'}
+              {item.label} {isSelected ? 'selected' : 'idle'} {hasChildren ? 'branch' : 'leaf'}
             </span>
           );
         }}
@@ -354,19 +367,19 @@ describe('Tree', () => {
           defaultExpanded={['documents']}
           items={treeItems}
         >
-          {({ flattenItems: flattenedTreeItems }) => flattenedTreeItems.map(item => (
-            <TreeItem
-              disabledSelect={item.value === 'reports'}
-              disabledToggle={item.value === 'documents'}
-              key={item._id}
-              level={item.level}
-              value={item.value}
-            >
-              Static
-              {' '}
-              {item.value}
-            </TreeItem>
-          ))}
+          {({ flattenItems: flattenedTreeItems }) =>
+            flattenedTreeItems.map(item => (
+              <TreeItem
+                disabledSelect={item.value === 'reports'}
+                disabledToggle={item.value === 'documents'}
+                key={item._id}
+                level={item.level}
+                value={item.value}
+              >
+                Static {item.value}
+              </TreeItem>
+            ))
+          }
         </TreeRoot>
         <TreeRoot
           defaultExpanded={['documents']}
@@ -374,19 +387,19 @@ describe('Tree', () => {
           onExpandedChange={onPreventedExpandedChange}
           onValueChange={onPreventedValueChange}
         >
-          {({ flattenItems: flattenedTreeItems }) => flattenedTreeItems.map(item => (
-            <TreeItem
-              key={item._id}
-              level={item.level}
-              value={item.value}
-              onSelect={event => event.preventDefault()}
-              onToggle={event => event.preventDefault()}
-            >
-              Prevented
-              {' '}
-              {item.value}
-            </TreeItem>
-          ))}
+          {({ flattenItems: flattenedTreeItems }) =>
+            flattenedTreeItems.map(item => (
+              <TreeItem
+                key={item._id}
+                level={item.level}
+                value={item.value}
+                onSelect={event => event.preventDefault()}
+                onToggle={event => event.preventDefault()}
+              >
+                Prevented {item.value}
+              </TreeItem>
+            ))
+          }
         </TreeRoot>
         <Tree
           defaultExpanded={['documents']}
@@ -416,13 +429,13 @@ describe('Tree', () => {
           disabled
           defaultExpanded={['documents']}
           items={treeItems}
-          renderItem={(props) => {
+          renderItem={props => {
             const { select, toggle } = props;
 
             return (
               <button
                 type="button"
-                onClick={(event) => {
+                onClick={event => {
                   event.stopPropagation();
                   select('reports');
                   toggle('documents');
@@ -438,7 +451,8 @@ describe('Tree', () => {
       </>
     );
 
-    const [directTree, preventedTree, selectedTree, collapsedTree, replaceSingleTree, bubbleTree] = screen.getAllByRole('tree');
+    const [directTree, preventedTree, selectedTree, collapsedTree, replaceSingleTree, bubbleTree] =
+      screen.getAllByRole('tree');
 
     await user.click(within(directTree).getByRole('treeitem', { name: 'Static reports' }));
     await user.click(within(directTree).getByRole('treeitem', { name: 'Static documents' }));
@@ -530,18 +544,14 @@ describe('Tree', () => {
           {
             label: 'Reports',
             value: 'reports',
-            children: [
-              { label: 'Annual', value: 'annual' }
-            ]
+            children: [{ label: 'Annual', value: 'annual' }]
           }
         ]
       },
       {
         label: 'Media',
         value: 'media',
-        children: [
-          { label: 'Images', value: 'images' }
-        ]
+        children: [{ label: 'Images', value: 'images' }]
       }
     ];
 
@@ -577,14 +587,12 @@ describe('Tree', () => {
         items={treeItems}
         multiple
         propagateSelect
-        renderItem={(props) => {
+        renderItem={props => {
           const { isIndeterminate, item } = props;
 
           return (
             <span>
-              {item.label}
-              {' '}
-              {isIndeterminate ? 'partial' : 'complete'}
+              {item.label} {isIndeterminate ? 'partial' : 'complete'}
             </span>
           );
         }}
@@ -595,18 +603,25 @@ describe('Tree', () => {
   });
 
   it('uses item values when tree data has no label', () => {
-    render(
-      <Tree
-        items={[{ value: 'unlabeled-node' }] as unknown as TreeItemData[]}
-      />
-    );
+    render(<Tree items={[{ value: 'unlabeled-node' }] as unknown as TreeItemData[]} />);
 
     expect(screen.getByRole('treeitem', { name: 'unlabeled-node' })).toBeInTheDocument();
   });
 
   it('throws a clear error when tree item context is missing', () => {
-    expect(() => render(<TreeContextProbe />)).toThrow('`TreeContextProbe` must be used within a `TreeRoot` component.');
-    expect(() => render(<TreeItem level={1} value="orphan">Orphan</TreeItem>)).toThrow('`TreeItem` must be used within a `TreeRoot` component.');
+    expect(() => render(<TreeContextProbe />)).toThrow(
+      '`TreeContextProbe` must be used within a `TreeRoot` component.'
+    );
+    expect(() =>
+      render(
+        <TreeItem
+          level={1}
+          value="orphan"
+        >
+          Orphan
+        </TreeItem>
+      )
+    ).toThrow('`TreeItem` must be used within a `TreeRoot` component.');
   });
 
   it('controls the auto-animate controller lifecycle', async () => {
@@ -698,7 +713,12 @@ describe('Tree', () => {
     expect(treeVirtualizerMock.scrollToIndex).toHaveBeenNthCalledWith(1, 1, { align: 'center' });
     expect(treeVirtualizerMock.scrollToIndex).toHaveBeenNthCalledWith(2, 2, { align: 'end' });
     expect(treeVirtualizerMock.scrollToIndex).toHaveBeenCalledTimes(2);
-    expect(virtualizerRef.current?.flattenItems.map(item => item.value)).toEqual(['documents', 'invoices', 'reports', 'archive']);
+    expect(virtualizerRef.current?.flattenItems.map(item => item.value)).toEqual([
+      'documents',
+      'invoices',
+      'reports',
+      'archive'
+    ]);
   });
 
   it('covers virtual tree selection, toggle and disabled callback branches', async () => {
@@ -778,13 +798,13 @@ describe('Tree', () => {
           defaultExpanded={['documents']}
           height={120}
           items={treeItems}
-          renderItem={(props) => {
+          renderItem={props => {
             const { select, toggle } = props;
 
             return (
               <button
                 type="button"
-                onClick={(event) => {
+                onClick={event => {
                   event.stopPropagation();
                   select('reports');
                   toggle('documents');
@@ -800,7 +820,15 @@ describe('Tree', () => {
       </>
     );
 
-    const [selectedTree, collapsedTree, replaceTree, bubbleAddTree, bubbleRemoveTree, propagateAddTree, propagateRemoveTree] = screen.getAllByRole('tree');
+    const [
+      selectedTree,
+      collapsedTree,
+      replaceTree,
+      bubbleAddTree,
+      bubbleRemoveTree,
+      propagateAddTree,
+      propagateRemoveTree
+    ] = screen.getAllByRole('tree');
 
     await user.click(getTreeItemByValue(selectedTree, 'reports'));
     await user.click(getTreeItemByValue(collapsedTree, 'documents'));
@@ -835,9 +863,7 @@ describe('Tree', () => {
           {
             label: 'Reports',
             value: 'reports',
-            children: [
-              { label: 'Annual', value: 'annual' }
-            ]
+            children: [{ label: 'Annual', value: 'annual' }]
           }
         ]
       }
@@ -895,14 +921,12 @@ describe('Tree', () => {
         defaultExpanded={['documents']}
         height={120}
         items={treeItems}
-        renderItem={(props) => {
+        renderItem={props => {
           const { isSelected, item } = props;
 
           return (
             <span>
-              {item.label}
-              {' '}
-              {isSelected ? 'selected' : 'idle'}
+              {item.label} {isSelected ? 'selected' : 'idle'}
             </span>
           );
         }}

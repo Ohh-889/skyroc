@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { Portal } from '@shell/ui/compose';
+import type { ReactNode } from 'react';
 
 import { useAdminState } from '../../../state/use-admin-state';
 
@@ -19,7 +19,10 @@ const MenuPortal = (props: MenuPortalProps) => {
   const deviceKey = isMobile ? 'mobile' : 'desktop';
 
   return (
-    <Portal container={container} key={`${deviceKey}:${containerKey}`}>
+    <Portal
+      container={container}
+      key={`${deviceKey}:${containerKey}`}
+    >
       {children}
     </Portal>
   );

@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useEffect, useMemo } from 'react';
 import { PickerView } from '../picker/PickerView';
 import type { DatePickerViewProps } from './types';
 import {
@@ -37,8 +37,7 @@ const DatePickerView = (props: DatePickerViewProps) => {
   /**
    * 三个基准时间戳。
    *
-   * 全部抹到零点再取 getTime()：同一天内多次渲染拿到的是同一个数字，下面的 memo 才有稳定依赖可比。
-   * 直接传 Date 对象的话，min / maxDate 缺省时每次渲染都是新对象，memo 等于没做。
+   * 全部抹到零点再取 getTime()：同一天内多次渲染拿到的是同一个数字，下面的 memo 才有稳定依赖可比。 直接传 Date 对象的话，min / maxDate 缺省时每次渲染都是新对象，memo 等于没做。
    */
   const referenceTime = startOfDay(new Date()).getTime();
   const bounds = resolveDateBounds(new Date(referenceTime), minDate, maxDate);

@@ -1,11 +1,11 @@
 'use client';
 /* eslint-disable react-hooks/incompatible-library */
 
-import type { CSSProperties, ReactNode, Ref } from 'react';
-import { useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { type Virtualizer, useVirtualizer } from '@tanstack/react-virtual';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { type Virtualizer, useVirtualizer } from '@tanstack/react-virtual';
+import type { CSSProperties, ReactNode, Ref } from 'react';
+import { useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { Icon } from '../icon';
 import { TreeRootProvider } from './context';
 import { findParentPath, flattenChildren, flattenItems } from './shared';
@@ -22,46 +22,29 @@ import type {
 } from './types';
 
 export interface TreeVirtualizerProps<T extends TreeItemData = TreeItemData>
-  extends Omit<TreeRootProps<T>, 'children' | 'onScroll' | 'onSelect' | 'onToggle'>,
-  Pick<TreeItemProps, 'disabledSelect' | 'disabledToggle' | 'indentSize' | 'onSelect' | 'onToggle'> {
-  /**
-   * Custom class names for component slots
-   */
+  extends
+    Omit<TreeRootProps<T>, 'children' | 'onScroll' | 'onSelect' | 'onToggle'>,
+    Pick<TreeItemProps, 'disabledSelect' | 'disabledToggle' | 'indentSize' | 'onSelect' | 'onToggle'> {
+  /** Custom class names for component slots */
   classNames?: TreeClassNames & {
     virtualContainer?: string;
     virtualContent?: string;
   };
-  /**
-   * Whether to use dynamic item size measurement
-   */
+  /** Whether to use dynamic item size measurement */
   dynamic?: boolean;
-  /**
-   * Height of the virtual container
-   */
+  /** Height of the virtual container */
   height: number | string;
-  /**
-   * Estimated item height for virtualization
-   */
+  /** Estimated item height for virtualization */
   itemSize?: number | ((index: number) => number);
-  /**
-   * Callback when scroll offset changes
-   */
+  /** Callback when scroll offset changes */
   onScroll?: (offset: number) => void;
-  /**
-   * Overscan count for rendering extra items
-   */
+  /** Overscan count for rendering extra items */
   overscan?: number;
-  /**
-   * Custom render function for each tree item
-   */
+  /** Custom render function for each tree item */
   renderItem?: (props: TreeItemRenderProps & { item: FlattenedItem<T> } & TreeRootRenderProps<T>) => ReactNode;
-  /**
-   * Reference to the virtualizer instance
-   */
+  /** Reference to the virtualizer instance */
   virtualizerRef?: Ref<TreeVirtualizerRef<T> | null>;
-  /**
-   * Width of the virtual container
-   */
+  /** Width of the virtual container */
   width?: number | string;
 }
 
@@ -88,13 +71,13 @@ const DefaultIndicator = ({ isExpanded }: { isExpanded: boolean }) => {
   );
 };
 
-function defaultRenderItemContent<T extends TreeItemData>(item: FlattenedItem<T>, isExpanded: boolean, hasChildren: boolean) {
-  const indicator = hasChildren
-    ? (
-      <DefaultIndicator isExpanded={isExpanded} />
-    )
-    : <span className="w-4" />;
-  const label = 'label' in item.data ? (item.data).label : item.value;
+function defaultRenderItemContent<T extends TreeItemData>(
+  item: FlattenedItem<T>,
+  isExpanded: boolean,
+  hasChildren: boolean
+) {
+  const indicator = hasChildren ? <DefaultIndicator isExpanded={isExpanded} /> : <span className="w-4" />;
+  const label = 'label' in item.data ? item.data.label : item.value;
   return (
     <>
       {indicator}
@@ -164,100 +147,109 @@ const TreeVirtualizer = <T extends TreeItemData = TreeItemData>(props: TreeVirtu
     if (multiple && Array.isArray(modelValue)) {
       return modelValue;
     }
-    return modelValue ? [modelValue] as string[] : [];
+    return modelValue ? ([modelValue] as string[]) : [];
   }, [multiple, modelValue]);
 
   const expandedItems = useMemo(() => flattenItems(items, expanded), [items, expanded]);
 
   // eslint-disable-next-line complexity
-  const handleSelect = useCallback((value: string) => {
-    if (disabled) {
-      return;
-    }
-
-    const item = expandedItems.find(i => i.value === value);
-
-    if (item?.hasChildren && !allowParentSelect) {
-      return;
-    }
-
-    let newValue: string | string[];
-
-    if (multiple && Array.isArray(modelValue)) {
-      if (selectionBehavior === 'replace') {
-        newValue = [value];
-        firstValue.current = value;
+  const handleSelect = useCallback(
+    (value: string) => {
+      if (disabled) {
+        return;
       }
-      else {
-        const index = modelValue.findIndex(v => v === value);
-        newValue = index !== -1 ? modelValue.filter(v => v !== value) : [...modelValue, value];
+
+      const item = expandedItems.find(i => i.value === value);
+
+      if (item?.hasChildren && !allowParentSelect) {
+        return;
       }
-    }
-    else if (selectionBehavior === 'replace') {
-      newValue = value;
-    }
-    else if (!Array.isArray(modelValue) && modelValue === value) {
-      newValue = '';
-    }
-    else {
-      newValue = value;
-    }
 
-    if (bubbleSelect && multiple && Array.isArray(newValue) && item) {
-      const bubbleUp = (currentItem: FlattenedItem<TreeItemData>) => {
-        if (!currentItem.parent) {
-          return;
-        }
-        const parentItem = expandedItems.find(i => i.value === currentItem.parent?.value);
-        if (!parentItem) {
-          return;
-        }
-        const isAllSelected = parentItem.data.children?.every(child => (newValue as string[]).includes(child.value));
-        if (isAllSelected) {
-          newValue = [...newValue as string[], parentItem.data.value];
-        }
-        else {
-          newValue = (newValue as string[]).filter(v => v !== parentItem.data.value);
-        }
-        bubbleUp(parentItem);
-      };
-      bubbleUp(item);
-    }
+      let newValue: string | string[];
 
-    if (propagateSelect && multiple && Array.isArray(newValue) && item) {
-      const children = flattenChildren(item.data.children);
-      const isSelected = newValue.includes(value);
-      if (isSelected) {
-        newValue = newValue.filter(v => !children.some(child => child.value === v));
+      if (multiple && Array.isArray(modelValue)) {
+        if (selectionBehavior === 'replace') {
+          newValue = [value];
+          firstValue.current = value;
+        } else {
+          const index = modelValue.findIndex(v => v === value);
+          newValue = index !== -1 ? modelValue.filter(v => v !== value) : [...modelValue, value];
+        }
+      } else if (selectionBehavior === 'replace') {
+        newValue = value;
+      } else if (!Array.isArray(modelValue) && modelValue === value) {
+        newValue = '';
+      } else {
+        newValue = value;
       }
-      else {
-        newValue = [...newValue, ...children.map(child => child.value)];
+
+      if (bubbleSelect && multiple && Array.isArray(newValue) && item) {
+        const bubbleUp = (currentItem: FlattenedItem<TreeItemData>) => {
+          if (!currentItem.parent) {
+            return;
+          }
+          const parentItem = expandedItems.find(i => i.value === currentItem.parent?.value);
+          if (!parentItem) {
+            return;
+          }
+          const isAllSelected = parentItem.data.children?.every(child => (newValue as string[]).includes(child.value));
+          if (isAllSelected) {
+            newValue = [...(newValue as string[]), parentItem.data.value];
+          } else {
+            newValue = (newValue as string[]).filter(v => v !== parentItem.data.value);
+          }
+          bubbleUp(parentItem);
+        };
+        bubbleUp(item);
       }
-    }
 
-    setModelValue(newValue);
-  }, [disabled, expandedItems, allowParentSelect, multiple, modelValue, selectionBehavior, bubbleSelect, propagateSelect, setModelValue]);
+      if (propagateSelect && multiple && Array.isArray(newValue) && item) {
+        const children = flattenChildren(item.data.children);
+        const isSelected = newValue.includes(value);
+        if (isSelected) {
+          newValue = newValue.filter(v => !children.some(child => child.value === v));
+        } else {
+          newValue = [...newValue, ...children.map(child => child.value)];
+        }
+      }
 
-  const handleToggle = useCallback((value: string) => {
-    if (disabled) {
-      return;
-    }
-    const item = expandedItems.find(i => i.value === value);
-    if (!item?.data?.children) {
-      return;
-    }
-    if (expanded.includes(value)) {
-      setExpanded(expanded.filter(v => v !== value));
-      return;
-    }
-    if (toggleBehavior === 'single') {
-      const parentPath = findParentPath(value, items);
-      setExpanded(parentPath ? [...parentPath, value] : [value]);
-    }
-    else {
-      setExpanded([...expanded, value]);
-    }
-  }, [disabled, expandedItems, expanded, toggleBehavior, items, setExpanded]);
+      setModelValue(newValue);
+    },
+    [
+      disabled,
+      expandedItems,
+      allowParentSelect,
+      multiple,
+      modelValue,
+      selectionBehavior,
+      bubbleSelect,
+      propagateSelect,
+      setModelValue
+    ]
+  );
+
+  const handleToggle = useCallback(
+    (value: string) => {
+      if (disabled) {
+        return;
+      }
+      const item = expandedItems.find(i => i.value === value);
+      if (!item?.data?.children) {
+        return;
+      }
+      if (expanded.includes(value)) {
+        setExpanded(expanded.filter(v => v !== value));
+        return;
+      }
+      if (toggleBehavior === 'single') {
+        const parentPath = findParentPath(value, items);
+        setExpanded(parentPath ? [...parentPath, value] : [value]);
+      } else {
+        setExpanded([...expanded, value]);
+      }
+    },
+    [disabled, expandedItems, expanded, toggleBehavior, items, setExpanded]
+  );
 
   function getEstimateSize(index: number) {
     if (typeof itemSize === 'function') {
@@ -271,7 +263,7 @@ const TreeVirtualizer = <T extends TreeItemData = TreeItemData>(props: TreeVirtu
     count: expandedItems.length,
     estimateSize: getEstimateSize,
     overscan,
-    onChange: (instance) => {
+    onChange: instance => {
       onScroll?.(instance.scrollOffset ?? 0);
     }
   });
@@ -279,42 +271,70 @@ const TreeVirtualizer = <T extends TreeItemData = TreeItemData>(props: TreeVirtu
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
 
-  const scrollToIndex = useCallback((index: number, options?: { align?: 'auto' | 'center' | 'end' | 'start' }) => {
-    virtualizer.scrollToIndex(index, options);
-  }, [virtualizer]);
-
-  const scrollToValue = useCallback((value: string, options?: { align?: 'auto' | 'center' | 'end' | 'start' }) => {
-    const index = expandedItems.findIndex(item => item.value === value);
-    if (index !== -1) {
+  const scrollToIndex = useCallback(
+    (index: number, options?: { align?: 'auto' | 'center' | 'end' | 'start' }) => {
       virtualizer.scrollToIndex(index, options);
-    }
-  }, [virtualizer, expandedItems]);
+    },
+    [virtualizer]
+  );
 
-  useImperativeHandle(virtualizerRef, () => ({
-    containerRef: rootRef.current,
-    virtualizer,
-    flattenItems: expandedItems,
-    scrollToIndex,
-    scrollToValue
-  }), [virtualizer, expandedItems, scrollToIndex, scrollToValue]);
+  const scrollToValue = useCallback(
+    (value: string, options?: { align?: 'auto' | 'center' | 'end' | 'start' }) => {
+      const index = expandedItems.findIndex(item => item.value === value);
+      if (index !== -1) {
+        virtualizer.scrollToIndex(index, options);
+      }
+    },
+    [virtualizer, expandedItems]
+  );
 
-  const contextValue = useMemo(() => ({
-    modelValue,
-    expanded,
-    selectedKeys,
-    expandedItems,
-    items,
-    multiple,
-    disabled,
-    selectionBehavior,
-    propagateSelect,
-    bubbleSelect,
-    allowParentSelect,
-    isVirtual: true,
-    size,
-    onSelect: handleSelect,
-    onToggle: handleToggle
-  }), [modelValue, selectedKeys, expanded, expandedItems, items, multiple, disabled, selectionBehavior, propagateSelect, bubbleSelect, allowParentSelect, size, handleSelect, handleToggle]);
+  useImperativeHandle(
+    virtualizerRef,
+    () => ({
+      containerRef: rootRef.current,
+      virtualizer,
+      flattenItems: expandedItems,
+      scrollToIndex,
+      scrollToValue
+    }),
+    [virtualizer, expandedItems, scrollToIndex, scrollToValue]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      modelValue,
+      expanded,
+      selectedKeys,
+      expandedItems,
+      items,
+      multiple,
+      disabled,
+      selectionBehavior,
+      propagateSelect,
+      bubbleSelect,
+      allowParentSelect,
+      isVirtual: true,
+      size,
+      onSelect: handleSelect,
+      onToggle: handleToggle
+    }),
+    [
+      modelValue,
+      selectedKeys,
+      expanded,
+      expandedItems,
+      items,
+      multiple,
+      disabled,
+      selectionBehavior,
+      propagateSelect,
+      bubbleSelect,
+      allowParentSelect,
+      size,
+      handleSelect,
+      handleToggle
+    ]
+  );
 
   const containerStyle: CSSProperties = {
     height,
@@ -349,7 +369,7 @@ const TreeVirtualizer = <T extends TreeItemData = TreeItemData>(props: TreeVirtu
             transform: `translateY(${virtualItems[0]?.start ?? 0}px)`
           }}
         >
-          {virtualItems.map((virtualItem) => {
+          {virtualItems.map(virtualItem => {
             const item = expandedItems[virtualItem.index];
 
             return (
@@ -378,7 +398,7 @@ const TreeVirtualizer = <T extends TreeItemData = TreeItemData>(props: TreeVirtu
       );
     }
 
-    return virtualItems.map((virtualItem) => {
+    return virtualItems.map(virtualItem => {
       const item = expandedItems[virtualItem.index];
 
       const itemStyle: CSSProperties = {

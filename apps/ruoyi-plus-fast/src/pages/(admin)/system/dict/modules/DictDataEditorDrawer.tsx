@@ -66,21 +66,46 @@ const DictDataEditorDrawer = (props: DictDataEditorDrawerProps) => {
       size={520}
       footer={
         <Flex justify="end">
-          <Button disabled={loading} onClick={onClose}>
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button className="ml-8px" loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            className="ml-8px"
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存
           </Button>
         </Flex>
       }
       onClose={onClose}
     >
-      {detailQuery.isError ? <Alert className="mb-16px" message="字典数据加载失败" showIcon type="error" /> : null}
+      {detailQuery.isError ? (
+        <Alert
+          className="mb-16px"
+          message="字典数据加载失败"
+          showIcon
+          type="error"
+        />
+      ) : null}
       <Spin spinning={detailQuery.isLoading}>
-        <Form form={form} layout="vertical" onFinish={handleFinish}>
-          <Form.Item label="字典类型" name="dictType">
-            <Select disabled options={typeOptions} />
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+        >
+          <Form.Item
+            label="字典类型"
+            name="dictType"
+          >
+            <Select
+              disabled
+              options={typeOptions}
+            />
           </Form.Item>
           <Flex gap={12}>
             <Form.Item
@@ -101,10 +126,21 @@ const DictDataEditorDrawer = (props: DictDataEditorDrawerProps) => {
             </Form.Item>
           </Flex>
           <Flex gap={12}>
-            <Form.Item className="flex-1" label="字典排序" name="dictSort">
-              <InputNumber className="w-full" min={0} />
+            <Form.Item
+              className="flex-1"
+              label="字典排序"
+              name="dictSort"
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+              />
             </Form.Item>
-            <Form.Item className="flex-1" label="是否默认" name="isDefault">
+            <Form.Item
+              className="flex-1"
+              label="是否默认"
+              name="isDefault"
+            >
               <Radio.Group
                 options={[
                   { label: '是', value: 'Y' },
@@ -113,7 +149,10 @@ const DictDataEditorDrawer = (props: DictDataEditorDrawerProps) => {
               />
             </Form.Item>
           </Flex>
-          <Form.Item label="回显样式" name="listClass">
+          <Form.Item
+            label="回显样式"
+            name="listClass"
+          >
             <Select
               allowClear
               options={['default', 'primary', 'success', 'info', 'warning', 'danger'].map(value => ({
@@ -122,10 +161,16 @@ const DictDataEditorDrawer = (props: DictDataEditorDrawerProps) => {
               }))}
             />
           </Form.Item>
-          <Form.Item label="样式属性" name="cssClass">
+          <Form.Item
+            label="样式属性"
+            name="cssClass"
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="备注" name="remark">
+          <Form.Item
+            label="备注"
+            name="remark"
+          >
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>

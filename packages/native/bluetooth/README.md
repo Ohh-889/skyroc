@@ -29,7 +29,7 @@ plugins: [
       bluetoothAlwaysPermission: '需要使用蓝牙来连接您的健康设备'
     }
   ]
-]
+];
 ```
 
 改完跑 `pnpm install` + `npx expo prebuild --clean`。**Expo Go 用不了**，得用 dev client。
@@ -44,10 +44,14 @@ import { ensureBluetoothReady, openAppSettings, openLocationSettings } from '@sk
 const outcome = await ensureBluetoothReady();
 if (!outcome.ready) {
   switch (outcome.blockedBy) {
-    case 'unsupported':          return toast('本机不支持蓝牙');
-    case 'permission':           return confirm('去设置里打开蓝牙权限', openAppSettings);
-    case 'bluetoothOff':         return toast('请打开蓝牙后重试');
-    case 'locationServicesOff':  return confirm('请打开定位服务', openLocationSettings);
+    case 'unsupported':
+      return toast('本机不支持蓝牙');
+    case 'permission':
+      return confirm('去设置里打开蓝牙权限', openAppSettings);
+    case 'bluetoothOff':
+      return toast('请打开蓝牙后重试');
+    case 'locationServicesOff':
+      return confirm('请打开定位服务', openLocationSettings);
   }
 }
 // 到这里蓝牙一定可用
@@ -55,15 +59,15 @@ if (!outcome.ready) {
 
 要自己控制流程就用原子方法：
 
-| 方法 | 说明 |
-| --- | --- |
-| `getBluetoothState()` | 当前状态，其余判断全是它的派生 |
-| `isBluetoothSupported()` / `isBluetoothEnabled()` / `isBluetoothAvailable()` | 三个常用判断 |
-| `getBluetoothPermission()` / `requestBluetoothPermission()` | 权限查询 / 申请 |
-| `requestEnableBluetooth()` | 引导用户打开蓝牙 |
-| `isLocationServicesEnabled()` / `openLocationSettings()` | Android 12 以下扫描要求定位服务开着 |
-| `openAppSettings()` | 权限被永久拒绝后的补救 |
-| `addBluetoothStateListener()` | 开关状态变化 |
+| 方法                                                                         | 说明                                |
+| ---------------------------------------------------------------------------- | ----------------------------------- |
+| `getBluetoothState()`                                                        | 当前状态，其余判断全是它的派生      |
+| `isBluetoothSupported()` / `isBluetoothEnabled()` / `isBluetoothAvailable()` | 三个常用判断                        |
+| `getBluetoothPermission()` / `requestBluetoothPermission()`                  | 权限查询 / 申请                     |
+| `requestEnableBluetooth()`                                                   | 引导用户打开蓝牙                    |
+| `isLocationServicesEnabled()` / `openLocationSettings()`                     | Android 12 以下扫描要求定位服务开着 |
+| `openAppSettings()`                                                          | 权限被永久拒绝后的补救              |
+| `addBluetoothStateListener()`                                                | 开关状态变化                        |
 
 监听状态变化：
 
@@ -81,12 +85,12 @@ useEffect(() => {
 
 ### 打开蓝牙
 
-| | Android | iOS |
-| --- | --- | --- |
-| 做法 | `ACTION_REQUEST_ENABLE` 系统对话框 | 跳到本 App 的设置页 |
-| `handledBy` | `'dialog'` | `'settings'` |
-| `enabled` | 用户的真实选择 | **恒为 `false`** |
-| 能不能立刻往下走 | 能 | 不能，等用户切回来再查一次 |
+|                  | Android                            | iOS                        |
+| ---------------- | ---------------------------------- | -------------------------- |
+| 做法             | `ACTION_REQUEST_ENABLE` 系统对话框 | 跳到本 App 的设置页        |
+| `handledBy`      | `'dialog'`                         | `'settings'`               |
+| `enabled`        | 用户的真实选择                     | **恒为 `false`**           |
+| 能不能立刻往下走 | 能                                 | 不能，等用户切回来再查一次 |
 
 iOS 上没有能直接开蓝牙、也没有能跳到蓝牙设置页的公开 API。
 `App-Prefs:root=Bluetooth` 这类私有 scheme 会被审核拒，且在新系统上已经失效，所以本包不用它。

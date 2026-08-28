@@ -1,7 +1,7 @@
 'use client';
 
-import { forwardRef } from 'react';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
 import { carouselVariants } from './carousel-variants';
 import { useCarousel } from './context';
 import type { CarouselItemProps } from './types';

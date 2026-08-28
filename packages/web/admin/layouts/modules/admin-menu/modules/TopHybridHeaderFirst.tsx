@@ -8,7 +8,10 @@ const ReversedHorizontalMix = () => {
   return [
     <Vertical key={LAYOUT_MODE_VERTICAL} />,
 
-    <Horizontal key={`${LAYOUT_MODE_TOP_HYBRID_HEADER_FIRST}-horizontal`} mode={HorizontalMenuMode.FirstLevel} />
+    <Horizontal
+      key={`${LAYOUT_MODE_TOP_HYBRID_HEADER_FIRST}-horizontal`}
+      mode={HorizontalMenuMode.FirstLevel}
+    />
   ];
 };
 

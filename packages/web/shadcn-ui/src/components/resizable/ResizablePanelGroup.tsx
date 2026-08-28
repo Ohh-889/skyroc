@@ -1,7 +1,7 @@
 'use client';
 
-import { Group as PanelGroup } from 'react-resizable-panels';
 import { cn } from '@skyroc/utils';
+import { Group as PanelGroup } from 'react-resizable-panels';
 import { resizableVariants } from './resizable-variants';
 import type { ResizablePanelGroupProps } from './types';
 

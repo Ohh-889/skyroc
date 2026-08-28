@@ -93,16 +93,12 @@ describe('Tabs', () => {
           value="summary"
           renderContent={({ active, item }) => (
             <span>
-              {active ? 'Active' : 'Inactive'}
-              {' '}
-              {item.children}
+              {active ? 'Active' : 'Inactive'} {item.children}
             </span>
           )}
           renderTrigger={({ active, item }) => (
             <span>
-              {item.label}
-              {' '}
-              {active ? 'selected' : 'idle'}
+              {item.label} {active ? 'selected' : 'idle'}
             </span>
           )}
         />

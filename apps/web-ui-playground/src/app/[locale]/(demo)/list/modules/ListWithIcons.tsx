@@ -29,12 +29,10 @@ const listItems = [
 
 const ListWithIcons = () => {
   return (
-
     <List
       className="w-80 max-sm:w-full"
       items={listItems}
     />
-
   );
 };
 

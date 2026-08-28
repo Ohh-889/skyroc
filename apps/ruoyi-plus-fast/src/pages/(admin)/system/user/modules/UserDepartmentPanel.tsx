@@ -34,11 +34,21 @@ const UserDepartmentPanel = (props: UserDepartmentPanelProps) => {
 
   function renderTree() {
     if (error) {
-      return <Alert action={<Button onClick={refresh}>重试</Button>} showIcon title="部门树加载失败" type="error" />;
+      return (
+        <Alert
+          action={<Button onClick={refresh}>重试</Button>}
+          showIcon
+          title="部门树加载失败"
+          type="error"
+        />
+      );
     }
     if (treeData.length === 0) {
       return (
-        <Empty description={keyword ? '没有找到符合条件的部门' : '暂无部门'} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <Empty
+          description={keyword ? '没有找到符合条件的部门' : '暂无部门'}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
       );
     }
     return (
@@ -56,7 +66,14 @@ const UserDepartmentPanel = (props: UserDepartmentPanelProps) => {
     <Card
       className="h-full min-h-0 flex flex-col overflow-hidden card-wrapper"
       classNames={{ body: 'min-h-0 flex flex-1 flex-col' }}
-      extra={<ButtonIcon aria-label="刷新部门树" icon="ph:arrows-clockwise" loading={fetching} onClick={refresh} />}
+      extra={
+        <ButtonIcon
+          aria-label="刷新部门树"
+          icon="ph:arrows-clockwise"
+          loading={fetching}
+          onClick={refresh}
+        />
+      }
       title="部门"
       variant="borderless"
     >
@@ -64,7 +81,12 @@ const UserDepartmentPanel = (props: UserDepartmentPanelProps) => {
         allowClear
         className="mb-10px"
         placeholder="搜索部门"
-        prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+        prefix={
+          <SvgIcon
+            className="text-tertiary"
+            icon="ph:magnifying-glass"
+          />
+        }
         value={keyword}
         onChange={event => setKeyword(event.target.value)}
       />
@@ -79,7 +101,9 @@ const UserDepartmentPanel = (props: UserDepartmentPanelProps) => {
       <div className="min-h-0 flex-1 overflow-auto lt-xl:max-h-360px">
         <Spin spinning={loading}>{renderTree()}</Spin>
       </div>
-      <div className="mt-12px border-t border-border-secondary pt-10px text-11px text-tertiary">当前接口支持部门模糊筛选</div>
+      <div className="mt-12px border-t border-border-secondary pt-10px text-11px text-tertiary">
+        当前接口支持部门模糊筛选
+      </div>
     </Card>
   );
 };
@@ -95,10 +119,16 @@ function createTreeData(nodes: DeptTreeNode[], keyword: string): TreeDataNode[] 
         children,
         key: String(node.id),
         title: (
-          <Flex align="center" gap={6}>
+          <Flex
+            align="center"
+            gap={6}
+          >
             <span className="min-w-0 flex-1 truncate">{node.label}</span>
             {node.disabled ? (
-              <Tag color="warning" variant="filled">
+              <Tag
+                color="warning"
+                variant="filled"
+              >
                 停用
               </Tag>
             ) : null}

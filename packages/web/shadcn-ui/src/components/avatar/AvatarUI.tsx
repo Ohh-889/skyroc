@@ -1,8 +1,8 @@
 'use client';
 
+import type { Image } from '@radix-ui/react-avatar';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import type { Image } from '@radix-ui/react-avatar';
 import AvatarFallback from './AvatarFallback';
 import AvatarImage from './AvatarImage';
 import AvatarRoot from './AvatarRoot';

@@ -46,26 +46,26 @@ pnpm sa cleanup
 
 ## 命令一览
 
-| 命令 | 说明 |
-| --- | --- |
-| `sa changelog` | 生成 / 更新 CHANGELOG.md |
-| `sa cleanup` | 删除 dist、node_modules 等构建产物 |
-| `sa git-commit` | 交互式生成符合 Conventional Commits 规范的提交信息 |
-| `sa git-commit-verify` | 校验当前 git 提交信息是否符合规范（用于 git hook） |
-| `sa release` | 版本发布：升级版本号 → 生成 changelog → commit + tag + push |
-| `sa update-pkg` | 检测并升级 package.json 中的依赖版本 |
+| 命令                   | 说明                                                        |
+| ---------------------- | ----------------------------------------------------------- |
+| `sa changelog`         | 生成 / 更新 CHANGELOG.md                                    |
+| `sa cleanup`           | 删除 dist、node_modules 等构建产物                          |
+| `sa git-commit`        | 交互式生成符合 Conventional Commits 规范的提交信息          |
+| `sa git-commit-verify` | 校验当前 git 提交信息是否符合规范（用于 git hook）          |
+| `sa release`           | 版本发布：升级版本号 → 生成 changelog → commit + tag + push |
+| `sa update-pkg`        | 检测并升级 package.json 中的依赖版本                        |
 
 ## 全局选项
 
 所有命令共享以下选项：
 
-| 选项 | 简写 | 说明 | 默认值 |
-| --- | --- | --- | --- |
-| `--lang <lang>` | `-l` | CLI 交互语言，支持 `en-us` / `zh-cn` | `en-us` |
-| `--execute <cmd>` | `-e` | release 版本号升级后、git commit 前执行的额外命令 | `pnpm sa changelog` |
-| `--push` | `-p` | release 完成后是否自动 push | `true` |
-| `--total` | `-t` | changelog 命令：基于所有历史 tag 生成完整 changelog | `false` |
-| `--cleanupDir <dir>` | `-c` | cleanup 命令：自定义清理目录的 glob 匹配模式，多个用 `,` 分隔 | 见配置默认值 |
+| 选项                 | 简写 | 说明                                                          | 默认值              |
+| -------------------- | ---- | ------------------------------------------------------------- | ------------------- |
+| `--lang <lang>`      | `-l` | CLI 交互语言，支持 `en-us` / `zh-cn`                          | `en-us`             |
+| `--execute <cmd>`    | `-e` | release 版本号升级后、git commit 前执行的额外命令             | `pnpm sa changelog` |
+| `--push`             | `-p` | release 完成后是否自动 push                                   | `true`              |
+| `--total`            | `-t` | changelog 命令：基于所有历史 tag 生成完整 changelog           | `false`             |
+| `--cleanupDir <dir>` | `-c` | cleanup 命令：自定义清理目录的 glob 匹配模式，多个用 `,` 分隔 | 见配置默认值        |
 
 ## 命令详情
 
@@ -90,37 +90,37 @@ pnpm sa cleanup
 
 **支持的提交类型：**
 
-| 类型 | 说明 |
-| --- | --- |
-| `feat` | 新功能 |
-| `feat-wip` | 开发中的功能（partial commit） |
-| `fix` | Bug 修复 |
-| `docs` | 仅文档变更 |
-| `typo` | 代码或文档中的拼写/笔误修正 |
-| `style` | 不影响代码含义的格式调整 |
+| 类型       | 说明                                |
+| ---------- | ----------------------------------- |
+| `feat`     | 新功能                              |
+| `feat-wip` | 开发中的功能（partial commit）      |
+| `fix`      | Bug 修复                            |
+| `docs`     | 仅文档变更                          |
+| `typo`     | 代码或文档中的拼写/笔误修正         |
+| `style`    | 不影响代码含义的格式调整            |
 | `refactor` | 既不修复 bug 也不添加功能的代码重构 |
-| `perf` | 性能优化 |
-| `optimize` | 代码质量优化 |
-| `test` | 测试相关 |
-| `build` | 构建系统或外部依赖变更 |
-| `ci` | CI 配置变更 |
-| `chore` | 其他杂项变更 |
-| `revert` | 回退先前提交 |
+| `perf`     | 性能优化                            |
+| `optimize` | 代码质量优化                        |
+| `test`     | 测试相关                            |
+| `build`    | 构建系统或外部依赖变更              |
+| `ci`       | CI 配置变更                         |
+| `chore`    | 其他杂项变更                        |
+| `revert`   | 回退先前提交                        |
 
 **支持的提交范围：**
 
-| 范围 | 说明 |
-| --- | --- |
-| `projects` | 整体项目 |
-| `packages` | 子包 |
-| `components` | 组件 |
-| `hooks` | Hook 函数 |
-| `utils` | 工具函数 |
-| `types` | TypeScript 类型声明 |
-| `styles` | 样式 |
-| `deps` | 项目依赖 |
-| `release` | 版本发布 |
-| `other` | 其他 |
+| 范围         | 说明                |
+| ------------ | ------------------- |
+| `projects`   | 整体项目            |
+| `packages`   | 子包                |
+| `components` | 组件                |
+| `hooks`      | Hook 函数           |
+| `utils`      | 工具函数            |
+| `types`      | TypeScript 类型声明 |
+| `styles`     | 样式                |
+| `deps`       | 项目依赖            |
+| `release`    | 版本发布            |
+| `other`      | 其他                |
 
 ---
 
@@ -300,9 +300,7 @@ export default defineConfig({
   changelogOptions: {
     // 参考 @soybeanjs/changelog 文档
   },
-  gitCommitVerifyIgnores: [
-    /^WIP:/
-  ]
+  gitCommitVerifyIgnores: [/^WIP:/]
 });
 ```
 
@@ -329,10 +327,10 @@ pnpm sa git-commit-verify
 
 `--lang` 选项控制交互界面语言，目前支持：
 
-| 值 | 说明 |
-| --- | --- |
+| 值      | 说明         |
+| ------- | ------------ |
 | `en-us` | 英文（默认） |
-| `zh-cn` | 简体中文 |
+| `zh-cn` | 简体中文     |
 
 ```bash
 pnpm sa git-commit --lang zh-cn
@@ -379,17 +377,17 @@ packages/@core/scripts/
 
 **依赖说明：**
 
-| 依赖 | 用途 |
-| --- | --- |
-| `cac` | CLI 框架，命令/选项注册与解析 |
-| `bumpp` | 交互式版本号升级 |
-| `@soybeanjs/changelog` | Changelog 生成 |
-| `enquirer` | 终端交互式 prompt |
-| `c12` | 配置文件加载（支持多种格式） |
-| `execa` | 跨平台子进程执行 |
-| `npm-check-updates` | 依赖版本检测与更新 |
-| `kolorist` | 终端颜色输出 |
-| `rimraf` | 跨平台递归删除（`sa cleanup`） |
+| 依赖                   | 用途                           |
+| ---------------------- | ------------------------------ |
+| `cac`                  | CLI 框架，命令/选项注册与解析  |
+| `bumpp`                | 交互式版本号升级               |
+| `@soybeanjs/changelog` | Changelog 生成                 |
+| `enquirer`             | 终端交互式 prompt              |
+| `c12`                  | 配置文件加载（支持多种格式）   |
+| `execa`                | 跨平台子进程执行               |
+| `npm-check-updates`    | 依赖版本检测与更新             |
+| `kolorist`             | 终端颜色输出                   |
+| `rimraf`               | 跨平台递归删除（`sa cleanup`） |
 
 ## 设计原则
 

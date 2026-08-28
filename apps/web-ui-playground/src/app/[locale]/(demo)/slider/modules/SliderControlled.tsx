@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, Slider } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const SliderControlled = () => {
   const [value, setValue] = useState([35]);

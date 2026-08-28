@@ -25,12 +25,12 @@ function useAuthFormRules(): {
 
 内部依赖 `useTranslation()` 读取 `form.*` 文案，因此只能在组件中调用。返回值：
 
-| 返回值 | 类型 | 说明 |
-| --- | --- | --- |
-| `formRules` | `Record<AuthField, FormRule[]>` | 必填 + 格式校验组合，适合大多数登录 / 注册字段。 |
-| `patternRules` | `Record<AuthField, FormRule>` | 只做格式校验，不含必填。 |
-| `defaultRequiredRule` | `FormRule` | 当前语言下的通用必填规则（`t('form.required')`）。 |
-| `createRequiredRule` | `(message: string) => FormRule` | 用指定文案创建必填规则。 |
+| 返回值                 | 类型                                 | 说明                                                 |
+| ---------------------- | ------------------------------------ | ---------------------------------------------------- |
+| `formRules`            | `Record<AuthField, FormRule[]>`      | 必填 + 格式校验组合，适合大多数登录 / 注册字段。     |
+| `patternRules`         | `Record<AuthField, FormRule>`        | 只做格式校验，不含必填。                             |
+| `defaultRequiredRule`  | `FormRule`                           | 当前语言下的通用必填规则（`t('form.required')`）。   |
+| `createRequiredRule`   | `(message: string) => FormRule`      | 用指定文案创建必填规则。                             |
 | `createConfirmPwdRule` | `(form: FormInstance) => FormRule[]` | 创建确认密码规则，校验是否等于表单 `password` 字段。 |
 
 `AuthField` 当前为：`'userName' | 'pwd' | 'phone' | 'email' | 'code'`。
@@ -39,13 +39,13 @@ function useAuthFormRules(): {
 
 `formRules` 与 `patternRules` 的 key 一致，区别在是否包含必填：
 
-| 字段 key | 格式正则（来自 `@skyroc/utils`） | `formRules`（必填 + 格式） | `patternRules`（仅格式） |
-| --- | --- | --- | --- |
-| `userName` | `REG_USER_NAME` | `[required, pattern]` | `pattern` |
-| `pwd` | `REG_PWD` | `[required, pattern]` | `pattern` |
-| `phone` | `REG_PHONE` | `[required, pattern]` | `pattern` |
-| `email` | `REG_EMAIL` | `[required, pattern]` | `pattern` |
-| `code` | `REG_CODE_SIX` | `[required, pattern]` | `pattern` |
+| 字段 key   | 格式正则（来自 `@skyroc/utils`） | `formRules`（必填 + 格式） | `patternRules`（仅格式） |
+| ---------- | -------------------------------- | -------------------------- | ------------------------ |
+| `userName` | `REG_USER_NAME`                  | `[required, pattern]`      | `pattern`                |
+| `pwd`      | `REG_PWD`                        | `[required, pattern]`      | `pattern`                |
+| `phone`    | `REG_PHONE`                      | `[required, pattern]`      | `pattern`                |
+| `email`    | `REG_EMAIL`                      | `[required, pattern]`      | `pattern`                |
+| `code`     | `REG_CODE_SIX`                   | `[required, pattern]`      | `pattern`                |
 
 所有 `patternRules` 的 `validateTrigger` 都是 `'onChange'`，文案 key 形如 `form.{field}.invalid`（格式）和 `form.{field}.required`（必填）。
 

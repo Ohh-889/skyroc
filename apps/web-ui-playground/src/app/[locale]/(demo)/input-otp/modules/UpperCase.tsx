@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { InputOTP } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const UpperCase = () => {
   const [value, setValue] = useState('');

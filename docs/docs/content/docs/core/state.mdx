@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/core-state"
-description: "基于 Jotai 的状态管理封装 — 存储解耦、跨平台、支持 React 组件外访问"
+title: '@skyroc/core-state'
+description: '基于 Jotai 的状态管理封装 — 存储解耦、跨平台、支持 React 组件外访问'
 ---
 
 ## 概述
@@ -50,7 +50,7 @@ import { storage } from '@skyroc/storage'; // 或任意存储工具
 registerStorage('local', {
   getItem: key => storage.get(key),
   setItem: (key, value) => storage.set(key, value),
-  removeItem: key => storage.remove(key),
+  removeItem: key => storage.remove(key)
 });
 
 // sessionStorage 适配器（手动序列化示例）
@@ -60,7 +60,7 @@ registerStorage('session', {
     return raw ? JSON.parse(raw) : null;
   },
   setItem: (key, value) => sessionStorage.setItem(key, JSON.stringify(value)),
-  removeItem: key => sessionStorage.removeItem(key),
+  removeItem: key => sessionStorage.removeItem(key)
 });
 ```
 
@@ -114,7 +114,7 @@ const uiAtom = atomWithPartial({ siderCollapse: false, mixSiderFixed: false });
 // 在组件中使用
 const [ui, setUi] = useAtom(uiAtom);
 
-setUi({ siderCollapse: true });                      // 只更新 siderCollapse
+setUi({ siderCollapse: true }); // 只更新 siderCollapse
 setUi(prev => ({ siderCollapse: !prev.siderCollapse })); // updater 函数形式
 // 值未变时跳过更新，不触发重渲染
 setUi({ siderCollapse: true }); // 若当前已是 true，无操作
@@ -144,7 +144,7 @@ interface JotaiProviderProps {
   children?: ReactNode;
 }
 
-function JotaiProvider(props: JotaiProviderProps): JSX.Element
+function JotaiProvider(props: JotaiProviderProps): JSX.Element;
 ```
 
 将子树绑定到包级 `globalStore`，是组件外访问能力的前提。通常放在应用根节点。
@@ -154,7 +154,7 @@ function JotaiProvider(props: JotaiProviderProps): JSX.Element
 ### globalStore
 
 ```ts
-const globalStore: ReturnType<typeof createStore>
+const globalStore: ReturnType<typeof createStore>;
 ```
 
 Jotai store 实例，通过 `JotaiProvider` 注入到 React 组件树，同时供 `getAtomValue` / `setAtomValue` 等在组件外使用。
@@ -169,7 +169,7 @@ Jotai store 实例，通过 `JotaiProvider` 注入到 React 组件树，同时�
 ### getAtomValue
 
 ```ts
-function getAtomValue<Value>(atom: Atom<Value>): Value
+function getAtomValue<Value>(atom: Atom<Value>): Value;
 ```
 
 在 React 组件外读取原子当前值。
@@ -186,7 +186,7 @@ const currentTheme = getAtomValue(themeAtom);
 function setAtomValue<Value, Args extends unknown[], Result>(
   atom: WritableAtom<Value, Args, Result>,
   ...args: Args
-): Result
+): Result;
 ```
 
 在 React 组件外写入原子。泛型覆盖任意写签名的原子，包括 `atomWithPartial`（接受 `PartialUpdater`）；
@@ -207,11 +207,9 @@ setAtomValue(uiAtom, prev => ({ siderCollapse: !prev.siderCollapse }));
 ### atomWithPartial
 
 ```ts
-function atomWithPartial<T extends object>(
-  initialValue: T
-): WritableAtom<T, [PartialUpdater<T>], void>
+function atomWithPartial<T extends object>(initialValue: T): WritableAtom<T, [PartialUpdater<T>], void>;
 
-type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>)
+type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>);
 ```
 
 创建支持部分更新的原子：
@@ -223,7 +221,7 @@ type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>)
 const adminStateAtom = atomWithPartial({
   siderCollapse: false,
   mixSiderFixed: false,
-  theme: 'dark',
+  theme: 'dark'
 });
 
 // 组件外
@@ -243,38 +241,38 @@ function createAtomWithStorage<T>(
   key: string,
   initialValue: T,
   options?: CreateAtomWithStorageOptions<T>
-): WritableAtom<T, [StorageAtomUpdate<T>], void>
+): WritableAtom<T, [StorageAtomUpdate<T>], void>;
 ```
 
 创建持久化原子，委托 `jotai/utils` 的 `atomWithStorage`，并在上层处理惰性解析和容错：
 
 **参数：**
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `key` | `string` | — | 存储键名 |
-| `initialValue` | `T` | — | 存储中无值时的初始值 |
-| `options.storageName` | `string` | `'local'` | 从 registry 解析的存储名称，`storage` 存在时忽略 |
-| `options.storage` | `AtomStorage` | — | 直传适配器，绕过 registry |
-| `options.getOnInit` | `boolean` | `true` | 是否在挂载前同步读取存储；SSR 场景可设为 `false` 避免 hydration 不一致 |
-| `options.validate` | `(raw: unknown) => T \| undefined` | — | 校验持久化数据；返回 `undefined` 表示拒绝并回退 `initialValue` |
+| 参数                  | 类型                               | 默认值    | 说明                                                                   |
+| --------------------- | ---------------------------------- | --------- | ---------------------------------------------------------------------- |
+| `key`                 | `string`                           | —         | 存储键名                                                               |
+| `initialValue`        | `T`                                | —         | 存储中无值时的初始值                                                   |
+| `options.storageName` | `string`                           | `'local'` | 从 registry 解析的存储名称，`storage` 存在时忽略                       |
+| `options.storage`     | `AtomStorage`                      | —         | 直传适配器，绕过 registry                                              |
+| `options.getOnInit`   | `boolean`                          | `true`    | 是否在挂载前同步读取存储；SSR 场景可设为 `false` 避免 hydration 不一致 |
+| `options.validate`    | `(raw: unknown) => T \| undefined` | —         | 校验持久化数据；返回 `undefined` 表示拒绝并回退 `initialValue`         |
 
 **容错行为：** 存储故障一律不外溢，每类故障只告警一次。
 
-| 场景 | 行为 |
-|------|------|
-| `getItem` 返回 `null` / `undefined` | 使用 `initialValue` |
-| storage 未注册 | 回退 `initialValue` 并告警，不中断模块加载 |
-| `getItem` 抛出异常（数据损坏等） | 回退 `initialValue` 并告警 |
-| `setItem` 抛出异常（配额、无痕模式） | 原子正常更新，仅未持久化，告警 |
-| `removeItem` 抛出异常 | 原子正常回到初始值，告警 |
-| 同一 storage 下 key 重复绑定 | 告警（两个原子会互相覆盖） |
+| 场景                                 | 行为                                       |
+| ------------------------------------ | ------------------------------------------ |
+| `getItem` 返回 `null` / `undefined`  | 使用 `initialValue`                        |
+| storage 未注册                       | 回退 `initialValue` 并告警，不中断模块加载 |
+| `getItem` 抛出异常（数据损坏等）     | 回退 `initialValue` 并告警                 |
+| `setItem` 抛出异常（配额、无痕模式） | 原子正常更新，仅未持久化，告警             |
+| `removeItem` 抛出异常                | 原子正常回到初始值，告警                   |
+| 同一 storage 下 key 重复绑定         | 告警（两个原子会互相覆盖）                 |
 
 **结构漂移：** 适配器返回的是 `unknown`，默认直接当作 `T` 使用。localStorage 里可能躺着旧版本结构时用 `validate` 拒绝它：
 
 ```ts
 const userAtom = createAtomWithStorage<User>('user', defaultUser, {
-  validate: raw => (isUser(raw) ? raw : undefined),
+  validate: raw => (isUser(raw) ? raw : undefined)
 });
 ```
 
@@ -295,7 +293,7 @@ registerStorage('local', {
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
-  },
+  }
 });
 ```
 
@@ -304,7 +302,7 @@ registerStorage('local', {
 ### registerStorage
 
 ```ts
-function registerStorage(name: string, storage: AtomStorage): void
+function registerStorage(name: string, storage: AtomStorage): void;
 ```
 
 注册命名存储适配器。同名重复注册会覆盖之前的适配器。
@@ -314,7 +312,7 @@ function registerStorage(name: string, storage: AtomStorage): void
 ### getStorage
 
 ```ts
-function getStorage(name: string): AtomStorage
+function getStorage(name: string): AtomStorage;
 ```
 
 按名称获取已注册的适配器。
@@ -330,7 +328,7 @@ function getStorage(name: string): AtomStorage
 ### hasStorage
 
 ```ts
-function hasStorage(name: string): boolean
+function hasStorage(name: string): boolean;
 ```
 
 检查某个名称是否已注册，不抛出异常，适合条件注册场景：
@@ -346,7 +344,7 @@ if (!hasStorage('local')) {
 ### unregisterStorage
 
 ```ts
-function unregisterStorage(name: string): boolean
+function unregisterStorage(name: string): boolean;
 ```
 
 移除指定名称的注册。返回 `true` 表示该名称存在并已移除，`false` 表示名称不存在。
@@ -356,7 +354,7 @@ function unregisterStorage(name: string): boolean
 ### `__clearStorageRegistry`（仅测试）
 
 ```ts
-function __clearStorageRegistry(): void
+function __clearStorageRegistry(): void;
 ```
 
 清空全部注册。**不从包入口导出**——测试从 `src/utils/storage-registry` 直接引入，运行时不应有能力抹掉全部注册。
@@ -389,7 +387,7 @@ interface AtomStorage {
 ### PartialUpdater
 
 ```ts
-type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>)
+type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>);
 ```
 
 `atomWithPartial` 的写参数类型，支持直接传入补丁对象或基于当前值的 updater 函数。
@@ -398,7 +396,7 @@ type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partial<T>)
 
 ```ts
 interface CreateAtomWithStorageOptions<T> {
-  getOnInit?: boolean;  // default: true
+  getOnInit?: boolean; // default: true
   storage?: AtomStorage;
   storageName?: string; // default: 'local'
   validate?: (raw: unknown) => T | undefined;
@@ -408,7 +406,7 @@ interface CreateAtomWithStorageOptions<T> {
 ### StorageAtomUpdate
 
 ```ts
-type StorageAtomUpdate<T> = T | typeof RESET | ((prev: T) => T | typeof RESET)
+type StorageAtomUpdate<T> = T | typeof RESET | ((prev: T) => T | typeof RESET);
 ```
 
 持久化原子的写参数类型。传入 `RESET`（来自 `jotai/utils`）会删除持久化条目并回到初始值。
@@ -457,9 +455,9 @@ pnpm test --coverage
 
 测试套件覆盖以下场景：
 
-| 模块 | 覆盖场景 |
-|------|----------|
-| `atomWithPartial` | 初始值、部分更新、累积合并、no-op 引用相等、updater 函数形式 |
+| 模块                    | 覆盖场景                                                                                                                                                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `atomWithPartial`       | 初始值、部分更新、累积合并、no-op 引用相等、updater 函数形式                                                                                                                                                                                                        |
 | `createAtomWithStorage` | 初始值回退、读取已存在值、写入同步到 storage、updater 形式、直传适配器、**模块顶层定义 + 事后注册**、未注册回退与告警、removeItem/RESET、对象值不二次反序列化、subscribe 推送与退化、setItem/removeItem 抛异常、validate 接受与拒绝、重复 key 告警、getOnInit false |
-| `globalStore` | getAtomValue / setAtomValue 基本操作、连续函数式调用累积、自定义写签名原子 |
-| `storage-registry` | 注册与获取、未注册报错、同名覆盖、多名称隔离、hasStorage、unregisterStorage、`__clearStorageRegistry` |
+| `globalStore`           | getAtomValue / setAtomValue 基本操作、连续函数式调用累积、自定义写签名原子                                                                                                                                                                                          |
+| `storage-registry`      | 注册与获取、未注册报错、同名覆盖、多名称隔离、hasStorage、unregisterStorage、`__clearStorageRegistry`                                                                                                                                                               |

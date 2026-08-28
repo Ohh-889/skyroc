@@ -35,7 +35,7 @@ export const commandVariants = tv({
         root: 'text-xl',
         separator: '-mx-3.5 my-2'
       },
-      'lg': {
+      lg: {
         empty: 'py-4.5',
         groupLabel: 'p-2',
         input: 'h-9',
@@ -46,7 +46,7 @@ export const commandVariants = tv({
         root: 'text-base',
         separator: '-mx-2.5 my-1.25'
       },
-      'md': {
+      md: {
         empty: 'py-4 text-sm',
         groupLabel: 'p-1.75',
         input: 'h-8',
@@ -57,7 +57,7 @@ export const commandVariants = tv({
         root: 'text-sm',
         separator: '-mx-2 my-1'
       },
-      'sm': {
+      sm: {
         empty: 'py-3.5',
         groupLabel: 'p-1.25',
         input: 'h-7',
@@ -68,7 +68,7 @@ export const commandVariants = tv({
         root: 'text-xs',
         separator: '-mx-1.5 my-1'
       },
-      'xl': {
+      xl: {
         empty: 'py-5',
         groupLabel: 'p-2.5',
         input: 'h-10',
@@ -79,7 +79,7 @@ export const commandVariants = tv({
         root: 'text-lg',
         separator: '-mx-3 my-1.5'
       },
-      'xs': {
+      xs: {
         empty: 'py-3',
         groupLabel: 'p-0.75',
         input: 'h-6',

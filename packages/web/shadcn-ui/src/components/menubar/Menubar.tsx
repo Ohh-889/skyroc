@@ -4,11 +4,7 @@ import MenubarUI from './MenubarUI';
 import type { MenubarProps } from './types';
 
 const Menubar = (props: MenubarProps) => {
-  return (
-    <MenubarUI
-      {...props}
-    />
-  );
+  return <MenubarUI {...props} />;
 };
 
 Menubar.displayName = 'Menubar';

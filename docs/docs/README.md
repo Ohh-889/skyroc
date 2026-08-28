@@ -21,34 +21,34 @@ pnpm dev
 
 ## 目录结构
 
-| 路径                 | 说明                                                        |
-| -------------------- | ----------------------------------------------------------- |
-| `content/docs/`      | 全部 MDX 正文，按 7 个顶级分区分目录                        |
-| `app/(home)/`        | 门户首页（Hero、阅读路径、能力矩阵、文档地图）与 header      |
-| `app/docs/`          | 文档布局（`GlassLayout`）与 `[[...slug]]` 页面               |
-| `app/api/search/`    | 搜索接口，由 `createFromSource(source)` 生成                 |
-| `app/og/docs/`       | 每篇文档的 OG 封面图（构建期静态生成）                       |
-| `app/llms*.txt`、`app/llms.mdx/` | 面向 LLM 的纯文本 / Markdown 出口                |
-| `lib/source.ts`      | 内容源适配层，`loader()` 提供访问内容的统一接口              |
-| `lib/shared.ts`      | 站点常量：站名、文档路由前缀、OG 与 Markdown 路由、Git 仓库信息 |
-| `components/mdx.tsx` | MDX 组件映射                                                 |
-| `middleware.ts`      | `.md` 后缀与 `Accept` 协商，把文档页重写到 Markdown 出口     |
-| `CONTENT-PLAN.md`    | 内容规划与迁移清单：分区划分、篇目归属、重定向表             |
+| 路径                             | 说明                                                            |
+| -------------------------------- | --------------------------------------------------------------- |
+| `content/docs/`                  | 全部 MDX 正文，按 7 个顶级分区分目录                            |
+| `app/(home)/`                    | 门户首页（Hero、阅读路径、能力矩阵、文档地图）与 header         |
+| `app/docs/`                      | 文档布局（`GlassLayout`）与 `[[...slug]]` 页面                  |
+| `app/api/search/`                | 搜索接口，由 `createFromSource(source)` 生成                    |
+| `app/og/docs/`                   | 每篇文档的 OG 封面图（构建期静态生成）                          |
+| `app/llms*.txt`、`app/llms.mdx/` | 面向 LLM 的纯文本 / Markdown 出口                               |
+| `lib/source.ts`                  | 内容源适配层，`loader()` 提供访问内容的统一接口                 |
+| `lib/shared.ts`                  | 站点常量：站名、文档路由前缀、OG 与 Markdown 路由、Git 仓库信息 |
+| `components/mdx.tsx`             | MDX 组件映射                                                    |
+| `middleware.ts`                  | `.md` 后缀与 `Accept` 协商，把文档页重写到 Markdown 出口        |
+| `CONTENT-PLAN.md`                | 内容规划与迁移清单：分区划分、篇目归属、重定向表                |
 
 ## 内容组织
 
 侧边栏不是一棵树，而是**七棵独立的树**——每个分区目录的 `meta.json` 里写 `"root": true`，
 `GlassLayout` 会自动把它们变成顶部分区切换器。
 
-| 分区                | URL 前缀          | 读者意图                             |
-| ------------------- | ----------------- | ------------------------------------ |
-| 指南 `guide/`       | `/docs/guide/`    | 项目怎么跑、怎么组织、怎么协作       |
-| Admin 应用 `admin/` | `/docs/admin/`    | 改 admin 的某个功能                  |
-| 跨端核心 `core/`    | `/docs/core/`     | `@core/*` 的 API 怎么用              |
-| 跨端 Hooks `hooks/` | `/docs/hooks/`    | 某个 hook 的签名与行为               |
-| 表单原语 `form/`    | `/docs/form/`     | 表单怎么写、怎么校验、怎么不重渲染   |
-| Web 端包 `web/`     | `/docs/web/`      | `web/*` 的 API 怎么用                |
-| 包总览 `packages/`  | `/docs/packages/` | 31 个包都有啥、某个能力在哪个包      |
+| 分区                | URL 前缀          | 读者意图                           |
+| ------------------- | ----------------- | ---------------------------------- |
+| 指南 `guide/`       | `/docs/guide/`    | 项目怎么跑、怎么组织、怎么协作     |
+| Admin 应用 `admin/` | `/docs/admin/`    | 改 admin 的某个功能                |
+| 跨端核心 `core/`    | `/docs/core/`     | `@core/*` 的 API 怎么用            |
+| 跨端 Hooks `hooks/` | `/docs/hooks/`    | 某个 hook 的签名与行为             |
+| 表单原语 `form/`    | `/docs/form/`     | 表单怎么写、怎么校验、怎么不重渲染 |
+| Web 端包 `web/`     | `/docs/web/`      | `web/*` 的 API 怎么用              |
+| 包总览 `packages/`  | `/docs/packages/` | 31 个包都有啥、某个能力在哪个包    |
 
 新增一篇文档：
 
@@ -62,13 +62,13 @@ pnpm dev
 
 除了给人看的页面，每篇文档同时以纯文本形式暴露，方便被模型抓取：
 
-| 路由                              | 内容                                  |
-| --------------------------------- | ------------------------------------- |
-| `/llms.txt`                       | 全站索引                              |
-| `/llms-full.txt`                  | 全站正文合集                          |
-| `/llms.mdx/docs/*/content.md`     | 单篇处理后的 Markdown                 |
-| `/docs/*.md`                      | 由 `middleware.ts` 重写到上一条        |
-| `/docs/*`（`Accept` 偏好 Markdown）| 同上，响应带 `Vary: Accept`            |
+| 路由                                | 内容                            |
+| ----------------------------------- | ------------------------------- |
+| `/llms.txt`                         | 全站索引                        |
+| `/llms-full.txt`                    | 全站正文合集                    |
+| `/llms.mdx/docs/*/content.md`       | 单篇处理后的 Markdown           |
+| `/docs/*.md`                        | 由 `middleware.ts` 重写到上一条 |
+| `/docs/*`（`Accept` 偏好 Markdown） | 同上，响应带 `Vary: Accept`     |
 
 ## 部署（Cloudflare Workers）
 
@@ -97,18 +97,18 @@ pnpm cf-typegen # 由 wrangler.jsonc 生成 CloudflareEnv 类型
 
 ## 脚本
 
-| 命令                | 作用                                     |
-| ------------------- | ---------------------------------------- |
-| `pnpm dev`          | 启动开发服务器                           |
-| `pnpm build`        | Next.js 生产构建                         |
-| `pnpm start`        | 以 Node 运行生产构建                     |
-| `pnpm lint`         | oxlint                                   |
-| `pnpm types:check`  | `next typegen` + `tsc --noEmit`          |
-| `pnpm worker:build` | 构建依赖包并产出 `.open-next/`           |
-| `pnpm preview`      | 本地 workerd 预览                        |
-| `pnpm deploy`       | 发布到 Cloudflare                        |
-| `pnpm upload`       | 上传新版本但不切流量                     |
-| `pnpm cf-typegen`   | 生成 `cloudflare-env.d.ts`               |
+| 命令                | 作用                            |
+| ------------------- | ------------------------------- |
+| `pnpm dev`          | 启动开发服务器                  |
+| `pnpm build`        | Next.js 生产构建                |
+| `pnpm start`        | 以 Node 运行生产构建            |
+| `pnpm lint`         | oxlint                          |
+| `pnpm types:check`  | `next typegen` + `tsc --noEmit` |
+| `pnpm worker:build` | 构建依赖包并产出 `.open-next/`  |
+| `pnpm preview`      | 本地 workerd 预览               |
+| `pnpm deploy`       | 发布到 Cloudflare               |
+| `pnpm upload`       | 上传新版本但不切流量            |
+| `pnpm cf-typegen`   | 生成 `cloudflare-env.d.ts`      |
 
 ## 延伸阅读
 

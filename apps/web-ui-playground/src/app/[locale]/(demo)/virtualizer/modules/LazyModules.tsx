@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import { Card } from '@skyroc/web-ui';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 const RowVirtualizerDynamic = dynamic(() => import('./VirtualListDynamic'), {
   ssr: false
 });
@@ -17,7 +17,6 @@ const LazyModules = () => {
         <RowVirtualizerDynamic />
       </Card>
     </Suspense>
-
   );
 };
 

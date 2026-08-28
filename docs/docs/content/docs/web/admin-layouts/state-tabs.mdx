@@ -1,6 +1,6 @@
 ---
-title: "状态与页签"
-description: "Admin Layouts 的运行时状态、菜单状态、页签状态、缓存和动态 badge 值更新"
+title: '状态与页签'
+description: 'Admin Layouts 的运行时状态、菜单状态、页签状态、缓存和动态 badge 值更新'
 ---
 
 `@skyroc/web-admin-layouts` 使用 Jotai 和全局 store 管理布局运行时状态。业务页面可以读取这些状态，但更常见的是只通过布局组件自然消费。
@@ -35,7 +35,10 @@ const CollapseButton = () => {
   const { siderCollapse, toggleSiderCollapse } = useAdminState();
 
   return (
-    <button type="button" onClick={toggleSiderCollapse}>
+    <button
+      type="button"
+      onClick={toggleSiderCollapse}
+    >
       {siderCollapse ? 'Expand' : 'Collapse'}
     </button>
   );
@@ -44,14 +47,14 @@ const CollapseButton = () => {
 
 常用返回值：
 
-| 返回值 | 说明 |
-| --- | --- |
-| `isMobile` | 是否进入移动端布局。 |
-| `siderCollapse` | 侧边栏是否折叠。 |
-| `toggleSiderCollapse` | 切换侧边栏折叠。 |
-| `fullContent` | 是否隐藏 Header、Sider、Footer，只显示内容区。 |
-| `contentXScrollable` | 内容区是否启用横向滚动场景。 |
-| `mixSiderFixed` | mix / hybrid 子菜单是否固定。 |
+| 返回值                | 说明                                           |
+| --------------------- | ---------------------------------------------- |
+| `isMobile`            | 是否进入移动端布局。                           |
+| `siderCollapse`       | 侧边栏是否折叠。                               |
+| `toggleSiderCollapse` | 切换侧边栏折叠。                               |
+| `fullContent`         | 是否隐藏 Header、Sider、Footer，只显示内容区。 |
+| `contentXScrollable`  | 内容区是否启用横向滚动场景。                   |
+| `mixSiderFixed`       | mix / hybrid 子菜单是否固定。                  |
 
 ## useMenus
 
@@ -76,43 +79,29 @@ async function initAuth() {
 `useAdminMenus` 面向菜单渲染和交互。
 
 ```tsx
-const {
-  menus,
-  firstLevelMenus,
-  secondLevelMenus,
-  childLevelMenus,
-  selectedKey,
-  openKeys,
-  routerPushByKey
-} = useAdminMenus();
+const { menus, firstLevelMenus, secondLevelMenus, childLevelMenus, selectedKey, openKeys, routerPushByKey } =
+  useAdminMenus();
 ```
 
 常用返回值：
 
-| 返回值 | 说明 |
-| --- | --- |
-| `menus` | 当前菜单分类下的完整 Ant Design 菜单树。 |
-| `firstLevelMenus` | 一级菜单，混合布局会使用。 |
-| `secondLevelMenus` | 当前一级菜单下的二级菜单。 |
-| `childLevelMenus` | 当前二级菜单下的子菜单。 |
-| `selectedKey` | 当前路由对应的选中菜单 key。 |
-| `openKeys` | 当前路由应该展开的父级 key。 |
-| `currentMenu` | 当前路由在 quickReferenceMenus 中的记录。 |
-| `routerPushByKey` | 根据菜单 key 跳转到对应路由。 |
+| 返回值             | 说明                                      |
+| ------------------ | ----------------------------------------- |
+| `menus`            | 当前菜单分类下的完整 Ant Design 菜单树。  |
+| `firstLevelMenus`  | 一级菜单，混合布局会使用。                |
+| `secondLevelMenus` | 当前一级菜单下的二级菜单。                |
+| `childLevelMenus`  | 当前二级菜单下的子菜单。                  |
+| `selectedKey`      | 当前路由对应的选中菜单 key。              |
+| `openKeys`         | 当前路由应该展开的父级 key。              |
+| `currentMenu`      | 当前路由在 quickReferenceMenus 中的记录。 |
+| `routerPushByKey`  | 根据菜单 key 跳转到对应路由。             |
 
 ## useAdminTab
 
 `useAdminTab` 管理路由页签。
 
 ```tsx
-const {
-  activeTabId,
-  allTabs,
-  removeActiveTab,
-  clearLeftTabs,
-  clearRightTabs,
-  clearOtherTabs
-} = useAdminTab();
+const { activeTabId, allTabs, removeActiveTab, clearLeftTabs, clearRightTabs, clearOtherTabs } = useAdminTab();
 ```
 
 页签来源于 `quickReferenceMenus`。每次路由变化时，布局 effect 会把当前路由转换成 tab 并加入状态。

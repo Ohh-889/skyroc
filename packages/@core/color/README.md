@@ -63,16 +63,18 @@ src/
 根据输入颜色生成 11 档色板。第二个参数可以直接传算法名，也可以传完整配置对象：
 
 ```ts
-type ColorPaletteConfig = PaletteAlgorithm | {
-  algorithm?: PaletteAlgorithm;   // default: 'antd'
-  darkTheme?: boolean;            // default: false，仅 antd 算法生效
-  darkThemeMixColor?: string;     // default: '#141414'，仅 antd 算法生效
-};
+type ColorPaletteConfig =
+  | PaletteAlgorithm
+  | {
+      algorithm?: PaletteAlgorithm; // default: 'antd'
+      darkTheme?: boolean; // default: false，仅 antd 算法生效
+      darkThemeMixColor?: string; // default: '#141414'，仅 antd 算法生效
+    };
 
 function getColorPalette(
   color: AnyColor,
-  config?: ColorPaletteConfig     // default: 'antd'
-): Map<ColorPaletteNumber, string>
+  config?: ColorPaletteConfig // default: 'antd'
+): Map<ColorPaletteNumber, string>;
 ```
 
 ```ts
@@ -98,8 +100,8 @@ const darkMap = getColorPalette('#1677ff', { algorithm: 'antd', darkTheme: true 
 function getPaletteColorByNumber(
   color: AnyColor,
   number: ColorPaletteNumber,
-  config?: ColorPaletteConfig     // default: 'antd'
-): string
+  config?: ColorPaletteConfig // default: 'antd'
+): string;
 ```
 
 ```ts
@@ -121,14 +123,14 @@ const darkHex = getPaletteColorByNumber('#1677ff', 200, { darkTheme: true });
 ```ts
 function getAntDPaletteColorByIndex(
   color: AnyColor,
-  index: ColorIndex  // 1-11，6 为主色
-): string
+  index: ColorIndex // 1-11，6 为主色
+): string;
 ```
 
 ```ts
 import { getAntDPaletteColorByIndex } from '@skyroc/color';
 
-const main = getAntDPaletteColorByIndex('#1677ff', 6);  // 主色
+const main = getAntDPaletteColorByIndex('#1677ff', 6); // 主色
 const light = getAntDPaletteColorByIndex('#1677ff', 1); // 最浅
 const dark = getAntDPaletteColorByIndex('#1677ff', 11); // 最深
 ```
@@ -140,9 +142,9 @@ const dark = getAntDPaletteColorByIndex('#1677ff', 11); // 最深
 ```ts
 function getAntDColorPalette(
   color: AnyColor,
-  darkTheme?: boolean,           // default: false
-  darkThemeMixColor?: string     // default: '#141414'
-): string[]
+  darkTheme?: boolean, // default: false
+  darkThemeMixColor?: string // default: '#141414'
+): string[];
 ```
 
 ```ts
@@ -168,26 +170,23 @@ const customDark = getAntDColorPalette('#1677ff', true, '#1a1a2e');
 #### `getRecommendedColorPalette`
 
 ```ts
-function getRecommendedColorPalette(color: string): ColorPaletteMatch
+function getRecommendedColorPalette(color: string): ColorPaletteMatch;
 ```
 
 ```ts
 import { getRecommendedColorPalette } from '@skyroc/color';
 
 const result = getRecommendedColorPalette('#6366f1');
-console.log(result.name);             // 色族名
-console.log(result.main.hex);         // 500 档 hex
-console.log(result.match.number);     // 输入色最接近的色阶编号
+console.log(result.name); // 色族名
+console.log(result.main.hex); // 500 档 hex
+console.log(result.match.number); // 输入色最接近的色阶编号
 console.log(result.colorMap.get(200)); // 取 200 档
 ```
 
 #### `getRecommendedPaletteColorByNumber`
 
 ```ts
-function getRecommendedPaletteColorByNumber(
-  color: string,
-  number: ColorPaletteNumber
-): string
+function getRecommendedPaletteColorByNumber(color: string, number: ColorPaletteNumber): string;
 ```
 
 ---
@@ -197,6 +196,7 @@ function getRecommendedPaletteColorByNumber(
 基于 [OKLCH](https://oklch.com/) 感知均匀色彩空间，灵感来自 Apple Human Interface Guidelines。相比 HSV/HSL，OKLCH 能保证不同色相在同一明度下的视觉亮度一致。
 
 核心特性：
+
 - **数据驱动明度曲线**：基于 Tailwind 官方色板的 OKLCH 分析数据
 - **色相感知色度补偿**：不同色相有不同的最佳色度-明度曲线
 - **Apple 风格色相旋转**：暖色越亮越偏黄、越暗越偏红；冷色反之
@@ -207,14 +207,14 @@ function getRecommendedPaletteColorByNumber(
 基础 OKLCH 色板生成：
 
 ```ts
-function generateOklchPalette(color: string): ColorPaletteFamily
+function generateOklchPalette(color: string): ColorPaletteFamily;
 ```
 
 ```ts
 import { generateOklchPalette } from '@skyroc/color';
 
 const family = generateOklchPalette('#6366f1');
-console.log(family.name);     // 自动命名
+console.log(family.name); // 自动命名
 console.log(family.palettes); // 11 档 { hex, number }[]
 ```
 
@@ -223,7 +223,7 @@ console.log(family.palettes); // 11 档 { hex, number }[]
 返回 `ColorPaletteMatch`，自动找到与输入色最接近的色阶：
 
 ```ts
-function getOklchColorPalette(color: string): ColorPaletteMatch
+function getOklchColorPalette(color: string): ColorPaletteMatch;
 ```
 
 #### `getOklchPaletteColorByNumber`
@@ -231,10 +231,7 @@ function getOklchColorPalette(color: string): ColorPaletteMatch
 快捷取指定色阶的 hex：
 
 ```ts
-function getOklchPaletteColorByNumber(
-  color: string,
-  number: ColorPaletteNumber
-): string
+function getOklchPaletteColorByNumber(color: string, number: ColorPaletteNumber): string;
 ```
 
 #### `generateOklchPaletteAdvanced`
@@ -242,10 +239,7 @@ function getOklchPaletteColorByNumber(
 支持自定义配置的高级生成：
 
 ```ts
-function generateOklchPaletteAdvanced(
-  color: string,
-  options?: OklchPaletteOptions
-): ColorPaletteFamily
+function generateOklchPaletteAdvanced(color: string, options?: OklchPaletteOptions): ColorPaletteFamily;
 ```
 
 ```ts
@@ -254,7 +248,7 @@ import { generateOklchPaletteAdvanced } from '@skyroc/color';
 // 关闭色相旋转，使用自定义明度曲线
 const palette = generateOklchPaletteAdvanced('#6366f1', {
   appleHueShift: false,
-  lightnessCurve: [0.97, 0.94, 0.89, 0.82, 0.74, 0.66, 0.58, 0.50, 0.43, 0.38, 0.26],
+  lightnessCurve: [0.97, 0.94, 0.89, 0.82, 0.74, 0.66, 0.58, 0.5, 0.43, 0.38, 0.26]
 });
 
 // 以 600 档为基准反推色度强度
@@ -270,24 +264,21 @@ const palette600 = generateOklchPaletteAdvanced('#6366f1', { forceStep: 600 });
 精确保留输入色的增强版本。在匹配档位上使用原始输入色（不做任何近似），其余档位的明度曲线整体平移以穿过该点，并附带每档的 OKLCH 数值与 CSS 字符串：
 
 ```ts
-function generateOklchPaletteAnchored(
-  color: string,
-  forceStep?: ColorPaletteNumber
-): ColorPaletteFamilyWithOklch
+function generateOklchPaletteAnchored(color: string, forceStep?: ColorPaletteNumber): ColorPaletteFamilyWithOklch;
 ```
 
 ```ts
 import { generateOklchPaletteAnchored } from '@skyroc/color';
 
 const result = generateOklchPaletteAnchored('#6366f1');
-console.log(result.matchedStep);          // 500
-console.log(result.palettes[5].hex);      // '#6366f1'（精确保留）
+console.log(result.matchedStep); // 500
+console.log(result.palettes[5].hex); // '#6366f1'（精确保留）
 console.log(result.palettes[5].oklchCss); // 'oklch(55.69% 0.215 277.01)'
-console.log(result.inputOklchCss);        // 输入色的 OKLCH CSS
+console.log(result.inputOklchCss); // 输入色的 OKLCH CSS
 
 // 强制放在 600 档
 const result600 = generateOklchPaletteAnchored('#6366f1', 600);
-console.log(result600.palettes[6].hex);   // '#6366f1'
+console.log(result600.palettes[6].hex); // '#6366f1'
 ```
 
 > `generateOklchPaletteEx` 是本函数的旧别名，已标记 `@deprecated`，行为完全一致。
@@ -301,7 +292,7 @@ console.log(result600.palettes[6].hex);   // '#6366f1'
 计算两颜色之间的 WCAG 对比度（范围 1–21）：
 
 ```ts
-function getContrastRatio(color1: string, color2: string): number
+function getContrastRatio(color1: string, color2: string): number;
 ```
 
 #### `meetsWcagContrast`
@@ -311,22 +302,22 @@ function getContrastRatio(color1: string, color2: string): number
 ```ts
 function meetsWcagContrast(
   ratio: number,
-  level?: WcagLevel,     // default: 'AA'
-  textSize?: TextSize    // default: 'normal'
-): boolean
+  level?: WcagLevel, // default: 'AA'
+  textSize?: TextSize // default: 'normal'
+): boolean;
 ```
 
 | 等级 | 正常文字 | 大号文字 |
-|------|---------|---------|
-| AA   | >= 4.5  | >= 3.0  |
-| AAA  | >= 7.0  | >= 4.5  |
+| ---- | -------- | -------- |
+| AA   | >= 4.5   | >= 3.0   |
+| AAA  | >= 7.0   | >= 4.5   |
 
 ```ts
 import { getContrastRatio, meetsWcagContrast } from '@skyroc/color';
 
 const ratio = getContrastRatio('#1677ff', '#ffffff');
 meetsWcagContrast(ratio, 'AA', 'normal'); // false（4.5 要求）
-meetsWcagContrast(ratio, 'AA', 'large');  // true（3.0 要求）
+meetsWcagContrast(ratio, 'AA', 'large'); // true（3.0 要求）
 ```
 
 #### `generateOklchPaletteWithContrast`
@@ -334,7 +325,7 @@ meetsWcagContrast(ratio, 'AA', 'large');  // true（3.0 要求）
 生成色板并附带完整的 WCAG 对比度分析：
 
 ```ts
-function generateOklchPaletteWithContrast(color: string): PaletteContrastInfo
+function generateOklchPaletteWithContrast(color: string): PaletteContrastInfo;
 ```
 
 ```ts
@@ -362,8 +353,8 @@ console.log(info.recommendedTextColor.get(500)); // '#ffffff' 或 '#000000'
 function findAccessibleTextColor(
   paletteColor: string,
   backgroundColor: string,
-  preferDark?: boolean    // default: true
-): ColorPaletteNumber | null
+  preferDark?: boolean // default: true
+): ColorPaletteNumber | null;
 ```
 
 ```ts
@@ -386,7 +377,7 @@ const lightStep = findAccessibleTextColor('#1677ff', '#1a1a2e', false);
 使用整体压暗的明度曲线生成暗色主题色板。**档位号语义与亮色色板一致**——50 最亮（L=0.96）、950 最暗（L=0.18），只是整条曲线比亮色色板更暗：
 
 ```ts
-function generateDarkModePalette(color: string): ColorPaletteFamily
+function generateDarkModePalette(color: string): ColorPaletteFamily;
 ```
 
 ```ts
@@ -406,22 +397,15 @@ const darkPalette = generateDarkModePalette('#1677ff');
 #### 格式转换与校验
 
 ```ts
-import {
-  isValidColor,
-  getHex,
-  getRgb,
-  getHsl,
-  getHsv,
-  transformHslToHex,
-} from '@skyroc/color';
+import { isValidColor, getHex, getRgb, getHsl, getHsv, transformHslToHex } from '@skyroc/color';
 
-isValidColor('#1677ff');          // true
-isValidColor('not-a-color');      // false
+isValidColor('#1677ff'); // true
+isValidColor('not-a-color'); // false
 
-getHex('rgb(22, 119, 255)');      // '#1677ff'
-getRgb('#1677ff');                 // { r: 22, g: 119, b: 255, a: 1 }
-getHsl('#1677ff');                 // { h: 215, s: 100, l: 54, a: 1 }
-getHsv('#1677ff');                 // { h: 215, s: 91, v: 100, a: 1 }
+getHex('rgb(22, 119, 255)'); // '#1677ff'
+getRgb('#1677ff'); // { r: 22, g: 119, b: 255, a: 1 }
+getHsl('#1677ff'); // { h: 215, s: 100, l: 54, a: 1 }
+getHsv('#1677ff'); // { h: 215, s: 91, v: 100, a: 1 }
 transformHslToHex({ h: 215, s: 100, l: 54 }); // '#1677ff'
 ```
 
@@ -440,12 +424,12 @@ console.log(delta); // e.g. 0.035
 ```ts
 import { addColorAlpha, mixColor, transformColorWithOpacity } from '@skyroc/color';
 
-addColorAlpha('#1677ff', 0.5);              // '#1677ff80'
-mixColor('#1677ff', '#ff4d4f', 0.5);       // 50% 混合
+addColorAlpha('#1677ff', 0.5); // '#1677ff80'
+mixColor('#1677ff', '#ff4d4f', 0.5); // 50% 混合
 
 // 将半透明色转为在指定背景上的不透明近似色
-transformColorWithOpacity('#1677ff', 0.3);              // 白底近似
-transformColorWithOpacity('#1677ff', 0.3, '#000000');   // 黑底近似
+transformColorWithOpacity('#1677ff', 0.3); // 白底近似
+transformColorWithOpacity('#1677ff', 0.3, '#000000'); // 黑底近似
 ```
 
 #### 明暗调节
@@ -453,11 +437,11 @@ transformColorWithOpacity('#1677ff', 0.3, '#000000');   // 黑底近似
 ```ts
 import { adjustLightness, lightenColor, darkenColor, isWhiteColor } from '@skyroc/color';
 
-adjustLightness('#1677ff', 20);   // 变亮（正数）
-adjustLightness('#1677ff', -20);  // 变暗（负数）
+adjustLightness('#1677ff', 20); // 变亮（正数）
+adjustLightness('#1677ff', -20); // 变暗（负数）
 lightenColor('#1677ff', 20);
 darkenColor('#1677ff', 20);
-isWhiteColor('#ffffff');           // true
+isWhiteColor('#ffffff'); // true
 ```
 
 #### 色名匹配
@@ -499,19 +483,19 @@ console.log(bluePalette?.palettes);
 
 ## 三种算法对比
 
-|  | Ant Design | 推荐算法 | OKLCH |
-|---|---|---|---|
-| **色彩空间** | HSV | HSL + deltaE | OKLCH（感知均匀） |
-| **色阶数量** | 11 档（索引 1-11） | 11 档（50-950） | 11 档（50-950） |
-| **主色位置** | 第 6 档 | 500 档 | 500 档（可自定义） |
-| **感知均匀性** | 一般 | 依赖预设数据 | 优秀 |
-| **色度补偿** | 无 | 无 | 有（按色相族自适应） |
-| **色相旋转** | 线性偏移 | 等比映射 | Apple 风格自然旋转 |
-| **暗色模式** | 混色法 | 不支持 | 反转明度曲线 |
-| **WCAG** | 不支持 | 不支持 | 完整支持 |
-| **sRGB 色域映射** | 无 | 无 | 二分法精确映射 |
-| **OKLCH 值输出** | 不支持 | 不支持 | 支持（`generateOklchPaletteEx`） |
-| **适用场景** | 兼容 Ant Design 生态 | Tailwind 风格一致性 | 设计系统、无障碍要求高的场景 |
+|                   | Ant Design           | 推荐算法            | OKLCH                            |
+| ----------------- | -------------------- | ------------------- | -------------------------------- |
+| **色彩空间**      | HSV                  | HSL + deltaE        | OKLCH（感知均匀）                |
+| **色阶数量**      | 11 档（索引 1-11）   | 11 档（50-950）     | 11 档（50-950）                  |
+| **主色位置**      | 第 6 档              | 500 档              | 500 档（可自定义）               |
+| **感知均匀性**    | 一般                 | 依赖预设数据        | 优秀                             |
+| **色度补偿**      | 无                   | 无                  | 有（按色相族自适应）             |
+| **色相旋转**      | 线性偏移             | 等比映射            | Apple 风格自然旋转               |
+| **暗色模式**      | 混色法               | 不支持              | 反转明度曲线                     |
+| **WCAG**          | 不支持               | 不支持              | 完整支持                         |
+| **sRGB 色域映射** | 无                   | 无                  | 二分法精确映射                   |
+| **OKLCH 值输出**  | 不支持               | 不支持              | 支持（`generateOklchPaletteEx`） |
+| **适用场景**      | 兼容 Ant Design 生态 | Tailwind 风格一致性 | 设计系统、无障碍要求高的场景     |
 
 **选择建议：**
 
@@ -590,11 +574,13 @@ type ColorIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 type PaletteAlgorithm = 'antd' | 'oklch' | 'recommended';
 
 // 统一入口配置：直接给算法名，或给完整配置对象
-type ColorPaletteConfig = PaletteAlgorithm | {
-  algorithm?: PaletteAlgorithm;
-  darkTheme?: boolean;
-  darkThemeMixColor?: string;
-};
+type ColorPaletteConfig =
+  | PaletteAlgorithm
+  | {
+      algorithm?: PaletteAlgorithm;
+      darkTheme?: boolean;
+      darkThemeMixColor?: string;
+    };
 
 // WCAG
 type WcagLevel = 'AA' | 'AAA';
@@ -609,17 +595,17 @@ type ColorPaletteFamily = { name: string; palettes: ColorPalette[] };
 // 匹配结果
 type ColorPaletteMatch = ColorPaletteFamily & {
   colorMap: Map<ColorPaletteNumber, ColorPalette>;
-  main: ColorPalette;   // 500 档
-  match: ColorPalette;  // 与输入色最接近的档
+  main: ColorPalette; // 500 档
+  match: ColorPalette; // 与输入色最接近的档
 };
 
 // OKLCH 高级选项
 interface OklchPaletteOptions {
-  appleHueShift?: boolean;       // 是否启用 Apple 风格色相旋转，default: true
-  chromaCompensation?: boolean;  // 是否启用色度补偿，default: true
-  lightnessCurve?: number[];     // 自定义明度曲线（11 个值，从亮到暗）
+  appleHueShift?: boolean; // 是否启用 Apple 风格色相旋转，default: true
+  chromaCompensation?: boolean; // 是否启用色度补偿，default: true
+  lightnessCurve?: number[]; // 自定义明度曲线（11 个值，从亮到暗）
   forceStep?: ColorPaletteNumber; // 强制将输入色放在指定色阶
-  includeOklch?: boolean;        // 是否在输出中包含 OKLCH 值，default: false
+  includeOklch?: boolean; // 是否在输出中包含 OKLCH 值，default: false
 }
 
 // 带 OKLCH 数值的扩展类型

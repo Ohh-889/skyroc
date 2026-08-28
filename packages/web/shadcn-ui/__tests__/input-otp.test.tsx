@@ -1,5 +1,5 @@
-import { createRef } from 'react';
 import { act } from '@testing-library/react';
+import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { InputOTP } from '../src/preset/input-otp';
 import { render, screen, setupUser, waitFor } from './helpers/render';

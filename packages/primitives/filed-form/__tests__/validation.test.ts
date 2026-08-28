@@ -100,8 +100,20 @@ describe('runRulesWithMode', () => {
   });
 
   it('should accept valid numeric, integer, float, and date values', async () => {
-    const number = await runRulesWithMode(2, [{ max: 3, min: 1, type: 'number' }], 'parallelAll', {}, defaultValidateMessages);
-    const integer = await runRulesWithMode(2, [{ max: 3, min: 1, type: 'integer' }], 'parallelAll', {}, defaultValidateMessages);
+    const number = await runRulesWithMode(
+      2,
+      [{ max: 3, min: 1, type: 'number' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
+    const integer = await runRulesWithMode(
+      2,
+      [{ max: 3, min: 1, type: 'integer' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
     const float = await runRulesWithMode(1.5, [{ type: 'float' }], 'parallelAll', {}, defaultValidateMessages);
     const date = await runRulesWithMode('2026-05-07', [{ type: 'date' }], 'parallelAll', {}, defaultValidateMessages);
 
@@ -197,7 +209,13 @@ describe('runRulesWithMode', () => {
       {},
       defaultValidateMessages
     );
-    const booleanResult = await runRulesWithMode('true', [{ type: 'boolean' }], 'parallelAll', {}, defaultValidateMessages);
+    const booleanResult = await runRulesWithMode(
+      'true',
+      [{ type: 'boolean' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
     const hexResult = await runRulesWithMode('zzzzzz', [{ type: 'hex' }], 'parallelAll', {}, defaultValidateMessages);
     const regexpResult = await runRulesWithMode('[', [{ type: 'regexp' }], 'parallelAll', {}, defaultValidateMessages);
     const urlResult = await runRulesWithMode('example', [{ type: 'url' }], 'parallelAll', {}, defaultValidateMessages);
@@ -210,7 +228,13 @@ describe('runRulesWithMode', () => {
   });
 
   it('should accept empty enum rules and valid boolean and regexp values', async () => {
-    const enumResult = await runRulesWithMode('guest', [{ enum: [], type: 'enum' }], 'parallelAll', {}, defaultValidateMessages);
+    const enumResult = await runRulesWithMode(
+      'guest',
+      [{ enum: [], type: 'enum' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
     const enumMatch = await runRulesWithMode(
       'admin',
       [{ enum: ['admin', 'editor'], type: 'enum' }],
@@ -218,7 +242,13 @@ describe('runRulesWithMode', () => {
       {},
       defaultValidateMessages
     );
-    const booleanResult = await runRulesWithMode(true, [{ type: 'boolean' }], 'parallelAll', {}, defaultValidateMessages);
+    const booleanResult = await runRulesWithMode(
+      true,
+      [{ type: 'boolean' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
     const emailResult = await runRulesWithMode(
       'ada@example.com',
       [{ type: 'email' }],
@@ -235,7 +265,13 @@ describe('runRulesWithMode', () => {
       {},
       defaultValidateMessages
     );
-    const regexpInstance = await runRulesWithMode(/abc/, [{ type: 'regexp' }], 'parallelAll', {}, defaultValidateMessages);
+    const regexpInstance = await runRulesWithMode(
+      /abc/,
+      [{ type: 'regexp' }],
+      'parallelAll',
+      {},
+      defaultValidateMessages
+    );
     const regexpObject = await runRulesWithMode({}, [{ type: 'regexp' }], 'parallelAll', {}, defaultValidateMessages);
     const urlResult = await runRulesWithMode(
       'https://soybeanjs.cn',
@@ -292,10 +328,12 @@ describe('runRulesWithMode', () => {
   });
 
   it('should use an empty rule fallback in serial mode', async () => {
-    await expect(runRulesWithMode('value', [undefined as any], 'serial', {}, defaultValidateMessages)).resolves.toEqual({
-      errors: [],
-      warns: []
-    });
+    await expect(runRulesWithMode('value', [undefined as any], 'serial', {}, defaultValidateMessages)).resolves.toEqual(
+      {
+        errors: [],
+        warns: []
+      }
+    );
   });
 
   it('should format undefined values as empty strings', async () => {
@@ -384,10 +422,7 @@ describe('runRulesWithMode', () => {
   it('should stop at the first error in parallelFirst mode', async () => {
     const result = await runRulesWithMode(
       'value',
-      [
-        { validator: () => 'first error' },
-        { validator: () => 'second error' }
-      ],
+      [{ validator: () => 'first error' }, { validator: () => 'second error' }],
       'parallelFirst',
       {},
       defaultValidateMessages

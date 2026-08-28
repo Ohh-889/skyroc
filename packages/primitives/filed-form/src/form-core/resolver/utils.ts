@@ -1,18 +1,18 @@
 /* eslint-disable consistent-return */
 
 /**
- * Utility functions for form validation resolver
- * Provides helper functions to transform validation issues and create generic resolvers
+ * Utility functions for form validation resolver Provides helper functions to transform validation issues and create
+ * generic resolvers
  */
 
-import type { AllPathsKeys } from '@skyroc/utils/type';
 import { keyOfName } from '@skyroc/utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import type { Action, Middleware } from '../middleware';
 import type { StandardSchemaV1NormalizedIssue } from './standard';
 
 /**
- * Converts an array of validation issues into entries format
- * Groups issues by field path and collects error messages for each field
+ * Converts an array of validation issues into entries format Groups issues by field path and collects error messages
+ * for each field
  */
 export function toEntries<Values = any>(issues: StandardSchemaV1NormalizedIssue[]): [AllPathsKeys<Values>, string[]][] {
   // Create a map to group error messages by field path
@@ -31,8 +31,8 @@ export function toEntries<Values = any>(issues: StandardSchemaV1NormalizedIssue[
 }
 
 /**
- * Dispatches validation issues to the form state
- * Converts issues to entries format and triggers setExternalErrors action
+ * Dispatches validation issues to the form state Converts issues to entries format and triggers setExternalErrors
+ * action
  */
 export function dispatchIssues<Values = any>(
   dispatch: (a: Action<Values>) => void,
@@ -45,10 +45,7 @@ export function dispatchIssues<Values = any>(
   dispatch({ entries, type: 'setExternalErrors' });
 }
 
-/**
- * Creates a generic validation resolver middleware
- * Handles both single field validation and multiple fields validation
- */
+/** Creates a generic validation resolver middleware Handles both single field validation and multiple fields validation */
 export function createGenericResolver<Values = any>(
   validate: (state: Values, name?: string | string[]) => Promise<StandardSchemaV1NormalizedIssue[]>
 ): Middleware<Values> {

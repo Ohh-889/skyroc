@@ -1,20 +1,7 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "./react.json"
-  ],
-  "plugins": [
-    "node",
-    "import",
-    "unicorn",
-    "typescript",
-    "eslint",
-    "oxc",
-    "vitest",
-    "react",
-    "jsx-a11y",
-    "nextjs"
-  ],
+  "extends": ["./react.json"],
+  "plugins": ["node", "import", "unicorn", "typescript", "eslint", "oxc", "vitest", "react", "jsx-a11y", "nextjs"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",

@@ -65,7 +65,11 @@ import { ConfigProvider, Button, Input, Select } from '@skyroc/web-ui';
 
 const App = () => {
   return (
-    <ConfigProvider size="lg" theme={{ color: 'blue' }} direction="ltr">
+    <ConfigProvider
+      size="lg"
+      theme={{ color: 'blue' }}
+      direction="ltr"
+    >
       <Button color="primary">按钮</Button>
       <Input placeholder="输入框" />
       <Select placeholder="选择器" />
@@ -83,6 +87,14 @@ const App = () => {
 ## 下一步
 
 <Cards>
-  <Card title="主题系统" description="颜色、尺寸、ConfigProvider 全局配置" href="/overview/theming" />
-  <Card title="Button" description="从最常用的按钮组件开始探索" href="/components/button" />
+  <Card
+    title="主题系统"
+    description="颜色、尺寸、ConfigProvider 全局配置"
+    href="/overview/theming"
+  />
+  <Card
+    title="Button"
+    description="从最常用的按钮组件开始探索"
+    href="/components/button"
+  />
 </Cards>

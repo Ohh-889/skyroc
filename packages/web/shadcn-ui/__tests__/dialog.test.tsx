@@ -3,7 +3,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { Dialog } from '../src/preset/dialog';
 
 vi.mock('@iconify/react', () => ({
-  Icon: (props: { icon: string }) => <span data-icon={props.icon} data-testid="iconify-icon" />
+  Icon: (props: { icon: string }) => (
+    <span
+      data-icon={props.icon}
+      data-testid="iconify-icon"
+    />
+  )
 }));
 
 describe('Dialog', () => {

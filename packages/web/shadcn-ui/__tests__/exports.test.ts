@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import * as Hooks from '../src/hooks';
 import * as WebUi from '../src';
 import * as Primitives from '../src/components';
+import * as Hooks from '../src/hooks';
 
 describe('public exports', () => {
   it('exposes the config-aware preset entry surface', () => {

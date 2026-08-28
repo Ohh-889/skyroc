@@ -25,28 +25,28 @@ App.tsx
 
 ## 适用场景
 
-| 你要做什么 | 先看哪里 |
-| --- | --- |
-| 新增路由标题或菜单文案 | `packages/web/admin-i18n/src/langs/*`、`packages/@core/types/src/locales/i18n.d.ts` 的 `I18n.Route` |
-| 新增页面或业务文案类型 | `packages/@core/types/src/locales/i18n.d.ts` 和共享语言资源 |
-| 调整默认语言或语言选项 | `apps/admin/src/config.ts`、`apps/admin/src/locales/index.ts` |
-| 同步 Dayjs 或其他第三方语言 | `apps/admin/src/locales/sync.ts`、`GlobalEffect` |
-| 修改 Ant Design locale | `apps/admin/src/locales/antd.ts`、`features/antd/AntdProvider.tsx` |
-| 新增本地 SVG 图标 | `apps/admin/src/assets/svg-icon`、route `menu.localIcon`、组件 `localIcon` prop |
-| 修改 Iconify provider | `.env` 的 `VITE_ICONIFY_URL`、`apps/admin/src/plugins/index.ts` |
+| 你要做什么                  | 先看哪里                                                                                            |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| 新增路由标题或菜单文案      | `packages/web/admin-i18n/src/langs/*`、`packages/@core/types/src/locales/i18n.d.ts` 的 `I18n.Route` |
+| 新增页面或业务文案类型      | `packages/@core/types/src/locales/i18n.d.ts` 和共享语言资源                                         |
+| 调整默认语言或语言选项      | `apps/admin/src/config.ts`、`apps/admin/src/locales/index.ts`                                       |
+| 同步 Dayjs 或其他第三方语言 | `apps/admin/src/locales/sync.ts`、`GlobalEffect`                                                    |
+| 修改 Ant Design locale      | `apps/admin/src/locales/antd.ts`、`features/antd/AntdProvider.tsx`                                  |
+| 新增本地 SVG 图标           | `apps/admin/src/assets/svg-icon`、route `menu.localIcon`、组件 `localIcon` prop                     |
+| 修改 Iconify provider       | `.env` 的 `VITE_ICONIFY_URL`、`apps/admin/src/plugins/index.ts`                                     |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/locales/index.ts` | 调用 `setupCoreI18n()`，注入默认语言、fallback、语言选项和 storage。 |
-| `apps/admin/src/config.ts` | 提供 `defaultLang`、`defaultLangOptions`、`localIconPrefix`、`defaultIcon`。 |
-| `apps/admin/src/locales/antd.ts` | 把 `zh-CN`、`en-US` 映射到 Ant Design locale 对象。 |
-| `apps/admin/src/locales/sync.ts` | 把应用语言同步给 Dayjs。 |
-| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `LangEffect`，语言变化时调用 `syncLocales`。 |
-| `apps/admin/src/plugins/assets.ts` | 注册本地 SVG sprite。 |
-| `apps/admin/src/plugins/index.ts` | 配置 Iconify provider、Dayjs、NProgress 和应用更新检测。 |
-| `packages/@core/types/src/locales/i18n.d.ts` | 全局 `I18n` 命名空间，约束 `$t()`、`i18nKey` 和语言资源 key。 |
+| 文件                                               | 职责                                                                         |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `apps/admin/src/locales/index.ts`                  | 调用 `setupCoreI18n()`，注入默认语言、fallback、语言选项和 storage。         |
+| `apps/admin/src/config.ts`                         | 提供 `defaultLang`、`defaultLangOptions`、`localIconPrefix`、`defaultIcon`。 |
+| `apps/admin/src/locales/antd.ts`                   | 把 `zh-CN`、`en-US` 映射到 Ant Design locale 对象。                          |
+| `apps/admin/src/locales/sync.ts`                   | 把应用语言同步给 Dayjs。                                                     |
+| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `LangEffect`，语言变化时调用 `syncLocales`。                            |
+| `apps/admin/src/plugins/assets.ts`                 | 注册本地 SVG sprite。                                                        |
+| `apps/admin/src/plugins/index.ts`                  | 配置 Iconify provider、Dayjs、NProgress 和应用更新检测。                     |
+| `packages/@core/types/src/locales/i18n.d.ts`       | 全局 `I18n` 命名空间，约束 `$t()`、`i18nKey` 和语言资源 key。                |
 
 ## 核心概念
 
@@ -82,7 +82,10 @@ i18next 的语言 key 不会自动让 Ant Design 切换语言。当前应用通�
 const { locale } = useLang();
 
 return (
-  <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+  <AntdProvider
+    locale={antdLocales[locale]}
+    userName={userInfo?.userName}
+  >
     {children}
   </AntdProvider>
 );
@@ -120,11 +123,11 @@ const localeMap: Record<I18n.LangType, string> = {
 
 ### 图标有三类来源
 
-| 来源 | 使用方式 | 典型场景 |
-| --- | --- | --- |
-| Iconify 在线 / provider | `material-symbols:sunny` 这类图标名 | 主题切换、菜单、通用 UI 图标。 |
-| 本地 SVG sprite | `localIcon="logo"`、`menu.localIcon: 'logo'` | 项目 logo、业务定制图标、内网不可依赖远端时的图标。 |
-| Ant Design / lucide / 组件图标 | 组件直接 import | 文档站、少量 React 组件内操作图标。 |
+| 来源                           | 使用方式                                     | 典型场景                                            |
+| ------------------------------ | -------------------------------------------- | --------------------------------------------------- |
+| Iconify 在线 / provider        | `material-symbols:sunny` 这类图标名          | 主题切换、菜单、通用 UI 图标。                      |
+| 本地 SVG sprite                | `localIcon="logo"`、`menu.localIcon: 'logo'` | 项目 logo、业务定制图标、内网不可依赖远端时的图标。 |
+| Ant Design / lucide / 组件图标 | 组件直接 import                              | 文档站、少量 React 组件内操作图标。                 |
 
 `.env` 当前定义：
 
@@ -167,13 +170,13 @@ packages/@core/types/src/locales/i18n.d.ts
 
 新增语言不是只加 JSON。至少要检查：
 
-| 位置 | 要做什么 |
-| --- | --- |
-| `I18n.LangType` | 增加语言联合类型。 |
-| `globalConfig.defaultLangOptions` | 增加语言切换选项。 |
-| 共享语言资源 | 增加对应语言资源并接入聚合。 |
-| `apps/admin/src/locales/antd.ts` | 增加 Ant Design locale 映射。 |
-| `apps/admin/src/locales/sync.ts` | 增加 Dayjs 或其他第三方 locale 映射。 |
+| 位置                              | 要做什么                              |
+| --------------------------------- | ------------------------------------- |
+| `I18n.LangType`                   | 增加语言联合类型。                    |
+| `globalConfig.defaultLangOptions` | 增加语言切换选项。                    |
+| 共享语言资源                      | 增加对应语言资源并接入聚合。          |
+| `apps/admin/src/locales/antd.ts`  | 增加 Ant Design locale 映射。         |
+| `apps/admin/src/locales/sync.ts`  | 增加 Dayjs 或其他第三方 locale 映射。 |
 
 缺任何一环，都可能出现“菜单翻译了，但 antd 没翻译”或“切换语言后日期格式没变”的现象。
 
@@ -189,7 +192,7 @@ apps/admin/src/assets/svg-icon/report.svg
 
 ```ts
 menu: {
-  localIcon: 'report'
+  localIcon: 'report';
 }
 ```
 
@@ -229,22 +232,22 @@ const adminIconifyOfflinePluginOptions = {
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 只加翻译 JSON，不改类型 | 同步 `packages/@core/types/src/locales/i18n.d.ts`，让 key 有类型约束。 |
-| 认为 i18next 会自动切换 antd 语言 | antd locale 由 `AppAntdProvider` 显式传入。 |
-| 在页面 effect 里同步 Dayjs locale | 第三方语言同步放在 `locales/sync.ts`，由 `LangEffect` 统一触发。 |
-| 把本地 SVG 写成 Iconify 名称 | 路由菜单使用 `menu.localIcon: 'logo'`，组件使用 `<SvgIcon localIcon="logo" />`；`icon-local-*` 是生成后的 symbol / class 前缀，不是普通 Iconify 名称。 |
-| 修改 `.env` 图标前缀后不重启 dev server | Vite env 是启动时读取，修改后需要重启。 |
-| 在共享 i18n 包里写应用专属运行逻辑 | 应用默认语言、缓存、第三方同步属于 `apps/admin` 适配层。 |
+| 误区                                    | 正确做法                                                                                                                                               |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 只加翻译 JSON，不改类型                 | 同步 `packages/@core/types/src/locales/i18n.d.ts`，让 key 有类型约束。                                                                                 |
+| 认为 i18next 会自动切换 antd 语言       | antd locale 由 `AppAntdProvider` 显式传入。                                                                                                            |
+| 在页面 effect 里同步 Dayjs locale       | 第三方语言同步放在 `locales/sync.ts`，由 `LangEffect` 统一触发。                                                                                       |
+| 把本地 SVG 写成 Iconify 名称            | 路由菜单使用 `menu.localIcon: 'logo'`，组件使用 `<SvgIcon localIcon="logo" />`；`icon-local-*` 是生成后的 symbol / class 前缀，不是普通 Iconify 名称。 |
+| 修改 `.env` 图标前缀后不重启 dev server | Vite env 是启动时读取，修改后需要重启。                                                                                                                |
+| 在共享 i18n 包里写应用专属运行逻辑      | 应用默认语言、缓存、第三方同步属于 `apps/admin` 适配层。                                                                                               |
 
 ## 相关链接
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 主题 Provider 和 Ant Design token | [主题系统](./overview) |
-| 组件、菜单和后端动态菜单图标用法 | [图标使用](./icons) |
-| 路由 `i18nKey`、菜单图标和隐藏菜单 | [路由元信息](../routing/route-meta) |
-| Iconify、本地 SVG 和 Vite preset | [环境变量与 Vite](../configuration/env-and-vite) |
-| 共享 i18n 包完整 API | [@skyroc/web-admin-i18n](/docs/web/admin-i18n) |
-| 共享 Vite 图标配置 | [@skyroc/web-admin-vite](/docs/web/admin-vite) |
+| 主题                               | 继续查看                                         |
+| ---------------------------------- | ------------------------------------------------ |
+| 主题 Provider 和 Ant Design token  | [主题系统](./overview)                           |
+| 组件、菜单和后端动态菜单图标用法   | [图标使用](./icons)                              |
+| 路由 `i18nKey`、菜单图标和隐藏菜单 | [路由元信息](../routing/route-meta)              |
+| Iconify、本地 SVG 和 Vite preset   | [环境变量与 Vite](../configuration/env-and-vite) |
+| 共享 i18n 包完整 API               | [@skyroc/web-admin-i18n](/docs/web/admin-i18n)   |
+| 共享 Vite 图标配置                 | [@skyroc/web-admin-vite](/docs/web/admin-vite)   |

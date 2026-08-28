@@ -1,5 +1,5 @@
-import { atomWithPartial, createAtomWithStorage, getAtomValue, setAtomValue } from '@skyroc/core-state';
 import { useSettingsTheme } from '@shell/theme';
+import { atomWithPartial, createAtomWithStorage, getAtomValue, setAtomValue } from '@skyroc/core-state';
 import { useNavigate } from '@tanstack/react-router';
 import { useAtom } from 'jotai';
 

@@ -4,13 +4,15 @@ import type { DrawerSide } from '../drawer';
 import type { LayoutCollapsible, LayoutSide, LayoutSlots, LayoutVariant } from './layout-variants';
 
 /**
- * Props for the Layout main content area.
- * Renders the primary content section of the layout.
+ * Props for the Layout main content area. Renders the primary content section of the layout.
  *
  * @example
- * <LayoutMain variant="sidebar" collapsible="icon">
- *   Main content goes here
- * </LayoutMain>
+ *   <LayoutMain
+ *     variant="sidebar"
+ *     collapsible="icon"
+ *   >
+ *     Main content goes here
+ *   </LayoutMain>;
  */
 export type LayoutMainProps = Pick<StyledComponentProps<'main'>, 'className'> & {
   /** Content to render within the main area */
@@ -21,20 +23,16 @@ export type LayoutMainProps = Pick<StyledComponentProps<'main'>, 'className'> & 
   variant?: LayoutVariant;
 };
 
-/**
- * Class names for different slots in the layout component.
- * Allows customizing styles for specific parts of the layout.
- */
+/** Class names for different slots in the layout component. Allows customizing styles for specific parts of the layout. */
 export type LayoutClassNames = Partial<Record<LayoutSlots, ClassValue>>;
 
 /**
- * Props for the Layout header section.
- * Renders a fixed or sticky header at the top of the layout.
+ * Props for the Layout header section. Renders a fixed or sticky header at the top of the layout.
  *
  * @example
- * <LayoutHeader>
- *   <h1>Page Title</h1>
- * </LayoutHeader>
+ *   <LayoutHeader>
+ *     <h1>Page Title</h1>
+ *   </LayoutHeader>;
  */
 export type LayoutHeaderProps = Pick<StyledComponentProps<'header'>, 'className'> & {
   /** Header content to render */
@@ -42,13 +40,12 @@ export type LayoutHeaderProps = Pick<StyledComponentProps<'header'>, 'className'
 };
 
 /**
- * Props for the Layout tab section.
- * Renders a tab area below the header in the layout.
+ * Props for the Layout tab section. Renders a tab area below the header in the layout.
  *
  * @example
- * <LayoutTab>
- *   <Tabs>Tab content</Tabs>
- * </LayoutTab>
+ *   <LayoutTab>
+ *     <Tabs>Tab content</Tabs>
+ *   </LayoutTab>;
  */
 export type LayoutTabProps = Pick<StyledComponentProps<'div'>, 'className'> & {
   /** Tab content to render */
@@ -56,13 +53,12 @@ export type LayoutTabProps = Pick<StyledComponentProps<'div'>, 'className'> & {
 };
 
 /**
- * Props for the Layout footer section.
- * Renders a footer area at the bottom of the layout.
+ * Props for the Layout footer section. Renders a footer area at the bottom of the layout.
  *
  * @example
- * <LayoutFooter>
- *   <p>Footer content</p>
- * </LayoutFooter>
+ *   <LayoutFooter>
+ *     <p>Footer content</p>
+ *   </LayoutFooter>;
  */
 export type LayoutFooterProps = Pick<StyledComponentProps<'footer'>, 'className'> & {
   /** Footer content to render */
@@ -70,13 +66,15 @@ export type LayoutFooterProps = Pick<StyledComponentProps<'footer'>, 'className'
 };
 
 /**
- * Props for the Layout mobile sidebar.
- * Renders a mobile-responsive sidebar using the Sheet component.
+ * Props for the Layout mobile sidebar. Renders a mobile-responsive sidebar using the Sheet component.
  *
  * @example
- * <LayoutMobile side="left" rootClassName="mobile-only">
- *   Mobile navigation
- * </LayoutMobile>
+ *   <LayoutMobile
+ *     side="left"
+ *     rootClassName="mobile-only"
+ *   >
+ *     Mobile navigation
+ *   </LayoutMobile>;
  */
 export type LayoutMobileProps = Pick<StyledComponentProps<'div'>, 'className'> & {
   /** Content to render in the mobile sidebar */
@@ -88,13 +86,16 @@ export type LayoutMobileProps = Pick<StyledComponentProps<'div'>, 'className'> &
 };
 
 /**
- * Props for the Layout rail sidebar.
- * Renders a vertical navigation rail, typically on desktop.
+ * Props for the Layout rail sidebar. Renders a vertical navigation rail, typically on desktop.
  *
  * @example
- * <LayoutRail side="left" variant="sidebar" collapsible="icon">
- *   <nav>Navigation items</nav>
- * </LayoutRail>
+ *   <LayoutRail
+ *     side="left"
+ *     variant="sidebar"
+ *     collapsible="icon"
+ *   >
+ *     <nav>Navigation items</nav>
+ *   </LayoutRail>;
  */
 export type LayoutRailProps = Pick<StyledComponentProps<'div'>, 'className'> & {
   /** Whether the rail is collapsible */
@@ -107,10 +108,7 @@ export type LayoutRailProps = Pick<StyledComponentProps<'div'>, 'className'> & {
 
 type LayoutUi = Partial<Record<LayoutSlots, ClassValue>>;
 
-/**
- * Props passed to the sidebar render function.
- * Provides context information about the current sidebar state.
- */
+/** Props passed to the sidebar render function. Provides context information about the current sidebar state. */
 export interface LayoutSidebarChildrenProps {
   /** Whether the sidebar is currently collapsed */
   collapsed: boolean;
@@ -121,23 +119,21 @@ export interface LayoutSidebarChildrenProps {
 }
 
 /**
- * Props for the Layout sidebar section.
- * Renders a collapsible sidebar with optional render function support.
+ * Props for the Layout sidebar section. Renders a collapsible sidebar with optional render function support.
  *
  * @example
- * <LayoutSidebar side="left" collapsible="offcanvas">
- *   Sidebar content
- * </LayoutSidebar>
+ *   <LayoutSidebar
+ *     side="left"
+ *     collapsible="offcanvas"
+ *   >
+ *     Sidebar content
+ *   </LayoutSidebar>;
  *
  * @example
- * // Using render function to respond to sidebar state changes
- * <LayoutSidebar>
- *   {({ collapsed, size }) => (
- *     <nav className={collapsed ? 'icon-only' : 'full'}>
- *       Navigation items
- *     </nav>
- *   )}
- * </LayoutSidebar>
+ *   // Using render function to respond to sidebar state changes
+ *   <LayoutSidebar>
+ *     {({ collapsed, size }) => <nav className={collapsed ? 'icon-only' : 'full'}>Navigation items</nav>}
+ *   </LayoutSidebar>;
  */
 export type LayoutSidebarProps = Pick<StyledComponentProps<'div'>, 'className'> & {
   /** Sidebar content or render function that receives sidebar state */
@@ -155,41 +151,34 @@ export type LayoutSidebarProps = Pick<StyledComponentProps<'div'>, 'className'> 
 };
 
 /**
- * Props for the Layout toggle/trigger button.
- * Button component for toggling sidebar open/closed state.
+ * Props for the Layout toggle/trigger button. Button component for toggling sidebar open/closed state.
  *
  * @example
- * <LayoutTrigger onClick={() => toggleSidebar()}>
- *   Menu
- * </LayoutTrigger>
+ *   <LayoutTrigger onClick={() => toggleSidebar()}>Menu</LayoutTrigger>;
  */
 export type LayoutTriggerProps = Omit<StyledComponentProps<React.ComponentPropsWithRef<'button'>>, 'color' | 'size'> & {
   /** Size variant for the trigger button */
   size?: ThemeSize;
 };
 
-/**
- * Props passed to the root layout render function.
- * Provides context information about the layout state.
- */
+/** Props passed to the root layout render function. Provides context information about the layout state. */
 export interface LayoutRootChildrenProps {
   /** Whether the layout sidebar is currently open */
   open: boolean;
 }
 
 /**
- * Props for the Layout root component.
- * Main container component that manages the layout state and structure.
+ * Props for the Layout root component. Main container component that manages the layout state and structure.
  *
  * @example
- * <LayoutRoot
- *   collapsible="offcanvas"
- *   defaultOpen={true}
- *   sidebarWidth={250}
- *   collapsedSidebarWidth={60}
- * >
- *   {({ open }) => <div>Layout is {open ? 'open' : 'closed'}</div>}
- * </LayoutRoot>
+ *   <LayoutRoot
+ *     collapsible="offcanvas"
+ *     defaultOpen={true}
+ *     sidebarWidth={250}
+ *     collapsedSidebarWidth={60}
+ *   >
+ *     {({ open }) => <div>Layout is {open ? 'open' : 'closed'}</div>}
+ *   </LayoutRoot>;
  */
 export type LayoutRootProps = Pick<StyledComponentProps<'div'>, 'className'> & {
   /** Root content or render function that receives layout state */
@@ -215,21 +204,21 @@ export type LayoutRootProps = Pick<StyledComponentProps<'div'>, 'className'> & {
 };
 
 /**
- * Props for the main Layout component.
- * Composite component that manages header, sidebar, tab, footer and main content areas.
+ * Props for the main Layout component. Composite component that manages header, sidebar, tab, footer and main content
+ * areas.
  *
  * @example
- * <Layout
- *   variant="sidebar"
- *   collapsible="icon"
- *   side="left"
- *   header={<LayoutHeader>Header</LayoutHeader>}
- *   sidebar={<LayoutSidebar>Sidebar</LayoutSidebar>}
- *   tab={<LayoutTab>Tab</LayoutTab>}
- *   footer={<LayoutFooter>Footer</LayoutFooter>}
- * >
- *   Main content area
- * </Layout>
+ *   <Layout
+ *     variant="sidebar"
+ *     collapsible="icon"
+ *     side="left"
+ *     header={<LayoutHeader>Header</LayoutHeader>}
+ *     sidebar={<LayoutSidebar>Sidebar</LayoutSidebar>}
+ *     tab={<LayoutTab>Tab</LayoutTab>}
+ *     footer={<LayoutFooter>Footer</LayoutFooter>}
+ *   >
+ *     Main content area
+ *   </Layout>;
  */
 export type LayoutProps = Omit<LayoutRootProps, 'children'> & {
   /** Main content area of the layout */
@@ -248,10 +237,7 @@ export type LayoutProps = Omit<LayoutRootProps, 'children'> & {
 
 type SidebarState = 'collapsed' | 'expanded';
 
-/**
- * Context type for the Layout component.
- * Provides layout state and control methods to child components.
- */
+/** Context type for the Layout component. Provides layout state and control methods to child components. */
 export interface LayoutContextType {
   /** Current width of the sidebar when collapsed */
   collapsedSidebarWidth?: number;

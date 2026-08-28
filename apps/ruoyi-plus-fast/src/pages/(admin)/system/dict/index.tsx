@@ -1,7 +1,7 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
@@ -37,6 +37,7 @@ import type {
 import { exportDictData, exportDictTypes } from '@/service/api/system-dict/api';
 
 import DictDataSearch from './modules/DictDataSearch';
+import DictTypePanel from './modules/DictTypePanel';
 import {
   DictSearchSchema,
   getDictDataSearchInitialParams,
@@ -44,7 +45,6 @@ import {
   toDictDataSearchQuery,
   toDictTypeSearchQuery
 } from './modules/shared';
-import DictTypePanel from './modules/DictTypePanel';
 
 const DictDataEditorDrawer = lazy(() => import('./modules/DictDataEditorDrawer'));
 const DictTypeEditorDrawer = lazy(() => import('./modules/DictTypeEditorDrawer'));
@@ -195,8 +195,7 @@ const DictManagement = (props: DictManagementProps) => {
   /**
    * 字典数据的重置。
    *
-   * 不能直接用表格 Hook 的 reset：它把表单清回 apiParams，而这一页的 apiParams 是从 URL 还原出来的， 清了等于又把 URL
-   * 上那个关键词填回去。这里显式清空。
+   * 不能直接用表格 Hook 的 reset：它把表单清回 apiParams，而这一页的 apiParams 是从 URL 还原出来的， 清了等于又把 URL 上那个关键词填回去。这里显式清空。
    */
   function resetDataSearch() {
     dataTable.searchProps.form.setFieldsValue({ dictLabel: undefined });

@@ -3,7 +3,7 @@ export type PathTuple = readonly Key[];
 export type NamePath = Key | PathTuple | undefined;
 
 export type SetOptions = {
-  /** Reject dangerous keys like "__proto__", "constructor", "prototype". Default: true (recommended) */
+  /** Reject dangerous keys like "**proto**", "constructor", "prototype". Default: true (recommended) */
   safeKeys?: boolean;
 };
 

@@ -15,8 +15,7 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
 /**
  * 当前登录用户信息。
  *
- * `signal` 由 TanStack Query 传进来，页面卸载 / 查询被取消时请求会跟着中断。
- * 注意：一旦自己传了 signal，这个请求就不再受 `request.cancelAllRequest()` 管辖。
+ * `signal` 由 TanStack Query 传进来，页面卸载 / 查询被取消时请求会跟着中断。 注意：一旦自己传了 signal，这个请求就不再受 `request.cancelAllRequest()` 管辖。
  */
 export function fetchGetUserInfo(signal?: AbortSignal) {
   // 没登录就别发这一枪：它必定 401，还会白白触发一次续签

@@ -28,7 +28,7 @@ export function flattenItems<T extends TreeItemData>(
       label: item.label,
       hasChildren: Boolean(children && children.length > 0),
       bind: {
-        'data': item,
+        data: item,
         level,
         'aria-setsize': items.length,
         'aria-posinset': index + 1
@@ -49,7 +49,7 @@ export function recurseCheckChildren(selected: string[], items?: TreeItemData[])
     return false;
   }
 
-  return items.some((item) => {
+  return items.some(item => {
     if (selected.includes(item.value)) {
       return true;
     }

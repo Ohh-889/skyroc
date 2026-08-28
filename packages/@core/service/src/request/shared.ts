@@ -11,8 +11,7 @@ function cleanCodeList(list: string[] | undefined) {
 /**
  * 规整调用方传进来的业务码
  *
- * 各 app 都是 `import.meta.env.X?.split(',')` 直接传进来的，两种配法会静默失效：
- * 值里带空格（`8888, 8889`）永远匹配不上，成功码缺失会让每个请求都被判成失败。
+ * 各 app 都是 `import.meta.env.X?.split(',')` 直接传进来的，两种配法会静默失效： 值里带空格（`8888, 8889`）永远匹配不上，成功码缺失会让每个请求都被判成失败。
  */
 export function normalizeCodes(codes: ServiceCodes): ServiceCodes {
   return {
@@ -31,11 +30,9 @@ function normalizeEndpoint(url: string) {
 /**
  * 判断这个请求是不是续签请求自己。
  *
- * 续签请求拿到过期码时绝不能再去续签：它会 await 自己那次还没完成的刷新，把自己和所有等着
- * 刷新的请求一起永久挂起。
+ * 续签请求拿到过期码时绝不能再去续签：它会 await 自己那次还没完成的刷新，把自己和所有等着 刷新的请求一起永久挂起。
  *
- * 认 url 而不是只认 `isRefreshToken` 标记，是因为标记要靠写 api 的人记得加；url 由 adapter
- * 必填，漏了编译就过不去。
+ * 认 url 而不是只认 `isRefreshToken` 标记，是因为标记要靠写 api 的人记得加；url 由 adapter 必填，漏了编译就过不去。
  */
 export function isRefreshTokenRequest(config: AxiosRequestConfig | undefined, adapter: RequestAdapter) {
   if (config?.isRefreshToken) {
@@ -62,8 +59,7 @@ export function getAuthorization(adapter: RequestAdapter) {
 /**
  * 单条消息占着去重位的上限。
  *
- * `onClose` 是可选的，平台大可以不回调（RN 的 `Alert.alert` 就没这个回调）。没有兜底的话
- * 那条消息会永远留在栈里，此后它再也弹不出来——一条错误提示被静默吞掉比重复弹一次糟得多。
+ * `onClose` 是可选的，平台大可以不回调（RN 的 `Alert.alert` 就没这个回调）。没有兜底的话 那条消息会永远留在栈里，此后它再也弹不出来——一条错误提示被静默吞掉比重复弹一次糟得多。
  */
 const MSG_MAX_LIFETIME = 5_000;
 

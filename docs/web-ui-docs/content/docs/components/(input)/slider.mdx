@@ -6,13 +6,7 @@ description: 用于在连续区间内选择数值或数值范围的滑块组件
 Slider 用于在连续范围中选择一个值或一段范围。组件基于 Radix Slider 封装，支持受控值、范围值、方向、尺寸、主题色和内部 slot 样式覆盖。
 
 ```tsx
-import {
-  Slider,
-  SliderRange,
-  SliderRoot,
-  SliderThumb,
-  SliderTrack
-} from '@skyroc/web-ui';
+import { Slider, SliderRange, SliderRoot, SliderThumb, SliderTrack } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -48,7 +42,7 @@ const [value, setValue] = useState([35]);
 <Slider
   value={value}
   onValueChange={setValue}
-/>
+/>;
 ```
 
 ## 范围选择
@@ -354,4 +348,8 @@ const [value, setValue] = useState([35]);
   ]}
 />
 
-<UnionType name="ClassValue" description="CSS 类名类型" type="string | null | undefined | Record<string, boolean> | ClassValue[]" />
+<UnionType
+  name="ClassValue"
+  description="CSS 类名类型"
+  type="string | null | undefined | Record<string, boolean> | ClassValue[]"
+/>

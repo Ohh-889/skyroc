@@ -31,13 +31,25 @@ const ProjectNews = () => {
       title={t('page.home.projectNews.title')}
       variant="borderless"
       extra={[
-        <AButton key="reset" type="text" onClick={reset}>
+        <AButton
+          key="reset"
+          type="text"
+          onClick={reset}
+        >
           重置
         </AButton>,
-        <AButton key="reverse" type="text" onClick={reverse}>
+        <AButton
+          key="reverse"
+          type="text"
+          onClick={reverse}
+        >
           反转
         </AButton>,
-        <AButton key="sort" type="text" onClick={sortByTimeDesc}>
+        <AButton
+          key="sort"
+          type="text"
+          onClick={sortByTimeDesc}
+        >
           以时间排序
         </AButton>,
         <AButton
@@ -47,7 +59,11 @@ const ProjectNews = () => {
         >
           从头添加
         </AButton>,
-        <AButton key="shift" type="text" onClick={shift}>
+        <AButton
+          key="shift"
+          type="text"
+          onClick={shift}
+        >
           删除头部
         </AButton>,
         <AButton
@@ -57,10 +73,17 @@ const ProjectNews = () => {
         >
           尾部添加
         </AButton>,
-        <AButton key="pop" type="text" onClick={pop}>
+        <AButton
+          key="pop"
+          type="text"
+          onClick={pop}
+        >
           删除尾部
         </AButton>,
-        <a className="ml-8px text-primary" key="a">
+        <a
+          className="ml-8px text-primary"
+          key="a"
+        >
           {t('page.home.projectNews.moreNews')}
         </a>
       ]}
@@ -79,14 +102,27 @@ const ProjectNews = () => {
             >
               <AList.Item
                 actions={[
-                  <AButton key="up" size="small" onClick={() => up(item.id)}>
+                  <AButton
+                    key="up"
+                    size="small"
+                    onClick={() => up(item.id)}
+                  >
                     上移
                   </AButton>,
 
-                  <AButton danger key="del" size="small" onClick={() => remove(item.id)}>
+                  <AButton
+                    danger
+                    key="del"
+                    size="small"
+                    onClick={() => remove(item.id)}
+                  >
                     删除
                   </AButton>,
-                  <AButton key="down" size="small" onClick={() => down(item.id)}>
+                  <AButton
+                    key="down"
+                    size="small"
+                    onClick={() => down(item.id)}
+                  >
                     下移
                   </AButton>
                 ]}

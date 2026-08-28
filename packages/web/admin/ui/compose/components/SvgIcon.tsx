@@ -28,11 +28,22 @@ const symbolId = (localIconPrefix: string, localIcon: string | null = defaultLoc
 const SvgIcon = ({ icon, localIcon, localIconPrefix = 'icon-local', ...props }: Props) => {
   /** If localIcon is passed, render localIcon first */
   return localIcon || !icon ? (
-    <svg height="1em" width="1em" {...props} aria-hidden="true">
-      <use fill="currentColor" href={symbolId(localIconPrefix, localIcon)} />
+    <svg
+      height="1em"
+      width="1em"
+      {...props}
+      aria-hidden="true"
+    >
+      <use
+        fill="currentColor"
+        href={symbolId(localIconPrefix, localIcon)}
+      />
     </svg>
   ) : (
-    <Icon icon={icon} {...props} />
+    <Icon
+      icon={icon}
+      {...props}
+    />
   );
 };
 

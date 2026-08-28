@@ -11,22 +11,21 @@
     "skyroc",
     "template"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/create-skyroc",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/@core/create-skyroc"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "type": "module",
   "bin": {
     "create-skyroc": "./bin.ts"
   },
@@ -34,6 +33,14 @@
     "dist",
     "README.md"
   ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "bin": {
+      "create-skyroc": "./dist/index.mjs"
+    },
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsx src/maintenance/build.ts",
     "clean": "rimraf dist",
@@ -63,13 +70,6 @@
     "tsx": "catalog:dev",
     "typescript": "catalog:core",
     "vitest": "catalog:dev"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public",
-    "bin": {
-      "create-skyroc": "./dist/index.mjs"
-    }
   },
   "engines": {
     "node": ">=20"

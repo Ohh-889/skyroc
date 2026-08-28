@@ -1,8 +1,8 @@
 'use client';
 
-import { ChevronsLeftRightEllipsis, Component, Dock, Home } from 'lucide-react';
 import { Breadcrumb } from '@skyroc/web-ui';
 import type { BreadcrumbItem } from '@skyroc/web-ui';
+import { ChevronsLeftRightEllipsis, Component, Dock, Home } from 'lucide-react';
 
 const items: BreadcrumbItem[] = [
   {

@@ -4,8 +4,7 @@ import type { DatePickerColumnType, DatePickerFilter, DatePickerFormatter } from
 /**
  * 生成列所需的全部上下文。
  *
- * 收成一个对象而不是平铺参数：年 / 月 / 日三列的范围互相牵制（选了 2 月日列才知道是 28 还是 29 天），
- * 每个环节都要拿到同一份完整上下文，平铺下去参数列表会一路膨胀。
+ * 收成一个对象而不是平铺参数：年 / 月 / 日三列的范围互相牵制（选了 2 月日列才知道是 28 还是 29 天）， 每个环节都要拿到同一份完整上下文，平铺下去参数列表会一路膨胀。
  */
 interface DateColumnsContext {
   /** 列类型及其顺序 */
@@ -26,8 +25,7 @@ interface DateColumnsContext {
   /**
    * 缺列时的兜底日期。
    *
-   * columnsType 允许不含 year（只显示月日），这时月份的上下界没法从选中值里读出来，
-   * 用这个日期的年份补位。
+   * ColumnsType 允许不含 year（只显示月日），这时月份的上下界没法从选中值里读出来， 用这个日期的年份补位。
    */
   referenceDate: Date;
 
@@ -62,8 +60,7 @@ const DEFAULT_YEAR_SPAN = 10;
 /**
  * 钳位迭代的最大轮数。
  *
- * 年 → 月 → 日 逐级收窄，每轮至少定死一列，正常数据下轮数等于列数；
- * 这个上限只防 filter 把各列挖成互相排斥时来回震荡。
+ * 年 → 月 → 日 逐级收窄，每轮至少定死一列，正常数据下轮数等于列数； 这个上限只防 filter 把各列挖成互相排斥时来回震荡。
  */
 const MAX_RESOLVE_DEPTH = 5;
 
@@ -147,7 +144,11 @@ function getDayRange(context: DateColumnsContext): [number, number] {
   const [minYear, maxYear] = getYearRange(context);
   const [minMonth, maxMonth] = getMonthRange(context);
   const year = readColumnValue(context, 'year', clampNumber(context.referenceDate.getFullYear(), minYear, maxYear));
-  const month = readColumnValue(context, 'month', clampNumber(context.referenceDate.getMonth() + 1, minMonth, maxMonth));
+  const month = readColumnValue(
+    context,
+    'month',
+    clampNumber(context.referenceDate.getMonth() + 1, minMonth, maxMonth)
+  );
 
   const isMinMonth = year === minYear && month === context.minDate.getMonth() + 1;
   const isMaxMonth = year === maxYear && month === context.maxDate.getMonth() + 1;
@@ -184,8 +185,7 @@ function genOptions(range: [number, number], type: DatePickerColumnType, context
 /**
  * 由当前选中值推出各列选项。
  *
- * 渲染和 onChange 都走这一个入口：级联意味着「选中值变了列也要跟着变」，
- * 两处各写一份迟早会在月末、年初这些边界上对不齐。
+ * 渲染和 onChange 都走这一个入口：级联意味着「选中值变了列也要跟着变」， 两处各写一份迟早会在月末、年初这些边界上对不齐。
  */
 function buildColumns(context: DateColumnsContext): PickerOption[][] {
   return context.columnsType.map(type => genOptions(getColumnRange(type, context), type, context));
@@ -194,8 +194,7 @@ function buildColumns(context: DateColumnsContext): PickerOption[][] {
 /**
  * 把选中值钳回各列的可选范围内。
  *
- * 按数值比较而不是「取最后一项」：值小于下界时该收到第一项（2000 年在 2016–2036 里应当变成 2016），
- * 被 filter 挖空的中间值则取最接近的可选项。
+ * 按数值比较而不是「取最后一项」：值小于下界时该收到第一项（2000 年在 2016–2036 里应当变成 2016）， 被 filter 挖空的中间值则取最接近的可选项。
  */
 function clampValues(values: string[], columns: PickerOption[][]): string[] {
   return columns.map((options, index) => {
@@ -228,10 +227,8 @@ function clampValues(values: string[], columns: PickerOption[][]): string[] {
 /**
  * 归一化列数据并同时修正选中值，迭代到不动点。
  *
- * 这两件事互相依赖：列的范围由选中值决定，而钳位后的值又会改变列的范围。算一轮不够——
- * 年被钳到首尾年份上之后，月列的上下界才该跟着收窄，日列还要再跟一轮。
- * 只算一轮的话，min / maxDate 把初值排除在外时（比如 maxDate 在过去），
- * 首屏会给出一个越界日期，用户直接点确定就把它交出去了。
+ * 这两件事互相依赖：列的范围由选中值决定，而钳位后的值又会改变列的范围。算一轮不够—— 年被钳到首尾年份上之后，月列的上下界才该跟着收窄，日列还要再跟一轮。 只算一轮的话，min / maxDate 把初值排除在外时（比如
+ * maxDate 在过去）， 首屏会给出一个越界日期，用户直接点确定就把它交出去了。
  */
 function resolveDateColumns(context: DateColumnsContext): { columns: PickerOption[][]; values: string[] } {
   let values = context.values;
@@ -252,8 +249,7 @@ function resolveDateColumns(context: DateColumnsContext): { columns: PickerOptio
 /**
  * 挂载时的初值。
  *
- * 不传 defaultValue 时落在今天而不是区间开头；再按可选区间钳一遍——
- * min / maxDate 把今天排除在外时，开局就不该拿一个越界值去渲染。
+ * 不传 defaultValue 时落在今天而不是区间开头；再按可选区间钳一遍—— min / maxDate 把今天排除在外时，开局就不该拿一个越界值去渲染。
  */
 function resolveInitialValue(options: DateInitialOptions, defaultValue?: string[]): string[] {
   const referenceDate = startOfDay(new Date());

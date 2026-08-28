@@ -1,14 +1,12 @@
 'use client';
 
-import type { AllPathsKeys, PathToDeepType, ShapeFromPaths } from '@skyroc/utils/type';
 import { isObject, isString } from '@skyroc/utils';
+import type { AllPathsKeys, PathToDeepType, ShapeFromPaths } from '@skyroc/utils/type';
 import type { FormInstance } from './FieldContext';
 import { useFieldContext } from './FieldContext';
 import { useFieldState } from './useFieldState';
 
-/**
- * Options for useWatch hook configuration
- */
+/** Options for useWatch hook configuration */
 type UseWatchOpts<Values = any> = {
   /** Form instance to watch values from */
   form: FormInstance<Values>;
@@ -20,24 +18,24 @@ type UseWatchOpts<Values = any> = {
  * Hook overload: Watch a single field value
  *
  * @example
- * ```tsx
- * // Watch single field with external form
- * function UserForm() {
+ *   ```tsx
+ *   // Watch single field with external form
+ *   function UserForm() {
  *   const [form] = useForm();
  *   const username = useWatch('username', { form });
  *
  *   return (
- *     <Form form={form}>
- *       <Field name="username">
- *         <Input placeholder="Username" />
- *       </Field>
- *       <div>Current username: {username}</div>
- *     </Form>
+ *   <Form form={form}>
+ *   <Field name="username">
+ *   <Input placeholder="Username" />
+ *   </Field>
+ *   <div>Current username: {username}</div>
+ *   </Form>
  *   );
- * }
- * ```
+ *   }
+ *   ```
  *
-】
+ *   】
  */
 function useWatch<Values, T extends AllPathsKeys<Values>>(
   name: T,
@@ -48,25 +46,27 @@ function useWatch<Values, T extends AllPathsKeys<Values>>(
  * Hook overload: Watch multiple specific field values
  *
  * @example
- * ```tsx
- * // Watch multiple fields with external form
- * function UserInfo() {
- *   const [form] = useForm();
- *   const { name, email } = useWatch(['name', 'email'], { form });
+ *   ```tsx
+ *   // Watch multiple fields with external form
+ *   function UserInfo() {
+ *     const [form] = useForm();
+ *     const { name, email } = useWatch(['name', 'email'], { form });
  *
- *   return (
- *     <Form form={form}>
- *       <Field name="name">
- *         <Input placeholder="Name" />
- *       </Field>
- *       <Field name="email">
- *         <Input placeholder="Email" />
- *       </Field>
- *       <div>Name: {name}, Email: {email}</div>
- *     </Form>
- *   );
- * }
- * ```
+ *     return (
+ *       <Form form={form}>
+ *         <Field name="name">
+ *           <Input placeholder="Name" />
+ *         </Field>
+ *         <Field name="email">
+ *           <Input placeholder="Email" />
+ *         </Field>
+ *         <div>
+ *           Name: {name}, Email: {email}
+ *         </div>
+ *       </Form>
+ *     );
+ *   }
+ *   ```;
  */
 function useWatch<Values, T extends AllPathsKeys<Values>>(
   names: T[],
@@ -77,25 +77,25 @@ function useWatch<Values, T extends AllPathsKeys<Values>>(
  * Hook overload: Watch all field values using external form instance
  *
  * @example
- * ```tsx
- * // Watch all fields with external form
- * function FormDebugger() {
- *   const [form] = useForm();
- *   const allValues = useWatch(form);
+ *   ```tsx
+ *   // Watch all fields with external form
+ *   function FormDebugger() {
+ *     const [form] = useForm();
+ *     const allValues = useWatch(form);
  *
- *   return (
- *     <Form form={form}>
- *       <Field name="name">
- *         <Input placeholder="Name" />
- *       </Field>
- *       <Field name="email">
- *         <Input placeholder="Email" />
- *       </Field>
- *       <pre>{JSON.stringify(allValues, null, 2)}</pre>
- *     </Form>
- *   );
- * }
- * ```
+ *     return (
+ *       <Form form={form}>
+ *         <Field name="name">
+ *           <Input placeholder="Name" />
+ *         </Field>
+ *         <Field name="email">
+ *           <Input placeholder="Email" />
+ *         </Field>
+ *         <pre>{JSON.stringify(allValues, null, 2)}</pre>
+ *       </Form>
+ *     );
+ *   }
+ *   ```;
  */
 function useWatch<Values = any>(form: FormInstance<Values>): Values;
 
@@ -103,34 +103,31 @@ function useWatch<Values = any>(form: FormInstance<Values>): Values;
  * Hook overload: Watch all field values using context form
  *
  * @example
- * ```tsx
- * // Watch all fields in child component (no form prop needed)
- * function FormSummary() {
- *   const allValues = useWatch();
- *   return <pre>{JSON.stringify(allValues, null, 2)}</pre>;
- * }
+ *   ```tsx
+ *   // Watch all fields in child component (no form prop needed)
+ *   function FormSummary() {
+ *     const allValues = useWatch();
+ *     return <pre>{JSON.stringify(allValues, null, 2)}</pre>;
+ *   }
  *
- * function App() {
- *   return (
- *     <Form initialValues={{ name: 'John', email: 'john@example.com' }}>
- *       <Field name="name">
- *         <Input placeholder="Name" />
- *       </Field>
- *       <Field name="email">
- *         <Input placeholder="Email" />
- *       </Field>
- *       <FormSummary />
- *     </Form>
- *   );
- * }
- * ```
+ *   function App() {
+ *     return (
+ *       <Form initialValues={{ name: 'John', email: 'john@example.com' }}>
+ *         <Field name="name">
+ *           <Input placeholder="Name" />
+ *         </Field>
+ *         <Field name="email">
+ *           <Input placeholder="Email" />
+ *         </Field>
+ *         <FormSummary />
+ *       </Form>
+ *     );
+ *   }
+ *   ```;
  */
 function useWatch<Values = any>(): Values;
 
-/**
- * Implementation function for useWatch hook
- * Handles all overload cases and returns appropriate field values
- */
+/** Implementation function for useWatch hook Handles all overload cases and returns appropriate field values */
 function useWatch<Values = any, T extends AllPathsKeys<Values> = AllPathsKeys<Values>>(
   names?: T[] | T | FormInstance<Values>,
   opts?: UseWatchOpts<Values>

@@ -16,7 +16,12 @@ interface RenderAntdMenuItemsOptions {
 }
 
 function createMenuTitle(menu: GeneratedMenu) {
-  return <I18nLabel fallback={menu.title} i18nKey={menu.i18nKey} />;
+  return (
+    <I18nLabel
+      fallback={menu.title}
+      i18nKey={menu.i18nKey}
+    />
+  );
 }
 
 function createMenuExtra(menu: GeneratedMenu) {
@@ -62,7 +67,13 @@ function renderMenu(menu: GeneratedMenu): Menu.CommonMenu {
   const commonMenu: Menu.CommonMenu = {
     extra: createMenuExtra(menu),
     i18nKey: menu.i18nKey,
-    icon: <SvgIcon icon={menu.icon || defaultIcon} localIcon={menu.localIcon} style={{ fontSize: '20px' }} />,
+    icon: (
+      <SvgIcon
+        icon={menu.icon || defaultIcon}
+        localIcon={menu.localIcon}
+        style={{ fontSize: '20px' }}
+      />
+    ),
     key: menu.key,
     label: <BeyondHiding title={title} />,
     order: menu.order,
@@ -91,7 +102,10 @@ function createSubMenuLabel(label: ReactNode, extra: ReactNode) {
 
 function createHorizontalMenuLabel(label: ReactNode, extra: ReactNode) {
   return (
-    <span className="inline-flex max-w-full min-w-0 items-center gap-6px" data-menu-horizontal-label="with-extra">
+    <span
+      className="inline-flex max-w-full min-w-0 items-center gap-6px"
+      data-menu-horizontal-label="with-extra"
+    >
       <span className="min-w-0 overflow-hidden">{label}</span>
       <span className="inline-flex shrink-0 items-center">{extra}</span>
     </span>

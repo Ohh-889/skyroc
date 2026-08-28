@@ -6,7 +6,7 @@ const OVERVIEW_SLUGS = new Set([
   'getting-started',
   'migration',
   'theming',
-  'usage-guides',
+  'usage-guides'
 ]);
 
 const LegacyDocsPage = async (props: PageProps<'/docs/[[...slug]]'>) => {

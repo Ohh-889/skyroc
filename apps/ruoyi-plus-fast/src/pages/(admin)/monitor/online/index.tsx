@@ -86,7 +86,10 @@ const OnlineManagement = (props: OnlineManagementProps) => {
         dataIndex: 'userName',
         key: 'userName',
         render: value => (
-          <Flex align="center" gap={8}>
+          <Flex
+            align="center"
+            gap={8}
+          >
             <span className="size-30px grid shrink-0 place-items-center rounded-full bg-primary-50 text-primary">
               <SvgIcon icon="ph:user" />
             </span>
@@ -160,7 +163,12 @@ const OnlineManagement = (props: OnlineManagementProps) => {
         fixed: 'right',
         key: 'actions',
         render: (_value, session) => (
-          <Button danger ghost size="small" onClick={() => handleForceLogout(session)}>
+          <Button
+            danger
+            ghost
+            size="small"
+            onClick={() => handleForceLogout(session)}
+          >
             强制下线
           </Button>
         ),
@@ -206,7 +214,10 @@ const OnlineManagement = (props: OnlineManagementProps) => {
         items={[{ children: <OnlineSearch {...searchProps} />, key: '1', label: '查询条件' }]}
       />
 
-      <div className="min-h-0 min-w-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 min-w-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -218,7 +229,11 @@ const OnlineManagement = (props: OnlineManagementProps) => {
             />
           }
           title={
-            <Flex align="center" gap={8} wrap="wrap">
+            <Flex
+              align="center"
+              gap={8}
+              wrap="wrap"
+            >
               <Typography.Text strong>在线用户</Typography.Text>
               <Typography.Text type="secondary">当前共 {total} 个在线会话</Typography.Text>
               <Tag color="green">实时会话</Tag>

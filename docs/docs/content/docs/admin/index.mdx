@@ -11,10 +11,10 @@ Skyroc Admin React 是一个面向中后台产品的 React 管理端模板。当
 
 仓库里有**两个后台应用**，读文档前必须先分清，否则会在 `apps/admin` 里找不到文档提到的页面：
 
-| 应用 | 定位 | 页面现状 |
-| --- | --- | --- |
-| `apps/admin`（`skyroc-admin`） | **精简起步模板**，二次开发的实际起点 | `pages/(admin)` 下只有 `home` 与 `layout`，外加登录页与错误页 |
-| `apps/admin-example` | **完整示例应用**，演示所有能力 | `manage/{user,menu,role}` CRUD、`plugin/*`、`function/*`、`interaction/*`、`projects/*` 等上百个页面 |
+| 应用                           | 定位                                 | 页面现状                                                                                             |
+| ------------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `apps/admin`（`skyroc-admin`） | **精简起步模板**，二次开发的实际起点 | `pages/(admin)` 下只有 `home` 与 `layout`，外加登录页与错误页                                        |
+| `apps/admin-example`           | **完整示例应用**，演示所有能力       | `manage/{user,menu,role}` CRUD、`plugin/*`、`function/*`、`interaction/*`、`projects/*` 等上百个页面 |
 
 两者共用同一套 `@skyroc/*` 共享包、同一套启动流程与路由机制，差别只在页面数量和 `service/api` 模块（`admin-example` 多一个 `system-manage`）。
 
@@ -85,17 +85,17 @@ main.tsx
 
 ## 从哪里读起
 
-| 目标                      | 阅读路径                                                                                                                                                          |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 目标                      | 阅读路径                                                                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 先把项目跑起来            | [快速开始](./getting-started/quick-start)、[开发工具配置](./getting-started/editor-setup)、[项目结构](./getting-started/project-structure)、[组件边界](./getting-started/component-boundaries) |
-| 看懂应用怎么启动          | [启动流程](./architecture/bootstrap)、[运行时 Provider](./architecture/runtime-providers)、[布局系统](./layout/overview)、[菜单与标签页](./layout/menus-and-tabs) |
-| 新增页面和路由            | [路由概览](./routing/overview)、[路由元信息](./routing/route-meta)、[路由守卫](./routing/guards)、[权限](./routing/permission)、[错误与加载页](./routing/error-loading-and-exception) |
-| 接入业务接口              | [请求概览](./request/overview)、[服务模块](./request/service-modules)、[代理与后端对接](./request/proxy-and-backend)                                              |
-| 修改主题、语言和图标      | [主题系统](./theme/overview)、[国际化与图标](./theme/i18n-and-icons)、[存储与缓存](./configuration/storage-and-cache)                                             |
-| 写管理页列表和表单        | [表格与表单](./features/table-and-form)、[表单规则](./features/form-rules)、[Ant Design 全局反馈](./features/antd-feedback)、[示例页面边界](./features/demo-pages) |
-| 理解 Dashboard 和图表示例 | [图表与 Dashboard](./features/charts-and-dashboard)、[示例页面边界](./features/demo-pages)                                                                        |
-| 理解登录和通知            | [登录认证](./features/auth-login)、[通知系统](./features/notification)                                                                                            |
-| 构建部署和排错            | [构建部署](./deployment/build-and-deploy)、[常见问题](./faq)                                                                                                      |
+| 看懂应用怎么启动          | [启动流程](./architecture/bootstrap)、[运行时 Provider](./architecture/runtime-providers)、[布局系统](./layout/overview)、[菜单与标签页](./layout/menus-and-tabs)                              |
+| 新增页面和路由            | [路由概览](./routing/overview)、[路由元信息](./routing/route-meta)、[路由守卫](./routing/guards)、[权限](./routing/permission)、[错误与加载页](./routing/error-loading-and-exception)          |
+| 接入业务接口              | [请求概览](./request/overview)、[服务模块](./request/service-modules)、[代理与后端对接](./request/proxy-and-backend)                                                                           |
+| 修改主题、语言和图标      | [主题系统](./theme/overview)、[国际化与图标](./theme/i18n-and-icons)、[存储与缓存](./configuration/storage-and-cache)                                                                          |
+| 写管理页列表和表单        | [表格与表单](./features/table-and-form)、[表单规则](./features/form-rules)、[Ant Design 全局反馈](./features/antd-feedback)、[示例页面边界](./features/demo-pages)                             |
+| 理解 Dashboard 和图表示例 | [图表与 Dashboard](./features/charts-and-dashboard)、[示例页面边界](./features/demo-pages)                                                                                                     |
+| 理解登录和通知            | [登录认证](./features/auth-login)、[通知系统](./features/notification)                                                                                                                         |
+| 构建部署和排错            | [构建部署](./deployment/build-and-deploy)、[常见问题](./faq)                                                                                                                                   |
 
 首页只提供介绍和导读，不展开安装命令、路由写法、接口示例或部署细节。具体操作应该放到对应专题页，避免入口页变成一篇过长的综合教程。
 
@@ -103,13 +103,13 @@ main.tsx
 
 理解或修改 admin 应用时，优先从下面这些文件开始：
 
-| 事实                       | 来源                                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| 应用脚本、技术栈、依赖边界 | `apps/admin/package.json`、`pnpm-workspace.yaml`                                         |
-| 编辑器、格式化、i18n Ally 和 UnoCSS 提示 | `.vscode/extensions.json`、`.vscode/settings.json`                         |
-| 启动顺序                   | `apps/admin/src/main.tsx`、`apps/admin/src/bootstrap.tsx`、`apps/admin/src/App.tsx`      |
-| 全局配置                   | `apps/admin/src/config.ts`、`apps/admin/.env*`                                           |
-| 路由、守卫、权限上下文     | `apps/admin/src/pages`、`apps/admin/src/features/router`、`apps/admin/src/features/auth` |
-| 菜单、布局、tabs           | `apps/admin/src/features/menus`、`apps/admin/src/pages/(admin)/layout.tsx`               |
-| 请求封装和服务模块         | `apps/admin/src/service`                                                                 |
-| 共享后台能力               | `packages/web/*`、`packages/@core/*`、[包总览](/docs/packages)                           |
+| 事实                                     | 来源                                                                                     |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 应用脚本、技术栈、依赖边界               | `apps/admin/package.json`、`pnpm-workspace.yaml`                                         |
+| 编辑器、格式化、i18n Ally 和 UnoCSS 提示 | `.vscode/extensions.json`、`.vscode/settings.json`                                       |
+| 启动顺序                                 | `apps/admin/src/main.tsx`、`apps/admin/src/bootstrap.tsx`、`apps/admin/src/App.tsx`      |
+| 全局配置                                 | `apps/admin/src/config.ts`、`apps/admin/.env*`                                           |
+| 路由、守卫、权限上下文                   | `apps/admin/src/pages`、`apps/admin/src/features/router`、`apps/admin/src/features/auth` |
+| 菜单、布局、tabs                         | `apps/admin/src/features/menus`、`apps/admin/src/pages/(admin)/layout.tsx`               |
+| 请求封装和服务模块                       | `apps/admin/src/service`                                                                 |
+| 共享后台能力                             | `packages/web/*`、`packages/@core/*`、[包总览](/docs/packages)                           |

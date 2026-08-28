@@ -1,5 +1,5 @@
-import type { ReactNode, Ref } from 'react';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { ReactNode, Ref } from 'react';
 import type { SlotClassNames } from '../../types';
 import type { PickerOption, PickerViewProps } from '../picker/types';
 import type { SheetSlots } from '../sheet/types';

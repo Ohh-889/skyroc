@@ -66,7 +66,10 @@ const UserCenter = () => {
     }
 
     return roles.map(role => (
-      <Tag color="blue" key={role}>
+      <Tag
+        color="blue"
+        key={role}
+      >
         {role}
       </Tag>
     ));
@@ -111,7 +114,10 @@ const UserCenter = () => {
       >
         <div className="min-w-0 flex items-start gap-12px">
           <div className="size-36px flex-center shrink-0 rounded-6px bg-layout text-primary">
-            <SvgIcon className="text-18px" icon={item.icon} />
+            <SvgIcon
+              className="text-18px"
+              icon={item.icon}
+            />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-8px">
@@ -121,7 +127,10 @@ const UserCenter = () => {
             <p className="mb-0 mt-4px text-12px text-secondary">{item.desc}</p>
           </div>
         </div>
-        <Button size="small" onClick={handleSecurityAction}>
+        <Button
+          size="small"
+          onClick={handleSecurityAction}
+        >
           {item.action}
         </Button>
       </div>
@@ -158,10 +167,16 @@ const UserCenter = () => {
   return (
     <div className="h-full overflow-auto">
       <div className="mx-auto max-w-1180px flex flex-col gap-16px p-16px lt-sm:p-12px">
-        <Card className="card-wrapper" variant="borderless">
+        <Card
+          className="card-wrapper"
+          variant="borderless"
+        >
           <div className="flex flex-wrap items-center justify-between gap-16px">
             <div className="min-w-0 flex items-center gap-16px">
-              <Avatar className="shrink-0 bg-primary text-28px" size={72}>
+              <Avatar
+                className="shrink-0 bg-primary text-28px"
+                size={72}
+              >
                 {getAvatarText(userName)}
               </Avatar>
               <div className="min-w-0">
@@ -173,10 +188,17 @@ const UserCenter = () => {
               </div>
             </div>
             <Space wrap>
-              <Button icon={<SvgIcon icon="ph:palette" />} onClick={openThemeDrawer}>
+              <Button
+                icon={<SvgIcon icon="ph:palette" />}
+                onClick={openThemeDrawer}
+              >
                 {t('page.userCenter.preferences.openThemeConfig')}
               </Button>
-              <Button icon={<SvgIcon icon="ph:shield-check" />} type="primary" onClick={handleSecurityAction}>
+              <Button
+                icon={<SvgIcon icon="ph:shield-check" />}
+                type="primary"
+                onClick={handleSecurityAction}
+              >
                 {t('page.userCenter.security.title')}
               </Button>
             </Space>
@@ -184,8 +206,16 @@ const UserCenter = () => {
         </Card>
 
         <Row gutter={[16, 16]}>
-          <Col lg={8} md={24} xs={24}>
-            <Card className="h-full card-wrapper" title={t('page.userCenter.profile.title')} variant="borderless">
+          <Col
+            lg={8}
+            md={24}
+            xs={24}
+          >
+            <Card
+              className="h-full card-wrapper"
+              title={t('page.userCenter.profile.title')}
+              variant="borderless"
+            >
               <Descriptions
                 column={1}
                 items={[
@@ -215,17 +245,41 @@ const UserCenter = () => {
             </Card>
           </Col>
 
-          <Col lg={16} md={24} xs={24}>
-            <Card className="h-full card-wrapper" title={t('page.userCenter.profileForm.title')} variant="borderless">
-              <Form form={form} layout="vertical" onFinish={handleProfileSubmit}>
+          <Col
+            lg={16}
+            md={24}
+            xs={24}
+          >
+            <Card
+              className="h-full card-wrapper"
+              title={t('page.userCenter.profileForm.title')}
+              variant="borderless"
+            >
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleProfileSubmit}
+              >
                 <Row gutter={16}>
-                  <Col md={12} xs={24}>
-                    <Form.Item label={t('page.userCenter.profileForm.displayName')} name="displayName">
+                  <Col
+                    md={12}
+                    xs={24}
+                  >
+                    <Form.Item
+                      label={t('page.userCenter.profileForm.displayName')}
+                      name="displayName"
+                    >
                       <Input placeholder={t('page.userCenter.profileForm.displayNamePlaceholder')} />
                     </Form.Item>
                   </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item label={t('page.userCenter.profileForm.gender')} name="gender">
+                  <Col
+                    md={12}
+                    xs={24}
+                  >
+                    <Form.Item
+                      label={t('page.userCenter.profileForm.gender')}
+                      name="gender"
+                    >
                       <Select
                         allowClear
                         options={[
@@ -236,18 +290,33 @@ const UserCenter = () => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item label={t('page.userCenter.profileForm.phone')} name="phone">
+                  <Col
+                    md={12}
+                    xs={24}
+                  >
+                    <Form.Item
+                      label={t('page.userCenter.profileForm.phone')}
+                      name="phone"
+                    >
                       <Input placeholder={t('page.userCenter.profileForm.phonePlaceholder')} />
                     </Form.Item>
                   </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item label={t('page.userCenter.profileForm.email')} name="email">
+                  <Col
+                    md={12}
+                    xs={24}
+                  >
+                    <Form.Item
+                      label={t('page.userCenter.profileForm.email')}
+                      name="email"
+                    >
                       <Input placeholder={t('page.userCenter.profileForm.emailPlaceholder')} />
                     </Form.Item>
                   </Col>
                   <Col xs={24}>
-                    <Form.Item label={t('page.userCenter.profileForm.introduction')} name="introduction">
+                    <Form.Item
+                      label={t('page.userCenter.profileForm.introduction')}
+                      name="introduction"
+                    >
                       <Input.TextArea
                         autoSize={{ maxRows: 4, minRows: 3 }}
                         placeholder={t('page.userCenter.profileForm.introductionPlaceholder')}
@@ -256,7 +325,11 @@ const UserCenter = () => {
                   </Col>
                 </Row>
                 <div className="flex justify-end">
-                  <Button htmlType="submit" icon={<SvgIcon icon="ph:floppy-disk" />} type="primary">
+                  <Button
+                    htmlType="submit"
+                    icon={<SvgIcon icon="ph:floppy-disk" />}
+                    type="primary"
+                  >
                     {t('page.userCenter.profileForm.saveProfile')}
                   </Button>
                 </div>
@@ -266,14 +339,28 @@ const UserCenter = () => {
         </Row>
 
         <Row gutter={[16, 16]}>
-          <Col lg={14} xs={24}>
-            <Card className="h-full card-wrapper" title={t('page.userCenter.security.title')} variant="borderless">
+          <Col
+            lg={14}
+            xs={24}
+          >
+            <Card
+              className="h-full card-wrapper"
+              title={t('page.userCenter.security.title')}
+              variant="borderless"
+            >
               {renderSecurityItems()}
             </Card>
           </Col>
 
-          <Col lg={10} xs={24}>
-            <Card className="h-full card-wrapper" title={t('page.userCenter.preferences.title')} variant="borderless">
+          <Col
+            lg={10}
+            xs={24}
+          >
+            <Card
+              className="h-full card-wrapper"
+              title={t('page.userCenter.preferences.title')}
+              variant="borderless"
+            >
               <div className="flex flex-col gap-16px">
                 <div className="flex items-center justify-between gap-16px">
                   <div>
@@ -314,7 +401,10 @@ const UserCenter = () => {
                       {t('page.userCenter.preferences.siderCollapseDesc')}
                     </p>
                   </div>
-                  <Switch checked={siderCollapse} onChange={setSiderCollapse} />
+                  <Switch
+                    checked={siderCollapse}
+                    onChange={setSiderCollapse}
+                  />
                 </div>
                 <div className="flex items-center justify-between gap-16px">
                   <div>
@@ -323,14 +413,21 @@ const UserCenter = () => {
                       {t('page.userCenter.preferences.fullContentDesc')}
                     </p>
                   </div>
-                  <Switch checked={fullContent} onChange={handleFullContentChange} />
+                  <Switch
+                    checked={fullContent}
+                    onChange={handleFullContentChange}
+                  />
                 </div>
               </div>
             </Card>
           </Col>
         </Row>
 
-        <Card className="card-wrapper" title={t('page.userCenter.activity.title')} variant="borderless">
+        <Card
+          className="card-wrapper"
+          title={t('page.userCenter.activity.title')}
+          variant="borderless"
+        >
           <Timeline items={renderActivityItems()} />
         </Card>
       </div>

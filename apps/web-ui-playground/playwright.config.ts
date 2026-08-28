@@ -1,5 +1,5 @@
-import { defineConfig, devices } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
+import { defineConfig, devices } from '@playwright/test';
 
 const PLAYGROUND_DIR = fileURLToPath(new URL('.', import.meta.url));
 const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3100);

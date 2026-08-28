@@ -1,8 +1,8 @@
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
-import { defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { defineDocs } from 'fumadocs-mdx/macro';
+import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
 
 const docs = defineDocs({
   dir: 'content/docs',
@@ -10,19 +10,19 @@ const docs = defineDocs({
     schema: pageSchema,
     lastModified: true,
     postprocess: {
-      includeProcessedMarkdown: true,
-    },
+      includeProcessedMarkdown: true
+    }
   },
   meta: {
-    schema: metaSchema,
-  },
+    schema: metaSchema
+  }
 });
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
+  plugins: [lucideIconsPlugin()]
 });
 
 export function getPageImageUrl(page: (typeof source)['$inferPage']) {
@@ -30,7 +30,7 @@ export function getPageImageUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: '/' + [page.locale, ...docsImageRoute.split('/'), ...segments].filter(Boolean).join('/'),
+    url: '/' + [page.locale, ...docsImageRoute.split('/'), ...segments].filter(Boolean).join('/')
   };
 }
 
@@ -39,7 +39,7 @@ export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: '/' + [page.locale, ...docsContentRoute.split('/'), ...segments].filter(Boolean).join('/'),
+    url: '/' + [page.locale, ...docsContentRoute.split('/'), ...segments].filter(Boolean).join('/')
   };
 }
 

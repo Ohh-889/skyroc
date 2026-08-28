@@ -1,6 +1,6 @@
 ---
-title: "API 参考"
-description: "@skyroc/web-admin-layouts 的导出项、初始化配置、布局 props、菜单 meta 和 hook 速查"
+title: 'API 参考'
+description: '@skyroc/web-admin-layouts 的导出项、初始化配置、布局 props、菜单 meta 和 hook 速查'
 ---
 
 ## 公共导出
@@ -30,24 +30,24 @@ import type { AdminLayoutProps, AdminLayoutsOptions } from '@skyroc/web-admin-la
 
 主要导出：
 
-| 导出 | 类型 | 说明 |
-| --- | --- | --- |
-| `AdminLayout` | Component | 应用级后台布局壳。插槽细节见 [布局插槽](/docs/web/admin-layouts/slots)。 |
-| `setupAdminLayouts` | Function | 启动阶段注入布局全局配置。 |
-| `useMenus` | Hook | 初始化和读取菜单原始数据。 |
-| `useAdminMenus` | Hook | 读取当前布局菜单视图和菜单交互方法。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
-| `useAdminState` | Hook | 读取和修改布局运行时状态。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
-| `useAdminTab` | Hook | 读取和操作路由页签。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
-| `useAdminMenuBadges` | Hook | 读取和更新菜单 badge 动态值。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
-| `setMenuBadgeValue` | Function | 非组件环境更新单个 badge 动态值。 |
-| `setMenuBadgeValues` | Function | 非组件环境批量更新 badge 动态值。 |
-| `clearMenuBadgeValues` | Function | 清理全部或部分 badge 动态值。 |
-| `hasAnyRoutePermission` | Function | 校验一组权限是否命中当前用户角色。 |
-| `hasRoutePermission` | Function | 校验单个 route meta 权限。 |
-| `hasMatchedRoutePermission` | Function | 校验当前 TanStack Router matches 链路权限。 |
-| `normalizePath` | Function | 规范化路由 path，去掉非根路径末尾斜杠。 |
-| `useRoute` | Hook | 读取当前 TanStack Router match，并返回布局包内部使用的标准 route 信息。 |
-| `cacheTabs` | Function | 将当前 tab 状态写入配置的 storage。通常由认证退出或布局 effect 调用。 |
+| 导出                        | 类型      | 说明                                                                                        |
+| --------------------------- | --------- | ------------------------------------------------------------------------------------------- |
+| `AdminLayout`               | Component | 应用级后台布局壳。插槽细节见 [布局插槽](/docs/web/admin-layouts/slots)。                    |
+| `setupAdminLayouts`         | Function  | 启动阶段注入布局全局配置。                                                                  |
+| `useMenus`                  | Hook      | 初始化和读取菜单原始数据。                                                                  |
+| `useAdminMenus`             | Hook      | 读取当前布局菜单视图和菜单交互方法。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。 |
+| `useAdminState`             | Hook      | 读取和修改布局运行时状态。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。           |
+| `useAdminTab`               | Hook      | 读取和操作路由页签。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。                 |
+| `useAdminMenuBadges`        | Hook      | 读取和更新菜单 badge 动态值。详见 [状态与页签](/docs/web/admin-layouts/state-tabs)。        |
+| `setMenuBadgeValue`         | Function  | 非组件环境更新单个 badge 动态值。                                                           |
+| `setMenuBadgeValues`        | Function  | 非组件环境批量更新 badge 动态值。                                                           |
+| `clearMenuBadgeValues`      | Function  | 清理全部或部分 badge 动态值。                                                               |
+| `hasAnyRoutePermission`     | Function  | 校验一组权限是否命中当前用户角色。                                                          |
+| `hasRoutePermission`        | Function  | 校验单个 route meta 权限。                                                                  |
+| `hasMatchedRoutePermission` | Function  | 校验当前 TanStack Router matches 链路权限。                                                 |
+| `normalizePath`             | Function  | 规范化路由 path，去掉非根路径末尾斜杠。                                                     |
+| `useRoute`                  | Hook      | 读取当前 TanStack Router match，并返回布局包内部使用的标准 route 信息。                     |
+| `cacheTabs`                 | Function  | 将当前 tab 状态写入配置的 storage。通常由认证退出或布局 effect 调用。                       |
 
 ## 核心入口
 
@@ -120,18 +120,18 @@ interface AdminLayoutsOptions {
 }
 ```
 
-| 字段 | 必填 | 说明 |
-| --- | --- | --- |
-| `defaultHome` | 是 | 默认首页路由。 |
-| `defaultIcon` | 是 | 菜单默认图标。 |
-| `routeMode` | 是 | 菜单模式：`static` 或 `dynamic`。 |
-| `routeTree` | 是 | TanStack Router 生成的 routeTree。 |
-| `menuCategories` | 是 | 菜单分类配置。 |
-| `storage` | 是 | 布局使用的 local storage 适配器。 |
-| `loadDynamicRoutes` | 否 | 动态菜单加载器。 |
-| `menuNodeCallback` | 否 | 菜单节点扩展回调。 |
-| `extras` | 否 | 自定义菜单 extra 组件注册表。 |
-| `permissionSuperRole` | 否 | 超级角色标识。 |
+| 字段                  | 必填 | 说明                               |
+| --------------------- | ---- | ---------------------------------- |
+| `defaultHome`         | 是   | 默认首页路由。                     |
+| `defaultIcon`         | 是   | 菜单默认图标。                     |
+| `routeMode`           | 是   | 菜单模式：`static` 或 `dynamic`。  |
+| `routeTree`           | 是   | TanStack Router 生成的 routeTree。 |
+| `menuCategories`      | 是   | 菜单分类配置。                     |
+| `storage`             | 是   | 布局使用的 local storage 适配器。  |
+| `loadDynamicRoutes`   | 否   | 动态菜单加载器。                   |
+| `menuNodeCallback`    | 否   | 菜单节点扩展回调。                 |
+| `extras`              | 否   | 自定义菜单 extra 组件注册表。      |
+| `permissionSuperRole` | 否   | 超级角色标识。                     |
 
 ### AdminLayoutsDynamicRoutes
 
@@ -200,26 +200,19 @@ interface AdminLayoutSlots {
 `useMenus` 管理菜单原始数据，是认证初始化和动态菜单加载的核心 hook。
 
 ```tsx
-const {
-  clearMenus,
-  getHomeRoute,
-  home,
-  initMenus,
-  menus,
-  quickReferenceMenus
-} = useMenus();
+const { clearMenus, getHomeRoute, home, initMenus, menus, quickReferenceMenus } = useMenus();
 ```
 
 返回值：
 
-| 返回值 | 说明 |
-| --- | --- |
-| `home` | 当前用户首页路由。静态模式默认来自 `defaultHome`，动态模式可来自后端。 |
-| `menus` | 原始菜单树，类型是 `Map<categoryKey, GeneratedMenu[]>`。 |
-| `quickReferenceMenus` | 快速索引，类型是 `Map<categoryKey, Map<path, QuickReferenceMenu>>`。 |
-| `initMenus(userInfo)` | 根据 `routeMode` 初始化菜单，并按用户权限过滤。 |
-| `clearMenus()` | 清空菜单状态，并恢复默认首页。 |
-| `getHomeRoute()` | 从全局 store 同步读取当前首页路由。适合路由重定向等场景。 |
+| 返回值                | 说明                                                                   |
+| --------------------- | ---------------------------------------------------------------------- |
+| `home`                | 当前用户首页路由。静态模式默认来自 `defaultHome`，动态模式可来自后端。 |
+| `menus`               | 原始菜单树，类型是 `Map<categoryKey, GeneratedMenu[]>`。               |
+| `quickReferenceMenus` | 快速索引，类型是 `Map<categoryKey, Map<path, QuickReferenceMenu>>`。   |
+| `initMenus(userInfo)` | 根据 `routeMode` 初始化菜单，并按用户权限过滤。                        |
+| `clearMenus()`        | 清空菜单状态，并恢复默认首页。                                         |
+| `getHomeRoute()`      | 从全局 store 同步读取当前首页路由。适合路由重定向等场景。              |
 
 典型用法是在认证初始化成功后调用：
 
@@ -235,10 +228,10 @@ async function initAuth() {
 
 `initMenus` 的行为取决于 `routeMode`：
 
-| `routeMode` | 行为 |
-| --- | --- |
-| `static` | 从 `routeTree` 的 `staticData` 生成菜单。详见 [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation)。 |
-| `dynamic` | 调用 `loadDynamicRoutes`，从后端路由结构生成菜单。详见 [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation)。 |
+| `routeMode` | 行为                                                                                                                         |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `static`    | 从 `routeTree` 的 `staticData` 生成菜单。详见 [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation)。           |
+| `dynamic`   | 调用 `loadDynamicRoutes`，从后端路由结构生成菜单。详见 [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation)。 |
 
 动态模式但未配置 `loadDynamicRoutes` 时会抛错：
 
@@ -280,15 +273,15 @@ interface AdminRouteInfo {
 
 字段说明：
 
-| 字段 | 说明 |
-| --- | --- |
-| `pathname` | 当前 URL pathname。 |
-| `search` | TanStack Router search 对象。 |
-| `searchStr` | 序列化后的 query string。 |
-| `fullPath` | `pathname + searchStr`，用于 tab 激活和跳转。 |
+| 字段         | 说明                                                 |
+| ------------ | ---------------------------------------------------- |
+| `pathname`   | 当前 URL pathname。                                  |
+| `search`     | TanStack Router search 对象。                        |
+| `searchStr`  | 序列化后的 query string。                            |
+| `fullPath`   | `pathname + searchStr`，用于 tab 激活和跳转。        |
 | `originPath` | 去掉末尾斜杠后的 route fullPath，用于菜单 key 匹配。 |
-| `routeId` | 当前 TanStack Router route id。 |
-| `staticData` | 当前 route 的 `Router.Meta`。 |
+| `routeId`    | 当前 TanStack Router route id。                      |
+| `staticData` | 当前 route 的 `Router.Meta`。                        |
 
 一般业务页面不需要直接使用它；布局内部用它连接菜单、tab 和权限状态。
 
@@ -458,9 +451,7 @@ cacheTabs();
 ```ts
 type MenuNodeConfig = Partial<Omit<Api.Route.BackendRoute, 'layout' | 'parentId'>>;
 
-type MenuNodeCallback = (
-  routeId: Router.RouteId
-) => MenuNodeConfig[];
+type MenuNodeCallback = (routeId: Router.RouteId) => MenuNodeConfig[];
 ```
 
 `menuNodeCallback` 用于在菜单生成阶段给指定 route 节点追加补充菜单。普通页面菜单优先写在 route `staticData.menu` 或后端 `BackendRoute.menu`；只有 divider、固定入口、聚合入口等“路由树之外的节点”才放在这里。

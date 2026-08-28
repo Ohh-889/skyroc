@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import genControlHeight from '@shell/theme/antd-algorithm/shared/genControlHeight';
 import type { SeedToken } from 'antd/es/theme/internal';
+import { describe, expect, it } from 'vitest';
 
 function makeToken(controlHeight: number): SeedToken {
   return { controlHeight } as SeedToken;

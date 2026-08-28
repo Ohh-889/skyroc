@@ -2,9 +2,9 @@
 
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import PaginationUI from '../../components/pagination/PaginationUI';
 import type { PaginationProps } from '../../components/pagination/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Pagination = forwardRef<ComponentRef<'nav'>, PaginationProps>((props, ref) => {
   const config = useComponentConfig('pagination');

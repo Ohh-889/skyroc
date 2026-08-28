@@ -1,13 +1,13 @@
 'use client';
 
-import { forwardRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
+import { alertVariants } from './alert-variants';
 import AlertDescription from './AlertDescription';
 import AlertRoot from './AlertRoot';
 import AlertTitle from './AlertTitle';
 import AlertWrapper from './AlertWrapper';
-import { alertVariants } from './alert-variants';
 import type { AlertProps } from './types';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
@@ -49,29 +49,25 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
         size={size}
         {...wrapperProps}
       >
-        {title
-          ? (
-            <AlertTitle
-              className={classNames?.title}
-              size={size}
-              {...titleProps}
-            >
-              {title}
-            </AlertTitle>
-          )
-          : null}
+        {title ? (
+          <AlertTitle
+            className={classNames?.title}
+            size={size}
+            {...titleProps}
+          >
+            {title}
+          </AlertTitle>
+        ) : null}
 
-        {description
-          ? (
-            <AlertDescription
-              className={classNames?.description}
-              size={size}
-              {...descriptionProps}
-            >
-              {description}
-            </AlertDescription>
-          )
-          : null}
+        {description ? (
+          <AlertDescription
+            className={classNames?.description}
+            size={size}
+            {...descriptionProps}
+          >
+            {description}
+          </AlertDescription>
+        ) : null}
 
         {children}
       </AlertWrapper>

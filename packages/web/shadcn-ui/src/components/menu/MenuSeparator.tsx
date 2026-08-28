@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Separator as _Separator } from '@radix-ui/react-menu';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { menuVariants } from './menu-variants';
 import type { MenuSeparatorProps } from './types';
 

@@ -11,8 +11,15 @@ const items: ToggleGroupProps['items'] = [
 
 const ToggleGroupSingle = () => {
   return (
-    <Card split title="Single">
-      <ToggleGroup items={items} type="single" defaultValue="center" />
+    <Card
+      split
+      title="Single"
+    >
+      <ToggleGroup
+        items={items}
+        type="single"
+        defaultValue="center"
+      />
     </Card>
   );
 };

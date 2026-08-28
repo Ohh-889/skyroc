@@ -1,9 +1,9 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import type { Content } from '@radix-ui/react-dialog';
 import { Close, Portal, Root, Trigger } from '@radix-ui/react-dialog';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import DialogAction from './DialogAction';
 import DialogClose from './DialogClose';
 import DialogContent from './DialogContent';
@@ -81,17 +81,15 @@ const DialogUI = forwardRef<ComponentRef<typeof Content>, DialogProps>((props, r
               {title}
             </DialogTitle>
 
-            {description
-              ? (
-                <DialogDescription
-                  className={classNames?.description}
-                  size={size}
-                  {...descriptionProps}
-                >
-                  {description}
-                </DialogDescription>
-              )
-              : null}
+            {description ? (
+              <DialogDescription
+                className={classNames?.description}
+                size={size}
+                {...descriptionProps}
+              >
+                {description}
+              </DialogDescription>
+            ) : null}
           </DialogHeader>
 
           <DialogClose

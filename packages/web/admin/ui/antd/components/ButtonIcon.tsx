@@ -112,9 +112,20 @@ const ButtonIcon = ({
       zIndex={zIndex}
       {...tooltipProps}
     >
-      <Comp className={clsx(cls, classNames?.button)} {...typeProps} {...rest} styles={styles?.button}>
+      <Comp
+        className={clsx(cls, classNames?.button)}
+        {...typeProps}
+        {...rest}
+        styles={styles?.button}
+      >
         <div className={clsx('flex-center gap-8px', animationClass)}>
-          {children || <SvgIcon className={classNames?.icon} icon={icon} style={styles?.icon} />}
+          {children || (
+            <SvgIcon
+              className={classNames?.icon}
+              icon={icon}
+              style={styles?.icon}
+            />
+          )}
         </div>
       </Comp>
     </Tooltip>

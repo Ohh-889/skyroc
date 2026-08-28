@@ -13,12 +13,12 @@ import { Tag } from '@skyroc/native-ui';
 
 `variant` 控制视觉强度，从高到低：
 
-| 变体      | 表现                       | 适用场景             |
-| --------- | -------------------------- | -------------------- |
-| `solid`   | 语义底色 + 前景色文字      | 强调状态（默认）     |
-| `tonal`   | 15% 低饱和底色 + 同语义文字 | 常规标记             |
-| `outline` | 语义描边，背景透明         | 与内容并列的分类     |
-| `ghost`   | 仅文字，无底色无描边       | 最弱的辅助信息       |
+| 变体      | 表现                        | 适用场景         |
+| --------- | --------------------------- | ---------------- |
+| `solid`   | 语义底色 + 前景色文字       | 强调状态（默认） |
+| `tonal`   | 15% 低饱和底色 + 同语义文字 | 常规标记         |
+| `outline` | 语义描边，背景透明          | 与内容并列的分类 |
+| `ghost`   | 仅文字，无底色无描边        | 最弱的辅助信息   |
 
 <Demo src="@playground/tag/TagVariant" />
 
@@ -64,11 +64,11 @@ import { Tag } from '@skyroc/native-ui';
 
 ## 形状
 
-| 形状      | 圆角                       |
-| --------- | -------------------------- |
-| `rounded` | `rounded-md`（默认）        |
-| `pill`    | 全圆角，药丸形              |
-| `mark`    | 只有右侧全圆角，标记形      |
+| 形状      | 圆角                   |
+| --------- | ---------------------- |
+| `rounded` | `rounded-md`（默认）   |
+| `pill`    | 全圆角，药丸形         |
+| `mark`    | 只有右侧全圆角，标记形 |
 
 <Demo src="@playground/tag/TagShape" />
 
@@ -92,12 +92,12 @@ import { Tag } from '@skyroc/native-ui';
 
 `className` 追加到根节点上，`classNames` 按 slot 细粒度覆盖：
 
-| slot        | 作用位置                                                    |
-| ----------- | ----------------------------------------------------------- |
-| `root`      | 根容器（底色、描边、圆角、尺寸）                            |
-| `text`      | 文字类名，通过 `TextClassContext` 下发给子 `Text`             |
-| `close`     | 关闭按钮容器                                                |
-| `closeIcon` | 关闭图标的 `colorClassName`，只接受 `accent-*` 颜色类         |
+| slot        | 作用位置                                              |
+| ----------- | ----------------------------------------------------- |
+| `root`      | 根容器（底色、描边、圆角、尺寸）                      |
+| `text`      | 文字类名，通过 `TextClassContext` 下发给子 `Text`     |
+| `close`     | 关闭按钮容器                                          |
+| `closeIcon` | 关闭图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
 
 <Demo src="@playground/tag/TagStyles" />
 

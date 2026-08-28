@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@skyroc/utils';
+import React from 'react';
 import { dividerVariants } from './divider-variants';
 import type { DividerLabelProps } from './types';
 

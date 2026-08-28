@@ -94,16 +94,17 @@ const GlobalHeader = memo(() => {
 
       {showMenuToggler && <MenuToggler />}
 
-      <div className="h-full flex-y-center flex-1-hidden" id={GLOBAL_HEADER_MENU_ID}>
+      <div
+        className="h-full flex-y-center flex-1-hidden"
+        id={GLOBAL_HEADER_MENU_ID}
+      >
         {!isMobile && !showMenu && <AdminBreadcrumb />}
       </div>
 
       <div className="h-full flex-y-center justify-end">
-
         {headerLeftActions}
 
         <AdminSearch />
-
 
         {!isMobile && (
           <FullScreen
@@ -115,11 +116,17 @@ const GlobalHeader = memo(() => {
           />
         )}
 
-        <LangSwitch className="px-12px" visible={header.multilingual.visible} />
+        <LangSwitch
+          className="px-12px"
+          visible={header.multilingual.visible}
+        />
 
         {headerMiddleActions}
 
-        <ThemeSchemaSwitch className="px-12px" tooltipContent={t('icon.themeSchema')} />
+        <ThemeSchemaSwitch
+          className="px-12px"
+          tooltipContent={t('icon.themeSchema')}
+        />
 
         <ThemeButton />
 

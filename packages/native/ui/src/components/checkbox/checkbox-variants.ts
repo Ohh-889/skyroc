@@ -14,11 +14,9 @@ export const SIZE_CONTROL_MAP: Record<ThemeSize, number> = {
 /**
  * Maps size preset to label line-height (px)
  *
- * 控件所在行的高度取「控件尺寸」与「label 首行行高」的较大值：label 比控件高时把控件撑到首行中线，
- * 控件比 label 高时以控件自身为准，避免被裁切。多行 label 下控件始终贴着首行而不是整块垂直居中。
+ * 控件所在行的高度取「控件尺寸」与「label 首行行高」的较大值：label 比控件高时把控件撑到首行中线， 控件比 label 高时以控件自身为准，避免被裁切。多行 label 下控件始终贴着首行而不是整块垂直居中。
  *
- * Values follow Tailwind CSS v4 line-height defaults:
- *   text-xs → 16px, text-sm → 20px, text-base → 24px, text-lg → 28px
+ * Values follow Tailwind CSS v4 line-height defaults: text-xs → 16px, text-sm → 20px, text-base → 24px, text-lg → 28px
  */
 export const SIZE_LABEL_LINE_HEIGHT_MAP: Record<ThemeSize, number> = {
   '2xl': 28,
@@ -72,8 +70,7 @@ export function resolveCheckboxSizes(size: ThemeSize, iconSize?: number): Checkb
 /**
  * 复选控件样式。
  *
- * `indicator` 槽输出的是 Uniwind 的 `accent-*` 工具类，供 `colorClassName` 取色，
- * 因此勾选颜色跟随主题 token，而非硬编码白色。
+ * `indicator` 槽输出的是 Uniwind 的 `accent-*` 工具类，供 `colorClassName` 取色， 因此勾选颜色跟随主题 token，而非硬编码白色。
  */
 export const checkboxVariants = tv({
   slots: {

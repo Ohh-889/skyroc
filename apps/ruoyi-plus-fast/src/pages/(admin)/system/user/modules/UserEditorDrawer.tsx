@@ -75,11 +75,21 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
     <Drawer
       destroyOnHidden
       footer={
-        <Flex gap={8} justify="flex-end">
-          <Button disabled={loading} onClick={onClose}>
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存用户
           </Button>
         </Flex>
@@ -91,13 +101,32 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
       onClose={onClose}
     >
       <Spin spinning={detailQuery.isLoading}>
-        <Form<UserFormValues> form={form} layout="vertical" onFinish={handleFinish}>
+        <Form<UserFormValues>
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+        >
           <div className="grid grid-cols-2 gap-x-16px lt-sm:grid-cols-1">
-            <Form.Item label="用户账号" name="userName" rules={[{ required: true, message: '请输入用户账号' }]}>
-              <Input disabled={isUpdate} maxLength={30} placeholder="请输入登录账号" />
+            <Form.Item
+              label="用户账号"
+              name="userName"
+              rules={[{ required: true, message: '请输入用户账号' }]}
+            >
+              <Input
+                disabled={isUpdate}
+                maxLength={30}
+                placeholder="请输入登录账号"
+              />
             </Form.Item>
-            <Form.Item label="用户昵称" name="nickName" rules={[{ required: true, message: '请输入用户昵称' }]}>
-              <Input maxLength={64} placeholder="请输入用户昵称" />
+            <Form.Item
+              label="用户昵称"
+              name="nickName"
+              rules={[{ required: true, message: '请输入用户昵称' }]}
+            >
+              <Input
+                maxLength={64}
+                placeholder="请输入用户昵称"
+              />
             </Form.Item>
             {!isUpdate ? (
               <Form.Item
@@ -108,7 +137,10 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
                 <Input.Password placeholder="不填写则账号暂时无法密码登录" />
               </Form.Item>
             ) : null}
-            <Form.Item label="所属部门" name="deptId">
+            <Form.Item
+              label="所属部门"
+              name="deptId"
+            >
               <TreeSelect
                 allowClear
                 showSearch
@@ -117,13 +149,29 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
                 onChange={handleDepartmentChange}
               />
             </Form.Item>
-            <Form.Item label="手机号码" name="phonenumber">
-              <Input maxLength={11} placeholder="请输入手机号码" />
+            <Form.Item
+              label="手机号码"
+              name="phonenumber"
+            >
+              <Input
+                maxLength={11}
+                placeholder="请输入手机号码"
+              />
             </Form.Item>
-            <Form.Item label="邮箱" name="email" rules={[{ type: 'email', message: '邮箱格式不正确' }]}>
-              <Input maxLength={50} placeholder="name@example.com" />
+            <Form.Item
+              label="邮箱"
+              name="email"
+              rules={[{ type: 'email', message: '邮箱格式不正确' }]}
+            >
+              <Input
+                maxLength={50}
+                placeholder="name@example.com"
+              />
             </Form.Item>
-            <Form.Item label="性别" name="sex">
+            <Form.Item
+              label="性别"
+              name="sex"
+            >
               <Radio.Group
                 options={[
                   { label: '男', value: '0' },
@@ -132,7 +180,10 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
                 ]}
               />
             </Form.Item>
-            <Form.Item label="账号状态" name="status">
+            <Form.Item
+              label="账号状态"
+              name="status"
+            >
               <Radio.Group
                 options={[
                   { label: '正常', value: '0' },
@@ -140,7 +191,10 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
                 ]}
               />
             </Form.Item>
-            <Form.Item label="岗位" name="postIds">
+            <Form.Item
+              label="岗位"
+              name="postIds"
+            >
               <Select
                 disabled={deptId === undefined}
                 loading={postQuery.isFetching}
@@ -169,8 +223,15 @@ const UserEditorDrawer = (props: UserEditorDrawerProps) => {
               />
             </Form.Item>
           </div>
-          <Form.Item label="备注" name="remark">
-            <Input.TextArea maxLength={500} rows={4} showCount />
+          <Form.Item
+            label="备注"
+            name="remark"
+          >
+            <Input.TextArea
+              maxLength={500}
+              rows={4}
+              showCount
+            />
           </Form.Item>
         </Form>
       </Spin>

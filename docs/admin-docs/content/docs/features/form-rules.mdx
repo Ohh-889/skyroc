@@ -11,24 +11,24 @@ description: 使用 apps/admin 的 useAuthFormRules、Ant Design Form 和共享�
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 登录页用户名和密码校验 | `pages/(auth)/login/index.tsx`、`formRules.userName`、`formRules.pwd` |
-| 注册或重置密码校验 | `pages/(auth)/login/register.tsx`、`pages/(auth)/login/reset-pwd.tsx` |
-| 验证码登录 | `pages/(auth)/login/code-login.tsx`、`formRules.phone`、`formRules.code` |
-| 新增认证字段规则 | `features/auth/use-auth-form-rules.ts`、`@skyroc/utils` 正则常量 |
-| 修改校验文案 | `packages/web/admin-i18n/src/langs/*/form.json`、`apps/admin/src/types/locales/form.d.ts` |
+| 场景                   | 重点位置                                                                                  |
+| ---------------------- | ----------------------------------------------------------------------------------------- |
+| 登录页用户名和密码校验 | `pages/(auth)/login/index.tsx`、`formRules.userName`、`formRules.pwd`                     |
+| 注册或重置密码校验     | `pages/(auth)/login/register.tsx`、`pages/(auth)/login/reset-pwd.tsx`                     |
+| 验证码登录             | `pages/(auth)/login/code-login.tsx`、`formRules.phone`、`formRules.code`                  |
+| 新增认证字段规则       | `features/auth/use-auth-form-rules.ts`、`@skyroc/utils` 正则常量                          |
+| 修改校验文案           | `packages/web/admin-i18n/src/langs/*/form.json`、`apps/admin/src/types/locales/form.d.ts` |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/features/auth/use-auth-form-rules.ts` | 创建认证页使用的 Ant Design Form 规则。 |
-| `packages/@core/utils/src/reg.ts` | 提供 `REG_USER_NAME`、`REG_PWD`、`REG_PHONE`、`REG_EMAIL`、`REG_CODE_SIX`。 |
-| `packages/web/admin-i18n/src/langs/zh-cn/form.json` | 中文校验文案。 |
-| `packages/web/admin-i18n/src/langs/en-us/form.json` | 英文校验文案。 |
-| `apps/admin/src/types/locales/form.d.ts` | 约束表单文案 key 的类型。 |
-| `apps/admin/src/pages/(auth)/login/*` | 当前真实消费表单规则的页面。 |
+| 文件                                                  | 职责                                                                        |
+| ----------------------------------------------------- | --------------------------------------------------------------------------- |
+| `apps/admin/src/features/auth/use-auth-form-rules.ts` | 创建认证页使用的 Ant Design Form 规则。                                     |
+| `packages/@core/utils/src/reg.ts`                     | 提供 `REG_USER_NAME`、`REG_PWD`、`REG_PHONE`、`REG_EMAIL`、`REG_CODE_SIX`。 |
+| `packages/web/admin-i18n/src/langs/zh-cn/form.json`   | 中文校验文案。                                                              |
+| `packages/web/admin-i18n/src/langs/en-us/form.json`   | 英文校验文案。                                                              |
+| `apps/admin/src/types/locales/form.d.ts`              | 约束表单文案 key 的类型。                                                   |
+| `apps/admin/src/pages/(auth)/login/*`                 | 当前真实消费表单规则的页面。                                                |
 
 ## 为什么不放进 admin-i18n
 
@@ -36,11 +36,11 @@ description: 使用 apps/admin 的 useAuthFormRules、Ant Design Form 和共享�
 
 `useAuthFormRules()` 同时依赖三类东西：
 
-| 依赖 | 所属边界 |
-| --- | --- |
-| `REG_PHONE`、`REG_PWD` 等正则 | `@skyroc/utils` 的纯校验常量。 |
-| `t('form.*')` 文案 | `@skyroc/web-admin-i18n` 提供资源和运行时。 |
-| `FormRule`、`FormInstance`、`password` 字段约定 | `apps/admin` 的认证表单实现。 |
+| 依赖                                            | 所属边界                                    |
+| ----------------------------------------------- | ------------------------------------------- |
+| `REG_PHONE`、`REG_PWD` 等正则                   | `@skyroc/utils` 的纯校验常量。              |
+| `t('form.*')` 文案                              | `@skyroc/web-admin-i18n` 提供资源和运行时。 |
+| `FormRule`、`FormInstance`、`password` 字段约定 | `apps/admin` 的认证表单实现。               |
 
 因此当前最佳位置是 `apps/admin/src/features/auth`。如果未来多个页面、多个应用或多个包都需要通用规则工厂，再考虑抽出纯工厂能力，例如 `createRequiredRule(message)`、`createPatternRule(options)`、`createConfirmFieldRule(options)`；认证字段集合仍应留在应用或认证模块里。
 
@@ -48,13 +48,13 @@ description: 使用 apps/admin 的 useAuthFormRules、Ant Design Form 和共享�
 
 `useAuthFormRules()` 返回五类能力：
 
-| 返回值 | 用途 |
-| --- | --- |
-| `formRules` | 必填 + 格式校验，适合大多数登录和注册字段。 |
-| `patternRules` | 只做格式校验，不包含必填。 |
-| `defaultRequiredRule` | 当前语言下的通用必填规则。 |
-| `createRequiredRule(message)` | 用指定文案创建必填规则。 |
-| `createConfirmPwdRule(form)` | 校验确认密码是否等于 `password` 字段。 |
+| 返回值                        | 用途                                        |
+| ----------------------------- | ------------------------------------------- |
+| `formRules`                   | 必填 + 格式校验，适合大多数登录和注册字段。 |
+| `patternRules`                | 只做格式校验，不包含必填。                  |
+| `defaultRequiredRule`         | 当前语言下的通用必填规则。                  |
+| `createRequiredRule(message)` | 用指定文案创建必填规则。                    |
+| `createConfirmPwdRule(form)`  | 校验确认密码是否等于 `password` 字段。      |
 
 规则本身是 Ant Design `FormRule`，因此最终仍交给 `Form.Item` 的 `rules` 消费。`useAuthFormRules()` 只负责把认证页常用模式收口。
 
@@ -83,12 +83,24 @@ const LoginForm = () => {
   }
 
   return (
-    <AForm form={form} onFinish={handleSubmit}>
-      <AForm.Item name="userName" rules={userName}>
+    <AForm
+      form={form}
+      onFinish={handleSubmit}
+    >
+      <AForm.Item
+        name="userName"
+        rules={userName}
+      >
         <AInput size="large" />
       </AForm.Item>
-      <AForm.Item name="password" rules={pwd}>
-        <AInput.Password autoComplete="password" size="large" />
+      <AForm.Item
+        name="password"
+        rules={pwd}
+      >
+        <AInput.Password
+          autoComplete="password"
+          size="large"
+        />
       </AForm.Item>
     </AForm>
   );
@@ -101,20 +113,23 @@ const LoginForm = () => {
 
 `formRules` 当前包含：
 
-| 字段 | 规则组合 | 典型页面 |
-| --- | --- | --- |
-| `userName` | 必填 + 用户名格式 | 账号密码登录。 |
-| `pwd` | 必填 + 密码格式 | 登录、注册、重置密码。 |
-| `phone` | 必填 + 手机号格式 | 验证码登录、注册、重置密码。 |
-| `email` | 必填 + 邮箱格式 | 需要邮箱认证字段时复用。 |
-| `code` | 必填 + 6 位验证码格式 | 验证码登录、注册、重置密码。 |
+| 字段       | 规则组合              | 典型页面                     |
+| ---------- | --------------------- | ---------------------------- |
+| `userName` | 必填 + 用户名格式     | 账号密码登录。               |
+| `pwd`      | 必填 + 密码格式       | 登录、注册、重置密码。       |
+| `phone`    | 必填 + 手机号格式     | 验证码登录、注册、重置密码。 |
+| `email`    | 必填 + 邮箱格式       | 需要邮箱认证字段时复用。     |
+| `code`     | 必填 + 6 位验证码格式 | 验证码登录、注册、重置密码。 |
 
 如果只需要格式校验，使用 `patternRules`。例如可选邮箱字段可以这样写：
 
 ```tsx
 const { patternRules } = useAuthFormRules();
 
-<AForm.Item name="email" rules={[patternRules.email]}>
+<AForm.Item
+  name="email"
+  rules={[patternRules.email]}
+>
   <AInput allowClear />
 </AForm.Item>;
 ```
@@ -133,10 +148,16 @@ const pwd = form.getFieldValue('password');
 const { createConfirmPwdRule, formRules } = useAuthFormRules();
 
 <AForm form={form}>
-  <AForm.Item name="password" rules={formRules.pwd}>
+  <AForm.Item
+    name="password"
+    rules={formRules.pwd}
+  >
     <AInput.Password />
   </AForm.Item>
-  <AForm.Item name="confirmPassword" rules={createConfirmPwdRule(form)}>
+  <AForm.Item
+    name="confirmPassword"
+    rules={createConfirmPwdRule(form)}
+  >
     <AInput.Password />
   </AForm.Item>
 </AForm>;
@@ -167,13 +188,13 @@ const isValidPhone = REG_PHONE.test(phone);
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 页面里直接写正则和中文文案 | 把认证页公共规则放进 `useAuthFormRules()`，文案走 i18n。 |
-| 只改中文 `form.json` | 同步英文资源和 `form.d.ts`，避免语言切换或类型约束漂移。 |
+| 误区                         | 正确做法                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| 页面里直接写正则和中文文案   | 把认证页公共规则放进 `useAuthFormRules()`，文案走 i18n。                        |
+| 只改中文 `form.json`         | 同步英文资源和 `form.d.ts`，避免语言切换或类型约束漂移。                        |
 | 把复杂业务校验都塞进认证规则 | 认证字段规则放 `useAuthFormRules()`；依赖接口或页面状态的校验留在页面或服务层。 |
-| 修改确认密码字段名但不改规则 | 当前规则读取 `password`，字段名不一致会导致校验失效。 |
-| 用按钮禁用逻辑替代表单校验 | 按钮禁用只是体验优化，提交仍然依赖 `Form.Item rules`。 |
+| 修改确认密码字段名但不改规则 | 当前规则读取 `password`，字段名不一致会导致校验失效。                           |
+| 用按钮禁用逻辑替代表单校验   | 按钮禁用只是体验优化，提交仍然依赖 `Form.Item rules`。                          |
 
 ## 相关链接
 

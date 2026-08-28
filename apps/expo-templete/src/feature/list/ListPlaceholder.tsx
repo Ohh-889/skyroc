@@ -12,8 +12,7 @@ export interface ListPlaceholderProps extends ListPlaceholderContext {
 /**
  * 列表占位区，挂在 FlatList 的 ListEmptyComponent 上。
  *
- * 只在列表为空时渲染，所以「已有数据时后台刷新失败」不会把整页替换成错误页 —— 这也是这几种状态不做提前 return 的原因：
- * PullToRefresh 和滚动位置始终留在树里，空态、错误态和断网态一样能下拉刷新。
+ * 只在列表为空时渲染，所以「已有数据时后台刷新失败」不会把整页替换成错误页 —— 这也是这几种状态不做提前 return 的原因： PullToRefresh 和滚动位置始终留在树里，空态、错误态和断网态一样能下拉刷新。
  */
 export const ListPlaceholder = (props: ListPlaceholderProps) => {
   const {

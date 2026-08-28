@@ -3,9 +3,7 @@
   "name": "hover-card",
   "type": "registry:block",
   "title": "Hover Card",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/hover-card/HoverCard.tsx",

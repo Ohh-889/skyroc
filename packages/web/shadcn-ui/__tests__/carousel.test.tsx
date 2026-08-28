@@ -64,10 +64,7 @@ describe('Carousel', () => {
         previousProps={{ children: 'Previous slide' }}
         setApi={setApi}
       >
-        {[
-          <div key="one">Slide one</div>,
-          <div key="two">Slide two</div>
-        ]}
+        {[<div key="one">Slide one</div>, <div key="two">Slide two</div>]}
       </Carousel>
     );
 
@@ -128,10 +125,7 @@ describe('Carousel', () => {
 
     expect(carouselMock.api.scrollNext).toHaveBeenCalledOnce();
     expect(carouselMock.api.scrollPrev).toHaveBeenCalledOnce();
-    expect(carouselMock.useEmblaCarousel).toHaveBeenCalledWith(
-      expect.objectContaining({ axis: 'y' }),
-      undefined
-    );
+    expect(carouselMock.useEmblaCarousel).toHaveBeenCalledWith(expect.objectContaining({ axis: 'y' }), undefined);
   });
 
   it('disables controls when the carousel API is unavailable', () => {
@@ -171,10 +165,7 @@ describe('Carousel', () => {
 
     expect(buttons).toHaveLength(2);
     expect(buttons.every(button => button.querySelector('svg'))).toBe(true);
-    expect(carouselMock.useEmblaCarousel).toHaveBeenCalledWith(
-      expect.objectContaining({ axis: 'y' }),
-      undefined
-    );
+    expect(carouselMock.useEmblaCarousel).toHaveBeenCalledWith(expect.objectContaining({ axis: 'y' }), undefined);
   });
 
   it('falls back to horizontal context orientation when opts axis is not vertical', () => {

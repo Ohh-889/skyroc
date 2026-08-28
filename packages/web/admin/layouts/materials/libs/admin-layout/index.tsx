@@ -105,7 +105,10 @@ const AdminLayout: FC<AdminLayoutProps> = ({
   const footerDisplay = !fullContent && fixedFooter ? 'block' : 'none';
 
   return (
-    <section className={classNames('relative h-full', commonClass)} style={cssVar}>
+    <section
+      className={classNames('relative h-full', commonClass)}
+      style={cssVar}
+    >
       <section
         id={isWrapperScroll ? scrollElId : ''}
         className={classNames('h-full flex flex-col', scrollWrapperClass, commonClass, {

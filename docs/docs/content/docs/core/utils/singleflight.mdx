@@ -1,6 +1,6 @@
 ---
-title: "Singleflight"
-description: "合并同 key 的并发请求，保证同一时刻相同 key 只有一个 Promise 在飞行，结果共享给所有调用方"
+title: 'Singleflight'
+description: '合并同 key 的并发请求，保证同一时刻相同 key 只有一个 Promise 在飞行，结果共享给所有调用方'
 ---
 
 ## 概述
@@ -36,15 +36,11 @@ class UserService {
 
   async fetchProfile(id: string) {
     // 相同 id 的并发调用共享同一个 Promise
-    return this.sf.do(`profile:${id}`, () =>
-      fetch(`/api/users/${id}/profile`).then(r => r.json())
-    );
+    return this.sf.do(`profile:${id}`, () => fetch(`/api/users/${id}/profile`).then(r => r.json()));
   }
 
   async fetchPermissions(userId: string) {
-    return this.sf.do(`perms:${userId}`, () =>
-      fetch(`/api/users/${userId}/permissions`).then(r => r.json())
-    );
+    return this.sf.do(`perms:${userId}`, () => fetch(`/api/users/${userId}/permissions`).then(r => r.json()));
   }
 }
 
@@ -54,7 +50,7 @@ const userService = new UserService();
 const [a, b, c] = await Promise.all([
   userService.fetchProfile('alice'),
   userService.fetchProfile('alice'),
-  userService.fetchProfile('alice'),
+  userService.fetchProfile('alice')
 ]);
 ```
 
@@ -68,9 +64,7 @@ import { createSingleflight } from '@skyroc/utils';
 const sf = createSingleflight();
 
 async function fetchConfig() {
-  return sf('app-config', () =>
-    fetch('/api/config').then(r => r.json())
-  );
+  return sf('app-config', () => fetch('/api/config').then(r => r.json()));
 }
 ```
 
@@ -138,10 +132,10 @@ sf.do('profile', () => fetchProfile(userId));
 
 ## 与其他去重方案对比
 
-| 方案 | 合并并发 | 缓存结果 | 适合场景 |
-| --- | --- | --- | --- |
-| `Singleflight` | ✅ | ❌（落定即清除） | 防止并发重复请求，不需要缓存 |
-| TanStack Query | ✅ | ✅（可配置 staleTime） | 完整的请求状态管理 |
-| 手动 `Map<key, Promise>` | ✅ | 需自己管理 | 自定义缓存策略 |
+| 方案                     | 合并并发 | 缓存结果               | 适合场景                     |
+| ------------------------ | -------- | ---------------------- | ---------------------------- |
+| `Singleflight`           | ✅       | ❌（落定即清除）       | 防止并发重复请求，不需要缓存 |
+| TanStack Query           | ✅       | ✅（可配置 staleTime） | 完整的请求状态管理           |
+| 手动 `Map<key, Promise>` | ✅       | 需自己管理             | 自定义缓存策略               |
 
 Singleflight 定位是**最轻量**的并发合并工具，不做缓存、不管失败重试、不管 loading 状态——这些交给调用层自行决定。

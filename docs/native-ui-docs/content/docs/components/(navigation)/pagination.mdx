@@ -79,16 +79,16 @@ import { Pagination } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot        | 作用位置                                       |
-| ----------- | ---------------------------------------------- |
-| `root`      | 根容器                                         |
-| `content`   | 页码与按钮的横向容器                           |
-| `navButton` | 上一页 / 下一页按钮                             |
-| `item`      | 单个页码按钮                                   |
-| `itemText`  | 页码文字（当前页加粗）                          |
-| `ellipsis`  | 省略号占位                                     |
-| `simple`    | `simple` 模式下「当前页/总页数」的容器          |
-| `desc`      | 省略号与「当前页/总页数」的文字                 |
+| slot        | 作用位置                               |
+| ----------- | -------------------------------------- |
+| `root`      | 根容器                                 |
+| `content`   | 页码与按钮的横向容器                   |
+| `navButton` | 上一页 / 下一页按钮                    |
+| `item`      | 单个页码按钮                           |
+| `itemText`  | 页码文字（当前页加粗）                 |
+| `ellipsis`  | 省略号占位                             |
+| `simple`    | `simple` 模式下「当前页/总页数」的容器 |
+| `desc`      | 省略号与「当前页/总页数」的文字        |
 
 <Demo src="@playground/pagination/PaginationStyles" />
 
@@ -124,8 +124,18 @@ import { Pagination } from '@skyroc/native-ui';
       default: 'false'
     },
     { name: 'siblingCount', description: '当前页左右各显示几个兄弟页码', type: 'number', default: '1' },
-    { name: 'prev', description: '上一页按钮内容，string / number 会被包裹为 Text', type: 'ReactNode', default: "'Prev'" },
-    { name: 'next', description: '下一页按钮内容，string / number 会被包裹为 Text', type: 'ReactNode', default: "'Next'" },
+    {
+      name: 'prev',
+      description: '上一页按钮内容，string / number 会被包裹为 Text',
+      type: 'ReactNode',
+      default: "'Prev'"
+    },
+    {
+      name: 'next',
+      description: '下一页按钮内容，string / number 会被包裹为 Text',
+      type: 'ReactNode',
+      default: "'Next'"
+    },
     { name: 'disabled', description: '禁用所有页码与上下页按钮', type: 'boolean', default: 'false' },
     { name: 'className', description: '根容器类名', type: 'string' },
     {

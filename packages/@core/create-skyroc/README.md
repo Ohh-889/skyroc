@@ -22,7 +22,7 @@ pnpm create skyroc my-app --template expo
 | -------------------------- | ----------------------------------------------- |
 | `--template <admin\|expo>` | 选择模板；带项目名时默认 `admin`                |
 | `--target <dir>`           | 目标目录，默认当前目录下的 `<name>`             |
-| `--title <title>`          | Admin 标题，写入 `.env`（默认由项目名转写）      |
+| `--title <title>`          | Admin 标题，写入 `.env`（默认由项目名转写）     |
 | `--description <desc>`     | 应用描述；Admin 同时写入 `.env`                 |
 | `--force`                  | 目标目录非空时覆盖                              |
 | `--install`                | 使用当前调用方的包管理器安装依赖                |

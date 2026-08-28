@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type {
   MenubarContentProps as _MenubarContentProps,
   MenubarGroupProps as _MenubarGroupProps,
@@ -9,6 +8,7 @@ import type {
   MenubarSubProps as _MenubarSubProps,
   MenubarTriggerProps as _MenubarTriggerProps
 } from '@radix-ui/react-menubar';
+import type { ReactNode } from 'react';
 import type { ClassValue, StyledComponentProps, ThemeSize } from '../../types/shared';
 import type {
   MenuCheckboxGroupItemProps,
@@ -29,14 +29,10 @@ import type {
   MenuSubTriggerProps
 } from '../menu/types';
 
-/**
- * Props for the primitive menubar menu component (composable usage).
- */
+/** Props for the primitive menubar menu component (composable usage). */
 export type MenubarMenuPrimitiveProps = _MenubarMenuProps;
 
-/**
- * Props for the composed menubar menu component.
- */
+/** Props for the composed menubar menu component. */
 export interface MenubarMenuComposedProps extends Omit<MenubarTriggerProps, 'children' | 'classNames'> {
   children: ReactNode;
   classNames?: Pick<MenuClassNames, 'content' | 'shortcut'> & {
@@ -47,79 +43,53 @@ export interface MenubarMenuComposedProps extends Omit<MenubarTriggerProps, 'chi
   value?: string;
 }
 
-/**
- * Props for the menubar content component.
- */
+/** Props for the menubar content component. */
 export interface MenubarContentProps extends StyledComponentProps<_MenubarContentProps> {
   size?: ThemeSize;
 }
 
-/**
- * Props for a menubar item.
- */
+/** Props for a menubar item. */
 export interface MenubarItemProps extends Omit<MenuItemProps, 'component'> {
   inset?: boolean;
 }
 
-/**
- * Props for a menubar label.
- */
+/** Props for a menubar label. */
 export type MenubarLabelProps = Omit<MenuLabelProps, 'component'>;
 
-/**
- * Props for rendering a menubar option from data.
- */
+/** Props for rendering a menubar option from data. */
 export type MenubarOptionProps = Omit<
   MenuOptionProps,
   'component' | 'labelComponent' | 'separatorComponent' | 'subComponent' | 'subContentComponent' | 'subTriggerComponent'
 >;
 
-/**
- * Props for a menubar item indicator.
- */
+/** Props for a menubar item indicator. */
 export type MenubarItemIndicatorProps = Omit<MenuItemIndicatorProps, 'component'>;
 
-/**
- * Props for a menubar separator.
- */
+/** Props for a menubar separator. */
 export type MenubarSeparatorProps = Omit<MenuSeparatorProps, 'component'>;
 
-/**
- * Props for menubar submenu content.
- */
+/** Props for menubar submenu content. */
 export type MenubarSubContentProps = Omit<MenuSubContentProps, 'component' | 'groupComponent' | 'portalComponent'>;
 
-/**
- * Props for a menubar submenu trigger.
- */
+/** Props for a menubar submenu trigger. */
 export type MenubarSubTriggerProps = Omit<MenuSubTriggerProps, 'component'>;
 
-/**
- * Props for menubar checkbox item.
- */
+/** Props for menubar checkbox item. */
 export type MenubarCheckboxItemProps = Omit<MenuCheckboxItemProps, 'component' | 'indicatorComponent'>;
 
-/**
- * Props for menubar radio item.
- */
+/** Props for menubar radio item. */
 export type MenubarRadioItemProps = Omit<MenuRadioItemProps, 'component' | 'indicatorComponent'>;
 
-/**
- * Props for menubar checkbox group.
- */
+/** Props for menubar checkbox group. */
 export type MenubarCheckboxGroupProps = Omit<
   MenuCheckboxGroupProps,
   'component' | 'groupComponent' | 'labelComponent' | 'separatorComponent'
 >;
 
-/**
- * Props for menubar radio group (primitive).
- */
+/** Props for menubar radio group (primitive). */
 export type MenubarRadioGroupPrimitiveProps = _MenubarRadioGroupProps;
 
-/**
- * Props for menubar radio group (data-driven).
- */
+/** Props for menubar radio group (data-driven). */
 export type MenubarRadioGroupProps = Omit<
   MenuRadioGroupProps,
   'component' | 'groupComponent' | 'labelComponent' | 'separatorComponent'
@@ -144,24 +114,18 @@ export interface MenubarTriggerProps extends StyledComponentProps<_MenubarTrigge
   trailing?: ReactNode;
 }
 
-/**
- * Base option for normal menu items.
- */
+/** Base option for normal menu items. */
 interface MenubarOptionBase extends Omit<MenubarMenuComposedProps, 'children' | 'classNames' | 'trigger' | 'type'> {
   label: ReactNode;
 }
 
-/**
- * Normal menu option (default type).
- */
+/** Normal menu option (default type). */
 interface MenubarNormalOption extends MenubarOptionBase {
   children: MenubarOptionProps['item'][];
   type?: 'item';
 }
 
-/**
- * Checkbox menu option.
- */
+/** Checkbox menu option. */
 interface MenubarCheckboxOption extends MenubarOptionBase {
   /** Array of checked item values */
   checks?: string[];
@@ -173,9 +137,7 @@ interface MenubarCheckboxOption extends MenubarOptionBase {
   type: 'checkbox';
 }
 
-/**
- * Radio menu option.
- */
+/** Radio menu option. */
 interface MenubarRadioOption extends MenubarOptionBase {
   /** Radio items to render */
   children: MenuRadioItemOptionProps[];
@@ -187,9 +149,7 @@ interface MenubarRadioOption extends MenubarOptionBase {
   value?: string;
 }
 
-/**
- * Union type for all menu option types.
- */
+/** Union type for all menu option types. */
 export type MenubarOption = MenubarCheckboxOption | MenubarNormalOption | MenubarRadioOption;
 
 export interface MenubarRootProps extends StyledComponentProps<_MenubarProps> {}
@@ -198,13 +158,13 @@ export interface MenubarRootProps extends StyledComponentProps<_MenubarProps> {}
  * Props for the main Menubar component.
  *
  * @example
- * <Menubar
+ *   <Menubar
  *   items={[
- *     { label: 'File', children: [...] },
- *     { label: 'View', type: 'checkbox', checks: [...], onChecksChange: ..., children: [...] },
- *     { label: 'Profiles', type: 'radio', value: '...', onValueChange: ..., children: [...] }
+ *   { label: 'File', children: [...] },
+ *   { label: 'View', type: 'checkbox', checks: [...], onChecksChange: ..., children: [...] },
+ *   { label: 'Profiles', type: 'radio', value: '...', onValueChange: ..., children: [...] }
  *   ]}
- * />
+ *   />
  */
 export interface MenubarProps extends Omit<_MenubarProps, 'children'>, Omit<MenuCommonProps, 'classNames'> {
   classNames?: MenuCommonProps['classNames'] & {

@@ -34,7 +34,7 @@ export interface ColorPaletteOptions {
 /** 统一入口的第二参：直接给算法名，或给完整配置 */
 export type ColorPaletteConfig = ColorPaletteOptions | PaletteAlgorithm;
 
-/** antd 算法的 11 档索引与 Tailwind 档位号的对应关系 */
+/** Antd 算法的 11 档索引与 Tailwind 档位号的对应关系 */
 const PALETTE_NUMBERS: ColorPaletteNumber[] = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
 /** 把「算法名或配置对象」归一为配置对象 */

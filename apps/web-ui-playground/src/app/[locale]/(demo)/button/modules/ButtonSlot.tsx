@@ -1,7 +1,7 @@
 'use client';
 
-import { Minus, Plus } from 'lucide-react';
 import { Button } from '@skyroc/web-ui';
+import { Minus, Plus } from 'lucide-react';
 
 const ButtonSlot = () => {
   return (

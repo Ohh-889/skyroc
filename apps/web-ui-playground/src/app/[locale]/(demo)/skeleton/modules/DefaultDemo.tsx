@@ -4,7 +4,6 @@ import { Skeleton } from '@skyroc/web-ui';
 
 const DefaultDemo = () => {
   return (
-
     <div className="flex-col items-center space-y-4">
       <Skeleton className="size-12 rounded-full" />
 
@@ -14,9 +13,7 @@ const DefaultDemo = () => {
       </div>
 
       <Skeleton className="h-[125px] w-[250px] rounded-xl" />
-
     </div>
-
   );
 };
 

@@ -1,9 +1,9 @@
-import { JotaiProvider, globalStore } from '@skyroc/core-state';
 import type { AdminDevtoolsProps } from '@shell/devtools';
 import { reactI18nextInstance } from '@shell/i18n';
 import { NotificationProvider } from '@shell/notification';
 import { useSettingsTheme } from '@shell/theme';
 import { LazyAnimate } from '@shell/ui/compose';
+import { JotaiProvider, globalStore } from '@skyroc/core-state';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Suspense, lazy, useMemo } from 'react';
 import type { ReactNode } from 'react';
@@ -17,18 +17,15 @@ import { router } from './features/router';
 import RouterProvider from './features/router/RouterProvider';
 import { queryClient } from './service/queryClient';
 
-
 interface ProviderProps {
   /** 需要挂载到全局 Provider 下的应用内容。 */
   children: ReactNode;
 }
 
-
 // 开发环境才加载 Devtools，生产环境会被 tree-shaking 移除
 const AdminDevtools = import.meta.env.DEV
   ? lazy(() => import('@shell/devtools').then(mod => ({ default: mod.AdminDevtools })))
   : (_props: AdminDevtoolsProps) => null;
-
 
 const Devtools = () => {
   const { darkMode } = useSettingsTheme();
@@ -42,7 +39,12 @@ const Devtools = () => {
 
   return (
     <Suspense fallback={null}>
-      <AdminDevtools config={config} queryClient={queryClient} router={router} store={globalStore} />
+      <AdminDevtools
+        config={config}
+        queryClient={queryClient}
+        router={router}
+        store={globalStore}
+      />
     </Suspense>
   );
 };

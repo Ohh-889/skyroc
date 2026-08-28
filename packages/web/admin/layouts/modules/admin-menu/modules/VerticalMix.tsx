@@ -76,12 +76,21 @@ const VerticalMix = memo((props: VerticalMixProps) => {
     }
   }
 
-
   return (
-    <div className="h-full flex" onMouseLeave={handleResetActiveMenu}>
-      <FirstLevelMenu inverted={siderInverted} mode={mode} onSelect={handleSelectMixMenu}>
+    <div
+      className="h-full flex"
+      onMouseLeave={handleResetActiveMenu}
+    >
+      <FirstLevelMenu
+        inverted={siderInverted}
+        mode={mode}
+        onSelect={handleSelectMixMenu}
+      >
         {hasLogo ? (
-          <div className="flex-center px-12px" style={{ height: `${header.height}px` }}>
+          <div
+            className="flex-center px-12px"
+            style={{ height: `${header.height}px` }}
+          >
             <LayoutLogo
               logo={logo}
               logoComponent={logoComponent}
@@ -102,7 +111,10 @@ const VerticalMix = memo((props: VerticalMixProps) => {
           inverted={siderInverted}
           style={{ width: showDrawer ? `${sider.mixChildMenuWidth}px` : '0px' }}
         >
-          <header className="flex-y-center justify-between px-12px" style={{ height: `${header.height}px` }}>
+          <header
+            className="flex-y-center justify-between px-12px"
+            style={{ height: `${header.height}px` }}
+          >
             <h2 className="ellipsis-text text-16px text-primary font-bold">{activeMenuLabel}</h2>
             <PinToggler
               className={classNames({ 'text-white:88 !hover:text-white': siderInverted })}

@@ -1,6 +1,6 @@
 ---
-title: "Emitter"
-description: "轻量级类型安全事件总线，支持泛型事件映射、通配符监听、粘性事件与键控隔离"
+title: 'Emitter'
+description: '轻量级类型安全事件总线，支持泛型事件映射、通配符监听、粘性事件与键控隔离'
 ---
 
 ## 概述
@@ -33,7 +33,7 @@ const off = bus.on('login', (user, timestamp) => {
 
 // 触发事件
 bus.emit('login', 'alice', Date.now()); // ✅ 类型正确
-bus.emit('login', 123);                 // ❌ 编译期类型错误
+bus.emit('login', 123); // ❌ 编译期类型错误
 
 // 取消订阅
 off();
@@ -53,10 +53,10 @@ type Events = {
 
 const bus = new Emitter<Events>();
 
-bus.on('resize', (w, h) => {});   // w: number, h: number
-bus.on('close', () => {});        // 无参数
-bus.emit('resize', 800, 600);     // ✅
-bus.emit('close', 'extra-arg');   // ❌ 编译期错误
+bus.on('resize', (w, h) => {}); // w: number, h: number
+bus.on('close', () => {}); // 无参数
+bus.emit('resize', 800, 600); // ✅
+bus.emit('close', 'extra-arg'); // ❌ 编译期错误
 ```
 
 不传泛型时退化为 `EventMap`（`Record<string, unknown[]>`），与旧代码完全兼容：
@@ -96,7 +96,7 @@ bus.emit('ready', { theme: 'dark' });
 // 500ms 后注册监听器
 setTimeout(() => {
   // on() 调用时立即收到上面那次触发的参数
-  bus.on('ready', (config) => {
+  bus.on('ready', config => {
     console.log('收到粘性事件:', config); // { theme: 'dark' }
   });
 }, 500);
@@ -116,8 +116,8 @@ type Events = {
 const bus = new Emitter<Events>();
 
 // 两个组件实例各自只监听属于自己 key 的 update
-bus.onMap('update', 'panel-A', (data) => console.log('A:', data));
-bus.onMap('update', 'panel-B', (data) => console.log('B:', data));
+bus.onMap('update', 'panel-A', data => console.log('A:', data));
+bus.onMap('update', 'panel-B', data => console.log('B:', data));
 
 bus.emitMap('update', 'panel-A', { value: 1 }); // 只触发 panel-A
 bus.emitMap('update', 'panel-B', { value: 2 }); // 只触发 panel-B
@@ -146,14 +146,14 @@ bus.emitMap('update', 'panel-A', { value: 1 });
 注册监听器，返回取消订阅函数。注册时会**消费**该事件积压的粘性事件。
 
 ```ts
-const off = bus.on('login', (user) => {});
+const off = bus.on('login', user => {});
 off(); // 取消订阅
 ```
 
-| 重载 | 说明 |
-| ---- | ---- |
-| `on('*', fn)` | 通配符，监听所有事件 |
-| `on(event, fn)` | 具名事件监听 |
+| 重载            | 说明                 |
+| --------------- | -------------------- |
+| `on('*', fn)`   | 通配符，监听所有事件 |
+| `on(event, fn)` | 具名事件监听         |
 
 ### `onMap(event, key, fn)`
 
@@ -169,7 +169,7 @@ bus.onMap('update', 'panel-A', handler);
 
 ```ts
 bus.off('login', handler); // 移除指定监听器
-bus.off('login');          // 移除 login 的全部监听器
+bus.off('login'); // 移除 login 的全部监听器
 bus.off('*', wildcardFn); // 移除通配符监听器
 ```
 
@@ -197,7 +197,7 @@ bus.offAll();
 
 ```ts
 bus.clearSticky('login'); // 只清 login
-bus.clearSticky();        // 全清
+bus.clearSticky(); // 全清
 ```
 
 ---
@@ -222,9 +222,8 @@ const plain = new Emitter({ stickyLimit: 0 }); // 完全关闭粘性事件
 ```
 
 <Callout type="warn">
-  粘性缓存只增不减会变成内存泄漏：一个从没人订阅的事件持续 `emit`，缓存就会无限增长。
-  `stickyLimit` 就是为此而设的上限，默认 32，超出后丢弃最早的那条。
-  高频且没人订阅的事件（埋点、心跳）建议显式设成 `0`。
+  粘性缓存只增不减会变成内存泄漏：一个从没人订阅的事件持续 `emit`，缓存就会无限增长。 `stickyLimit`
+  就是为此而设的上限，默认 32，超出后丢弃最早的那条。 高频且没人订阅的事件（埋点、心跳）建议显式设成 `0`。
 </Callout>
 
 ## 设计说明

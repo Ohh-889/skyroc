@@ -31,18 +31,35 @@ const ExcelDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="file-icons:microsoft-excel"
         resources={[{ label: 'SheetJS', url: 'https://docs.sheetjs.com/' }]}
         tags={['xlsx', 'Ant Design Table']}
         title="Excel 导出示例"
       />
-      <ExamplePanel icon="file-icons:microsoft-excel" title="用户数据导出">
-        <Button className="mb-4" type="primary" onClick={exportExcel}>
+      <ExamplePanel
+        icon="file-icons:microsoft-excel"
+        title="用户数据导出"
+      >
+        <Button
+          className="mb-4"
+          type="primary"
+          onClick={exportExcel}
+        >
           导出 Excel
         </Button>
-        <Table columns={columns} dataSource={demoUsers} pagination={false} rowKey="id" size="small" />
+        <Table
+          columns={columns}
+          dataSource={demoUsers}
+          pagination={false}
+          rowKey="id"
+          size="small"
+        />
       </ExamplePanel>
     </Space>
   );

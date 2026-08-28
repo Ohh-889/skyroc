@@ -54,12 +54,21 @@ const Sender = (props: SenderProps) => {
       className="shadow-sm transition-shadow duration-300 hover:shadow-md"
       title={
         <ASpace>
-          <SvgIcon className="text-blue-500" icon="ant-design:send-outlined" />
+          <SvgIcon
+            className="text-blue-500"
+            icon="ant-design:send-outlined"
+          />
           <Typography.Text strong>Sender Component</Typography.Text>
         </ASpace>
       }
     >
-      <AButton className="w-full" icon={<SvgIcon icon="ant-design:send-outlined" />} size="large" type="primary" onClick={sendMessage}>
+      <AButton
+        className="w-full"
+        icon={<SvgIcon icon="ant-design:send-outlined" />}
+        size="large"
+        type="primary"
+        onClick={sendMessage}
+      >
         Send Message
       </AButton>
     </ACard>
@@ -80,10 +89,16 @@ const Receiver = (props: ReceiverProps) => {
 
   function renderMessage() {
     return (
-      <ASpace className="w-full" direction="vertical">
+      <ASpace
+        className="w-full"
+        direction="vertical"
+      >
         <div className="rounded-lg">
           <Typography.Text type="secondary">Message:</Typography.Text>
-          <Typography.Text strong className="block">
+          <Typography.Text
+            strong
+            className="block"
+          >
             {messageState.message}
           </Typography.Text>
           <ADivider className="my-2" />
@@ -110,7 +125,10 @@ const Receiver = (props: ReceiverProps) => {
       className="shadow-sm transition-shadow duration-300 hover:shadow-md"
       title={
         <ASpace>
-          <SvgIcon className="text-green-500" icon="ant-design:inbox-outlined" />
+          <SvgIcon
+            className="text-green-500"
+            icon="ant-design:inbox-outlined"
+          />
           <Typography.Text strong>Receiver Component</Typography.Text>
         </ASpace>
       }
@@ -122,11 +140,22 @@ const Receiver = (props: ReceiverProps) => {
 
 const EventBusDemo = () => {
   return (
-    <ACard className="h-full card-wrapper" size="small" variant="borderless">
-      <Typography.Title className="mb-8 text-center" level={2}>
+    <ACard
+      className="h-full card-wrapper"
+      size="small"
+      variant="borderless"
+    >
+      <Typography.Title
+        className="mb-8 text-center"
+        level={2}
+      >
         Event Bus Example: Sibling Communication
       </Typography.Title>
-      <ASpace className="w-full" direction="vertical" size="large">
+      <ASpace
+        className="w-full"
+        direction="vertical"
+        size="large"
+      >
         <Sender message="Hello from Sender!" />
         <Receiver emptyText="No message received." />
       </ASpace>

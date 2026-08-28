@@ -106,7 +106,7 @@ export function fetchUserOptions(params: UserOptionParams = {}) {
 export function fetchUserDetail(userId?: UserId) {
   return request<UserDetailResponse>({
     method: 'get',
-    url: userId  ? SYSTEM_USER_URLS.DETAIL(userId): SYSTEM_USER_URLS.FORM_OPTIONS
+    url: userId ? SYSTEM_USER_URLS.DETAIL(userId) : SYSTEM_USER_URLS.FORM_OPTIONS
   });
 }
 

@@ -9,24 +9,24 @@ description: 使用 home dashboard、useEcharts、主题暗色模式、尺寸监
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 新增首页图表模块 | `apps/admin/src/pages/(admin)/home/modules` |
-| 接入 ECharts 并跟随暗色模式 | `apps/admin/src/hooks/use-echarts.ts` |
-| 做响应式图表尺寸 | `useSize(domRef)`、`chart.resize()` |
-| 更新图表数据 | `updateOptions()`、服务模块 query hooks |
-| 给首页菜单显示动态徽标 | `useAdminMenuBadges()`、`staticData.menu.badge.valueKey` |
+| 场景                        | 重点位置                                                 |
+| --------------------------- | -------------------------------------------------------- |
+| 新增首页图表模块            | `apps/admin/src/pages/(admin)/home/modules`              |
+| 接入 ECharts 并跟随暗色模式 | `apps/admin/src/hooks/use-echarts.ts`                    |
+| 做响应式图表尺寸            | `useSize(domRef)`、`chart.resize()`                      |
+| 更新图表数据                | `updateOptions()`、服务模块 query hooks                  |
+| 给首页菜单显示动态徽标      | `useAdminMenuBadges()`、`staticData.menu.badge.valueKey` |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/pages/(admin)/home/index.tsx` | 首页页面组合，注册 `HOME_MENU_BADGE_KEY`，挂载卡片、折线图、饼图和项目动态模块。 |
-| `apps/admin/src/pages/(admin)/home/modules/LineChart.tsx` | 折线图模块示例。 |
-| `apps/admin/src/pages/(admin)/home/modules/PieChart.tsx` | 饼图模块示例。 |
-| `apps/admin/src/hooks/use-echarts.ts` | ECharts 注册、初始化、主题切换、尺寸变化、销毁和 options 更新封装。 |
-| `packages/web/admin-theme/src/hooks/use-theme.ts` | 图表读取的主题状态来源。 |
-| `packages/web/admin-layouts/src/modules/menus` | 菜单 badge 的运行时状态来源。 |
+| 文件                                                      | 职责                                                                             |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `apps/admin/src/pages/(admin)/home/index.tsx`             | 首页页面组合，注册 `HOME_MENU_BADGE_KEY`，挂载卡片、折线图、饼图和项目动态模块。 |
+| `apps/admin/src/pages/(admin)/home/modules/LineChart.tsx` | 折线图模块示例。                                                                 |
+| `apps/admin/src/pages/(admin)/home/modules/PieChart.tsx`  | 饼图模块示例。                                                                   |
+| `apps/admin/src/hooks/use-echarts.ts`                     | ECharts 注册、初始化、主题切换、尺寸变化、销毁和 options 更新封装。              |
+| `packages/web/admin-theme/src/hooks/use-theme.ts`         | 图表读取的主题状态来源。                                                         |
+| `packages/web/admin-layouts/src/modules/menus`            | 菜单 badge 的运行时状态来源。                                                    |
 
 ## 核心概念
 
@@ -34,11 +34,11 @@ description: 使用 home dashboard、useEcharts、主题暗色模式、尺寸监
 
 `home/index.tsx` 当前只做三件事：
 
-| 职责 | 当前行为 |
-| --- | --- |
-| 菜单 badge | 调用 `setMenuBadgeValue('home.updates', 25)`。 |
-| 页面布局 | 用 Ant Design `Space`、`Row`、`Col` 组合模块。 |
-| 模块挂载 | 挂载 `HeaderBanner`、`CardData`、`LineChart`、`PieChart`、`ProjectNews`、`CreativityBanner`。 |
+| 职责       | 当前行为                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| 菜单 badge | 调用 `setMenuBadgeValue('home.updates', 25)`。                                                |
+| 页面布局   | 用 Ant Design `Space`、`Row`、`Col` 组合模块。                                                |
+| 模块挂载   | 挂载 `HeaderBanner`、`CardData`、`LineChart`、`PieChart`、`ProjectNews`、`CreativityBanner`。 |
 
 图表 options、卡片内容和模块样式都放在 `modules` 目录里。新增模块时继续保持这个边界，首页不要变成一个大文件。
 
@@ -46,14 +46,14 @@ description: 使用 home dashboard、useEcharts、主题暗色模式、尺寸监
 
 `useEcharts()` 当前负责：
 
-| 能力 | 实现方式 |
-| --- | --- |
+| 能力              | 实现方式                                                                        |
+| ----------------- | ------------------------------------------------------------------------------- |
 | 注册 ECharts 能力 | 在 hook 文件顶部调用 `echarts.use()`，只注册当前项目需要的 chart 和 component。 |
-| 初始化实例 | 只有在容器有尺寸后才 `echarts.init(domRef.current, chartTheme)`。 |
-| 暗色模式 | 读取 `useSettingsTheme()` 的 `darkMode`，模式变化时销毁并重建实例。 |
-| loading 样式 | 默认 `onRender` 会按主题设置 loading 文本色、遮罩色和主题色。 |
-| 数据更新 | `updateOptions()` 合并当前 options，清空旧图表后重新 `setOption()`。 |
-| 销毁 | `useUnmount()` 中 dispose 实例。 |
+| 初始化实例        | 只有在容器有尺寸后才 `echarts.init(domRef.current, chartTheme)`。               |
+| 暗色模式          | 读取 `useSettingsTheme()` 的 `darkMode`，模式变化时销毁并重建实例。             |
+| loading 样式      | 默认 `onRender` 会按主题设置 loading 文本色、遮罩色和主题色。                   |
+| 数据更新          | `updateOptions()` 合并当前 options，清空旧图表后重新 `setOption()`。            |
+| 销毁              | `useUnmount()` 中 dispose 实例。                                                |
 
 因此，页面模块不需要自己写 `echarts.init()`、`window.resize` 监听或 unmount dispose。
 
@@ -114,7 +114,10 @@ const OrderTrendChart = (props: OrderTrendChartProps) => {
   return (
     <ACard title="订单趋势">
       <AButton onClick={refreshData}>刷新</AButton>
-      <div ref={domRef} style={{ height }} />
+      <div
+        ref={domRef}
+        style={{ height }}
+      />
     </ACard>
   );
 };
@@ -155,23 +158,23 @@ function syncHomeBadge() {
 
 接真实 dashboard 数据时，推荐拆成三层：
 
-| 层 | 示例位置 | 职责 |
-| --- | --- | --- |
-| 服务模块 | `apps/admin/src/service/api/dashboard` | 定义 `urls`、`api`、`hooks`、`keys`、`types`。 |
-| 页面模块 | `home/modules/OrderTrendChart.tsx` | 调用 query hook，把返回数据转成 ECharts options。 |
-| 页面组合 | `home/index.tsx` | 决定模块顺序、布局和菜单 badge 更新。 |
+| 层       | 示例位置                               | 职责                                              |
+| -------- | -------------------------------------- | ------------------------------------------------- |
+| 服务模块 | `apps/admin/src/service/api/dashboard` | 定义 `urls`、`api`、`hooks`、`keys`、`types`。    |
+| 页面模块 | `home/modules/OrderTrendChart.tsx`     | 调用 query hook，把返回数据转成 ECharts options。 |
+| 页面组合 | `home/index.tsx`                       | 决定模块顺序、布局和菜单 badge 更新。             |
 
 这样图表模块只关心展示和数据映射，不直接拼接 URL，也不维护全局菜单状态。
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 在每个图表组件里直接 `echarts.init()` | 使用 `useEcharts()` 统一处理主题、尺寸和销毁。 |
-| 容器没有高度就挂图表 | 给图表容器稳定高度或响应式高度。 |
-| 暗色模式变化后只改 CSS | 让 `useEcharts()` 重建 ECharts 实例，使用对应 chart theme。 |
-| 把 dashboard 接口写在 `home/index.tsx` 里 | 建服务模块，再把数据交给子模块。 |
-| 动态 badge 写死在 `staticData` | `staticData` 只放 `valueKey`，运行时用 `setMenuBadgeValue()` 更新值。 |
+| 误区                                      | 正确做法                                                              |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| 在每个图表组件里直接 `echarts.init()`     | 使用 `useEcharts()` 统一处理主题、尺寸和销毁。                        |
+| 容器没有高度就挂图表                      | 给图表容器稳定高度或响应式高度。                                      |
+| 暗色模式变化后只改 CSS                    | 让 `useEcharts()` 重建 ECharts 实例，使用对应 chart theme。           |
+| 把 dashboard 接口写在 `home/index.tsx` 里 | 建服务模块，再把数据交给子模块。                                      |
+| 动态 badge 写死在 `staticData`            | `staticData` 只放 `valueKey`，运行时用 `setMenuBadgeValue()` 更新值。 |
 
 ## 相关链接
 

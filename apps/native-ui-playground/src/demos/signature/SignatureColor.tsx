@@ -23,8 +23,7 @@ interface SignatureColorProps {
 /**
  * 八种语义色共用一块画布，靠上方按钮切换。
  *
- * 不是为了省地方：每块 Signature 在 web 上都要独占一个 WebGL 上下文（Skia 的画布是 GPU 表面），
- * 而浏览器每页只给 16 个，超出后最早创建的那几块会被静默回收 —— 表现为画布还在、笔却画不上去。
+ * 不是为了省地方：每块 Signature 在 web 上都要独占一个 WebGL 上下文（Skia 的画布是 GPU 表面）， 而浏览器每页只给 16 个，超出后最早创建的那几块会被静默回收 —— 表现为画布还在、笔却画不上去。
  * 八个语义色摊成八块画布，光这一节就吃掉半个额度，文档站整页必然溢出。
  */
 const SignatureColor = (props: SignatureColorProps) => {

@@ -65,7 +65,11 @@ import type { NumberInputProps, NumberInputClassNames, NumberInputControlProps }
 通过 `min`、`max` 限制输入范围，`step` 设置每次递增/递减的步进值。到达边界时对应按钮自动禁用。
 
 ```tsx
-<NumberInput min={0} max={100} step={5} />
+<NumberInput
+  min={0}
+  max={100}
+  step={5}
+/>
 ```
 
 ## 受控用法
@@ -75,7 +79,10 @@ import type { NumberInputProps, NumberInputClassNames, NumberInputControlProps }
 ```tsx
 const [count, setCount] = useState(0);
 
-<NumberInput value={count} onValueChange={setCount} />
+<NumberInput
+  value={count}
+  onValueChange={setCount}
+/>;
 ```
 
 ## 键盘操作

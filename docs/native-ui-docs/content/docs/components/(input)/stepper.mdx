@@ -26,11 +26,11 @@ import { Stepper } from '@skyroc/native-ui';
 
 `size` 同时决定按钮边长、输入框宽高与字号：
 
-| 尺寸 | 按钮    | 输入框（宽 × 高） | 数字字号        | 加减符号    |
-| ---- | ------- | ----------------- | --------------- | ----------- |
-| `sm` | 28 × 28 | 40 × 28           | `--text-xs`     | `text-base` |
-| `md` | 32 × 32 | 56 × 32           | `--text-sm`     | `text-lg`   |
-| `lg` | 40 × 40 | 64 × 40           | `--text-base`   | `text-xl`   |
+| 尺寸 | 按钮    | 输入框（宽 × 高） | 数字字号      | 加减符号    |
+| ---- | ------- | ----------------- | ------------- | ----------- |
+| `sm` | 28 × 28 | 40 × 28           | `--text-xs`   | `text-base` |
+| `md` | 32 × 32 | 56 × 32           | `--text-sm`   | `text-lg`   |
+| `lg` | 40 × 40 | 64 × 40           | `--text-base` | `text-xl`   |
 
 <Demo src="@playground/stepper/StepperSize" />
 
@@ -38,10 +38,10 @@ import { Stepper } from '@skyroc/native-ui';
 
 ## 外观主题
 
-| 主题      | 表现                                                   |
-| --------- | ------------------------------------------------------ |
-| `default` | 连体式：三段贴合成一条，两端圆角，整体 `bg-muted`      |
-| `round`   | 分离式：两枚圆钮（加号为 `bg-primary`）+ 无底色输入框  |
+| 主题      | 表现                                                  |
+| --------- | ----------------------------------------------------- |
+| `default` | 连体式：三段贴合成一条，两端圆角，整体 `bg-muted`     |
+| `round`   | 分离式：两枚圆钮（加号为 `bg-primary`）+ 无底色输入框 |
 
 <Demo src="@playground/stepper/StepperTheme" />
 
@@ -112,10 +112,10 @@ import { Stepper } from '@skyroc/native-ui';
 | ----------- | -------------------------------------------- |
 | `root`      | 根容器 `View`（横向排布与三段之间的间距）    |
 | `minus`     | 减少按钮容器                                 |
-| `minusIcon` | 减号文字（通过 Button 的 `classNames.text`）  |
+| `minusIcon` | 减号文字（通过 Button 的 `classNames.text`） |
 | `plus`      | 增加按钮容器                                 |
 | `plusIcon`  | 加号文字                                     |
-| `input`     | 中间的 `TextInput`                            |
+| `input`     | 中间的 `TextInput`                           |
 
 <Demo src="@playground/stepper/StepperStyles" />
 

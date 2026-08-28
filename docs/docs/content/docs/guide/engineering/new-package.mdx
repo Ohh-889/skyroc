@@ -64,33 +64,33 @@ packages/<group>/<name>/
   "private": false,
   "description": "...",
   "type": "module",
-  "main":  "./dist/index.mjs",
+  "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "files": ["dist", "README.md"],
   "sideEffects": false,
   "exports": {
-    ".":              { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
+    ".": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build":    "tsdown",
-    "dev":      "tsdown --watch",
-    "clean":    "rimraf dist .turbo",
-    "lint":     "oxlint",
-    "test":     "vitest run",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "clean": "rimraf dist .turbo",
+    "lint": "oxlint",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@skyroc/utils": "workspace:*"
   },
   "devDependencies": {
-    "@skyroc/config":   "workspace:*",
+    "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
-    "tsdown":           "catalog:dev",
-    "rimraf":           "catalog:dev",
-    "typescript":       "catalog:core",
-    "vitest":           "catalog:dev",
-    "oxlint":           "catalog:dev"
+    "tsdown": "catalog:dev",
+    "rimraf": "catalog:dev",
+    "typescript": "catalog:core",
+    "vitest": "catalog:dev",
+    "oxlint": "catalog:dev"
   },
   "publishConfig": {
     "access": "public"
@@ -108,14 +108,14 @@ packages/<group>/<name>/
 
 ## 第 2 步：`tsconfig.json`
 
-| 包类型 | extends |
-| --- | --- |
-| 跨平台库 | `@skyroc/tsconfig/library.json` |
-| Web 库 | `@skyroc/tsconfig/web.json` |
-| Node 工具 | `@skyroc/tsconfig/node.json` |
-| RN 库 | `@skyroc/tsconfig/react-native.json` |
-| Web 应用 | `@skyroc/tsconfig/web-app.json` |
-| RN 应用 | `@skyroc/tsconfig/react-native-app.json` |
+| 包类型    | extends                                  |
+| --------- | ---------------------------------------- |
+| 跨平台库  | `@skyroc/tsconfig/library.json`          |
+| Web 库    | `@skyroc/tsconfig/web.json`              |
+| Node 工具 | `@skyroc/tsconfig/node.json`             |
+| RN 库     | `@skyroc/tsconfig/react-native.json`     |
+| Web 应用  | `@skyroc/tsconfig/web-app.json`          |
+| RN 应用   | `@skyroc/tsconfig/react-native-app.json` |
 
 ```jsonc
 {
@@ -136,12 +136,7 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   clean: true,
-  external: [
-    /^node:/,
-    /^@skyroc\//,
-    'react',
-    'react-dom'
-  ]
+  external: [/^node:/, /^@skyroc\//, 'react', 'react-dom']
 });
 ```
 

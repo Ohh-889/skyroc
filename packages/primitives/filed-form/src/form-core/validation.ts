@@ -278,8 +278,7 @@ export function createRuleChecker(messages: ValidateMessages = {}) {
   // Float validation
   checker.registerType('float', ({ rule: r, value: v }) => {
     const num = Number(v);
-    if (!Number.isFinite(num) || Number.isInteger(num))
-      return failWithMessages(r, 'float', { value: v }, checker.msg);
+    if (!Number.isFinite(num) || Number.isInteger(num)) return failWithMessages(r, 'float', { value: v }, checker.msg);
     return ok();
   });
 

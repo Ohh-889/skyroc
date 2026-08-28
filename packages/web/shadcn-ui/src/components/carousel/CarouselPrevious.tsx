@@ -1,15 +1,24 @@
 'use client';
 
-import { forwardRef } from 'react';
-import { ChevronLeft } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { ChevronLeft } from 'lucide-react';
+import { forwardRef } from 'react';
 import { ButtonIcon } from '../button';
 import { carouselVariants } from './carousel-variants';
 import { useCarousel } from './context';
 import type { CarouselNextProps } from './types';
 
 const CarouselNext = forwardRef<HTMLButtonElement, CarouselNextProps>((props, ref) => {
-  const { 'aria-label': ariaLabel, children, className, disabled, shape = 'circle', size, variant = 'pure', ...rest } = props;
+  const {
+    'aria-label': ariaLabel,
+    children,
+    className,
+    disabled,
+    shape = 'circle',
+    size,
+    variant = 'pure',
+    ...rest
+  } = props;
 
   const { canScrollPrev, orientation, scrollPrev } = useCarousel();
 

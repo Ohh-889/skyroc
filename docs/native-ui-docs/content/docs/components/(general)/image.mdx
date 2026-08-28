@@ -26,14 +26,14 @@ import { Image } from '@skyroc/native-ui';
 
 `radius` 提供六档圆角，作用在 root 上；root 带 `overflow-hidden`，所以图片会被一起裁掉。
 
-| 取值    | 类名           |
-| ------- | -------------- |
-| `none`  | 不加圆角（默认） |
-| `sm`    | `rounded-sm`   |
-| `md`    | `rounded-md`   |
-| `lg`    | `rounded-lg`   |
-| `xl`    | `rounded-xl`   |
-| `full`  | `rounded-full` |
+| 取值   | 类名             |
+| ------ | ---------------- |
+| `none` | 不加圆角（默认） |
+| `sm`   | `rounded-sm`     |
+| `md`   | `rounded-md`     |
+| `lg`   | `rounded-lg`     |
+| `xl`   | `rounded-xl`     |
+| `full` | `rounded-full`   |
 
 <Demo src="@playground/image/ImageRadius" />
 
@@ -73,12 +73,12 @@ import { Image } from '@skyroc/native-ui';
 
 `className` 追加到 root 上，`classNames` 按 slot 细粒度覆盖：
 
-| slot        | 作用位置                                                       |
-| ----------- | -------------------------------------------------------------- |
+| slot        | 作用位置                                                          |
+| ----------- | ----------------------------------------------------------------- |
 | `root`      | 最外层 `View`，`relative overflow-hidden`，**尺寸和圆角都在这里** |
-| `image`     | 内层 `expo-image`，默认 `h-full w-full`                          |
+| `image`     | 内层 `expo-image`，默认 `h-full w-full`                           |
 | `loading`   | 加载中遮罩层，`absolute inset-0` + 居中 + `bg-muted`              |
-| `error`     | 失败遮罩层，同上                                                 |
+| `error`     | 失败遮罩层，同上                                                  |
 | `indicator` | 指示器与破损图标的取色类，**只认 `accent-*`**                     |
 
 <Demo src="@playground/image/ImageSlotClassNames" />
@@ -164,7 +164,8 @@ import { Image } from '@skyroc/native-ui';
     },
     {
       name: 'placeholder',
-      description: '占位图源（blurhash / thumbhash / 低清图），透传给 expo-image。会被加载遮罩挡住，配合 showLoading={false} 使用',
+      description:
+        '占位图源（blurhash / thumbhash / 低清图），透传给 expo-image。会被加载遮罩挡住，配合 showLoading={false} 使用',
       type: 'ImageSource'
     },
     {
@@ -241,9 +242,17 @@ import type { ImageProps, ImageRadius, ImageSlots, ImageSource, ImageVariantProp
       fields: [
         { name: 'uri', type: 'string', description: '图片地址：HTTPS 地址、本地文件路径或静态资源名。' },
         { name: 'headers', type: 'Record<string, string>', description: '请求远程图片时附带的 HTTP 头，用于鉴权。' },
-        { name: 'width', type: 'number | null', description: '构建期已知的宽度，用作默认尺寸；数组形态下参与分辨率挑选。' },
+        {
+          name: 'width',
+          type: 'number | null',
+          description: '构建期已知的宽度，用作默认尺寸；数组形态下参与分辨率挑选。'
+        },
         { name: 'height', type: 'number | null', description: '构建期已知的高度。' },
-        { name: 'blurhash', type: 'string', description: 'blurhash 字符串，一般给 placeholder 用；与 uri 同时出现时被忽略。' },
+        {
+          name: 'blurhash',
+          type: 'string',
+          description: 'blurhash 字符串，一般给 placeholder 用；与 uri 同时出现时被忽略。'
+        },
         { name: 'thumbhash', type: 'string', description: 'thumbhash 字符串，用途同 blurhash。' },
         { name: 'cacheKey', type: 'string', description: '缓存键，缺省时用 uri 当键。' },
         { name: 'isAnimated', type: 'boolean', description: '是否是动图（GIF / 动态 WebP），仅 iOS / Android。' }

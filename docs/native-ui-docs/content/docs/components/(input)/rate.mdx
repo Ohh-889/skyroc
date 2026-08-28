@@ -36,11 +36,11 @@ import { Rate } from '@skyroc/native-ui';
 
 ## 数量与尺寸
 
-| 属性     | 含义                                 | 默认值 |
-| -------- | ------------------------------------ | ------ |
-| `count`  | 星星总数，非整数向下取整、负数按 0    | 5      |
-| `size`   | 图标边长（px），同时是半星裁剪基准    | 24     |
-| `gutter` | 星星间距（px）                        | 4      |
+| 属性     | 含义                               | 默认值 |
+| -------- | ---------------------------------- | ------ |
+| `count`  | 星星总数，非整数向下取整、负数按 0 | 5      |
+| `size`   | 图标边长（px），同时是半星裁剪基准 | 24     |
+| `gutter` | 星星间距（px）                     | 4      |
 
 <Demo src="@playground/rate/RateSize" />
 
@@ -78,12 +78,12 @@ import { Rate } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot       | 作用位置                                                     |
-| ---------- | ------------------------------------------------------------ |
-| `root`     | 根容器 `View`（横向排布，间距由 `gutter` 决定）               |
-| `item`     | 单颗星的容器                                                 |
-| `icon`     | 点亮星的 `colorClassName`，只接受 `accent-*` 颜色类           |
-| `voidIcon` | 未点亮星的 `colorClassName`，只接受 `accent-*` 颜色类         |
+| slot       | 作用位置                                              |
+| ---------- | ----------------------------------------------------- |
+| `root`     | 根容器 `View`（横向排布，间距由 `gutter` 决定）       |
+| `item`     | 单颗星的容器                                          |
+| `icon`     | 点亮星的 `colorClassName`，只接受 `accent-*` 颜色类   |
+| `voidIcon` | 未点亮星的 `colorClassName`，只接受 `accent-*` 颜色类 |
 
 <Demo src="@playground/rate/RateStyles" />
 

@@ -162,7 +162,10 @@ describe('Sonner', () => {
     expect(defaultId).toBe('toast-id');
     expect(sonnerMock.toast.warning).toHaveBeenCalledWith('Warning', expect.any(Object));
     expect(sonnerMock.toast.info).toHaveBeenCalledWith('Opened', expect.any(Object));
-    expect(sonnerMock.toast.loading).toHaveBeenCalledWith('Loading', expect.objectContaining({ id: 'loading-message' }));
+    expect(sonnerMock.toast.loading).toHaveBeenCalledWith(
+      'Loading',
+      expect.objectContaining({ id: 'loading-message' })
+    );
     expect(sonnerMock.toast).toHaveBeenCalledWith('Default opened', expect.any(Object));
 
     loadingOptions.onAutoClose?.();
@@ -304,7 +307,10 @@ describe('Sonner', () => {
     expect(infoId).toBe('info-id');
     expect(warningId).toBe('warning-id');
     expect(defaultId).toBe('toast-id');
-    expect(sonnerMock.toast.error).toHaveBeenCalledWith('Error title', expect.objectContaining({ id: 'error-notification' }));
+    expect(sonnerMock.toast.error).toHaveBeenCalledWith(
+      'Error title',
+      expect.objectContaining({ id: 'error-notification' })
+    );
     expect(sonnerMock.toast.info).toHaveBeenCalledWith('Info title', expect.any(Object));
     expect(sonnerMock.toast.warning).toHaveBeenCalledWith('Warning title', expect.any(Object));
     expect(sonnerMock.toast).toHaveBeenCalledWith('Default title', expect.any(Object));

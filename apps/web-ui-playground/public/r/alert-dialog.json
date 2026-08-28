@@ -3,14 +3,8 @@
   "name": "alert-dialog",
   "type": "registry:block",
   "title": "Alert Dialog",
-  "dependencies": [
-    "@radix-ui/react-alert-dialog",
-    "@radix-ui/react-slot"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json",
-    "https://ui-play.skyroc.me/r/button.json"
-  ],
+  "dependencies": ["@radix-ui/react-alert-dialog", "@radix-ui/react-slot"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json", "https://ui-play.skyroc.me/r/button.json"],
   "files": [
     {
       "path": "src/components/alert-dialog/AlertDialog.tsx",

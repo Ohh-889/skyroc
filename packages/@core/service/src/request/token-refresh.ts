@@ -10,8 +10,7 @@ const REUSE_WINDOW = 1_000;
 /**
  * 全局唯一的在途刷新。
  *
- * 放模块级而不是挂在某个请求实例上：HTTP、WebSocket、SSE 用的是同一次登录的凭据，各刷各的
- * 会让后发的那次拿着已经轮换掉的 refresh token 去换，换回来一次失败和一次莫名其妙的登出。
+ * 放模块级而不是挂在某个请求实例上：HTTP、WebSocket、SSE 用的是同一次登录的凭据，各刷各的 会让后发的那次拿着已经轮换掉的 refresh token 去换，换回来一次失败和一次莫名其妙的登出。
  */
 let inFlight: Promise<boolean> | null = null;
 let reuseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -40,8 +39,7 @@ export async function handleRefreshToken(adapter: RequestAdapter): Promise<boole
 /**
  * 刷新令牌，并发调用共用同一次请求。
  *
- * 任何传输拿到「令牌过期」都该走这里，不要自己调 adapter.fetchRefreshToken —— 那样
- * 各传输之间没有去重，第二个刷新必定失败。
+ * 任何传输拿到「令牌过期」都该走这里，不要自己调 adapter.fetchRefreshToken —— 那样 各传输之间没有去重，第二个刷新必定失败。
  */
 export async function refreshToken(adapter: RequestAdapter): Promise<boolean> {
   inFlight ??= handleRefreshToken(adapter);

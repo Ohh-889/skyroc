@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import NumberInputUI from '../../components/number-input/NumberInputUI';
 import type { NumberInputProps } from '../../components/number-input/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>((props, ref) => {
   const config = useComponentConfig('numberInput');

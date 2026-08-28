@@ -33,7 +33,7 @@ export function useOssListByIdsQuery(ids: OssId[], enabled = true) {
 export function useUploadOssFileMutation() {
   return useMutation({
     mutationFn: (file: File) => uploadOssFile(file),
-    mutationKey: SYSTEM_OSS_MUTATION_KEYS.UPLOAD,
+    mutationKey: SYSTEM_OSS_MUTATION_KEYS.UPLOAD
   });
 }
 

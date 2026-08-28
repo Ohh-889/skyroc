@@ -30,16 +30,16 @@ import { Checkbox, CheckboxCard, CheckboxGroup, CheckboxGroupCard } from '@skyro
 
 `color` 提供 8 种主题色，取值与全局 `ThemeColor` 一致。选中态填充 `bg-{color}`，内部勾用 `accent-{color}-foreground` 取色，因此跟随主题 token 而不是硬编码白色。
 
-| 颜色          | 选中背景          | 语义                   |
-| ------------- | ----------------- | ---------------------- |
-| `primary`     | `bg-primary`      | 常规选择（默认）       |
-| `destructive` | `bg-destructive`  | 危险项，如批量删除     |
-| `success`     | `bg-success`      | 成功、已完成           |
-| `warning`     | `bg-warning`      | 需要注意的选项         |
-| `info`        | `bg-info`         | 信息性选项             |
-| `accent`      | `bg-accent`       | 强调色                 |
-| `carbon`      | `bg-carbon`       | 中性深色               |
-| `secondary`   | `bg-secondary`    | 次级、弱化选项         |
+| 颜色          | 选中背景         | 语义               |
+| ------------- | ---------------- | ------------------ |
+| `primary`     | `bg-primary`     | 常规选择（默认）   |
+| `destructive` | `bg-destructive` | 危险项，如批量删除 |
+| `success`     | `bg-success`     | 成功、已完成       |
+| `warning`     | `bg-warning`     | 需要注意的选项     |
+| `info`        | `bg-info`        | 信息性选项         |
+| `accent`      | `bg-accent`      | 强调色             |
+| `carbon`      | `bg-carbon`      | 中性深色           |
+| `secondary`   | `bg-secondary`   | 次级、弱化选项     |
 
 <Demo src="@playground/checkbox/CheckboxColor" />
 
@@ -49,14 +49,14 @@ import { Checkbox, CheckboxCard, CheckboxGroup, CheckboxGroupCard } from '@skyro
 
 `size` 同时决定指示器边长、内部勾的大小、标签字号与指示器到标签的间距：
 
-| 尺寸   | 指示器 | 内部图标 | 控件行高 | 标签字号     | 指示器与标签间距 |
-| ------ | ------ | -------- | -------- | ------------ | ---------------- |
-| `xs`   | 14     | 9        | 16       | `text-xs`    | 4                |
-| `sm`   | 16     | 11       | 20       | `text-sm`    | 6                |
-| `md`   | 20     | 14       | 24       | `text-base`  | 8                |
-| `lg`   | 24     | 16       | 24       | `text-base`  | 10               |
-| `xl`   | 28     | 18       | 24       | `text-base`  | 12               |
-| `2xl`  | 32     | 20       | 28       | `text-lg`    | 14               |
+| 尺寸  | 指示器 | 内部图标 | 控件行高 | 标签字号    | 指示器与标签间距 |
+| ----- | ------ | -------- | -------- | ----------- | ---------------- |
+| `xs`  | 14     | 9        | 16       | `text-xs`   | 4                |
+| `sm`  | 16     | 11       | 20       | `text-sm`   | 6                |
+| `md`  | 20     | 14       | 24       | `text-base` | 8                |
+| `lg`  | 24     | 16       | 24       | `text-base` | 10               |
+| `xl`  | 28     | 18       | 24       | `text-base` | 12               |
+| `2xl` | 32     | 20       | 28       | `text-lg`   | 14               |
 
 <Demo src="@playground/checkbox/CheckboxSize" />
 
@@ -140,27 +140,27 @@ import { Checkbox, CheckboxCard, CheckboxGroup, CheckboxGroupCard } from '@skyro
 
 `Checkbox` 的 slot：
 
-| slot            | 作用位置                                                      |
-| --------------- | ------------------------------------------------------------- |
-| `root`          | 根容器 View，控制排列方向与间距                               |
-| `control`       | 指示器外层的可点 Pressable（含热区与 `active:opacity-70`）    |
-| `indicator`     | 指示器本体，背景 / 边框 / 圆角所在的节点                      |
+| slot            | 作用位置                                                       |
+| --------------- | -------------------------------------------------------------- |
+| `root`          | 根容器 View，控制排列方向与间距                                |
+| `control`       | 指示器外层的可点 Pressable（含热区与 `active:opacity-70`）     |
+| `indicator`     | 指示器本体，背景 / 边框 / 圆角所在的节点                       |
 | `indicatorIcon` | 内置勾 / 横线图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
-| `labelWrapper`  | 标签外层的可点 Pressable                                      |
-| `label`         | 标签文字，仅在 `children` 为字符串 / 数字时生效               |
+| `labelWrapper`  | 标签外层的可点 Pressable                                       |
+| `label`         | 标签文字，仅在 `children` 为字符串 / 数字时生效                |
 
 `CheckboxCard` 的 slot：
 
-| slot            | 作用位置                                                      |
-| --------------- | ------------------------------------------------------------- |
-| `root`          | 卡片容器 Pressable                                            |
-| `indicator`     | 指示器本体                                                    |
+| slot            | 作用位置                                                       |
+| --------------- | -------------------------------------------------------------- |
+| `root`          | 卡片容器 Pressable                                             |
+| `indicator`     | 指示器本体                                                     |
 | `indicatorIcon` | 内置勾 / 横线图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
-| `content`       | 指示器之外的内容区（图标 + 文字块）                           |
-| `icon`          | `icon` 的包裹节点                                             |
-| `texts`         | 标题与描述的文字块                                            |
-| `label`         | 标题文字，仅在 `label` 为字符串 / 数字时生效                  |
-| `description`   | 描述文字，仅在 `description` 为字符串 / 数字时生效            |
+| `content`       | 指示器之外的内容区（图标 + 文字块）                            |
+| `icon`          | `icon` 的包裹节点                                              |
+| `texts`         | 标题与描述的文字块                                             |
+| `label`         | 标题文字，仅在 `label` 为字符串 / 数字时生效                   |
+| `description`   | 描述文字，仅在 `description` 为字符串 / 数字时生效             |
 
 <Demo src="@playground/checkbox/CheckboxStyles" />
 

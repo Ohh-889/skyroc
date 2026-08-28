@@ -2,8 +2,8 @@ import { Outlet, createRootRouteWithContext, useLocation, useMatches } from '@ta
 import { useTranslation } from 'react-i18next';
 
 import ErrorPage from './error';
-import NotFound from './not-found';
 import GlobalLoading from './loading';
+import NotFound from './not-found';
 
 interface RouteMatchWithStaticData {
   /** Route metadata used by global document side effects. */

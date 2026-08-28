@@ -63,8 +63,7 @@ describe('Progress', () => {
         transform: 'translateX(-0%)'
       });
       expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('Invalid prop `value`'));
-    }
-    finally {
+    } finally {
       consoleError.mockRestore();
     }
   });
@@ -92,8 +91,7 @@ describe('Progress', () => {
         transform: 'translateX(-50%)'
       });
       expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('Invalid prop `max`'));
-    }
-    finally {
+    } finally {
       consoleError.mockRestore();
     }
   });

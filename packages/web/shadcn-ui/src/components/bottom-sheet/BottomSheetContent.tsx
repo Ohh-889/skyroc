@@ -1,11 +1,11 @@
+import { cn } from '@skyroc/utils';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
 import { Content, Portal } from 'vaul';
-import { cn } from '@skyroc/utils';
+import { bottomSheetVariants } from './bottom-sheet-variants';
 import BottomSheetContentBody from './BottomSheetContentBody';
 import BottomSheetKnob from './BottomSheetKnob';
 import BottomSheetOverlay from './BottomSheetOverlay';
-import { bottomSheetVariants } from './bottom-sheet-variants';
 import type { BottomSheetContentProps } from './types';
 
 const BottomSheetContent = forwardRef<ComponentRef<typeof Content>, BottomSheetContentProps>((props, ref) => {

@@ -61,11 +61,18 @@ const KeepAliveFormVerify = (props: KeepAliveFormVerifyProps) => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <Card variant="borderless">
         <div className="flex flex-wrap items-center justify-between gap-16px">
           <div>
-            <Typography.Title className="m-0!" level={4}>
+            <Typography.Title
+              className="m-0!"
+              level={4}
+            >
               Keep Alive Form
             </Typography.Title>
             <Typography.Text type="secondary">实例 ID：{mountIdRef.current}</Typography.Text>
@@ -80,30 +87,63 @@ const KeepAliveFormVerify = (props: KeepAliveFormVerifyProps) => {
 
         <Divider />
 
-        <Space size={24} wrap>
+        <Space
+          size={24}
+          wrap
+        >
           <Typography.Text>受控输入：{nickname || '-'}</Typography.Text>
           <Typography.Text data-testid="keep-alive-counter">计数器：{counter}</Typography.Text>
-          <Button type="primary" onClick={handleIncreaseCounter}>
+          <Button
+            type="primary"
+            onClick={handleIncreaseCounter}
+          >
             加一
           </Button>
         </Space>
       </Card>
 
-      <Card title="缓存验证表单" variant="borderless">
-        <Form form={form} initialValues={initialFormValues} layout="vertical">
-          <Form.Item label="项目名称" name="projectName">
-            <Input data-testid="keep-alive-project-name" placeholder="输入后切换页面再回来" />
+      <Card
+        title="缓存验证表单"
+        variant="borderless"
+      >
+        <Form
+          form={form}
+          initialValues={initialFormValues}
+          layout="vertical"
+        >
+          <Form.Item
+            label="项目名称"
+            name="projectName"
+          >
+            <Input
+              data-testid="keep-alive-project-name"
+              placeholder="输入后切换页面再回来"
+            />
           </Form.Item>
 
           <Form.Item label="处理人">
-            <Input data-testid="keep-alive-assignee" value={nickname} onChange={handleNicknameChange} />
+            <Input
+              data-testid="keep-alive-assignee"
+              value={nickname}
+              onChange={handleNicknameChange}
+            />
           </Form.Item>
 
-          <Form.Item label="优先级" name="priority">
-            <InputNumber className="w-full" max={5} min={1} />
+          <Form.Item
+            label="优先级"
+            name="priority"
+          >
+            <InputNumber
+              className="w-full"
+              max={5}
+              min={1}
+            />
           </Form.Item>
 
-          <Form.Item label="状态" name="status">
+          <Form.Item
+            label="状态"
+            name="status"
+          >
             <Select
               options={[
                 { label: '草稿', value: 'draft' },
@@ -113,7 +153,11 @@ const KeepAliveFormVerify = (props: KeepAliveFormVerifyProps) => {
             />
           </Form.Item>
 
-          <Form.Item label="启用缓存项" name="enabled" valuePropName="checked">
+          <Form.Item
+            label="启用缓存项"
+            name="enabled"
+            valuePropName="checked"
+          >
             <Switch />
           </Form.Item>
 

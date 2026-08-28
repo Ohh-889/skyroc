@@ -23,7 +23,12 @@ import { VirtualList, VirtualGrid, useVirtualizer, useWindowVirtualizer } from '
 <Demo src="@playground/virtualizer/modules/VirtualListBasic" />
 
 ```tsx
-<VirtualList data={items} height={300} itemSize={40} renderItem={({ item, index }) => <div>{item.name}</div>} />
+<VirtualList
+  data={items}
+  height={300}
+  itemSize={40}
+  renderItem={({ item, index }) => <div>{item.name}</div>}
+/>
 ```
 
 ## 可变尺寸
@@ -76,7 +81,13 @@ virtualizerRef.current?.scrollToIndex(5000, { align: 'center' });
 设置 `dynamic` 后，`VirtualList` 会把渲染项挂到 `measureElement` 上，让 TanStack Virtual 在实际 DOM 渲染后测量尺寸。动态测量适合真实高度难以准确预估的内容。
 
 ```tsx
-<VirtualList dynamic data={items} height={300} itemSize={48} renderItem={({ item }) => <div>{item.description}</div>} />
+<VirtualList
+  dynamic
+  data={items}
+  height={300}
+  itemSize={48}
+  renderItem={({ item }) => <div>{item.description}</div>}
+/>
 ```
 
 ## API

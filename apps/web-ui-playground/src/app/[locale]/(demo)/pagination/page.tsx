@@ -29,4 +29,3 @@ const PaginationPage = () => {
 };
 
 export default PaginationPage;
-

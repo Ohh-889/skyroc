@@ -53,7 +53,11 @@ vi.mock('@tanstack/react-router', () => ({
     const { children, className, style, to = '' } = props;
 
     return (
-      <a className={className} href={to} style={style}>
+      <a
+        className={className}
+        href={to}
+        style={style}
+      >
         {children}
       </a>
     );
@@ -677,7 +681,12 @@ describe('menu rendering', () => {
     expect(item).not.toHaveProperty('extra');
 
     await act(async () => {
-      render(<AMenu items={items} mode="inline" />);
+      render(
+        <AMenu
+          items={items}
+          mode="inline"
+        />
+      );
     });
 
     expect(screen.getByText('Plugin')).toBeInTheDocument();
@@ -802,7 +811,10 @@ describe('menu rendering', () => {
       }
 
       return (
-        <button type="button" onClick={handleUpdate}>
+        <button
+          type="button"
+          onClick={handleUpdate}
+        >
           update badge
         </button>
       );

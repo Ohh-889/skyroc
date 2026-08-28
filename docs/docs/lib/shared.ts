@@ -8,4 +8,3 @@ export const gitConfig = {
   repo: 'skyroc',
   branch: 'master'
 };
-

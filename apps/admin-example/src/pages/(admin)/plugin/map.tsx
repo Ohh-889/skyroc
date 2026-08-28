@@ -21,7 +21,12 @@ const MapPane = (props: MapPaneProps) => {
 
   return (
     <div className="h-560px overflow-hidden rounded-lg border border-border">
-      <MapContainer center={center} className="h-full w-full" scrollWheelZoom zoom={13}>
+      <MapContainer
+        center={center}
+        className="h-full w-full"
+        scrollWheelZoom
+        zoom={13}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -41,17 +46,32 @@ const MapPane = (props: MapPaneProps) => {
 const MapDemo = () => {
   const items: TabsProps['items'] = [
     {
-      children: <MapPane center={[22.546789983033168, 114.05834626586915]} label="深圳科技园" />,
+      children: (
+        <MapPane
+          center={[22.546789983033168, 114.05834626586915]}
+          label="深圳科技园"
+        />
+      ),
       key: 'shenzhen',
       label: '深圳'
     },
     {
-      children: <MapPane center={[39.98412, 116.307484]} label="北京中关村" />,
+      children: (
+        <MapPane
+          center={[39.98412, 116.307484]}
+          label="北京中关村"
+        />
+      ),
       key: 'beijing',
       label: '北京'
     },
     {
-      children: <MapPane center={[31.2304, 121.4737]} label="上海陆家嘴" />,
+      children: (
+        <MapPane
+          center={[31.2304, 121.4737]}
+          label="上海陆家嘴"
+        />
+      ),
       key: 'shanghai',
       label: '上海'
     }
@@ -69,8 +89,14 @@ const MapDemo = () => {
         tags={['react-leaflet', 'Leaflet', 'OpenStreetMap']}
         title="地图示例"
       />
-      <ExamplePanel icon="mdi:map-outline" title="React 地图容器">
-        <Tabs destroyOnHidden items={items} />
+      <ExamplePanel
+        icon="mdi:map-outline"
+        title="React 地图容器"
+      >
+        <Tabs
+          destroyOnHidden
+          items={items}
+        />
       </ExamplePanel>
     </div>
   );

@@ -20,18 +20,40 @@ const CarouselUI = forwardRef<HTMLDivElement, CarouselProps>((props, ref) => {
   }
 
   return (
-    <CarouselRoot className={className || classNames?.root} ref={ref} size={size} {...rest}>
-      <CarouselContent classNames={classNames} size={size} {...contentProps}>
+    <CarouselRoot
+      className={className || classNames?.root}
+      ref={ref}
+      size={size}
+      {...rest}
+    >
+      <CarouselContent
+        classNames={classNames}
+        size={size}
+        {...contentProps}
+      >
         {Array.from({ length: itemCount }).map((_, index) => (
-          <CarouselItem className={classNames?.item} key={index} size={size} {...itemProps}>
+          <CarouselItem
+            className={classNames?.item}
+            key={index}
+            size={size}
+            {...itemProps}
+          >
             {renderItem(index)}
           </CarouselItem>
         ))}
       </CarouselContent>
 
-      <CarouselNext className={classNames?.next} size={size} {...nextProps} />
+      <CarouselNext
+        className={classNames?.next}
+        size={size}
+        {...nextProps}
+      />
 
-      <CarouselPrevious className={classNames?.previous} size={size} {...previousProps} />
+      <CarouselPrevious
+        className={classNames?.previous}
+        size={size}
+        {...previousProps}
+      />
     </CarouselRoot>
   );
 });

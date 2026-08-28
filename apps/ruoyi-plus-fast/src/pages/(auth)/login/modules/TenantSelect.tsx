@@ -15,8 +15,7 @@ interface TenantSelectProps {
 /**
  * 登录页的租户下拉框
  *
- * 不是 AForm.Item：租户在两个登录页之间共享、由 useLoginTenant 持有，塞进表单就要在接口回
- * 来之后再 setFieldValue 回填一次。这里只把它排版成和表单项一样。
+ * 不是 AForm.Item：租户在两个登录页之间共享、由 useLoginTenant 持有，塞进表单就要在接口回 来之后再 setFieldValue 回填一次。这里只把它排版成和表单项一样。
  */
 const TenantSelect = (props: TenantSelectProps) => {
   const { loading = false, onChange, options, value } = props;

@@ -1,13 +1,24 @@
-import { isValidElement } from 'react';
 import { NavigationMenuLink } from '@radix-ui/react-navigation-menu';
-import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
+import { ArrowUpRight } from 'lucide-react';
+import { isValidElement } from 'react';
 import { navigationMenuVariants } from './navigation-menu';
 import type { NavigationMenuChildLinkProps } from './types';
 
 const NavigationMenuChildLink = (props: NavigationMenuChildLinkProps) => {
-  const { children, className, classNames, component: Component = 'a', description, disabled, leading, size, trailing, ...rest } = props;
+  const {
+    children,
+    className,
+    classNames,
+    component: Component = 'a',
+    description,
+    disabled,
+    leading,
+    size,
+    trailing,
+    ...rest
+  } = props;
 
   const { itemIcon, linkIcon, subLink, subLinkContent, subLinkDescription, subLinkLabel } = navigationMenuVariants({
     size

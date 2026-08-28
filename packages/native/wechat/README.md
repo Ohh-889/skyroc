@@ -8,14 +8,14 @@
 
 ## 能力概览
 
-| 分类 | 方法 |
-| --- | --- |
-| 环境探测 | `isWechatInstalled` `openWechat` `getWechatApiVersion` `getWechatInstallUrl` |
-| 登录授权 | `sendWechatAuth` `consumePendingWechatAuth` |
-| 分享收藏 | `shareText` `shareImage` `shareWebpage` `shareVideo` `shareMusic` `shareMusicVideo` `shareFile` `shareEmoticon` `shareMiniProgram` `consumePendingWechatShare` |
-| 事件 | `addWechatRequestSentListener` `addWechatResponseListener` |
-| 配置与诊断 | `configureWechat` `checkWechatUniversalLink` |
-| 工具 | `isWechatCancelled` |
+| 分类       | 方法                                                                                                                                                           |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 环境探测   | `isWechatInstalled` `openWechat` `getWechatApiVersion` `getWechatInstallUrl`                                                                                   |
+| 登录授权   | `sendWechatAuth` `consumePendingWechatAuth`                                                                                                                    |
+| 分享收藏   | `shareText` `shareImage` `shareWebpage` `shareVideo` `shareMusic` `shareMusicVideo` `shareFile` `shareEmoticon` `shareMiniProgram` `consumePendingWechatShare` |
+| 事件       | `addWechatRequestSentListener` `addWechatResponseListener`                                                                                                     |
+| 配置与诊断 | `configureWechat` `checkWechatUniversalLink`                                                                                                                   |
+| 工具       | `isWechatCancelled`                                                                                                                                            |
 
 仓库内的可运行示例见 [`apps/expo-templete/src/pages/(app)/demo/wechat.tsx`](../../../apps/expo-templete/src/pages/%28app%29/demo/wechat.tsx)，登录接入的封装见 [`apps/expo-templete/src/feature/auth/use-wechat-login.ts`](../../../apps/expo-templete/src/feature/auth/use-wechat-login.ts)。
 
@@ -53,13 +53,13 @@ plugins: [
       universalLink: process.env.WECHAT_UNIVERSAL_LINK
     }
   ]
-]
+];
 ```
 
-| 参数 | 必填 | 说明 |
-| --- | --- | --- |
-| `appId` | 是 | 开放平台「移动应用」的 AppID，形如 `wx1234567890abcdef`。不以 `wx` 开头会在 prebuild 时直接报错 |
-| `universalLink` | 是 | iOS Universal Link，必须是 `https://` 开头、**以 `/` 结尾**，且与开放平台后台填写的完全一致 |
+| 参数            | 必填 | 说明                                                                                            |
+| --------------- | ---- | ----------------------------------------------------------------------------------------------- |
+| `appId`         | 是   | 开放平台「移动应用」的 AppID，形如 `wx1234567890abcdef`。不以 `wx` 开头会在 prebuild 时直接报错 |
+| `universalLink` | 是   | iOS Universal Link，必须是 `https://` 开头、**以 `/` 结尾**，且与开放平台后台填写的完全一致     |
 
 原生侧从 `Info.plist` / `AndroidManifest` 读这两个值，**JS 不需要再传一次 AppID**。
 
@@ -105,7 +105,7 @@ if (!result.ok) {
   return;
 }
 
-await exchangeToken(result.payload.code);    // 这里 payload 必然存在
+await exchangeToken(result.payload.code); // 这里 payload 必然存在
 ```
 
 ## 登录
@@ -115,7 +115,7 @@ import { consumePendingWechatAuth, isWechatCancelled, sendWechatAuth } from '@sk
 
 const result = await sendWechatAuth({
   scope: 'snsapi_userinfo',
-  state: crypto.randomUUID(),        // 建议每次传随机值，回调里比对，防串号
+  state: crypto.randomUUID(), // 建议每次传随机值，回调里比对，防串号
   onLaunched: ok => setHint(ok ? '等待微信…' : '唤起失败')
 });
 
@@ -124,7 +124,7 @@ if (result.ok) {
   // 换 token 要用 AppSecret，绝不能放在客户端
   await api.loginByWechat(result.payload.code);
 } else if (!isWechatCancelled(result)) {
-  toast(result.message);             // 取消类静默处理，其余才提示
+  toast(result.message); // 取消类静默处理，其余才提示
 }
 ```
 
@@ -154,15 +154,15 @@ await shareWebpage({
   title: '标题',
   description: '摘要',
   thumb: 'https://example.com/cover.png',
-  scene: 'session'                  // 'session' | 'timeline' | 'favorite'
+  scene: 'session' // 'session' | 'timeline' | 'favorite'
 });
 
 await shareMiniProgram({
-  userName: 'gh_xxxxxxxx',          // 小程序原始 ID
+  userName: 'gh_xxxxxxxx', // 小程序原始 ID
   path: '/pages/index/index',
-  webpageUrl: 'https://example.com',// 低版本微信的兜底网页
-  hdImage: 'file:///.../cover.png'  // 卡片封面大图，上限 128KB
-});                                 // 只能发到会话，scene 会被忽略
+  webpageUrl: 'https://example.com', // 低版本微信的兜底网页
+  hdImage: 'file:///.../cover.png' // 卡片封面大图，上限 128KB
+}); // 只能发到会话，scene 会被忽略
 ```
 
 ### 媒体来源
@@ -189,13 +189,13 @@ await shareMiniProgram({
 
 ## 排错
 
-| 现象 | 处理 |
-| --- | --- |
-| `ERR_WECHAT_NO_RESPONSE` 偶发 | 用户按 Home 放弃了，和取消一视同仁（`isWechatCancelled` 已覆盖这两种） |
+| 现象                                  | 处理                                                                          |
+| ------------------------------------- | ----------------------------------------------------------------------------- |
+| `ERR_WECHAT_NO_RESPONSE` 偶发         | 用户按 Home 放弃了，和取消一视同仁（`isWechatCancelled` 已覆盖这两种）        |
 | `ERR_WECHAT_NO_RESPONSE` **大量出现** | 多半是 Universal Link 配置有问题，回调丢了。先跑 `checkWechatUniversalLink()` |
-| `ERR_WECHAT_NOT_CONFIGURED` | `app.config.ts` 里插件没配，或配完没重新 prebuild |
-| `ERR_WECHAT_PENDING` | 同类型的上一个请求还没结束。原生侧每种 kind 只有一个 pending 槽 |
-| 模拟器构建链接失败 | 见上文 `EXCLUDED_ARCHS`，确认插件生效且已 prebuild |
+| `ERR_WECHAT_NOT_CONFIGURED`           | `app.config.ts` 里插件没配，或配完没重新 prebuild                             |
+| `ERR_WECHAT_PENDING`                  | 同类型的上一个请求还没结束。原生侧每种 kind 只有一个 pending 槽               |
+| 模拟器构建链接失败                    | 见上文 `EXCLUDED_ARCHS`，确认插件生效且已 prebuild                            |
 
 完整错误码含义见 `WechatResultCode` 的逐条注释。
 

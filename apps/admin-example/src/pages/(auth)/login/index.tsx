@@ -1,8 +1,8 @@
 import { ButtonLink } from '@shell/ui/antd';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useInitLogin } from '@/features/auth/use-login';
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
+import { useInitLogin } from '@/features/auth/use-login';
 
 type AccountKey = 'admin' | 'super' | 'user';
 
@@ -71,30 +71,67 @@ const Login = () => {
   return (
     <>
       <h3 className="text-18px text-primary font-medium">{t('page.login.pwdLogin.title')}</h3>
-      <AForm className="pt-24px" form={form} initialValues={INITIAL_VALUES} onFinish={login}>
-        <AForm.Item name="userName" rules={userNameRules}>
+      <AForm
+        className="pt-24px"
+        form={form}
+        initialValues={INITIAL_VALUES}
+        onFinish={login}
+      >
+        <AForm.Item
+          name="userName"
+          rules={userNameRules}
+        >
           <AInput size="large" />
         </AForm.Item>
 
-        <AForm.Item name="password" rules={pwd}>
-          <AInput.Password autoComplete="password" size="large" />
+        <AForm.Item
+          name="password"
+          rules={pwd}
+        >
+          <AInput.Password
+            autoComplete="password"
+            size="large"
+          />
         </AForm.Item>
-        <ASpace className="w-full" orientation="vertical" size={24}>
+        <ASpace
+          className="w-full"
+          orientation="vertical"
+          size={24}
+        >
           <div className="flex-y-center justify-between">
             <ACheckbox>{t('page.login.pwdLogin.rememberMe')}</ACheckbox>
 
-            <ButtonLink btnType="text" to="/login/reset-pwd">
+            <ButtonLink
+              btnType="text"
+              to="/login/reset-pwd"
+            >
               {t('page.login.pwdLogin.forgetPassword')}
             </ButtonLink>
           </div>
-          <AButton block color="primary" htmlType="submit" loading={loading} shape="round" size="large" type="primary">
+          <AButton
+            block
+            color="primary"
+            htmlType="submit"
+            loading={loading}
+            shape="round"
+            size="large"
+            type="primary"
+          >
             {t('common.confirm')}
           </AButton>
           <div className="flex-y-center justify-between gap-12px">
-            <ButtonLink block className="flex-1" to="/login/code-login">
+            <ButtonLink
+              block
+              className="flex-1"
+              to="/login/code-login"
+            >
               {t(LOGIN_ACTION_I18N_KEYS.codeLogin) as string}
             </ButtonLink>
-            <ButtonLink block className="flex-1" to="/login/register">
+            <ButtonLink
+              block
+              className="flex-1"
+              to="/login/register"
+            >
               {t(LOGIN_ACTION_I18N_KEYS.register) as string}
             </ButtonLink>
           </div>
@@ -102,7 +139,11 @@ const Login = () => {
           <div className="flex-center gap-12px">
             {accounts.map(item => {
               return (
-                <AButton key={item.key} type="primary" onClick={() => handleAccountLogin(item)}>
+                <AButton
+                  key={item.key}
+                  type="primary"
+                  onClick={() => handleAccountLogin(item)}
+                >
                   {item.label}
                 </AButton>
               );

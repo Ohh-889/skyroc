@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Overlay } from '@radix-ui/react-alert-dialog';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { dialogVariants } from './alert-dialog-variants';
 import type { AlertDialogOverlayProps } from './types';
 

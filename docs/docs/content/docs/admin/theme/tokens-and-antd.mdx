@@ -37,16 +37,16 @@ export const defaultThemeSettings: Theme.ThemeSetting = {
 
 完整配置还包括：
 
-| 配置区域 | 作用 |
-| --- | --- |
-| `themeScheme` | 亮色、暗色或跟随系统。 |
-| `themeColor` / `otherColor` | primary、info、success、warning、error 五类功能色。 |
-| `themeRadius` / `themeTextSize` | 传给 Ant Design 的基础圆角和字号。 |
-| `layout` | 控制后台布局模式和滚动模式。 |
-| `header` / `tab` / `sider` / `footer` | 控制布局区域显示、高度、宽度、固定状态等。 |
-| `page` | 控制页面切换动画。 |
-| `watermark` | 控制水印文案、用户信息、时间和 Ant Design 水印参数。 |
-| `tokens` | 定义 layout、container、base-text、boxShadow 等应用语义 token。 |
+| 配置区域                              | 作用                                                            |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `themeScheme`                         | 亮色、暗色或跟随系统。                                          |
+| `themeColor` / `otherColor`           | primary、info、success、warning、error 五类功能色。             |
+| `themeRadius` / `themeTextSize`       | 传给 Ant Design 的基础圆角和字号。                              |
+| `layout`                              | 控制后台布局模式和滚动模式。                                    |
+| `header` / `tab` / `sider` / `footer` | 控制布局区域显示、高度、宽度、固定状态等。                      |
+| `page`                                | 控制页面切换动画。                                              |
+| `watermark`                           | 控制水印文案、用户信息、时间和 Ant Design 水印参数。            |
+| `tokens`                              | 定义 layout、container、base-text、boxShadow 等应用语义 token。 |
 
 只有当默认值适用于所有后台应用时，才直接改这个文件。某个应用自己的默认主题应在应用入口通过 `setupTheme({ overrides })` 处理。
 
@@ -54,16 +54,16 @@ export const defaultThemeSettings: Theme.ThemeSetting = {
 
 `useTheme()` 读取 `themeSettingsAtom`，并派生运行时需要的值：
 
-| 返回值 | 来源和用途 |
-| --- | --- |
-| `darkMode` | 由 `themeScheme` 和系统暗色偏好计算。`themeScheme: 'auto'` 时跟随系统。 |
-| `themeColors` | 从 `themeColor` 和 `otherColor` 组合出完整功能色。 |
-| `watermarkContent` | 根据 watermark 文案、用户名和当前时间拼接。 |
-| `settingsJson` | 供主题配置导入导出或变更比较使用。 |
-| `setThemeScheme()` | 切换亮色、暗色、自动模式。 |
-| `updateThemeColors()` | 修改 primary/info/success/warning/error。 |
-| `setThemeLayout()` | 修改布局模式。 |
-| `setSettings()` | 合并更新任意主题配置片段。 |
+| 返回值                | 来源和用途                                                              |
+| --------------------- | ----------------------------------------------------------------------- |
+| `darkMode`            | 由 `themeScheme` 和系统暗色偏好计算。`themeScheme: 'auto'` 时跟随系统。 |
+| `themeColors`         | 从 `themeColor` 和 `otherColor` 组合出完整功能色。                      |
+| `watermarkContent`    | 根据 watermark 文案、用户名和当前时间拼接。                             |
+| `settingsJson`        | 供主题配置导入导出或变更比较使用。                                      |
+| `setThemeScheme()`    | 切换亮色、暗色、自动模式。                                              |
+| `updateThemeColors()` | 修改 primary/info/success/warning/error。                               |
+| `setThemeLayout()`    | 修改布局模式。                                                          |
+| `setSettings()`       | 合并更新任意主题配置片段。                                              |
 
 业务页面如果要读取主题，只使用 `useTheme()` 或 `useSettingsTheme()`。不要直接从 `themeSettingsAtom`、localStorage 或 DOM class 反推主题状态。
 
@@ -72,7 +72,10 @@ export const defaultThemeSettings: Theme.ThemeSetting = {
 应用侧的 `features/antd/AntdProvider.tsx` 只负责传入语言和用户名：
 
 ```tsx
-<AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+<AntdProvider
+  locale={antdLocales[locale]}
+  userName={userInfo?.userName}
+>
   {children}
 </AntdProvider>
 ```
@@ -105,12 +108,12 @@ export function getAntdTheme(colors: Theme.ThemeColor, darkMode: boolean, settin
 
 这里有几个边界：
 
-| 主题层 | 职责 |
-| --- | --- |
+| 主题层                       | 职责                                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
 | `@skyroc/adapter-antd-theme` | 提供 `derivative` 和 `derivativeDark` 算法，用 OKLCH 调色板生成 Ant Design token。 |
-| `@skyroc/web-admin-theme` | 把当前主题状态转换为 Ant Design `ThemeConfig`。 |
-| `apps/admin-example` | 通过 Provider 注入 locale、userName，并确保 Provider 包住页面。 |
-| 业务页面 | 消费全局主题，不再新建全局 `ConfigProvider`。 |
+| `@skyroc/web-admin-theme`    | 把当前主题状态转换为 Ant Design `ThemeConfig`。                                    |
+| `apps/admin-example`         | 通过 Provider 注入 locale、userName，并确保 Provider 包住页面。                    |
+| 业务页面                     | 消费全局主题，不再新建全局 `ConfigProvider`。                                      |
 
 页面局部的少量视觉定制可以用组件 props 或局部 class。全局 token、算法、暗色模式和 message/modal/notification 主题必须走统一 `AntdProvider`。
 
@@ -223,7 +226,12 @@ import { useSettingsTheme } from '@skyroc/web-admin-theme';
 const ThemeAwarePanel = () => {
   const { darkMode, themeColor } = useSettingsTheme();
 
-  return <div data-dark={darkMode} style={{ borderColor: themeColor }} />;
+  return (
+    <div
+      data-dark={darkMode}
+      style={{ borderColor: themeColor }}
+    />
+  );
 };
 ```
 
@@ -239,9 +247,9 @@ const ThemeAwarePanel = () => {
 
 ## 相关链接
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 主题初始化和缓存策略 | [主题运行时与缓存](./runtime-and-cache) |
-| 启动流程 | [启动流程](../architecture/bootstrap) |
-| 布局组件如何消费主题 | [布局系统](../layout/overview) |
-| 主题包完整 API | [@skyroc/web-admin-theme](/docs/web/theme/admin-theme) |
+| 主题                 | 继续查看                                               |
+| -------------------- | ------------------------------------------------------ |
+| 主题初始化和缓存策略 | [主题运行时与缓存](./runtime-and-cache)                |
+| 启动流程             | [启动流程](../architecture/bootstrap)                  |
+| 布局组件如何消费主题 | [布局系统](../layout/overview)                         |
+| 主题包完整 API       | [@skyroc/web-admin-theme](/docs/web/theme/admin-theme) |

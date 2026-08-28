@@ -61,9 +61,18 @@ const SiderSettings = () => {
 
   return (
     <div className="flex-col-stretch gap-12px">
-      <AnimatedCollapse className="flex-col-stretch gap-12px" visible={layoutMode === LAYOUT_MODE_VERTICAL}>
+      <AnimatedCollapse
+        className="flex-col-stretch gap-12px"
+        visible={layoutMode === LAYOUT_MODE_VERTICAL}
+      >
         <SettingItem label={t('theme.layout.sider.width')}>
-          <AInputNumber className="w-120px" min={0} step={1} value={sider.width} onChange={handleWidthChange} />
+          <AInputNumber
+            className="w-120px"
+            min={0}
+            step={1}
+            value={sider.width}
+            onChange={handleWidthChange}
+          />
         </SettingItem>
 
         <SettingItem label={t('theme.layout.sider.collapsedWidth')}>
@@ -77,9 +86,18 @@ const SiderSettings = () => {
         </SettingItem>
       </AnimatedCollapse>
 
-      <AnimatedCollapse className="flex-col-stretch gap-12px" visible={isMixLayoutMode}>
+      <AnimatedCollapse
+        className="flex-col-stretch gap-12px"
+        visible={isMixLayoutMode}
+      >
         <SettingItem label={t('theme.layout.sider.mixWidth')}>
-          <AInputNumber className="w-120px" min={0} step={1} value={sider.mixWidth} onChange={handleMixWidthChange} />
+          <AInputNumber
+            className="w-120px"
+            min={0}
+            step={1}
+            value={sider.mixWidth}
+            onChange={handleMixWidthChange}
+          />
         </SettingItem>
 
         <SettingItem label={t('theme.layout.sider.mixCollapsedWidth')}>
@@ -110,11 +128,17 @@ const SiderSettings = () => {
           label={t('theme.layout.sider.autoSelectFirstMenu')}
           suffix={
             <ATooltip title={t('theme.layout.sider.autoSelectFirstMenuTip')}>
-              <SvgIcon className="text-icon-info" icon="mdi:information-outline" />
+              <SvgIcon
+                className="text-icon-info"
+                icon="mdi:information-outline"
+              />
             </ATooltip>
           }
         >
-          <ASwitch checked={sider.autoSelectFirstMenu} onChange={handleAutoSelectFirstMenuChange} />
+          <ASwitch
+            checked={sider.autoSelectFirstMenu}
+            onChange={handleAutoSelectFirstMenuChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
     </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@skyroc/utils';
 import React, {
   type CSSProperties,
   Children,
@@ -8,7 +9,6 @@ import React, {
   cloneElement,
   isValidElement
 } from 'react';
-import { cn } from '@skyroc/utils';
 import { skeletonContainerVariants, skeletonItemVariants } from './skeleton-variants';
 import type { SkeletonAnimation, SkeletonContainerProps } from './types';
 
@@ -43,17 +43,7 @@ const TEXT_TAGS = new Set([
 ]);
 
 // Tags that should be treated as media/visual elements
-const MEDIA_TAGS = new Set([
-  'img',
-  'picture',
-  'video',
-  'audio',
-  'canvas',
-  'svg',
-  'iframe',
-  'embed',
-  'object'
-]);
+const MEDIA_TAGS = new Set(['img', 'picture', 'video', 'audio', 'canvas', 'svg', 'iframe', 'embed', 'object']);
 
 // Tags that should preserve their structure (layout containers)
 const LAYOUT_TAGS = new Set([
@@ -123,9 +113,9 @@ function isReactComponent(type: any): boolean {
       const typeString = typeOf.toString();
       // react.lazy, react.forward_ref, react.memo, etc.
       if (
-        typeString.includes('react.lazy')
-        || typeString.includes('react.forward_ref')
-        || typeString.includes('react.memo')
+        typeString.includes('react.lazy') ||
+        typeString.includes('react.forward_ref') ||
+        typeString.includes('react.memo')
       ) {
         return true;
       }
@@ -170,10 +160,7 @@ function getElementTag(element: ReactElement): string {
 }
 
 // Check if element should be excluded by key
-function shouldExclude(
-  element: ReactElement,
-  excludeKeys: string[]
-): boolean {
+function shouldExclude(element: ReactElement, excludeKeys: string[]): boolean {
   // Check if element's key is in the exclude list
   if (element.key && excludeKeys.includes(String(element.key))) {
     return true;
@@ -199,34 +186,20 @@ function extractStyles(props: Record<string, any>): CSSProperties {
   const { style = {} } = props;
 
   // Copy explicit styles
-  if (style.width)
-    styles.width = style.width;
-  if (style.height)
-    styles.height = style.height;
-  if (style.minWidth)
-    styles.minWidth = style.minWidth;
-  if (style.minHeight)
-    styles.minHeight = style.minHeight;
-  if (style.maxWidth)
-    styles.maxWidth = style.maxWidth;
-  if (style.maxHeight)
-    styles.maxHeight = style.maxHeight;
-  if (style.aspectRatio)
-    styles.aspectRatio = style.aspectRatio;
-  if (style.flex)
-    styles.flex = style.flex;
-  if (style.flexGrow)
-    styles.flexGrow = style.flexGrow;
-  if (style.flexShrink)
-    styles.flexShrink = style.flexShrink;
-  if (style.flexBasis)
-    styles.flexBasis = style.flexBasis;
-  if (style.gridArea)
-    styles.gridArea = style.gridArea;
-  if (style.gridColumn)
-    styles.gridColumn = style.gridColumn;
-  if (style.gridRow)
-    styles.gridRow = style.gridRow;
+  if (style.width) styles.width = style.width;
+  if (style.height) styles.height = style.height;
+  if (style.minWidth) styles.minWidth = style.minWidth;
+  if (style.minHeight) styles.minHeight = style.minHeight;
+  if (style.maxWidth) styles.maxWidth = style.maxWidth;
+  if (style.maxHeight) styles.maxHeight = style.maxHeight;
+  if (style.aspectRatio) styles.aspectRatio = style.aspectRatio;
+  if (style.flex) styles.flex = style.flex;
+  if (style.flexGrow) styles.flexGrow = style.flexGrow;
+  if (style.flexShrink) styles.flexShrink = style.flexShrink;
+  if (style.flexBasis) styles.flexBasis = style.flexBasis;
+  if (style.gridArea) styles.gridArea = style.gridArea;
+  if (style.gridColumn) styles.gridColumn = style.gridColumn;
+  if (style.gridRow) styles.gridRow = style.gridRow;
 
   return styles;
 }
@@ -250,10 +223,8 @@ function createTextSkeleton(
   textContent?: string
 ): ReactElement {
   const style: CSSProperties = {};
-  if (skeletonColor)
-    style.backgroundColor = skeletonColor;
-  if (skeletonRadius)
-    style.borderRadius = skeletonRadius;
+  if (skeletonColor) style.backgroundColor = skeletonColor;
+  if (skeletonRadius) style.borderRadius = skeletonRadius;
 
   // If we have text content, estimate width based on it
   if (textContent) {
@@ -282,10 +253,8 @@ function createMediaSkeleton(
     ...extractedStyles
   };
 
-  if (skeletonColor)
-    style.backgroundColor = skeletonColor;
-  if (skeletonRadius)
-    style.borderRadius = skeletonRadius;
+  if (skeletonColor) style.backgroundColor = skeletonColor;
+  if (skeletonRadius) style.borderRadius = skeletonRadius;
 
   // For images, try to preserve aspect ratio
   const { className = '', height, width } = props;
@@ -313,18 +282,8 @@ interface SkeletonizeOptions {
 }
 
 // Main function to convert children to skeleton
-function skeletonizeChildren(
-  children: ReactNode,
-  options: SkeletonizeOptions
-): ReactNode {
-  const {
-    animation,
-    currentDepth = 0,
-    depth,
-    excludeKeys,
-    skeletonColor,
-    skeletonRadius
-  } = options;
+function skeletonizeChildren(children: ReactNode, options: SkeletonizeOptions): ReactNode {
+  const { animation, currentDepth = 0, depth, excludeKeys, skeletonColor, skeletonRadius } = options;
 
   // Depth limit reached
   if (currentDepth > depth) {
@@ -362,7 +321,10 @@ function skeletonizeChildren(
       if (isReactComponent(element.type)) {
         // Get text content for width estimation if available
         const textContent = hasOnlyTextChildren(props.children)
-          ? Children.toArray(props.children).filter(isTextNode).map(c => String(c)).join('')
+          ? Children.toArray(props.children)
+              .filter(isTextNode)
+              .map(c => String(c))
+              .join('')
           : '';
 
         return (
@@ -377,17 +339,17 @@ function skeletonizeChildren(
 
       // Handle media elements (native HTML tags)
       if (MEDIA_TAGS.has(tag)) {
-        return React.cloneElement(
-          createMediaSkeleton(props, animation, skeletonColor, skeletonRadius),
-          { key: index }
-        );
+        return React.cloneElement(createMediaSkeleton(props, animation, skeletonColor, skeletonRadius), { key: index });
       }
 
       // Handle interactive elements (native HTML tags like button, input)
       if (INTERACTIVE_TAGS.has(tag)) {
         // Get text content for width estimation if available
         const textContent = hasOnlyTextChildren(props.children)
-          ? Children.toArray(props.children).filter(isTextNode).map(c => String(c)).join('')
+          ? Children.toArray(props.children)
+              .filter(isTextNode)
+              .map(c => String(c))
+              .join('')
           : '';
 
         return (

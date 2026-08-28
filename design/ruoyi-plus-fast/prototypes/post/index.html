@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 岗位管理设计稿</title>
     <style>
       :root {
@@ -80,8 +86,7 @@
         background: var(--page);
         color: var(--text);
         font-family:
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC',
           'Microsoft YaHei', sans-serif;
         font-size: 14px;
       }
@@ -135,13 +140,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        background:
-          radial-gradient(
-            circle at 10% 6%,
-            rgb(99 102 241 / 20%),
-            transparent 27%
-          ),
-          var(--sidebar);
+        background: radial-gradient(circle at 10% 6%, rgb(99 102 241 / 20%), transparent 27%), var(--sidebar);
         color: #f4f5f8;
       }
 
@@ -202,11 +201,7 @@
       }
 
       .nav-item.active {
-        background: linear-gradient(
-          90deg,
-          rgb(99 102 241 / 25%),
-          rgb(99 102 241 / 10%)
-        );
+        background: linear-gradient(90deg, rgb(99 102 241 / 25%), rgb(99 102 241 / 10%));
         box-shadow: inset 3px 0 0 #8183ff;
         color: #fff;
       }
@@ -1356,97 +1351,220 @@
     </style>
   </head>
   <body>
-    <svg aria-hidden="true" width="0" height="0" style="position: absolute">
-      <symbol id="i-grid" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
+    <svg
+      aria-hidden="true"
+      width="0"
+      height="0"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-grid"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="3"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
       </symbol>
-      <symbol id="i-home" viewBox="0 0 24 24">
+      <symbol
+        id="i-home"
+        viewBox="0 0 24 24"
+      >
         <path d="m3 11 9-8 9 8" />
         <path d="M5 10v11h14V10M9 21v-7h6v7" />
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
       </symbol>
-      <symbol id="i-building" viewBox="0 0 24 24">
-        <path
-          d="M3 21h18M6 21V5l6-2v18M18 21V9l-6-2M8.5 8h1M8.5 12h1M8.5 16h1M14.5 12h1M14.5 16h1"
-        />
+      <symbol
+        id="i-building"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 21h18M6 21V5l6-2v18M18 21V9l-6-2M8.5 8h1M8.5 12h1M8.5 16h1M14.5 12h1M14.5 16h1" />
       </symbol>
-      <symbol id="i-briefcase" viewBox="0 0 24 24">
-        <rect x="3" y="7" width="18" height="13" rx="2" />
+      <symbol
+        id="i-briefcase"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="7"
+          width="18"
+          height="13"
+          rx="2"
+        />
         <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" />
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
         <path d="m9 12 2 2 4-4" />
       </symbol>
-      <symbol id="i-menu" viewBox="0 0 24 24">
+      <symbol
+        id="i-menu"
+        viewBox="0 0 24 24"
+      >
         <path d="M4 6h16M4 12h16M4 18h16" />
       </symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" />
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        />
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.57 15 1.7 1.7 0 0 0 3 14H3v-4h.08A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.57 1.7 1.7 0 0 0 10 3h4a1.7 1.7 0 0 0 1.06 1.57 1.7 1.7 0 0 0 1.88-.34L17 4.17 19.83 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 21 10h.08v4H21a1.7 1.7 0 0 0-1.6 1Z"
         />
       </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        />
         <path d="m20 20-4-4" />
       </symbol>
-      <symbol id="i-chevron-down" viewBox="0 0 24 24">
+      <symbol
+        id="i-chevron-down"
+        viewBox="0 0 24 24"
+      >
         <path d="m6 9 6 6 6-6" />
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24">
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 5v14M5 12h14" />
       </symbol>
-      <symbol id="i-trash" viewBox="0 0 24 24">
+      <symbol
+        id="i-trash"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v5M14 11v5" />
       </symbol>
-      <symbol id="i-download" viewBox="0 0 24 24">
+      <symbol
+        id="i-download"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14" />
       </symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
         <path d="M20 7v5h-5M4 17v-5h5" />
         <path d="M6.1 8A8 8 0 0 1 20 12M17.9 16A8 8 0 0 1 4 12" />
       </symbol>
-      <symbol id="i-columns" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        />
         <path d="M9 4v16M15 4v16" />
       </symbol>
-      <symbol id="i-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4" />
+      <symbol
+        id="i-sun"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="4"
+        />
         <path
           d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
         />
       </symbol>
-      <symbol id="i-bell" viewBox="0 0 24 24">
+      <symbol
+        id="i-bell"
+        viewBox="0 0 24 24"
+      >
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
       </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
+      <symbol
+        id="i-x"
+        viewBox="0 0 24 24"
+      >
         <path d="m6 6 12 12M18 6 6 18" />
       </symbol>
-      <symbol id="i-info" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
+      <symbol
+        id="i-info"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+        />
         <path d="M12 11v6M12 7h.01" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
+      <symbol
+        id="i-check"
+        viewBox="0 0 24 24"
+      >
         <path d="m5 12 4 4L19 6" />
       </symbol>
-      <symbol id="i-alert" viewBox="0 0 24 24">
-        <path
-          d="M10.3 4.2 2.7 17.4A2 2 0 0 0 4.4 20h15.2a2 2 0 0 0 1.7-2.6L13.7 4.2a2 2 0 0 0-3.4 0Z"
-        />
+      <symbol
+        id="i-alert"
+        viewBox="0 0 24 24"
+      >
+        <path d="M10.3 4.2 2.7 17.4A2 2 0 0 0 4.4 20h15.2a2 2 0 0 0 1.7-2.6L13.7 4.2a2 2 0 0 0-3.4 0Z" />
         <path d="M12 9v4M12 17h.01" />
       </symbol>
     </svg>
 
     <div class="app">
-      <aside class="sidebar" aria-label="主导航">
+      <aside
+        class="sidebar"
+        aria-label="主导航"
+      >
         <div class="brand">
           <span class="brand-mark"
             ><svg class="icon"><use href="#i-grid"></use></svg></span
@@ -1459,28 +1577,25 @@
           </button>
           <div class="nav-label">系统管理</div>
           <button class="nav-item">
-            <svg class="icon"><use href="#i-users"></use></svg
-            ><span>用户管理</span>
+            <svg class="icon"><use href="#i-users"></use></svg><span>用户管理</span>
           </button>
           <button class="nav-item">
-            <svg class="icon"><use href="#i-building"></use></svg
-            ><span>部门管理</span>
+            <svg class="icon"><use href="#i-building"></use></svg><span>部门管理</span>
           </button>
-          <button class="nav-item active" aria-current="page">
-            <svg class="icon"><use href="#i-briefcase"></use></svg
-            ><span>岗位管理</span>
-          </button>
-          <button class="nav-item">
-            <svg class="icon"><use href="#i-shield"></use></svg
-            ><span>角色管理</span>
+          <button
+            class="nav-item active"
+            aria-current="page"
+          >
+            <svg class="icon"><use href="#i-briefcase"></use></svg><span>岗位管理</span>
           </button>
           <button class="nav-item">
-            <svg class="icon"><use href="#i-menu"></use></svg
-            ><span>菜单管理</span>
+            <svg class="icon"><use href="#i-shield"></use></svg><span>角色管理</span>
           </button>
           <button class="nav-item">
-            <svg class="icon"><use href="#i-settings"></use></svg
-            ><span>系统设置</span
+            <svg class="icon"><use href="#i-menu"></use></svg><span>菜单管理</span>
+          </button>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-settings"></use></svg><span>系统设置</span
             ><svg class="icon small chevron">
               <use href="#i-chevron-down"></use>
             </svg>
@@ -1502,9 +1617,7 @@
             >
               <svg class="icon"><use href="#i-menu"></use></svg>
             </button>
-            <div class="breadcrumbs">
-              <span>系统管理</span><span>/</span><strong>岗位管理</strong>
-            </div>
+            <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>岗位管理</strong></div>
           </div>
           <div class="topbar-actions">
             <button
@@ -1515,7 +1628,11 @@
             >
               <svg class="icon"><use href="#i-sun"></use></svg>
             </button>
-            <button class="icon-button" aria-label="通知" title="通知">
+            <button
+              class="icon-button"
+              aria-label="通知"
+              title="通知"
+            >
               <svg class="icon"><use href="#i-bell"></use></svg>
             </button>
             <span class="avatar">WS</span>
@@ -1529,8 +1646,7 @@
               <p>维护部门岗位与用户任职基础，岗位不直接代表系统权限</p>
             </div>
             <div class="tenant-chip">
-              <svg class="icon small"><use href="#i-building"></use></svg
-              >当前租户：Skyroc 科技
+              <svg class="icon small"><use href="#i-building"></use></svg>当前租户：Skyroc 科技
             </div>
           </section>
 
@@ -1554,7 +1670,10 @@
           </label>
 
           <div class="workspace">
-            <aside class="panel dept-panel" aria-label="组织部门筛选">
+            <aside
+              class="panel dept-panel"
+              aria-label="组织部门筛选"
+            >
               <div class="panel-header">
                 <div class="panel-title">
                   <svg class="icon"><use href="#i-building"></use></svg>组织部门
@@ -1586,7 +1705,12 @@
                   <svg class="icon small"><use href="#i-x"></use></svg>
                 </button>
               </div>
-              <div class="tree" id="deptTree" role="tree" aria-label="部门树">
+              <div
+                class="tree"
+                id="deptTree"
+                role="tree"
+                aria-label="部门树"
+              >
                 <button
                   class="tree-row active"
                   data-dept="all"
@@ -1595,10 +1719,8 @@
                   data-level="0"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">全部部门</span
-                  ><span class="tree-badge">36</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">全部部门</span><span class="tree-badge">36</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1614,8 +1736,7 @@
                     ><svg class="icon small">
                       <use href="#i-chevron-down"></use></svg></span
                   ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">Skyroc 集团</span
-                  ><span class="tree-badge">36</span>
+                  ><span class="tree-label">Skyroc 集团</span><span class="tree-badge">36</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1630,8 +1751,7 @@
                   <span class="tree-toggle"
                     ><svg class="icon small">
                       <use href="#i-chevron-down"></use></svg></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">技术中心</span
+                  ><svg class="icon small"><use href="#i-building"></use></svg><span class="tree-label">技术中心</span
                   ><span class="tree-badge">12</span>
                 </button>
                 <button
@@ -1643,10 +1763,8 @@
                   data-parent="tech"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">研发一部</span
-                  ><span class="tree-badge">6</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">研发一部</span><span class="tree-badge">6</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1657,10 +1775,8 @@
                   data-parent="tech"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">研发二部</span
-                  ><span class="tree-badge">4</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">研发二部</span><span class="tree-badge">4</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1671,10 +1787,8 @@
                   data-parent="tech"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">质量保障部</span
-                  ><span class="tree-badge">2</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">质量保障部</span><span class="tree-badge">2</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1685,10 +1799,8 @@
                   data-parent="group"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">产品中心</span
-                  ><span class="tree-badge">9</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">产品中心</span><span class="tree-badge">9</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1699,10 +1811,8 @@
                   data-parent="group"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">运营中心</span
-                  ><span class="tree-badge">8</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">运营中心</span><span class="tree-badge">8</span>
                 </button>
                 <button
                   class="tree-row"
@@ -1713,15 +1823,12 @@
                   data-parent="group"
                   role="treeitem"
                 >
-                  <span class="tree-spacer"></span
-                  ><svg class="icon small"><use href="#i-building"></use></svg
-                  ><span class="tree-label">财务部</span
-                  ><span class="tree-badge">3</span>
+                  <span class="tree-spacer"></span><svg class="icon small"><use href="#i-building"></use></svg
+                  ><span class="tree-label">财务部</span><span class="tree-badge">3</span>
                 </button>
               </div>
               <div class="dept-foot">
-                <span>单击部门查看全部下级岗位</span
-                ><span id="deptResultCount">8 个部门</span>
+                <span>单击部门查看全部下级岗位</span><span id="deptResultCount">8 个部门</span>
               </div>
             </aside>
 
@@ -1730,11 +1837,17 @@
                 <div class="filter-grid">
                   <div class="field">
                     <label for="postNameQuery">岗位名称</label
-                    ><input id="postNameQuery" placeholder="请输入岗位名称" />
+                    ><input
+                      id="postNameQuery"
+                      placeholder="请输入岗位名称"
+                    />
                   </div>
                   <div class="field">
                     <label for="postCodeQuery">岗位编码</label
-                    ><input id="postCodeQuery" placeholder="请输入岗位编码" />
+                    ><input
+                      id="postCodeQuery"
+                      placeholder="请输入岗位编码"
+                    />
                   </div>
                   <div class="field">
                     <label for="statusQuery">状态</label
@@ -1745,12 +1858,16 @@
                     </select>
                   </div>
                   <div class="filter-actions">
-                    <button class="button primary" id="queryButton">
-                      <svg class="icon small"><use href="#i-search"></use></svg
-                      >查询</button
-                    ><button class="button" id="resetButton">
-                      <svg class="icon small"><use href="#i-refresh"></use></svg
-                      >重置
+                    <button
+                      class="button primary"
+                      id="queryButton"
+                    >
+                      <svg class="icon small"><use href="#i-search"></use></svg>查询</button
+                    ><button
+                      class="button"
+                      id="resetButton"
+                    >
+                      <svg class="icon small"><use href="#i-refresh"></use></svg>重置
                     </button>
                   </div>
                 </div>
@@ -1764,10 +1881,16 @@
                     <use href="#i-chevron-down"></use>
                   </svg>
                 </button>
-                <div class="extra-filters" id="extraFilters">
+                <div
+                  class="extra-filters"
+                  id="extraFilters"
+                >
                   <div class="field">
                     <label for="categoryQuery">类别编码</label
-                    ><input id="categoryQuery" placeholder="如 TECH、MGT" />
+                    ><input
+                      id="categoryQuery"
+                      placeholder="如 TECH、MGT"
+                    />
                   </div>
                   <div class="field">
                     <label for="exactDeptQuery">精确部门</label
@@ -1782,12 +1905,21 @@
                   </div>
                   <div class="field">
                     <label for="dateQuery">创建时间</label
-                    ><input id="dateQuery" type="date" />
+                    ><input
+                      id="dateQuery"
+                      type="date"
+                    />
                   </div>
                 </div>
-                <div class="active-filter-bar" id="activeFilterBar">
+                <div
+                  class="active-filter-bar"
+                  id="activeFilterBar"
+                >
                   <span>已生效：</span
-                  ><span class="filter-chip" id="activeFilterChip"></span>
+                  ><span
+                    class="filter-chip"
+                    id="activeFilterChip"
+                  ></span>
                 </div>
               </div>
 
@@ -1795,13 +1927,14 @@
                 <div class="toolbar">
                   <div class="toolbar-left">
                     <div class="scope-summary">
-                      <strong id="visibleCount">8 个岗位</strong
-                      ><span class="scope-dot"></span
+                      <strong id="visibleCount">8 个岗位</strong><span class="scope-dot"></span
                       ><span id="scopeName">全部部门</span>
                     </div>
-                    <button class="button primary" id="addButton">
-                      <svg class="icon small"><use href="#i-plus"></use></svg
-                      ><span>新增岗位</span>
+                    <button
+                      class="button primary"
+                      id="addButton"
+                    >
+                      <svg class="icon small"><use href="#i-plus"></use></svg><span>新增岗位</span>
                     </button>
                     <button
                       class="button"
@@ -1819,8 +1952,7 @@
                       disabled
                       title="请先选择岗位"
                     >
-                      <svg class="icon small"><use href="#i-trash"></use></svg
-                      ><span>批量删除</span>
+                      <svg class="icon small"><use href="#i-trash"></use></svg><span>批量删除</span>
                     </button>
                   </div>
                   <div class="toolbar-right">
@@ -1861,7 +1993,10 @@
                       <col style="width: 116px" />
                       <col style="width: 55px" />
                       <col style="width: 74px" />
-                      <col class="hide-medium" style="width: 136px" />
+                      <col
+                        class="hide-medium"
+                        style="width: 136px"
+                      />
                       <col style="width: 105px" />
                     </colgroup>
                     <thead>
@@ -1901,8 +2036,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">前端工程师</span
-                            ><span class="post-sub">FE_DEV</span>
+                            <span class="post-name">前端工程师</span><span class="post-sub">FE_DEV</span>
                           </div>
                         </td>
                         <td><span class="mono">FE_DEV</span></td>
@@ -1920,9 +2054,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -1943,8 +2075,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">后端工程师</span
-                            ><span class="post-sub">BE_DEV</span>
+                            <span class="post-name">后端工程师</span><span class="post-sub">BE_DEV</span>
                           </div>
                         </td>
                         <td><span class="mono">BE_DEV</span></td>
@@ -1962,9 +2093,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -1985,8 +2114,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">测试工程师</span
-                            ><span class="post-sub">QA_ENGINEER</span>
+                            <span class="post-name">测试工程师</span><span class="post-sub">QA_ENGINEER</span>
                           </div>
                         </td>
                         <td><span class="mono">QA_ENGINEER</span></td>
@@ -2004,9 +2132,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2027,8 +2153,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">技术经理</span
-                            ><span class="post-sub">TECH_MANAGER</span>
+                            <span class="post-name">技术经理</span><span class="post-sub">TECH_MANAGER</span>
                           </div>
                         </td>
                         <td><span class="mono">TECH_MANAGER</span></td>
@@ -2046,9 +2171,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2069,8 +2192,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">产品经理</span
-                            ><span class="post-sub">PRODUCT_MANAGER</span>
+                            <span class="post-name">产品经理</span><span class="post-sub">PRODUCT_MANAGER</span>
                           </div>
                         </td>
                         <td><span class="mono">PRODUCT_MANAGER</span></td>
@@ -2088,9 +2210,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2111,8 +2231,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">交互设计师</span
-                            ><span class="post-sub">UX_DESIGNER</span>
+                            <span class="post-name">交互设计师</span><span class="post-sub">UX_DESIGNER</span>
                           </div>
                         </td>
                         <td><span class="mono">UX_DESIGNER</span></td>
@@ -2130,9 +2249,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2153,8 +2270,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">内容运营</span
-                            ><span class="post-sub">CONTENT_OPS</span>
+                            <span class="post-name">内容运营</span><span class="post-sub">CONTENT_OPS</span>
                           </div>
                         </td>
                         <td><span class="mono">CONTENT_OPS</span></td>
@@ -2172,9 +2288,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2195,8 +2309,7 @@
                         </td>
                         <td>
                           <div class="post-main">
-                            <span class="post-name">财务专员</span
-                            ><span class="post-sub">FINANCE</span>
+                            <span class="post-name">财务专员</span><span class="post-sub">FINANCE</span>
                           </div>
                         </td>
                         <td><span class="mono">FINANCE</span></td>
@@ -2214,9 +2327,7 @@
                         <td>
                           <div class="row-actions">
                             <button class="link-button edit-row">编辑</button
-                            ><button class="link-button danger-link delete-row">
-                              删除
-                            </button>
+                            ><button class="link-button danger-link delete-row">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -2225,18 +2336,32 @@
                 </div>
 
                 <div class="table-footer">
-                  <div class="selection-note">
-                    已选 <strong id="selectedCount">0</strong> 项 · 共 36 条
-                  </div>
-                  <div class="pagination" aria-label="分页">
-                    <button class="page-button" aria-label="上一页">‹</button
-                    ><button class="page-button active" aria-current="page">
+                  <div class="selection-note">已选 <strong id="selectedCount">0</strong> 项 · 共 36 条</div>
+                  <div
+                    class="pagination"
+                    aria-label="分页"
+                  >
+                    <button
+                      class="page-button"
+                      aria-label="上一页"
+                    >
+                      ‹</button
+                    ><button
+                      class="page-button active"
+                      aria-current="page"
+                    >
                       1</button
-                    ><button class="page-button">2</button
-                    ><button class="page-button">3</button
+                    ><button class="page-button">2</button><button class="page-button">3</button
                     ><button class="page-button">4</button
-                    ><button class="page-button" aria-label="下一页">›</button
-                    ><select class="page-size" aria-label="每页条数">
+                    ><button
+                      class="page-button"
+                      aria-label="下一页"
+                    >
+                      ›</button
+                    ><select
+                      class="page-size"
+                      aria-label="每页条数"
+                    >
                       <option>10 条/页</option>
                       <option>20 条/页</option>
                       <option>50 条/页</option>
@@ -2250,7 +2375,10 @@
       </div>
     </div>
 
-    <div class="overlay" id="drawerOverlay"></div>
+    <div
+      class="overlay"
+      id="drawerOverlay"
+    ></div>
     <aside
       class="drawer"
       id="postDrawer"
@@ -2260,7 +2388,11 @@
     >
       <div class="drawer-header">
         <h2 id="drawerTitle">新增岗位</h2>
-        <button class="icon-button" id="closeDrawer" aria-label="关闭抽屉">
+        <button
+          class="icon-button"
+          id="closeDrawer"
+          aria-label="关闭抽屉"
+        >
           <svg class="icon"><use href="#i-x"></use></svg>
         </button>
       </div>
@@ -2268,11 +2400,23 @@
         <h3 class="form-section-title">
           <svg class="icon small"><use href="#i-briefcase"></use></svg>岗位信息
         </h3>
-        <form id="postForm" novalidate>
+        <form
+          id="postForm"
+          novalidate
+        >
           <div class="form-grid">
-            <div class="form-field full" data-field="dept">
-              <label class="required" for="formDept">所属部门</label
-              ><select id="formDept" required>
+            <div
+              class="form-field full"
+              data-field="dept"
+            >
+              <label
+                class="required"
+                for="formDept"
+                >所属部门</label
+              ><select
+                id="formDept"
+                required
+              >
                 <option value="">请选择所属部门</option>
                 <option>技术中心</option>
                 <option>研发一部</option>
@@ -2283,8 +2427,14 @@
                 <option>财务部</option></select
               ><span class="field-error">请选择所属部门</span>
             </div>
-            <div class="form-field" data-field="name">
-              <label class="required" for="formName">岗位名称</label
+            <div
+              class="form-field"
+              data-field="name"
+            >
+              <label
+                class="required"
+                for="formName"
+                >岗位名称</label
               ><input
                 id="formName"
                 maxlength="50"
@@ -2293,17 +2443,21 @@
               /><span class="field-error">请输入岗位名称</span
               ><span class="field-hint">同一部门内不可重名，最多 50 字符</span>
             </div>
-            <div class="form-field" data-field="code">
-              <label class="required" for="formCode">岗位编码</label
+            <div
+              class="form-field"
+              data-field="code"
+            >
+              <label
+                class="required"
+                for="formCode"
+                >岗位编码</label
               ><input
                 id="formCode"
                 maxlength="64"
                 placeholder="如：FE_DEV"
                 required
               /><span class="field-error">请输入岗位编码</span
-              ><span class="field-hint"
-                >租户内唯一，建议使用大写字母与下划线</span
-              >
+              ><span class="field-hint">租户内唯一，建议使用大写字母与下划线</span>
             </div>
             <div class="form-field">
               <label for="formCategory">类别编码</label
@@ -2314,7 +2468,10 @@
               /><span class="field-hint">暂无岗位类别字典，可选填</span>
             </div>
             <div class="form-field">
-              <label class="required" for="formSort">岗位顺序</label
+              <label
+                class="required"
+                for="formSort"
+                >岗位顺序</label
               ><input
                 id="formSort"
                 type="number"
@@ -2351,22 +2508,25 @@
                 maxlength="500"
                 placeholder="请输入岗位职责或使用说明"
               ></textarea
-              ><span class="field-hint"
-                ><span id="remarkCount">0</span> / 500</span
-              >
+              ><span class="field-hint"><span id="remarkCount">0</span> / 500</span>
             </div>
           </div>
           <div class="form-note">
             <svg class="icon small"><use href="#i-info"></use></svg
-            ><span
-              >岗位用于描述用户在部门中的任职位置，不会直接授予菜单或按钮权限。权限仍由角色管理。</span
-            >
+            ><span>岗位用于描述用户在部门中的任职位置，不会直接授予菜单或按钮权限。权限仍由角色管理。</span>
           </div>
         </form>
       </div>
       <div class="drawer-footer">
-        <button class="button" id="cancelDrawer">取消</button
-        ><button class="button primary" id="savePost">
+        <button
+          class="button"
+          id="cancelDrawer"
+        >
+          取消</button
+        ><button
+          class="button primary"
+          id="savePost"
+        >
           <svg class="icon small"><use href="#i-check"></use></svg>保存岗位
         </button>
       </div>
@@ -2386,15 +2546,25 @@
           </div>
           <div>
             <h3 id="deleteTitle">删除岗位？</h3>
-            <p id="deleteDescription">
-              删除后不可恢复；若岗位已分配用户，系统将拒绝删除。
-            </p>
-            <div class="delete-summary" id="deleteSummary"></div>
+            <p id="deleteDescription">删除后不可恢复；若岗位已分配用户，系统将拒绝删除。</p>
+            <div
+              class="delete-summary"
+              id="deleteSummary"
+            ></div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="button" id="cancelDelete">取消</button
-          ><button class="button danger" id="confirmDelete">删除岗位</button>
+          <button
+            class="button"
+            id="cancelDelete"
+          >
+            取消</button
+          ><button
+            class="button danger"
+            id="confirmDelete"
+          >
+            删除岗位
+          </button>
         </div>
       </div>
     </div>
@@ -2420,19 +2590,31 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="button" id="continueEdit">继续编辑</button
-          ><button class="button danger" id="confirmDiscard">放弃修改</button>
+          <button
+            class="button"
+            id="continueEdit"
+          >
+            继续编辑</button
+          ><button
+            class="button danger"
+            id="confirmDiscard"
+          >
+            放弃修改
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+    <div
+      class="toast-stack"
+      id="toastStack"
+      aria-live="polite"
+    ></div>
 
     <script>
       const root = document.documentElement;
       const rows = () => Array.from(document.querySelectorAll('#postRows tr'));
-      const rowChecks = () =>
-        Array.from(document.querySelectorAll('.row-check'));
+      const rowChecks = () => Array.from(document.querySelectorAll('.row-check'));
       const drawer = document.getElementById('postDrawer');
       const drawerOverlay = document.getElementById('drawerOverlay');
       const drawerTitle = document.getElementById('drawerTitle');
@@ -2458,40 +2640,28 @@
 
       function selectedRows() {
         return rowChecks()
-          .filter((checkbox) => checkbox.checked)
-          .map((checkbox) => checkbox.closest('tr'));
+          .filter(checkbox => checkbox.checked)
+          .map(checkbox => checkbox.closest('tr'));
       }
 
       function updateSelection() {
         const selected = selectedRows();
         document.getElementById('selectedCount').textContent = selected.length;
         const selectAll = document.getElementById('selectAll');
-        const visibleChecks = rowChecks().filter(
-          (checkbox) => checkbox.closest('tr').style.display !== 'none',
-        );
-        selectAll.checked =
-          visibleChecks.length > 0 &&
-          visibleChecks.every((checkbox) => checkbox.checked);
+        const visibleChecks = rowChecks().filter(checkbox => checkbox.closest('tr').style.display !== 'none');
+        selectAll.checked = visibleChecks.length > 0 && visibleChecks.every(checkbox => checkbox.checked);
         selectAll.indeterminate = selected.length > 0 && !selectAll.checked;
-        document.getElementById('deleteSelectedButton').disabled =
-          selected.length === 0;
-        document.getElementById('editSelectedButton').disabled =
-          selected.length !== 1;
-        document.getElementById('editSelectedButton').title =
-          selected.length === 1 ? '编辑已选岗位' : '请选择一个岗位';
+        document.getElementById('deleteSelectedButton').disabled = selected.length === 0;
+        document.getElementById('editSelectedButton').disabled = selected.length !== 1;
+        document.getElementById('editSelectedButton').title = selected.length === 1 ? '编辑已选岗位' : '请选择一个岗位';
         document.getElementById('deleteSelectedButton').title = selected.length
           ? `删除已选 ${selected.length} 个岗位`
           : '请先选择岗位';
-        rows().forEach((row) =>
-          row.classList.toggle(
-            'selected',
-            row.querySelector('.row-check').checked,
-          ),
-        );
+        rows().forEach(row => row.classList.toggle('selected', row.querySelector('.row-check').checked));
       }
 
       function clearSelection() {
-        rowChecks().forEach((checkbox) => {
+        rowChecks().forEach(checkbox => {
           checkbox.checked = false;
         });
         document.getElementById('selectAll').checked = false;
@@ -2509,94 +2679,58 @@
           quality: ['质量保障部'],
           product: ['产品中心'],
           operation: ['运营中心'],
-          finance: ['财务部'],
+          finance: ['财务部']
         };
-        return (
-          !mapping[deptId] ||
-          mapping[deptId].length === 0 ||
-          mapping[deptId].includes(dept)
-        );
+        return !mapping[deptId] || mapping[deptId].length === 0 || mapping[deptId].includes(dept);
       }
 
       function applyFilters() {
-        const name = document
-          .getElementById('postNameQuery')
-          .value.trim()
-          .toLowerCase();
-        const code = document
-          .getElementById('postCodeQuery')
-          .value.trim()
-          .toLowerCase();
+        const name = document.getElementById('postNameQuery').value.trim().toLowerCase();
+        const code = document.getElementById('postCodeQuery').value.trim().toLowerCase();
         const status = document.getElementById('statusQuery').value;
-        const category = document
-          .getElementById('categoryQuery')
-          .value.trim()
-          .toLowerCase();
+        const category = document.getElementById('categoryQuery').value.trim().toLowerCase();
         const exactDept = document.getElementById('exactDeptQuery').value;
         let count = 0;
-        rows().forEach((row) => {
+        rows().forEach(row => {
           const matches =
             row.dataset.name.toLowerCase().includes(name) &&
             row.dataset.code.toLowerCase().includes(code) &&
             (!status || row.dataset.status === status) &&
             row.dataset.category.toLowerCase().includes(category) &&
-            (exactDept
-              ? row.dataset.dept === exactDept
-              : rowMatchesDept(row, activeDept.id));
+            (exactDept ? row.dataset.dept === exactDept : rowMatchesDept(row, activeDept.id));
           row.style.display = matches ? '' : 'none';
           if (matches) count += 1;
         });
         clearSelection();
         document.getElementById('visibleCount').textContent = `${count} 个岗位`;
-        document.getElementById('scopeName').textContent = exactDept
-          ? `${exactDept}（精确）`
-          : activeDept.name;
+        document.getElementById('scopeName').textContent = exactDept ? `${exactDept}（精确）` : activeDept.name;
         const activeParts = [];
-        if (category)
-          activeParts.push(
-            `类别：${document.getElementById('categoryQuery').value.trim()}`,
-          );
+        if (category) activeParts.push(`类别：${document.getElementById('categoryQuery').value.trim()}`);
         if (exactDept) activeParts.push(`精确部门：${exactDept}`);
         if (document.getElementById('dateQuery').value)
-          activeParts.push(
-            `创建日期：${document.getElementById('dateQuery').value}`,
-          );
-        document
-          .getElementById('activeFilterBar')
-          .classList.toggle('visible', activeParts.length > 0);
-        document.getElementById('activeFilterChip').textContent =
-          activeParts.join(' · ');
-        toast(
-          count ? `已找到 ${count} 个符合条件的岗位` : '没有找到符合条件的岗位',
-          'info',
-        );
+          activeParts.push(`创建日期：${document.getElementById('dateQuery').value}`);
+        document.getElementById('activeFilterBar').classList.toggle('visible', activeParts.length > 0);
+        document.getElementById('activeFilterChip').textContent = activeParts.join(' · ');
+        toast(count ? `已找到 ${count} 个符合条件的岗位` : '没有找到符合条件的岗位', 'info');
       }
 
       function resetFilters() {
-        [
-          'postNameQuery',
-          'postCodeQuery',
-          'categoryQuery',
-          'dateQuery',
-        ].forEach((id) => {
+        ['postNameQuery', 'postCodeQuery', 'categoryQuery', 'dateQuery'].forEach(id => {
           document.getElementById(id).value = '';
         });
-        ['statusQuery', 'exactDeptQuery'].forEach((id) => {
+        ['statusQuery', 'exactDeptQuery'].forEach(id => {
           document.getElementById(id).value = '';
         });
         activeDept = { id: 'all', name: '全部部门' };
         document
           .querySelectorAll('.tree-row')
-          .forEach((row) =>
-            row.classList.toggle('active', row.dataset.dept === 'all'),
-          );
+          .forEach(row => row.classList.toggle('active', row.dataset.dept === 'all'));
         document.getElementById('mobileDeptSelect').value = 'all';
         document.getElementById('activeFilterBar').classList.remove('visible');
-        rows().forEach((row) => {
+        rows().forEach(row => {
           row.style.display = '';
         });
-        document.getElementById('visibleCount').textContent =
-          `${rows().length} 个岗位`;
+        document.getElementById('visibleCount').textContent = `${rows().length} 个岗位`;
         document.getElementById('scopeName').textContent = '全部部门';
         clearSelection();
         toast('查询条件已重置', 'info');
@@ -2607,20 +2741,15 @@
         form.reset();
         document.getElementById('formSort').value = '0';
         document.getElementById('remarkCount').textContent = '0';
-        document
-          .querySelectorAll('.form-field.invalid')
-          .forEach((field) => field.classList.remove('invalid'));
+        document.querySelectorAll('.form-field.invalid').forEach(field => field.classList.remove('invalid'));
         if (row) {
           drawerTitle.textContent = '编辑岗位';
           document.getElementById('formDept').value = row.dataset.dept;
           document.getElementById('formName').value = row.dataset.name;
           document.getElementById('formCode').value = row.dataset.code;
           document.getElementById('formCategory').value = row.dataset.category;
-          document.getElementById('formSort').value =
-            row.children[5].textContent.trim();
-          document.querySelector(
-            `input[name="postStatus"][value="${row.dataset.status}"]`,
-          ).checked = true;
+          document.getElementById('formSort').value = row.children[5].textContent.trim();
+          document.querySelector(`input[name="postStatus"][value="${row.dataset.status}"]`).checked = true;
         } else {
           drawerTitle.textContent = '新增岗位';
           const prefill = {
@@ -2630,7 +2759,7 @@
             quality: '质量保障部',
             product: '产品中心',
             operation: '运营中心',
-            finance: '财务部',
+            finance: '财务部'
           }[activeDept.id];
           if (prefill) document.getElementById('formDept').value = prefill;
         }
@@ -2655,16 +2784,16 @@
         const fields = [
           {
             wrapper: document.querySelector('[data-field="dept"]'),
-            input: document.getElementById('formDept'),
+            input: document.getElementById('formDept')
           },
           {
             wrapper: document.querySelector('[data-field="name"]'),
-            input: document.getElementById('formName'),
+            input: document.getElementById('formName')
           },
           {
             wrapper: document.querySelector('[data-field="code"]'),
-            input: document.getElementById('formCode'),
-          },
+            input: document.getElementById('formCode')
+          }
         ];
         let valid = true;
         fields.forEach(({ wrapper, input }) => {
@@ -2684,26 +2813,19 @@
         if (editingRow) {
           editingRow.dataset.name = name;
           editingRow.dataset.code = code;
-          editingRow.dataset.category =
-            document.getElementById('formCategory').value.trim() || '—';
+          editingRow.dataset.category = document.getElementById('formCategory').value.trim() || '—';
           editingRow.dataset.dept = document.getElementById('formDept').value;
-          editingRow.dataset.status = document.querySelector(
-            'input[name="postStatus"]:checked',
-          ).value;
+          editingRow.dataset.status = document.querySelector('input[name="postStatus"]:checked').value;
           editingRow.querySelector('.post-name').textContent = name;
-          editingRow.querySelectorAll('.post-sub, .mono').forEach((node) => {
+          editingRow.querySelectorAll('.post-sub, .mono').forEach(node => {
             node.textContent = code;
           });
-          editingRow.querySelector('.category').textContent =
-            editingRow.dataset.category;
-          editingRow.querySelector('.dept-cell').lastChild.textContent =
-            editingRow.dataset.dept;
-          editingRow.children[5].textContent =
-            document.getElementById('formSort').value;
+          editingRow.querySelector('.category').textContent = editingRow.dataset.category;
+          editingRow.querySelector('.dept-cell').lastChild.textContent = editingRow.dataset.dept;
+          editingRow.children[5].textContent = document.getElementById('formSort').value;
           const statusNode = editingRow.querySelector('.status');
           statusNode.className = `status ${editingRow.dataset.status}`;
-          statusNode.textContent =
-            editingRow.dataset.status === 'normal' ? '正常' : '停用';
+          statusNode.textContent = editingRow.dataset.status === 'normal' ? '正常' : '停用';
         }
         closeDrawer(true);
         toast(isEditing ? '岗位信息已保存' : '岗位已新增（原型演示）');
@@ -2711,11 +2833,9 @@
 
       function openDelete(targetRows) {
         pendingDeleteRows = targetRows;
-        const names = targetRows.map((row) => row.dataset.name);
+        const names = targetRows.map(row => row.dataset.name);
         document.getElementById('deleteTitle').textContent =
-          targetRows.length > 1
-            ? `删除已选的 ${targetRows.length} 个岗位？`
-            : `删除岗位“${names[0]}”？`;
+          targetRows.length > 1 ? `删除已选的 ${targetRows.length} 个岗位？` : `删除岗位“${names[0]}”？`;
         document.getElementById('deleteDescription').textContent =
           targetRows.length > 1
             ? '这是原子操作：任一岗位已分配用户或数据过期时，整批都不会删除。'
@@ -2734,55 +2854,38 @@
         toast(dark ? '已切换为浅色主题' : '已切换为深色主题', 'info');
       });
 
-      document
-        .getElementById('moreFilter')
-        .addEventListener('click', (event) => {
-          const open = document
-            .getElementById('extraFilters')
-            .classList.toggle('open');
-          event.currentTarget.setAttribute('aria-expanded', String(open));
-          event.currentTarget.firstChild.textContent = open
-            ? '收起筛选 '
-            : '更多筛选 ';
-        });
+      document.getElementById('moreFilter').addEventListener('click', event => {
+        const open = document.getElementById('extraFilters').classList.toggle('open');
+        event.currentTarget.setAttribute('aria-expanded', String(open));
+        event.currentTarget.firstChild.textContent = open ? '收起筛选 ' : '更多筛选 ';
+      });
 
-      document
-        .getElementById('queryButton')
-        .addEventListener('click', applyFilters);
-      document
-        .getElementById('resetButton')
-        .addEventListener('click', resetFilters);
-      ['postNameQuery', 'postCodeQuery', 'categoryQuery'].forEach((id) =>
-        document.getElementById(id).addEventListener('keydown', (event) => {
+      document.getElementById('queryButton').addEventListener('click', applyFilters);
+      document.getElementById('resetButton').addEventListener('click', resetFilters);
+      ['postNameQuery', 'postCodeQuery', 'categoryQuery'].forEach(id =>
+        document.getElementById(id).addEventListener('keydown', event => {
           if (event.key === 'Enter') applyFilters();
-        }),
+        })
       );
 
-      document.querySelectorAll('.tree-row').forEach((treeRow) => {
-        treeRow.addEventListener('click', (event) => {
+      document.querySelectorAll('.tree-row').forEach(treeRow => {
+        treeRow.addEventListener('click', event => {
           if (event.target.closest('.tree-toggle')) {
             const toggle = event.target.closest('.tree-toggle');
             toggle.classList.toggle('collapsed');
             const parentId = treeRow.dataset.dept;
             const hidden = toggle.classList.contains('collapsed');
-            document
-              .querySelectorAll(`.tree-row[data-parent="${parentId}"]`)
-              .forEach((child) => {
-                child.hidden = hidden;
-              });
+            document.querySelectorAll(`.tree-row[data-parent="${parentId}"]`).forEach(child => {
+              child.hidden = hidden;
+            });
             treeRow.setAttribute('aria-expanded', String(!hidden));
             return;
           }
-          document
-            .querySelectorAll('.tree-row')
-            .forEach((row) => row.classList.remove('active'));
+          document.querySelectorAll('.tree-row').forEach(row => row.classList.remove('active'));
           treeRow.classList.add('active');
           activeDept = {
             id: treeRow.dataset.dept,
-            name:
-              treeRow.dataset.name === '全部部门'
-                ? '全部部门'
-                : `${treeRow.dataset.name}及下级`,
+            name: treeRow.dataset.name === '全部部门' ? '全部部门' : `${treeRow.dataset.name}及下级`
           };
           document.getElementById('exactDeptQuery').value = '';
           applyFilters();
@@ -2793,91 +2896,55 @@
       deptSearch.addEventListener('input', () => {
         const value = deptSearch.value.trim().toLowerCase();
         let visible = 0;
-        document.querySelectorAll('.tree-row').forEach((row) => {
-          const show =
-            !value ||
-            row.dataset.name.toLowerCase().includes(value) ||
-            row.dataset.dept === 'all';
+        document.querySelectorAll('.tree-row').forEach(row => {
+          const show = !value || row.dataset.name.toLowerCase().includes(value) || row.dataset.dept === 'all';
           row.hidden = !show;
           if (show && row.dataset.dept !== 'all') visible += 1;
         });
-        document.getElementById('clearDeptSearch').style.display = value
-          ? 'grid'
-          : 'none';
-        document.getElementById('deptResultCount').textContent =
-          `${visible} 个部门`;
+        document.getElementById('clearDeptSearch').style.display = value ? 'grid' : 'none';
+        document.getElementById('deptResultCount').textContent = `${visible} 个部门`;
       });
 
-      document
-        .getElementById('clearDeptSearch')
-        .addEventListener('click', () => {
-          deptSearch.value = '';
-          deptSearch.dispatchEvent(new Event('input'));
-          deptSearch.focus();
-        });
+      document.getElementById('clearDeptSearch').addEventListener('click', () => {
+        deptSearch.value = '';
+        deptSearch.dispatchEvent(new Event('input'));
+        deptSearch.focus();
+      });
 
       document.getElementById('collapseAll').addEventListener('click', () => {
-        document
-          .querySelectorAll('.tree-toggle')
-          .forEach((toggle) => toggle.classList.add('collapsed'));
-        document
-          .querySelectorAll(
-            '.tree-row[data-level="1"], .tree-row[data-level="2"]',
-          )
-          .forEach((row) => {
-            row.hidden = true;
-          });
+        document.querySelectorAll('.tree-toggle').forEach(toggle => toggle.classList.add('collapsed'));
+        document.querySelectorAll('.tree-row[data-level="1"], .tree-row[data-level="2"]').forEach(row => {
+          row.hidden = true;
+        });
         toast('部门树已收起', 'info');
       });
 
-      document
-        .getElementById('mobileDeptSelect')
-        .addEventListener('change', (event) => {
-          const option =
-            event.currentTarget.options[event.currentTarget.selectedIndex];
-          activeDept = {
-            id: event.currentTarget.value,
-            name: option.textContent,
-          };
-          applyFilters();
-        });
+      document.getElementById('mobileDeptSelect').addEventListener('change', event => {
+        const option = event.currentTarget.options[event.currentTarget.selectedIndex];
+        activeDept = {
+          id: event.currentTarget.value,
+          name: option.textContent
+        };
+        applyFilters();
+      });
 
-      document
-        .getElementById('selectAll')
-        .addEventListener('change', (event) => {
-          rowChecks().forEach((checkbox) => {
-            if (checkbox.closest('tr').style.display !== 'none')
-              checkbox.checked = event.currentTarget.checked;
-          });
-          updateSelection();
+      document.getElementById('selectAll').addEventListener('change', event => {
+        rowChecks().forEach(checkbox => {
+          if (checkbox.closest('tr').style.display !== 'none') checkbox.checked = event.currentTarget.checked;
         });
-      rowChecks().forEach((checkbox) =>
-        checkbox.addEventListener('change', updateSelection),
-      );
+        updateSelection();
+      });
+      rowChecks().forEach(checkbox => checkbox.addEventListener('change', updateSelection));
 
-      document
-        .getElementById('addButton')
-        .addEventListener('click', () => openDrawer());
-      document
-        .getElementById('editSelectedButton')
-        .addEventListener('click', () => openDrawer(selectedRows()[0]));
+      document.getElementById('addButton').addEventListener('click', () => openDrawer());
+      document.getElementById('editSelectedButton').addEventListener('click', () => openDrawer(selectedRows()[0]));
       document
         .querySelectorAll('.edit-row')
-        .forEach((button) =>
-          button.addEventListener('click', () =>
-            openDrawer(button.closest('tr')),
-          ),
-        );
+        .forEach(button => button.addEventListener('click', () => openDrawer(button.closest('tr'))));
       document
         .querySelectorAll('.delete-row')
-        .forEach((button) =>
-          button.addEventListener('click', () =>
-            openDelete([button.closest('tr')]),
-          ),
-        );
-      document
-        .getElementById('deleteSelectedButton')
-        .addEventListener('click', () => openDelete(selectedRows()));
+        .forEach(button => button.addEventListener('click', () => openDelete([button.closest('tr')])));
+      document.getElementById('deleteSelectedButton').addEventListener('click', () => openDelete(selectedRows()));
 
       form.addEventListener('input', () => {
         drawerDirty = true;
@@ -2885,36 +2952,23 @@
       form.addEventListener('change', () => {
         drawerDirty = true;
       });
-      document
-        .getElementById('formRemark')
-        .addEventListener('input', (event) => {
-          document.getElementById('remarkCount').textContent =
-            event.currentTarget.value.length;
-        });
+      document.getElementById('formRemark').addEventListener('input', event => {
+        document.getElementById('remarkCount').textContent = event.currentTarget.value.length;
+      });
       document.getElementById('savePost').addEventListener('click', savePost);
-      document
-        .getElementById('closeDrawer')
-        .addEventListener('click', () => closeDrawer());
-      document
-        .getElementById('cancelDrawer')
-        .addEventListener('click', () => closeDrawer());
+      document.getElementById('closeDrawer').addEventListener('click', () => closeDrawer());
+      document.getElementById('cancelDrawer').addEventListener('click', () => closeDrawer());
       drawerOverlay.addEventListener('click', () => closeDrawer());
-      document
-        .getElementById('continueEdit')
-        .addEventListener('click', () => discardModal.classList.remove('open'));
-      document
-        .getElementById('confirmDiscard')
-        .addEventListener('click', () => {
-          discardModal.classList.remove('open');
-          closeDrawer(true);
-        });
+      document.getElementById('continueEdit').addEventListener('click', () => discardModal.classList.remove('open'));
+      document.getElementById('confirmDiscard').addEventListener('click', () => {
+        discardModal.classList.remove('open');
+        closeDrawer(true);
+      });
 
-      document
-        .getElementById('cancelDelete')
-        .addEventListener('click', () => deleteModal.classList.remove('open'));
+      document.getElementById('cancelDelete').addEventListener('click', () => deleteModal.classList.remove('open'));
       document.getElementById('confirmDelete').addEventListener('click', () => {
         deleteModal.classList.remove('open');
-        pendingDeleteRows.forEach((row) => row.remove());
+        pendingDeleteRows.forEach(row => row.remove());
         const deletedCount = pendingDeleteRows.length;
         pendingDeleteRows = [];
         clearSelection();
@@ -2925,37 +2979,29 @@
 
       document
         .getElementById('exportButton')
-        .addEventListener('click', () =>
-          toast('导出接口尚未实现，正式页面接入后开放', 'info'),
-        );
+        .addEventListener('click', () => toast('导出接口尚未实现，正式页面接入后开放', 'info'));
       document.getElementById('refreshButton').addEventListener('click', () => {
         clearSelection();
         toast('岗位列表已刷新');
       });
       document
         .getElementById('columnsButton')
-        .addEventListener('click', () =>
-          toast('列设置：岗位名称、状态与操作列固定显示', 'info'),
-        );
+        .addEventListener('click', () => toast('列设置：岗位名称、状态与操作列固定显示', 'info'));
 
-      document.querySelectorAll('.page-button').forEach((button) =>
+      document.querySelectorAll('.page-button').forEach(button =>
         button.addEventListener('click', () => {
           if (!/^\d+$/.test(button.textContent.trim())) return;
-          document
-            .querySelectorAll('.page-button')
-            .forEach((item) => item.classList.remove('active'));
+          document.querySelectorAll('.page-button').forEach(item => item.classList.remove('active'));
           button.classList.add('active');
           clearSelection();
           toast(`已切换到第 ${button.textContent.trim()} 页`, 'info');
-        }),
+        })
       );
 
-      document.addEventListener('keydown', (event) => {
+      document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
-        if (discardModal.classList.contains('open'))
-          discardModal.classList.remove('open');
-        else if (deleteModal.classList.contains('open'))
-          deleteModal.classList.remove('open');
+        if (discardModal.classList.contains('open')) discardModal.classList.remove('open');
+        else if (deleteModal.classList.contains('open')) deleteModal.classList.remove('open');
         else if (drawer.classList.contains('open')) closeDrawer();
       });
     </script>

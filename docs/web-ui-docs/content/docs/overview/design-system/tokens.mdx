@@ -9,11 +9,11 @@ description: 颜色、尺寸、圆角、间距和字体在项目中的使用方�
 
 颜色分为三类：
 
-| 类型 | 示例 | 使用方式 |
-| --- | --- | --- |
-| 语义色 | `primary`、`success`、`warning` | 通过组件 `color` prop 表达业务语义 |
-| 前景色 | `primary-foreground` | 由组件自动选择，业务代码一般不需要手写 |
-| 背景与边框 | `background`、`border`、`muted` | 用于页面容器、说明区域、分隔层级 |
+| 类型       | 示例                            | 使用方式                               |
+| ---------- | ------------------------------- | -------------------------------------- |
+| 语义色     | `primary`、`success`、`warning` | 通过组件 `color` prop 表达业务语义     |
+| 前景色     | `primary-foreground`            | 由组件自动选择，业务代码一般不需要手写 |
+| 背景与边框 | `background`、`border`、`muted` | 用于页面容器、说明区域、分隔层级       |
 
 推荐写法：
 
@@ -44,7 +44,9 @@ description: 颜色、尺寸、圆角、间距和字体在项目中的使用方�
 全局圆角由 `@skyroc/tailwind-plugin` 注入。组件内部会根据自身层级使用合适的圆角，不需要在业务代码里统一追加 `rounded-*`。
 
 ```css
-@import '@skyroc/tailwind-plugin' with (radius: 0.5);
+@import '@skyroc/tailwind-plugin' with (
+  radius: 0.5
+);
 ```
 
 当项目需要更硬朗或更柔和的界面风格时，应优先调整主题层的 `radius`，而不是逐个覆盖组件。

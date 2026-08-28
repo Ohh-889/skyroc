@@ -43,8 +43,7 @@ export function useKeyboardKey() {
   };
 
   const getKeyboardKey = (value?: KbdValue) => {
-    if (!value)
-      return '';
+    if (!value) return '';
 
     if (value === 'meta' || value === 'alt' || value === 'ctrl') {
       return specificMapRef[value as keyof SpecificKeyboardKeyMap];

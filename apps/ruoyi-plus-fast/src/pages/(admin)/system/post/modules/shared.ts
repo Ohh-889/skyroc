@@ -65,12 +65,12 @@ export function normalizePostSearchParams(params: Partial<PostListParams>): Post
 export function hasPostFilters(params: Partial<PostListParams>) {
   return Boolean(
     params.beginTime ||
-      params.belongDeptId ||
-      params.deptId ||
-      params.endTime ||
-      params.postCategory ||
-      params.postCode ||
-      params.postName ||
-      params.status
+    params.belongDeptId ||
+    params.deptId ||
+    params.endTime ||
+    params.postCategory ||
+    params.postCode ||
+    params.postName ||
+    params.status
   );
 }

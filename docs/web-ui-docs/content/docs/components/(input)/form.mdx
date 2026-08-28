@@ -49,13 +49,16 @@ Form 系统分为三层：
 ```tsx
 <Form
   initialValues={{ email: '', password: '' }}
-  onFinish={(values) => console.log('提交:', values)}
-  onFinishFailed={(error) => console.log('验证失败:', error)}
+  onFinish={values => console.log('提交:', values)}
+  onFinishFailed={error => console.log('验证失败:', error)}
 >
   <FormField
     name="email"
     label="邮箱"
-    rules={[{ required: true, message: '请输入邮箱' }, { type: 'email', message: '邮箱格式不正确' }]}
+    rules={[
+      { required: true, message: '请输入邮箱' },
+      { type: 'email', message: '邮箱格式不正确' }
+    ]}
     component={Input}
   />
   <FormField
@@ -85,10 +88,10 @@ const [form] = useForm();
 
 form.setFieldsValue({ name: 'John', email: 'john@example.com' });
 form.setFieldValue('name', 'Updated Name');
-form.getFieldsValue();       // 获取全部值
-form.getFieldValue('name');  // 获取单个字段值
-form.resetFields();          // 重置全部
-form.resetFields(['name']);  // 重置指定字段
+form.getFieldsValue(); // 获取全部值
+form.getFieldValue('name'); // 获取单个字段值
+form.resetFields(); // 重置全部
+form.resetFields(['name']); // 重置指定字段
 ```
 
 ## 字段验证
@@ -123,11 +126,22 @@ const schema = z.object({
   age: z.number().min(18, '须年满 18 岁')
 });
 
-<Form schema={schema} onFinish={(values) => console.log(values)}>
-  <FormField name="username" label="用户名" component={Input} />
-  <FormField name="age" label="年龄" component={Input} />
+<Form
+  schema={schema}
+  onFinish={values => console.log(values)}
+>
+  <FormField
+    name="username"
+    label="用户名"
+    component={Input}
+  />
+  <FormField
+    name="age"
+    label="年龄"
+    component={Input}
+  />
   <button type="submit">提交</button>
-</Form>
+</Form>;
 ```
 
 ## 异步验证
@@ -144,13 +158,21 @@ const schema = z.object({
 
 ```tsx
 <Form initialValues={{ price: 0, quantity: 1, total: 0 }}>
-  <FormField name="price" label="单价" component={Input} />
-  <FormField name="quantity" label="数量" component={Input} />
+  <FormField
+    name="price"
+    label="单价"
+    component={Input}
+  />
+  <FormField
+    name="quantity"
+    label="数量"
+    component={Input}
+  />
   <FormComputedField
     name="total"
     label="总价"
     deps={['price', 'quantity']}
-    compute={(get) => (get('price') || 0) * (get('quantity') || 0)}
+    compute={get => (get('price') || 0) * (get('quantity') || 0)}
     component={Input}
   />
 </Form>
@@ -169,12 +191,28 @@ const schema = z.object({
       <>
         {fields.map((field, index) => (
           <div key={field.key}>
-            <FormField name={`${field.name}.name`} label="姓名" component={Input} />
-            <FormField name={`${field.name}.email`} label="邮箱" component={Input} />
-            <button type="button" onClick={() => remove(index)}>删除</button>
+            <FormField
+              name={`${field.name}.name`}
+              label="姓名"
+              component={Input}
+            />
+            <FormField
+              name={`${field.name}.email`}
+              label="邮箱"
+              component={Input}
+            />
+            <button
+              type="button"
+              onClick={() => remove(index)}
+            >
+              删除
+            </button>
           </div>
         ))}
-        <button type="button" onClick={() => insert(fields.length, { name: '', email: '' })}>
+        <button
+          type="button"
+          onClick={() => insert(fields.length, { name: '', email: '' })}
+        >
           添加用户
         </button>
       </>
@@ -190,7 +228,7 @@ const schema = z.object({
 <Demo src="@playground/form/modules/FieldChange" />
 
 ```tsx
-useEffectField(['country'], (get) => {
+useEffectField(['country'], get => {
   const country = get('country');
   console.log('国家变更为:', country);
 });
@@ -216,10 +254,7 @@ const allValues = useWatch(); // 使用 context 中的 form
 <Demo src="@playground/form/modules/UseSelector" />
 
 ```tsx
-const total = useSelector(
-  (get) => (get('price') || 0) * (get('quantity') || 0),
-  { deps: ['price', 'quantity'] }
-);
+const total = useSelector(get => (get('price') || 0) * (get('quantity') || 0), { deps: ['price', 'quantity'] });
 ```
 
 ## 重置表单
@@ -247,12 +282,15 @@ const total = useSelector(
 <Demo src="@playground/form/modules/Middleware" />
 
 ```tsx
-const loggingMiddleware = ({ getState }) => (next) => (action) => {
-  console.log('Before:', action.type, getState());
-  const result = next(action);
-  console.log('After:', getState());
-  return result;
-};
+const loggingMiddleware =
+  ({ getState }) =>
+  next =>
+  action => {
+    console.log('Before:', action.type, getState());
+    const result = next(action);
+    console.log('After:', getState());
+    return result;
+  };
 
 form.use(loggingMiddleware);
 ```
@@ -293,7 +331,7 @@ const { canUndo, canRedo, undo, redo } = useUndoRedo(form);
     {
       name: 'component',
       description: '渲染的容器元素，设为 false 则不渲染包裹元素',
-      type: "ElementType | false",
+      type: 'ElementType | false',
       default: "'form'"
     },
     {
@@ -522,38 +560,38 @@ const { canUndo, canRedo, undo, redo } = useUndoRedo(form);
 
 **值操作**
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `getFieldValue` | `(name) => value` | 获取指定字段的值 |
-| `getFieldsValue` | `(names?) => values` | 获取多个字段值，不传参时返回全部 |
-| `setFieldValue` | `(name, value) => void` | 设置指定字段的值 |
-| `setFieldsValue` | `(values) => void` | 批量设置多个字段的值 |
-| `setDisabled` | `(name, disabled) => void` | 设置字段禁用状态 |
-| `setHidden` | `(name, hidden) => void` | 设置字段隐藏状态 |
+| 方法             | 签名                       | 说明                             |
+| ---------------- | -------------------------- | -------------------------------- |
+| `getFieldValue`  | `(name) => value`          | 获取指定字段的值                 |
+| `getFieldsValue` | `(names?) => values`       | 获取多个字段值，不传参时返回全部 |
+| `setFieldValue`  | `(name, value) => void`    | 设置指定字段的值                 |
+| `setFieldsValue` | `(values) => void`         | 批量设置多个字段的值             |
+| `setDisabled`    | `(name, disabled) => void` | 设置字段禁用状态                 |
+| `setHidden`      | `(name, hidden) => void`   | 设置字段隐藏状态                 |
 
 **状态查询**
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `getField` | `(name) => Meta` | 获取字段完整元数据 |
-| `getFields` | `(names?) => MetaShape` | 获取多个字段的元数据 |
-| `getFieldError` | `(name) => string[]` | 获取字段错误信息 |
-| `getFieldsError` | `(names?) => Record` | 获取多个字段的错误信息 |
-| `getFieldTouched` | `(name) => boolean` | 字段是否被触碰过 |
-| `getFieldValidating` | `(name) => boolean` | 字段是否正在验证 |
-| `getFormState` | `() => FormState` | 获取完整表单状态快照 |
-| `isDisabled` | `(name) => boolean` | 字段是否禁用 |
-| `isHidden` | `(name) => boolean` | 字段是否隐藏 |
+| 方法                 | 签名                    | 说明                   |
+| -------------------- | ----------------------- | ---------------------- |
+| `getField`           | `(name) => Meta`        | 获取字段完整元数据     |
+| `getFields`          | `(names?) => MetaShape` | 获取多个字段的元数据   |
+| `getFieldError`      | `(name) => string[]`    | 获取字段错误信息       |
+| `getFieldsError`     | `(names?) => Record`    | 获取多个字段的错误信息 |
+| `getFieldTouched`    | `(name) => boolean`     | 字段是否被触碰过       |
+| `getFieldValidating` | `(name) => boolean`     | 字段是否正在验证       |
+| `getFormState`       | `() => FormState`       | 获取完整表单状态快照   |
+| `isDisabled`         | `(name) => boolean`     | 字段是否禁用           |
+| `isHidden`           | `(name) => boolean`     | 字段是否隐藏           |
 
 **操作**
 
-| 方法 | 签名 | 说明 |
-| --- | --- | --- |
-| `validateField` | `(name, opts?) => Promise<boolean>` | 验证指定字段 |
-| `validateFields` | `(names?, opts?) => Promise<boolean>` | 验证多个字段 |
-| `resetFields` | `(names?) => void` | 重置字段到初始值 |
-| `submit` | `() => void` | 触发表单提交 |
-| `use` | `(middleware) => void` | 添加中间件 |
+| 方法             | 签名                                  | 说明             |
+| ---------------- | ------------------------------------- | ---------------- |
+| `validateField`  | `(name, opts?) => Promise<boolean>`   | 验证指定字段     |
+| `validateFields` | `(names?, opts?) => Promise<boolean>` | 验证多个字段     |
+| `resetFields`    | `(names?) => void`                    | 重置字段到初始值 |
+| `submit`         | `() => void`                          | 触发表单提交     |
+| `use`            | `(middleware) => void`                | 添加中间件       |
 
 ## 类型
 
@@ -584,7 +622,11 @@ const { canUndo, canRedo, undo, redo } = useUndoRedo(form);
         { name: 'pattern', type: 'RegExp', description: '正则表达式匹配。' },
         { name: 'enum', type: 'any[]', description: 'type 为 enum 时的允许值列表。' },
         { name: 'whitespace', type: 'boolean', description: '是否禁止纯空白字符串。' },
-        { name: 'validator', type: '(rule: Rule, value: any, values: any) => Promise<string | any> | string | undefined', description: '自定义验证函数，返回字符串表示错误。' },
+        {
+          name: 'validator',
+          type: '(rule: Rule, value: any, values: any) => Promise<string | any> | string | undefined',
+          description: '自定义验证函数，返回字符串表示错误。'
+        },
         { name: 'warningOnly', type: 'boolean', description: '为 true 时验证失败仅产生警告，不阻止提交。' },
         { name: 'validateTrigger', type: 'string | string[]', description: '指定触发此规则的事件。' },
         { name: 'transform', type: '(value: any) => any', description: '验证前转换值的函数。' },

@@ -2,16 +2,5 @@
   "title": "数据展示",
   "defaultOpen": true,
   "collapsible": false,
-  "pages": [
-    "card",
-    "badge",
-    "tag",
-    "avatar",
-    "list",
-    "tree",
-    "carousel",
-    "progress",
-    "skeleton",
-    "virtualizer"
-  ]
+  "pages": ["card", "badge", "tag", "avatar", "list", "tree", "carousel", "progress", "skeleton", "virtualizer"]
 }

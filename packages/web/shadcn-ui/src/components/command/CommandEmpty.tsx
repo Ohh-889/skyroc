@@ -1,5 +1,5 @@
-import { CommandEmpty as _CommandEmpty } from 'cmdk';
 import { cn } from '@skyroc/utils';
+import { CommandEmpty as _CommandEmpty } from 'cmdk';
 import { commandVariants } from './command-variants';
 import type { CommandEmptyProps } from './types';
 

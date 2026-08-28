@@ -2,7 +2,7 @@ import { Button, PasswordInput, Text } from '@skyroc/native-ui';
 import { useRef } from 'react';
 import { TextInput, View } from 'react-native';
 
-/** ref 暴露 focus / blur，用于验证码页面进入即弹键盘一类场景 */
+/** Ref 暴露 focus / blur，用于验证码页面进入即弹键盘一类场景 */
 const PasswordInputRef = () => {
   const inputRef = useRef<TextInput>(null);
 

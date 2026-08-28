@@ -21,8 +21,8 @@ export const popupVariants = tv({
     /**
      * 底部安全区避让（home indicator）。
      *
-     * 走 uniwind 的 pb-safe 而不是读 SafeAreaInsetsContext：安全区尺寸由应用根节点的 Uniwind.updateInsets 同步进运行时，不依赖弹层所在的
-     * React 树里有没有 SafeAreaProvider——弹层挂在原生 Modal 里，context 本来就未必接得上。
+     * 走 uniwind 的 pb-safe 而不是读 SafeAreaInsetsContext：安全区尺寸由应用根节点的 Uniwind.updateInsets 同步进运行时，不依赖弹层所在的 React 树里有没有
+     * SafeAreaProvider——弹层挂在原生 Modal 里，context 本来就未必接得上。
      */
     safeAreaInsetBottom: {
       true: 'pb-safe'
@@ -34,8 +34,8 @@ export const popupVariants = tv({
     /**
      * 容器自身是否作为面板绘制背景
      *
-     * 默认 true：多数弹层（抽屉、底部面板）就是那块面板，内容只往里塞文字。 内容自带卡片时必须关掉——容器的不透明底铺满整个矩形，会盖在子节点圆角的外侧，
-     * 把子节点辛苦画出来的圆角原样填成直角，而且怎么改子节点的 className 都不会有变化。
+     * 默认 true：多数弹层（抽屉、底部面板）就是那块面板，内容只往里塞文字。 内容自带卡片时必须关掉——容器的不透明底铺满整个矩形，会盖在子节点圆角的外侧， 把子节点辛苦画出来的圆角原样填成直角，而且怎么改子节点的
+     * className 都不会有变化。
      */
     surface: {
       false: 'bg-transparent',

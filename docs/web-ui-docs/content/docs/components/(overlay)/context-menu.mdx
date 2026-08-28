@@ -6,11 +6,7 @@ description: 右键触发的上下文菜单，支持嵌套子菜单、复选框�
 上下文菜单（ContextMenu）在用户右键点击触发区域时弹出，提供与当前上下文相关的操作列表。组件基于 Radix ContextMenu 封装，通过 `items` 数组数据驱动渲染，支持普通选项、子菜单、标签、分隔线、复选框组和单选组。
 
 ```tsx
-import {
-  ContextMenu,
-  ContextMenuCheckbox,
-  ContextMenuRadio
-} from '@skyroc/web-ui';
+import { ContextMenu, ContextMenuCheckbox, ContextMenuRadio } from '@skyroc/web-ui';
 ```
 
 ## 架构说明
@@ -113,14 +109,14 @@ ContextMenu 提供三个主入口组件，适应不同场景：
 
 `items` 数组中的每个元素通过 `type` 字段区分类型：
 
-| 类型        | 说明                                 | 必填字段                 |
-| ----------- | ------------------------------------ | ----------------------- |
-| `item`      | 可选择的菜单项（默认类型，可省略）   | `label`                 |
-| `label`     | 不可交互的分组标签                   | `type`、`label`         |
-| `separator` | 分隔线                               | `type`                  |
-| `sub`       | 子菜单，展开后显示嵌套选项           | `type`、`children`      |
-| `checkbox`  | 复选框组，支持多选                   | `type`、`children`      |
-| `radio`     | 单选组，支持互斥选择                 | `type`、`children`      |
+| 类型        | 说明                               | 必填字段           |
+| ----------- | ---------------------------------- | ------------------ |
+| `item`      | 可选择的菜单项（默认类型，可省略） | `label`            |
+| `label`     | 不可交互的分组标签                 | `type`、`label`    |
+| `separator` | 分隔线                             | `type`             |
+| `sub`       | 子菜单，展开后显示嵌套选项         | `type`、`children` |
+| `checkbox`  | 复选框组，支持多选                 | `type`、`children` |
+| `radio`     | 单选组，支持互斥选择               | `type`、`children` |
 
 **普通选项（item）**
 
@@ -402,7 +398,8 @@ ContextMenu 提供三个主入口组件，适应不同场景：
     },
     {
       name: 'ContextMenuContentProps',
-      description: '菜单内容容器属性。继承 Radix ContextMenu Content 的定位属性（side、sideOffset、align、alignOffset 等）。',
+      description:
+        '菜单内容容器属性。继承 Radix ContextMenu Content 的定位属性（side、sideOffset、align、alignOffset 等）。',
       fields: [
         { name: 'className', type: 'ClassValue', description: '内容容器 class。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '尺寸。' },
@@ -425,7 +422,11 @@ ContextMenu 提供三个主入口组件，适应不同场景：
         { name: 'trailing', type: 'ReactNode', description: '后置插槽。' },
         { name: 'shortcut', type: 'string | string[]', description: '关联键盘快捷键。' },
         { name: 'indicatorIcon', type: 'ReactNode', description: '自定义勾选指示器图标。' },
-        { name: 'type', type: "'label' | 'separator'", description: '如果为 label 或 separator，则渲染为标签或分隔线而非复选项。' }
+        {
+          name: 'type',
+          type: "'label' | 'separator'",
+          description: '如果为 label 或 separator，则渲染为标签或分隔线而非复选项。'
+        }
       ]
     },
     {
@@ -439,7 +440,11 @@ ContextMenu 提供三个主入口组件，适应不同场景：
         { name: 'trailing', type: 'ReactNode', description: '后置插槽。' },
         { name: 'shortcut', type: 'string | string[]', description: '关联键盘快捷键。' },
         { name: 'indicatorIcon', type: 'ReactNode', description: '自定义选中指示器图标。' },
-        { name: 'type', type: "'label' | 'separator'", description: '如果为 label 或 separator，则渲染为标签或分隔线而非单选项。' }
+        {
+          name: 'type',
+          type: "'label' | 'separator'",
+          description: '如果为 label 或 separator，则渲染为标签或分隔线而非单选项。'
+        }
       ]
     }
   ]}

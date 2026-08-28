@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
 import { Card } from '@skyroc/web-ui';
+import type { Metadata } from 'next';
 import { generateComponentMetadata } from '../components-meta';
-import FormBasic from './modules/FormBasic';
-import Default from './modules/Default';
+import AsyncValidatorResolver from './modules/AsyncValidatorResolver';
 import ClearDestroy from './modules/ClearDestroy';
 import ComputedDemo from './modules/ComputedDemo';
 import CustomValidateMessages from './modules/CustomValidateMessages';
+import Default from './modules/Default';
 import FieldChange from './modules/FieldChange';
+import FormBasic from './modules/FormBasic';
 import List from './modules/List';
 import Middleware from './modules/Middleware';
 import Preserve from './modules/Preserve';
@@ -18,7 +19,6 @@ import UseWatch from './modules/UseWatch';
 import Validate from './modules/validate';
 import ValidateWarning from './modules/validateWaring';
 import ZodResolver from './modules/ZodResolver';
-import AsyncValidatorResolver from './modules/AsyncValidatorResolver';
 
 export async function generateMetadata(): Promise<Metadata> {
   return await generateComponentMetadata('form');

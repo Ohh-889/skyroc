@@ -1,10 +1,10 @@
 /**
  * Re-exported so consumers write to storage-backed atoms without importing `jotai/utils` themselves.
  *
- * `RESET` is a module-level `unique symbol`: a second copy of jotai (pnpm forks it whenever peer
- * resolution differs) carries a *different* symbol, and `set(atom, RESET)` from the wrong copy fails
- * the identity check — the symbol gets persisted as a value instead of clearing the entry. Taking it
- * from here guarantees it comes from the same jotai instance the atoms were created with.
+ * `RESET` is a module-level `unique symbol`: a second copy of jotai (pnpm forks it whenever peer resolution differs)
+ * carries a _different_ symbol, and `set(atom, RESET)` from the wrong copy fails the identity check — the symbol gets
+ * persisted as a value instead of clearing the entry. Taking it from here guarantees it comes from the same jotai
+ * instance the atoms were created with.
  */
 export { RESET } from 'jotai/utils';
 // Provider

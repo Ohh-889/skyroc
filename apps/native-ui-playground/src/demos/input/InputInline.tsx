@@ -1,7 +1,7 @@
 import { Input, Text } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
-/** none 变体不再强制右对齐，需要靠右时由调用方传 textAlign */
+/** None 变体不再强制右对齐，需要靠右时由调用方传 textAlign */
 const InputInline = () => {
   return (
     <View className="gap-3 bg-background p-4">

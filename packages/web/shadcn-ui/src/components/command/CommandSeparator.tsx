@@ -1,5 +1,5 @@
-import { CommandSeparator as _CommandSeparator } from 'cmdk';
 import { cn } from '@skyroc/utils';
+import { CommandSeparator as _CommandSeparator } from 'cmdk';
 import { commandVariants } from './command-variants';
 import type { CommandSeparatorProps } from './types';
 

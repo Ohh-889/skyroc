@@ -21,23 +21,23 @@ export const toggleVariants = tv({
         groupRoot: `gap-3`,
         toggle: `h-12 px-10 text-xl`
       },
-      'lg': {
+      lg: {
         groupRoot: `gap-2.5`,
         toggle: `h-9 px-6 text-base`
       },
-      'md': {
+      md: {
         groupRoot: `gap-2`,
         toggle: `h-8 px-4 text-sm`
       },
-      'sm': {
+      sm: {
         groupRoot: `gap-1.75`,
         toggle: `h-7 px-2 text-xs`
       },
-      'xl': {
+      xl: {
         groupRoot: `gap-3`,
         toggle: `h-10 px-8 text-lg`
       },
-      'xs': {
+      xs: {
         groupRoot: `gap-1.5`,
         toggle: `h-6 px-1.5 text-2xs`
       }

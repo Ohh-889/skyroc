@@ -10,8 +10,8 @@ import type { SetStateAction } from 'jotai/vanilla';
  * 1. Access / modify atoms outside React (axios interceptors, event handlers, etc.)
  * 2. Test environments
  *
- * Inside React, read and write atoms with `useAtom` and let {@link JotaiProvider} supply this store — passing
- * `{ store: globalStore }` at every call site defeats the Provider and makes the subtree impossible to isolate.
+ * Inside React, read and write atoms with `useAtom` and let {@link JotaiProvider} supply this store — passing `{ store:
+ * globalStore }` at every call site defeats the Provider and makes the subtree impossible to isolate.
  *
  * **Not suitable for SSR.** This is a module-level singleton, so a Node server shares one store across every request
  * and one user's state leaks into another's render. Server rendering needs a per-request `createStore()` passed to

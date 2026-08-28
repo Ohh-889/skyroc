@@ -1,6 +1,6 @@
-import { remark } from 'remark';
-import remarkGfm from 'remark-gfm';
-import remarkRehype from 'remark-rehype';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import defaultMdxComponents from 'fumadocs-ui/mdx';
+import type { ElementContent, Root, RootContent } from 'hast';
 import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import {
   Children,
@@ -9,13 +9,13 @@ import {
   type ReactNode,
   Suspense,
   use,
-  useDeferredValue,
+  useDeferredValue
 } from 'react';
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
 import { visit } from 'unist-util-visit';
-import type { ElementContent, Root, RootContent } from 'hast';
 
 export interface Processor {
   process: (content: string) => Promise<ReactNode>;
@@ -30,16 +30,16 @@ export function rehypeWrapWords() {
       const words = node.value.split(/(?=\s)/);
 
       // Create new span nodes for each word and whitespace
-      const newNodes: ElementContent[] = words.flatMap((word) => {
+      const newNodes: ElementContent[] = words.flatMap(word => {
         if (word.length === 0) return [];
 
         return {
           type: 'element',
           tagName: 'span',
           properties: {
-            class: 'animate-fd-fade-in',
+            class: 'animate-fd-fade-in'
           },
-          children: [{ type: 'text', value: word }],
+          children: [{ type: 'text', value: word }]
         };
       });
 
@@ -47,7 +47,7 @@ export function rehypeWrapWords() {
         type: 'element',
         tagName: 'span',
         properties: {},
-        children: newNodes,
+        children: newNodes
       } satisfies RootContent);
       return 'skip';
     });
@@ -70,10 +70,10 @@ function createProcessor(): Processor {
         components: {
           ...defaultMdxComponents,
           pre: Pre,
-          img: undefined, // use JSX
-        },
+          img: undefined // use JSX
+        }
       });
-    },
+    }
   };
 }
 
@@ -86,12 +86,17 @@ function Pre(props: ComponentProps<'pre'>) {
   let lang =
     codeProps.className
       ?.split(' ')
-      .find((v) => v.startsWith('language-'))
+      .find(v => v.startsWith('language-'))
       ?.slice('language-'.length) ?? 'text';
 
   if (lang === 'mdx') lang = 'md';
 
-  return <DynamicCodeBlock lang={lang} code={content.trimEnd()} />;
+  return (
+    <DynamicCodeBlock
+      lang={lang}
+      code={content.trimEnd()}
+    />
+  );
 }
 
 const processor = createProcessor();

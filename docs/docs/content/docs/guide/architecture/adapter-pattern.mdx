@@ -56,10 +56,10 @@ Web 端注入 `@skyroc/axios` 实现：
 
 ```ts
 import { createAppRequest } from '@skyroc/service';
-import { createAxiosAdapter } from '@skyroc/axios/service';   // 仅 Web 用
+import { createAxiosAdapter } from '@skyroc/axios/service'; // 仅 Web 用
 
 const request = createAppRequest({
-  adapter: createAxiosAdapter({ baseURL, timeout: 10000 }),
+  adapter: createAxiosAdapter({ baseURL, timeout: 10000 })
   // ...
 });
 ```
@@ -84,10 +84,10 @@ export interface StorageAdapter {
 
 包内提供两套实现：
 
-| 子入口 | 实现 | 平台 |
-| --- | --- | --- |
-| `@skyroc/logger/web` | `WebStorageAdapter`（IndexedDB / localStorage） | Web |
-| `@skyroc/logger/native` | `RNStorageAdapter`（AsyncStorage） | RN |
+| 子入口                  | 实现                                            | 平台 |
+| ----------------------- | ----------------------------------------------- | ---- |
+| `@skyroc/logger/web`    | `WebStorageAdapter`（IndexedDB / localStorage） | Web  |
+| `@skyroc/logger/native` | `RNStorageAdapter`（AsyncStorage）              | RN   |
 
 业务方按需 import 对应实现并注入。详见 [@skyroc/logger](/docs/core/logger)。
 
@@ -131,13 +131,13 @@ RN 端实现：基于 `AsyncStorage`，相同接口语义。
 
 ## 何时该引入适配器
 
-| 场景 | 是否引入 |
-| --- | --- |
-| 模块只在 Web 用 | ❌（直接放 `web/`） |
-| 模块只在 RN 用 | ❌（直接放 `native/`） |
-| 同一业务逻辑，平台 API 不同 | ✅ 必须 |
-| 同一业务逻辑，平台 API 相同 | ❌（放 `@core/`） |
-| 跨平台但实现完全相同 | ❌（不需要 adapter，写一次即可） |
+| 场景                        | 是否引入                         |
+| --------------------------- | -------------------------------- |
+| 模块只在 Web 用             | ❌（直接放 `web/`）              |
+| 模块只在 RN 用              | ❌（直接放 `native/`）           |
+| 同一业务逻辑，平台 API 不同 | ✅ 必须                          |
+| 同一业务逻辑，平台 API 相同 | ❌（放 `@core/`）                |
+| 跨平台但实现完全相同        | ❌（不需要 adapter，写一次即可） |
 
 ## 注入时机
 
@@ -167,12 +167,12 @@ export const logger = createLogger({
 
 ## 收益对比
 
-| 维度 | 直接耦合平台 API | 适配器模式 |
-| --- | --- | --- |
-| 跨端复用 | 需要分支判断或维护多份 | 一份核心，多套适配器 |
-| 测试 | 必须模拟平台环境 | 注入内存版 adapter 即可 |
-| 维护 | 平台 API 变化影响核心 | 仅改对应适配器 |
-| 扩展 | 新增平台要改核心 | 新增平台仅写适配器 |
+| 维度     | 直接耦合平台 API       | 适配器模式              |
+| -------- | ---------------------- | ----------------------- |
+| 跨端复用 | 需要分支判断或维护多份 | 一份核心，多套适配器    |
+| 测试     | 必须模拟平台环境       | 注入内存版 adapter 即可 |
+| 维护     | 平台 API 变化影响核心  | 仅改对应适配器          |
+| 扩展     | 新增平台要改核心       | 新增平台仅写适配器      |
 
 ## 与包分层、平台优先的关系
 

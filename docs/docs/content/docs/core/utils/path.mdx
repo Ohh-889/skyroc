@@ -1,6 +1,6 @@
 ---
-title: "Path"
-description: "深层路径工具：解析 name path、读取 / 写入 / 删除嵌套值，并提供路径收集、前缀匹配与安全 key 保护"
+title: 'Path'
+description: '深层路径工具：解析 name path、读取 / 写入 / 删除嵌套值，并提供路径收集、前缀匹配与安全 key 保护'
 ---
 
 ## 概述
@@ -27,13 +27,13 @@ type NamePath = Key | PathTuple | undefined;
 
 常见写法：
 
-| 写法 | 解析结果 | 说明 |
-| --- | --- | --- |
-| `'profile.name'` | `['profile', 'name']` | 点路径 |
-| `'items[0].title'` | `['items', 0, 'title']` | 数组下标会转成 number |
+| 写法                  | 解析结果                | 说明                      |
+| --------------------- | ----------------------- | ------------------------- |
+| `'profile.name'`      | `['profile', 'name']`   | 点路径                    |
+| `'items[0].title'`    | `['items', 0, 'title']` | 数组下标会转成 number     |
 | `'items["sku.code"]'` | `['items', 'sku.code']` | 带点的 key 可用引号括起来 |
-| `['profile', 'name']` | `['profile', 'name']` | tuple 路径会复制一份 |
-| `0` | `[0]` | 单个 number key |
+| `['profile', 'name']` | `['profile', 'name']`   | tuple 路径会复制一份      |
+| `0`                   | `[0]`                   | 单个 number key           |
 
 ### `toPathArray(path)`
 
@@ -99,8 +99,8 @@ const source = {
   profile: {
     age: undefined,
     name: 'Alex',
-    nullable: null,
-  },
+    nullable: null
+  }
 };
 
 deepGet(source, 'profile.name');
@@ -124,11 +124,11 @@ deepGet(source, 'profile.nullable', 'fallback');
 
 `deepGet` 对 `undefined` 和 `null` 的语义不同：
 
-| 值 | 结果 |
-| --- | --- |
-| 目标值是 `undefined` | 返回默认值 |
-| 目标值是 `null` | 返回 `null` |
-| `path` 是 `null` / `undefined` / `[]` | 返回默认值 |
+| 值                                    | 结果        |
+| ------------------------------------- | ----------- |
+| 目标值是 `undefined`                  | 返回默认值  |
+| 目标值是 `null`                       | 返回 `null` |
+| `path` 是 `null` / `undefined` / `[]` | 返回默认值  |
 
 ## 写入值
 
@@ -177,7 +177,7 @@ import { deepUnset } from '@skyroc/utils';
 
 const source = {
   items: ['first', 'second'],
-  profile: { age: 18, name: 'Alex' },
+  profile: { age: 18, name: 'Alex' }
 };
 
 deepUnset(source, 'profile.age');
@@ -209,7 +209,7 @@ deepUnset(source, []) === source;
 deepSet({}, '__proto__.polluted', true);
 // {}
 
-({} as Record<string, unknown>).polluted;
+(({}) as Record<string, unknown>).polluted;
 // undefined
 ```
 
@@ -231,7 +231,7 @@ import { unflatten } from '@skyroc/utils';
 
 unflatten({
   'items[0].title': 'First',
-  'profile.name': 'Alex',
+  'profile.name': 'Alex'
 });
 
 // {
@@ -278,8 +278,8 @@ collectDeepKeys({
   nil: null,
   profile: {
     birthday: new Date('2026-05-07T00:00:00.000Z'),
-    name: 'Alex',
-  },
+    name: 'Alex'
+  }
 });
 
 // [
@@ -295,20 +295,20 @@ collectDeepKeys({
 
 这些工具主要供表单内核和路径写入逻辑复用。
 
-| 函数 | 说明 |
-| --- | --- |
-| `isPlainObject(value)` | 判断是否为普通对象，数组会返回 `false` |
-| `isObjectRecord(value)` | 判断是否为非 null 对象，数组也会返回 `true` |
-| `isObjectLike(value)` | 判断是否为非 null 对象 |
-| `isUnsafeKey(key)` | 判断 key 是否为 `__proto__`、`constructor` 或 `prototype` |
-| `toArrayIndex(key)` | key 是合法数组下标（非负整数、无前导零）时返回该数字，否则返回 `null` |
-| `emptyContainer(nextKey)` | `nextKey` 是数组下标时返回 `[]`，否则返回 `{}` |
+| 函数                      | 说明                                                                  |
+| ------------------------- | --------------------------------------------------------------------- |
+| `isPlainObject(value)`    | 判断是否为普通对象，数组会返回 `false`                                |
+| `isObjectRecord(value)`   | 判断是否为非 null 对象，数组也会返回 `true`                           |
+| `isObjectLike(value)`     | 判断是否为非 null 对象                                                |
+| `isUnsafeKey(key)`        | 判断 key 是否为 `__proto__`、`constructor` 或 `prototype`             |
+| `toArrayIndex(key)`       | key 是合法数组下标（非负整数、无前导零）时返回该数字，否则返回 `null` |
+| `emptyContainer(nextKey)` | `nextKey` 是数组下标时返回 `[]`，否则返回 `{}`                        |
 
 ## 类型参考
 
-| 类型 | 说明 |
-| --- | --- |
-| `Key` | `string \| number` |
-| `PathTuple` | `readonly Key[]` |
-| `NamePath` | `Key \| PathTuple \| undefined`，所有路径参数接受的形态 |
-| `SetOptions` | `deepSet` / `deepUnset` 的选项（`safeKeys`） |
+| 类型         | 说明                                                    |
+| ------------ | ------------------------------------------------------- |
+| `Key`        | `string \| number`                                      |
+| `PathTuple`  | `readonly Key[]`                                        |
+| `NamePath`   | `Key \| PathTuple \| undefined`，所有路径参数接受的形态 |
+| `SetOptions` | `deepSet` / `deepUnset` 的选项（`safeKeys`）            |

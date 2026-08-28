@@ -34,21 +34,40 @@ const PrintDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:printer-outline"
         resources={[{ label: 'Print.js', url: 'https://printjs.crabbly.com/' }]}
         tags={['print-js', 'JSON', 'Image']}
         title="打印示例"
       />
-      <ExamplePanel icon="mdi:printer-outline" title="打印数据">
-        <Space className="mb-4" wrap>
-          <Button type="primary" onClick={printTable}>
+      <ExamplePanel
+        icon="mdi:printer-outline"
+        title="打印数据"
+      >
+        <Space
+          className="mb-4"
+          wrap
+        >
+          <Button
+            type="primary"
+            onClick={printTable}
+          >
             打印表格
           </Button>
           <Button onClick={printImage}>打印图片</Button>
         </Space>
-        <Table columns={tableColumns} dataSource={demoUsers} pagination={false} rowKey="id" size="small" />
+        <Table
+          columns={tableColumns}
+          dataSource={demoUsers}
+          pagination={false}
+          rowKey="id"
+          size="small"
+        />
       </ExamplePanel>
     </Space>
   );

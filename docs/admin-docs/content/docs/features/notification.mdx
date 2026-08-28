@@ -11,28 +11,28 @@ description: 使用 @skyroc/web-admin-notification 接入后台 header 通知按
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 在后台 header 显示通知入口 | `pages/(admin)/layout.tsx`、`NotificationButton` |
-| 让业务页面发通知 | `useNotificationContext()` |
-| 修改通知声音 | `App.tsx`、`assets/audio/wechat-style-notification.wav`、`NotificationProvider.soundUrl` |
-| 控制浏览器通知、声音、勿扰模式 | `NotificationConfig`、`updateConfig()` |
-| 做通知演示或调试 | `pages/(admin)/manage/user/index.tsx`、`useMockNotifications()` |
-| 扩展通知包能力 | `packages/web/admin-notification/src/*` |
+| 场景                           | 重点位置                                                                                 |
+| ------------------------------ | ---------------------------------------------------------------------------------------- |
+| 在后台 header 显示通知入口     | `pages/(admin)/layout.tsx`、`NotificationButton`                                         |
+| 让业务页面发通知               | `useNotificationContext()`                                                               |
+| 修改通知声音                   | `App.tsx`、`assets/audio/wechat-style-notification.wav`、`NotificationProvider.soundUrl` |
+| 控制浏览器通知、声音、勿扰模式 | `NotificationConfig`、`updateConfig()`                                                   |
+| 做通知演示或调试               | `pages/(admin)/manage/user/index.tsx`、`useMockNotifications()`                          |
+| 扩展通知包能力                 | `packages/web/admin-notification/src/*`                                                  |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/App.tsx` | 在 `AntdProvider` 内挂载 `NotificationProvider`，并注入应用自己的通知音频。 |
-| `apps/admin/src/pages/(admin)/layout.tsx` | 把 `NotificationButton` 注入 `WebAdminLayout` 的 `headerMiddleActions`。 |
-| `apps/admin/src/pages/(admin)/manage/user/index.tsx` | 当前通知系统演示页，展示不同类型、优先级、批量操作、权限和配置控制。 |
-| `apps/admin/src/assets/audio/wechat-style-notification.wav` | 当前应用注入的通知声音资源。 |
-| `packages/web/admin-notification/src/NotificationProvider.tsx` | 通知上下文 Provider，封装 `useNotification()`。 |
-| `packages/web/admin-notification/src/NotificationButton.tsx` | Header 通知按钮，展示未读角标并弹出通知面板。 |
-| `packages/web/admin-notification/src/NotificationPanel.tsx` | 通知面板 UI。 |
-| `packages/web/admin-notification/src/use-notification.ts` | 通知状态、声音、浏览器通知、权限和勿扰模式逻辑。 |
-| `packages/web/admin-notification/src/types.ts` | 通知项、优先级、类型和运行时配置类型。 |
+| 文件                                                           | 职责                                                                        |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `apps/admin/src/App.tsx`                                       | 在 `AntdProvider` 内挂载 `NotificationProvider`，并注入应用自己的通知音频。 |
+| `apps/admin/src/pages/(admin)/layout.tsx`                      | 把 `NotificationButton` 注入 `WebAdminLayout` 的 `headerMiddleActions`。    |
+| `apps/admin/src/pages/(admin)/manage/user/index.tsx`           | 当前通知系统演示页，展示不同类型、优先级、批量操作、权限和配置控制。        |
+| `apps/admin/src/assets/audio/wechat-style-notification.wav`    | 当前应用注入的通知声音资源。                                                |
+| `packages/web/admin-notification/src/NotificationProvider.tsx` | 通知上下文 Provider，封装 `useNotification()`。                             |
+| `packages/web/admin-notification/src/NotificationButton.tsx`   | Header 通知按钮，展示未读角标并弹出通知面板。                               |
+| `packages/web/admin-notification/src/NotificationPanel.tsx`    | 通知面板 UI。                                                               |
+| `packages/web/admin-notification/src/use-notification.ts`      | 通知状态、声音、浏览器通知、权限和勿扰模式逻辑。                            |
+| `packages/web/admin-notification/src/types.ts`                 | 通知项、优先级、类型和运行时配置类型。                                      |
 
 ## 接入链路
 
@@ -78,10 +78,10 @@ const App = () => (
 
 这里有两个边界：
 
-| 边界 | 原因 |
-| --- | --- |
+| 边界                                             | 原因                                                   |
+| ------------------------------------------------ | ------------------------------------------------------ |
 | `@skyroc/web-admin-notification` 提供运行时和 UI | 通知列表、角标、面板、声音播放和浏览器通知逻辑可复用。 |
-| `apps/admin` 注入 `soundUrl` | 音频资源属于宿主应用，不应该硬编码进共享包。 |
+| `apps/admin` 注入 `soundUrl`                     | 音频资源属于宿主应用，不应该硬编码进共享包。           |
 
 如果通知点击需要走 TanStack Router，而不是默认 `window.location.href`，可以给 `NotificationProvider` 传 `onNavigate`，在应用侧调用 router 跳转。
 
@@ -101,13 +101,13 @@ const App = () => (
 
 `NotificationButton` 做的事情包括：
 
-| 能力 | 当前行为 |
-| --- | --- |
-| 未读角标 | `unreadCount > 99` 时显示 `99+`。 |
-| 按钮动画 | 有未读时使用 `swing`，无未读时使用 `scale`。 |
-| 面板打开 | Ant Design `Dropdown`，点击按钮打开通知面板。 |
-| 标记已读 | 点击通知项时调用 `markAsRead(id)`。 |
-| 删除通知 | 调用 `removeNotification(id)`。 |
+| 能力           | 当前行为                                            |
+| -------------- | --------------------------------------------------- |
+| 未读角标       | `unreadCount > 99` 时显示 `99+`。                   |
+| 按钮动画       | 有未读时使用 `swing`，无未读时使用 `scale`。        |
+| 面板打开       | Ant Design `Dropdown`，点击按钮打开通知面板。       |
+| 标记已读       | 点击通知项时调用 `markAsRead(id)`。                 |
+| 删除通知       | 调用 `removeNotification(id)`。                     |
 | 全部已读和清空 | 调用 `markAllAsRead()`、`clearAllNotifications()`。 |
 
 Header 只负责展示入口。业务通知的创建不应该写在 layout 里。
@@ -130,7 +130,10 @@ const SaveButton = () => {
   }
 
   return (
-    <Button type="primary" onClick={handleSaveSuccess}>
+    <Button
+      type="primary"
+      onClick={handleSaveSuccess}
+    >
       保存
     </Button>
   );
@@ -139,12 +142,12 @@ const SaveButton = () => {
 
 快捷方法包括：
 
-| 方法 | 通知类型 |
-| --- | --- |
-| `addInfoNotification(title, content, options)` | `info` |
+| 方法                                              | 通知类型  |
+| ------------------------------------------------- | --------- |
+| `addInfoNotification(title, content, options)`    | `info`    |
 | `addSuccessNotification(title, content, options)` | `success` |
 | `addWarningNotification(title, content, options)` | `warning` |
-| `addErrorNotification(title, content, options)` | `error` |
+| `addErrorNotification(title, content, options)`   | `error`   |
 | `addMessageNotification(title, content, options)` | `message` |
 
 需要完整控制时，使用 `addNotification()`：
@@ -163,19 +166,19 @@ addNotification({
 
 `NotificationItem` 的核心字段如下：
 
-| 字段 | 作用 |
-| --- | --- |
-| `id` | 稳定 ID；没有传入时由 `nanoid()` 生成。 |
-| `title` | 通知标题。 |
-| `content` | 通知正文。 |
-| `type` | 视觉类型：`info`、`success`、`warning`、`error`、`message`。 |
-| `priority` | 优先级：`low`、`normal`、`high`、`urgent`。 |
-| `read` | 是否已读；新增时默认 `false`。 |
-| `timestamp` | 创建时间；新增时默认 `Date.now()`。 |
-| `link` | 浏览器通知点击后的目标地址。 |
-| `silent` | 跳过通知声音。 |
-| `showBrowserNotification` | 是否触发浏览器原生通知。 |
-| `meta` | 业务自定义数据。 |
+| 字段                      | 作用                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| `id`                      | 稳定 ID；没有传入时由 `nanoid()` 生成。                      |
+| `title`                   | 通知标题。                                                   |
+| `content`                 | 通知正文。                                                   |
+| `type`                    | 视觉类型：`info`、`success`、`warning`、`error`、`message`。 |
+| `priority`                | 优先级：`low`、`normal`、`high`、`urgent`。                  |
+| `read`                    | 是否已读；新增时默认 `false`。                               |
+| `timestamp`               | 创建时间；新增时默认 `Date.now()`。                          |
+| `link`                    | 浏览器通知点击后的目标地址。                                 |
+| `silent`                  | 跳过通知声音。                                               |
+| `showBrowserNotification` | 是否触发浏览器原生通知。                                     |
+| `meta`                    | 业务自定义数据。                                             |
 
 `NotificationShortcutOptions` 可以覆盖除 `title`、`content`、`type` 之外的多数通知项字段。
 
@@ -203,14 +206,14 @@ addNotification()
 
 副作用会被这些条件拦截：
 
-| 条件 | 影响 |
-| --- | --- |
-| `silent: true` | 不播放声音，也不会触发浏览器通知。 |
-| `showBrowserNotification: false` | 只创建应用内通知。 |
-| `config.soundEnabled === false` | 不播放声音。 |
-| `config.browserNotificationEnabled === false` | 不触发浏览器通知。 |
-| `config.doNotDisturb` 且当前时间在 `doNotDisturbTime` 内 | 不播放声音，也不触发浏览器通知。 |
-| 浏览器通知权限不是 `granted` | 不触发浏览器通知。 |
+| 条件                                                     | 影响                               |
+| -------------------------------------------------------- | ---------------------------------- |
+| `silent: true`                                           | 不播放声音，也不会触发浏览器通知。 |
+| `showBrowserNotification: false`                         | 只创建应用内通知。                 |
+| `config.soundEnabled === false`                          | 不播放声音。                       |
+| `config.browserNotificationEnabled === false`            | 不触发浏览器通知。                 |
+| `config.doNotDisturb` 且当前时间在 `doNotDisturbTime` 内 | 不播放声音，也不触发浏览器通知。   |
+| 浏览器通知权限不是 `granted`                             | 不触发浏览器通知。                 |
 
 请求浏览器通知权限用：
 
@@ -224,28 +227,28 @@ const granted = await requestNotificationPermission();
 
 当前 `apps/admin/src/pages/(admin)/manage/user/index.tsx` 是通知系统演示页。它展示了：
 
-| 演示内容 | 使用的 API |
-| --- | --- |
-| 信息、成功、警告、错误、消息通知 | `addInfoNotification()` 等快捷方法 |
-| 紧急、低优先级通知 | `addNotification({ priority })` |
-| 静音通知 | `silent: true` |
-| 仅应用内通知 | `showBrowserNotification: false` |
-| 带链接通知 | `link` |
-| 批量添加模拟通知 | `useMockNotifications()` |
-| 全部已读、清理已读、清空 | `markAllAsRead()`、`clearReadNotifications()`、`clearAllNotifications()` |
-| 配置切换 | `updateConfig()` |
+| 演示内容                         | 使用的 API                                                               |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| 信息、成功、警告、错误、消息通知 | `addInfoNotification()` 等快捷方法                                       |
+| 紧急、低优先级通知               | `addNotification({ priority })`                                          |
+| 静音通知                         | `silent: true`                                                           |
+| 仅应用内通知                     | `showBrowserNotification: false`                                         |
+| 带链接通知                       | `link`                                                                   |
+| 批量添加模拟通知                 | `useMockNotifications()`                                                 |
+| 全部已读、清理已读、清空         | `markAllAsRead()`、`clearReadNotifications()`、`clearAllNotifications()` |
+| 配置切换                         | `updateConfig()`                                                         |
 
 如果要把 `/manage/user` 恢复成用户管理列表，应先把通知演示迁移到独立示例页，或者重新选择一个示例路由，避免“用户管理”菜单和实际页面职责不一致。
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
+| 误区                                                    | 正确做法                                                                    |
+| ------------------------------------------------------- | --------------------------------------------------------------------------- |
 | 在页面外使用 `useNotificationContext()` 却没有 Provider | 确保页面位于 `NotificationProvider` 子树下。当前 `App.tsx` 已覆盖后台页面。 |
-| 把通知声音硬编码进共享包 | 声音资源由宿主应用通过 `soundUrl` 注入。 |
-| 以为通知会自动持久化 | 当前通知状态是内存态；需要持久化时接业务接口或本地存储。 |
-| 在 layout 里写业务通知创建逻辑 | layout 只放 `NotificationButton`，业务事件由页面或全局 effect 发通知。 |
-| 直接依赖浏览器通知一定出现 | 需要用户授权，且会受浏览器、系统和勿扰设置影响。 |
+| 把通知声音硬编码进共享包                                | 声音资源由宿主应用通过 `soundUrl` 注入。                                    |
+| 以为通知会自动持久化                                    | 当前通知状态是内存态；需要持久化时接业务接口或本地存储。                    |
+| 在 layout 里写业务通知创建逻辑                          | layout 只放 `NotificationButton`，业务事件由页面或全局 effect 发通知。      |
+| 直接依赖浏览器通知一定出现                              | 需要用户授权，且会受浏览器、系统和勿扰设置影响。                            |
 
 ## 相关链接
 

@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants';
 /**
  * PickerGroup 多 slot 样式变体。
  *
- * tab 的激活态走 active variant，而不是在 JSX 里拼类名字符串——与 tabsVariants 保持同一套写法， 调用方覆盖 tabText 时才不会被硬编码的激活样式盖掉。
+ * Tab 的激活态走 active variant，而不是在 JSX 里拼类名字符串——与 tabsVariants 保持同一套写法， 调用方覆盖 tabText 时才不会被硬编码的激活样式盖掉。
  */
 export const pickerGroupVariants = tv({
   slots: {

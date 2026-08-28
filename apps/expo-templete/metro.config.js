@@ -1,7 +1,7 @@
-const path = require("node:path");
+const path = require('node:path');
 
-const { getDefaultConfig } = require("expo/metro-config");
-const { withUniwindConfig } = require("uniwind/metro"); // make sure this import exists
+const { getDefaultConfig } = require('expo/metro-config');
+const { withUniwindConfig } = require('uniwind/metro'); // make sure this import exists
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
@@ -34,9 +34,9 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 // Apply uniwind modifications before exporting
 const uniwindConfig = withUniwindConfig(config, {
   // relative path to your global.css file
-  cssEntryFile: "./src/global.css",
+  cssEntryFile: './src/global.css',
   // optional: path to typings
-  dtsFile: "./types/uniwind-types.d.ts",
+  dtsFile: './types/uniwind-types.d.ts'
 });
 
 module.exports = uniwindConfig;

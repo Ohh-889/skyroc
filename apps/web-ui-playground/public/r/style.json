@@ -14,10 +14,7 @@
     "tailwind-merge",
     "@tailwindcss/postcss"
   ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/utils.json",
-    "https://ui-play.skyroc.me/r/types.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/utils.json", "https://ui-play.skyroc.me/r/types.json"],
   "files": [
     {
       "path": "../tailwind-plugin/src/generate.ts",

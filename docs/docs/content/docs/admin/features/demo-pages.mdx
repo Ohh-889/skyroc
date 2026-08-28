@@ -9,37 +9,37 @@ description: 区分 apps/admin 的起步页面与 apps/admin-example 的演示�
 
 ## 两个应用的页面分工
 
-| 应用 | `pages/(admin)` 内容 | 适合做什么 |
-| --- | --- | --- |
-| `apps/admin` | `home/index.tsx`、`layout.tsx` | 直接作为新项目起点。首页是一块"A minimal admin starter is ready."的占位卡片，删掉换成业务页即可。 |
-| `apps/admin-example` | 上百个页面，覆盖 manage / plugin / function / interaction / projects / multi-menu / document / exception | 查某个能力怎么写，然后把对应模式搬到自己的应用里。 |
+| 应用                 | `pages/(admin)` 内容                                                                                     | 适合做什么                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `apps/admin`         | `home/index.tsx`、`layout.tsx`                                                                           | 直接作为新项目起点。首页是一块"A minimal admin starter is ready."的占位卡片，删掉换成业务页即可。 |
+| `apps/admin-example` | 上百个页面，覆盖 manage / plugin / function / interaction / projects / multi-menu / document / exception | 查某个能力怎么写，然后把对应模式搬到自己的应用里。                                                |
 
 ## `apps/admin-example` 的页面地图
 
 ### 真实业务实现（可以作为骨架参照）
 
-| 路由 | 文件 | 可以学什么 |
-| --- | --- | --- |
-| `/manage/user` | `manage/user/index.tsx` + `modules/` | 完整用户 CRUD：`useTable()`、`useTableOperate()`、`useTableScroll()`、`TableHeaderOperation`、搜索表单、操作抽屉。 |
-| `/manage/role` | `manage/role/index.tsx` + `modules/` | 角色 CRUD，外加 `MenuAuthModal`、`ButtonAuthModal` 两种权限分配弹窗。 |
-| `/manage/menu` | `manage/menu/index.tsx` + `modules/` | 菜单配置页，演示如何录入 `staticData` 对应的后端菜单字段。 |
-| `/manage/user/$id`、`/manage/role/$id` | `manage/*/\$id.tsx` | 动态参数详情页、隐藏菜单与 `activeMenu` 的配合。 |
-| `/projects`、`/projects/$pid` | `projects/` | 多级动态路由与列表-详情-编辑三段式结构。 |
+| 路由                                   | 文件                                 | 可以学什么                                                                                                         |
+| -------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `/manage/user`                         | `manage/user/index.tsx` + `modules/` | 完整用户 CRUD：`useTable()`、`useTableOperate()`、`useTableScroll()`、`TableHeaderOperation`、搜索表单、操作抽屉。 |
+| `/manage/role`                         | `manage/role/index.tsx` + `modules/` | 角色 CRUD，外加 `MenuAuthModal`、`ButtonAuthModal` 两种权限分配弹窗。                                              |
+| `/manage/menu`                         | `manage/menu/index.tsx` + `modules/` | 菜单配置页，演示如何录入 `staticData` 对应的后端菜单字段。                                                         |
+| `/manage/user/$id`、`/manage/role/$id` | `manage/*/\$id.tsx`                  | 动态参数详情页、隐藏菜单与 `activeMenu` 的配合。                                                                   |
+| `/projects`、`/projects/$pid`          | `projects/`                          | 多级动态路由与列表-详情-编辑三段式结构。                                                                           |
 
 这些页面对应的接口在 `apps/admin-example/src/service/api/system-manage`，是写业务模块最完整的参照。
 
 ### 能力演示页（学用法，不要整页复制）
 
-| 路由 | 文件 | 演示什么 |
-| --- | --- | --- |
-| `/interaction/feedback` | `interaction/feedback/index.tsx` | Ant Design message / notification / modal 的全局包装函数，从 `@/config` 导入 `showMessage`、`showConfirmModal` 等。 |
+| 路由                        | 文件                                 | 演示什么                                                                                                                             |
+| --------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `/interaction/feedback`     | `interaction/feedback/index.tsx`     | Ant Design message / notification / modal 的全局包装函数，从 `@/config` 导入 `showMessage`、`showConfirmModal` 等。                  |
 | `/interaction/notification` | `interaction/notification/index.tsx` | 站内通知中心：`useNotificationContext()` 的全部方法，配合 `@skyroc/web-admin-notification/mock` 的 `useMockNotifications()` 造数据。 |
-| `/interaction/theme` | `interaction/theme/index.tsx` | UnoCSS 设计系统、主题色阶、渐变色板展示。 |
-| `/function/*` | `function/` | 多标签页、事件总线、请求、权限切换、超级页面等运行时能力。 |
-| `/plugin/*` | `plugin/` | ECharts、编辑器、甘特图、地图、打印、Excel、条码等第三方库接入。 |
-| `/keep-alive-form` | `keep-alive-form.tsx` | 验证 `staticData.keepAlive` 在 tabs 切换时是否保留表单状态。 |
-| `/exception/*` | `exception/` | 后台壳内的 403 / 404 / 500 异常页示例，区别于顶层 `(errors)` 错误页。 |
-| `/document/*` | `document/` | 外链路由（`staticData.href`）与 iframe 路由（`staticData.url`）两种形态。 |
+| `/interaction/theme`        | `interaction/theme/index.tsx`        | UnoCSS 设计系统、主题色阶、渐变色板展示。                                                                                            |
+| `/function/*`               | `function/`                          | 多标签页、事件总线、请求、权限切换、超级页面等运行时能力。                                                                           |
+| `/plugin/*`                 | `plugin/`                            | ECharts、编辑器、甘特图、地图、打印、Excel、条码等第三方库接入。                                                                     |
+| `/keep-alive-form`          | `keep-alive-form.tsx`                | 验证 `staticData.keepAlive` 在 tabs 切换时是否保留表单状态。                                                                         |
+| `/exception/*`              | `exception/`                         | 后台壳内的 403 / 404 / 500 异常页示例，区别于顶层 `(errors)` 错误页。                                                                |
+| `/document/*`               | `document/`                          | 外链路由（`staticData.href`）与 iframe 路由（`staticData.url`）两种形态。                                                            |
 
 演示页的共同特征是：数据是 mock 的、没有真实接口、样式为了展示而堆砌。**只迁移其中的 API 用法，不要整页复制。**
 
@@ -47,10 +47,10 @@ description: 区分 apps/admin 的起步页面与 apps/admin-example 的演示�
 
 这是两种不同的路由形态，都靠 `staticData` 声明，不靠组件实现：
 
-| 形态 | 配置字段 | 行为 | 例子 |
-| --- | --- | --- | --- |
-| 外链 | `staticData.href` | `guardAdminRoute()` 识别后 `window.open` 打开新窗口，当前页面回退到首页或 404。组件返回 `null`。 | `document/repository.tsx` |
-| iframe | `staticData.url` | 菜单进入应用内 iframe 页面，tabs 和菜单仍在后台壳内。组件读 `staticData.url` 渲染 `IframePage`。 | `document/react.tsx` |
+| 形态   | 配置字段          | 行为                                                                                             | 例子                      |
+| ------ | ----------------- | ------------------------------------------------------------------------------------------------ | ------------------------- |
+| 外链   | `staticData.href` | `guardAdminRoute()` 识别后 `window.open` 打开新窗口，当前页面回退到首页或 404。组件返回 `null`。 | `document/repository.tsx` |
+| iframe | `staticData.url`  | 菜单进入应用内 iframe 页面，tabs 和菜单仍在后台壳内。组件读 `staticData.url` 渲染 `IframePage`。 | `document/react.tsx`      |
 
 `IframePage` 是 app 内组件（`features/router/components/IframePage`），不是共享包导出。`apps/admin` 里没有它，需要时自行实现或从 example 拷贝。
 
@@ -81,13 +81,13 @@ apps/admin/src/pages/(admin)/manage/user/
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 在 `apps/admin` 里找 `manage/user` 等页面 | 它们在 `apps/admin-example`。精简模板刻意不带业务页。 |
-| 把 `interaction/theme` 当成主题接入最佳实践 | 它只是 UnoCSS 色板展示，真正的主题接入见 [主题系统](../theme/overview)。 |
-| 直接复制 `interaction/feedback` 作为业务页骨架 | 只把 `showMessage` / `showConfirmModal` 这类调用方式迁移出来。 |
-| 只改菜单标题，不改权限和 i18n | `staticData.permissions`、`i18nKey`、语言文件和菜单显示要一起对齐。 |
-| 演示页里的 mock 数据可以留着 | `useMockNotifications()` 一类 mock 入口只在 example 里用，接真实接口时要整体换掉。 |
+| 误区                                           | 正确做法                                                                           |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 在 `apps/admin` 里找 `manage/user` 等页面      | 它们在 `apps/admin-example`。精简模板刻意不带业务页。                              |
+| 把 `interaction/theme` 当成主题接入最佳实践    | 它只是 UnoCSS 色板展示，真正的主题接入见 [主题系统](../theme/overview)。           |
+| 直接复制 `interaction/feedback` 作为业务页骨架 | 只把 `showMessage` / `showConfirmModal` 这类调用方式迁移出来。                     |
+| 只改菜单标题，不改权限和 i18n                  | `staticData.permissions`、`i18nKey`、语言文件和菜单显示要一起对齐。                |
+| 演示页里的 mock 数据可以留着                   | `useMockNotifications()` 一类 mock 入口只在 example 里用，接真实接口时要整体换掉。 |
 
 ## 相关链接
 

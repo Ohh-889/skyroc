@@ -20,11 +20,9 @@ const REQUEST_TEXTS: Record<string, string> = {
 /**
  * 把请求层给的原始消息换成用户看得懂的话。
  *
- * 断网时 axios 只会甩一句英文 `Network Error`，超时则是 `timeout of 10000ms exceeded`——
- * 直接弹给用户毫无意义。这里按当前网络状态分流，也正是「断网」和「服务端挂了」必须分开的地方：
+ * 断网时 axios 只会甩一句英文 `Network Error`，超时则是 `timeout of 10000ms exceeded`—— 直接弹给用户毫无意义。这里按当前网络状态分流，也正是「断网」和「服务端挂了」必须分开的地方：
  *
- * - 没网：告诉用户去检查网络，这事他自己能解决，也**不该**上报给 Sentry
- *   （地铁、电梯、隧道里产生的断网错误能把错误看板刷爆，真正的后端 bug 全被淹掉）
+ * - 没网：告诉用户去检查网络，这事他自己能解决，也**不该**上报给 Sentry （地铁、电梯、隧道里产生的断网错误能把错误看板刷爆，真正的后端 bug 全被淹掉）
  * - 有网还失败：那是服务端或链路的问题，保留原始消息，该报警报警
  */
 function resolveErrorMessage(msg: string) {
@@ -34,17 +32,14 @@ function resolveErrorMessage(msg: string) {
 /**
  * React Native 平台适配器。
  *
- * 错误处理、令牌续签、并发去重这些逻辑都在 `@skyroc/service` 里跨端复用，这里只提供平台差异：
- * 用什么弹提示、凭据存在哪、登录页怎么跳。
+ * 错误处理、令牌续签、并发去重这些逻辑都在 `@skyroc/service` 里跨端复用，这里只提供平台差异： 用什么弹提示、凭据存在哪、登录页怎么跳。
  */
 export const nativeAdapter: RequestAdapter = {
   fetchRefreshToken,
   /**
-   * RN 端跳登录是守卫式的（见 `src/app/_layout.tsx`），没有「带 redirect 参数回跳」这一步，
-   * 也就没有要交给 `redirectToLogin` 的现场。
+   * RN 端跳登录是守卫式的（见 `src/app/_layout.tsx`），没有「带 redirect 参数回跳」这一步， 也就没有要交给 `redirectToLogin` 的现场。
    *
-   * 想做「登录后回到刚才那页」：用 `usePathname()` 把当前路径写进一个模块级变量，这里返回它，
-   * 再在登录成功后 `router.replace` 回去。
+   * 想做「登录后回到刚才那页」：用 `usePathname()` 把当前路径写进一个模块级变量，这里返回它， 再在登录成功后 `router.replace` 回去。
    */
   getCurrentPath() {
     return '';

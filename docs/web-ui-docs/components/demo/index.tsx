@@ -7,11 +7,9 @@ interface DemoProps {
   defaultExpanded?: boolean;
   description?: string;
   /**
-   * Demo 源码定位：
-   * - "@playground/button/modules/ButtonColor"
-   *   → apps/web-ui-playground/src/app/[locale]/(demo)/button/modules/ButtonColor.tsx
-   * - "@/content/demos/foo" → apps/web-ui-docs/content/demos/foo.tsx
-   * - 绝对/相对路径
+   * Demo 源码定位： - "@playground/button/modules/ButtonColor" →
+   * apps/web-ui-playground/src/app/[locale]/(demo)/button/modules/ButtonColor.tsx - "@/content/demos/foo" →
+   * apps/web-ui-docs/content/demos/foo.tsx - 绝对/相对路径
    */
   src: string;
   title?: string;
@@ -23,7 +21,7 @@ const PLAYGROUND_BASE = path.join(REPO_ROOT, 'apps/web-ui-playground/src/app/[lo
 function resolveSrc(src: string): { filePath: string; playgroundRoute: string | null } {
   if (src.startsWith('@playground/')) {
     const rel = src.slice('@playground/'.length);
-    const route = `/${  rel.replace(/\/modules\/[^/]+$/, '').replace(/\\/g, '/')}`;
+    const route = `/${rel.replace(/\/modules\/[^/]+$/, '').replace(/\\/g, '/')}`;
     return { filePath: path.join(PLAYGROUND_BASE, rel), playgroundRoute: route };
   }
   if (src.startsWith('@/')) {

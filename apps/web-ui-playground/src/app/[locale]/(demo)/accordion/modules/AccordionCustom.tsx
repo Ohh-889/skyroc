@@ -1,8 +1,8 @@
 'use client';
 
-import { Earth, Info, Rocket } from 'lucide-react';
 import { Accordion, Tag } from '@skyroc/web-ui';
 import type { AccordionItemData } from '@skyroc/web-ui';
+import { Earth, Info, Rocket } from 'lucide-react';
 
 const items: AccordionItemData[] = [
   {

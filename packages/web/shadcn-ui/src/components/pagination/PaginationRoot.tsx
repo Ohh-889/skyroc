@@ -1,6 +1,6 @@
+import { cn } from '@skyroc/utils';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { cn } from '@skyroc/utils';
 import { paginationVariants } from './pagination-variants';
 import type { PaginationRootProps } from './types';
 

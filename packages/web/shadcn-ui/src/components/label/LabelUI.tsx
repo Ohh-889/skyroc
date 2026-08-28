@@ -1,9 +1,9 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Root } from '@radix-ui/react-label';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { labelVariants } from './label-variants';
 import type { LabelProps } from './types';
 

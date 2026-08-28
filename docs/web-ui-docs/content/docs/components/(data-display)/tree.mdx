@@ -23,7 +23,11 @@ import { Tree, TreeItem, TreeRoot, TreeVirtualizer } from '@skyroc/web-ui';
 <Demo src="@playground/tree/modules/TreeBasic" />
 
 ```tsx
-<Tree items={items} defaultExpanded={['components']} defaultValue="button" />
+<Tree
+  items={items}
+  defaultExpanded={['components']}
+  defaultValue="button"
+/>
 ```
 
 ## 多选
@@ -33,7 +37,12 @@ import { Tree, TreeItem, TreeRoot, TreeVirtualizer } from '@skyroc/web-ui';
 <Demo src="@playground/tree/modules/TreeMultiple" />
 
 ```tsx
-<Tree multiple items={items} value={value} onValueChange={nextValue => setValue(nextValue as string[])} />
+<Tree
+  multiple
+  items={items}
+  value={value}
+  onValueChange={nextValue => setValue(nextValue as string[])}
+/>
 ```
 
 ## 自定义渲染
@@ -61,7 +70,11 @@ import { Tree, TreeItem, TreeRoot, TreeVirtualizer } from '@skyroc/web-ui';
 <Demo src="@playground/tree/modules/TreeVirtualizer" />
 
 ```tsx
-<TreeVirtualizer height={300} itemSize={36} items={items} />
+<TreeVirtualizer
+  height={300}
+  itemSize={36}
+  items={items}
+/>
 ```
 
 ## 选择传播
@@ -76,7 +89,13 @@ Tree 支持父子节点选择联动：
 | `selectionBehavior` | `toggle` 可取消已选节点，`replace` 替换选择 |
 
 ```tsx
-<Tree multiple allowParentSelect propagateSelect bubbleSelect items={items} />
+<Tree
+  multiple
+  allowParentSelect
+  propagateSelect
+  bubbleSelect
+  items={items}
+/>
 ```
 
 ## 展开行为
@@ -84,7 +103,11 @@ Tree 支持父子节点选择联动：
 `defaultExpanded` 设置非受控初始展开项，`expanded` + `onExpandedChange` 用于受控展开。`toggleBehavior="single"` 会让同层路径保持单展开。
 
 ```tsx
-<Tree expanded={expanded} toggleBehavior="single" onExpandedChange={setExpanded} />
+<Tree
+  expanded={expanded}
+  toggleBehavior="single"
+  onExpandedChange={setExpanded}
+/>
 ```
 
 ## API

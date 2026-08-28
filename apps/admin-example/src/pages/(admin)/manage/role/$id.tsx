@@ -28,11 +28,17 @@ const RoleDetail = () => {
   const items = createRoleDescriptionItems({ role, t });
 
   return (
-    <Card className="h-full card-wrapper" title={t('page.manage.roleDetail.title')} variant="borderless">
-      <Descriptions bordered column={{ lg: 2, md: 2, sm: 1, xs: 1 }} items={items} />
-      <div className="mt-16px text-center text-16px text-secondary">
-        {t('page.manage.roleDetail.explain')}
-      </div>
+    <Card
+      className="h-full card-wrapper"
+      title={t('page.manage.roleDetail.title')}
+      variant="borderless"
+    >
+      <Descriptions
+        bordered
+        column={{ lg: 2, md: 2, sm: 1, xs: 1 }}
+        items={items}
+      />
+      <div className="mt-16px text-center text-16px text-secondary">{t('page.manage.roleDetail.explain')}</div>
     </Card>
   );
 };

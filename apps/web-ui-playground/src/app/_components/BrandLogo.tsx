@@ -1,6 +1,6 @@
+import { Tag } from '@skyroc/web-ui';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Tag } from '@skyroc/web-ui';
 
 const BrandLogo = () => {
   return (
@@ -23,9 +23,7 @@ const BrandLogo = () => {
           Skyroc UI
         </span>
 
-        <span className="text-muted-foreground -mt-0.5 text-[10px] font-medium tracking-wide">
-          Playground
-        </span>
+        <span className="text-muted-foreground -mt-0.5 text-[10px] font-medium tracking-wide">Playground</span>
       </div>
 
       <Tag

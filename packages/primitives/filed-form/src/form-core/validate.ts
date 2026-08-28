@@ -1,16 +1,13 @@
 /* eslint-disable no-template-curly-in-string */
 /**
- * Validation message system for form field validation
- * Provides customizable error messages for different validation rule types
+ * Validation message system for form field validation Provides customizable error messages for different validation
+ * rule types
  */
 
 /** Type alias for validation message strings */
 type ValidateMessage = string;
 
-/**
- * Configuration object for validation error messages
- * Supports nested message structures for different validation types
- */
+/** Configuration object for validation error messages Supports nested message structures for different validation types */
 export interface ValidateMessages {
   /** Error message for boolean type validation */
   boolean?: ValidateMessage;
@@ -74,9 +71,8 @@ export interface ValidateMessages {
 }
 
 /**
- * Default validation message templates with placeholder support
- * These messages can be customized by providing a ValidateMessages object
- * Placeholders like ${min}, ${max}, ${len} are replaced with actual rule values
+ * Default validation message templates with placeholder support These messages can be customized by providing a
+ * ValidateMessages object Placeholders like ${min}, ${max}, ${len} are replaced with actual rule values
  */
 export const defaultValidateMessages: ValidateMessages = {
   boolean: 'Must be a boolean',

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Password } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const PasswordBase = () => {
   const [value, setValue] = useState('abc123');
@@ -14,11 +14,7 @@ const PasswordBase = () => {
         onChange={e => setValue(e.target.value)}
       />
 
-      <p className="text-muted-foreground mt-2 text-sm">
-        Value:
-        {' '}
-        {value}
-      </p>
+      <p className="text-muted-foreground mt-2 text-sm">Value: {value}</p>
     </div>
   );
 };

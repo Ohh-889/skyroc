@@ -38,12 +38,13 @@ const virtualizerMock = vi.hoisted(() => {
 
       return {
         getTotalSize: () => options.count * options.estimateSize(0),
-        getVirtualItems: () => Array.from({ length: options.count }, (_, index) => ({
-          index,
-          key: index,
-          size: options.estimateSize(index),
-          start: index * options.estimateSize(index)
-        })),
+        getVirtualItems: () =>
+          Array.from({ length: options.count }, (_, index) => ({
+            index,
+            key: index,
+            size: options.estimateSize(index),
+            start: index * options.estimateSize(index)
+          })),
         measureElement,
         scrollOffset: undefined
       };
@@ -71,7 +72,7 @@ describe('Virtualizer branch coverage', () => {
           data={rows.slice(0, 1)}
           itemSize={24}
           onScroll={onListScroll}
-          renderItem={(props) => {
+          renderItem={props => {
             const { item } = props;
 
             return <div data-testid="default-height-row">{item.label}</div>;
@@ -82,7 +83,7 @@ describe('Virtualizer branch coverage', () => {
           horizontal
           itemSize={32}
           keyExtractor={item => item.id}
-          renderItem={(props) => {
+          renderItem={props => {
             const { item } = props;
 
             return <div data-testid="horizontal-function-key-row">{item.label}</div>;
@@ -93,7 +94,7 @@ describe('Virtualizer branch coverage', () => {
           dynamic
           itemSize={28}
           keyExtractor="id"
-          renderItem={(props) => {
+          renderItem={props => {
             const { item } = props;
 
             return <div data-testid="dynamic-string-key-row">{item.label}</div>;
@@ -108,9 +109,7 @@ describe('Virtualizer branch coverage', () => {
           width={120}
           onScroll={onGridScroll}
           renderCell={(item, rowIndex, colIndex) => (
-            <div data-testid={`mock-grid-cell-${rowIndex}-${colIndex}`}>
-              {item.label}
-            </div>
+            <div data-testid={`mock-grid-cell-${rowIndex}-${colIndex}`}>{item.label}</div>
           )}
         />
       </>

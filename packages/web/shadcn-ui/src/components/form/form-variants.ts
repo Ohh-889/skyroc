@@ -22,23 +22,23 @@ export const formVariants = tv({
         item: 'text-xl space-y-3.5',
         label: 'gap-3.5'
       },
-      'lg': {
+      lg: {
         item: 'text-base space-y-2.5',
         label: 'gap-2.5'
       },
-      'md': {
+      md: {
         item: 'text-sm space-y-2',
         label: 'gap-2'
       },
-      'sm': {
+      sm: {
         item: 'text-xs space-y-1.75',
         label: 'gap-1.75'
       },
-      'xl': {
+      xl: {
         item: 'text-lg space-y-3',
         label: 'gap-3'
       },
-      'xs': {
+      xs: {
         item: 'text-2xs space-y-1.5',
         label: 'gap-1.5'
       }

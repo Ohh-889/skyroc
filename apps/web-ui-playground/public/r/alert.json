@@ -3,12 +3,8 @@
   "name": "alert",
   "type": "registry:block",
   "title": "Alert",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "dependencies": ["@radix-ui/react-slot"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/alert/Alert.tsx",

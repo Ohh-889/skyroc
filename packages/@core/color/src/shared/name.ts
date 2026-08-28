@@ -22,8 +22,7 @@ const nameCache = new Map<string, string>();
 /**
  * 惰性预解析色名表
  *
- * 色名表有 1500+ 条，若每次调用都重新解析 rgb/hsl，单次色名匹配就要构造 3000+ 个 colord 实例——这是调色板生成的主要开销来源。
- * 这里在首次调用时解析一次并常驻，后续匹配只做纯数值运算。
+ * 色名表有 1500+ 条，若每次调用都重新解析 rgb/hsl，单次色名匹配就要构造 3000+ 个 colord 实例——这是调色板生成的主要开销来源。 这里在首次调用时解析一次并常驻，后续匹配只做纯数值运算。
  */
 function getParsedColorNames(): ParsedColorName[] {
   if (!parsedColorNames) {

@@ -1,8 +1,8 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { showSuccessMessage } from '@shell/theme';
 import { SvgIcon, TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex, TableOnChange } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Button, Card, Collapse, Empty, Flex, Table, Tag, Tooltip, Typography } from 'antd';
@@ -471,8 +471,7 @@ function renderFileCell(file: OssItem) {
 /**
  * 上传人列：有账号名就显示账号名，只剩 id 时退回 `#id`。
  *
- * 两种情况会只剩 id：账号被彻底删了，或者这条记录是定时任务/脚本写进来的（那种连 id 都没有）。
- * 退回 id 而不是显示“未知”，是因为排查时那个 id 仍然能拿去查。
+ * 两种情况会只剩 id：账号被彻底删了，或者这条记录是定时任务/脚本写进来的（那种连 id 都没有）。 退回 id 而不是显示“未知”，是因为排查时那个 id 仍然能拿去查。
  */
 function renderUploaderCell(file: OssItem) {
   if (file.createByName) {

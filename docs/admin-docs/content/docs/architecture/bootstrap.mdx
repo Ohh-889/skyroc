@@ -30,27 +30,27 @@ index.html
 
 当你要做下面这些改动时，先看这页：
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 调整应用启动顺序 | `apps/admin/src/main.tsx`、`apps/admin/src/bootstrap.tsx`、`apps/admin/src/App.tsx` |
-| 接入新的运行时插件 | `apps/admin/src/plugins/index.ts`、`@skyroc/web-admin-runtime` |
-| 修改主题、暗色模式或 Ant Design 主题接入 | `setupTheme`、`AppAntdProvider`、`ThemeEffect` |
-| 修改布局、菜单、动态路由和 tabs 初始化 | `setupAdminLayouts`、`features/menus`、`features/auth/use-auth.ts` |
-| 修改语言、日期本地化或国际化初始化 | `setupI18n`、`GlobalEffect`、`locales/sync.ts` |
-| 排查白屏、devtools、NProgress 或路由守卫问题 | `main.tsx`、`bootstrap.tsx`、`pages/__root.tsx`、`features/router/guard.ts` |
+| 场景                                         | 重点位置                                                                            |
+| -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 调整应用启动顺序                             | `apps/admin/src/main.tsx`、`apps/admin/src/bootstrap.tsx`、`apps/admin/src/App.tsx` |
+| 接入新的运行时插件                           | `apps/admin/src/plugins/index.ts`、`@skyroc/web-admin-runtime`                      |
+| 修改主题、暗色模式或 Ant Design 主题接入     | `setupTheme`、`AppAntdProvider`、`ThemeEffect`                                      |
+| 修改布局、菜单、动态路由和 tabs 初始化       | `setupAdminLayouts`、`features/menus`、`features/auth/use-auth.ts`                  |
+| 修改语言、日期本地化或国际化初始化           | `setupI18n`、`GlobalEffect`、`locales/sync.ts`                                      |
+| 排查白屏、devtools、NProgress 或路由守卫问题 | `main.tsx`、`bootstrap.tsx`、`pages/__root.tsx`、`features/router/guard.ts`         |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/index.html` | 提供 `<div id="app"></div>`，并加载 `/src/main.tsx`。 |
-| `apps/admin/src/main.tsx` | 浏览器入口。开发环境先加载 Jotai devtools，再动态导入 `bootstrap.tsx`。 |
-| `apps/admin/src/bootstrap.tsx` | 启动编排层。完成主题、布局、插件、i18n 初始化，并挂载 React 根节点。 |
-| `apps/admin/src/App.tsx` | Provider 组合层。把 React Query、Jotai、devtools、Ant Design、通知、动画、路由和全局副作用组合起来。 |
-| `apps/admin/src/config.ts` | 应用级配置入口，提供默认首页、路由模式、菜单图标、语言、主题和 devtools 配置。 |
-| `apps/admin/src/features/router` | 创建 TanStack Router，并通过 `RouterProvider` 注入登录态、用户信息和首页上下文。 |
-| `apps/admin/src/features/auth/use-auth.ts` | 登录态和初始化用户信息的入口。路由守卫会通过它加载用户信息和菜单。 |
-| `apps/admin/src/plugins` | 全局样式、svg icon 注册、Dayjs、Iconify、NProgress 和更新检测等运行时插件。 |
+| 文件                                       | 职责                                                                                                 |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `apps/admin/index.html`                    | 提供 `<div id="app"></div>`，并加载 `/src/main.tsx`。                                                |
+| `apps/admin/src/main.tsx`                  | 浏览器入口。开发环境先加载 Jotai devtools，再动态导入 `bootstrap.tsx`。                              |
+| `apps/admin/src/bootstrap.tsx`             | 启动编排层。完成主题、布局、插件、i18n 初始化，并挂载 React 根节点。                                 |
+| `apps/admin/src/App.tsx`                   | Provider 组合层。把 React Query、Jotai、devtools、Ant Design、通知、动画、路由和全局副作用组合起来。 |
+| `apps/admin/src/config.ts`                 | 应用级配置入口，提供默认首页、路由模式、菜单图标、语言、主题和 devtools 配置。                       |
+| `apps/admin/src/features/router`           | 创建 TanStack Router，并通过 `RouterProvider` 注入登录态、用户信息和首页上下文。                     |
+| `apps/admin/src/features/auth/use-auth.ts` | 登录态和初始化用户信息的入口。路由守卫会通过它加载用户信息和菜单。                                   |
+| `apps/admin/src/plugins`                   | 全局样式、svg icon 注册、Dayjs、Iconify、NProgress 和更新检测等运行时插件。                          |
 
 ## 核心概念
 
@@ -78,13 +78,13 @@ bootstrap();
 
 `bootstrap.tsx` 先查找 `#app` 容器，容器不存在时直接返回。容器存在后，它按固定顺序初始化应用运行所需的全局能力。
 
-| 顺序 | 初始化 | 当前行为 |
-| --- | --- | --- |
-| 1 | `setupTheme({ buildTime: BUILD_TIME })` | 初始化主题 atom。开发环境使用默认主题；生产环境会读取缓存，并通过构建时间处理主题覆盖。 |
-| 2 | `setupAdminLayouts(...)` | 把默认首页、默认图标、路由模式、route tree、菜单分类、动态路由加载器、菜单扩展和本地缓存适配器交给布局包。 |
-| 3 | `setupAdminPlugins()` | 初始化 Dayjs、NProgress、Iconify 离线服务和生产环境应用更新检测。 |
-| 4 | `await setupI18n()` | 初始化 `@skyroc/web-admin-i18n`，读取默认语言、fallback 语言、语言选项和本地缓存。 |
-| 5 | `createRoot(container).render(...)` | 在 `ErrorBoundary` 下渲染 `App`。 |
+| 顺序 | 初始化                                  | 当前行为                                                                                                   |
+| ---- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 1    | `setupTheme({ buildTime: BUILD_TIME })` | 初始化主题 atom。开发环境使用默认主题；生产环境会读取缓存，并通过构建时间处理主题覆盖。                    |
+| 2    | `setupAdminLayouts(...)`                | 把默认首页、默认图标、路由模式、route tree、菜单分类、动态路由加载器、菜单扩展和本地缓存适配器交给布局包。 |
+| 3    | `setupAdminPlugins()`                   | 初始化 Dayjs、NProgress、Iconify 离线服务和生产环境应用更新检测。                                          |
+| 4    | `await setupI18n()`                     | 初始化 `@skyroc/web-admin-i18n`，读取默认语言、fallback 语言、语言选项和本地缓存。                         |
+| 5    | `createRoot(container).render(...)`     | 在 `ErrorBoundary` 下渲染 `App`。                                                                          |
 
 这个顺序不能随意打乱。主题必须早于任何组件读取主题 atom；布局配置必须早于 `WebAdminLayout` 和菜单 hooks 使用；NProgress 必须早于根路由调用 `globalConfig.nprogress`；i18n 必须早于页面和 layout 读取翻译。
 
@@ -104,17 +104,17 @@ import '../styles/css/global.css';
 
 `apps/admin` 传入的关键配置包括：
 
-| 配置 | 作用 |
-| --- | --- |
-| `defaultHome` | 从 `globalConfig.defaultHome` 读取默认首页。 |
-| `routeMode` | 从 `VITE_AUTH_ROUTE_MODE` 读取静态或动态路由模式。 |
-| `routeTree` | 使用 TanStack Router 生成的 `routeTree.gen.ts`。 |
-| `loadDynamicRoutes` | 通过 `loadAdminDynamicRoutes()` 加载真实后端菜单响应，并适配成布局包动态菜单数据。 |
-| `menuCategories` | 定义菜单分类和 layout route 的关系，当前 `admin` 对应 `/(admin)`。 |
-| `menuNodeCallback` | 为顶层菜单追加 divider 等项目级菜单节点。 |
-| `extras` | 注册标准 badge 之外的菜单扩展 UI，例如 `ReleaseChannel`。 |
-| `permissionSuperRole` | 从 `VITE_STATIC_SUPER_ROLE` 读取超级角色标识。 |
-| `storage` | 使用 `localStg` 读写布局、菜单和 tabs 相关缓存。 |
+| 配置                  | 作用                                                                               |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| `defaultHome`         | 从 `globalConfig.defaultHome` 读取默认首页。                                       |
+| `routeMode`           | 从 `VITE_AUTH_ROUTE_MODE` 读取静态或动态路由模式。                                 |
+| `routeTree`           | 使用 TanStack Router 生成的 `routeTree.gen.ts`。                                   |
+| `loadDynamicRoutes`   | 通过 `loadAdminDynamicRoutes()` 加载真实后端菜单响应，并适配成布局包动态菜单数据。 |
+| `menuCategories`      | 定义菜单分类和 layout route 的关系，当前 `admin` 对应 `/(admin)`。                 |
+| `menuNodeCallback`    | 为顶层菜单追加 divider 等项目级菜单节点。                                          |
+| `extras`              | 注册标准 badge 之外的菜单扩展 UI，例如 `ReleaseChannel`。                          |
+| `permissionSuperRole` | 从 `VITE_STATIC_SUPER_ROLE` 读取超级角色标识。                                     |
+| `storage`             | 使用 `localStg` 读写布局、菜单和 tabs 相关缓存。                                   |
 
 因此，新增菜单分类、菜单额外节点或动态路由加载策略时，优先改 `features/menus` 和 `bootstrap.tsx` 的布局配置，不要在 `WebAdminLayout` 内部硬编码业务规则。
 
@@ -135,15 +135,15 @@ QueryClientProvider
 
 这里有几个依赖关系需要保持：
 
-| Provider 或组件 | 为什么在这里 |
-| --- | --- |
-| `QueryClientProvider` | `useAuth`、`AntdProvider`、路由守卫和服务 hooks 都依赖同一个 `queryClient`。 |
-| `JotaiProvider` | 主题、语言、认证等应用状态依赖 Jotai store。 |
-| `Devtools` | 开发环境加载后台调试面板，并接入 `queryClient`、`router` 和 `globalStore`。 |
-| `AntdProvider` | 读取当前语言和用户信息，把 Ant Design locale 与主题能力交给下层 UI。 |
-| `NotificationProvider` | 提供通知系统能力，并配置通知音效。 |
-| `RouterProvider` | 把 `useAuth` 返回的登录态、用户信息、首页和初始化函数注入 TanStack Router context。 |
-| `GlobalEffect` | 挂载主题和语言副作用，例如主题状态同步、语言切换后同步 Dayjs locale。 |
+| Provider 或组件        | 为什么在这里                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `QueryClientProvider`  | `useAuth`、`AntdProvider`、路由守卫和服务 hooks 都依赖同一个 `queryClient`。        |
+| `JotaiProvider`        | 主题、语言、认证等应用状态依赖 Jotai store。                                        |
+| `Devtools`             | 开发环境加载后台调试面板，并接入 `queryClient`、`router` 和 `globalStore`。         |
+| `AntdProvider`         | 读取当前语言和用户信息，把 Ant Design locale 与主题能力交给下层 UI。                |
+| `NotificationProvider` | 提供通知系统能力，并配置通知音效。                                                  |
+| `RouterProvider`       | 把 `useAuth` 返回的登录态、用户信息、首页和初始化函数注入 TanStack Router context。 |
+| `GlobalEffect`         | 挂载主题和语言副作用，例如主题状态同步、语言切换后同步 Dayjs locale。               |
 
 `RouterProvider` 注入的 context 会被根路由和后台 layout route 使用。根路由在已登录但未初始化时调用 `initAuth()`；后台 layout route 通过 `guardAdminRoute()` 做登录、用户信息、权限和外链处理。
 
@@ -151,13 +151,13 @@ QueryClientProvider
 
 不要把所有业务初始化都提前到 `bootstrap.tsx`。用户信息、菜单和权限属于“有登录态后才能确定”的运行时数据，当前由路由链路完成：
 
-| 阶段 | 位置 | 行为 |
-| --- | --- | --- |
-| Router context 注入 | `features/router/RouterProvider.tsx` | 从 `useAuth()` 读取 `initAuth`、`clearAuth`、`isLoggedIn`、`userInfo`、`homeRoute` 等上下文。 |
-| 根路由预初始化 | `pages/__root.tsx` | 已登录但 auth 未初始化时，调用 `context.initAuth()`。 |
-| 后台路由守卫 | `pages/(admin)/layout.tsx` | 调用 `guardAdminRoute()`。 |
-| 用户与菜单初始化 | `features/auth/use-auth.ts` | `initAuth()` 请求用户信息，再调用 `initMenus(data)` 生成菜单。 |
-| 权限判断 | `features/router/guard.ts` | 未登录跳登录页；用户初始化失败清理认证；静态权限和已授权路由不通过时跳 403；外链路由打开新窗口。 |
+| 阶段                | 位置                                 | 行为                                                                                             |
+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| Router context 注入 | `features/router/RouterProvider.tsx` | 从 `useAuth()` 读取 `initAuth`、`clearAuth`、`isLoggedIn`、`userInfo`、`homeRoute` 等上下文。    |
+| 根路由预初始化      | `pages/__root.tsx`                   | 已登录但 auth 未初始化时，调用 `context.initAuth()`。                                            |
+| 后台路由守卫        | `pages/(admin)/layout.tsx`           | 调用 `guardAdminRoute()`。                                                                       |
+| 用户与菜单初始化    | `features/auth/use-auth.ts`          | `initAuth()` 请求用户信息，再调用 `initMenus(data)` 生成菜单。                                   |
+| 权限判断            | `features/router/guard.ts`           | 未登录跳登录页；用户初始化失败清理认证；静态权限和已授权路由不通过时跳 403；外链路由打开新窗口。 |
 
 这条链路保证了应用壳可以先完成基础 Provider 挂载，再根据登录态和用户权限决定可见路由、菜单和默认首页。
 
@@ -237,37 +237,37 @@ const App = () => (
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 把所有启动逻辑都放进 `main.tsx` | `main.tsx` 只做环境相关入口加载；应用初始化放在 `bootstrap.tsx`。 |
-| 在组件里第一次读取主题时才初始化主题 | `setupTheme` 必须在 React 渲染前完成，否则主题 atom 初始值可能不稳定。 |
-| 在 `WebAdminLayout` 里硬编码菜单、路由模式或动态路由加载 | 这些属于布局运行时配置，应通过 `setupAdminLayouts` 和 `features/menus` 注入。 |
-| 未初始化 i18n 就渲染 App | `setupI18n()` 是异步初始化，当前启动链路会先 `await` 再 render。 |
-| 把用户信息和菜单请求提前到 `bootstrap.tsx` | 用户信息和菜单依赖登录态，应留在 `useAuth`、根路由和后台路由守卫里。 |
-| 修改 NProgress 后只看根路由 | NProgress 实例由 `setupAdminPlugins()` 通过 `initNProgress` 写入 `globalConfig`，根路由只是消费它。 |
-| 复制旧 Vue 文档的 Pinia、NaiveUI 或 Elegant Router 说明 | 当前实现以 React、Jotai、Ant Design 和 TanStack Router 为准。 |
+| 误区                                                     | 正确做法                                                                                            |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 把所有启动逻辑都放进 `main.tsx`                          | `main.tsx` 只做环境相关入口加载；应用初始化放在 `bootstrap.tsx`。                                   |
+| 在组件里第一次读取主题时才初始化主题                     | `setupTheme` 必须在 React 渲染前完成，否则主题 atom 初始值可能不稳定。                              |
+| 在 `WebAdminLayout` 里硬编码菜单、路由模式或动态路由加载 | 这些属于布局运行时配置，应通过 `setupAdminLayouts` 和 `features/menus` 注入。                       |
+| 未初始化 i18n 就渲染 App                                 | `setupI18n()` 是异步初始化，当前启动链路会先 `await` 再 render。                                    |
+| 把用户信息和菜单请求提前到 `bootstrap.tsx`               | 用户信息和菜单依赖登录态，应留在 `useAuth`、根路由和后台路由守卫里。                                |
+| 修改 NProgress 后只看根路由                              | NProgress 实例由 `setupAdminPlugins()` 通过 `initNProgress` 写入 `globalConfig`，根路由只是消费它。 |
+| 复制旧 Vue 文档的 Pinia、NaiveUI 或 Elegant Router 说明  | 当前实现以 React、Jotai、Ant Design 和 TanStack Router 为准。                                       |
 
 ## 排查顺序
 
 启动相关问题可以按下面顺序缩小范围：
 
-| 现象 | 先检查 |
-| --- | --- |
-| 页面完全不挂载 | `index.html` 是否存在 `#app`，`main.tsx` 是否成功导入 `bootstrap.tsx`。 |
+| 现象                     | 先检查                                                                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 页面完全不挂载           | `index.html` 是否存在 `#app`，`main.tsx` 是否成功导入 `bootstrap.tsx`。                                                             |
 | 开发环境 devtools 不出现 | `import.meta.env.DEV` 是否为 true，`main.tsx` 是否先加载了 `@shell/devtools/jotai`，`App.tsx` 中 `AdminDevtools` 是否被 lazy 加载。 |
-| 主题或暗色模式初始值不对 | `setupTheme` 是否在 render 前执行，生产环境缓存和 `BUILD_TIME` 是否符合预期。 |
-| 菜单或 tabs 异常 | `setupAdminLayouts` 的 `routeMode`、`routeTree`、`menuCategories`、`loadDynamicRoutes` 和 `storage` 是否正确。 |
-| 登录后菜单没有生成 | `useAuth().initAuth()` 是否成功拿到用户信息，`initMenus(data)` 是否执行。 |
-| 语言或日期本地化异常 | `setupI18n()` 是否完成，`GlobalEffect` 是否挂载，`syncLocales` 是否把语言映射到 Dayjs locale。 |
-| 路由切换进度条异常 | `setupAdminPlugins()` 是否初始化 NProgress，根路由 `pages/__root.tsx` 是否能读取 `globalConfig.nprogress`。 |
+| 主题或暗色模式初始值不对 | `setupTheme` 是否在 render 前执行，生产环境缓存和 `BUILD_TIME` 是否符合预期。                                                       |
+| 菜单或 tabs 异常         | `setupAdminLayouts` 的 `routeMode`、`routeTree`、`menuCategories`、`loadDynamicRoutes` 和 `storage` 是否正确。                      |
+| 登录后菜单没有生成       | `useAuth().initAuth()` 是否成功拿到用户信息，`initMenus(data)` 是否执行。                                                           |
+| 语言或日期本地化异常     | `setupI18n()` 是否完成，`GlobalEffect` 是否挂载，`syncLocales` 是否把语言映射到 Dayjs locale。                                      |
+| 路由切换进度条异常       | `setupAdminPlugins()` 是否初始化 NProgress，根路由 `pages/__root.tsx` 是否能读取 `globalConfig.nprogress`。                         |
 
 ## 相关位置
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 项目目录边界 | [项目结构](../getting-started/project-structure) |
-| 运行、构建和环境模式 | [快速开始](../getting-started/quick-start) |
-| 布局和菜单配置 | [布局系统](../layout/overview)、[菜单与标签页](../layout/menus-and-tabs) |
-| 路由守卫 | [路由守卫](../routing/guards) |
-| 权限和超级角色 | [权限](../routing/permission) |
-| 主题、语言和图标 | [主题系统](../theme/overview)、[国际化与图标](../theme/i18n-and-icons) |
+| 主题                 | 继续查看                                                                 |
+| -------------------- | ------------------------------------------------------------------------ |
+| 项目目录边界         | [项目结构](../getting-started/project-structure)                         |
+| 运行、构建和环境模式 | [快速开始](../getting-started/quick-start)                               |
+| 布局和菜单配置       | [布局系统](../layout/overview)、[菜单与标签页](../layout/menus-and-tabs) |
+| 路由守卫             | [路由守卫](../routing/guards)                                            |
+| 权限和超级角色       | [权限](../routing/permission)                                            |
+| 主题、语言和图标     | [主题系统](../theme/overview)、[国际化与图标](../theme/i18n-and-icons)   |

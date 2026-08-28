@@ -19,11 +19,9 @@ export type PartialUpdater<T extends object> = Partial<T> | ((prev: T) => Partia
  *   const [state, setState] = useAtom(adminStateAtom);
  *   setState({ siderCollapse: true });               // patch form
  *   setState(prev => ({ siderCollapse: !prev.siderCollapse })); // updater form
- *   ```
+ *   ```;
  */
-export function atomWithPartial<T extends object>(
-  initialValue: T
-): WritableAtom<T, [PartialUpdater<T>], void> {
+export function atomWithPartial<T extends object>(initialValue: T): WritableAtom<T, [PartialUpdater<T>], void> {
   const baseAtom = atom(initialValue);
   baseAtom.debugPrivate = true;
 

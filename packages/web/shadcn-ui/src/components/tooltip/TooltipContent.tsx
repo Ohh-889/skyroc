@@ -15,7 +15,13 @@ const TooltipContent = forwardRef<ComponentRef<typeof Content>, TooltipContentPr
 
   return (
     <Portal>
-      <Content avoidCollisions={avoidCollisions} className={mergedCls} ref={ref} sideOffset={sideOffset} {...rest} />
+      <Content
+        avoidCollisions={avoidCollisions}
+        className={mergedCls}
+        ref={ref}
+        sideOffset={sideOffset}
+        {...rest}
+      />
     </Portal>
   );
 });

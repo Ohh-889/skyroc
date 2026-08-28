@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
 import { Card } from '@skyroc/web-ui';
+import type { Metadata } from 'next';
 import { generateComponentMetadata } from '../components-meta';
 import AvatarBasic from './modules/AvatarBasic';
+import AvatarCustomFallback from './modules/AvatarCustomFallback';
+import AvatarFallback from './modules/AvatarFallback';
 import AvatarGroup from './modules/AvatarGroup';
 import AvatarSize from './modules/AvatarSize';
-import AvatarFallback from './modules/AvatarFallback';
-import AvatarCustomFallback from './modules/AvatarCustomFallback';
 
 export async function generateMetadata(): Promise<Metadata> {
   return await generateComponentMetadata('avatar');

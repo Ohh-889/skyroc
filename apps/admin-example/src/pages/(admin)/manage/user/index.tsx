@@ -148,14 +148,28 @@ const UserManage = () => {
         minWidth: 220,
         render: (_, record) => (
           <div className="flex-center gap-8px">
-            <Button ghost size="small" type="primary" onClick={() => edit(record.id)}>
+            <Button
+              ghost
+              size="small"
+              type="primary"
+              onClick={() => edit(record.id)}
+            >
               {t('common.edit')}
             </Button>
-            <Button size="small" onClick={() => goDetail(record.id)}>
+            <Button
+              size="small"
+              onClick={() => goDetail(record.id)}
+            >
               {t('common.detail')}
             </Button>
-            <Popconfirm title={t('common.confirmDelete')} onConfirm={handleDelete}>
-              <Button danger size="small">
+            <Popconfirm
+              title={t('common.confirmDelete')}
+              onConfirm={handleDelete}
+            >
+              <Button
+                danger
+                size="small"
+              >
                 {t('common.delete')}
               </Button>
             </Popconfirm>
@@ -182,7 +196,10 @@ const UserManage = () => {
         ]}
       />
 
-      <div className="min-h-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -199,7 +216,12 @@ const UserManage = () => {
           title={t('page.manage.user.title')}
           variant="borderless"
         >
-          <Table rowSelection={rowSelection} scroll={scrollConfig} size="small" {...tableProps} />
+          <Table
+            rowSelection={rowSelection}
+            scroll={scrollConfig}
+            size="small"
+            {...tableProps}
+          />
           <Suspense fallback={null}>
             <UserOperateDrawer {...generalPopupOperation} />
           </Suspense>

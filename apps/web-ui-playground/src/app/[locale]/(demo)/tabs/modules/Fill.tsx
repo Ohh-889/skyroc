@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import type { TabsOptionData } from '@skyroc/web-ui';
 import { Tabs } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const tabs = [
   {
@@ -27,9 +27,7 @@ const Fill = () => {
 
   return (
     <div className="flex-c gap-4">
-      <p className="text-muted-foreground text-sm">
-        TabsList width is controlled by the content width
-      </p>
+      <p className="text-muted-foreground text-sm">TabsList width is controlled by the content width</p>
 
       <div className="lt-sm:w-auto w-[320px]">
         <Tabs

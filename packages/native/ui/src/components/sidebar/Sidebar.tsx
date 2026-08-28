@@ -16,8 +16,7 @@ const indicatorLayoutStyle: ViewStyle = { left: 0, position: 'absolute' };
 /**
  * 指示器对齐所需的全部可变量。
  *
- * 这些数据只驱动动画、不参与渲染，因此整体挂在一个稳定的 ref 上：布局变化不会引起 Sidebar 重渲染，alignToItem 也得以提到组件外层，effect
- * 的依赖数组才能只写 activeIndex 且保持诚实。
+ * 这些数据只驱动动画、不参与渲染，因此整体挂在一个稳定的 ref 上：布局变化不会引起 Sidebar 重渲染，alignToItem 也得以提到组件外层，effect 的依赖数组才能只写 activeIndex 且保持诚实。
  */
 interface SidebarIndicatorContext {
   /** 是否已完成首帧落位；首帧直接落位不做动画 */

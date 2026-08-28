@@ -17,20 +17,20 @@ import type { FieldItemProps } from './types';
  * 除了 value 与变更回调，还会向子组件注入 `error`（当前字段是否校验失败）， Input 这类支持 error 变体的组件因此能自动变红。
  *
  * @example
- * ```tsx
- * <FieldItem name="password" label="输入新密码" required rules={[{ minLength: 6 }]}>
+ *   ```tsx
+ *   <FieldItem name="password" label="输入新密码" required rules={[{ minLength: 6 }]}>
  *   <Input type="password" placeholder="请输入密码" />
- * </FieldItem>
+ *   </FieldItem>
  *
- * <FieldItem name="duration" label="运动时长" size="sm" description="单位：分钟">
+ *   <FieldItem name="duration" label="运动时长" size="sm" description="单位：分钟">
  *   <Input placeholder="请输入" keyboardType="number-pad" />
- * </FieldItem>
+ *   </FieldItem>
  *
- * // 非文本控件同样不需要额外配置，onChange(value) 的第一个参数就是值
- * <FieldItem name="score" label="评分">
+ *   // 非文本控件同样不需要额外配置，onChange(value) 的第一个参数就是值
+ *   <FieldItem name="score" label="评分">
  *   <Rate />
- * </FieldItem>
- * ```
+ *   </FieldItem>
+ *   ```;
  */
 const FieldItem = <Values = any,>(props: FieldItemProps<Values>) => {
   const {

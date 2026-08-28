@@ -25,12 +25,12 @@ import { Input } from '@skyroc/native-ui';
 
 `variant` 控制容器外观：
 
-| 变体        | 表现                                   | 适用场景                     |
-| ----------- | -------------------------------------- | ---------------------------- |
-| `outline`   | 四边描边（`border-input`）             | 独立输入框（默认）           |
-| `filled`    | 灰底（`bg-muted`）+ 透明描边           | 弱化边框的表单、搜索条       |
-| `underline` | 仅底部描边、无圆角                     | 紧凑列表、内联编辑           |
-| `none`      | 无边框无背景、无内边距、高度自适应     | 嵌在自定义容器里当纯输入区   |
+| 变体        | 表现                               | 适用场景                   |
+| ----------- | ---------------------------------- | -------------------------- |
+| `outline`   | 四边描边（`border-input`）         | 独立输入框（默认）         |
+| `filled`    | 灰底（`bg-muted`）+ 透明描边       | 弱化边框的表单、搜索条     |
+| `underline` | 仅底部描边、无圆角                 | 紧凑列表、内联编辑         |
+| `none`      | 无边框无背景、无内边距、高度自适应 | 嵌在自定义容器里当纯输入区 |
 
 <Demo src="@playground/input/InputVariant" />
 
@@ -40,11 +40,11 @@ import { Input } from '@skyroc/native-ui';
 
 `size` 同时决定容器高度、圆角、水平内边距、元素间距与输入字号，功能图标（清除、密码切换）的像素尺寸也随之变化：
 
-| 尺寸 | 高度 | 圆角     | 水平内边距 | 间距 | 字号                | 图标 |
-| ---- | ---- | -------- | ---------- | ---- | ------------------- | ---- |
-| `sm` | 40   | `rounded-md`  | 8    | 6    | `--text-sm`   | 18   |
-| `md` | 48   | `rounded-lg`  | 12   | 8    | `--text-base` | 20   |
-| `lg` | 64   | `rounded-xl`  | 16   | 10   | `--text-lg`   | 22   |
+| 尺寸 | 高度 | 圆角         | 水平内边距 | 间距 | 字号          | 图标 |
+| ---- | ---- | ------------ | ---------- | ---- | ------------- | ---- |
+| `sm` | 40   | `rounded-md` | 8          | 6    | `--text-sm`   | 18   |
+| `md` | 48   | `rounded-lg` | 12         | 8    | `--text-base` | 20   |
+| `lg` | 64   | `rounded-xl` | 16         | 10   | `--text-lg`   | 22   |
 
 <Demo src="@playground/input/InputSize" />
 
@@ -104,11 +104,11 @@ import { Input } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot      | 作用位置                                       |
-| --------- | ---------------------------------------------- |
-| `root`    | 根容器 `View`（边框、背景、高度、内边距）      |
-| `control` | 底层 `TextInput`（字号、文字色、placeholder）  |
-| `action`  | 清除 / 密码切换按钮的容器 `Pressable`          |
+| slot      | 作用位置                                      |
+| --------- | --------------------------------------------- |
+| `root`    | 根容器 `View`（边框、背景、高度、内边距）     |
+| `control` | 底层 `TextInput`（字号、文字色、placeholder） |
+| `action`  | 清除 / 密码切换按钮的容器 `Pressable`         |
 
 <Demo src="@playground/input/InputStyles" />
 
@@ -132,7 +132,10 @@ import { Input } from '@skyroc/native-ui';
 ```tsx
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
-<Input component={BottomSheetTextInput} placeholder="在 Sheet 里输入" />;
+<Input
+  component={BottomSheetTextInput}
+  placeholder="在 Sheet 里输入"
+/>;
 ```
 
 ## 无障碍

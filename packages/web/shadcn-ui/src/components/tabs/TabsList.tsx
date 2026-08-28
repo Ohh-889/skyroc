@@ -52,7 +52,12 @@ const TabsList = forwardRef<ComponentRef<typeof List>, TabsListProps>((props, re
     updateIndicatorStyle();
   }, [value, dir]);
   return (
-    <List className={mergedCls} dir={dir} {...rest} ref={mergedRef}>
+    <List
+      className={mergedCls}
+      dir={dir}
+      {...rest}
+      ref={mergedRef}
+    >
       {children}
 
       {enableIndicator ? (

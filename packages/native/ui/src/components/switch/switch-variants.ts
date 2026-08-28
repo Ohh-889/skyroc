@@ -24,8 +24,7 @@ export const SIZE_THUMB_MAP: Record<ThemeSize, number> = {
 /**
  * 开关样式。
  *
- * 未选中底色直接挂在 `root` 上，选中色由 `checkedOverlay` 盖在上面做透明度过渡——两层都用语义色 token，
- * 主题与暗色模式自动跟随，不需要在 worklet 里插值色值。
+ * 未选中底色直接挂在 `root` 上，选中色由 `checkedOverlay` 盖在上面做透明度过渡——两层都用语义色 token， 主题与暗色模式自动跟随，不需要在 worklet 里插值色值。
  *
  * `indicator` 槽输出的是 Uniwind 的 `accent-*` 工具类，供 ActivityIndicator 的 `colorClassName` 取色。
  *

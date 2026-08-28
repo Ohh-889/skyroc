@@ -12,7 +12,10 @@ const AppAntdProvider = (props: PropsWithChildren) => {
   const { data: userInfo } = useUserInfoQuery();
 
   return (
-    <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+    <AntdProvider
+      locale={antdLocales[locale]}
+      userName={userInfo?.userName}
+    >
       {children}
     </AntdProvider>
   );

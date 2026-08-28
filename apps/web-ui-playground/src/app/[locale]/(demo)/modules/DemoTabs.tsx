@@ -1,8 +1,8 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import type { TabsOptionData } from '@skyroc/web-ui';
 import { Tabs } from '@skyroc/web-ui';
+import { usePathname } from 'next/navigation';
 
 interface DemoTabsProps {
   items: TabsOptionData[];

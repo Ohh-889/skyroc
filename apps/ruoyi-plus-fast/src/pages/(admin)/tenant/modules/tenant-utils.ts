@@ -86,11 +86,11 @@ export function hasTenantFilters(params: Partial<TenantListParams>) {
 export function hasAdvancedTenantFilters(params: Partial<TenantListParams>) {
   return Boolean(
     params.beginTime ||
-      params.contactPhone ||
-      params.domain ||
-      params.endTime ||
-      params.licenseNumber ||
-      params.packageId
+    params.contactPhone ||
+    params.domain ||
+    params.endTime ||
+    params.licenseNumber ||
+    params.packageId
   );
 }
 

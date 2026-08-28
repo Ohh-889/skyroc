@@ -3,16 +3,5 @@
   "description": "packages/@core 下的跨平台基础能力：工具函数、请求、状态、色彩与设计令牌",
   "icon": "Box",
   "root": true,
-  "pages": [
-    "index",
-    "utils",
-    "axios",
-    "service",
-    "state",
-    "color",
-    "tailwind-plugin",
-    "logger",
-    "types",
-    "scripts"
-  ]
+  "pages": ["index", "utils", "axios", "service", "state", "color", "tailwind-plugin", "logger", "types", "scripts"]
 }

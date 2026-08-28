@@ -3,12 +3,8 @@
   "name": "label",
   "type": "registry:block",
   "title": "Label",
-  "dependencies": [
-    "@radix-ui/react-label"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "dependencies": ["@radix-ui/react-label"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/label/Label.tsx",

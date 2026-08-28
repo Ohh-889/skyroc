@@ -23,13 +23,13 @@ form.setFieldValue('user.age', 'Alice'); // ❌ 编译报错（age 不是 string
 
 推导逻辑不在本包，而在 [`@skyroc/utils/type`](/docs/core/utils/type)：
 
-| 用处 | 类型 |
-| --- | --- |
-| `FieldProps.name` | `AllPathsKeys<Values>` |
-| `useWatch(name)` 的返回 | `PathToDeepType<Values, T>` |
-| `List` / `useArrayField` 的 `name` | `ArrayKeys<Values>` |
-| 数组元素值 | `ArrayElementValue<Values, K>` |
-| `arrayOp(name)` 的 insert / remove 参数 | 与数组元素类型绑定 |
+| 用处                                    | 类型                           |
+| --------------------------------------- | ------------------------------ |
+| `FieldProps.name`                       | `AllPathsKeys<Values>`         |
+| `useWatch(name)` 的返回                 | `PathToDeepType<Values, T>`    |
+| `List` / `useArrayField` 的 `name`      | `ArrayKeys<Values>`            |
+| 数组元素值                              | `ArrayElementValue<Values, K>` |
+| `arrayOp(name)` 的 insert / remove 参数 | 与数组元素类型绑定             |
 
 `AllPathsKeys` 会把嵌套对象和数组下标一并展开，所以 `'user.name'`、`'tags.0'` 都是合法路径。
 

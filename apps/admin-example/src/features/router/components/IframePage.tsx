@@ -26,7 +26,12 @@ export const IframePage = (props: IframePageProps) => {
 
   return (
     <div className="relative h-full">
-      {loading && <Skeleton active className="p-16px" />}
+      {loading && (
+        <Skeleton
+          active
+          className="p-16px"
+        />
+      )}
       <div className={loading ? 'h-0 overflow-hidden' : 'h-full'}>
         <iframe
           className="size-full border-0"

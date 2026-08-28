@@ -44,11 +44,17 @@ const GlobalSettings = () => {
   return (
     <>
       <SettingItem label={t('theme.general.multilingual.visible')}>
-        <ASwitch checked={header.multilingual.visible} onChange={handleMultilingualVisibleChange} />
+        <ASwitch
+          checked={header.multilingual.visible}
+          onChange={handleMultilingualVisibleChange}
+        />
       </SettingItem>
 
       <SettingItem label={t('theme.general.globalSearch.visible')}>
-        <ASwitch checked={header.globalSearch.visible} onChange={handleGlobalSearchVisibleChange} />
+        <ASwitch
+          checked={header.globalSearch.visible}
+          onChange={handleGlobalSearchVisibleChange}
+        />
       </SettingItem>
     </>
   );

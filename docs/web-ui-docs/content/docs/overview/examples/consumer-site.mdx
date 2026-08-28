@@ -32,7 +32,10 @@ Next.js 的 C 端业务和官网页面通常同时关注品牌表达、转化效
 <Form>
   <Input placeholder="请输入邮箱" />
   <Password placeholder="请输入密码" />
-  <Button color="primary" className="w-full">
+  <Button
+    color="primary"
+    className="w-full"
+  >
     创建账号
   </Button>
 </Form>
@@ -50,8 +53,14 @@ Next.js 的 C 端业务和官网页面通常同时关注品牌表达、转化效
 
 ```tsx
 <div className="flex flex-wrap items-center gap-3">
-  <Input placeholder="搜索内容" size="sm" />
-  <Select placeholder="分类" size="sm" />
+  <Input
+    placeholder="搜索内容"
+    size="sm"
+  />
+  <Select
+    placeholder="分类"
+    size="sm"
+  />
   <Segment items={['最新', '热门']} />
 </div>
 ```
@@ -86,7 +95,10 @@ C 端页面中的敏感操作通常不是“删除数据”，也可能是取消
 
 ```tsx
 <AlertDialog>
-  <Button color="destructive" variant="outline">
+  <Button
+    color="destructive"
+    variant="outline"
+  >
     取消订阅
   </Button>
 </AlertDialog>

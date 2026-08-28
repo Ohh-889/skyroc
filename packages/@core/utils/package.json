@@ -1,7 +1,6 @@
 {
   "name": "@skyroc/utils",
   "version": "4.0.0",
-  "type": "module",
   "description": "Platform-agnostic utility functions (Node / browser / React Native) with ./type, ./web, ./path, ./cn, ./crypto and ./scheduler subpath exports",
   "keywords": [
     "browser",
@@ -16,28 +15,29 @@
     "typescript",
     "utility"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/utils",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/@core/utils"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "sideEffects": [
-    "./src/date/dayjs.ts",
-    "./dist/date/dayjs.js"
-  ],
   "files": [
     "dist",
     "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./src/date/dayjs.ts",
+    "./dist/date/dayjs.js"
   ],
   "main": "./src/index.ts",
   "module": "./src/index.ts",
@@ -52,11 +52,7 @@
     "./web": "./src/web/index.ts"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -101,9 +97,13 @@
         }
       }
     },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
     "sideEffects": [
       "./dist/date/dayjs.js"
-    ]
+    ],
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "tsdown",

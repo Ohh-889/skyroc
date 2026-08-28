@@ -1,8 +1,8 @@
-import type { SeedToken } from 'antd/lib/theme/interface';
-import { describe, expect, it } from 'vitest';
 import derivativeDark from '@shell/theme/antd-algorithm/algorithm/dark';
 import derivative from '@shell/theme/antd-algorithm/algorithm/default';
 import { seedToken } from '@shell/theme/antd-algorithm/seed';
+import type { SeedToken } from 'antd/lib/theme/interface';
+import { describe, expect, it } from 'vitest';
 
 const token = seedToken as unknown as SeedToken;
 

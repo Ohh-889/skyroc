@@ -3,9 +3,7 @@
   "name": "segment",
   "type": "registry:block",
   "title": "Segment",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/segment/Segment.tsx",

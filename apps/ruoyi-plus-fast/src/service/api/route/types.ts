@@ -21,7 +21,7 @@ export interface RuoYiRouter {
   component?: string;
   hidden?: boolean;
   meta?: RuoYiRouterMeta;
-  /** path 首字母大写加菜单 id，后端保证全局唯一。 */
+  /** Path 首字母大写加菜单 id，后端保证全局唯一。 */
   name: string;
   /** 顶级是绝对路径，子级是相对父级的一段。 */
   path: string;

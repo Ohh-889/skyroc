@@ -1,24 +1,11 @@
 {
   "$schema": "../../../node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "./base.json"
-  ],
-  "plugins": [
-    "node",
-    "import",
-    "unicorn",
-    "typescript",
-    "eslint",
-    "oxc",
-    "vitest",
-    "react"
-  ],
+  "extends": ["./base.json"],
+  "plugins": ["node", "import", "unicorn", "typescript", "eslint", "oxc", "vitest", "react"],
   "rules": {
     "no-restricted-imports": "error",
     "import/no-absolute-path": "warn",
-    "import/no-empty-named-blocks": [
-      "error"
-    ],
+    "import/no-empty-named-blocks": ["error"],
     "react/hook-use-state": [
       "error",
       {
@@ -33,10 +20,7 @@
         "props": "never"
       }
     ],
-    "react/jsx-fragments": [
-      "warn",
-      "syntax"
-    ],
+    "react/jsx-fragments": ["warn", "syntax"],
     "react/jsx-no-useless-fragment": "warn",
     "react/react-in-jsx-scope": "off",
     "react/self-closing-comp": [
@@ -49,21 +33,13 @@
     "react/only-export-components": [
       "warn",
       {
-        "allowExportNames": [
-          "loader",
-          "action",
-          "handle",
-          "shouldRevalidate"
-        ]
+        "allowExportNames": ["loader", "action", "handle", "shouldRevalidate"]
       }
     ]
   },
   "overrides": [
     {
-      "files": [
-        "**/*.?([cm])jsx",
-        "**/*.?([cm])tsx"
-      ],
+      "files": ["**/*.?([cm])jsx", "**/*.?([cm])tsx"],
       "rules": {
         "react/display-name": "error",
         "react/jsx-key": "error",

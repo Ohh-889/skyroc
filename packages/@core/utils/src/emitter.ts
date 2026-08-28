@@ -28,8 +28,8 @@ const DEFAULT_STICKY_LIMIT = 32;
  * - 粘性事件：晚注册的监听器会收到之前已触发但未被消费的事件
  * - 键控事件（Map 模式）：同一事件名下按 key 隔离监听器
  *
- * @example 类型安全
- *   ```ts
+ * @example
+ *   类型安全```ts
  *   type Events = {
  *     login: [user: string];
  *     logout: [];
@@ -40,7 +40,8 @@ const DEFAULT_STICKY_LIMIT = 32;
  *   bus.emit('login', 123);        // ❌ 类型错误
  *   ```;
  *
- * @example 无泛型（向后兼容）
+ * @example
+ *   无泛型（向后兼容）
  *   ```ts
  *   const bus = new Emitter();
  *   bus.on('login', (user) => console.log(user));

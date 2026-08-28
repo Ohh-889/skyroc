@@ -25,10 +25,10 @@ import { Search } from '@skyroc/native-ui';
 
 `shape` 控制输入区圆角：
 
-| 形状     | 圆角                                       |
-| -------- | ------------------------------------------ |
-| `square` | 跟随 `size`（`sm` 小、`lg` 大），默认      |
-| `round`  | 恒为胶囊形（`rounded-full`）               |
+| 形状     | 圆角                                  |
+| -------- | ------------------------------------- |
+| `square` | 跟随 `size`（`sm` 小、`lg` 大），默认 |
+| `round`  | 恒为胶囊形（`rounded-full`）          |
 
 <Demo src="@playground/search/SearchShape" />
 
@@ -38,11 +38,11 @@ import { Search } from '@skyroc/native-ui';
 
 `size` 同时作用于外层留白、搜索图标像素大小，并直接透传给内部 `Input`（决定高度与字号）：
 
-| 尺寸 | 外层内边距            | 图标 | 输入框高度 |
-| ---- | --------------------- | ---- | ---------- |
-| `sm` | `px-2 py-1.5`（8 / 6）  | 14   | 40         |
-| `md` | `px-3 py-2`（12 / 8）   | 16   | 48         |
-| `lg` | `px-4 py-2.5`（16 / 10）| 18   | 64         |
+| 尺寸 | 外层内边距               | 图标 | 输入框高度 |
+| ---- | ------------------------ | ---- | ---------- |
+| `sm` | `px-2 py-1.5`（8 / 6）   | 14   | 40         |
+| `md` | `px-3 py-2`（12 / 8）    | 16   | 48         |
+| `lg` | `px-4 py-2.5`（16 / 10） | 18   | 64         |
 
 <Demo src="@playground/search/SearchSize" />
 
@@ -86,15 +86,15 @@ import { Search } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 覆盖搜索栏自身的 slot，`inputClassNames` 继续下钻到内部 `Input` 的 slot：
 
-| slot         | 归属               | 作用位置                              |
-| ------------ | ------------------ | ------------------------------------- |
-| `root`       | `classNames`       | 最外层 `View`（横向排布、内边距）     |
-| `label`      | `classNames`       | 左侧标签文字                          |
-| `input`      | `classNames`       | 内部 `Input` 的根节点（背景、圆角）   |
-| `action`     | `classNames`       | 右侧操作按钮容器 `Pressable`          |
-| `actionText` | `classNames`       | 右侧操作按钮的文字                    |
-| `control`    | `inputClassNames`  | 内部 `Input` 的 `TextInput`           |
-| `action`     | `inputClassNames`  | 内部 `Input` 的清除按钮容器           |
+| slot         | 归属              | 作用位置                            |
+| ------------ | ----------------- | ----------------------------------- |
+| `root`       | `classNames`      | 最外层 `View`（横向排布、内边距）   |
+| `label`      | `classNames`      | 左侧标签文字                        |
+| `input`      | `classNames`      | 内部 `Input` 的根节点（背景、圆角） |
+| `action`     | `classNames`      | 右侧操作按钮容器 `Pressable`        |
+| `actionText` | `classNames`      | 右侧操作按钮的文字                  |
+| `control`    | `inputClassNames` | 内部 `Input` 的 `TextInput`         |
+| `action`     | `inputClassNames` | 内部 `Input` 的清除按钮容器         |
 
 <Demo src="@playground/search/SearchStyles" />
 

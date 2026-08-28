@@ -8,8 +8,8 @@ export const LIGHT_TEXT_BASE = '#1F1F1F';
 /**
  * Generate color palettes (light mode)
  *
- * Uses generateOklchPaletteAnchored algorithm instead of antd's @ant-design/colors Outputs 11 colors (50-950), mapped to
- * antd's 1-10 indexes
+ * Uses generateOklchPaletteAnchored algorithm instead of antd's @ant-design/colors Outputs 11 colors (50-950), mapped
+ * to antd's 1-10 indexes
  */
 export const generateColorPalettes: GenerateColorMap = (baseColor: string): ColorMap => {
   const { palettes } = generateOklchPaletteAnchored(baseColor, 500);

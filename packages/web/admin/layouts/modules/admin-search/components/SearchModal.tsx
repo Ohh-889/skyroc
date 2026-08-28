@@ -1,6 +1,13 @@
 import { SvgIcon } from '@shell/ui/compose';
 import { useDebounceFn, useKeyPress } from 'ahooks';
-import { Button as AButton, Empty as AEmpty, Input as AInput, type InputRef, Modal as AModal, Space as ASpace } from 'antd';
+import {
+  Button as AButton,
+  Empty as AEmpty,
+  Input as AInput,
+  type InputRef,
+  Modal as AModal,
+  Space as ASpace
+} from 'antd';
 import { clsx } from 'clsx';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -138,12 +145,21 @@ const SearchModal = (props: Props) => {
         <AInput
           allowClear
           placeholder={t('common.keywordSearch')}
-          prefix={<SvgIcon className="text-15px text-#c2c2c2" icon="uil:search" />}
+          prefix={
+            <SvgIcon
+              className="text-15px text-#c2c2c2"
+              icon="uil:search"
+            />
+          }
           ref={keyword}
           onInput={handleSearch.run}
         />
         {isMobile && (
-          <AButton ghost type="primary" onClick={handleClose}>
+          <AButton
+            ghost
+            type="primary"
+            onClick={handleClose}
+          >
             {t('common.cancel')}
           </AButton>
         )}

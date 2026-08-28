@@ -51,9 +51,7 @@ describe('ConfigProvider', () => {
 
   it('lets component props override provider defaults', () => {
     render(
-      <ConfigProvider
-        button={{ color: 'destructive', size: 'lg' }}
-      >
+      <ConfigProvider button={{ color: 'destructive', size: 'lg' }}>
         <Button
           color="success"
           size="sm"

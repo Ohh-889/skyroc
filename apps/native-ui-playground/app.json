@@ -1,11 +1,7 @@
 {
   "expo": {
     "scheme": "dev.expo.eastestsexample",
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-status-bar"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-status-bar"],
     "experiments": {
       "typedRoutes": true
     },

@@ -11,26 +11,26 @@ description: 使用 apps/admin 的 AntdProvider、showMessage、showNotification
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 页面里显示成功、错误或 loading 消息 | `showSuccessMessage()`、`showErrorMessage()`、`showLoadingMessage()` |
-| 页面里打开确认弹窗 | `showConfirmModal()`、`showModal()` |
-| 页面里展示 Ant Design notification | `showSuccessNotification()`、`showErrorNotification()` |
-| 请求失败时弹错误 | `apps/admin/src/service/request/index.ts`、`service/adapter.ts` |
-| 排查 `message is not initialized` | `App.tsx`、`features/antd/AntdProvider.tsx`、`@skyroc/web-admin-theme/AntdProvider` |
-| 参考当前演示页 | `apps/admin/src/pages/(admin)/manage/menu/index.tsx` |
+| 场景                                | 重点位置                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| 页面里显示成功、错误或 loading 消息 | `showSuccessMessage()`、`showErrorMessage()`、`showLoadingMessage()`                |
+| 页面里打开确认弹窗                  | `showConfirmModal()`、`showModal()`                                                 |
+| 页面里展示 Ant Design notification  | `showSuccessNotification()`、`showErrorNotification()`                              |
+| 请求失败时弹错误                    | `apps/admin/src/service/request/index.ts`、`service/adapter.ts`                     |
+| 排查 `message is not initialized`   | `App.tsx`、`features/antd/AntdProvider.tsx`、`@skyroc/web-admin-theme/AntdProvider` |
+| 参考当前演示页                      | `apps/admin/src/pages/(admin)/manage/menu/index.tsx`                                |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/App.tsx` | 在 React 树中挂载 `AppAntdProvider`。 |
-| `apps/admin/src/features/antd/AntdProvider.tsx` | 读取语言和用户信息，把 locale / userName 传给主题包 Provider。 |
+| 文件                                                 | 职责                                                                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `apps/admin/src/App.tsx`                             | 在 React 树中挂载 `AppAntdProvider`。                                                                       |
+| `apps/admin/src/features/antd/AntdProvider.tsx`      | 读取语言和用户信息，把 locale / userName 传给主题包 Provider。                                              |
 | `packages/web/admin-theme/src/antd/AntdProvider.tsx` | 组合 `ConfigProvider`、`App`、`Watermark`，并用 `App.useApp()` 初始化 message / modal / notification 实例。 |
-| `packages/web/admin-theme/src/antd/ui.ts` | 暴露 `showMessage`、`showModal`、`showNotification` 等函数。 |
-| `apps/admin/src/config.ts` | re-export 全局反馈函数，保持 auto-import 和应用入口稳定。 |
-| `apps/admin/src/service/adapter.ts` | 把请求核心需要的错误弹窗、错误消息能力接到 Ant Design。 |
-| `apps/admin/src/pages/(admin)/manage/menu/index.tsx` | 当前 Ant Design message、notification、modal 的演示页。 |
+| `packages/web/admin-theme/src/antd/ui.ts`            | 暴露 `showMessage`、`showModal`、`showNotification` 等函数。                                                |
+| `apps/admin/src/config.ts`                           | re-export 全局反馈函数，保持 auto-import 和应用入口稳定。                                                   |
+| `apps/admin/src/service/adapter.ts`                  | 把请求核心需要的错误弹窗、错误消息能力接到 Ant Design。                                                     |
+| `apps/admin/src/pages/(admin)/manage/menu/index.tsx` | 当前 Ant Design message、notification、modal 的演示页。                                                     |
 
 ## 核心链路
 
@@ -63,11 +63,11 @@ function getMessage() {
 
 ## API 分组
 
-| 分组 | 函数 |
-| --- | --- |
-| Message | `showMessage`、`showSuccessMessage`、`showErrorMessage`、`showInfoMessage`、`showWarningMessage`、`showLoadingMessage`、`destroyMessage` |
+| 分组         | 函数                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Message      | `showMessage`、`showSuccessMessage`、`showErrorMessage`、`showInfoMessage`、`showWarningMessage`、`showLoadingMessage`、`destroyMessage`         |
 | Notification | `showNotification`、`showSuccessNotification`、`showErrorNotification`、`showInfoNotification`、`showWarningNotification`、`destroyNotification` |
-| Modal | `showModal`、`showConfirmModal`、`showInfoModal`、`showSuccessModal`、`showErrorModal`、`showWarningModal` |
+| Modal        | `showModal`、`showConfirmModal`、`showInfoModal`、`showSuccessModal`、`showErrorModal`、`showWarningModal`                                       |
 
 这些函数从 `apps/admin/src/config.ts` 导出。页面中推荐从 `@/config` 导入，或者使用项目 auto-import 生成的全局类型。
 
@@ -97,7 +97,14 @@ const DeleteButton = (props: DeleteButtonProps) => {
     });
   }
 
-  return <AButton danger onClick={handleDelete}>删除</AButton>;
+  return (
+    <AButton
+      danger
+      onClick={handleDelete}
+    >
+      删除
+    </AButton>
+  );
 };
 ```
 
@@ -122,32 +129,32 @@ setTimeout(() => {
 
 请求层不是直接 import Ant Design 原生 API，而是通过应用适配器注入：
 
-| 位置 | 行为 |
-| --- | --- |
-| `service/request/index.ts` | 普通请求错误调用 `showErrorMessage(message)`。 |
-| `service/adapter.ts` | 给核心请求包提供错误消息、错误弹窗、token 读写、刷新 token 和跳转登录能力。 |
-| `@skyroc/web-admin-theme` | 提供真正的 Ant Design UI 实例。 |
+| 位置                       | 行为                                                                        |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `service/request/index.ts` | 普通请求错误调用 `showErrorMessage(message)`。                              |
+| `service/adapter.ts`       | 给核心请求包提供错误消息、错误弹窗、token 读写、刷新 token 和跳转登录能力。 |
+| `@skyroc/web-admin-theme`  | 提供真正的 Ant Design UI 实例。                                             |
 
 这样请求核心不用知道 `apps/admin` 的 UI 组件树，只依赖 host 应用传入的适配能力。
 
 ## 与通知中心的区别
 
-| 能力 | 位置 | 生命周期 |
-| --- | --- | --- |
-| Ant Design `notification` | `showNotification()` 系列 | 弹出式反馈，通常不保留列表状态。 |
-| 后台通知中心 | `@skyroc/web-admin-notification` | Provider 内存态通知列表，header 按钮展示未读数和通知面板。 |
+| 能力                      | 位置                             | 生命周期                                                   |
+| ------------------------- | -------------------------------- | ---------------------------------------------------------- |
+| Ant Design `notification` | `showNotification()` 系列        | 弹出式反馈，通常不保留列表状态。                           |
+| 后台通知中心              | `@skyroc/web-admin-notification` | Provider 内存态通知列表，header 按钮展示未读数和通知面板。 |
 
 需要临时操作反馈时用 Ant Design notification；需要用户在 header 通知面板里查看、标记已读、播放通知音或请求浏览器通知权限时，用后台通知系统。
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 在 `bootstrap.tsx` 渲染 `App` 前调用 `showMessage()` | 反馈 API 依赖 `AntdProvider`，只能在 Provider 挂载后使用。 |
-| 在页面里直接调用 `message.success()` | 使用 `@/config` 导出的包装函数，保持主题、locale 和 holder 统一。 |
-| 把 `manage/menu` 当成菜单管理 CRUD | 它当前只是 Ant Design 全局反馈演示页。 |
-| 业务通知全部用 Ant Design notification | 需要通知列表、未读数、声音和浏览器通知权限时，用 [通知系统](./notification)。 |
-| 使用 `window.$message` 作为新代码入口 | 当前推荐入口是 `showSuccessMessage()` 等包装函数；`window.$message` 只是历史兼容类型。 |
+| 误区                                                 | 正确做法                                                                               |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 在 `bootstrap.tsx` 渲染 `App` 前调用 `showMessage()` | 反馈 API 依赖 `AntdProvider`，只能在 Provider 挂载后使用。                             |
+| 在页面里直接调用 `message.success()`                 | 使用 `@/config` 导出的包装函数，保持主题、locale 和 holder 统一。                      |
+| 把 `manage/menu` 当成菜单管理 CRUD                   | 它当前只是 Ant Design 全局反馈演示页。                                                 |
+| 业务通知全部用 Ant Design notification               | 需要通知列表、未读数、声音和浏览器通知权限时，用 [通知系统](./notification)。          |
+| 使用 `window.$message` 作为新代码入口                | 当前推荐入口是 `showSuccessMessage()` 等包装函数；`window.$message` 只是历史兼容类型。 |
 
 ## 相关链接
 

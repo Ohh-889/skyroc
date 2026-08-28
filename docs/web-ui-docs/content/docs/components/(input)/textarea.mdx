@@ -43,7 +43,10 @@ Textarea 支持原生 `textarea` 属性，`placeholder`、`disabled`、`readOnly
 <Demo src="@playground/textarea/modules/TextareaMaxlength" />
 
 ```tsx
-<Textarea showCount maxLength={200} />
+<Textarea
+  showCount
+  maxLength={200}
+/>
 ```
 
 ## 自定义统计内容
@@ -53,7 +56,10 @@ Textarea 支持原生 `textarea` 属性，`placeholder`、`disabled`、`readOnly
 <Demo src="@playground/textarea/modules/TextCustomCount" />
 
 ```tsx
-<Textarea showCount countRender={count => <span>{count}</span>} />
+<Textarea
+  showCount
+  countRender={count => <span>{count}</span>}
+/>
 ```
 
 ## 字符簇计数

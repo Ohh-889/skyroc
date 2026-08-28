@@ -5,117 +5,117 @@ description: 阅读其它文档前的术语对齐
 
 ## 仓库结构相关
 
-| 术语 | 含义 |
-| --- | --- |
-| **Monorepo** | 多个相关项目放在一个 git 仓库内，由 pnpm workspace + Turborepo 管理 |
-| **Workspace** | pnpm 概念，由 `pnpm-workspace.yaml` 的 glob 定义的「子项目」 |
-| **Catalog** | pnpm 10 的依赖版本集中管理机制（`catalogs:` 配置） |
-| **Internal 包** | `internal/` 下的不发布工程化配置包 |
-| **Platform-first** | 包按平台（@core/hooks/primitives 跨端，web/native/miniapp 各占一棵）分目录的策略 |
-| **Adapter Pattern** | 用接口隔离平台 API，使核心代码跨平台的设计模式 |
-| **`@skyroc` scope** | 仓库统一的 npm scope；新包一律用它 |
-| **`@skyroc` scope** | Skyroc 包统一使用的 npm scope |
+| 术语                | 含义                                                                             |
+| ------------------- | -------------------------------------------------------------------------------- |
+| **Monorepo**        | 多个相关项目放在一个 git 仓库内，由 pnpm workspace + Turborepo 管理              |
+| **Workspace**       | pnpm 概念，由 `pnpm-workspace.yaml` 的 glob 定义的「子项目」                     |
+| **Catalog**         | pnpm 10 的依赖版本集中管理机制（`catalogs:` 配置）                               |
+| **Internal 包**     | `internal/` 下的不发布工程化配置包                                               |
+| **Platform-first**  | 包按平台（@core/hooks/primitives 跨端，web/native/miniapp 各占一棵）分目录的策略 |
+| **Adapter Pattern** | 用接口隔离平台 API，使核心代码跨平台的设计模式                                   |
+| **`@skyroc` scope** | 仓库统一的 npm scope；新包一律用它                                               |
+| **`@skyroc` scope** | Skyroc 包统一使用的 npm scope                                                    |
 
 ## 工具链相关
 
-| 术语 | 含义 |
-| --- | --- |
-| **Oxlint** | Rust 实现的 ESLint 替代品，速度 50–100×；本仓库默认 linter |
-| **Oxfmt** | Oxc 工具链的格式化器，对应 Prettier；全仓共享一份 `.oxfmtrc.json` |
-| **tsdown** | 基于 Rolldown 的库构建器，本仓库所有 `@skyroc/*` 库的构建工具 |
-| **Vitest** | 与 Vite 同生态的测试框架；本仓库的单测 / 集成测试方案 |
-| **Turborepo** | 任务编排 + 增量缓存；定义在 `turbo.json` |
-| **MSW** | Mock Service Worker，集成测试中拦截 HTTP（已装未启） |
-| **Playwright** | E2E 测试（待集成） |
-| **simple-git-hooks** | Git hook 管理工具，提交规范校验入口 |
-| **bumpp** | 版本号交互式提升工具，被 `sa release` 包装 |
+| 术语                 | 含义                                                              |
+| -------------------- | ----------------------------------------------------------------- |
+| **Oxlint**           | Rust 实现的 ESLint 替代品，速度 50–100×；本仓库默认 linter        |
+| **Oxfmt**            | Oxc 工具链的格式化器，对应 Prettier；全仓共享一份 `.oxfmtrc.json` |
+| **tsdown**           | 基于 Rolldown 的库构建器，本仓库所有 `@skyroc/*` 库的构建工具     |
+| **Vitest**           | 与 Vite 同生态的测试框架；本仓库的单测 / 集成测试方案             |
+| **Turborepo**        | 任务编排 + 增量缓存；定义在 `turbo.json`                          |
+| **MSW**              | Mock Service Worker，集成测试中拦截 HTTP（已装未启）              |
+| **Playwright**       | E2E 测试（待集成）                                                |
+| **simple-git-hooks** | Git hook 管理工具，提交规范校验入口                               |
+| **bumpp**            | 版本号交互式提升工具，被 `sa release` 包装                        |
 
 ## 应用与运行时
 
-| 术语 | 含义 |
-| --- | --- |
-| **admin** | `apps/admin`（包名 `skyroc-admin`），中后台主应用 |
-| **playground** | `apps/web-ui-playground`、`apps/native-ui-playground`，组件 demo 站 |
-| **AdminLayout** | `@skyroc/materials` 提供的骨架布局组件 |
-| **AdminShell** | `@skyroc/web-admin-layouts` 集成版本（含状态、菜单、tab 等） |
-| **Setup（setupXxx）** | 应用启动序列中的初始化函数（`setupTheme`、`setupI18n` 等） |
-| **AntdProvider** | `@skyroc/web-admin-theme` 提供的 antd ConfigProvider 封装 |
-| **Theme Drawer** | 主题设置抽屉，admin-layouts 内置 |
-| **TabBar** | 多页签栏（持久化打开的页面） |
+| 术语                  | 含义                                                                |
+| --------------------- | ------------------------------------------------------------------- |
+| **admin**             | `apps/admin`（包名 `skyroc-admin`），中后台主应用                   |
+| **playground**        | `apps/web-ui-playground`、`apps/native-ui-playground`，组件 demo 站 |
+| **AdminLayout**       | `@skyroc/materials` 提供的骨架布局组件                              |
+| **AdminShell**        | `@skyroc/web-admin-layouts` 集成版本（含状态、菜单、tab 等）        |
+| **Setup（setupXxx）** | 应用启动序列中的初始化函数（`setupTheme`、`setupI18n` 等）          |
+| **AntdProvider**      | `@skyroc/web-admin-theme` 提供的 antd ConfigProvider 封装           |
+| **Theme Drawer**      | 主题设置抽屉，admin-layouts 内置                                    |
+| **TabBar**            | 多页签栏（持久化打开的页面）                                        |
 
 ## 状态 / 数据
 
-| 术语 | 含义 |
-| --- | --- |
-| **Atom** | Jotai 的状态单元 |
-| **Storage Atom** | 持久化到 localStorage / AsyncStorage 的 atom |
-| **QueryClient** | TanStack Query 的实例 |
+| 术语                | 含义                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Atom**            | Jotai 的状态单元                                                                                     |
+| **Storage Atom**    | 持久化到 localStorage / AsyncStorage 的 atom                                                         |
+| **QueryClient**     | TanStack Query 的实例                                                                                |
 | **Request Adapter** | `@skyroc/service` 的请求实现抽象（详见 [Adapter Pattern](/docs/guide/architecture/adapter-pattern)） |
-| **ServiceCodes** | 业务错误码到动作的映射表 |
-| **Singleflight** | 同时刻只允许一个进行中的副本（用于 token 刷新去重） |
+| **ServiceCodes**    | 业务错误码到动作的映射表                                                                             |
+| **Singleflight**    | 同时刻只允许一个进行中的副本（用于 token 刷新去重）                                                  |
 
 ## UI / 主题
 
-| 术语 | 含义 |
-| --- | --- |
-| **OKLCH** | 感知均匀色彩空间，本项目主题算法基础 |
-| **Color Palette** | 一个主色派生的 11 档色阶 |
-| **Design Token** | 设计系统的原子（颜色、字号、间距、圆角） |
-| **HSL 变量** | CSS 自定义属性，存的是 HSL 分量（兼容 antd 与 tailwind 4） |
-| **Materials** | `@skyroc/materials`，纯结构骨架组件 |
-| **shadcn 风格** | Radix UI + Tailwind 的组件风格；`@skyroc/web-ui` 即此风格 |
-| **Compose 组件** | `@skyroc/web-ui-compose`，基于 antd 的组合组件 |
+| 术语              | 含义                                                       |
+| ----------------- | ---------------------------------------------------------- |
+| **OKLCH**         | 感知均匀色彩空间，本项目主题算法基础                       |
+| **Color Palette** | 一个主色派生的 11 档色阶                                   |
+| **Design Token**  | 设计系统的原子（颜色、字号、间距、圆角）                   |
+| **HSL 变量**      | CSS 自定义属性，存的是 HSL 分量（兼容 antd 与 tailwind 4） |
+| **Materials**     | `@skyroc/materials`，纯结构骨架组件                        |
+| **shadcn 风格**   | Radix UI + Tailwind 的组件风格；`@skyroc/web-ui` 即此风格  |
+| **Compose 组件**  | `@skyroc/web-ui-compose`，基于 antd 的组合组件             |
 
 ## TypeScript
 
-| 术语 | 含义 |
-| --- | --- |
-| **strict** | 启用所有严格模式，全仓默认 |
+| 术语                         | 含义                        |
+| ---------------------------- | --------------------------- |
+| **strict**                   | 启用所有严格模式，全仓默认  |
 | **noUncheckedIndexedAccess** | 索引访问自动 `\| undefined` |
-| **verbatimModuleSyntax** | 强制 `import type` |
-| **`Api` namespace** | 全局后端 API 类型 |
-| **`Router` namespace** | 全局路由 meta / key 类型 |
-| **`Theme` namespace** | 全局主题类型 |
+| **verbatimModuleSyntax**     | 强制 `import type`          |
+| **`Api` namespace**          | 全局后端 API 类型           |
+| **`Router` namespace**       | 全局路由 meta / key 类型    |
+| **`Theme` namespace**        | 全局主题类型                |
 
 ## 路由
 
-| 术语 | 含义 |
-| --- | --- |
-| **TanStack Router** | 类型安全的路由库；本项目用文件式路由 |
-| **routeTree.gen.ts** | TanStack Router 自动生成的类型 / 路由树 |
-| **Constant Routes** | 不需要鉴权的常驻路由（login / 404 等） |
-| **Auth Routes** | 鉴权后通过菜单动态注入的路由 |
-| **Layout Route** | 包裹页面的布局节点（AdminLayout / BlankLayout） |
+| 术语                 | 含义                                            |
+| -------------------- | ----------------------------------------------- |
+| **TanStack Router**  | 类型安全的路由库；本项目用文件式路由            |
+| **routeTree.gen.ts** | TanStack Router 自动生成的类型 / 路由树         |
+| **Constant Routes**  | 不需要鉴权的常驻路由（login / 404 等）          |
+| **Auth Routes**      | 鉴权后通过菜单动态注入的路由                    |
+| **Layout Route**     | 包裹页面的布局节点（AdminLayout / BlankLayout） |
 
 ## 表单
 
-| 术语 | 含义 |
-| --- | --- |
+| 术语               | 含义                                                   |
+| ------------------ | ------------------------------------------------------ |
 | **`@skyroc/form`** | 类型安全的表单原语（`packages/primitives/filed-form`） |
-| **ChangeTag** | bitmask，精确订阅字段的某类变化 |
-| **StandardSchema** | 跨校验库的统一协议（zod / valibot 等） |
-| **Path 类型** | `@skyroc/utils/type` 派生的「嵌套字段访问路径」类型 |
+| **ChangeTag**      | bitmask，精确订阅字段的某类变化                        |
+| **StandardSchema** | 跨校验库的统一协议（zod / valibot 等）                 |
+| **Path 类型**      | `@skyroc/utils/type` 派生的「嵌套字段访问路径」类型    |
 
 ## 文档
 
-| 术语 | 含义 |
-| --- | --- |
-| **Fumadocs** | 本文档框架（Next.js + MDX） |
-| **主文档门户** | `docs/docs`（本站点），承载指南 / Admin / 跨端核心 / Web 端包 / 包总览 |
-| **组件站** | `docs/web-ui-docs`、`docs/native-ui-docs`，独立部署，承载实时 Demo 与 Props |
-| **meta.json** | 同目录文档的导航顺序定义 |
-| **mdx** | Markdown + JSX，支持 `<Card />` 等组件 |
+| 术语           | 含义                                                                        |
+| -------------- | --------------------------------------------------------------------------- |
+| **Fumadocs**   | 本文档框架（Next.js + MDX）                                                 |
+| **主文档门户** | `docs/docs`（本站点），承载指南 / Admin / 跨端核心 / Web 端包 / 包总览      |
+| **组件站**     | `docs/web-ui-docs`、`docs/native-ui-docs`，独立部署，承载实时 Demo 与 Props |
+| **meta.json**  | 同目录文档的导航顺序定义                                                    |
+| **mdx**        | Markdown + JSX，支持 `<Card />` 等组件                                      |
 
 ## 缩略 / 命名
 
-| 缩写 | 全名 |
-| --- | --- |
-| **SA** | Soybean Admin（仓库历史 scope） |
-| **CLI** | Command Line Interface，本仓库特指 `sa` 命令 |
-| **HMR** | Hot Module Replacement |
-| **SSR** | Server-Side Rendering |
-| **CSR** | Client-Side Rendering |
-| **CSS Var** | CSS Custom Property（`--foo`） |
-| **OKLCH** | Oklab Lightness-Chroma-Hue（一种感知均匀色彩空间） |
-| **RN** | React Native |
-| **DTS** | TypeScript 声明文件（`.d.ts`） |
+| 缩写        | 全名                                               |
+| ----------- | -------------------------------------------------- |
+| **SA**      | Soybean Admin（仓库历史 scope）                    |
+| **CLI**     | Command Line Interface，本仓库特指 `sa` 命令       |
+| **HMR**     | Hot Module Replacement                             |
+| **SSR**     | Server-Side Rendering                              |
+| **CSR**     | Client-Side Rendering                              |
+| **CSS Var** | CSS Custom Property（`--foo`）                     |
+| **OKLCH**   | Oklab Lightness-Chroma-Hue（一种感知均匀色彩空间） |
+| **RN**      | React Native                                       |
+| **DTS**     | TypeScript 声明文件（`.d.ts`）                     |

@@ -49,8 +49,7 @@ interface SwipeCellProps {
    *
    * 点击主体、手势回弹、实例 `close()` 三条路径都会经过；被其他 SwipeCell 挤掉与 `disabled` 强制收起不经过——那不是用户对本实例的主动操作。
    *
-   * 挂了拦截后，操作区在拿到结果之前不会移动：确认才收起，拒绝则保持展开，不存在「先关掉再弹回来」的中间态。 代价是异步确认期间关闭动画会推迟到 Promise
-   * resolve 之后。
+   * 挂了拦截后，操作区在拿到结果之前不会移动：确认才收起，拒绝则保持展开，不存在「先关掉再弹回来」的中间态。 代价是异步确认期间关闭动画会推迟到 Promise resolve 之后。
    */
   beforeClose?: (params: SwipeCellBeforeCloseParams) => boolean | Promise<boolean>;
 

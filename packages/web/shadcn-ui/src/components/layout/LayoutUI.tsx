@@ -46,8 +46,8 @@ const LayoutUI = ({
         ui={ui}
         variant={variant}
       >
-        {typeof sidebar === 'function'
-          ? props => (
+        {typeof sidebar === 'function' ? (
+          props => (
             <>
               {sidebar(props)}
 
@@ -59,18 +59,18 @@ const LayoutUI = ({
               />
             </>
           )
-          : (
-            <>
-              {sidebar}
+        ) : (
+          <>
+            {sidebar}
 
-              <LayoutRail
-                className={ui?.rail}
-                collapsible={collapsible}
-                side={side}
-                variant={variant}
-              />
-            </>
-          )}
+            <LayoutRail
+              className={ui?.rail}
+              collapsible={collapsible}
+              side={side}
+              variant={variant}
+            />
+          </>
+        )}
       </LayoutSidebar>
 
       <LayoutMain

@@ -27,12 +27,12 @@ pnpm --filter native-ui-docs lint         # oxlint
 
 全部可选，缺省时对应能力自动降级：
 
-| 变量                        | 作用                                                          |
-| --------------------------- | ------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`      | 站点地址，用于 OG / Twitter 卡片图的绝对路径                   |
-| `NEXT_PUBLIC_PLAYGROUND_URL`| 设置后每个 Demo 会显示「在 playground 打开」入口（Expo Web 部署地址） |
-| `OPENROUTER_API_KEY`        | AI 问答（`/api/chat`）所需，未设置时该功能不可用               |
-| `OPENROUTER_MODEL`          | AI 问答使用的模型，默认 `anthropic/claude-3.5-sonnet`          |
+| 变量                         | 作用                                                                  |
+| ---------------------------- | --------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`       | 站点地址，用于 OG / Twitter 卡片图的绝对路径                          |
+| `NEXT_PUBLIC_PLAYGROUND_URL` | 设置后每个 Demo 会显示「在 playground 打开」入口（Expo Web 部署地址） |
+| `OPENROUTER_API_KEY`         | AI 问答（`/api/chat`）所需，未设置时该功能不可用                      |
+| `OPENROUTER_MODEL`           | AI 问答使用的模型，默认 `anthropic/claude-3.5-sonnet`                 |
 
 ## 目录职责
 
@@ -156,15 +156,15 @@ echo 'OPENROUTER_API_KEY=...' > .dev.vars    # pnpm preview 本地（.env.local 
 
 ## 脚本
 
-| 命令                | 作用                            |
-| ------------------- | ------------------------------- |
-| `pnpm dev`          | 启动开发服务器                  |
-| `pnpm build`        | 构建依赖包 + Next.js 生产构建   |
-| `pnpm start`        | 以 Node 运行生产构建            |
-| `pnpm lint`         | oxlint                          |
+| 命令                | 作用                                         |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | 启动开发服务器                               |
+| `pnpm build`        | 构建依赖包 + Next.js 生产构建                |
+| `pnpm start`        | 以 Node 运行生产构建                         |
+| `pnpm lint`         | oxlint                                       |
 | `pnpm types:check`  | 构建依赖包 + `next typegen` + `tsc --noEmit` |
-| `pnpm worker:build` | 产出 `.open-next/`              |
-| `pnpm preview`      | 本地 workerd 预览               |
-| `pnpm deploy`       | 发布到 Cloudflare               |
-| `pnpm upload`       | 上传新版本但不切流量            |
-| `pnpm cf-typegen`   | 生成 `cloudflare-env.d.ts`      |
+| `pnpm worker:build` | 产出 `.open-next/`                           |
+| `pnpm preview`      | 本地 workerd 预览                            |
+| `pnpm deploy`       | 发布到 Cloudflare                            |
+| `pnpm upload`       | 上传新版本但不切流量                         |
+| `pnpm cf-typegen`   | 生成 `cloudflare-env.d.ts`                   |

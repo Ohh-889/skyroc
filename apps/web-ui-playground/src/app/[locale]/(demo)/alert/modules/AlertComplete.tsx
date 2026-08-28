@@ -1,7 +1,7 @@
 'use client';
 
-import { TriangleAlert, X } from 'lucide-react';
 import { Alert, ButtonIcon } from '@skyroc/web-ui';
+import { TriangleAlert, X } from 'lucide-react';
 
 const AlertComplete = () => {
   return (
@@ -11,14 +11,14 @@ const AlertComplete = () => {
       icon={<TriangleAlert />}
       title="Error"
       variant="ghost"
-      trailing={(
+      trailing={
         <ButtonIcon
           fitContent={false}
           variant="ghost"
         >
           <X />
         </ButtonIcon>
-      )}
+      }
     />
   );
 };

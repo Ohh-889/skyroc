@@ -1,6 +1,6 @@
 ---
-title: "Regex"
-description: "项目常用校验正则常量：用户名、手机号、密码（强 / 弱两档）、邮箱、验证码、URL"
+title: 'Regex'
+description: '项目常用校验正则常量：用户名、手机号、密码（强 / 弱两档）、邮箱、验证码、URL'
 ---
 
 ## 概述
@@ -14,7 +14,7 @@ import {
   REG_EMAIL,
   REG_CODE_SIX,
   REG_CODE_FOUR,
-  REG_URL,
+  REG_URL
 } from '@skyroc/utils';
 ```
 
@@ -24,16 +24,16 @@ import {
 
 ## 正则速查
 
-| 常量 | 规则摘要 | 典型合法值 | 典型非法值 |
-| --- | --- | --- | --- |
-| `REG_USER_NAME` | 4-16 位：中文 / 英文 / 数字 / `_` / `-` | `alice_01`、`张三` | `ab`（太短）、`alice@`（含非法字符） |
-| `REG_PHONE` | 中国大陆 11 位手机号 | `13812345678` | `12345678901`（非法号段）|
-| `REG_PWD` | 6-18 位：字母 / 数字 / `_`（**弱策略**） | `pass_123` | `abc`（太短）、`pass word`（含空格）|
-| `REG_PWD_STRONG` | 8-32 位非空白，须同时含大小写字母与数字 | `Passw0rd!` | `password1`（无大写）、`Passw0r`（太短）|
-| `REG_EMAIL` | 标准邮箱格式 | `user@example.com` | `user@`、`@example.com` |
-| `REG_CODE_SIX` | 恰好 6 位纯数字 | `123456` | `12345`（5 位）、`1234567`（7 位）|
-| `REG_CODE_FOUR` | 恰好 4 位纯数字 | `1234` | `123`、`12345` |
-| `REG_URL` | HTTP(S) / 协议相对 URL，协议可省 | `https://example.com/path?q=1`、`//cdn.a.com/x.js` | `ftp://…`、`example`（无点） |
+| 常量             | 规则摘要                                 | 典型合法值                                         | 典型非法值                               |
+| ---------------- | ---------------------------------------- | -------------------------------------------------- | ---------------------------------------- |
+| `REG_USER_NAME`  | 4-16 位：中文 / 英文 / 数字 / `_` / `-`  | `alice_01`、`张三`                                 | `ab`（太短）、`alice@`（含非法字符）     |
+| `REG_PHONE`      | 中国大陆 11 位手机号                     | `13812345678`                                      | `12345678901`（非法号段）                |
+| `REG_PWD`        | 6-18 位：字母 / 数字 / `_`（**弱策略**） | `pass_123`                                         | `abc`（太短）、`pass word`（含空格）     |
+| `REG_PWD_STRONG` | 8-32 位非空白，须同时含大小写字母与数字  | `Passw0rd!`                                        | `password1`（无大写）、`Passw0r`（太短） |
+| `REG_EMAIL`      | 标准邮箱格式                             | `user@example.com`                                 | `user@`、`@example.com`                  |
+| `REG_CODE_SIX`   | 恰好 6 位纯数字                          | `123456`                                           | `12345`（5 位）、`1234567`（7 位）       |
+| `REG_CODE_FOUR`  | 恰好 4 位纯数字                          | `1234`                                             | `123`、`12345`                           |
+| `REG_URL`        | HTTP(S) / 协议相对 URL，协议可省         | `https://example.com/path?q=1`、`//cdn.a.com/x.js` | `ftp://…`、`example`（无点）             |
 
 ---
 
@@ -50,10 +50,10 @@ import {
 - 全字符串匹配（`^` 和 `$`）
 
 ```ts
-REG_USER_NAME.test('alice');        // true
-REG_USER_NAME.test('张三_01');      // true
-REG_USER_NAME.test('ab');           // false（太短）
-REG_USER_NAME.test('alice@gmail');  // false（@ 非法）
+REG_USER_NAME.test('alice'); // true
+REG_USER_NAME.test('张三_01'); // true
+REG_USER_NAME.test('ab'); // false（太短）
+REG_USER_NAME.test('alice@gmail'); // false（@ 非法）
 REG_USER_NAME.test('a'.repeat(17)); // false（太长）
 ```
 
@@ -72,13 +72,13 @@ REG_USER_NAME.test('a'.repeat(17)); // false（太长）
 REG_PHONE.test('13812345678'); // true
 REG_PHONE.test('19912345678'); // true
 REG_PHONE.test('12345678901'); // false（第二位是 2）
-REG_PHONE.test('1381234567');  // false（只有 10 位）
+REG_PHONE.test('1381234567'); // false（只有 10 位）
 REG_PHONE.test('+8613812345678'); // false（含国际区号）
 ```
 
 <Callout>
-  这里**不枚举号段白名单**。运营商放新号段时，枚举式正则会立刻失效误杀真实用户；
-  放宽到 `1[3-9]` 的漏判成本远低于误杀。真正的号码有效性交给短信验证码。
+  这里**不枚举号段白名单**。运营商放新号段时，枚举式正则会立刻失效误杀真实用户； 放宽到 `1[3-9]`
+  的漏判成本远低于误杀。真正的号码有效性交给短信验证码。
 </Callout>
 
 > 如需校验带国际区号的手机号，需使用专门的国际号码校验库（如 `libphonenumber-js`）。
@@ -96,11 +96,11 @@ REG_PHONE.test('+8613812345678'); // false（含国际区号）
 - **不允许**空格、特殊符号（如 `@!#`）
 
 ```ts
-REG_PWD.test('pass_123');       // true
-REG_PWD.test('UPPER_case_01');  // true
-REG_PWD.test('abc');            // false（太短）
-REG_PWD.test('pass word');      // false（含空格）
-REG_PWD.test('p@ssword');       // false（含 @）
+REG_PWD.test('pass_123'); // true
+REG_PWD.test('UPPER_case_01'); // true
+REG_PWD.test('abc'); // false（太短）
+REG_PWD.test('pass word'); // false（含空格）
+REG_PWD.test('p@ssword'); // false（含 @）
 ```
 
 <Callout type="warn">
@@ -120,13 +120,13 @@ REG_PWD.test('p@ssword');       // false（含 @）
 - 允许符号，只禁止空白字符（`\S`）
 
 ```ts
-REG_PWD_STRONG.test('Passw0rd');    // true
-REG_PWD_STRONG.test('P@ssw0rd!');   // true（符号是允许的）
-REG_PWD_STRONG.test('password1');   // false（缺大写）
-REG_PWD_STRONG.test('PASSWORD1');   // false（缺小写）
-REG_PWD_STRONG.test('Password');    // false（缺数字）
-REG_PWD_STRONG.test('Passw0r');     // false（太短）
-REG_PWD_STRONG.test('Passw 0rd');   // false（含空格）
+REG_PWD_STRONG.test('Passw0rd'); // true
+REG_PWD_STRONG.test('P@ssw0rd!'); // true（符号是允许的）
+REG_PWD_STRONG.test('password1'); // false（缺大写）
+REG_PWD_STRONG.test('PASSWORD1'); // false（缺小写）
+REG_PWD_STRONG.test('Password'); // false（缺数字）
+REG_PWD_STRONG.test('Passw0r'); // false（太短）
+REG_PWD_STRONG.test('Passw 0rd'); // false（含空格）
 ```
 
 前三个 `(?=...)` 是零宽断言，只做「存在性检查」不消费字符，真正决定长度和字符集的是末尾的 `\S{8,32}`。
@@ -144,12 +144,12 @@ REG_PWD_STRONG.test('Passw 0rd');   // false（含空格）
 - 校验范围覆盖 99% 的常见邮箱格式
 
 ```ts
-REG_EMAIL.test('user@example.com');        // true
-REG_EMAIL.test('user+filter@gmail.com');   // true
+REG_EMAIL.test('user@example.com'); // true
+REG_EMAIL.test('user+filter@gmail.com'); // true
 REG_EMAIL.test('user.name@sub.domain.io'); // true
-REG_EMAIL.test('user@');                   // false
-REG_EMAIL.test('@example.com');            // false
-REG_EMAIL.test('user@example');            // false（无顶级域名）
+REG_EMAIL.test('user@'); // false
+REG_EMAIL.test('@example.com'); // false
+REG_EMAIL.test('user@example'); // false（无顶级域名）
 ```
 
 ---
@@ -163,10 +163,10 @@ REG_EMAIL.test('user@example');            // false（无顶级域名）
 精确匹配 6 位连续数字，不多不少。
 
 ```ts
-REG_CODE_SIX.test('123456');  // true
-REG_CODE_SIX.test('12345');   // false（5 位）
+REG_CODE_SIX.test('123456'); // true
+REG_CODE_SIX.test('12345'); // false（5 位）
 REG_CODE_SIX.test('1234567'); // false（7 位）
-REG_CODE_SIX.test('12345a');  // false（含字母）
+REG_CODE_SIX.test('12345a'); // false（含字母）
 ```
 
 ---
@@ -180,9 +180,9 @@ REG_CODE_SIX.test('12345a');  // false（含字母）
 精确匹配 4 位连续数字，常用于支付密码、短信验证码等场景。
 
 ```ts
-REG_CODE_FOUR.test('1234');  // true
-REG_CODE_FOUR.test('0000');  // true
-REG_CODE_FOUR.test('123');   // false（3 位）
+REG_CODE_FOUR.test('1234'); // true
+REG_CODE_FOUR.test('0000'); // true
+REG_CODE_FOUR.test('123'); // false（3 位）
 REG_CODE_FOUR.test('12345'); // false（5 位）
 ```
 
@@ -199,19 +199,19 @@ REG_CODE_FOUR.test('12345'); // false（5 位）
 - 端口、路径、查询参数、锚点均可选
 
 ```ts
-REG_URL.test('https://example.com');              // true
+REG_URL.test('https://example.com'); // true
 REG_URL.test('http://example.com/path?q=1#hash'); // true
-REG_URL.test('https://example.com:8080');         // true
-REG_URL.test('//cdn.example.com/a.js');           // true（协议相对）
-REG_URL.test('www.example.com');                  // true
-REG_URL.test('example.com');                      // true（有点即可，协议可省）
-REG_URL.test('ftp://example.com');                // false（非 http/https）
-REG_URL.test('not a url');                        // false
+REG_URL.test('https://example.com:8080'); // true
+REG_URL.test('//cdn.example.com/a.js'); // true（协议相对）
+REG_URL.test('www.example.com'); // true
+REG_URL.test('example.com'); // true（有点即可，协议可省）
+REG_URL.test('ftp://example.com'); // false（非 http/https）
+REG_URL.test('not a url'); // false
 ```
 
 <Callout>
-  这条正则各段字符集互不重叠、量词不嵌套，失配时不会产生指数级回溯。
-  早期版本把 `\w` 同时放进相邻两个字符类里，是典型的 ReDoS 形状——校验一条恶意长串就能把主线程挂住。
+  这条正则各段字符集互不重叠、量词不嵌套，失配时不会产生指数级回溯。 早期版本把 `\w` 同时放进相邻两个字符类里，是典型的
+  ReDoS 形状——校验一条恶意长串就能把主线程挂住。
 </Callout>
 
 ---
@@ -234,7 +234,7 @@ function validatePhone(value: string): string | null {
   name="phone"
   rules={[
     { required: true, message: '请输入手机号' },
-    { pattern: REG_PHONE, message: '手机号格式不正确' },
+    { pattern: REG_PHONE, message: '手机号格式不正确' }
   ]}
 >
   <Input placeholder="请输入手机号" />
@@ -263,13 +263,13 @@ import { REG_PHONE, REG_EMAIL, REG_PWD } from '@skyroc/utils';
 
 const loginSchema = z.object({
   phone: z.string().regex(REG_PHONE, '手机号格式不正确'),
-  password: z.string().regex(REG_PWD, '密码为 6-18 位字母、数字或下划线'),
+  password: z.string().regex(REG_PWD, '密码为 6-18 位字母、数字或下划线')
 });
 
 const registerSchema = z.object({
   email: z.string().regex(REG_EMAIL, '邮箱格式不正确'),
   username: z.string().regex(REG_USER_NAME, '用户名为 4-16 位，支持中文、英文、数字、_、-'),
-  verifyCode: z.string().regex(REG_CODE_SIX, '请输入 6 位验证码'),
+  verifyCode: z.string().regex(REG_CODE_SIX, '请输入 6 位验证码')
 });
 ```
 

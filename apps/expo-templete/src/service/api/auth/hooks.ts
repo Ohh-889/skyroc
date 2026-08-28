@@ -16,8 +16,7 @@ export function queryUserInfoOptions() {
 /**
  * 登录。
  *
- * 不在这里写存储和跳转：拿到凭据后调用方自己 `signIn`，页面才知道要不要先弹协议、先埋点。
- * 失败的提示由请求层统一弹（见 `service/adapter`），这里不用再接 onError。
+ * 不在这里写存储和跳转：拿到凭据后调用方自己 `signIn`，页面才知道要不要先弹协议、先埋点。 失败的提示由请求层统一弹（见 `service/adapter`），这里不用再接 onError。
  */
 export function useLoginMutation() {
   return useMutation({

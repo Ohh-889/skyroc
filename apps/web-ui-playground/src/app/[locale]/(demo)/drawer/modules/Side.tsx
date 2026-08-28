@@ -7,7 +7,6 @@ const sides: DrawerSide[] = ['left', 'right', 'top', 'bottom'];
 
 const Side = () => {
   return (
-
     <div className="flex flex-wrap gap-3">
       {sides.map(side => (
         <Drawer
@@ -22,7 +21,6 @@ const Side = () => {
         </Drawer>
       ))}
     </div>
-
   );
 };
 

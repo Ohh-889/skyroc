@@ -1,17 +1,17 @@
 import type { ComponentType, Ref } from 'react';
-import type { CodeFieldProps } from 'react-native-confirmation-code-field';
 import type { TextInput, TextInputProps } from 'react-native';
+import type { CodeFieldProps } from 'react-native-confirmation-code-field';
 import type { SlotClassNames } from '../../types/shared';
 import type { PasswordInputSlots, PasswordInputVariantProps } from './password-input-variants';
 
 /**
  * 密码输入框组件属性
  *
- * 继承 CodeFieldProps 以透传底层 TextInput 属性（keyboardType、returnKeyType 等）。
- * divider / status 是组件按格子下标与聚焦态内部计算的样式变体，不对外开放。
+ * 继承 CodeFieldProps 以透传底层 TextInput 属性（keyboardType、returnKeyType 等）。 divider / status 是组件按格子下标与聚焦态内部计算的样式变体，不对外开放。
  */
 interface PasswordInputProps
-  extends Omit<CodeFieldProps, 'defaultValue' | 'onChangeText' | 'ref' | 'renderCell' | 'style' | 'value'>,
+  extends
+    Omit<CodeFieldProps, 'defaultValue' | 'onChangeText' | 'ref' | 'renderCell' | 'style' | 'value'>,
     Pick<PasswordInputVariantProps, 'size' | 'variant'> {
   /** 根节点类名 */
   className?: string;
@@ -49,7 +49,8 @@ interface PasswordInputProps
   /**
    * 承接触摸的那个底层 TextInput 的 ref。
    *
-   * PasswordInput 自己也要用它做输满自动失焦，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 focus / blur / clear 等 TextInput 原生方法，不必再包一层窄接口。
+   * PasswordInput 自己也要用它做输满自动失焦，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 focus / blur / clear 等 TextInput
+   * 原生方法，不必再包一层窄接口。
    */
   ref?: Ref<TextInput>;
 

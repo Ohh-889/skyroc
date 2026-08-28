@@ -17,11 +17,7 @@ const ScrollAreaCustom = () => {
             className="rounded-md border p-3"
             key={index}
           >
-            <div className="text-sm font-medium">
-              Message
-              {' '}
-              {index + 1}
-            </div>
+            <div className="text-sm font-medium">Message {index + 1}</div>
             <p className="text-muted-foreground mt-1 text-xs">
               Custom scrollbar styling keeps the content area visually aligned with the current theme.
             </p>

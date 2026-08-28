@@ -1,8 +1,8 @@
 'use client';
 
+import type { Root } from '@radix-ui/react-tabs';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import type { Root } from '@radix-ui/react-tabs';
 import SegmentList from '../tabs/TabsList';
 import SegmentRoot from '../tabs/TabsRoot';
 import SegmentTrigger from '../tabs/TabsTrigger';

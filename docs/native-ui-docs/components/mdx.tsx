@@ -11,7 +11,7 @@ export function getMDXComponents(components?: MDXComponents) {
     PropsTable,
     TypeTable,
     UnionType,
-    ...components,
+    ...components
   } satisfies MDXComponents;
 }
 

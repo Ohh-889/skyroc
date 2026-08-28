@@ -8,7 +8,7 @@ import { withUniwind } from 'uniwind';
 import { imageVariants } from './image-variants';
 import type { ImageProps, ImageSource } from './types';
 
-/** expo-image 不认 className，用 withUniwind 把工具类映射到 style 上 */
+/** Expo-image 不认 className，用 withUniwind 把工具类映射到 style 上 */
 const StyledImage = withUniwind(EXImage);
 
 /** MaterialIcons 不认 className，用 withUniwind 把 `accent-*` 工具类映射到 color 上，让失败图标色跟随主题 token */
@@ -52,7 +52,7 @@ const Image = (props: ImageProps) => {
   const [failed, setFailed] = useState(false);
 
   /**
-   * src 变化时重置加载态。
+   * Src 变化时重置加载态。
    *
    * 这是"由 props 派生 state"，React 官方建议在渲染期直接调整而非放进 effect： 放进 effect 会先用旧状态渲染一帧，换图时能看到上一张图的错误占位。
    */

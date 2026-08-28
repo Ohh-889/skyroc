@@ -1,4 +1,4 @@
 {
   "title": "路由",
-  "pages": [ "overview", "route-meta", "route-cache", "guards", "permission", "error-loading-and-exception" ]
+  "pages": ["overview", "route-meta", "route-cache", "guards", "permission", "error-loading-and-exception"]
 }

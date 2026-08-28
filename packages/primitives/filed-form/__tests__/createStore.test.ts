@@ -275,9 +275,13 @@ describe('FormStore values and metadata', () => {
 
     registerField(hooks, 'subtotal');
     registerField(hooks, 'total');
-    const unregisterSubtotal = hooks.registerComputed('subtotal', ['price', 'quantity'], (get: (name: string) => any) => {
-      return Number(get('price')) * Number(get('quantity'));
-    });
+    const unregisterSubtotal = hooks.registerComputed(
+      'subtotal',
+      ['price', 'quantity'],
+      (get: (name: string) => any) => {
+        return Number(get('price')) * Number(get('quantity'));
+      }
+    );
     const unregisterTotal = hooks.registerComputed('total', ['subtotal'], (get: (name: string) => any) => {
       return Number(get('subtotal')) + 2;
     });

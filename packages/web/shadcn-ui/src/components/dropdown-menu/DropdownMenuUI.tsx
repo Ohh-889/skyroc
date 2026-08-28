@@ -7,16 +7,21 @@ import DropdownMenuOption from './DropdownMenuOption';
 import DropdownMenuRadioGroup from './DropdownMenuRadioGroup';
 import type { DropdownMenuOption as DropdownMenuOptionType, DropdownMenuProps } from './types';
 
-const isCheckboxMenu = (item: DropdownMenuOptionType | any): item is Extract<DropdownMenuOptionType, { type: 'checkbox' }> => {
+const isCheckboxMenu = (
+  item: DropdownMenuOptionType | any
+): item is Extract<DropdownMenuOptionType, { type: 'checkbox' }> => {
   return item.type === 'checkbox';
 };
 
-const isRadioMenu = (item: DropdownMenuOptionType | any): item is Extract<DropdownMenuOptionType, { type: 'radio' }> => {
+const isRadioMenu = (
+  item: DropdownMenuOptionType | any
+): item is Extract<DropdownMenuOptionType, { type: 'radio' }> => {
   return item.type === 'radio';
 };
 
 const DropdownMenuUI = (props: DropdownMenuProps) => {
-  const { children, className, classNames, contentProps, defaultOpen, dir, items, modal, onOpenChange, open, size } = props;
+  const { children, className, classNames, contentProps, defaultOpen, dir, items, modal, onOpenChange, open, size } =
+    props;
 
   return (
     <Root

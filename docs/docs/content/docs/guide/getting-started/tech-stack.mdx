@@ -101,11 +101,11 @@ TanStack Query 不用于代替本地 UI 状态，Jotai 也不重复实现服务�
 
 三条规则决定一个依赖的版本写在哪：
 
-| 依赖性质 | 写法 |
-| --- | --- |
-| 跨多个 workspace 使用的第三方依赖 | 先加进 `pnpm-workspace.yaml` 的对应 catalog，使用方写 `catalog:<域>` |
-| 只在单个 workspace 使用的第三方依赖 | 直接在该 workspace 的 `package.json` 写版本号 |
-| 仓库内包互相依赖 | `workspace:*` |
+| 依赖性质                            | 写法                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| 跨多个 workspace 使用的第三方依赖   | 先加进 `pnpm-workspace.yaml` 的对应 catalog，使用方写 `catalog:<域>` |
+| 只在单个 workspace 使用的第三方依赖 | 直接在该 workspace 的 `package.json` 写版本号                        |
+| 仓库内包互相依赖                    | `workspace:*`                                                        |
 
 只有兼容性或类型一致性必须强制统一时，才动根 `overrides`。catalog 的分域方式、完整配置与新增依赖的流程见 [Catalog 依赖管理](/docs/guide/architecture/catalog)。
 

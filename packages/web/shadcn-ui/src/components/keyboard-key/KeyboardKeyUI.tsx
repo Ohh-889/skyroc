@@ -6,33 +6,24 @@ import type { KeyboardKeyProps } from './types';
 import { useKeyboardKey } from './use-keyboard-key';
 
 export const KeyboardKeyUI = (props: KeyboardKeyProps) => {
-  const {
-    children,
-    className,
-    size,
-    symbolize = true,
-    value,
-    variant,
-    ...rest
-  } = props;
+  const { children, className, size, symbolize = true, value, variant, ...rest } = props;
 
   const { getKeyboardKey } = useKeyboardKey();
 
   function formatValue() {
-    if (!value)
-      return '';
+    if (!value) return '';
 
     const values = Array.isArray(value) ? value : [value];
 
     return values
-      .map((v) => {
+      .map(v => {
         if (symbolize) {
           return getKeyboardKey(v);
         }
         return v;
       })
       .join('');
-  };
+  }
 
   const mergedCls = cn(kbdVariants({ size, variant }), className);
 

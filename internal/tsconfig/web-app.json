@@ -3,10 +3,6 @@
   "display": "Web Application",
   "extends": "./web.json",
   "compilerOptions": {
-    "types": [
-      "vite/client",
-      "node",
-      "unplugin-icons/types/react"
-    ]
+    "types": ["vite/client", "node", "unplugin-icons/types/react"]
   }
 }

@@ -8,8 +8,7 @@ import type { DateInput, DateStyle } from './types';
 /**
  * 默认货币。
  *
- * **货币是业务数据的属性，不是界面语言的属性**——同一件商品对中文用户和英文用户都是人民币标价，
- * 不该因为切了英文就变成美元。所以 `formatCurrency` 的 currency 应该由接口下发，这个常量只是
+ * **货币是业务数据的属性，不是界面语言的属性**——同一件商品对中文用户和英文用户都是人民币标价， 不该因为切了英文就变成美元。所以 `formatCurrency` 的 currency 应该由接口下发，这个常量只是
  * 后端没给时的兜底。
  */
 export const DEFAULT_CURRENCY = 'CNY';
@@ -17,11 +16,9 @@ export const DEFAULT_CURRENCY = 'CNY';
 /**
  * 五档日期格式。
  *
- * 业务页面只能从这几档里选，不要各自传 Intl options：同一个时间在列表页和详情页长得不一样，
- * 是最典型的「有 i18n 但没有统一入口」的症状。不够用就往这里加一档，别在页面里绕开。
+ * 业务页面只能从这几档里选，不要各自传 Intl options：同一个时间在列表页和详情页长得不一样， 是最典型的「有 i18n 但没有统一入口」的症状。不够用就往这里加一档，别在页面里绕开。
  *
- * 故意不写 `timeZone`：不传就用设备时区，这在移动端几乎总是对的。要按公司总部时区显示，
- * 在这里统一加，别让每个调用方自己传。
+ * 故意不写 `timeZone`：不传就用设备时区，这在移动端几乎总是对的。要按公司总部时区显示， 在这里统一加，别让每个调用方自己传。
  */
 const DATE_STYLE_OPTIONS: Record<DateStyle, Intl.DateTimeFormatOptions> = {
   date: { day: '2-digit', month: '2-digit', year: 'numeric' },
@@ -34,9 +31,8 @@ const DATE_STYLE_OPTIONS: Record<DateStyle, Intl.DateTimeFormatOptions> = {
 /**
  * 格式化器缓存。
  *
- * `new Intl.DateTimeFormat()` 在 Hermes 上要过一次原生桥并解析 locale，比想象中贵得多——
- * 一个 60 行的长列表每次滚动都重建一遍格式化器，掉帧是能测出来的。key 带上 locale，切语言后
- * 自然拿到另一组实例，旧的留着也没关系（就那么几个）。
+ * `new Intl.DateTimeFormat()` 在 Hermes 上要过一次原生桥并解析 locale，比想象中贵得多—— 一个 60 行的长列表每次滚动都重建一遍格式化器，掉帧是能测出来的。key 带上
+ * locale，切语言后 自然拿到另一组实例，旧的留着也没关系（就那么几个）。
  */
 const dateTimeFormatters = new Map<string, Intl.DateTimeFormat>();
 
@@ -73,8 +69,8 @@ function getNumberFormatter(locale: string, cacheKey: string, options: Intl.Numb
 /**
  * 入参归一成 Date。
  *
- * 字符串只接受 ISO 8601。`new Date('2024/01/02 10:00')` 这种非标准写法在 Hermes 和各版本 iOS 上
- * 的行为不一致（时区解释能差 8 小时），后端返回这种格式就在 service 层转掉，别指望这里兜住。
+ * 字符串只接受 ISO 8601。`new Date('2024/01/02 10:00')` 这种非标准写法在 Hermes 和各版本 iOS 上 的行为不一致（时区解释能差 8 小时），后端返回这种格式就在 service
+ * 层转掉，别指望这里兜住。
  */
 function toDate(value: DateInput) {
   return value instanceof Date ? value : new Date(value);
@@ -93,7 +89,7 @@ export function formatNumber(value: number, options?: Intl.NumberFormatOptions, 
 /**
  * 货币。
  *
- * currency 请从接口数据里取，别用当前语言推（见 `DEFAULT_CURRENCY` 的注释）。
+ * Currency 请从接口数据里取，别用当前语言推（见 `DEFAULT_CURRENCY` 的注释）。
  */
 export function formatCurrency(value: number, currency = DEFAULT_CURRENCY, locale: string = getLocale()) {
   return getNumberFormatter(locale, `currency:${currency}`, { currency, style: 'currency' }).format(value);
@@ -120,10 +116,9 @@ const RELATIVE_UNITS = [
 /**
  * 相对时间：「3 分钟前」「2 天后」。
  *
- * **不用 `Intl.RelativeTimeFormat`**——Hermes 没有这个构造器（它只带了 Collator / DateTimeFormat /
- * NumberFormat 三样，可以在 hermesvm 的符号表里验证）。所以这里改用词条 + i18next 复数拼，
- * 也就顺带解决了另一个问题：`RelativeTimeFormat` 的措辞是固定的，产品想把「刚刚」改成「就在刚才」
- * 时，走词条改一个 key 就行，还能 OTA 下去。
+ * **不用 `Intl.RelativeTimeFormat`**——Hermes 没有这个构造器（它只带了 Collator / DateTimeFormat / NumberFormat 三样，可以在 hermesvm
+ * 的符号表里验证）。所以这里改用词条 + i18next 复数拼， 也就顺带解决了另一个问题：`RelativeTimeFormat` 的措辞是固定的，产品想把「刚刚」改成「就在刚才」 时，走词条改一个 key 就行，还能 OTA
+ * 下去。
  *
  * 复数依赖 `Intl.PluralRules`，那个同样是 polyfill 补的（见 `i18n.ts` 顶部的 import）。
  */

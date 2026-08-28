@@ -6,13 +6,7 @@ description: 鼠标悬停或聚焦时展示补充信息的浮层卡片
 HoverCard 用于在用户悬停或聚焦某个触发元素时展示简短的补充信息。它基于 Radix HoverCard 封装，适合展示用户资料、术语说明、链接预览或上下文摘要。
 
 ```tsx
-import {
-  HoverCard,
-  HoverCardArrow,
-  HoverCardContent,
-  HoverCardRoot,
-  HoverCardTrigger
-} from '@skyroc/web-ui';
+import { HoverCard, HoverCardArrow, HoverCardContent, HoverCardRoot, HoverCardTrigger } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -254,8 +248,7 @@ HoverCard 也导出 Radix 原语，适合在需要完全自定义组合结构时
   data={[
     {
       name: 'HoverCardProps',
-      description:
-        '主组件属性。组合了 Radix HoverCard Root 属性，并额外提供触发元素、内容属性、箭头和 slot 样式配置。',
+      description: '主组件属性。组合了 Radix HoverCard Root 属性，并额外提供触发元素、内容属性、箭头和 slot 样式配置。',
       fields: [
         { name: 'arrowProps', type: 'HoverCardArrowProps', description: '传递给箭头组件的额外属性。' },
         { name: 'children', type: 'ReactNode', description: '浮层内容。' },
@@ -290,7 +283,8 @@ HoverCard 也导出 Radix 原语，适合在需要完全自定义组合结构时
     },
     {
       name: 'HoverCardContentProps',
-      description: '内容容器属性。继承 Radix HoverCard Content props，并通过 StyledComponentProps 增加 className 和 size。',
+      description:
+        '内容容器属性。继承 Radix HoverCard Content props，并通过 StyledComponentProps 增加 className 和 size。',
       fields: [
         { name: 'align', type: "'start' | 'center' | 'end'", description: '对齐方式。默认值为 center。' },
         { name: 'alignOffset', type: 'number', description: '沿对齐轴偏移的距离。' },
@@ -327,7 +321,11 @@ HoverCard 也导出 Radix 原语，适合在需要完全自定义组合结构时
       name: 'StyledComponentProps<T>',
       description: '项目内用于包装 Radix props 或原生元素 props 的通用类型。',
       fields: [
-        { name: '...sourceProps', type: 'inherited props without className', description: '继承原始组件属性，但重新定义 className。' },
+        {
+          name: '...sourceProps',
+          type: 'inherited props without className',
+          description: '继承原始组件属性，但重新定义 className。'
+        },
         { name: 'className', type: 'ClassValue', description: '组件 class。' },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '项目统一尺寸类型。' }
       ]

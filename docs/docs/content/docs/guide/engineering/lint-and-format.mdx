@@ -7,12 +7,12 @@ description: 项目代码检查与格式化工具链介绍
 
 本项目采用 **Oxc 工具链** 作为核心 lint 与格式化方案：
 
-| 职责 | 工具 | 版本 | 配置文件 |
-| --- | --- | --- | --- |
-| 代码检查 (Lint) | [Oxlint](https://oxc.rs/docs/guide/usage/linter) | `^1.60.0` | `.oxlintrc.json` |
-| 代码格式化 (Format) | [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) | `^0.45.0` | `.oxfmtrc.json` |
-| 编辑器基础规范 | [EditorConfig](https://editorconfig.org/) | — | `.editorconfig` |
-| 任务编排 | [Turborepo](https://turbo.build/) | — | `turbo.json` |
+| 职责                | 工具                                               | 版本      | 配置文件         |
+| ------------------- | -------------------------------------------------- | --------- | ---------------- |
+| 代码检查 (Lint)     | [Oxlint](https://oxc.rs/docs/guide/usage/linter)   | `^1.60.0` | `.oxlintrc.json` |
+| 代码格式化 (Format) | [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) | `^0.45.0` | `.oxfmtrc.json`  |
+| 编辑器基础规范      | [EditorConfig](https://editorconfig.org/)          | —         | `.editorconfig`  |
+| 任务编排            | [Turborepo](https://turbo.build/)                  | —         | `turbo.json`     |
 
 > 全仓库（含 Expo 应用 `apps/native-ui-playground`）已统一到 Oxlint，没有任何包再跑 ESLint。`eslint-plugin-sort` 是唯一的例外——它通过 Oxlint 的 `jsPlugins` 桥接运行，不需要 ESLint 本体。
 
@@ -75,26 +75,26 @@ Admin 应用与 UI 组件包在根配置基础上额外启用：
 
 ### 核心规则亮点
 
-| 规则 | 级别 | 说明 |
-| --- | --- | --- |
-| `eqeqeq` | error | 强制全等比较 |
-| `no-console` | warn | 禁止 console（scripts 目录豁免） |
-| `no-unused-vars` | error | 禁止未使用变量（`_` 前缀豁免） |
-| `prefer-const` | error | 未重新赋值必须用 `const` |
-| `no-var` | error | 禁止 `var` |
-| `typescript/consistent-type-imports` | error | 强制使用 `type` 导入 |
-| `typescript/no-explicit-any` | off | 允许 `any`（不作硬性限制） |
-| `complexity` | error | 限制圈复杂度 |
-| `max-depth` / `max-params` | error | 限制嵌套深度与参数数量 |
+| 规则                                 | 级别  | 说明                             |
+| ------------------------------------ | ----- | -------------------------------- |
+| `eqeqeq`                             | error | 强制全等比较                     |
+| `no-console`                         | warn  | 禁止 console（scripts 目录豁免） |
+| `no-unused-vars`                     | error | 禁止未使用变量（`_` 前缀豁免）   |
+| `prefer-const`                       | error | 未重新赋值必须用 `const`         |
+| `no-var`                             | error | 禁止 `var`                       |
+| `typescript/consistent-type-imports` | error | 强制使用 `type` 导入             |
+| `typescript/no-explicit-any`         | off   | 允许 `any`（不作硬性限制）       |
+| `complexity`                         | error | 限制圈复杂度                     |
+| `max-depth` / `max-params`           | error | 限制嵌套深度与参数数量           |
 
 ### 各包 lint 脚本
 
-| 包 | `lint` 脚本 |
-| --- | --- |
-| 根 (`package.json`) | `turbo run lint` |
-| `apps/*`、`packages/**` | `oxlint --fix` |
-| `docs/*` | `oxlint`（文档站不自动改写） |
-| `@skyroc/scripts` | `oxlint --fix --ignore-pattern 'templates/**'` |
+| 包                      | `lint` 脚本                                    |
+| ----------------------- | ---------------------------------------------- |
+| 根 (`package.json`)     | `turbo run lint`                               |
+| `apps/*`、`packages/**` | `oxlint --fix`                                 |
+| `docs/*`                | `oxlint`（文档站不自动改写）                   |
+| `@skyroc/scripts`       | `oxlint --fix --ignore-pattern 'templates/**'` |
 
 ---
 
@@ -132,17 +132,17 @@ Oxfmt 是 Oxc 工具链的格式化器，同样基于 Rust，性能极高。项�
 
 ### 规则说明
 
-| 配置项 | 值 | 说明 |
-| --- | --- | --- |
-| `printWidth` | `120` | 每行最大字符数 |
-| `semi` | `true` | 语句末尾加分号 |
-| `singleQuote` | `true` | 使用单引号 |
-| `trailingComma` | `"none"` | 不添加尾随逗号 |
-| `arrowParens` | `"avoid"` | 箭头函数单参数不加括号 |
-| `endOfLine` | `"lf"` | 统一使用 LF 换行符 |
-| `jsdoc` | `true` | 格式化 JSDoc 注释 |
-| `sortImports` | `{ partitionByNewline: true }` | 自动排序 import 语句 |
-| `sortPackageJson` | `true` | 自动排序 `package.json` 字段 |
+| 配置项            | 值                             | 说明                         |
+| ----------------- | ------------------------------ | ---------------------------- |
+| `printWidth`      | `120`                          | 每行最大字符数               |
+| `semi`            | `true`                         | 语句末尾加分号               |
+| `singleQuote`     | `true`                         | 使用单引号                   |
+| `trailingComma`   | `"none"`                       | 不添加尾随逗号               |
+| `arrowParens`     | `"avoid"`                      | 箭头函数单参数不加括号       |
+| `endOfLine`       | `"lf"`                         | 统一使用 LF 换行符           |
+| `jsdoc`           | `true`                         | 格式化 JSDoc 注释            |
+| `sortImports`     | `{ partitionByNewline: true }` | 自动排序 import 语句         |
+| `sortPackageJson` | `true`                         | 自动排序 `package.json` 字段 |
 
 ### 忽略文件
 

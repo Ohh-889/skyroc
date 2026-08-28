@@ -1,7 +1,7 @@
 import { PasswordInput } from '@skyroc/native-ui';
 import { View } from 'react-native';
 
-/** className 落在 root，classNames 逐槽覆盖 */
+/** ClassName 落在 root，classNames 逐槽覆盖 */
 const PasswordInputStyles = () => {
   return (
     <View className="gap-3 bg-background p-4">

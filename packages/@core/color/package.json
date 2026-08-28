@@ -1,7 +1,6 @@
 {
   "name": "@skyroc/color",
   "version": "2.6.1",
-  "type": "module",
   "description": "Color utilities and palette generation built on colord and culori, with Ant Design / OKLCH palettes",
   "keywords": [
     "antd",
@@ -13,28 +12,29 @@
     "react",
     "typescript"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/color",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/@core/color"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
-  },
-  "sideEffects": [
-    "./src/shared/colord.ts",
-    "./dist/index.js"
-  ],
   "files": [
     "dist",
     "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./src/shared/colord.ts",
+    "./dist/index.js"
   ],
   "main": "./src/index.ts",
   "module": "./src/index.ts",
@@ -50,11 +50,7 @@
     ".": "./src/index.ts"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -62,7 +58,11 @@
           "default": "./dist/index.js"
         }
       }
-    }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "registry": "https://registry.npmjs.org/",
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "tsdown",

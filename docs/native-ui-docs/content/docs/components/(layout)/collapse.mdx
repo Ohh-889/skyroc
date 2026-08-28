@@ -44,14 +44,14 @@ import { Collapse, CollapseItem } from '@skyroc/native-ui';
 
 `Collapse` 的 ref 暴露 `toggleAll`，`CollapseItem` 的 ref 暴露 `toggle`：
 
-| 方法                             | 说明                                                                 |
-| -------------------------------- | -------------------------------------------------------------------- |
-| `toggleAll()`                    | 逐项反转当前状态                                                     |
-| `toggleAll(true / false)`        | 布尔简写，等价于 `{ expanded }`                                       |
-| `toggleAll({ expanded })`        | 全部展开或全部收起                                                   |
-| `toggleAll({ skipDisabled })`    | 禁用面板保持原状，不参与本次批量切换                                 |
-| `item.toggle()`                  | 反转该面板                                                           |
-| `item.toggle(expanded)`          | 展开或收起该面板                                                     |
+| 方法                          | 说明                                 |
+| ----------------------------- | ------------------------------------ |
+| `toggleAll()`                 | 逐项反转当前状态                     |
+| `toggleAll(true / false)`     | 布尔简写，等价于 `{ expanded }`      |
+| `toggleAll({ expanded })`     | 全部展开或全部收起                   |
+| `toggleAll({ skipDisabled })` | 禁用面板保持原状，不参与本次批量切换 |
+| `item.toggle()`               | 反转该面板                           |
+| `item.toggle(expanded)`       | 展开或收起该面板                     |
 
 <Demo src="@playground/collapse/CollapseRef" />
 
@@ -61,11 +61,11 @@ import { Collapse, CollapseItem } from '@skyroc/native-ui';
 
 `size` 逐项设置，同时决定标题行（Cell）与内容区的规格：
 
-| 尺寸 | 标题行最小高度 | 标题字号    | 箭头 | 内容内边距        | 内容字号    |
-| ---- | -------------- | ----------- | ---- | ----------------- | ----------- |
-| `sm` | 40             | `text-sm`   | 11   | `px-3 py-2`       | `text-xs`   |
-| `md` | 48             | `text-base` | 12   | `px-4 py-3`       | `text-sm`   |
-| `lg` | 56             | `text-lg`   | 14   | `px-4 py-3.5`     | `text-base` |
+| 尺寸 | 标题行最小高度 | 标题字号    | 箭头 | 内容内边距    | 内容字号    |
+| ---- | -------------- | ----------- | ---- | ------------- | ----------- |
+| `sm` | 40             | `text-sm`   | 11   | `px-3 py-2`   | `text-xs`   |
+| `md` | 48             | `text-base` | 12   | `px-4 py-3`   | `text-sm`   |
+| `lg` | 56             | `text-lg`   | 14   | `px-4 py-3.5` | `text-base` |
 
 <Demo src="@playground/collapse/CollapseSize" />
 
@@ -149,13 +149,13 @@ import { Collapse, CollapseItem } from '@skyroc/native-ui';
 
 ### 样式覆盖
 
-| slot          | 作用位置                                                            |
-| ------------- | ------------------------------------------------------------------- |
-| `root`        | 单个面板的根容器（含面板间分隔线）                                  |
-| `wrapper`     | 高度动画层，`overflow-hidden` 就加在这里                            |
-| `content`     | 内容容器 View，承载内边距与背景                                     |
-| `contentText` | 内容文字，仅在 `children` 为字符串时生效                            |
-| `arrow`       | 箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类               |
+| slot          | 作用位置                                              |
+| ------------- | ----------------------------------------------------- |
+| `root`        | 单个面板的根容器（含面板间分隔线）                    |
+| `wrapper`     | 高度动画层，`overflow-hidden` 就加在这里              |
+| `content`     | 内容容器 View，承载内边距与背景                       |
+| `contentText` | 内容文字，仅在 `children` 为字符串时生效              |
+| `arrow`       | 箭头图标的 `colorClassName`，只接受 `accent-*` 颜色类 |
 
 内部用于绝对定位测量的那一层不对外开放；标题行的细粒度覆盖走 `headerClassNames`。
 

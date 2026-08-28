@@ -7,9 +7,9 @@ import { parseYAML } from 'confbox';
 import type { TemplateMeta } from './meta';
 
 interface WorkspacePackage {
-  /** package.json 中的 `private` 字段，为 true 表示不会发布到 registry。 */
+  /** Package.json 中的 `private` 字段，为 true 表示不会发布到 registry。 */
   isPrivate: boolean;
-  /** package.json 中的 `version` 字段。 */
+  /** Package.json 中的 `version` 字段。 */
   version: string;
 }
 
@@ -18,7 +18,7 @@ interface WorkspaceCatalog {
   catalogs: Record<string, Record<string, string>>;
   /** 默认 catalog，对应裸写的 `catalog:`。 */
   defaultCatalog: Record<string, string>;
-  /** workspace 包目录的 glob 模式。 */
+  /** Workspace 包目录的 glob 模式。 */
   packages: string[];
 }
 
@@ -38,22 +38,19 @@ interface ResolveContext {
 interface ResolveTemplateMetaOptions {
   /** 源 admin 应用目录。 */
   sourceDir: string;
-  /** monorepo 根目录。 */
+  /** Monorepo 根目录。 */
   workspaceRoot: string;
 }
 
 const SKIP_DIRS = new Set(['.git', '.turbo', 'dist', 'node_modules']);
 
 /**
- * `@skyroc/tsconfig` 的内容已经被展平进生成应用的 tsconfig.json，再留一条依赖只会指向一个装不上的私有包。
- * 其余 workspace 依赖都必须保留——vite.config、uno.config 真的会 import 它们。
+ * `@skyroc/tsconfig` 的内容已经被展平进生成应用的 tsconfig.json，再留一条依赖只会指向一个装不上的私有包。 其余 workspace 依赖都必须保留——vite.config、uno.config 真的会
+ * import 它们。
  */
 const INLINED_DEV_DEPENDENCIES = new Set(['@skyroc/tsconfig']);
 
-/**
- * shell 源码会被 `pnpm create skyroc` 原样复制进生成项目的 `src/framework`（经 `@shell` 别名访问），
- * 依赖里不能再指向这个私有 workspace 包。
- */
+/** Shell 源码会被 `pnpm create skyroc` 原样复制进生成项目的 `src/framework`（经 `@shell` 别名访问）， 依赖里不能再指向这个私有 workspace 包。 */
 const INLINED_DEPENDENCIES = new Set(['@skyroc/web-admin-shell']);
 
 /**
@@ -117,7 +114,7 @@ export function resolveDependencies(
   return { resolved, unpublished };
 }
 
-/** tsconfig 的 extends 是「compilerOptions 浅合并、其余字段子覆盖父」。 */
+/** Tsconfig 的 extends 是「compilerOptions 浅合并、其余字段子覆盖父」。 */
 export function mergeTsconfig(base: Record<string, unknown>, child: Record<string, unknown>) {
   const merged: Record<string, unknown> = { ...base, ...child };
 
@@ -133,7 +130,7 @@ export function mergeTsconfig(base: Record<string, unknown>, child: Record<strin
   return merged;
 }
 
-/** oxlint 的 extends 是「rules 浅合并、overrides 按父→子拼接、其余字段子覆盖父」。 */
+/** Oxlint 的 extends 是「rules 浅合并、overrides 按父→子拼接、其余字段子覆盖父」。 */
 export function mergeOxlintConfig(base: Record<string, unknown>, child: Record<string, unknown>) {
   const merged: Record<string, unknown> = { ...base, ...child };
 

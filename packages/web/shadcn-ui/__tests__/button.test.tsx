@@ -1,5 +1,5 @@
-import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import { describe, expect, it } from 'vitest';
 import { Button } from '../src/preset/button';
 
@@ -22,9 +22,7 @@ describe('Button', () => {
   });
 
   it('disables the button and renders a loading indicator while loading', () => {
-    const { container } = render(
-      <Button loading>Save</Button>
-    );
+    const { container } = render(<Button loading>Save</Button>);
 
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();

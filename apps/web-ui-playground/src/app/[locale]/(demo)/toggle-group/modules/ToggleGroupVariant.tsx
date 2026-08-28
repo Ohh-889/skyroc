@@ -11,10 +11,23 @@ const items: ToggleGroupProps['items'] = [
 
 const ToggleGroupVariant = () => {
   return (
-    <Card split title="Variant">
+    <Card
+      split
+      title="Variant"
+    >
       <div className="flex flex-wrap gap-4">
-        <ToggleGroup items={items} type="single" defaultValue="day" variant="ghost" />
-        <ToggleGroup items={items} type="single" defaultValue="week" variant="outline" />
+        <ToggleGroup
+          items={items}
+          type="single"
+          defaultValue="day"
+          variant="ghost"
+        />
+        <ToggleGroup
+          items={items}
+          type="single"
+          defaultValue="week"
+          variant="outline"
+        />
       </div>
     </Card>
   );

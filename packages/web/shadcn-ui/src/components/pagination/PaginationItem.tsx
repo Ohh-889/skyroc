@@ -3,16 +3,7 @@ import { paginationVariants } from './pagination-variants';
 import type { PaginationItemProps } from './types';
 
 const PaginationItem = (props: PaginationItemProps) => {
-  const {
-    children,
-    className,
-    isActive,
-    shape,
-    size,
-    value,
-    variant,
-    ...rest
-  } = props;
+  const { children, className, isActive, shape, size, value, variant, ...rest } = props;
 
   const { button } = paginationVariants({ size, variant, shape });
 

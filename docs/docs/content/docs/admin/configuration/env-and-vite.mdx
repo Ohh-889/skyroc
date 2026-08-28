@@ -19,41 +19,41 @@ apps/admin/.env*
 
 当你要做下面这些改动时，先看这页：
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 切换测试或生产后端 | `apps/admin/.env.test`、`apps/admin/.env.prod` |
-| 修改开发代理 | `VITE_HTTP_PROXY`、`VITE_PROXY_LOG`、`VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL` |
-| 修改应用部署 base | `VITE_BASE_URL` 或 `application.base` |
-| 调整 dev server 端口、open、host | `application.server` |
-| 调整构建产物、sourcemap、manual chunks | `application.build`、`application.buildTimeDefineName`、`vite.build` |
-| 关闭或配置内置插件 | `application.plugins` |
-| 使用 Vite 原生能力 | `vite` 字段 |
+| 场景                                   | 重点位置                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 切换测试或生产后端                     | `apps/admin/.env.test`、`apps/admin/.env.prod`                                              |
+| 修改开发代理                           | `VITE_HTTP_PROXY`、`VITE_PROXY_LOG`、`VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL` |
+| 修改应用部署 base                      | `VITE_BASE_URL` 或 `application.base`                                                       |
+| 调整 dev server 端口、open、host       | `application.server`                                                                        |
+| 调整构建产物、sourcemap、manual chunks | `application.build`、`application.buildTimeDefineName`、`vite.build`                        |
+| 关闭或配置内置插件                     | `application.plugins`                                                                       |
+| 使用 Vite 原生能力                     | `vite` 字段                                                                                 |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/.env` | 公共环境变量。包含应用标题、路由模式、代理开关、服务 code、默认后端和图标前缀等。 |
-| `apps/admin/.env.test` | test mode 覆盖项。当前主要覆盖测试环境后端地址和其他服务地址。 |
-| `apps/admin/.env.prod` | prod mode 覆盖项。当前主要覆盖生产环境后端地址和其他服务地址。 |
-| `apps/admin/vite.config.ts` | 应用 Vite 入口。直接使用 `@skyroc/web-admin-vite` 的 `defineConfig`。 |
-| `apps/admin-example/vite.config.ts` | 示例应用 Vite 入口。沿用同一套 admin preset，只额外指定示例应用 dev server 端口。 |
-| `apps/admin/src/types/vite-env.d.ts` | `import.meta.env` 类型声明。新增 env 时应同步这里。 |
-| `apps/admin/src/utils/service.ts` | 前端请求层根据 env 生成真实 baseURL 或代理 baseURL。 |
-| `packages/web/admin-vite/src/config.ts` | `defineConfig` 主入口，负责读取 env、生成 preset、合并原始 Vite 配置。 |
-| `packages/web/admin-vite/src/proxy.ts` | 解析服务地址并创建 Vite dev server proxy。 |
+| 文件                                    | 职责                                                                              |
+| --------------------------------------- | --------------------------------------------------------------------------------- |
+| `apps/admin/.env`                       | 公共环境变量。包含应用标题、路由模式、代理开关、服务 code、默认后端和图标前缀等。 |
+| `apps/admin/.env.test`                  | test mode 覆盖项。当前主要覆盖测试环境后端地址和其他服务地址。                    |
+| `apps/admin/.env.prod`                  | prod mode 覆盖项。当前主要覆盖生产环境后端地址和其他服务地址。                    |
+| `apps/admin/vite.config.ts`             | 应用 Vite 入口。直接使用 `@skyroc/web-admin-vite` 的 `defineConfig`。             |
+| `apps/admin-example/vite.config.ts`     | 示例应用 Vite 入口。沿用同一套 admin preset，只额外指定示例应用 dev server 端口。 |
+| `apps/admin/src/types/vite-env.d.ts`    | `import.meta.env` 类型声明。新增 env 时应同步这里。                               |
+| `apps/admin/src/utils/service.ts`       | 前端请求层根据 env 生成真实 baseURL 或代理 baseURL。                              |
+| `packages/web/admin-vite/src/config.ts` | `defineConfig` 主入口，负责读取 env、生成 preset、合并原始 Vite 配置。            |
+| `packages/web/admin-vite/src/proxy.ts`  | 解析服务地址并创建 Vite dev server proxy。                                        |
 
 ## env 加载规则
 
 当前脚本决定了 Vite 使用哪个 mode：
 
-| 命令 | Vite mode | 会读取 |
-| --- | --- | --- |
-| `pnpm --filter skyroc-admin dev` | `test` | `.env` + `.env.test` |
-| `pnpm --filter skyroc-admin dev:prod` | `prod` | `.env` + `.env.prod` |
-| `pnpm --filter skyroc-admin build` | `prod` | `.env` + `.env.prod` |
-| `pnpm --filter skyroc-admin build:test` | `test` | `.env` + `.env.test` |
-| `pnpm --filter skyroc-admin preview` | Vite preview 默认 mode | 已构建产物的运行配置来自构建时 mode |
+| 命令                                    | Vite mode              | 会读取                              |
+| --------------------------------------- | ---------------------- | ----------------------------------- |
+| `pnpm --filter skyroc-admin dev`        | `test`                 | `.env` + `.env.test`                |
+| `pnpm --filter skyroc-admin dev:prod`   | `prod`                 | `.env` + `.env.prod`                |
+| `pnpm --filter skyroc-admin build`      | `prod`                 | `.env` + `.env.prod`                |
+| `pnpm --filter skyroc-admin build:test` | `test`                 | `.env` + `.env.test`                |
+| `pnpm --filter skyroc-admin preview`    | Vite preview 默认 mode | 已构建产物的运行配置来自构建时 mode |
 
 `@skyroc/web-admin-vite` 的 `defineConfig` 会在内部执行：
 
@@ -68,57 +68,57 @@ const env = loadEnv(configEnv.mode, application.envDir ?? root);
 
 ### 应用基础信息
 
-| 变量 | 当前用途 |
-| --- | --- |
-| `VITE_BASE_URL` | Vite `base` 和应用更新检测的基础路径。 |
-| `VITE_APP_TITLE` | 页面标题、devtools 名称等应用展示信息。 |
-| `VITE_APP_DESC` | `index.html` 的 description。 |
-| `VITE_SOURCE_MAP` | 当前 env 已声明；现有 Vite preset 没有直接读取它。需要 sourcemap 时，通过 `vite.build.sourcemap` 明确配置。 |
-| `VITE_STORAGE_PREFIX` | `apps/admin/src/utils/storage.ts` 使用的本地缓存前缀。 |
-| `VITE_AUTOMATICALLY_DETECT_UPDATE` | 当前 env 已声明；现有更新检测实际由 `globalConfig.automaticallyDetectUpdate` 和生产环境共同控制。 |
+| 变量                               | 当前用途                                                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `VITE_BASE_URL`                    | Vite `base` 和应用更新检测的基础路径。                                                                      |
+| `VITE_APP_TITLE`                   | 页面标题、devtools 名称等应用展示信息。                                                                     |
+| `VITE_APP_DESC`                    | `index.html` 的 description。                                                                               |
+| `VITE_SOURCE_MAP`                  | 当前 env 已声明；现有 Vite preset 没有直接读取它。需要 sourcemap 时，通过 `vite.build.sourcemap` 明确配置。 |
+| `VITE_STORAGE_PREFIX`              | `apps/admin/src/utils/storage.ts` 使用的本地缓存前缀。                                                      |
+| `VITE_AUTOMATICALLY_DETECT_UPDATE` | 当前 env 已声明；现有更新检测实际由 `globalConfig.automaticallyDetectUpdate` 和生产环境共同控制。           |
 
 ### 路由和权限
 
-| 变量 | 当前用途 |
-| --- | --- |
-| `VITE_AUTH_ROUTE_MODE` | 路由权限模式，当前类型为 `static` 或 `dynamic`。 |
-| `VITE_ROUTE_HOME` | 静态路由模式下的默认首页。 |
-| `VITE_MENU_ICON` | 菜单未配置图标时使用的默认 Iconify 图标。 |
-| `VITE_STATIC_SUPER_ROLE` | 静态权限模式下的超级角色标识。 |
+| 变量                       | 当前用途                                                                |
+| -------------------------- | ----------------------------------------------------------------------- |
+| `VITE_AUTH_ROUTE_MODE`     | 路由权限模式，当前类型为 `static` 或 `dynamic`。                        |
+| `VITE_ROUTE_HOME`          | 静态路由模式下的默认首页。                                              |
+| `VITE_MENU_ICON`           | 菜单未配置图标时使用的默认 Iconify 图标。                               |
+| `VITE_STATIC_SUPER_ROLE`   | 静态权限模式下的超级角色标识。                                          |
 | `VITE_ROUTER_HISTORY_MODE` | 声明了路由历史模式类型，当前路由实现仍以 TanStack Router 配置为事实源。 |
 
 ### 图标和 Iconify
 
-| 变量 | 当前用途 |
-| --- | --- |
-| `VITE_ICON_PREFIX` | 图标组件前缀约定。 |
+| 变量                     | 当前用途                                                          |
+| ------------------------ | ----------------------------------------------------------------- |
+| `VITE_ICON_PREFIX`       | 图标组件前缀约定。                                                |
 | `VITE_ICON_LOCAL_PREFIX` | 本地 svg 图标前缀，当前 `globalConfig.localIconPrefix` 会读取它。 |
-| `VITE_ICONIFY_URL` | `setupAdminPlugins()` 中的 Iconify 离线服务地址。 |
+| `VITE_ICONIFY_URL`       | `setupAdminPlugins()` 中的 Iconify 离线服务地址。                 |
 
 `@skyroc/web-admin-vite` 的图标插件也可以通过 `application.plugins.unpluginIcon`、`application.plugins.unocss` 和 `application.plugins.autoImport` 传入图标相关 options。应用运行时读取的 env 和构建插件 options 不要混在一起：页面和运行时读取 `import.meta.env`，构建期插件差异放到 `vite.config.ts`。
 
 默认情况下不需要在 `vite.config.ts` 里专门写图标配置。`@skyroc/web-admin-vite` 会按当前应用启动目录解析 `src/assets/svg-icon`，并同时配置：
 
-| 插件配置 | 作用 |
-| --- | --- |
-| `application.plugins.unpluginIcon` | 注册本地 SVG sprite 和 `unplugin-icons` 组件。 |
-| `application.plugins.unocss` | 让 UnoCSS icon preset 能识别 Iconify 和本地 SVG class。 |
-| `application.plugins.autoImport` | 给 `icon-*` 组件自动导入 resolver 提供相同的图标前缀配置。 |
+| 插件配置                           | 作用                                                       |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `application.plugins.unpluginIcon` | 注册本地 SVG sprite 和 `unplugin-icons` 组件。             |
+| `application.plugins.unocss`       | 让 UnoCSS icon preset 能识别 Iconify 和本地 SVG class。    |
+| `application.plugins.autoImport`   | 给 `icon-*` 组件自动导入 resolver 提供相同的图标前缀配置。 |
 
 只有改本地图标目录、前缀、scale 或 SVG transform 时，才需要在这三处传入同一组图标 options，避免 sprite、UnoCSS class 和自动导入 resolver 使用不同规则。
 
 ### 请求和后端 code
 
-| 变量 | 当前用途 |
-| --- | --- |
-| `VITE_SERVICE_BASE_URL` | 主后端服务地址。开发代理开启时，对应 `/proxy-default`。 |
-| `VITE_OTHER_SERVICE_BASE_URL` | 其他后端服务地址，使用 JSON5 字符串。每个 key 对应 `/proxy-{key}`。 |
-| `VITE_HTTP_PROXY` | 为 `Y` 时，开发服务创建代理；请求层在 dev 环境也会改用代理前缀。 |
-| `VITE_PROXY_LOG` | 为 `Y` 时，代理请求会在终端打印代理地址和真实请求地址。 |
-| `VITE_SERVICE_SUCCESS_CODE` | 业务成功 code。 |
-| `VITE_SERVICE_LOGOUT_CODES` | 需要直接退出登录的业务 code，逗号分隔。 |
-| `VITE_SERVICE_MODAL_LOGOUT_CODES` | 需要弹窗退出登录的业务 code，逗号分隔。 |
-| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | 需要刷新 token 后重试的业务 code，逗号分隔。 |
+| 变量                               | 当前用途                                                            |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `VITE_SERVICE_BASE_URL`            | 主后端服务地址。开发代理开启时，对应 `/proxy-default`。             |
+| `VITE_OTHER_SERVICE_BASE_URL`      | 其他后端服务地址，使用 JSON5 字符串。每个 key 对应 `/proxy-{key}`。 |
+| `VITE_HTTP_PROXY`                  | 为 `Y` 时，开发服务创建代理；请求层在 dev 环境也会改用代理前缀。    |
+| `VITE_PROXY_LOG`                   | 为 `Y` 时，代理请求会在终端打印代理地址和真实请求地址。             |
+| `VITE_SERVICE_SUCCESS_CODE`        | 业务成功 code。                                                     |
+| `VITE_SERVICE_LOGOUT_CODES`        | 需要直接退出登录的业务 code，逗号分隔。                             |
+| `VITE_SERVICE_MODAL_LOGOUT_CODES`  | 需要弹窗退出登录的业务 code，逗号分隔。                             |
+| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | 需要刷新 token 后重试的业务 code，逗号分隔。                        |
 
 `VITE_OTHER_SERVICE_BASE_URL` 当前写法允许外层反引号，内部按 JSON5 解析：
 
@@ -199,10 +199,10 @@ export default defineConfig(configEnv => {
 
 `@skyroc/web-admin-vite` 刻意把配置分成两层：
 
-| 字段 | 职责 | 示例 |
-| --- | --- | --- |
-| `application` | Skyroc Admin 预设语义，用来描述后台应用差异 | `server.port`、`proxy.enabled`、`plugins.router`、`css.additionalData`、`build.manualChunks` |
-| `vite` | 原始 Vite `UserConfig`，在 admin preset 之后 merge | `optimizeDeps`、`server.fs`、`resolve.conditions`、第三方 Vite 插件 |
+| 字段          | 职责                                               | 示例                                                                                         |
+| ------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `application` | Skyroc Admin 预设语义，用来描述后台应用差异        | `server.port`、`proxy.enabled`、`plugins.router`、`css.additionalData`、`build.manualChunks` |
+| `vite`        | 原始 Vite `UserConfig`，在 admin preset 之后 merge | `optimizeDeps`、`server.fs`、`resolve.conditions`、第三方 Vite 插件                          |
 
 优先规则：
 
@@ -242,17 +242,17 @@ export default defineConfig({
 
 `defineConfig` 会生成一份 admin 应用默认 Vite 配置，再合并 `vite` 覆盖层。
 
-| 配置项 | 默认行为 |
-| --- | --- |
-| `base` | 优先使用 `application.base`，否则读取 `VITE_BASE_URL`，再否则为 `/`。 |
-| `build` | 使用 admin 构建输出规则，拆分 CSS、图片、页面 chunk、组件 chunk 和基础 vendor chunk。 |
-| `define` | 注入 `__DEV__`；默认还会注入 `BUILD_TIME`。 |
-| `css` | 当 `application.css.additionalData` 存在时，写入 SCSS preprocessor options。 |
+| 配置项    | 默认行为                                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`    | 优先使用 `application.base`，否则读取 `VITE_BASE_URL`，再否则为 `/`。                                                                       |
+| `build`   | 使用 admin 构建输出规则，拆分 CSS、图片、页面 chunk、组件 chunk 和基础 vendor chunk。                                                       |
+| `define`  | 注入 `__DEV__`；默认还会注入 `BUILD_TIME`。                                                                                                 |
+| `css`     | 当 `application.css.additionalData` 存在时，写入 SCSS preprocessor options。                                                                |
 | `plugins` | 注入 TanStack Devtools、TanStack Router、React、Babel、UnoCSS、Icons、auto-import、HTML、inspect、remove-console、project info 等内置插件。 |
-| `preview` | 默认端口 `9725`。 |
-| `resolve` | 默认 `@ -> src`、`~ -> .`，并 dedupe React runtime。 |
-| `server` | 默认 `host = 0.0.0.0`、`open = true`、`port = 9527`，并配置 warmup 文件。 |
-| `proxy` | dev server 下按 env 生成代理。 |
+| `preview` | 默认端口 `9725`。                                                                                                                           |
+| `resolve` | 默认 `@ -> src`、`~ -> .`，并 dedupe React runtime。                                                                                        |
+| `server`  | 默认 `host = 0.0.0.0`、`open = true`、`port = 9527`，并配置 warmup 文件。                                                                   |
+| `proxy`   | dev server 下按 env 生成代理。                                                                                                              |
 
 内置插件不应在 `apps/admin` 里重新拼一遍。确实要改插件行为时，优先通过 `application.plugins` 配置。
 
@@ -279,10 +279,10 @@ VITE_OTHER_SERVICE_BASE_URL
 
 默认代理前缀：
 
-| 服务 | 代理前缀 | 目标来源 |
-| --- | --- | --- |
-| 主服务 | `/proxy-default` | `VITE_SERVICE_BASE_URL` |
-| 其他服务 | `/proxy-{key}` | `VITE_OTHER_SERVICE_BASE_URL` 的 key |
+| 服务     | 代理前缀         | 目标来源                             |
+| -------- | ---------------- | ------------------------------------ |
+| 主服务   | `/proxy-default` | `VITE_SERVICE_BASE_URL`              |
+| 其他服务 | `/proxy-{key}`   | `VITE_OTHER_SERVICE_BASE_URL` 的 key |
 
 请求转发时会去掉代理前缀。例如：
 
@@ -434,36 +434,36 @@ export default defineConfig({
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 直接在仓库根目录运行裸 `vite` | 使用 `pnpm --filter skyroc-admin dev` 等脚本，保证 `process.cwd()`、`root` 和 `.env*` 指向 `apps/admin`。 |
-| 只改 `.env.prod` 后继续跑 `dev` | `dev` 使用 test mode，应改 `.env.test` 或使用 `dev:prod`。 |
-| 开发环境代理开启后还期待浏览器请求直接打远端域名 | 代理开启时请求层会使用 `/proxy-default` 和 `/proxy-{key}`，真实转发目标在 Vite dev server。 |
-| `VITE_OTHER_SERVICE_BASE_URL` 写成非法 JSON/JSON5 | 使用对象字符串，key 对应代理前缀和请求层 other key。解析失败时其他服务会变成空对象。 |
-| 把后端服务地址硬编码进 API 文件 | 优先通过 `.env.test` / `.env.prod` 配置，再让请求实例读取 `getServiceBaseURL()` 的结果。 |
-| 在 `vite.config.ts` 顶层平铺 Vite 配置 | 使用 `application` 描述 admin preset 差异，使用 `vite` 放原始 Vite 配置。 |
-| 在 `apps/admin` 里复制 admin-vite 内置插件组合 | 通过 `application.plugins` 修改开关或参数；可复用默认行为应留在 `@skyroc/web-admin-vite`。 |
-| 新增 env 后没有类型 | 同步更新 `apps/admin/src/types/vite-env.d.ts`，让 `import.meta.env` 可检查。 |
+| 误区                                              | 正确做法                                                                                                  |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 直接在仓库根目录运行裸 `vite`                     | 使用 `pnpm --filter skyroc-admin dev` 等脚本，保证 `process.cwd()`、`root` 和 `.env*` 指向 `apps/admin`。 |
+| 只改 `.env.prod` 后继续跑 `dev`                   | `dev` 使用 test mode，应改 `.env.test` 或使用 `dev:prod`。                                                |
+| 开发环境代理开启后还期待浏览器请求直接打远端域名  | 代理开启时请求层会使用 `/proxy-default` 和 `/proxy-{key}`，真实转发目标在 Vite dev server。               |
+| `VITE_OTHER_SERVICE_BASE_URL` 写成非法 JSON/JSON5 | 使用对象字符串，key 对应代理前缀和请求层 other key。解析失败时其他服务会变成空对象。                      |
+| 把后端服务地址硬编码进 API 文件                   | 优先通过 `.env.test` / `.env.prod` 配置，再让请求实例读取 `getServiceBaseURL()` 的结果。                  |
+| 在 `vite.config.ts` 顶层平铺 Vite 配置            | 使用 `application` 描述 admin preset 差异，使用 `vite` 放原始 Vite 配置。                                 |
+| 在 `apps/admin` 里复制 admin-vite 内置插件组合    | 通过 `application.plugins` 修改开关或参数；可复用默认行为应留在 `@skyroc/web-admin-vite`。                |
+| 新增 env 后没有类型                               | 同步更新 `apps/admin/src/types/vite-env.d.ts`，让 `import.meta.env` 可检查。                              |
 
 ## 排查顺序
 
-| 现象 | 先检查 |
-| --- | --- |
-| env 修改不生效 | 是否重启了 Vite dev server，当前命令使用的 mode 是否正确。 |
-| 启动端口不是预期 | `application.server.port` 是否配置，是否仍由默认 `9527` 生效。 |
-| 代理没有创建 | 是否是 dev server，是否不是 preview，`VITE_HTTP_PROXY` 是否为 `Y`。 |
-| 代理目标不对 | 当前 mode 读取的是 `.env.test` 还是 `.env.prod`，`VITE_SERVICE_BASE_URL` 是否被 mode 文件覆盖。 |
-| 其他服务请求 undefined | `VITE_OTHER_SERVICE_BASE_URL` 是否能被 JSON5 解析，请求层是否使用了存在的 key。 |
-| 图标或自动导入异常 | 先看 `application.plugins.unpluginIcon` / `unocss` / `autoImport` 是否使用同一组图标 options，再看 `VITE_ICON_LOCAL_PREFIX` 等运行时配置是否被误用。 |
-| 构建产物路径不对 | `VITE_BASE_URL`、`application.base` 和部署路径是否一致。 |
+| 现象                   | 先检查                                                                                                                                               |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| env 修改不生效         | 是否重启了 Vite dev server，当前命令使用的 mode 是否正确。                                                                                           |
+| 启动端口不是预期       | `application.server.port` 是否配置，是否仍由默认 `9527` 生效。                                                                                       |
+| 代理没有创建           | 是否是 dev server，是否不是 preview，`VITE_HTTP_PROXY` 是否为 `Y`。                                                                                  |
+| 代理目标不对           | 当前 mode 读取的是 `.env.test` 还是 `.env.prod`，`VITE_SERVICE_BASE_URL` 是否被 mode 文件覆盖。                                                      |
+| 其他服务请求 undefined | `VITE_OTHER_SERVICE_BASE_URL` 是否能被 JSON5 解析，请求层是否使用了存在的 key。                                                                      |
+| 图标或自动导入异常     | 先看 `application.plugins.unpluginIcon` / `unocss` / `autoImport` 是否使用同一组图标 options，再看 `VITE_ICON_LOCAL_PREFIX` 等运行时配置是否被误用。 |
+| 构建产物路径不对       | `VITE_BASE_URL`、`application.base` 和部署路径是否一致。                                                                                             |
 
 ## 相关位置
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 启动时如何消费 `BUILD_TIME`、主题、布局和 i18n | [启动流程](../architecture/bootstrap) |
-| 项目启动、构建和预览命令 | [快速开始](../getting-started/quick-start) |
-| 组件、菜单和动态菜单图标用法 | [图标使用](../theme/icons) |
-| 请求实例如何使用 baseURL 和业务 code | [请求概览](../request/overview) |
-| 切换真实后端和代理细节 | [代理与后端对接](../request/proxy-and-backend) |
-| 共享 Vite 预设完整 API | [@skyroc/web-admin-vite](/docs/web/admin-vite) |
+| 主题                                           | 继续查看                                       |
+| ---------------------------------------------- | ---------------------------------------------- |
+| 启动时如何消费 `BUILD_TIME`、主题、布局和 i18n | [启动流程](../architecture/bootstrap)          |
+| 项目启动、构建和预览命令                       | [快速开始](../getting-started/quick-start)     |
+| 组件、菜单和动态菜单图标用法                   | [图标使用](../theme/icons)                     |
+| 请求实例如何使用 baseURL 和业务 code           | [请求概览](../request/overview)                |
+| 切换真实后端和代理细节                         | [代理与后端对接](../request/proxy-and-backend) |
+| 共享 Vite 预设完整 API                         | [@skyroc/web-admin-vite](/docs/web/admin-vite) |

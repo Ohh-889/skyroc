@@ -134,7 +134,7 @@ Combobox 由三个组件协作完成：
     {
       name: 'shortcut',
       description: '关联的键盘快捷键',
-      type: "string | string[]"
+      type: 'string | string[]'
     },
     {
       name: 'className',
@@ -210,7 +210,11 @@ Combobox 由三个组件协作完成：
         { name: 'leading', type: 'ReactNode', description: '前置插槽，默认为搜索图标。' },
         { name: 'trailing', type: 'ReactNode', description: '后置插槽。' },
         { name: 'className', type: 'ClassValue', description: '输入框 class。' },
-        { name: 'classNames', type: "Pick<CommandClassNames, 'input' | 'inputIcon' | 'inputWrapper'>", description: '输入框相关 slot 的 class。' },
+        {
+          name: 'classNames',
+          type: "Pick<CommandClassNames, 'input' | 'inputIcon' | 'inputWrapper'>",
+          description: '输入框相关 slot 的 class。'
+        },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '输入框尺寸。' }
       ]
     },
@@ -239,7 +243,11 @@ Combobox 由三个组件协作完成：
         { name: 'label', type: 'ReactNode', description: '分组标题文本。' },
         { name: 'type', type: "'group'", description: '标识为分组类型，可省略（含 children 字段时自动识别）。' },
         { name: 'className', type: 'ClassValue', description: '分组容器 class。' },
-        { name: 'classNames', type: "Pick<CommandClassNames, 'group' | 'groupLabel'>", description: '分组内 slot class。' },
+        {
+          name: 'classNames',
+          type: "Pick<CommandClassNames, 'group' | 'groupLabel'>",
+          description: '分组内 slot class。'
+        },
         { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '分组尺寸。' }
       ]
     },

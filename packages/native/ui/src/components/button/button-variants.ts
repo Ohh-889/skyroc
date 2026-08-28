@@ -7,8 +7,8 @@ export const DEFAULT_BUTTON_SIZE = 'md';
 /**
  * 按钮样式变体。
  *
- * `text` 槽通过 TextClassContext 下发给子 Text，任意 children 都能继承按钮的文字色； `indicator` 槽输出 Uniwind 的 `accent-*` 工具类，供 ActivityIndicator 的
- * `colorClassName` 取色——它不读 `className` 上的 `text-*`，因此必须与 `text` 槽一一对应地各维护一份。
+ * `text` 槽通过 TextClassContext 下发给子 Text，任意 children 都能继承按钮的文字色； `indicator` 槽输出 Uniwind 的 `accent-*` 工具类，供
+ * ActivityIndicator 的 `colorClassName` 取色——它不读 `className` 上的 `text-*`，因此必须与 `text` 槽一一对应地各维护一份。
  */
 export const buttonVariants = tv({
   slots: {

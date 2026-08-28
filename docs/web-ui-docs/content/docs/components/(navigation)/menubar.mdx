@@ -6,14 +6,7 @@ description: 用于构建横向应用菜单和多级菜单的菜单栏组件
 Menubar 用于构建类似桌面应用的横向菜单栏。组件基于 Radix Menubar，并复用项目 Menu 的菜单项、分隔线、子菜单、checkbox 和 radio 组选项能力。
 
 ```tsx
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRoot,
-  MenubarTrigger
-} from '@skyroc/web-ui';
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarRoot, MenubarTrigger } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -33,11 +26,11 @@ import {
 
 Menubar 支持三类顶层菜单：
 
-| type       | 说明                                 |
-| ---------- | ------------------------------------ |
+| type       | 说明                                  |
+| ---------- | ------------------------------------- |
 | `item`     | 默认菜单，children 使用普通菜单项数据 |
-| `checkbox` | checkbox 菜单组，支持多选            |
-| `radio`    | radio 菜单组，支持单选               |
+| `checkbox` | checkbox 菜单组，支持多选             |
+| `radio`    | radio 菜单组，支持单选                |
 
 ## 菜单项类型
 
@@ -50,10 +43,7 @@ const fileMenu = [
   {
     type: 'sub',
     label: 'Share',
-    children: [
-      { label: 'Email link' },
-      { label: 'Messages' }
-    ]
+    children: [{ label: 'Email link' }, { label: 'Messages' }]
   }
 ];
 ```
@@ -236,7 +226,11 @@ Menubar 同时导出 Radix 风格结构组件，适合需要完全手动组合�
       fields: [
         { name: 'label', type: 'ReactNode', description: '顶层菜单触发器内容。' },
         { name: 'type', type: "'item' | 'checkbox' | 'radio'", description: '顶层菜单类型。默认普通菜单可省略。' },
-        { name: 'children', type: 'MenuOptionData[] | MenuCheckboxGroupItemProps[] | MenuRadioItemOptionProps[]', description: '子项数据。' },
+        {
+          name: 'children',
+          type: 'MenuOptionData[] | MenuCheckboxGroupItemProps[] | MenuRadioItemOptionProps[]',
+          description: '子项数据。'
+        },
         { name: 'checks', type: 'string[]', description: 'checkbox 菜单选中值列表。' },
         { name: 'onChecksChange', type: '(checks: string[]) => void', description: 'checkbox 菜单选中值变化回调。' },
         { name: 'value', type: 'string', description: 'radio 菜单选中值或顶层菜单 value。' },

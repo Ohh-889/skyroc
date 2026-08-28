@@ -68,7 +68,10 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
       footer={
         <Flex justify="space-between">
           <Button onClick={onClose}>{t('common.cancel')}</Button>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+          >
             {t('common.confirm')}
           </Button>
         </Flex>
@@ -78,20 +81,42 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
       title={drawerTitle}
       onClose={onClose}
     >
-      <Form form={form} initialValues={createDefaultBackendRouteFormModel()} layout="vertical">
-        <Divider plain titlePlacement="start">
+      <Form
+        form={form}
+        initialValues={createDefaultBackendRouteFormModel()}
+        layout="vertical"
+      >
+        <Divider
+          plain
+          titlePlacement="start"
+        >
           {t('page.manage.menu.routePayload')}
         </Divider>
 
         <Row gutter={16}>
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.id')} name="id">
-              <Input allowClear placeholder={t('page.manage.menu.form.id')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.id')}
+              name="id"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.id')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.parent')} name="parentId">
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.parent')}
+              name="parentId"
+            >
               <Select
                 allowClear
                 showSearch
@@ -102,72 +127,164 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.layout')} name="layout">
-              <Select allowClear options={layoutOptions} placeholder={t('page.manage.menu.form.layout')} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.routePath')} name="path" rules={[requiredRule]}>
-              <Input allowClear placeholder={t('page.manage.menu.form.routePath')} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.routeName')} name="name">
-              <Input allowClear placeholder={t('page.manage.menu.form.routeName')} />
-            </Form.Item>
-          </Col>
-
-          <Col span={24}>
-            <Form.Item label={t('page.manage.menu.redirect')} name="redirect">
-              <Input allowClear placeholder={t('page.manage.menu.form.redirect')} />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Divider plain titlePlacement="start">
-          {t('page.manage.menu.handle')}
-        </Divider>
-
-        <Row gutter={16}>
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.menuType')} name="type" rules={[requiredRule]}>
-              <Radio.Group options={translateRadioOptions(routeMenuTypeOptions, t)} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.order')} name="order">
-              <InputNumber className="w-full" min={0} placeholder={t('page.manage.menu.form.order')} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.menuName')} name="title">
-              <Input allowClear placeholder={t('page.manage.menu.form.title')} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.i18nKey')} name="i18nKey">
-              <Input allowClear placeholder={t('page.manage.menu.form.i18nKey')} />
-            </Form.Item>
-          </Col>
-
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.icon')} name="icon">
-              <Input
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.layout')}
+              name="layout"
+            >
+              <Select
                 allowClear
-                placeholder={t('page.manage.menu.form.icon')}
-                suffix={formValues.icon ? <SvgIcon className="text-icon" icon={formValues.icon} /> : null}
+                options={layoutOptions}
+                placeholder={t('page.manage.menu.form.layout')}
               />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.localIcon')} name="localIcon">
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.routePath')}
+              name="path"
+              rules={[requiredRule]}
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.routePath')}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.routeName')}
+              name="name"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.routeName')}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={24}>
+            <Form.Item
+              label={t('page.manage.menu.redirect')}
+              name="redirect"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.redirect')}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Divider
+          plain
+          titlePlacement="start"
+        >
+          {t('page.manage.menu.handle')}
+        </Divider>
+
+        <Row gutter={16}>
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.menuType')}
+              name="type"
+              rules={[requiredRule]}
+            >
+              <Radio.Group options={translateRadioOptions(routeMenuTypeOptions, t)} />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.order')}
+              name="order"
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+                placeholder={t('page.manage.menu.form.order')}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.menuName')}
+              name="title"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.title')}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.i18nKey')}
+              name="i18nKey"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.i18nKey')}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.icon')}
+              name="icon"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.icon')}
+                suffix={
+                  formValues.icon ? (
+                    <SvgIcon
+                      className="text-icon"
+                      icon={formValues.icon}
+                    />
+                  ) : null
+                }
+              />
+            </Form.Item>
+          </Col>
+
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.localIcon')}
+              name="localIcon"
+            >
               <Select
                 allowClear
                 showSearch
@@ -177,69 +294,163 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.extra')} name="extra">
-              <Select allowClear options={extraOptions} placeholder={t('page.manage.menu.form.extra')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.extra')}
+              name="extra"
+            >
+              <Select
+                allowClear
+                options={extraOptions}
+                placeholder={t('page.manage.menu.form.extra')}
+              />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-            <Form.Item label={t('page.manage.menu.roles')} name="roles">
-              <Select mode="tags" placeholder={t('page.manage.menu.form.roles')} tokenSeparators={[',']} />
+            <Form.Item
+              label={t('page.manage.menu.roles')}
+              name="roles"
+            >
+              <Select
+                mode="tags"
+                placeholder={t('page.manage.menu.form.roles')}
+                tokenSeparators={[',']}
+              />
             </Form.Item>
           </Col>
         </Row>
 
-        <Divider plain titlePlacement="start">
+        <Divider
+          plain
+          titlePlacement="start"
+        >
           {t('page.manage.menu.navigation')}
         </Divider>
 
         <Row gutter={16}>
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.href')} name="href">
-              <Input allowClear placeholder={t('page.manage.menu.form.href')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.href')}
+              name="href"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.href')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.url')} name="url">
-              <Input allowClear placeholder={t('page.manage.menu.form.url')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.url')}
+              name="url"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.url')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.fixedIndexInTab')} name="fixedIndexInTab">
-              <InputNumber className="w-full" min={0} placeholder={t('page.manage.menu.form.fixedIndexInTab')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.fixedIndexInTab')}
+              name="fixedIndexInTab"
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+                placeholder={t('page.manage.menu.form.fixedIndexInTab')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.hideInMenu')} name="hideInMenu" valuePropName="checked">
-              <Switch checkedChildren={t('common.yesOrNo.yes')} unCheckedChildren={t('common.yesOrNo.no')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.hideInMenu')}
+              name="hideInMenu"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren={t('common.yesOrNo.yes')}
+                unCheckedChildren={t('common.yesOrNo.no')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.keepAlive')} name="keepAlive" valuePropName="checked">
-              <Switch checkedChildren={t('common.yesOrNo.yes')} unCheckedChildren={t('common.yesOrNo.no')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.keepAlive')}
+              name="keepAlive"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren={t('common.yesOrNo.yes')}
+                unCheckedChildren={t('common.yesOrNo.no')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.constant')} name="constant" valuePropName="checked">
-              <Switch checkedChildren={t('common.yesOrNo.yes')} unCheckedChildren={t('common.yesOrNo.no')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.constant')}
+              name="constant"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren={t('common.yesOrNo.yes')}
+                unCheckedChildren={t('common.yesOrNo.no')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.multiTab')} name="multiTab" valuePropName="checked">
-              <Switch checkedChildren={t('common.yesOrNo.yes')} unCheckedChildren={t('common.yesOrNo.no')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.multiTab')}
+              name="multiTab"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren={t('common.yesOrNo.yes')}
+                unCheckedChildren={t('common.yesOrNo.no')}
+              />
             </Form.Item>
           </Col>
 
           {hideInMenu && (
-            <Col md={12} span={24}>
-              <Form.Item label={t('page.manage.menu.activeMenu')} name="activeMenu">
+            <Col
+              md={12}
+              span={24}
+            >
+              <Form.Item
+                label={t('page.manage.menu.activeMenu')}
+                name="activeMenu"
+              >
                 <Select
                   allowClear
                   showSearch
@@ -251,7 +462,10 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
           )}
         </Row>
 
-        <Divider plain titlePlacement="start">
+        <Divider
+          plain
+          titlePlacement="start"
+        >
           {t('page.manage.menu.query')}
         </Divider>
 
@@ -259,26 +473,47 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
           {(fields, { add, remove }) => (
             <div className="flex flex-col gap-8px">
               {fields.map((field, index) => (
-                <Row gutter={8} key={field.key}>
-                  <Col md={10} span={24}>
+                <Row
+                  gutter={8}
+                  key={field.key}
+                >
+                  <Col
+                    md={10}
+                    span={24}
+                  >
                     <Form.Item name={[field.name, 'key']}>
-                      <Input allowClear placeholder={t('page.manage.menu.form.queryKey')} />
+                      <Input
+                        allowClear
+                        placeholder={t('page.manage.menu.form.queryKey')}
+                      />
                     </Form.Item>
                   </Col>
 
-                  <Col md={10} span={24}>
+                  <Col
+                    md={10}
+                    span={24}
+                  >
                     <Form.Item name={[field.name, 'value']}>
-                      <Input allowClear placeholder={t('page.manage.menu.form.queryValue')} />
+                      <Input
+                        allowClear
+                        placeholder={t('page.manage.menu.form.queryValue')}
+                      />
                     </Form.Item>
                   </Col>
 
-                  <Col md={4} span={24}>
+                  <Col
+                    md={4}
+                    span={24}
+                  >
                     <Flex gap={8}>
                       <Button
                         icon={<SvgIcon icon="ic:round-plus" />}
                         onClick={() => add(createDefaultBackendRouteQuery(), index + 1)}
                       />
-                      <Button icon={<SvgIcon icon="ic:round-remove" />} onClick={() => remove(index)} />
+                      <Button
+                        icon={<SvgIcon icon="ic:round-remove" />}
+                        onClick={() => remove(index)}
+                      />
                     </Flex>
                   </Col>
                 </Row>
@@ -298,13 +533,22 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
           )}
         </Form.List>
 
-        <Divider plain titlePlacement="start">
+        <Divider
+          plain
+          titlePlacement="start"
+        >
           {t('page.manage.menu.badge')}
         </Divider>
 
         <Row gutter={16}>
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.badgeTypeTitle')} name="badgeType">
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.badgeTypeTitle')}
+              name="badgeType"
+            >
               <Select
                 allowClear
                 options={translateOptions(badgeTypeOptions)}
@@ -313,8 +557,14 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.badgeVariantTitle')} name="badgeVariant">
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.badgeVariantTitle')}
+              name="badgeVariant"
+            >
               <Select
                 allowClear
                 options={translateOptions(badgeVariantOptions)}
@@ -323,21 +573,46 @@ const MenuOperateDrawer = (props: MenuOperateDrawerProps) => {
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.badgeValue')} name="badgeValue">
-              <Input allowClear placeholder={t('page.manage.menu.form.badgeValue')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.badgeValue')}
+              name="badgeValue"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.badgeValue')}
+              />
             </Form.Item>
           </Col>
 
-          <Col md={12} span={24}>
-            <Form.Item label={t('page.manage.menu.badgeValueKey')} name="badgeValueKey">
-              <Input allowClear placeholder={t('page.manage.menu.form.badgeValueKey')} />
+          <Col
+            md={12}
+            span={24}
+          >
+            <Form.Item
+              label={t('page.manage.menu.badgeValueKey')}
+              name="badgeValueKey"
+            >
+              <Input
+                allowClear
+                placeholder={t('page.manage.menu.form.badgeValueKey')}
+              />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-            <Form.Item label={t('page.manage.menu.badgeShowZero')} name="badgeShowZero" valuePropName="checked">
-              <Switch checkedChildren={t('common.yesOrNo.yes')} unCheckedChildren={t('common.yesOrNo.no')} />
+            <Form.Item
+              label={t('page.manage.menu.badgeShowZero')}
+              name="badgeShowZero"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren={t('common.yesOrNo.yes')}
+                unCheckedChildren={t('common.yesOrNo.no')}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -358,8 +633,14 @@ function createRequiredRule(message: string): FormRule {
 function getLocalIconOption(icon: string) {
   return {
     label: (
-      <Flex align="center" gap={12}>
-        <SvgIcon className="text-icon" localIcon={icon} />
+      <Flex
+        align="center"
+        gap={12}
+      >
+        <SvgIcon
+          className="text-icon"
+          localIcon={icon}
+        />
         <span>{icon}</span>
       </Flex>
     ),

@@ -1,8 +1,8 @@
 'use client';
 
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import PaginationContent from './PaginationContent';
 import PaginationEllipsis from './PaginationEllipsis';
 import PaginationFirst from './PaginationFirst';
@@ -74,10 +74,8 @@ const PaginationUI = forwardRef<ComponentRef<'nav'>, PaginationProps>((props, re
   // Events
   // ---------------------------
   const handlePageChange = (page: number) => {
-    if (disabled)
-      return;
-    if (page < 1 || page > pageCount)
-      return;
+    if (disabled) return;
+    if (page < 1 || page > pageCount) return;
     setCurrentPage(page);
   };
 
@@ -98,22 +96,20 @@ const PaginationUI = forwardRef<ComponentRef<'nav'>, PaginationProps>((props, re
         size={size}
         {...contentProps}
       >
-        {showFirstLast
-          ? (
-            <PaginationFirst
-              actionAsSelected={actionAsSelected}
-              className={classNames?.navigationButton}
-              disabled={disabled || isFirstPage}
-              icon={firstIcon}
-              label={firstLabel}
-              shape={shape}
-              size={size}
-              variant={variant}
-              onClick={handleFirst}
-              {...firstProps}
-            />
-          )
-          : null}
+        {showFirstLast ? (
+          <PaginationFirst
+            actionAsSelected={actionAsSelected}
+            className={classNames?.navigationButton}
+            disabled={disabled || isFirstPage}
+            icon={firstIcon}
+            label={firstLabel}
+            shape={shape}
+            size={size}
+            variant={variant}
+            onClick={handleFirst}
+            {...firstProps}
+          />
+        ) : null}
 
         <PaginationPrevious
           actionAsSelected={actionAsSelected}
@@ -170,22 +166,20 @@ const PaginationUI = forwardRef<ComponentRef<'nav'>, PaginationProps>((props, re
           {...nextProps}
         />
 
-        {showFirstLast
-          ? (
-            <PaginationLast
-              actionAsSelected={actionAsSelected}
-              className={classNames?.navigationButton}
-              disabled={disabled || isLastPage}
-              icon={lastIcon}
-              label={lastLabel}
-              shape={shape}
-              size={size}
-              variant={variant}
-              onClick={handleLast}
-              {...lastProps}
-            />
-          )
-          : null}
+        {showFirstLast ? (
+          <PaginationLast
+            actionAsSelected={actionAsSelected}
+            className={classNames?.navigationButton}
+            disabled={disabled || isLastPage}
+            icon={lastIcon}
+            label={lastLabel}
+            shape={shape}
+            size={size}
+            variant={variant}
+            onClick={handleLast}
+            {...lastProps}
+          />
+        ) : null}
       </PaginationContent>
     </PaginationRoot>
   );

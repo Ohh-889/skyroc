@@ -57,11 +57,11 @@ git review（聚焦意图与架构，不再逐行验证正确性）
 
 前端测试通常分三层，职责不同，成本各异：
 
-| 层级 | 工具 | 覆盖什么 | 不覆盖什么 | 运行时机 |
-| --- | --- | --- | --- | --- |
-| **单元测试** | Vitest | 纯函数、hooks、算法、工具库 | UI 渲染、用户流程 | 每次提交 |
+| 层级         | 工具         | 覆盖什么                       | 不覆盖什么           | 运行时机 |
+| ------------ | ------------ | ------------------------------ | -------------------- | -------- |
+| **单元测试** | Vitest       | 纯函数、hooks、算法、工具库    | UI 渲染、用户流程    | 每次提交 |
 | **集成测试** | Vitest + MSW | 模块间协作、API 边界、状态流转 | 浏览器行为、E2E 路径 | 每次提交 |
-| **E2E 测试** | Playwright | 用户关键操作路径 | 内部逻辑细节 | CI / PR |
+| **E2E 测试** | Playwright   | 用户关键操作路径               | 内部逻辑细节         | CI / PR  |
 
 三层并不是都需要写满。**优先保证单元测试的覆盖密度**，对纯逻辑代码而言，单测的反馈最快、成本最低、价值最高。集成测试和 E2E 聚焦在真正重要的业务路径上，不做无意义的覆盖率堆砌。
 
@@ -158,12 +158,12 @@ test('用户应能正常登录并进入首页', async ({ page }) => {
 
 ### 工具链
 
-| 职责 | 工具 | 说明 |
-| --- | --- | --- |
+| 职责                | 工具                          | 说明                                |
+| ------------------- | ----------------------------- | ----------------------------------- |
 | 单元测试 / 集成测试 | [Vitest](https://vitest.dev/) | 与 Vite 同生态，TS 零配置，速度极快 |
-| React hook 测试 | `@testing-library/react` | `renderHook` + `act` |
-| 覆盖率报告 | `@vitest/coverage-v8` | 通过 `pnpm test:coverage` 生成 |
-| API Mock（待接入） | [MSW](https://mswjs.io/) | 已安装，可用于集成测试 |
+| React hook 测试     | `@testing-library/react`      | `renderHook` + `act`                |
+| 覆盖率报告          | `@vitest/coverage-v8`         | 通过 `pnpm test:coverage` 生成      |
+| API Mock（待接入）  | [MSW](https://mswjs.io/)      | 已安装，可用于集成测试              |
 
 ### 配置架构
 
@@ -201,14 +201,14 @@ pnpm test --watch
 
 ### 已有测试覆盖包
 
-| 包 | 覆盖内容 |
-| --- | --- |
-| `packages/@core/utils` | 数组、对象、日期、加密、正则、存储、DOM 工具、任务调度 |
-| `packages/@core/color` | OKLCH 调色板、Ant Design 色板算法 |
-| `packages/@core/state` | Jotai atom、storage registry、global store |
-| `packages/@core/axios` | 请求配置、类型守卫、选项处理 |
-| `packages/@core/service` | 请求创建、错误处理、状态共享 |
-| `packages/hooks` | loading、countdown、copy、array、store 等 hooks |
+| 包                       | 覆盖内容                                               |
+| ------------------------ | ------------------------------------------------------ |
+| `packages/@core/utils`   | 数组、对象、日期、加密、正则、存储、DOM 工具、任务调度 |
+| `packages/@core/color`   | OKLCH 调色板、Ant Design 色板算法                      |
+| `packages/@core/state`   | Jotai atom、storage registry、global store             |
+| `packages/@core/axios`   | 请求配置、类型守卫、选项处理                           |
+| `packages/@core/service` | 请求创建、错误处理、状态共享                           |
+| `packages/hooks`         | loading、countdown、copy、array、store 等 hooks        |
 
 ---
 

@@ -34,11 +34,17 @@ const VisibilityExample = (props: VisibilityExampleProps) => {
   const [form] = useForm<VisibilityValues>();
 
   return (
-    <Form form={form} initialValues={{ name: initialName }}>
+    <Form
+      form={form}
+      initialValues={{ name: initialName }}
+    >
       <Field name="name">
         <input aria-label="Visible name" />
       </Field>
-      <button type="button" onClick={() => form.setHidden('name', true)}>
+      <button
+        type="button"
+        onClick={() => form.setHidden('name', true)}
+      >
         Hide name
       </button>
     </Form>
@@ -58,7 +64,10 @@ const ComputedVisibilityExample = () => {
   const [form] = useForm<ComputedVisibilityValues>();
 
   return (
-    <Form form={form} initialValues={{ quantity: 2, total: 10, unitPrice: 5 }}>
+    <Form
+      form={form}
+      initialValues={{ quantity: 2, total: 10, unitPrice: 5 }}
+    >
       <ComputedField
         compute={get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0)}
         deps={['quantity', 'unitPrice']}
@@ -67,7 +76,10 @@ const ComputedVisibilityExample = () => {
       >
         <input aria-label="Computed total" />
       </ComputedField>
-      <button type="button" onClick={() => form.setHidden('total', true)}>
+      <button
+        type="button"
+        onClick={() => form.setHidden('total', true)}
+      >
         Hide total
       </button>
     </Form>
@@ -88,7 +100,10 @@ const ListVisibilityExample = () => {
   const [form] = useForm<ListVisibilityValues>();
 
   return (
-    <Form form={form} initialValues={{ items: [{ title: 'A' }] }}>
+    <Form
+      form={form}
+      initialValues={{ items: [{ title: 'A' }] }}
+    >
       <List name="items">
         {fields => (
           <ul aria-label="Hidden list">
@@ -98,7 +113,10 @@ const ListVisibilityExample = () => {
           </ul>
         )}
       </List>
-      <button type="button" onClick={() => form.setHidden('items', true)}>
+      <button
+        type="button"
+        onClick={() => form.setHidden('items', true)}
+      >
         Hide list
       </button>
     </Form>
@@ -127,10 +145,16 @@ const StrictListExample = () => {
                   <Field<StrictListValues> name={`${field.name}.age` as any}>
                     <input aria-label={`Age ${index}`} />
                   </Field>
-                  <button type="button" onClick={() => ops.insert(index + 1, { age: 11, name: '' })}>
+                  <button
+                    type="button"
+                    onClick={() => ops.insert(index + 1, { age: 11, name: '' })}
+                  >
                     Insert {index}
                   </button>
-                  <button type="button" onClick={() => ops.remove(index)}>
+                  <button
+                    type="button"
+                    onClick={() => ops.remove(index)}
+                  >
                     Remove {index}
                   </button>
                 </div>
@@ -175,8 +199,15 @@ describe('Form and Field integration', () => {
     const onFinishFailed = vi.fn();
 
     render(
-      <Form initialValues={{ email: '' }} onFinish={onFinish} onFinishFailed={onFinishFailed}>
-        <Field name="email" rules={[{ debounceMs: 0, message: 'Email is required', required: true }]}>
+      <Form
+        initialValues={{ email: '' }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      >
+        <Field
+          name="email"
+          rules={[{ debounceMs: 0, message: 'Email is required', required: true }]}
+        >
           <input aria-label="Email" />
         </Field>
         <EmailError />
@@ -207,8 +238,14 @@ describe('Form and Field integration', () => {
 
   it('should validate fields from additional validate triggers', async () => {
     render(
-      <Form initialValues={{ email: '' }} validateTrigger="onBlur">
-        <Field name="email" rules={[{ debounceMs: 0, message: 'Email is required', required: true }]}>
+      <Form
+        initialValues={{ email: '' }}
+        validateTrigger="onBlur"
+      >
+        <Field
+          name="email"
+          rules={[{ debounceMs: 0, message: 'Email is required', required: true }]}
+        >
           <input aria-label="Blur email" />
         </Field>
         <EmailError />
@@ -232,7 +269,12 @@ describe('Form and Field integration', () => {
     const schema = vi.fn(async () => [{ message: 'Invalid email', path: ['email'] }]);
 
     render(
-      <Form initialValues={{ email: 'bad' }} onFinish={onFinish} onFinishFailed={onFinishFailed} schema={schema}>
+      <Form
+        initialValues={{ email: 'bad' }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        schema={schema}
+      >
         <Field name="email">
           <input aria-label="Schema email" />
         </Field>
@@ -255,7 +297,10 @@ describe('Form and Field integration', () => {
 
   it('should render without a wrapper when component is false', () => {
     const { container } = render(
-      <Form component={false} initialValues={{ name: 'Ada' }}>
+      <Form
+        component={false}
+        initialValues={{ name: 'Ada' }}
+      >
         <Field name="name">
           <input aria-label="Headless name" />
         </Field>
@@ -268,7 +313,11 @@ describe('Form and Field integration', () => {
 
   it('should render a custom component wrapper', () => {
     render(
-      <Form aria-label="Custom form shell" component="section" initialValues={{ name: 'Ada' }}>
+      <Form
+        aria-label="Custom form shell"
+        component="section"
+        initialValues={{ name: 'Ada' }}
+      >
         <Field name="name">
           <input aria-label="Custom name" />
         </Field>
@@ -311,7 +360,10 @@ describe('Form and Field integration', () => {
     const onReset = vi.fn();
 
     render(
-      <Form initialValues={{ name: 'Ada' }} onReset={onReset}>
+      <Form
+        initialValues={{ name: 'Ada' }}
+        onReset={onReset}
+      >
         <Field name="name">
           <input aria-label="Reset name" />
         </Field>
@@ -339,7 +391,10 @@ describe('Form and Field integration', () => {
     const onValuesChange = vi.fn();
 
     render(
-      <Form initialValues={{ phone: '' }} onValuesChange={onValuesChange}>
+      <Form
+        initialValues={{ phone: '' }}
+        onValuesChange={onValuesChange}
+      >
         <Field
           getValueFromEvent={event => event.target.value}
           name="phone"
@@ -361,7 +416,10 @@ describe('Form and Field integration', () => {
   it('should leave normalized values unchanged when normalization is a no-op', async () => {
     render(
       <Form initialValues={{ phone: '123' }}>
-        <Field name="phone" normalize={value => value}>
+        <Field
+          name="phone"
+          normalize={value => value}
+        >
           <input aria-label="Noop phone" />
         </Field>
       </Form>
@@ -377,8 +435,14 @@ describe('Form and Field integration', () => {
   it('should support checked value props', async () => {
     render(
       <Form initialValues={{ enabled: true }}>
-        <Field name="enabled" valuePropName="checked">
-          <input aria-label="Enabled" type="checkbox" />
+        <Field
+          name="enabled"
+          valuePropName="checked"
+        >
+          <input
+            aria-label="Enabled"
+            type="checkbox"
+          />
         </Field>
       </Form>
     );
@@ -414,7 +478,10 @@ describe('Form and Field integration', () => {
     const validator = vi.fn(() => 'Name is invalid');
 
     render(
-      <Form<NameValues> initialValues={{ name: 'Ada' }} onValuesChange={onValuesChange}>
+      <Form<NameValues>
+        initialValues={{ name: 'Ada' }}
+        onValuesChange={onValuesChange}
+      >
         <Field
           getValueFromEvent={() => 'Ada'}
           name="name"
@@ -439,7 +506,10 @@ describe('Form and Field integration', () => {
     render(
       <Form>
         <Field name={'' as any}>
-          <input aria-label="Nameless field" onChange={onChange} />
+          <input
+            aria-label="Nameless field"
+            onChange={onChange}
+          />
         </Field>
       </Form>
     );
@@ -486,10 +556,16 @@ describe('List component integration', () => {
                   <li key={field.key}>{field.name}</li>
                 ))}
               </ul>
-              <button type="button" onClick={() => ops.insert(fields.length, { title: 'C' })}>
+              <button
+                type="button"
+                onClick={() => ops.insert(fields.length, { title: 'C' })}
+              >
                 Add
               </button>
-              <button type="button" onClick={() => ops.remove(0)}>
+              <button
+                type="button"
+                onClick={() => ops.remove(0)}
+              >
                 Remove first
               </button>
             </>
@@ -503,11 +579,7 @@ describe('List component integration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add' }));
 
     await waitFor(() => {
-      expect(screen.getAllByRole('listitem').map(item => item.textContent)).toEqual([
-        'items.0',
-        'items.1',
-        'items.2'
-      ]);
+      expect(screen.getAllByRole('listitem').map(item => item.textContent)).toEqual(['items.0', 'items.1', 'items.2']);
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove first' }));
@@ -556,7 +628,11 @@ describe('ComputedField integration', () => {
   it('should pass empty values to unresolved computed fields', () => {
     render(
       <Form>
-        <ComputedField compute={() => undefined} deps={[]} name={'total' as any}>
+        <ComputedField
+          compute={() => undefined}
+          deps={[]}
+          name={'total' as any}
+        >
           <input aria-label="Empty total" />
         </ComputedField>
       </Form>
@@ -570,10 +646,16 @@ describe('ComputedField integration', () => {
     render(
       <Form initialValues={{ quantity: 2, total: 10, unitPrice: 5 }}>
         <Field name="quantity">
-          <input aria-label="Quantity" type="number" />
+          <input
+            aria-label="Quantity"
+            type="number"
+          />
         </Field>
         <Field name="unitPrice">
-          <input aria-label="Unit price" type="number" />
+          <input
+            aria-label="Unit price"
+            type="number"
+          />
         </Field>
         <ComputedField
           compute={get => Number(get('quantity') || 0) * Number(get('unitPrice') || 0)}

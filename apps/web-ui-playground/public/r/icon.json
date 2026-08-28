@@ -3,12 +3,8 @@
   "name": "icon",
   "type": "registry:block",
   "title": "Icon",
-  "dependencies": [
-    "@iconify/react"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "dependencies": ["@iconify/react"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/icon/Icon.tsx",

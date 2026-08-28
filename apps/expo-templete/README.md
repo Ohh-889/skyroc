@@ -5,14 +5,14 @@ Expo SDK 57 + React Native 0.86 + expo-router 的业务模板。
 不是脚手架 demo —— 登录态、网络层、主题、国际化、深链、离线提示、原生打包脚本都已经立好了，
 新项目从这里 fork 出去，删掉 `demo` 分组就能开始写业务。
 
-| | |
-| --- | --- |
-| 路由 | expo-router（typed routes + React Compiler 已开） |
-| 服务端状态 | TanStack Query，和 web 端共用 `@skyroc/service` |
-| 客户端状态 | jotai（`@skyroc/core-state`），持久化走 SecureStore / MMKV |
-| 样式 | uniwind（Tailwind 语法），语义色 token 在 `src/global.css` |
-| UI | `@skyroc/native-ui` |
-| 原生模块 | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`、`expo-widgets`（Live Activity） |
+|            |                                                                                  |
+| ---------- | -------------------------------------------------------------------------------- |
+| 路由       | expo-router（typed routes + React Compiler 已开）                                |
+| 服务端状态 | TanStack Query，和 web 端共用 `@skyroc/service`                                  |
+| 客户端状态 | jotai（`@skyroc/core-state`），持久化走 SecureStore / MMKV                       |
+| 样式       | uniwind（Tailwind 语法），语义色 token 在 `src/global.css`                       |
+| UI         | `@skyroc/native-ui`                                                              |
+| 原生模块   | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`、`expo-widgets`（Live Activity） |
 
 ## 快速开始
 
@@ -68,11 +68,11 @@ metro.config.js     jotai 单例钉死 + uniwind 接线
 
 四个 `.env` 文件，`.env` 是三套环境共用的兜底，其余三个按环境覆盖：
 
-| 文件 | 何时加载 |
-| --- | --- |
-| `.env` | 永远加载，只放三套环境**完全相同**的值 |
-| `.env.dev` | `pnpm start` / `pnpm ios` / `pnpm android`，打包时 `env=dev` |
-| `.env.staging` | `pnpm start:staging`，打包时 `env=staging` |
+| 文件              | 何时加载                                                                     |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `.env`            | 永远加载，只放三套环境**完全相同**的值                                       |
+| `.env.dev`        | `pnpm start` / `pnpm ios` / `pnpm android`，打包时 `env=dev`                 |
+| `.env.staging`    | `pnpm start:staging`，打包时 `env=staging`                                   |
 | `.env.production` | `pnpm start:prod`，打包时 `env=prod`；EAS / `expo export` 也会自动认这个名字 |
 
 dev / staging 故意不叫 `.env.development` / `.env.stage`：dev server 下 `EXPO_PUBLIC_*` 是
@@ -81,10 +81,10 @@ Metro 现场拼的虚拟模块，文件值会盖掉 dotenv-cli 设进 `process.e
 
 变量分两类，**前缀决定它能被谁看见**：
 
-| 前缀 | 谁读 | 注意 |
-| --- | --- | --- |
-| `EXPO_PUBLIC_*` | JS 运行时 | 编译期被 babel 替换成字面量，**解包就能看到，绝不放密钥**；改了要 `expo start --clear` |
-| 无前缀 | 只有 `app.config.ts`（Node 侧） | 写进 Info.plist / AndroidManifest，**改了必须重新 prebuild，OTA 覆盖不到** |
+| 前缀            | 谁读                            | 注意                                                                                   |
+| --------------- | ------------------------------- | -------------------------------------------------------------------------------------- |
+| `EXPO_PUBLIC_*` | JS 运行时                       | 编译期被 babel 替换成字面量，**解包就能看到，绝不放密钥**；改了要 `expo start --clear` |
+| 无前缀          | 只有 `app.config.ts`（Node 侧） | 写进 Info.plist / AndroidManifest，**改了必须重新 prebuild，OTA 覆盖不到**             |
 
 目前用到的：
 

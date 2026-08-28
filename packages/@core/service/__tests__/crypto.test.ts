@@ -36,8 +36,7 @@ function fromBase64(base64: string): Uint8Array<ArrayBuffer> {
 /**
  * 后端 unseal 的等价实现，用来验证前端发出去的密文确实解得开。
  *
- * 刻意用 WebCrypto 而不是 node-forge 解：加解密两头是两套独立实现，
- * forge 这边算错了参数（OAEP 的 hash、GCM 的 tag 位置）这里就会失败。
+ * 刻意用 WebCrypto 而不是 node-forge 解：加解密两头是两套独立实现， forge 这边算错了参数（OAEP 的 hash、GCM 的 tag 位置）这里就会失败。
  */
 async function unseal(sealedKey: string, body: string): Promise<string> {
   const rawKey = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, privateKey, fromBase64(sealedKey));
@@ -54,7 +53,12 @@ async function unseal(sealedKey: string, body: string): Promise<string> {
 }
 
 function createConfig(overrides: Partial<InternalAxiosRequestConfig> = {}): InternalAxiosRequestConfig {
-  return { headers: new AxiosHeaders(), method: 'post', url: '/auth/login', ...overrides } as InternalAxiosRequestConfig;
+  return {
+    headers: new AxiosHeaders(),
+    method: 'post',
+    url: '/auth/login',
+    ...overrides
+  } as InternalAxiosRequestConfig;
 }
 
 describe('seal', () => {

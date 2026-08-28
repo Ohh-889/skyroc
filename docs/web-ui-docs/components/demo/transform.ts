@@ -1,16 +1,14 @@
 /**
  * 将 playground 的 demo `.tsx` 源码转换成 react-live 可执行的代码片段。
  *
- * 输入示例：
- *   'use client';
- *   import { Button } from '@skyroc/web-ui';
- *   const ButtonColor = () => (<Button>Hi</Button>);
- *   export default ButtonColor;
+ * 输入示例： 'use client'; import { Button } from '@skyroc/web-ui'; const ButtonColor = () => (<Button>Hi</Button>); export
+ * default ButtonColor;
  *
  * 产出：
- *   - display:    保留 import 让用户在编辑器看到完整上下文
- *   - executable: 剥掉 import / 'use client' / export，末尾追加 render(<X />)
- *   - componentName / externalImports
+ *
+ * - Display: 保留 import 让用户在编辑器看到完整上下文
+ * - Executable: 剥掉 import / 'use client' / export，末尾追加 render(<X />)
+ * - ComponentName / externalImports
  */
 
 const IMPORT_RE = /^\s*import\s+(?:[^'"]+?\s+from\s+)?['"]([^'"]+)['"];?\s*$/gm;
@@ -29,9 +27,9 @@ export interface TransformResult {
   display: string;
   /** 喂给 react-live 的代码 — 已剥 import / export，末尾有 render(...) */
   executable: string;
-  /** demo 里 import 的所有非相对模块 */
+  /** Demo 里 import 的所有非相对模块 */
   externalModules: string[];
-  /** demo 里 import 但 scope 没提供的标识符 */
+  /** Demo 里 import 但 scope 没提供的标识符 */
   missingIdentifiers: string[];
 }
 
@@ -47,11 +45,12 @@ function collectImportedIdentifiers(src: string): { idents: Set<string>; modules
   for (const m of src.matchAll(NAMED_IMPORT_RE)) {
     if (m[1]) idents.add(m[1]);
     for (const part of m[2].split(',')) {
-      const name = part
-        .trim()
-        .replace(/^type\s+/, '')
-        .split(/\s+as\s+/)[1] // 有 alias 取后者
-        ?.trim() ?? part.trim().replace(/^type\s+/, '');
+      const name =
+        part
+          .trim()
+          .replace(/^type\s+/, '')
+          .split(/\s+as\s+/)[1] // 有 alias 取后者
+          ?.trim() ?? part.trim().replace(/^type\s+/, '');
       if (name) idents.add(name);
     }
   }

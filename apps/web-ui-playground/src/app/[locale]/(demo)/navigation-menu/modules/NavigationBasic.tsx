@@ -1,7 +1,19 @@
 'use client';
 
 import { NavigationMenu } from '@skyroc/web-ui';
-import { BookOpen, Box, CircleHelp, CloudDownload, Code2, Database, FileText, House, Palette, Smile, SwatchBook } from 'lucide-react';
+import {
+  BookOpen,
+  Box,
+  CircleHelp,
+  CloudDownload,
+  Code2,
+  Database,
+  FileText,
+  House,
+  Palette,
+  Smile,
+  SwatchBook
+} from 'lucide-react';
 import Link from 'next/link';
 
 const menus = [

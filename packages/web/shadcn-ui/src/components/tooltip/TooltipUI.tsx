@@ -13,10 +13,20 @@ const TooltipUI = (props: TooltipProps) => {
     <Root {...rest}>
       <Trigger asChild>{children}</Trigger>
 
-      <TooltipContent className={className || classNames?.content} size={size} {...contentProps}>
+      <TooltipContent
+        className={className || classNames?.content}
+        size={size}
+        {...contentProps}
+      >
         {content}
 
-        {showArrow ? <TooltipArrow className={classNames?.arrow} size={size} {...arrowProps} /> : null}
+        {showArrow ? (
+          <TooltipArrow
+            className={classNames?.arrow}
+            size={size}
+            {...arrowProps}
+          />
+        ) : null}
       </TooltipContent>
     </Root>
   );

@@ -11,8 +11,7 @@ const FormMessage = (props: FormMessageProps) => {
 
   const body = error?.length ? error[0] : props.children;
 
-  if (!body)
-    return null;
+  if (!body) return null;
 
   return (
     <p

@@ -57,10 +57,20 @@ const MenuTreeTitle = (props: MenuTreeTitleProps) => {
   }
 
   return (
-    <Flex align="center" className="group min-w-0" gap={7}>
-      <SvgIcon className={selected ? 'text-primary' : 'text-tertiary'} icon={getMenuTypeIcon(menu.menuType)} />
+    <Flex
+      align="center"
+      className="group min-w-0"
+      gap={7}
+    >
+      <SvgIcon
+        className={selected ? 'text-primary' : 'text-tertiary'}
+        icon={getMenuTypeIcon(menu.menuType)}
+      />
       <span className="min-w-0 flex-1 truncate">{menu.menuName}</span>
-      <Tag variant="filled" className="m-0 text-10px text-tertiary">
+      <Tag
+        variant="filled"
+        className="m-0 text-10px text-tertiary"
+      >
         {menu.menuType === 'M' ? '目录' : '菜单'}
       </Tag>
       {allowAddChild ? (
@@ -126,7 +136,11 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
       return (
         <Alert
           action={
-            <Button size="small" type="primary" onClick={onRetry}>
+            <Button
+              size="small"
+              type="primary"
+              onClick={onRetry}
+            >
               重试
             </Button>
           }
@@ -138,7 +152,12 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
     }
 
     if (!loading && treeData.length === 0) {
-      return <Empty description={keyword ? '未找到匹配菜单' : '暂无菜单资源'} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+      return (
+        <Empty
+          description={keyword ? '未找到匹配菜单' : '暂无菜单资源'}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      );
     }
 
     return (
@@ -196,7 +215,12 @@ const MenuTreePanel = (props: MenuTreePanelProps) => {
         allowClear
         className="mb-8px"
         placeholder="搜索菜单名称或路由"
-        prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+        prefix={
+          <SvgIcon
+            className="text-tertiary"
+            icon="ph:magnifying-glass"
+          />
+        }
         value={keyword}
         onChange={event => setKeyword(event.target.value)}
       />

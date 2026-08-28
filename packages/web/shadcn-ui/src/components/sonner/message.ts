@@ -1,9 +1,7 @@
 import type { ExternalToast, ToastT } from 'sonner';
 import { toast } from 'sonner';
 
-/**
- * Promise data configuration for message.promise()
- */
+/** Promise data configuration for message.promise() */
 export interface MessagePromiseData<T = unknown> {
   /** Error state message or function that receives error */
   error?: React.ReactNode | ((error: unknown) => React.ReactNode);
@@ -15,10 +13,7 @@ export interface MessagePromiseData<T = unknown> {
   success?: React.ReactNode | ((data: T) => React.ReactNode);
 }
 
-/**
- * Message configuration options
- * Lightweight global toast with icon and text only
- */
+/** Message configuration options Lightweight global toast with icon and text only */
 export interface MessageConfig {
   /** Custom class name */
   className?: string;
@@ -40,9 +35,7 @@ export interface MessageConfig {
 
 export type MessageType = 'error' | 'info' | 'loading' | 'success' | 'warning';
 
-/**
- * Global configuration options
- */
+/** Global configuration options */
 export interface MessageGlobalConfig {
   /** Default auto close delay in milliseconds. Default: 3000ms */
   duration?: number;
@@ -64,16 +57,12 @@ let globalConfig: MessageGlobalConfig = {
 // Active messages tracking
 const activeMessages = new Set<string | number>();
 
-/**
- * Check if value is MessageConfig object
- */
+/** Check if value is MessageConfig object */
 function isMessageConfig(value: unknown): value is MessageConfig {
   return typeof value === 'object' && value !== null && 'content' in value;
 }
 
-/**
- * Show message toast
- */
+/** Show message toast */
 // eslint-disable-next-line max-params
 function showMessage(
   type: MessageType,
@@ -88,8 +77,7 @@ function showMessage(
 
   if (isMessageConfig(content)) {
     config = content;
-  }
-  else {
+  } else {
     config = {
       content,
       duration,
@@ -175,80 +163,68 @@ function showMessage(
  * Display lightweight global feedback messages without interrupting user operations.
  *
  * @example
- * ```tsx
- * // Basic usage
- * message.success('Operation successful');
- * message.error('Operation failed');
- * message.warning('Warning message');
- * message.info('Info message');
- * message.loading('Loading...');
+ *   ```tsx
+ *   // Basic usage
+ *   message.success('Operation successful');
+ *   message.error('Operation failed');
+ *   message.warning('Warning message');
+ *   message.info('Info message');
+ *   message.loading('Loading...');
  *
- * // Custom duration (ms)
- * message.success('This message shows for 10s', 10000);
+ *   // Custom duration (ms)
+ *   message.success('This message shows for 10s', 10000);
  *
- * // Using config object
- * message.success({
- *   content: 'Operation successful',
- *   duration: 5000,
- *   key: 'unique-key',
- *   onClose: () => console.log('closed')
- * });
+ *   // Using config object
+ *   message.success({
+ *     content: 'Operation successful',
+ *     duration: 5000,
+ *     key: 'unique-key',
+ *     onClose: () => console.log('closed')
+ *   });
  *
- * // Promise usage
- * message.promise(fetchData(), {
- *   loading: 'Loading...',
- *   success: 'Data loaded',
- *   error: 'Failed to load'
- * });
+ *   // Promise usage
+ *   message.promise(fetchData(), {
+ *     loading: 'Loading...',
+ *     success: 'Data loaded',
+ *     error: 'Failed to load'
+ *   });
  *
- * // Manual dismiss
- * const id = message.loading('Loading...');
- * // ... async operation
- * message.dismiss(id);
+ *   // Manual dismiss
+ *   const id = message.loading('Loading...');
+ *   // ... async operation
+ *   message.dismiss(id);
  *
- * // Global config
- * message.config({ duration: 5000, maxCount: 3 });
- * ```
+ *   // Global config
+ *   message.config({ duration: 5000, maxCount: 3 });
+ *   ```
  */
 export const message = {
-  /**
-   * Show success message
-   */
+  /** Show success message */
   success(content: React.ReactNode | MessageConfig, duration?: number, onClose?: () => void) {
     return showMessage('success', content, duration, onClose);
   },
 
-  /**
-   * Show error message
-   */
+  /** Show error message */
   error(content: React.ReactNode | MessageConfig, duration?: number, onClose?: () => void) {
     return showMessage('error', content, duration, onClose);
   },
 
-  /**
-   * Show warning message
-   */
+  /** Show warning message */
   warning(content: React.ReactNode | MessageConfig, duration?: number, onClose?: () => void) {
     return showMessage('warning', content, duration, onClose);
   },
 
-  /**
-   * Show info message
-   */
+  /** Show info message */
   info(content: React.ReactNode | MessageConfig, duration?: number, onClose?: () => void) {
     return showMessage('info', content, duration, onClose);
   },
 
-  /**
-   * Show loading message
-   */
+  /** Show loading message */
   loading(content: React.ReactNode | MessageConfig, duration?: number, onClose?: () => void) {
     return showMessage('loading', content, duration, onClose);
   },
 
-  /**
-   * Show promise-based message with loading/success/error states
-   */
+  /** Show promise-based message with loading/success/error states */
   promise<T>(
     promise: Promise<T> | (() => Promise<T>),
     data: MessagePromiseData<T>,
@@ -278,37 +254,28 @@ export const message = {
     return result;
   },
 
-  /**
-   * Open message with config
-   */
+  /** Open message with config */
   open(config: MessageConfig & { type?: MessageType }) {
     const { type = 'info', ...rest } = config;
     return showMessage(type, rest);
   },
 
-  /**
-   * Dismiss specific message or all messages
-   */
+  /** Dismiss specific message or all messages */
   dismiss(id?: string | number) {
     if (id !== undefined) {
       activeMessages.delete(id);
-    }
-    else {
+    } else {
       activeMessages.clear();
     }
     return toast.dismiss(id);
   },
 
-  /**
-   * Alias for dismiss
-   */
+  /** Alias for dismiss */
   destroy(id?: string | number) {
     return this.dismiss(id);
   },
 
-  /**
-   * Set global configuration
-   */
+  /** Set global configuration */
   config(options: MessageGlobalConfig) {
     globalConfig = { ...globalConfig, ...options };
   }

@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { Avatar } from '@skyroc/web-ui';
 import { User } from 'lucide-react';
+import Image from 'next/image';
 
 const AvatarCustomFallback = () => {
   return (
@@ -19,7 +19,7 @@ const AvatarCustomFallback = () => {
         alt="User Avatar"
         classNames={{ fallback: 'bg-foreground' }}
         src="https://invalid-url.com/image.png"
-        fallback={(
+        fallback={
           <Image
             alt="Fallback"
             className="dark:invert"
@@ -27,7 +27,7 @@ const AvatarCustomFallback = () => {
             src="https://assets.skyroc.me/asset/logo.svg"
             width={20}
           />
-        )}
+        }
       />
     </div>
   );

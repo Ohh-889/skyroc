@@ -2,9 +2,9 @@
 
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import CollapsibleUI from '../../components/collapsible/CollapsibleUI';
 import type { CollapsibleProps } from '../../components/collapsible/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Collapsible = forwardRef<ComponentRef<typeof CollapsibleUI>, CollapsibleProps>((props, ref) => {
   const config = useComponentConfig('collapsible');

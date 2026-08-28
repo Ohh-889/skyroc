@@ -152,14 +152,23 @@ const JotaiDevtools = (props: JotaiDevtoolsProps) => {
 
   return (
     <>
-      {showTimeline ? <JotaiAtomsDevtools name={jotaiConfig.name ?? 'skyroc-admin'} store={store} /> : null}
+      {showTimeline ? (
+        <JotaiAtomsDevtools
+          name={jotaiConfig.name ?? 'skyroc-admin'}
+          store={store}
+        />
+      ) : null}
       {showPanel ? (
         <span
           className="skyroc-admin-jotai-devtools"
           data-position={jotaiConfig.position ?? 'bottom-left'}
           style={triggerOffsetStyle}
         >
-          <JotaiDevTools position={jotaiConfig.position} store={store} theme={theme} />
+          <JotaiDevTools
+            position={jotaiConfig.position}
+            store={store}
+            theme={theme}
+          />
         </span>
       ) : null}
     </>
@@ -242,10 +251,17 @@ const AdminDevtools = (props: AdminDevtoolsProps) => {
   return (
     <Suspense fallback={null}>
       {plugins.length > 0 ? (
-        <TanStackDevtools config={tanStackConfig} plugins={plugins} />
+        <TanStackDevtools
+          config={tanStackConfig}
+          plugins={plugins}
+        />
       ) : null}
 
-      <JotaiDevtools config={config.jotai} store={store} theme={config.theme} />
+      <JotaiDevtools
+        config={config.jotai}
+        store={store}
+        theme={config.theme}
+      />
     </Suspense>
   );
 };

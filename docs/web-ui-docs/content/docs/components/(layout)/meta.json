@@ -2,11 +2,5 @@
   "title": "布局容器",
   "defaultOpen": true,
   "collapsible": false,
-  "pages": [
-    "accordion",
-    "collapsible",
-    "resizable",
-    "scroll-area",
-    "aspect-ratio"
-  ]
+  "pages": ["accordion", "collapsible", "resizable", "scroll-area", "aspect-ratio"]
 }

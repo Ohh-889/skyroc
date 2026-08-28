@@ -122,7 +122,10 @@ const ClientEditorDrawer = (props: ClientEditorDrawerProps) => {
               label="客户端 ID"
               name="clientId"
             >
-              <Input readOnly className="font-mono" />
+              <Input
+                readOnly
+                className="font-mono"
+              />
             </Form.Item>
           ) : null}
           <div className="grid grid-cols-2 gap-x-16px lt-sm:grid-cols-1">
@@ -152,7 +155,11 @@ const ClientEditorDrawer = (props: ClientEditorDrawerProps) => {
             </Form.Item>
           </div>
           <Form.Item
-            extra={isUpdate ? '修改密钥不会改变 clientId，已分发客户端需要同步更新密钥。' : '客户端密钥当前由后端明文存储，请仅通过安全渠道分发。'}
+            extra={
+              isUpdate
+                ? '修改密钥不会改变 clientId，已分发客户端需要同步更新密钥。'
+                : '客户端密钥当前由后端明文存储，请仅通过安全渠道分发。'
+            }
             label="客户端密钥"
             name="clientSecret"
             rules={[

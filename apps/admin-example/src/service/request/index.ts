@@ -1,6 +1,6 @@
-import type { AxiosResponse } from 'axios';
 import { BACKEND_ERROR_CODE, createFlatRequest } from '@skyroc/axios';
 import { createAppRequest } from '@skyroc/service';
+import type { AxiosResponse } from 'axios';
 
 import { getServiceBaseURL } from '@/utils/service';
 import { localStg } from '@/utils/storage';

@@ -135,19 +135,19 @@ export const dividerVariants = tv({
       '2xl': {
         label: 'text-2xl'
       },
-      'lg': {
+      lg: {
         label: 'text-base'
       },
-      'md': {
+      md: {
         label: 'text-sm'
       },
-      'sm': {
+      sm: {
         label: 'text-xs'
       },
-      'xl': {
+      xl: {
         label: 'text-lg'
       },
-      'xs': {
+      xs: {
         label: 'text-2xs'
       }
     }

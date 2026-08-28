@@ -1,8 +1,8 @@
 /**
  * Query string 解析 / 序列化。
  *
- * 移植自 vue-router 的 `src/query.ts`（MIT License, Copyright (c) 2019 Eduardo San Martin Morote）， 保留了它的编码策略：空格用 `+`、`+`
- * 转义成 `%2B`、`[]{}|^\`` 保持字面量不编码。
+ * 移植自 vue-router 的 `src/query.ts`（MIT License, Copyright (c) 2019 Eduardo San Martin Morote）， 保留了它的编码策略：空格用 `+`、`+` 转义成
+ * `%2B`、`[]{}|^`` 保持字面量不编码。
  *
  * @see https://github.com/vuejs/router/blob/main/packages/router/src/query.ts
  */

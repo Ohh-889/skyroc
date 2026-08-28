@@ -1,11 +1,9 @@
 /**
  * 网络层的环境配置。
  *
- * 全部走 `EXPO_PUBLIC_*`：这类变量会被 babel 在编译期原样替换进包里，任何人解包都能看到，
- * **绝不能放密钥**。需要保密的值只能留在后端，或走构建期变量 + 原生侧注入。
+ * 全部走 `EXPO_PUBLIC_*`：这类变量会被 babel 在编译期原样替换进包里，任何人解包都能看到， **绝不能放密钥**。需要保密的值只能留在后端，或走构建期变量 + 原生侧注入。
  *
- * 读取必须写成 `process.env.EXPO_PUBLIC_X` 这样的字面形式——解构或动态取键名不会被替换，
- * 运行时拿到的是 undefined。
+ * 读取必须写成 `process.env.EXPO_PUBLIC_X` 这样的字面形式——解构或动态取键名不会被替换， 运行时拿到的是 undefined。
  */
 
 /** 接口根地址，例如 `https://api.example.com`。空串表示还没接后端 */
@@ -27,7 +25,12 @@ export const API_TIMEOUT = Number(process.env.EXPO_PUBLIC_API_TIMEOUT) || DEFAUL
 
 /** `'8888, 8889'` 这样的配置项拆成数组并去掉空白，没配就是空数组 */
 function splitCodes(value?: string) {
-  return value ? value.split(',').map(code => code.trim()).filter(Boolean) : [];
+  return value
+    ? value
+        .split(',')
+        .map(code => code.trim())
+        .filter(Boolean)
+    : [];
 }
 
 /**

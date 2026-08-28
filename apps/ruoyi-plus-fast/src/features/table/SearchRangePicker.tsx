@@ -1,11 +1,7 @@
 import { DatePicker, Form, Input } from 'antd';
 import type { FormInstance, FormItemProps } from 'antd';
 
-import {
-  formatSearchRangeBegin,
-  formatSearchRangeEnd,
-  toSearchDateRange
-} from './search-params';
+import { formatSearchRangeBegin, formatSearchRangeEnd, toSearchDateRange } from './search-params';
 import type { SearchDateRange, SearchRangeGranularity } from './search-params';
 
 interface SearchRangePickerProps {
@@ -28,8 +24,8 @@ interface SearchRangePickerProps {
 /**
  * 查询表单里的时间区间。
  *
- * RangePicker 的值是 Dayjs 元组，没法写进 URL；而参数、URL 和接口都用两个字符串字段。 与其在提交前后来回转换，不如让表单直接登记这两个字符串字段，
- * RangePicker 退化成它们之上的一层视图—— 这样「清空区间再查询」提交的是显式 undefined，能正常覆盖掉上一次的值，不会有残留。
+ * RangePicker 的值是 Dayjs 元组，没法写进 URL；而参数、URL 和接口都用两个字符串字段。 与其在提交前后来回转换，不如让表单直接登记这两个字符串字段， RangePicker 退化成它们之上的一层视图——
+ * 这样「清空区间再查询」提交的是显式 undefined，能正常覆盖掉上一次的值，不会有残留。
  */
 const SearchRangePicker = (props: SearchRangePickerProps) => {
   const {

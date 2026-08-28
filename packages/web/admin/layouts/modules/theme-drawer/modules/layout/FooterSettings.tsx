@@ -44,24 +44,39 @@ const FooterSettings = () => {
   return (
     <div className="flex-col-stretch gap-12px">
       <SettingItem label={t('theme.layout.footer.visible')}>
-        <ASwitch checked={footer.visible} onChange={handleVisibleChange} />
+        <ASwitch
+          checked={footer.visible}
+          onChange={handleVisibleChange}
+        />
       </SettingItem>
 
       <AnimatedCollapse visible={footer.visible && isWrapperScrollMode}>
         <SettingItem label={t('theme.layout.footer.fixed')}>
-          <ASwitch checked={footer.fixed} onChange={handleFixedChange} />
+          <ASwitch
+            checked={footer.fixed}
+            onChange={handleFixedChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
 
       <AnimatedCollapse visible={footer.visible}>
         <SettingItem label={t('theme.layout.footer.height')}>
-          <AInputNumber className="w-120px" min={0} step={1} value={footer.height} onChange={handleHeightChange} />
+          <AInputNumber
+            className="w-120px"
+            min={0}
+            step={1}
+            value={footer.height}
+            onChange={handleHeightChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
 
       <AnimatedCollapse visible={footer.visible && isMixHorizontalMode}>
         <SettingItem label={t('theme.layout.footer.right')}>
-          <ASwitch checked={footer.right} onChange={handleRightChange} />
+          <ASwitch
+            checked={footer.right}
+            onChange={handleRightChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
     </div>

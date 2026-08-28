@@ -1,14 +1,4 @@
-import {
-  ArrowRight,
-  BookOpenText,
-  Braces,
-  Boxes,
-  Code2,
-  Component,
-  Rocket,
-  Route,
-  Sparkles
-} from 'lucide-react';
+import { ArrowRight, BookOpenText, Braces, Boxes, Code2, Component, Rocket, Route, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';

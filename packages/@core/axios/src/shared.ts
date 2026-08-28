@@ -13,8 +13,8 @@ export function isHttpSuccess(status: number) {
 /**
  * 二进制响应里夹带 JSON 时把它解出来
  *
- * 典型场景：`responseType: 'blob'` 的文件下载失败了，后端回的其实是 JSON 错误信封。不解出来的话
- * `isBackendSuccess` / `onBackendFail` 拿到的是一坨 Blob，业务码无从判断。
+ * 典型场景：`responseType: 'blob'` 的文件下载失败了，后端回的其实是 JSON 错误信封。不解出来的话 `isBackendSuccess` / `onBackendFail` 拿到的是一坨
+ * Blob，业务码无从判断。
  *
  * @param response Axios response
  */

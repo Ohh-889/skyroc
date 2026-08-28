@@ -41,9 +41,16 @@ const UserRoleDrawer = (props: UserRoleDrawerProps) => {
   return (
     <Drawer
       footer={
-        <Flex gap={8} justify="flex-end">
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
           <Button onClick={onClose}>取消</Button>
-          <Button loading={loading} type="primary" onClick={() => onSubmit(selectedRoleIds)}>
+          <Button
+            loading={loading}
+            type="primary"
+            onClick={() => onSubmit(selectedRoleIds)}
+          >
             保存角色
           </Button>
         </Flex>

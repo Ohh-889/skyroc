@@ -1,6 +1,6 @@
-import { REG_EMAIL, REG_PHONE } from '@skyroc/utils';
 import { SvgIcon } from '@shell/ui/compose';
 import type { TableSearchProps } from '@shell/ui/compose';
+import { REG_EMAIL, REG_PHONE } from '@skyroc/utils';
 import { Button, Col, Flex, Form, Input, Row, Select } from 'antd';
 import type { FormRule } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -32,51 +32,143 @@ const UserSearch = (props: UserSearchProps) => {
   }
 
   return (
-    <Form form={form} initialValues={searchParams} labelCol={{ md: 7, span: 5 }}>
-      <Row gutter={[16, 16]} wrap>
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.userName')} name="userName">
-            <Input allowClear placeholder={t('page.manage.user.form.userName')} />
+    <Form
+      form={form}
+      initialValues={searchParams}
+      labelCol={{ md: 7, span: 5 }}
+    >
+      <Row
+        gutter={[16, 16]}
+        wrap
+      >
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.userName')}
+            name="userName"
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.user.form.userName')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.userGender')} name="userGender">
-            <Select allowClear options={translateOptions(userGenderOptions)} placeholder={t('page.manage.user.form.userGender')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.userGender')}
+            name="userGender"
+          >
+            <Select
+              allowClear
+              options={translateOptions(userGenderOptions)}
+              placeholder={t('page.manage.user.form.userGender')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.nickName')} name="nickName">
-            <Input allowClear placeholder={t('page.manage.user.form.nickName')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.nickName')}
+            name="nickName"
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.user.form.nickName')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.userPhone')} name="userPhone" rules={[phoneRule]}>
-            <Input allowClear placeholder={t('page.manage.user.form.userPhone')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.userPhone')}
+            name="userPhone"
+            rules={[phoneRule]}
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.user.form.userPhone')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.userEmail')} name="userEmail" rules={[emailRule]}>
-            <Input allowClear placeholder={t('page.manage.user.form.userEmail')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.userEmail')}
+            name="userEmail"
+            rules={[emailRule]}
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.user.form.userEmail')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.user.userStatus')} name="status">
-            <Select allowClear options={translateOptions(enableStatusOptions)} placeholder={t('page.manage.user.form.userStatus')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.user.userStatus')}
+            name="status"
+          >
+            <Select
+              allowClear
+              options={translateOptions(enableStatusOptions)}
+              placeholder={t('page.manage.user.form.userStatus')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={12} span={24}>
+        <Col
+          lg={12}
+          span={24}
+        >
           <Form.Item className="m-0">
-            <Flex align="center" gap={12} justify="end">
-              <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={reset}>
+            <Flex
+              align="center"
+              gap={12}
+              justify="end"
+            >
+              <Button
+                icon={<SvgIcon icon="ic:round-refresh" />}
+                onClick={reset}
+              >
                 {t('common.reset')}
               </Button>
-              <Button ghost icon={<SvgIcon icon="ic:round-search" />} type="primary" onClick={handleSearch}>
+              <Button
+                ghost
+                icon={<SvgIcon icon="ic:round-search" />}
+                type="primary"
+                onClick={handleSearch}
+              >
                 {t('common.search')}
               </Button>
             </Flex>

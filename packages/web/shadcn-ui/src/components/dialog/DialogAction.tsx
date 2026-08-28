@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { Close } from '@radix-ui/react-dialog';
+import { forwardRef } from 'react';
 import { Button, type ButtonProps } from '../button';
 
 const DialogAction = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {

@@ -10,7 +10,11 @@ const AdminLogo = (props: AdminLayoutLogoProps) => {
   const targetPath = to ?? getAdminLayoutsOptions().defaultHome;
 
   return (
-    <Link className={clsx('w-full flex-center nowrap-hidden', className)} style={style} to={targetPath}>
+    <Link
+      className={clsx('w-full flex-center nowrap-hidden', className)}
+      style={style}
+      to={targetPath}
+    >
       {logo}
 
       {title ? (

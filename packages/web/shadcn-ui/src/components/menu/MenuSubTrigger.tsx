@@ -1,9 +1,9 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { SubTrigger as _SubTrigger } from '@radix-ui/react-menu';
-import { ChevronRight } from 'lucide-react';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
+import { ChevronRight } from 'lucide-react';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import { menuVariants } from './menu-variants';
 import type { MenuSubTriggerProps } from './types';
 

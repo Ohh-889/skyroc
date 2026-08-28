@@ -9,38 +9,38 @@ description: 构建 apps/admin 生产包，并正确处理 preview、base url、
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 构建生产包 | `pnpm --filter skyroc-admin build`、`.env.prod` |
-| 构建测试环境包 | `pnpm --filter skyroc-admin build:test`、`.env.test` |
-| 本地预览构建产物 | `pnpm --filter skyroc-admin preview` |
-| 部署到域名根路径 | `VITE_BASE_URL=/`、Nginx `try_files` |
-| 部署到子路径 | `VITE_BASE_URL=/admin/`、Nginx `location /admin/` |
-| 切换后端接口 | `VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL` |
-| 排查刷新 404 | TanStack Router 默认 browser history、服务端 rewrite |
+| 场景             | 重点位置                                               |
+| ---------------- | ------------------------------------------------------ |
+| 构建生产包       | `pnpm --filter skyroc-admin build`、`.env.prod`        |
+| 构建测试环境包   | `pnpm --filter skyroc-admin build:test`、`.env.test`   |
+| 本地预览构建产物 | `pnpm --filter skyroc-admin preview`                   |
+| 部署到域名根路径 | `VITE_BASE_URL=/`、Nginx `try_files`                   |
+| 部署到子路径     | `VITE_BASE_URL=/admin/`、Nginx `location /admin/`      |
+| 切换后端接口     | `VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL` |
+| 排查刷新 404     | TanStack Router 默认 browser history、服务端 rewrite   |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/package.json` | 定义 `dev`、`build`、`build:test`、`preview` 和 `pre*` 脚本。 |
-| `apps/admin/.env` | 公共 env，包含 `VITE_BASE_URL`、代理开关、服务 code、路由和存储配置。 |
-| `apps/admin/.env.test` | test mode 覆盖项，当前主要配置测试环境后端地址。 |
-| `apps/admin/.env.prod` | prod mode 覆盖项，当前主要配置生产环境后端地址。 |
-| `apps/admin/vite.config.ts` | 使用 `@skyroc/web-admin-vite` 的 `defineConfig()`，注入应用级 SCSS 配置。 |
-| `packages/web/admin-vite/src/config.ts` | 共享 Vite 预设入口，读取 env、生成 base、server、preview、proxy 和插件。 |
-| `packages/web/admin-vite/src/build.ts` | 构建产物命名、页面 chunk、组件 chunk 和 vendor chunk 规则。 |
-| `packages/web/admin-vite/src/proxy.ts` | 开发代理生成逻辑。生产部署不会依赖 Vite dev proxy。 |
-| `apps/admin/src/features/router/index.ts` | 当前 TanStack Router 使用默认 browser history，需要服务端 SPA rewrite。 |
+| 文件                                      | 职责                                                                      |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| `apps/admin/package.json`                 | 定义 `dev`、`build`、`build:test`、`preview` 和 `pre*` 脚本。             |
+| `apps/admin/.env`                         | 公共 env，包含 `VITE_BASE_URL`、代理开关、服务 code、路由和存储配置。     |
+| `apps/admin/.env.test`                    | test mode 覆盖项，当前主要配置测试环境后端地址。                          |
+| `apps/admin/.env.prod`                    | prod mode 覆盖项，当前主要配置生产环境后端地址。                          |
+| `apps/admin/vite.config.ts`               | 使用 `@skyroc/web-admin-vite` 的 `defineConfig()`，注入应用级 SCSS 配置。 |
+| `packages/web/admin-vite/src/config.ts`   | 共享 Vite 预设入口，读取 env、生成 base、server、preview、proxy 和插件。  |
+| `packages/web/admin-vite/src/build.ts`    | 构建产物命名、页面 chunk、组件 chunk 和 vendor chunk 规则。               |
+| `packages/web/admin-vite/src/proxy.ts`    | 开发代理生成逻辑。生产部署不会依赖 Vite dev proxy。                       |
+| `apps/admin/src/features/router/index.ts` | 当前 TanStack Router 使用默认 browser history，需要服务端 SPA rewrite。   |
 
 ## 构建前检查
 
 当前仓库根要求：
 
-| 工具 | 要求 | 来源 |
-| --- | --- | --- |
-| Node.js | `>=20` | 根 `package.json` |
-| pnpm | `10.4.1` | 根 `package.json`、`apps/admin/package.json` |
+| 工具    | 要求     | 来源                                         |
+| ------- | -------- | -------------------------------------------- |
+| Node.js | `>=20`   | 根 `package.json`                            |
+| pnpm    | `10.4.1` | 根 `package.json`、`apps/admin/package.json` |
 
 先在仓库根安装依赖：
 
@@ -94,11 +94,11 @@ pnpm --filter @skyroc/web-admin-vite build
 
 脚本和 env 的关系如下：
 
-| 命令 | Vite mode | 读取 env |
-| --- | --- | --- |
-| `pnpm --filter skyroc-admin build` | `prod` | `.env` + `.env.prod` |
-| `pnpm --filter skyroc-admin build:test` | `test` | `.env` + `.env.test` |
-| `pnpm --filter skyroc-admin preview` | Vite preview | 运行已构建产物；构建时 env 已固化进产物。 |
+| 命令                                    | Vite mode    | 读取 env                                  |
+| --------------------------------------- | ------------ | ----------------------------------------- |
+| `pnpm --filter skyroc-admin build`      | `prod`       | `.env` + `.env.prod`                      |
+| `pnpm --filter skyroc-admin build:test` | `test`       | `.env` + `.env.test`                      |
+| `pnpm --filter skyroc-admin preview`    | Vite preview | 运行已构建产物；构建时 env 已固化进产物。 |
 
 `VITE_SERVICE_BASE_URL`、`VITE_OTHER_SERVICE_BASE_URL`、`VITE_BASE_URL` 这类变量会在构建时确定。修改 env 后必须重新构建，不能只替换静态文件目录里的某个 JS 文件。
 
@@ -206,9 +206,9 @@ server {
 
 子路径部署时要同时满足两件事：
 
-| 配置 | 作用 |
-| --- | --- |
-| `VITE_BASE_URL=/admin/` | 让构建产物里的 JS、CSS、图片等资源使用正确前缀。 |
+| 配置                                  | 作用                                                        |
+| ------------------------------------- | ----------------------------------------------------------- |
+| `VITE_BASE_URL=/admin/`               | 让构建产物里的 JS、CSS、图片等资源使用正确前缀。            |
 | 服务端 rewrite 到 `/admin/index.html` | 让刷新 `/admin/manage/user` 这类前端路由时仍返回入口 HTML。 |
 
 如果只改 Nginx，不改 `VITE_BASE_URL`，资源路径可能从域名根加载；如果只改 `VITE_BASE_URL`，不做 rewrite，刷新深层路由仍会 404。
@@ -224,10 +224,10 @@ VITE_PROXY_LOG=Y
 
 `@skyroc/web-admin-vite` 会在 dev server 下创建：
 
-| 服务 | 代理前缀 |
-| --- | --- |
-| 主服务 `VITE_SERVICE_BASE_URL` | `/proxy-default` |
-| 其他服务 `VITE_OTHER_SERVICE_BASE_URL` 中的 `demo` | `/proxy-demo` |
+| 服务                                               | 代理前缀         |
+| -------------------------------------------------- | ---------------- |
+| 主服务 `VITE_SERVICE_BASE_URL`                     | `/proxy-default` |
+| 其他服务 `VITE_OTHER_SERVICE_BASE_URL` 中的 `demo` | `/proxy-demo`    |
 
 生产部署不要依赖 Vite dev proxy。生产包里的接口地址来自构建时的 env：
 
@@ -254,13 +254,13 @@ location /api/ {
 
 `@skyroc/web-admin-vite` 默认会调整 Rollup 输出：
 
-| 类型 | 输出规则 |
-| --- | --- |
-| CSS | `css/[name]-[hash].css` |
-| 图片 | `images/[name]-[hash].[ext]` |
-| 页面 chunk | `js/pages/{path}/[name]-[hash].js` |
-| 组件 chunk | `js/components/[name]-[hash].js` |
-| 其他 JS | `js/[name]-[hash].js` |
+| 类型         | 输出规则                                       |
+| ------------ | ---------------------------------------------- |
+| CSS          | `css/[name]-[hash].css`                        |
+| 图片         | `images/[name]-[hash].[ext]`                   |
+| 页面 chunk   | `js/pages/{path}/[name]-[hash].js`             |
+| 组件 chunk   | `js/components/[name]-[hash].js`               |
+| 其他 JS      | `js/[name]-[hash].js`                          |
 | vendor chunk | 默认拆 `antd`、`il8n`、`react`、`react-router` |
 
 需要增加 manual chunks 时，不要完全重写 Vite 配置，优先通过 `application.build.manualChunks` 扩展：
@@ -295,15 +295,15 @@ pnpm --filter skyroc-admin build
 
 ## 常见问题
 
-| 现象 | 先检查 |
-| --- | --- |
-| 构建时找不到 `@skyroc/web-admin-vite` 产物 | 是否通过 `pnpm --filter skyroc-admin build` 执行，让 `prebuild` 先构建 admin-vite。 |
-| 线上刷新 `/manage/user` 404 | Nginx 或静态服务器是否把未知路径 rewrite 到 `index.html`。 |
-| 部署在 `/admin/` 后资源 404 | `VITE_BASE_URL` 是否在构建前改成 `/admin/` 并重新构建。 |
-| 线上仍请求测试后端 | 构建时 mode 是否是 `prod`，`.env.prod` 是否覆盖了正确的 `VITE_SERVICE_BASE_URL`。 |
-| 生产环境代理没有生效 | Vite dev proxy 只服务开发服务器；生产需要真实后端地址或 Nginx/API 网关转发。 |
-| sourcemap 没生成 | 当前 `VITE_SOURCE_MAP` 只是 env 声明，preset 没直接读取；需要在 `vite.build.sourcemap` 中明确配置。 |
-| 修改 env 后线上没有变化 | env 在构建时注入，必须重新构建并发布新产物。 |
+| 现象                                       | 先检查                                                                                              |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| 构建时找不到 `@skyroc/web-admin-vite` 产物 | 是否通过 `pnpm --filter skyroc-admin build` 执行，让 `prebuild` 先构建 admin-vite。                 |
+| 线上刷新 `/manage/user` 404                | Nginx 或静态服务器是否把未知路径 rewrite 到 `index.html`。                                          |
+| 部署在 `/admin/` 后资源 404                | `VITE_BASE_URL` 是否在构建前改成 `/admin/` 并重新构建。                                             |
+| 线上仍请求测试后端                         | 构建时 mode 是否是 `prod`，`.env.prod` 是否覆盖了正确的 `VITE_SERVICE_BASE_URL`。                   |
+| 生产环境代理没有生效                       | Vite dev proxy 只服务开发服务器；生产需要真实后端地址或 Nginx/API 网关转发。                        |
+| sourcemap 没生成                           | 当前 `VITE_SOURCE_MAP` 只是 env 声明，preset 没直接读取；需要在 `vite.build.sourcemap` 中明确配置。 |
+| 修改 env 后线上没有变化                    | env 在构建时注入，必须重新构建并发布新产物。                                                        |
 
 ## 相关链接
 

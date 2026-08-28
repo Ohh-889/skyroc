@@ -1,16 +1,16 @@
 ---
-title: "@skyroc/web-admin-styles"
-description: "Admin 应用共享的全局 CSS 资产：UnoCSS 风格 reset、全局基线与滚动条、NProgress 主题化样式，三个文件按子路径导出"
+title: '@skyroc/web-admin-styles'
+description: 'Admin 应用共享的全局 CSS 资产：UnoCSS 风格 reset、全局基线与滚动条、NProgress 主题化样式，三个文件按子路径导出'
 ---
 
 ## 概述
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/web-admin-styles` |
-| 目录 | `packages/web/admin-styles` |
-| 版本 | 0.1.0 |
-| 依赖 | 无 |
+| 项     | 值                                               |
+| ------ | ------------------------------------------------ |
+| 包名   | `@skyroc/web-admin-styles`                       |
+| 目录   | `packages/web/admin-styles`                      |
+| 版本   | 0.1.0                                            |
+| 依赖   | 无                                               |
 | 子入口 | `./global.css`、`./reset.css`、`./nprogress.css` |
 
 这是一个**纯 CSS 包**，不导出任何 JS / TS 符号，也没有 `.` 主入口。三个 CSS 文件各自暴露成子路径：
@@ -82,22 +82,22 @@ import './plugins/assets';
 
 ## 为什么单独成包
 
-| 原因 | 说明 |
-| --- | --- |
-| 可按需引入 | 不用 NProgress 的项目可以只引 `reset.css` + 自己的全局样式 |
+| 原因           | 说明                                                               |
+| -------------- | ------------------------------------------------------------------ |
+| 可按需引入     | 不用 NProgress 的项目可以只引 `reset.css` + 自己的全局样式         |
 | 样式与逻辑解耦 | nprogress 的 JS 在 `admin-runtime`，视觉在这里，改配色不用碰运行时 |
-| 多应用共享 | `apps/admin` 与 `apps/admin-example` 共用同一份基线 |
+| 多应用共享     | `apps/admin` 与 `apps/admin-example` 共用同一份基线                |
 
 ## 与其它样式来源的分工
 
 一个 Admin 应用里同时有四层样式，职责不重叠：
 
-| 来源 | 管什么 |
-| --- | --- |
-| `@skyroc/web-admin-styles` | 应用级：reset、滚动条、灰度、NProgress、`body` 基线 |
-| [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) | 提供 CSS 变量与设计 token，被下面两者消费 |
-| `@skyroc/web-ui` | 组件级：Tailwind 编译后的设计系统样式（`@skyroc/web-ui/style.css`） |
-| `@skyroc/uno-config` | UnoCSS 预设，业务页面写的原子类 |
-| `apps/admin/src/styles/scss/global.scss` | 应用自身的 SCSS 变量与 mixin，由 vite 的 `additionalData` 注入每个 `.scss` |
+| 来源                                                    | 管什么                                                                     |
+| ------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `@skyroc/web-admin-styles`                              | 应用级：reset、滚动条、灰度、NProgress、`body` 基线                        |
+| [`@skyroc/tailwind-plugin`](/docs/core/tailwind-plugin) | 提供 CSS 变量与设计 token，被下面两者消费                                  |
+| `@skyroc/web-ui`                                        | 组件级：Tailwind 编译后的设计系统样式（`@skyroc/web-ui/style.css`）        |
+| `@skyroc/uno-config`                                    | UnoCSS 预设，业务页面写的原子类                                            |
+| `apps/admin/src/styles/scss/global.scss`                | 应用自身的 SCSS 变量与 mixin，由 vite 的 `additionalData` 注入每个 `.scss` |
 
 加载顺序上 reset 最先、库样式其次、应用样式最后，后者可以覆盖前者。

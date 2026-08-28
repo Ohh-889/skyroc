@@ -49,8 +49,14 @@ const ChartPreview = (props: ChartPreviewProps) => {
   }, [option]);
 
   return (
-    <ExamplePanel icon="mdi:chart-box-outline" title={title}>
-      <div ref={chartRef} style={{ height }} />
+    <ExamplePanel
+      icon="mdi:chart-box-outline"
+      title={title}
+    >
+      <div
+        ref={chartRef}
+        style={{ height }}
+      />
     </ExamplePanel>
   );
 };
@@ -89,25 +95,47 @@ const GaugeClock = () => {
   }, []);
 
   return (
-    <ExamplePanel icon="mdi:gauge" title="仪表盘时钟">
-      <div ref={chartRef} style={{ height: 640 }} />
+    <ExamplePanel
+      icon="mdi:gauge"
+      title="仪表盘时钟"
+    >
+      <div
+        ref={chartRef}
+        style={{ height: 640 }}
+      />
     </ExamplePanel>
   );
 };
 
 const EchartsDemo = () => {
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="simple-icons:apacheecharts"
         resources={[{ label: 'ECharts', url: 'https://echarts.apache.org/' }]}
         tags={['echarts', 'Canvas', 'Resize Binding']}
         title="ECharts 示例"
       />
-      <ChartPreview option={pieOption} title="南丁格尔玫瑰图" />
-      <ChartPreview option={lineOption} title="堆叠折线图" />
-      <ChartPreview option={barOption} title="柱状图" />
-      <ChartPreview option={radarOption} title="雷达图" />
+      <ChartPreview
+        option={pieOption}
+        title="南丁格尔玫瑰图"
+      />
+      <ChartPreview
+        option={lineOption}
+        title="堆叠折线图"
+      />
+      <ChartPreview
+        option={barOption}
+        title="柱状图"
+      />
+      <ChartPreview
+        option={radarOption}
+        title="雷达图"
+      />
       <GaugeClock />
     </Space>
   );

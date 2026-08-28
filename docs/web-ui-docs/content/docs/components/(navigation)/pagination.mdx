@@ -7,12 +7,7 @@ description: 分页导航组件，用于在多页内容中切换
 
 ```tsx
 import { Pagination } from '@skyroc/web-ui';
-import type {
-  PaginationClassNames,
-  PaginationProps,
-  PaginationPages,
-  PaginationPageItem
-} from '@skyroc/web-ui';
+import type { PaginationClassNames, PaginationProps, PaginationPages, PaginationPageItem } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -42,12 +37,12 @@ import type {
 
 <Demo src="@playground/pagination/modules/Variant" />
 
-| 变体 | 说明 |
-| --- | --- |
-| `pure` | 默认，选中时带边框和背景 |
-| `solid` | 选中时使用主色填充 |
-| `outline` | 选中时使用主色边框 |
-| `soft` | 选中时使用主色半透明背景 |
+| 变体      | 说明                     |
+| --------- | ------------------------ |
+| `pure`    | 默认，选中时带边框和背景 |
+| `solid`   | 选中时使用主色填充       |
+| `outline` | 选中时使用主色边框       |
+| `soft`    | 选中时使用主色半透明背景 |
 
 ## 尺寸
 
@@ -61,10 +56,10 @@ import type {
 
 <Demo src="@playground/pagination/modules/Shape" />
 
-| 形状 | 说明 |
-| --- | --- |
-| `square` | 默认，圆角矩形 |
-| `rounded` | 圆形按钮 |
+| 形状      | 说明           |
+| --------- | -------------- |
+| `square`  | 默认，圆角矩形 |
+| `rounded` | 圆形按钮       |
 
 ## 显示边缘页码
 
@@ -98,7 +93,7 @@ const [page, setPage] = useState(1);
   itemsPerPage={10}
   page={page}
   onPageChange={setPage}
-/>
+/>;
 ```
 
 ## API

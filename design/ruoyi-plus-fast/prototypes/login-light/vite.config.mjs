@@ -1,19 +1,19 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
-    outDir: "dist/client",
+    outDir: 'dist/client'
   },
   optimizeDeps: {
-    include: ["react", "react-dom/client"],
+    include: ['react', 'react-dom/client']
   },
   server: {
-    host: "0.0.0.0",
-    allowedHosts: ["terminal.local"],
+    host: '0.0.0.0',
+    allowedHosts: ['terminal.local'],
     warmup: {
-      clientFiles: ["./src/main.jsx"],
-    },
+      clientFiles: ['./src/main.jsx']
+    }
   },
-  plugins: [react()],
+  plugins: [react()]
 });

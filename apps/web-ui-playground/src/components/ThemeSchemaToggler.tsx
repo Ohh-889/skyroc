@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
-import { useTranslations } from 'next-intl';
 import { Icon, Switch } from '@skyroc/web-ui';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 const ThemeSchemaToggler = () => {
   const t = useTranslations('header');
@@ -21,8 +21,7 @@ const ThemeSchemaToggler = () => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted)
-    return null;
+  if (!isMounted) return null;
 
   return (
     <Switch

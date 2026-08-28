@@ -17,13 +17,9 @@ import type {
 /**
  * 把非 axios 异常（transform、hook 里抛出的）包成 AxiosError，保住 flat 风格 `error` 字段的契约
  *
- * `response` 拿得到就一并带上：transform 抛错时响应是实实在在收到过的，丢掉它会让调用方只剩一句
- * TypeError，状态码和响应体全都查不到。
+ * `response` 拿得到就一并带上：transform 抛错时响应是实实在在收到过的，丢掉它会让调用方只剩一句 TypeError，状态码和响应体全都查不到。
  */
-function toAxiosError<ResponseData>(
-  error: unknown,
-  response?: AxiosResponse<ResponseData>
-): AxiosError<ResponseData> {
+function toAxiosError<ResponseData>(error: unknown, response?: AxiosResponse<ResponseData>): AxiosError<ResponseData> {
   if (isAxiosError<ResponseData>(error)) {
     return error;
   }
@@ -52,8 +48,7 @@ function createCommonRequest<
   /**
    * 托管请求共用一个 controller，cancelAllRequest 把它 abort 掉再换一个新的
    *
-   * 不按 requestId 存一张 Map：那样每个请求都会往 Map 里塞一条，而请求正常结束时没有任何地方
-   * 删除它——长驻页面下这张表只增不减。共用一个 controller 则完全不需要回收，adapter 在请求结束时
+   * 不按 requestId 存一张 Map：那样每个请求都会往 Map 里塞一条，而请求正常结束时没有任何地方 删除它——长驻页面下这张表只增不减。共用一个 controller 则完全不需要回收，adapter 在请求结束时
    * 会自己把 abort 监听器摘掉。
    */
   let abortController = new AbortController();

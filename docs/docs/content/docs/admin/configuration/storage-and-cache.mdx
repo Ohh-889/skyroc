@@ -7,28 +7,28 @@ description: 梳理 VITE_STORAGE_PREFIX、localStg、token、refreshToken、lang
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 修改 localStorage 前缀 | `VITE_STORAGE_PREFIX`、`apps/admin/src/utils/storage.ts` |
-| 排查 token、refreshToken、退出登录 | `features/auth`、`service/adapter.ts`、`service/request/index.ts` |
-| 排查语言缓存 | `apps/admin/src/locales/index.ts` |
-| 排查 tabs 缓存 | `@skyroc/web-admin-layouts`、`useAuth().logout()`、`useInitLogin()` |
-| 排查主题缓存 | `@skyroc/web-admin-theme` 的 `setupTheme()` 和 `ThemeEffect` |
-| 清理 React Query 旧用户数据 | `queryClient.clear()` |
+| 场景                               | 重点位置                                                            |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| 修改 localStorage 前缀             | `VITE_STORAGE_PREFIX`、`apps/admin/src/utils/storage.ts`            |
+| 排查 token、refreshToken、退出登录 | `features/auth`、`service/adapter.ts`、`service/request/index.ts`   |
+| 排查语言缓存                       | `apps/admin/src/locales/index.ts`                                   |
+| 排查 tabs 缓存                     | `@skyroc/web-admin-layouts`、`useAuth().logout()`、`useInitLogin()` |
+| 排查主题缓存                       | `@skyroc/web-admin-theme` 的 `setupTheme()` 和 `ThemeEffect`        |
+| 清理 React Query 旧用户数据        | `queryClient.clear()`                                               |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/utils/storage.ts` | 创建应用级 `localStg`，默认前缀为 `SR_`，可由 `VITE_STORAGE_PREFIX` 覆盖。 |
-| `apps/admin/src/features/auth/use-auth.ts` | 登录态 atom、`setAuth()`、`initAuth()`、`logout()`。 |
-| `apps/admin/src/features/auth/use-login.ts` | 登录成功后按 `lastLoginUserId` 判断是否清理 `globalTabs`。 |
-| `apps/admin/src/features/auth/use-auth.ts` | `getToken()`、`clearAuthStorage()`。 |
-| `apps/admin/src/service/adapter.ts` | 请求刷新 token、读取 token、清理 token、写入新 token。 |
-| `apps/admin/src/locales/index.ts` | 把 i18n storage 接到 `localStg.get('lang')` 和 `localStg.set('lang')`。 |
-| `packages/web/admin-layouts/src/state/tabs/use-admin-tab.ts` | 使用布局 storage 读写 `globalTabs`。 |
-| `packages/web/admin-theme/src/setup.ts` | 主题初始化和主题 storage 创建。 |
-| `packages/web/admin-theme/src/components/ThemeEffect.tsx` | 写入 `themeSettings`、`darkMode`、`themeColor`。 |
+| 文件                                                         | 职责                                                                       |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `apps/admin/src/utils/storage.ts`                            | 创建应用级 `localStg`，默认前缀为 `SR_`，可由 `VITE_STORAGE_PREFIX` 覆盖。 |
+| `apps/admin/src/features/auth/use-auth.ts`                   | 登录态 atom、`setAuth()`、`initAuth()`、`logout()`。                       |
+| `apps/admin/src/features/auth/use-login.ts`                  | 登录成功后按 `lastLoginUserId` 判断是否清理 `globalTabs`。                 |
+| `apps/admin/src/features/auth/use-auth.ts`                   | `getToken()`、`clearAuthStorage()`。                                       |
+| `apps/admin/src/service/adapter.ts`                          | 请求刷新 token、读取 token、清理 token、写入新 token。                     |
+| `apps/admin/src/locales/index.ts`                            | 把 i18n storage 接到 `localStg.get('lang')` 和 `localStg.set('lang')`。    |
+| `packages/web/admin-layouts/src/state/tabs/use-admin-tab.ts` | 使用布局 storage 读写 `globalTabs`。                                       |
+| `packages/web/admin-theme/src/setup.ts`                      | 主题初始化和主题 storage 创建。                                            |
+| `packages/web/admin-theme/src/components/ThemeEffect.tsx`    | 写入 `themeSettings`、`darkMode`、`themeColor`。                           |
 
 ## 应用级 storage
 
@@ -46,17 +46,17 @@ export const localStg = createStorage<StorageType.Local>('local', storagePrefix)
 
 ## key 归属
 
-| key | 读写位置 | 生命周期 |
-| --- | --- | --- |
-| `token` | `setAuth()` 写入；请求层读取；`clearAuthStorage()` 清理 | 登录成功到退出登录或认证失败。 |
-| `refreshToken` | `setAuth()` 写入；request adapter 刷新 token 时读取；`clearAuthStorage()` 清理 | 登录成功到退出登录或认证失败。 |
-| `lastLoginUserId` | `logout()` 退出时记录；`useInitLogin()` 登录成功后比较 | 用来判断是否同一用户再次登录。 |
-| `globalTabs` | `admin-layouts` 的 tabs 状态写入；`useInitLogin()` 换用户时清理 | 取决于主题设置里的 tabs cache。 |
-| `lang` | `setupI18n()` 的 storage adapter 读写 | 用户切换语言后持久化。 |
-| `themeSettings` | `ThemeEffect` 在生产环境页面关闭或刷新时写入 | 主题包内部 storage。 |
-| `darkMode` | `ThemeEffect` 监听暗色模式变化时写入 | 主题包内部 storage。 |
-| `themeColor` | `ThemeEffect` 监听主题色变化时写入 | 主题包内部 storage。 |
-| `overrideThemeFlag` | `setupTheme()` 生产环境版本覆盖检测写入 | 主题包内部 storage。 |
+| key                 | 读写位置                                                                       | 生命周期                        |
+| ------------------- | ------------------------------------------------------------------------------ | ------------------------------- |
+| `token`             | `setAuth()` 写入；请求层读取；`clearAuthStorage()` 清理                        | 登录成功到退出登录或认证失败。  |
+| `refreshToken`      | `setAuth()` 写入；request adapter 刷新 token 时读取；`clearAuthStorage()` 清理 | 登录成功到退出登录或认证失败。  |
+| `lastLoginUserId`   | `logout()` 退出时记录；`useInitLogin()` 登录成功后比较                         | 用来判断是否同一用户再次登录。  |
+| `globalTabs`        | `admin-layouts` 的 tabs 状态写入；`useInitLogin()` 换用户时清理                | 取决于主题设置里的 tabs cache。 |
+| `lang`              | `setupI18n()` 的 storage adapter 读写                                          | 用户切换语言后持久化。          |
+| `themeSettings`     | `ThemeEffect` 在生产环境页面关闭或刷新时写入                                   | 主题包内部 storage。            |
+| `darkMode`          | `ThemeEffect` 监听暗色模式变化时写入                                           | 主题包内部 storage。            |
+| `themeColor`        | `ThemeEffect` 监听主题色变化时写入                                             | 主题包内部 storage。            |
+| `overrideThemeFlag` | `setupTheme()` 生产环境版本覆盖检测写入                                        | 主题包内部 storage。            |
 
 ## 主题缓存的特殊点
 
@@ -143,13 +143,13 @@ function readUserListFilters() {
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
+| 误区                                             | 正确做法                                                                                          |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
 | 改了 `VITE_STORAGE_PREFIX`，以为所有缓存都换前缀 | 只有使用 `localStg` 的模块自动跟随；主题包默认仍是 `SR_`，除非显式传 storage 或 `storagePrefix`。 |
-| 退出登录只删 `token` | 调用 `logout()`，同时清 React Query、认证 storage、菜单和 tabs。 |
-| 换用户后还想保留上个用户 tabs | 当前 `useInitLogin()` 会在用户变化时删除 `globalTabs` 和 `lastLoginUserId`。 |
-| 把请求缓存写进 localStorage | 服务端数据优先交给 React Query；localStorage 只放需要跨刷新保留的轻量状态。 |
-| 在页面里手写 storage key 字符串 | 先扩展 `StorageType.Local`，再用 `localStg` 读写。 |
+| 退出登录只删 `token`                             | 调用 `logout()`，同时清 React Query、认证 storage、菜单和 tabs。                                  |
+| 换用户后还想保留上个用户 tabs                    | 当前 `useInitLogin()` 会在用户变化时删除 `globalTabs` 和 `lastLoginUserId`。                      |
+| 把请求缓存写进 localStorage                      | 服务端数据优先交给 React Query；localStorage 只放需要跨刷新保留的轻量状态。                       |
+| 在页面里手写 storage key 字符串                  | 先扩展 `StorageType.Local`，再用 `localStg` 读写。                                                |
 
 ## 相关链接
 

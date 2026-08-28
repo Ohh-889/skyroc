@@ -17,27 +17,25 @@ function useCaptcha(
 };
 ```
 
-| 参数 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `defaultLabel` | `string` | `'获取验证码'` | 空闲态文案 |
-| `getCountingLabel` | `CaptchaCountingLabelGetter` | `` count => `${count}秒后重新获取` `` | 倒计时文案生成器 |
-| `options.request` | `CaptchaRequest` | 500ms 空 Promise | 发送验证码的实际请求 |
-| `options.seconds` | `number` | `10` | 倒计时时长 |
-| `options.validateTarget` | `CaptchaTargetValidator` | 内置手机号正则 | 发送前校验接收目标 |
+| 参数                     | 类型                         | 默认                                  | 说明                 |
+| ------------------------ | ---------------------------- | ------------------------------------- | -------------------- |
+| `defaultLabel`           | `string`                     | `'获取验证码'`                        | 空闲态文案           |
+| `getCountingLabel`       | `CaptchaCountingLabelGetter` | `` count => `${count}秒后重新获取` `` | 倒计时文案生成器     |
+| `options.request`        | `CaptchaRequest`             | 500ms 空 Promise                      | 发送验证码的实际请求 |
+| `options.seconds`        | `number`                     | `10`                                  | 倒计时时长           |
+| `options.validateTarget` | `CaptchaTargetValidator`     | 内置手机号正则                        | 发送前校验接收目标   |
 
-<Callout type="warn">
-`seconds` 默认是 **10 秒**，不是常见的 60。业务里几乎都要显式传。
-</Callout>
+<Callout type="warn">`seconds` 默认是 **10 秒**，不是常见的 60。业务里几乎都要显式传。</Callout>
 
 ## label 的三态
 
 `label` 由 `loading` 和 `isCounting` 推导，组件直接渲染即可：
 
-| 状态 | `label` |
-| --- | --- |
-| 请求中 | `''`（空串，留给按钮自己放 spinner） |
-| 倒计时中 | `getCountingLabel(count)` |
-| 空闲 | `defaultLabel` |
+| 状态     | `label`                              |
+| -------- | ------------------------------------ |
+| 请求中   | `''`（空串，留给按钮自己放 spinner） |
+| 倒计时中 | `getCountingLabel(count)`            |
+| 空闲     | `defaultLabel`                       |
 
 判定顺序是先 loading 后 counting，所以两者同时为真时显示倒计时文案。
 
@@ -111,11 +109,11 @@ const CaptchaButton = (props: CaptchaButtonProps) => {
 
 ## 导出的类型
 
-| 类型 | 定义 |
-| --- | --- |
-| `CaptchaRequest` | `(target: string) => Promise<void> \| void` |
-| `CaptchaTargetValidator` | `(target: string) => boolean` |
-| `CaptchaCountingLabelGetter` | `(count: number) => string` |
-| `UseCaptchaOptions` | `{ request?, seconds?, validateTarget? }` |
+| 类型                         | 定义                                        |
+| ---------------------------- | ------------------------------------------- |
+| `CaptchaRequest`             | `(target: string) => Promise<void> \| void` |
+| `CaptchaTargetValidator`     | `(target: string) => boolean`               |
+| `CaptchaCountingLabelGetter` | `(count: number) => string`                 |
+| `UseCaptchaOptions`          | `{ request?, seconds?, validateTarget? }`   |
 
 倒计时部分由 [`useCountDownTimer`](/docs/hooks/use-count-down-timer) 提供，请求态由 [`useLoading`](/docs/hooks/use-loading) 提供。

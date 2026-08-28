@@ -4,11 +4,7 @@ import NavigationMenuUI from './NavigationMenuUI';
 import type { NavigationMenuProps } from './types';
 
 const NavigationMenu = (props: NavigationMenuProps) => {
-  return (
-    <NavigationMenuUI
-      {...props}
-    />
-  );
+  return <NavigationMenuUI {...props} />;
 };
 
 NavigationMenu.displayName = 'NavigationMenu';

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import type { CheckedState } from '@skyroc/web-ui';
 import { Checkbox } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const CheckboxBasic = () => {
   const [checked, setChecked] = useState<CheckedState>(false);

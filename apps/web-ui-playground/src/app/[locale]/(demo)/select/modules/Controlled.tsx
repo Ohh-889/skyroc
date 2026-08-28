@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import type { SelectProps } from '@skyroc/web-ui';
 import { Select } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const fruits: SelectProps['items'] = [
   { label: 'Apple', value: 'apple' },

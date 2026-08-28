@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Header } from '@radix-ui/react-accordion';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { accordionVariants } from './accordion-variants';
 import type { AccordionHeaderProps } from './types';
 

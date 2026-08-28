@@ -21,7 +21,10 @@ const NotFound = async () => {
   const messages = await getMessages({ locale });
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={messages}
+    >
       <NotFoundClient />
     </NextIntlClientProvider>
   );

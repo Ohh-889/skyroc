@@ -35,17 +35,35 @@ export const CardUI = React.forwardRef<HTMLDivElement, CardProps>((props, ref) =
   const showHeader = Boolean(header || title || extra);
 
   return (
-    <CardRoot className={className || classNames?.root} size={size} split={split} {...rest} ref={ref}>
+    <CardRoot
+      className={className || classNames?.root}
+      size={size}
+      split={split}
+      {...rest}
+      ref={ref}
+    >
       {showHeader ? (
-        <CardHeader className={classNames?.header} size={size} {...headerProps}>
+        <CardHeader
+          className={classNames?.header}
+          size={size}
+          {...headerProps}
+        >
           {header || (
             <>
               {titleRoot || (
-                <CardTitleRoot className={classNames?.titleRoot} size={size} {...titleRootProps}>
+                <CardTitleRoot
+                  className={classNames?.titleRoot}
+                  size={size}
+                  {...titleRootProps}
+                >
                   {titleLeading}
 
                   {typeof title === 'string' || typeof title === 'number' ? (
-                    <CardTitle className={classNames?.title} size={size} {...titleProps}>
+                    <CardTitle
+                      className={classNames?.title}
+                      size={size}
+                      {...titleProps}
+                    >
                       {title}
                     </CardTitle>
                   ) : (
@@ -62,12 +80,21 @@ export const CardUI = React.forwardRef<HTMLDivElement, CardProps>((props, ref) =
         </CardHeader>
       ) : null}
 
-      <CardContent className={classNames?.content} scrollable={scrollable} size={size} {...contentProps}>
+      <CardContent
+        className={classNames?.content}
+        scrollable={scrollable}
+        size={size}
+        {...contentProps}
+      >
         {children}
       </CardContent>
 
       {typeof footer === 'string' || typeof footer === 'number' ? (
-        <CardFooter className={classNames?.footer} size={size} {...footerProps}>
+        <CardFooter
+          className={classNames?.footer}
+          size={size}
+          {...footerProps}
+        >
           {footer}
         </CardFooter>
       ) : (

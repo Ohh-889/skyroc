@@ -84,7 +84,7 @@ export interface CreateAtomWithStorageOptions<T> {
  *   const userAtom = createAtomWithStorage('user', defaultUser, {
  *     validate: raw => (isUser(raw) ? raw : undefined)
  *   });
- *   ```
+ *   ```;
  */
 export function createAtomWithStorage<T>(
   key: string,

@@ -39,7 +39,10 @@ Skyroc UI 保留了 Radix UI 和 shadcn 风格的可组合能力，但更强调�
 `asChild` 用于把组件行为委托给子元素，例如让 `Button` 渲染成 `Link`。
 
 ```tsx
-<Button asChild color="primary">
+<Button
+  asChild
+  color="primary"
+>
   <Link href="/overview/introduction">阅读文档</Link>
 </Button>
 ```

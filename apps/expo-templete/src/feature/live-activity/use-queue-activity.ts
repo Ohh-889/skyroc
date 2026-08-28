@@ -19,7 +19,7 @@ const DEEP_LINK = Linking.createURL('/demo/live-activity');
 /** 结束后卡片在锁屏上继续停留的时间 */
 const DISMISS_DELAY = 30_000;
 
-/** useQueueActivity 的返回值 */
+/** UseQueueActivity 的返回值 */
 export interface QueueActivityController {
   /** 当前推给灵动岛的内容；冷启动恢复出来的实例拿不到历史内容，这里会是 null */
   content: QueueActivityProps | null;
@@ -49,8 +49,7 @@ export interface QueueActivityController {
 /**
  * 把「一条排队 Live Activity」的完整生命周期收在一个 hook 里。
  *
- * 真实项目里前台 update 只是兜底，主路径是后端拿 `pushToken` 推 APNs——用户锁着屏、App 被挂起时，
- * 只有推送能让灵动岛动起来。所以这个 hook 的重点其实是把两个 token 拿到手并上报给自己的服务端。
+ * 真实项目里前台 update 只是兜底，主路径是后端拿 `pushToken` 推 APNs——用户锁着屏、App 被挂起时， 只有推送能让灵动岛动起来。所以这个 hook 的重点其实是把两个 token 拿到手并上报给自己的服务端。
  */
 export function useQueueActivity(): QueueActivityController {
   const [content, setContent] = useState<QueueActivityProps | null>(null);
@@ -62,11 +61,7 @@ export function useQueueActivity(): QueueActivityController {
   const contentRef = useRef<QueueActivityProps | null>(null);
   const tokenSubscriptionRef = useRef<EventSubscription | null>(null);
 
-  /**
-   * token 有两条到达路径，都得接：
-   * - `getPushToken()` 立刻问一次，恢复出来的实例通常已经有了；
-   * - 监听事件，新建的实例要等系统签发，第一次问多半是 null，之后才补上，系统还会不定期轮换。
-   */
+  /** Token 有两条到达路径，都得接： - `getPushToken()` 立刻问一次，恢复出来的实例通常已经有了； - 监听事件，新建的实例要等系统签发，第一次问多半是 null，之后才补上，系统还会不定期轮换。 */
   const bindPushToken = useCallback((activity: LiveActivity<QueueActivityProps>) => {
     tokenSubscriptionRef.current?.remove();
     tokenSubscriptionRef.current = activity.addPushTokenListener(event => setPushToken(event.pushToken));
@@ -100,9 +95,7 @@ export function useQueueActivity(): QueueActivityController {
   useEffect(() => {
     if (!IS_SUPPORTED) return undefined;
 
-    const subscription = addPushToStartTokenListener(event =>
-      setPushToStartToken(event.activityPushToStartToken)
-    );
+    const subscription = addPushToStartTokenListener(event => setPushToStartToken(event.activityPushToStartToken));
 
     return () => subscription.remove();
   }, []);

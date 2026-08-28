@@ -108,8 +108,6 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
     });
   }, [detailQuery.data, form, isUpdate, open, presetDeptId]);
 
-
-
   async function handleFinish(values: PostFormValues) {
     await onSubmit({
       deptId: values.deptId,
@@ -129,11 +127,21 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
     <Drawer
       destroyOnHidden
       footer={
-        <Flex gap={8} justify="flex-end">
-          <Button disabled={loading} onClick={onClose}>
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存岗位
           </Button>
         </Flex>
@@ -154,7 +162,10 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
       {detailQuery.isError ? (
         <Alert
           action={
-            <Button size="small" onClick={() => detailQuery.refetch()}>
+            <Button
+              size="small"
+              onClick={() => detailQuery.refetch()}
+            >
               重试
             </Button>
           }
@@ -166,9 +177,20 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
       ) : null}
 
       <Spin spinning={isUpdate && detailQuery.isLoading}>
-        <Form<PostFormValues> form={form} layout="vertical" requiredMark onFinish={handleFinish}>
-          <Typography.Text className="flex items-center gap-7px" strong>
-            <SvgIcon className="text-primary" icon="ph:tree-structure" />
+        <Form<PostFormValues>
+          form={form}
+          layout="vertical"
+          requiredMark
+          onFinish={handleFinish}
+        >
+          <Typography.Text
+            className="flex items-center gap-7px"
+            strong
+          >
+            <SvgIcon
+              className="text-primary"
+              icon="ph:tree-structure"
+            />
             组织归属
           </Typography.Text>
           <Divider className="my-12px" />
@@ -181,7 +203,7 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
           >
             <TreeSelect
               showSearch={{
-                treeNodeFilterProp: "title"
+                treeNodeFilterProp: 'title'
               }}
               placeholder="请选择所属部门"
               treeData={departmentTreeData}
@@ -189,8 +211,14 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
             />
           </Form.Item>
 
-          <Typography.Text className="flex items-center gap-7px" strong>
-            <SvgIcon className="text-primary" icon="ph:identification-card" />
+          <Typography.Text
+            className="flex items-center gap-7px"
+            strong
+          >
+            <SvgIcon
+              className="text-primary"
+              icon="ph:identification-card"
+            />
             岗位信息
           </Typography.Text>
           <Divider className="my-12px" />
@@ -205,7 +233,11 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
                 { max: 50, message: '岗位名称最多 50 个字符' }
               ]}
             >
-              <Input allowClear maxLength={50} placeholder="例如 前端工程师" />
+              <Input
+                allowClear
+                maxLength={50}
+                placeholder="例如 前端工程师"
+              />
             </Form.Item>
 
             <Form.Item
@@ -217,7 +249,11 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
                 { max: 64, message: '岗位编码最多 64 个字符' }
               ]}
             >
-              <Input allowClear maxLength={64} placeholder="例如 FE_DEV" />
+              <Input
+                allowClear
+                maxLength={64}
+                placeholder="例如 FE_DEV"
+              />
             </Form.Item>
 
             <Form.Item
@@ -226,15 +262,31 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
               name="postCategory"
               rules={[{ max: 100, message: '类别编码最多 100 个字符' }]}
             >
-              <Input allowClear maxLength={100} placeholder="例如 TECH" />
+              <Input
+                allowClear
+                maxLength={100}
+                placeholder="例如 TECH"
+              />
             </Form.Item>
 
-            <Form.Item label="岗位顺序" name="postSort" rules={[{ message: '请输入岗位顺序', required: true }]}>
-              <InputNumber className="w-full" min={0} precision={0} />
+            <Form.Item
+              label="岗位顺序"
+              name="postSort"
+              rules={[{ message: '请输入岗位顺序', required: true }]}
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+                precision={0}
+              />
             </Form.Item>
           </div>
 
-          <Form.Item extra="已分配用户的岗位不能停用。" label="岗位状态" name="status">
+          <Form.Item
+            extra="已分配用户的岗位不能停用。"
+            label="岗位状态"
+            name="status"
+          >
             <Radio.Group
               options={[
                 { label: '正常', value: '0' },
@@ -243,8 +295,18 @@ const PostEditorDrawer = (props: PostEditorDrawerProps) => {
             />
           </Form.Item>
 
-          <Form.Item label="备注" name="remark" rules={[{ max: 500, message: '备注最多 500 个字符' }]}>
-            <Input.TextArea allowClear maxLength={500} placeholder="请输入岗位职责或使用说明" rows={4} showCount />
+          <Form.Item
+            label="备注"
+            name="remark"
+            rules={[{ max: 500, message: '备注最多 500 个字符' }]}
+          >
+            <Input.TextArea
+              allowClear
+              maxLength={500}
+              placeholder="请输入岗位职责或使用说明"
+              rows={4}
+              showCount
+            />
           </Form.Item>
 
           <Alert

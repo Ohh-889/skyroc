@@ -8,14 +8,14 @@ const AlertDialogCustomIcon = () => {
       description="You can customize the icon displayed in the dialog"
       icon={<Heart className="text-destructive" />}
       title="Custom Icon"
-      trigger={(
+      trigger={
         <Button
           color="destructive"
           variant="outline"
         >
           Custom Icon
         </Button>
-      )}
+      }
       onCancel={() => console.log('cancel')}
       onOk={() => console.log('ok')}
     />

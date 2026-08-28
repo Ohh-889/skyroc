@@ -82,27 +82,27 @@ export const checkboxVariants = tv({
         groupRoot: 'gap-x-4.5 gap-y-3.5',
         root: 'gap-3.5'
       },
-      'lg': {
+      lg: {
         control: 'size-4.5',
         groupRoot: 'gap-x-3.5 gap-y-2.5',
         root: 'gap-2.5'
       },
-      'md': {
+      md: {
         control: 'size-4',
         groupRoot: 'gap-x-3 gap-y-2',
         root: 'gap-2'
       },
-      'sm': {
+      sm: {
         control: 'size-3.5',
         groupRoot: 'gap-x-2.5 gap-y-1.75',
         root: 'gap-1.75'
       },
-      'xl': {
+      xl: {
         control: 'size-5',
         groupRoot: 'gap-x-4 gap-y-3',
         root: 'gap-3'
       },
-      'xs': {
+      xs: {
         control: 'size-3',
         groupRoot: 'gap-x-2 gap-y-1.5',
         root: 'gap-1.5'

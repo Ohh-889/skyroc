@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { AArrowDownIcon, Earth, Minus, Plus } from 'lucide-react';
 import { Accordion } from '@skyroc/web-ui';
 import type { AccordionItemData } from '@skyroc/web-ui';
+import { AArrowDownIcon, Earth, Minus, Plus } from 'lucide-react';
+import { useState } from 'react';
 
 const items: AccordionItemData[] = [
   {

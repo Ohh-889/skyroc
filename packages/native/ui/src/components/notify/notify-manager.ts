@@ -11,8 +11,8 @@ interface NotifyEntry extends NotifyOptions {
 /**
  * Notify 状态管理器，继承 Store 基类获得订阅能力（单例，同时只显示一条）
  *
- * 同时持有自动关闭的定时器：自动关闭属于生命周期而不是渲染，放在视图里会让「谁来卸载自己」这件事永远说不清，
- * 也会让超时关闭、命令式关闭、被顶替三条路径走上行为不一致的分支。这里把关闭统一收口，onClose 因此对每条 Notify 恰好触发一次。
+ * 同时持有自动关闭的定时器：自动关闭属于生命周期而不是渲染，放在视图里会让「谁来卸载自己」这件事永远说不清， 也会让超时关闭、命令式关闭、被顶替三条路径走上行为不一致的分支。这里把关闭统一收口，onClose 因此对每条 Notify
+ * 恰好触发一次。
  */
 class NotifyManager extends Store<NotifyEntry | null> {
   private idCounter = 0;

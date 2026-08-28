@@ -22,7 +22,10 @@ const SelectOption = (props: SelectOptionProps) => {
   if (isGroup(item)) {
     const { children, label, ...rest } = item;
     return (
-      <Group className={cn(classNames?.group)} data-slot="select-group">
+      <Group
+        className={cn(classNames?.group)}
+        data-slot="select-group"
+      >
         <SelectLabel
           {...rest}
           className={classNames?.groupLabel}

@@ -364,7 +364,8 @@ const OssConfigEditorDrawer = (props: OssConfigEditorDrawerProps) => {
                     className="text-12px"
                     type="secondary"
                   >
-                    私有：列表地址是短期签名地址；公开：对象 URL 可直接访问；自定义：桶策略由运维自行维护，系统不代为配置。
+                    私有：列表地址是短期签名地址；公开：对象 URL
+                    可直接访问；自定义：桶策略由运维自行维护，系统不代为配置。
                   </Typography.Text>
                 }
               >

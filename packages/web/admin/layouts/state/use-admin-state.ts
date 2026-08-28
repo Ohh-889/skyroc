@@ -1,5 +1,5 @@
-import { atomWithPartial } from '@skyroc/core-state';
 import { useSettingsTheme } from '@shell/theme';
+import { atomWithPartial } from '@skyroc/core-state';
 import { useResponsive } from 'ahooks';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';

@@ -3,8 +3,8 @@
  *
  * Adapter contract:
  *
- * - `getItem` returns the deserialized value (or `null` / `undefined` when missing). Adapters are responsible for
- *   parsing raw strings (e.g. `JSON.parse`) before returning.
+ * - `getItem` returns the deserialized value (or `null` / `undefined` when missing). Adapters are responsible for parsing
+ *   raw strings (e.g. `JSON.parse`) before returning.
  * - The interface is intentionally synchronous to mirror `localStorage` / `sessionStorage`. For asynchronous backends
  *   (React Native AsyncStorage, IndexedDB), prefer building on top of jotai's own async storage helpers.
  * - `subscribe` is optional. Implement it to push external changes (e.g. cross-tab `storage` events) back into atoms.

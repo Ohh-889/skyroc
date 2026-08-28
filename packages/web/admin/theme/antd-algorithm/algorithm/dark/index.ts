@@ -16,8 +16,8 @@ export { generateColorPalettes, generateNeutralColorPalettes };
  * Dark mode theme algorithm
  *
  * Reference Ant Design official dark theme implementation: 1. Uses generateDarkModePalette algorithm to generate
- * palettes (replaces @ant-design/colors) 2. Special color mapping strategy (1-4→950-700, 5→400, 6→500, 7→600) 3.
- * Custom colorPrimaryBg to optimize selected item background
+ * palettes (replaces @ant-design/colors) 2. Special color mapping strategy (1-4→950-700, 5→400, 6→500, 7→600) 3. Custom
+ * colorPrimaryBg to optimize selected item background
  *
  * Generated content: - Preset colors (blue, geekblue, etc.): palette vars only (blue-1 ... blue-10, blue-50 ...
  * blue-950) - Functional colors (colorPrimary, colorInfo, etc.): palette vars + semantic colors (colorPrimaryBg,

@@ -3,9 +3,8 @@ const { createRunOncePlugin, withAndroidManifest, withInfoPlist } = require('exp
 /**
  * 地图 App 的 scheme。
  *
- * Linking.canOpenURL 默认查不到任何第三方 App：iOS 9+ 只认 Info.plist 里白名单过的 scheme，
- * Android 11+ 只认 AndroidManifest 里 queries 声明过的。两端都不声明的话探测恒为 false，
- * 地图面板会永远只剩系统自带的 Apple 地图。
+ * Linking.canOpenURL 默认查不到任何第三方 App：iOS 9+ 只认 Info.plist 里白名单过的 scheme， Android 11+ 只认 AndroidManifest 里 queries
+ * 声明过的。两端都不声明的话探测恒为 false， 地图面板会永远只剩系统自带的 Apple 地图。
  *
  * `maps` 是 iOS 自带地图，第三方三家两端通用。
  */

@@ -26,14 +26,14 @@ import { Avatar, AvatarGroup } from '@skyroc/native-ui';
 
 `size` 提供 6 档，同时决定头像直径与 `fallback` 的文字字号：
 
-| 尺寸   | 直径 | fallback 字号 |
-| ------ | ---- | ------------- |
-| `xs`   | 24   | 10            |
-| `sm`   | 32   | 12            |
-| `md`   | 40   | 14（默认）    |
-| `lg`   | 48   | 16            |
-| `xl`   | 56   | 18            |
-| `2xl`  | 64   | 20            |
+| 尺寸  | 直径 | fallback 字号 |
+| ----- | ---- | ------------- |
+| `xs`  | 24   | 10            |
+| `sm`  | 32   | 12            |
+| `md`  | 40   | 14（默认）    |
+| `lg`  | 48   | 16            |
+| `xl`  | 56   | 18            |
+| `2xl` | 64   | 20            |
 
 <Demo src="@playground/avatar/AvatarSize" />
 
@@ -59,12 +59,12 @@ import { Avatar, AvatarGroup } from '@skyroc/native-ui';
 
 `className` 追加到根节点，`classNames` 按 slot 细粒度覆盖：
 
-| slot           | 作用位置                                             |
-| -------------- | ---------------------------------------------------- |
-| `root`         | 根节点，尺寸与底色都在这里                           |
-| `image`        | 图片自身，默认额外补一层 `rounded-full`              |
-| `fallback`     | 降级内容的容器（`Image` 的 error slot）              |
-| `fallbackText` | 降级内容为 `string` / `number` 时自动包裹的 `Text`    |
+| slot           | 作用位置                                           |
+| -------------- | -------------------------------------------------- |
+| `root`         | 根节点，尺寸与底色都在这里                         |
+| `image`        | 图片自身，默认额外补一层 `rounded-full`            |
+| `fallback`     | 降级内容的容器（`Image` 的 error slot）            |
+| `fallbackText` | 降级内容为 `string` / `number` 时自动包裹的 `Text` |
 
 <Demo src="@playground/avatar/AvatarStyles" />
 

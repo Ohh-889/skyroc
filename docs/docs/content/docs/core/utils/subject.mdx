@@ -1,6 +1,6 @@
 ---
-title: "createSubject"
-description: "轻量 RxJS Subject 实现，用于多播值推送与模块间单向数据流"
+title: 'createSubject'
+description: '轻量 RxJS Subject 实现，用于多播值推送与模块间单向数据流'
 ---
 
 ## 概述
@@ -9,12 +9,12 @@ description: "轻量 RxJS Subject 实现，用于多播值推送与模块间单�
 
 与 `Emitter` 的核心区别：
 
-| | `Emitter` | `createSubject` |
-| --- | --- | --- |
-| 承载内容 | 多种具名事件 | 单一类型的值流 |
-| 适合场景 | 跨模块事件广播 | 单向数据流、状态推送 |
+|          | `Emitter`           | `createSubject`                          |
+| -------- | ------------------- | ---------------------------------------- |
+| 承载内容 | 多种具名事件        | 单一类型的值流                           |
+| 适合场景 | 跨模块事件广播      | 单向数据流、状态推送                     |
 | 订阅方式 | `on(eventName, fn)` | `subscribe(fn)` 或 `subscribe({ next })` |
-| 生命周期 | 手动 offAll | `complete()` 关闭并清理 |
+| 生命周期 | 手动 offAll         | `complete()` 关闭并清理                  |
 
 ## 快速上手
 
@@ -30,7 +30,7 @@ const sub1 = subject.subscribe(value => {
 
 // 订阅：传 Observer 对象
 const sub2 = subject.subscribe({
-  next: value => console.log('订阅者 2:', value),
+  next: value => console.log('订阅者 2:', value)
 });
 
 subject.next('hello');

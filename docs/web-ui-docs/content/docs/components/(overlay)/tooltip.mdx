@@ -53,7 +53,10 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipRoot, To
 <Demo src="@playground/tooltip/modules/TooltipArrow" />
 
 ```tsx
-<Tooltip showArrow content="Tooltip content">
+<Tooltip
+  showArrow
+  content="Tooltip content"
+>
   <Button>with arrow</Button>
 </Tooltip>
 ```
@@ -302,9 +305,17 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipRoot, To
   ]}
 />
 
-<UnionType name="TooltipSide" description="Tooltip 出现方向类型" type="'top' | 'right' | 'bottom' | 'left'" />
+<UnionType
+  name="TooltipSide"
+  description="Tooltip 出现方向类型"
+  type="'top' | 'right' | 'bottom' | 'left'"
+/>
 
-<UnionType name="TooltipAlign" description="Tooltip 对齐方式类型" type="'start' | 'center' | 'end'" />
+<UnionType
+  name="TooltipAlign"
+  description="Tooltip 对齐方式类型"
+  type="'start' | 'center' | 'end'"
+/>
 
 <UnionType
   name="ClassValue"

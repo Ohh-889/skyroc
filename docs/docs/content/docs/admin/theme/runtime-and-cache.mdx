@@ -25,14 +25,14 @@ bootstrap.tsx
 
 ## 实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin-example/src/bootstrap.tsx` | 在 React 渲染前调用 `setupTheme()`，并把应用级 `localStg` 交给主题包。 |
-| `apps/admin-example/src/utils/storage.ts` | 创建应用级 storage，默认前缀为 `SR_`，可由 `VITE_STORAGE_PREFIX` 覆盖。 |
-| `packages/web/admin-theme/src/setup.ts` | 读取默认主题、生产缓存和版本覆盖，初始化 `themeSettingsAtom.init`。 |
-| `packages/web/admin-theme/src/hooks/use-theme.ts` | 暴露 `useTheme()` / `useSettingsTheme()`，统一读写主题状态。 |
-| `packages/web/admin-theme/src/components/ThemeEffect.tsx` | 把主题状态同步到 DOM、localStorage、全局滤镜和水印定时器。 |
-| `apps/admin-example/src/features/effects/GlobalEffect.tsx` | 挂载 `ThemeEffect` 和 `LangEffect`。 |
+| 文件                                                       | 职责                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `apps/admin-example/src/bootstrap.tsx`                     | 在 React 渲染前调用 `setupTheme()`，并把应用级 `localStg` 交给主题包。  |
+| `apps/admin-example/src/utils/storage.ts`                  | 创建应用级 storage，默认前缀为 `SR_`，可由 `VITE_STORAGE_PREFIX` 覆盖。 |
+| `packages/web/admin-theme/src/setup.ts`                    | 读取默认主题、生产缓存和版本覆盖，初始化 `themeSettingsAtom.init`。     |
+| `packages/web/admin-theme/src/hooks/use-theme.ts`          | 暴露 `useTheme()` / `useSettingsTheme()`，统一读写主题状态。            |
+| `packages/web/admin-theme/src/components/ThemeEffect.tsx`  | 把主题状态同步到 DOM、localStorage、全局滤镜和水印定时器。              |
+| `apps/admin-example/src/features/effects/GlobalEffect.tsx` | 挂载 `ThemeEffect` 和 `LangEffect`。                                    |
 
 ## `setupTheme` 的职责
 
@@ -47,10 +47,10 @@ setupTheme({
 
 这里有两个关键参数：
 
-| 参数 | 作用 |
-| --- | --- |
-| `buildTime` | 用于生产环境判断当前构建版本是否已经应用过主题覆盖。 |
-| `storage` | 指定主题包读写缓存时使用的 storage adapter。传入 `localStg` 后，主题缓存会跟随 `VITE_STORAGE_PREFIX`。 |
+| 参数        | 作用                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
+| `buildTime` | 用于生产环境判断当前构建版本是否已经应用过主题覆盖。                                                   |
+| `storage`   | 指定主题包读写缓存时使用的 storage adapter。传入 `localStg` 后，主题缓存会跟随 `VITE_STORAGE_PREFIX`。 |
 
 如果不传 `storage` 或 `storagePrefix`，主题包会用自己的默认前缀 `SR_` 创建 storage。默认情况下这和应用前缀一样，但当应用配置了 `VITE_STORAGE_PREFIX` 后，主题包不会自动知道这个变化。显式传 `localStg` 可以避免 token、语言、tabs 使用一个前缀，主题仍写到另一个前缀。
 
@@ -58,9 +58,9 @@ setupTheme({
 
 `setupTheme()` 的内部规则按环境分成两段：
 
-| 环境 | 行为 |
-| --- | --- |
-| 开发环境 | 直接用 `defaultThemeSettings` 初始化主题 atom，不读取缓存。 |
+| 环境     | 行为                                                                                                            |
+| -------- | --------------------------------------------------------------------------------------------------------------- |
+| 开发环境 | 直接用 `defaultThemeSettings` 初始化主题 atom，不读取缓存。                                                     |
 | 生产环境 | 读取 `themeSettings` 缓存，与默认主题合并，再根据 `overrideThemeFlag` 和 `buildTime` 判断是否合并 `overrides`。 |
 
 生产环境会先读缓存：
@@ -91,12 +91,12 @@ setupTheme({
 
 适合放进 `overrides` 的情况：
 
-| 场景 | 是否适合 |
-| --- | --- |
-| 产品新版要求统一替换默认主色 | 适合。 |
-| 新增 watermark 字段，需要给生产用户补默认结构 | 适合。 |
-| 只想让开发环境临时看一个颜色 | 不适合，直接用主题抽屉或改共享默认值。 |
-| 每次启动都想强制重置用户主题 | 不适合，`overrides` 不是重置机制。 |
+| 场景                                          | 是否适合                               |
+| --------------------------------------------- | -------------------------------------- |
+| 产品新版要求统一替换默认主色                  | 适合。                                 |
+| 新增 watermark 字段，需要给生产用户补默认结构 | 适合。                                 |
+| 只想让开发环境临时看一个颜色                  | 不适合，直接用主题抽屉或改共享默认值。 |
+| 每次启动都想强制重置用户主题                  | 不适合，`overrides` 不是重置机制。     |
 
 如果只是共享默认值本身要调整，应改 `packages/web/admin-theme/src/config/default.ts`。如果只是某个应用有自己的默认偏好，应在应用入口传 `overrides`，不要把应用专属配置写进共享主题包。
 
@@ -104,11 +104,11 @@ setupTheme({
 
 主题包当前会读写这些 key：
 
-| key | 写入时机 |
-| --- | --- |
-| `themeSettings` | 生产环境页面关闭或刷新前，缓存完整主题配置。 |
-| `darkMode` | 暗色模式派生值变化时写入。 |
-| `themeColor` | 主题主色变化时写入。 |
+| key                 | 写入时机                                          |
+| ------------------- | ------------------------------------------------- |
+| `themeSettings`     | 生产环境页面关闭或刷新前，缓存完整主题配置。      |
+| `darkMode`          | 暗色模式派生值变化时写入。                        |
+| `themeColor`        | 主题主色变化时写入。                              |
 | `overrideThemeFlag` | 生产环境应用过当前构建版本的 `overrides` 后写入。 |
 
 `themeSettings` 是完整主题配置，供下一次生产环境初始化恢复用户配置。`darkMode` 和 `themeColor` 是轻量快照，主要给首屏 loading 这类早于完整 React 主题链路的界面使用。
@@ -117,14 +117,14 @@ setupTheme({
 
 `ThemeEffect` 不渲染 UI，它只做主题副作用：
 
-| 副作用 | 目的 |
-| --- | --- |
-| `toggleCssDarkMode(darkMode)` | 在 html 上同步暗色 class，让 UnoCSS、全局样式和暗色工具类生效。 |
-| `set('darkMode', darkMode)` | 缓存当前暗色派生值，供首屏 loading 读取。 |
-| `set('themeColor', themeColors.primary)` | 缓存当前主色，供首屏 loading 读取。 |
-| `beforeunload` 缓存 `themeSettings` | 生产环境刷新或关闭前保留完整用户主题设置。 |
-| `toggleAuxiliaryColorModes()` | 同步灰阶和色弱模式。 |
-| `updateWatermarkTimer()` | 仅在水印开启且显示时间时运行水印时间更新。 |
+| 副作用                                   | 目的                                                            |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `toggleCssDarkMode(darkMode)`            | 在 html 上同步暗色 class，让 UnoCSS、全局样式和暗色工具类生效。 |
+| `set('darkMode', darkMode)`              | 缓存当前暗色派生值，供首屏 loading 读取。                       |
+| `set('themeColor', themeColors.primary)` | 缓存当前主色，供首屏 loading 读取。                             |
+| `beforeunload` 缓存 `themeSettings`      | 生产环境刷新或关闭前保留完整用户主题设置。                      |
+| `toggleAuxiliaryColorModes()`            | 同步灰阶和色弱模式。                                            |
+| `updateWatermarkTimer()`                 | 仅在水印开启且显示时间时运行水印时间更新。                      |
 
 这些操作都属于 React 外部系统同步，所以集中在 `ThemeEffect`。页面组件不应该自己写 effect 去改 `document.documentElement`、localStorage 或全局滤镜。
 
@@ -150,19 +150,19 @@ const { defaultDarkMode, defaultThemeColor } = globalConfig;
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 把 `overrides` 当成每次启动的默认值 | `overrides` 只在生产环境构建版本变化时覆盖缓存字段。 |
-| 页面直接读 localStorage 拿主题 | 页面读取 `useTheme()`，localStorage 只给初始化和持久化使用。 |
-| 在页面里手动切 html dark class | 暗色 class 由 `ThemeEffect` 统一同步。 |
-| 只传 `buildTime` 就以为主题缓存跟随应用前缀 | 还要传 `storage` 或 `storagePrefix`。 |
-| 修改共享默认主题来满足单个应用 | 应用专属配置放在应用入口的 `overrides` 或 storage 初始化策略。 |
+| 误区                                        | 正确做法                                                       |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| 把 `overrides` 当成每次启动的默认值         | `overrides` 只在生产环境构建版本变化时覆盖缓存字段。           |
+| 页面直接读 localStorage 拿主题              | 页面读取 `useTheme()`，localStorage 只给初始化和持久化使用。   |
+| 在页面里手动切 html dark class              | 暗色 class 由 `ThemeEffect` 统一同步。                         |
+| 只传 `buildTime` 就以为主题缓存跟随应用前缀 | 还要传 `storage` 或 `storagePrefix`。                          |
+| 修改共享默认主题来满足单个应用              | 应用专属配置放在应用入口的 `overrides` 或 storage 初始化策略。 |
 
 ## 相关链接
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 主题系统总览 | [主题系统](./overview) |
-| Ant Design token 和 UnoCSS 主题变量 | [主题 Token 与 Ant Design](./tokens-and-antd) |
-| 启动顺序 | [启动流程](../architecture/bootstrap) |
-| 存储前缀和缓存 key | [存储与缓存](../configuration/storage-and-cache) |
+| 主题                                | 继续查看                                         |
+| ----------------------------------- | ------------------------------------------------ |
+| 主题系统总览                        | [主题系统](./overview)                           |
+| Ant Design token 和 UnoCSS 主题变量 | [主题 Token 与 Ant Design](./tokens-and-antd)    |
+| 启动顺序                            | [启动流程](../architecture/bootstrap)            |
+| 存储前缀和缓存 key                  | [存储与缓存](../configuration/storage-and-cache) |

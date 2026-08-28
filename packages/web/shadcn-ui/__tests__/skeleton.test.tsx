@@ -1,6 +1,6 @@
 import { forwardRef, lazy, memo } from 'react';
-import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { describe, expect, it } from 'vitest';
 import { Skeleton, SkeletonContainer } from '../src/components/skeleton';
 import { render, screen } from './helpers/render';
@@ -97,13 +97,7 @@ describe('Skeleton', () => {
     expect(skeleton).toHaveClass('animate-pulse', 'rounded-md', 'custom-skeleton');
     expect(skeleton).toHaveTextContent('Loading content');
 
-    rerender(
-      <Skeleton
-        data-testid="skeleton"
-      >
-        Hidden content
-      </Skeleton>
-    );
+    rerender(<Skeleton data-testid="skeleton">Hidden content</Skeleton>);
 
     expect(screen.getByTestId('skeleton')).not.toHaveTextContent('Hidden content');
   });

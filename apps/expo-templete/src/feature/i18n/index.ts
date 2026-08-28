@@ -1,7 +1,4 @@
-/**
- * `i18next.d.ts` 给 `t()` 上类型，靠 tsconfig 的 include 自动生效，不用（也不能）在这里 import——
- * 它是纯类型文件，运行时没有对应的模块。
- */
+/** `i18next.d.ts` 给 `t()` 上类型，靠 tsconfig 的 include 自动生效，不用（也不能）在这里 import—— 它是纯类型文件，运行时没有对应的模块。 */
 
 export { FALLBACK_LOCALE, LOCALE_OPTIONS, LOCALE_PREFERENCES, SUPPORTED_LOCALES } from './config';
 export {

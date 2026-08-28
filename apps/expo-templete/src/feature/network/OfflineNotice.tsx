@@ -8,8 +8,7 @@ import { useIsOnline } from './use-is-online';
 /**
  * 断网多久后才提示。
  *
- * WiFi 掉到蜂窝、切基站、过隧道都会有几百毫秒的空窗，立刻弹会变成一条红条一直在闪。
- * 真正断网的用户等这一秒无所谓，误报被这一秒全挡掉了。
+ * WiFi 掉到蜂窝、切基站、过隧道都会有几百毫秒的空窗，立刻弹会变成一条红条一直在闪。 真正断网的用户等这一秒无所谓，误报被这一秒全挡掉了。
  */
 const OFFLINE_DELAY = 1_000;
 
@@ -18,14 +17,13 @@ const RESTORED_DURATION = 2_000;
 
 const RESTORED_MESSAGE = '网络已恢复';
 
-/** hidden：没什么可说的；offline：正断着；restored：刚恢复，报一声就走 */
+/** Hidden：没什么可说的；offline：正断着；restored：刚恢复，报一声就走 */
 type NoticeState = 'hidden' | 'offline' | 'restored';
 
 /**
  * 全局断网提示条，挂在根 layout 上。
  *
- * 用常驻横幅而不是每个页面各弹各的 toast：断网是**一段状态**不是一个事件，用户看到条还在，就知道现在
- * 点什么都没用，不会反复戳按钮；toast 弹完就没了，只会让人以为是这一次操作倒霉。
+ * 用常驻横幅而不是每个页面各弹各的 toast：断网是**一段状态**不是一个事件，用户看到条还在，就知道现在 点什么都没用，不会反复戳按钮；toast 弹完就没了，只会让人以为是这一次操作倒霉。
  *
  * 只提示，不拦截操作：能不能发请求由 `onlineManager` 和请求本身决定（见 `feature/query/query-provider`）。
  */
@@ -37,8 +35,7 @@ export const OfflineNotice = () => {
   /**
    * 断网条有没有真的露过脸。
    *
-   * 「已恢复」只该给看见过断网条的人看：没到 OFFLINE_DELAY 就恢复的抖动，用户什么都没察觉，
-   * 这时候冒一句「网络已恢复」反而是凭空制造了一次故障感。
+   * 「已恢复」只该给看见过断网条的人看：没到 OFFLINE_DELAY 就恢复的抖动，用户什么都没察觉， 这时候冒一句「网络已恢复」反而是凭空制造了一次故障感。
    */
   const noticedOffline = useRef(false);
 

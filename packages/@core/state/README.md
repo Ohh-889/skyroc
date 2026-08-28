@@ -41,7 +41,7 @@ import { storage } from '@skyroc/storage';
 registerStorage('local', {
   getItem: key => storage.get(key),
   setItem: (key, value) => storage.set(key, value),
-  removeItem: key => storage.remove(key),
+  removeItem: key => storage.remove(key)
 });
 
 // sessionStorage 适配器
@@ -51,7 +51,7 @@ registerStorage('session', {
     return raw ? JSON.parse(raw) : null;
   },
   setItem: (key, value) => sessionStorage.setItem(key, JSON.stringify(value)),
-  removeItem: key => sessionStorage.removeItem(key),
+  removeItem: key => sessionStorage.removeItem(key)
 });
 ```
 
@@ -113,7 +113,7 @@ setAtomValue(themeAtom, RESET);
 
 ```ts
 const userAtom = createAtomWithStorage<User>('user', defaultUser, {
-  validate: raw => (isUser(raw) ? raw : undefined), // 返回 undefined → 回退 defaultUser
+  validate: raw => (isUser(raw) ? raw : undefined) // 返回 undefined → 回退 defaultUser
 });
 ```
 
@@ -121,13 +121,13 @@ const userAtom = createAtomWithStorage<User>('user', defaultUser, {
 
 #### 故障行为
 
-| 场景                          | 行为                                            |
-| ----------------------------- | ----------------------------------------------- |
-| storage 未注册                | 回退 `initialValue`，告警一次                   |
-| `getItem` 抛错（数据损坏等）  | 回退 `initialValue`，告警一次                   |
-| `setItem` 抛错（配额、无痕）  | atom 正常更新，仅未持久化，告警一次             |
-| `removeItem` 抛错             | atom 正常回到初始值，告警一次                   |
-| 同一 storage 下 key 重复绑定  | 告警一次（两个 atom 会互相覆盖）                |
+| 场景                         | 行为                                |
+| ---------------------------- | ----------------------------------- |
+| storage 未注册               | 回退 `initialValue`，告警一次       |
+| `getItem` 抛错（数据损坏等） | 回退 `initialValue`，告警一次       |
+| `setItem` 抛错（配额、无痕） | atom 正常更新，仅未持久化，告警一次 |
+| `removeItem` 抛错            | atom 正常回到初始值，告警一次       |
+| 同一 storage 下 key 重复绑定 | 告警一次（两个 atom 会互相覆盖）    |
 
 ### 4. 部分更新原子
 
@@ -138,7 +138,7 @@ const uiAtom = atomWithPartial({ siderCollapse: false, mixSiderFixed: false });
 
 // 在组件中使用
 const [ui, setUi] = useAtom(uiAtom);
-setUi({ siderCollapse: true });                          // 补丁形式
+setUi({ siderCollapse: true }); // 补丁形式
 setUi(prev => ({ siderCollapse: !prev.siderCollapse })); // updater 函数形式
 setUi({ siderCollapse: true }); // 值未变 → 无操作，不触发重渲染
 ```
@@ -179,7 +179,7 @@ registerStorage('local', {
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
-  },
+  }
 });
 ```
 
@@ -201,24 +201,24 @@ registerStorage('local', {
 
 ### Utils（工具函数）
 
-| 导出                                      | 说明                                          |
-| ----------------------------------------- | --------------------------------------------- |
-| `createAtomWithStorage(key, init, opts?)` | 创建持久化 atom（惰性解析存储，故障不外溢）   |
-| `atomWithPartial(init)`                   | 创建支持部分更新的 atom（内置无操作跳过）     |
-| `registerStorage(name, adapter)`          | 注册命名存储适配器                            |
-| `getStorage(name)`                        | 获取已注册的存储适配器（未注册时抛出）        |
-| `hasStorage(name)`                        | 检查名称是否已注册（不抛出）                  |
-| `unregisterStorage(name)`                 | 移除注册，返回是否存在                        |
+| 导出                                      | 说明                                        |
+| ----------------------------------------- | ------------------------------------------- |
+| `createAtomWithStorage(key, init, opts?)` | 创建持久化 atom（惰性解析存储，故障不外溢） |
+| `atomWithPartial(init)`                   | 创建支持部分更新的 atom（内置无操作跳过）   |
+| `registerStorage(name, adapter)`          | 注册命名存储适配器                          |
+| `getStorage(name)`                        | 获取已注册的存储适配器（未注册时抛出）      |
+| `hasStorage(name)`                        | 检查名称是否已注册（不抛出）                |
+| `unregisterStorage(name)`                 | 移除注册，返回是否存在                      |
 
 ### Types（类型导出）
 
-| 导出                              | 说明                                                                 |
-| --------------------------------- | -------------------------------------------------------------------- |
+| 导出                              | 说明                                                                  |
+| --------------------------------- | --------------------------------------------------------------------- |
 | `AtomStorage`                     | 存储适配器接口（`getItem` / `setItem` / `removeItem` / `subscribe?`） |
-| `PartialUpdater<T>`               | `atomWithPartial` 的写参数类型（对象补丁或 updater 函数）            |
-| `CreateAtomWithStorageOptions<T>` | `createAtomWithStorage` 的 options 类型                              |
-| `StorageAtomUpdate<T>`            | 持久化 atom 的写参数类型（值 / updater / `RESET`）                   |
-| `JotaiProviderProps`              | `JotaiProvider` 的 props 类型                                        |
+| `PartialUpdater<T>`               | `atomWithPartial` 的写参数类型（对象补丁或 updater 函数）             |
+| `CreateAtomWithStorageOptions<T>` | `createAtomWithStorage` 的 options 类型                               |
+| `StorageAtomUpdate<T>`            | 持久化 atom 的写参数类型（值 / updater / `RESET`）                    |
+| `JotaiProviderProps`              | `JotaiProvider` 的 props 类型                                         |
 
 ## 许可证
 

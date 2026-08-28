@@ -1,5 +1,4 @@
 import type { LucideIcon } from 'lucide-react';
-import type { Metadata } from 'next';
 import {
   ArrowUpRight,
   Blocks,
@@ -15,6 +14,7 @@ import {
   Terminal,
   Workflow
 } from 'lucide-react';
+import type { Metadata } from 'next';
 import { Bricolage_Grotesque, JetBrains_Mono } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -57,7 +57,7 @@ interface FeatureItem {
   icon: LucideIcon;
   /** 关联的源码路径标签。 */
   tag: string;
-  /** bento 网格跨列样式，控制卡片大小。 */
+  /** Bento 网格跨列样式，控制卡片大小。 */
   span: string;
 }
 
@@ -184,7 +184,10 @@ const HomePage = (props: HomePageProps) => {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[640px] bg-[radial-gradient(60%_60%_at_72%_8%,rgba(6,182,212,0.16),transparent_60%),radial-gradient(58%_58%_at_28%_2%,rgba(100,108,255,0.22),transparent_62%)]"
       />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04] [background-image:var(--sk-grain)] dark:opacity-[0.07]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04] [background-image:var(--sk-grain)] dark:opacity-[0.07]"
+      />
 
       {/* ===== Hero：非对称双栏 ===== */}
       <section className="mx-auto w-full max-w-7xl px-5 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-24 lg:pt-20">
@@ -196,7 +199,13 @@ const HomePage = (props: HomePageProps) => {
               className="inline-flex items-center gap-2 rounded-full border border-[#646cff]/25 bg-[#646cff]/8 py-1.5 pl-1.5 pr-3 text-xs font-medium text-[#4b51d6] backdrop-blur dark:border-[#646cff]/30 dark:bg-[#646cff]/12 dark:text-[#b8bcff]"
             >
               <span className="flex size-6 items-center justify-center rounded-full bg-white shadow-sm dark:bg-white/10">
-                <Image src="/skyroc-logo.svg" alt="" width={14} height={14} aria-hidden="true" />
+                <Image
+                  src="/skyroc-logo.svg"
+                  alt=""
+                  width={14}
+                  height={14}
+                  aria-hidden="true"
+                />
               </span>
               <span className="font-[family-name:var(--font-mono)] tracking-tight">v · 源码事实导向</span>
             </div>
@@ -219,7 +228,13 @@ const HomePage = (props: HomePageProps) => {
                   className="absolute -bottom-2 left-0 h-3 w-full text-[#06b6d4]"
                   preserveAspectRatio="none"
                 >
-                  <path d="M2 9 C 80 2, 220 2, 298 8" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  <path
+                    d="M2 9 C 80 2, 220 2, 298 8"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </span>
             </h1>
@@ -229,30 +244,50 @@ const HomePage = (props: HomePageProps) => {
               className="mt-8 max-w-xl text-lg leading-8 text-slate-600 dark:text-slate-400"
               style={{ animationDelay: '160ms' }}
             >
-              面向 <code className="rounded bg-slate-900/5 px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[0.85em] text-[#4b51d6] dark:bg-white/8 dark:text-[#b8bcff]">apps/admin</code>{' '}
+              面向{' '}
+              <code className="rounded bg-slate-900/5 px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[0.85em] text-[#4b51d6] dark:bg-white/8 dark:text-[#b8bcff]">
+                apps/admin
+              </code>{' '}
               的新版开发文档。按真实源码讲清启动、路由、权限、请求、主题、通知与部署边界。
             </p>
 
-            <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: '240ms' }}>
+            <div
+              data-reveal
+              className="mt-9 flex flex-col gap-3 sm:flex-row"
+              style={{ animationDelay: '240ms' }}
+            >
               <Link
                 href="/docs/getting-started/quick-start"
                 className="group inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#646cff] px-6 text-sm font-semibold text-white shadow-[0_18px_44px_-12px_rgba(100,108,255,0.7)] transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[#535bf2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#646cff]"
               >
                 开始使用
-                <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                <ArrowUpRight
+                  className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  aria-hidden="true"
+                />
               </Link>
               <Link
                 href="/docs"
                 className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300/80 bg-white/70 px-6 text-sm font-semibold text-slate-800 backdrop-blur transition-colors duration-200 hover:border-[#646cff]/45 hover:text-[#4b51d6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#646cff] dark:border-white/15 dark:bg-white/5 dark:text-slate-100 dark:hover:border-[#646cff]/50 dark:hover:text-white"
               >
-                <BookOpen className="size-4" aria-hidden="true" />
+                <BookOpen
+                  className="size-4"
+                  aria-hidden="true"
+                />
                 查看文档
               </Link>
             </div>
 
-            <dl data-reveal className="mt-12 flex flex-wrap gap-x-10 gap-y-5" style={{ animationDelay: '320ms' }}>
+            <dl
+              data-reveal
+              className="mt-12 flex flex-wrap gap-x-10 gap-y-5"
+              style={{ animationDelay: '320ms' }}
+            >
               {metricItems.map(metric => (
-                <div key={metric.label} className="flex flex-col">
+                <div
+                  key={metric.label}
+                  className="flex flex-col"
+                >
                   <dt className="order-2 mt-1 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-500">
                     {metric.label}
                   </dt>
@@ -265,13 +300,19 @@ const HomePage = (props: HomePageProps) => {
           </div>
 
           {/* 右：拟真编辑器窗口 */}
-          <div data-reveal className="relative" style={{ animationDelay: '200ms' }}>
+          <div
+            data-reveal
+            className="relative"
+            style={{ animationDelay: '200ms' }}
+          >
             <div
               aria-hidden="true"
               className="skyroc-float absolute -right-4 -top-6 hidden rounded-xl border border-[#06b6d4]/30 bg-white/85 px-3.5 py-2.5 shadow-xl shadow-[#06b6d4]/10 backdrop-blur md:block dark:border-[#06b6d4]/30 dark:bg-white/10"
             >
               <p className="font-[family-name:var(--font-mono)] text-[11px] text-[#06b6d4]">pnpm dev</p>
-              <p className="font-[family-name:var(--font-mono)] text-[11px] text-slate-500 dark:text-slate-400">ready in 312 ms</p>
+              <p className="font-[family-name:var(--font-mono)] text-[11px] text-slate-500 dark:text-slate-400">
+                ready in 312 ms
+              </p>
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-[#0d1021] shadow-[0_40px_90px_-30px_rgba(15,23,42,0.55)] dark:border-white/10">
@@ -279,15 +320,17 @@ const HomePage = (props: HomePageProps) => {
                 <span className="size-3 rounded-full bg-[#ff5f57]" />
                 <span className="size-3 rounded-full bg-[#febc2e]" />
                 <span className="size-3 rounded-full bg-[#28c840]" />
-                <span className="ml-3 font-[family-name:var(--font-mono)] text-[11px] text-slate-400">apps/admin/src</span>
+                <span className="ml-3 font-[family-name:var(--font-mono)] text-[11px] text-slate-400">
+                  apps/admin/src
+                </span>
               </div>
               <pre className="overflow-x-auto px-5 py-5 font-[family-name:var(--font-mono)] text-[12.5px] leading-[1.85] text-slate-300">
                 <code>
                   <span className="text-[#6b7280]">{'// 约定式页面 → 自动生成路由'}</span>
                   {'\n'}
                   <span className="text-[#c084fc]">export</span> <span className="text-[#c084fc]">const</span>{' '}
-                  <span className="text-[#7dd3fc]">Route</span> = <span className="text-[#7dd3fc]">createFileRoute</span>(
-                  {'\n'}
+                  <span className="text-[#7dd3fc]">Route</span> ={' '}
+                  <span className="text-[#7dd3fc]">createFileRoute</span>({'\n'}
                   {'  '}
                   <span className="text-[#a3e635]">{"'/(base)/home'"}</span>
                   {'\n'})({'{'}
@@ -304,8 +347,8 @@ const HomePage = (props: HomePageProps) => {
                   {'\n\n'}
                   <span className="text-[#6b7280]">{'// 服务 hooks 直接复用'}</span>
                   {'\n'}
-                  <span className="text-[#c084fc]">const</span> {'{'} <span className="text-[#e5e7eb]">data</span> {'}'} ={' '}
-                  <span className="text-[#7dd3fc]">useUserList</span>(<span className="text-[#fbbf24]">params</span>)
+                  <span className="text-[#c084fc]">const</span> {'{'} <span className="text-[#e5e7eb]">data</span> {'}'}{' '}
+                  = <span className="text-[#7dd3fc]">useUserList</span>(<span className="text-[#fbbf24]">params</span>)
                   <span className="skyroc-blink text-[#646cff]">▋</span>
                 </code>
               </pre>
@@ -314,7 +357,11 @@ const HomePage = (props: HomePageProps) => {
         </div>
 
         {/* ===== 技术栈跑马灯 ===== */}
-        <div data-reveal className="relative mt-16 overflow-hidden" style={{ animationDelay: '400ms' }}>
+        <div
+          data-reveal
+          className="relative mt-16 overflow-hidden"
+          style={{ animationDelay: '400ms' }}
+        >
           <p className="mb-5 text-center text-xs font-medium uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Built on a modern stack
           </p>
@@ -362,14 +409,20 @@ const HomePage = (props: HomePageProps) => {
                   className="pointer-events-none absolute -right-12 -top-12 size-32 rounded-full bg-[radial-gradient(circle,rgba(100,108,255,0.16),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
                 <div className="flex size-11 items-center justify-center rounded-xl border border-[#646cff]/15 bg-gradient-to-br from-[#646cff]/12 to-[#06b6d4]/10 text-[#4b51d6] dark:border-[#646cff]/25 dark:text-[#b8bcff]">
-                  <Icon className="size-5" aria-hidden="true" />
+                  <Icon
+                    className="size-5"
+                    aria-hidden="true"
+                  />
                 </div>
                 <h3 className="mt-5 font-[family-name:var(--font-display)] text-lg font-bold text-slate-950 dark:text-white">
                   {item.title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-6 text-slate-600 dark:text-slate-400">{item.description}</p>
                 <p className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-md bg-slate-900/5 px-2 py-1 font-[family-name:var(--font-mono)] text-[11px] text-slate-500 dark:bg-white/5 dark:text-slate-400">
-                  <CornerDownRight className="size-3" aria-hidden="true" />
+                  <CornerDownRight
+                    className="size-3"
+                    aria-hidden="true"
+                  />
                   {item.tag}
                 </p>
               </article>
@@ -390,7 +443,10 @@ const HomePage = (props: HomePageProps) => {
               先跑起来，再看启动链路与路由菜单。首页少讲概念，文档页讲清楚真实代码。
             </p>
             <div className="mt-7 flex items-center gap-2 font-[family-name:var(--font-mono)] text-xs text-slate-400 dark:text-slate-500">
-              <Languages className="size-3.5" aria-hidden="true" />
+              <Languages
+                className="size-3.5"
+                aria-hidden="true"
+              />
               i18n · theme · notification 均已就绪
             </div>
           </div>
@@ -409,7 +465,10 @@ const HomePage = (props: HomePageProps) => {
                       {item.index}
                     </span>
                     <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#646cff] to-[#535bf2] text-white shadow-[0_12px_30px_-12px_rgba(100,108,255,0.8)]">
-                      <Icon className="size-5" aria-hidden="true" />
+                      <Icon
+                        className="size-5"
+                        aria-hidden="true"
+                      />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-[family-name:var(--font-display)] text-lg font-bold text-slate-950 dark:text-white">

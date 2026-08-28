@@ -133,19 +133,19 @@ export const carouselVariants = tv({
       '2xl': {
         root: 'text-xl'
       },
-      'lg': {
+      lg: {
         root: 'text-base'
       },
-      'md': {
+      md: {
         root: 'text-sm'
       },
-      'sm': {
+      sm: {
         root: 'text-xs'
       },
-      'xl': {
+      xl: {
         root: 'text-lg'
       },
-      'xs': {
+      xs: {
         root: 'text-2xs'
       }
     }

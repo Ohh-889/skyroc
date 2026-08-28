@@ -76,7 +76,7 @@ interface TableHeaderOperationProps {
  *     refresh={getData}
  *     loading={loading}
  *   />;
- *   ```
+ *   ```;
  */
 const TableHeaderOperation = (props: TableHeaderOperationProps) => {
   const {
@@ -109,7 +109,11 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
   const { t } = useTranslation();
 
   return (
-    <Space wrap align={itemAlign} className="lt-sm:w-200px">
+    <Space
+      wrap
+      align={itemAlign}
+      className="lt-sm:w-200px"
+    >
       {prefix}
 
       {children || (
@@ -117,7 +121,12 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
           {add && (
             <Button
               ghost
-              icon={<SvgIcon className="text-icon" icon="ic:round-plus" />}
+              icon={
+                <SvgIcon
+                  className="text-icon"
+                  icon="ic:round-plus"
+                />
+              }
               size="small"
               type="primary"
               onClick={add}
@@ -127,12 +136,20 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
           )}
 
           {onDelete && (
-            <Popconfirm title={t('common.confirmDelete')} onConfirm={onDelete}>
+            <Popconfirm
+              title={t('common.confirmDelete')}
+              onConfirm={onDelete}
+            >
               <Button
                 danger
                 ghost
                 disabled={disabledDelete}
-                icon={<SvgIcon className="text-icon" icon="ic:round-delete" />}
+                icon={
+                  <SvgIcon
+                    className="text-icon"
+                    icon="ic:round-delete"
+                  />
+                }
                 size="small"
               >
                 {batchDeleteText ?? t('common.batchDelete')}
@@ -153,7 +170,11 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
           showUploadList={false}
         >
           <Button
-            disabled={importLoading} icon={<SvgIcon icon="mdi:upload" />} loading={importLoading} size="small">
+            disabled={importLoading}
+            icon={<SvgIcon icon="mdi:upload" />}
+            loading={importLoading}
+            size="small"
+          >
             {importText}
           </Button>
         </Upload>
@@ -161,7 +182,11 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
 
       {exportData && (
         <Button
-          icon={<SvgIcon icon="mdi:download" />} loading={exportLoading} size="small" onClick={exportData}>
+          icon={<SvgIcon icon="mdi:download" />}
+          loading={exportLoading}
+          size="small"
+          onClick={exportData}
+        >
           {exportText}
         </Button>
       )}
@@ -195,9 +220,17 @@ const TableHeaderOperation = (props: TableHeaderOperationProps) => {
       <Popover
         placement="bottomRight"
         trigger="click"
-        content={<DragContent columns={columns} setColumnChecks={setColumnChecks} />}
+        content={
+          <DragContent
+            columns={columns}
+            setColumnChecks={setColumnChecks}
+          />
+        }
       >
-        <Button icon={<SvgIcon icon="ant-design:setting-outlined" />} size="small">
+        <Button
+          icon={<SvgIcon icon="ant-design:setting-outlined" />}
+          size="small"
+        >
           {columnSettingText ?? t('common.columnSetting')}
         </Button>
       </Popover>

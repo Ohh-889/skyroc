@@ -8,21 +8,13 @@ interface ComponentDir {
 
 const root = process.cwd();
 
-const demoBasePath = path.join(
-  root,
-  'src/app/[locale]/(demo)'
-);
+const demoBasePath = path.join(root, 'src/app/[locale]/(demo)');
 
 function getComponentDirs(): Array<ComponentDir> {
   const entries = fs.readdirSync(demoBasePath, { withFileTypes: true });
 
   return entries
-    .filter(
-      entry =>
-        entry.isDirectory()
-        && entry.name !== 'modules'
-        && !entry.name.startsWith('_')
-    )
+    .filter(entry => entry.isDirectory() && entry.name !== 'modules' && !entry.name.startsWith('_'))
     .map(dir => ({
       name: dir.name,
       label: dir.name[0].toUpperCase() + dir.name.slice(1),

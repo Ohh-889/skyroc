@@ -20,27 +20,27 @@ export const breadcrumbVariants = tv({
         list: 'gap-4.5',
         root: 'text-xl'
       },
-      'lg': {
+      lg: {
         item: 'gap-2.5',
         list: 'gap-3.5',
         root: 'text-base'
       },
-      'md': {
+      md: {
         item: 'gap-2',
         list: 'gap-3',
         root: 'text-sm'
       },
-      'sm': {
+      sm: {
         item: 'gap-1.75',
         list: 'gap-2.5',
         root: 'text-xs'
       },
-      'xl': {
+      xl: {
         item: 'gap-3',
         list: 'gap-4',
         root: 'text-lg'
       },
-      'xs': {
+      xs: {
         item: 'gap-1.5',
         list: 'gap-2',
         root: 'text-2xs'

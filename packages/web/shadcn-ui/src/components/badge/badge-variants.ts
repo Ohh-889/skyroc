@@ -56,19 +56,19 @@ export const badgeVariants = tv({
       '2xl': {
         content: `min-h-5 px-2.5 text-base leading-relaxed`
       },
-      'lg': {
+      lg: {
         content: `min-h-3.5 px-1.75 text-xs leading-relaxed`
       },
-      'md': {
+      md: {
         content: `min-h-3 px-1.5 text-2xs leading-relaxed`
       },
-      'sm': {
+      sm: {
         content: `min-h-2.5 px-1.25 text-3xs leading-relaxed`
       },
-      'xl': {
+      xl: {
         content: `min-h-4 px-2 text-sm leading-relaxed`
       },
-      'xs': {
+      xs: {
         content: `min-h-2 px-1 text-4xs leading-relaxed`
       }
     }

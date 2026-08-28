@@ -8,8 +8,8 @@ import type { RequestAdapter, RequestInstanceState, ServiceCodes } from './types
 /**
  * 浏览器才有的「关页面前再清一次凭据」兜底。
  *
- * 只判 `typeof window !== 'undefined'` 不够：React Native 把 `window` 指向 global，判断为真，
- * 但它没有 addEventListener，调下去直接 TypeError —— 弹窗登出这条路会在原生端整个断掉。
+ * 只判 `typeof window !== 'undefined'` 不够：React Native 把 `window` 指向 global，判断为真， 但它没有 addEventListener，调下去直接 TypeError
+ * —— 弹窗登出这条路会在原生端整个断掉。
  */
 function canListenBeforeUnload() {
   return typeof window !== 'undefined' && typeof window.addEventListener === 'function';

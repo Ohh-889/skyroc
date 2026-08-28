@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
 import { dialogVariants } from './dialog-variants';
 import type { DialogHeaderProps } from './types';
 

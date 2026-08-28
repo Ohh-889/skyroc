@@ -18,16 +18,16 @@ Vite dev server 负责“把本地代理前缀转发到真实后端”；应用�
 
 ## 当前关键变量
 
-| 变量 | 作用 |
-| --- | --- |
-| `VITE_SERVICE_BASE_URL` | 主后台服务地址。开发代理开启时映射到 `/proxy-default`。 |
-| `VITE_OTHER_SERVICE_BASE_URL` | 其他服务地址，使用 JSON5 对象字符串。每个 key 映射到 `/proxy-{key}`。 |
-| `VITE_HTTP_PROXY` | dev server 下是否启用代理，当前为 `Y`。 |
-| `VITE_PROXY_LOG` | 是否在终端打印代理请求和真实请求地址，当前为 `Y`。 |
-| `VITE_SERVICE_SUCCESS_CODE` | 主业务请求成功 code。 |
-| `VITE_SERVICE_LOGOUT_CODES` | 直接登出 code，逗号分隔。 |
-| `VITE_SERVICE_MODAL_LOGOUT_CODES` | 弹窗确认后登出 code，逗号分隔。 |
-| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | token 过期后刷新并重试的 code，逗号分隔。 |
+| 变量                               | 作用                                                                  |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `VITE_SERVICE_BASE_URL`            | 主后台服务地址。开发代理开启时映射到 `/proxy-default`。               |
+| `VITE_OTHER_SERVICE_BASE_URL`      | 其他服务地址，使用 JSON5 对象字符串。每个 key 映射到 `/proxy-{key}`。 |
+| `VITE_HTTP_PROXY`                  | dev server 下是否启用代理，当前为 `Y`。                               |
+| `VITE_PROXY_LOG`                   | 是否在终端打印代理请求和真实请求地址，当前为 `Y`。                    |
+| `VITE_SERVICE_SUCCESS_CODE`        | 主业务请求成功 code。                                                 |
+| `VITE_SERVICE_LOGOUT_CODES`        | 直接登出 code，逗号分隔。                                             |
+| `VITE_SERVICE_MODAL_LOGOUT_CODES`  | 弹窗确认后登出 code，逗号分隔。                                       |
+| `VITE_SERVICE_EXPIRED_TOKEN_CODES` | token 过期后刷新并重试的 code，逗号分隔。                             |
 
 当前 `.env.test` 和 `.env.prod` 都指向 Apifox mock 主服务；其他服务只有 `demo`：
 
@@ -45,12 +45,12 @@ VITE_OTHER_SERVICE_BASE_URL= `{
 
 `apps/admin/package.json` 的脚本决定 Vite mode：
 
-| 命令 | Vite mode | 读取 |
-| --- | --- | --- |
-| `pnpm --filter skyroc-admin dev` | `test` | `.env` + `.env.test` |
-| `pnpm --filter skyroc-admin dev:prod` | `prod` | `.env` + `.env.prod` |
-| `pnpm --filter skyroc-admin build:test` | `test` | `.env` + `.env.test` |
-| `pnpm --filter skyroc-admin build` | `prod` | `.env` + `.env.prod` |
+| 命令                                    | Vite mode | 读取                 |
+| --------------------------------------- | --------- | -------------------- |
+| `pnpm --filter skyroc-admin dev`        | `test`    | `.env` + `.env.test` |
+| `pnpm --filter skyroc-admin dev:prod`   | `prod`    | `.env` + `.env.prod` |
+| `pnpm --filter skyroc-admin build:test` | `test`    | `.env` + `.env.test` |
+| `pnpm --filter skyroc-admin build`      | `prod`    | `.env` + `.env.prod` |
 
 本地默认开发命令是 `dev`，也就是 test mode。只改 `.env.prod` 后继续跑 `dev`，不会看到后端地址变化。
 
@@ -78,9 +78,9 @@ VITE_OTHER_SERVICE_BASE_URL= `{
 
 规则在两处保持一致：
 
-| 位置 | 函数 | 职责 |
-| --- | --- | --- |
-| `apps/admin/src/utils/service.ts` | `createProxyPattern()` | 给前端请求实例生成 baseURL。 |
+| 位置                                   | 函数                            | 职责                                |
+| -------------------------------------- | ------------------------------- | ----------------------------------- |
+| `apps/admin/src/utils/service.ts`      | `createProxyPattern()`          | 给前端请求实例生成 baseURL。        |
 | `packages/web/admin-vite/src/proxy.ts` | `createAdminViteProxyPattern()` | 给 Vite dev server 生成 proxy key。 |
 
 这两个函数的默认结果都应该是 `/proxy-default`，带 key 时都是 `/proxy-{key}`。
@@ -129,11 +129,11 @@ const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy
 
 结果如下：
 
-| 场景 | 主服务 | 其他服务 |
-| --- | --- | --- |
-| dev 且代理开启 | `/proxy-default` | `/proxy-{key}` |
+| 场景           | 主服务                  | 其他服务                           |
+| -------------- | ----------------------- | ---------------------------------- |
+| dev 且代理开启 | `/proxy-default`        | `/proxy-{key}`                     |
 | dev 但代理关闭 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL[key]` |
-| build 产物 | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL[key]` |
+| build 产物     | `VITE_SERVICE_BASE_URL` | `VITE_OTHER_SERVICE_BASE_URL[key]` |
 
 所以“是否走代理”不是 API 模块决定的，而是 env 和运行环境共同决定的。
 
@@ -257,16 +257,16 @@ type Response<T> = {
 
 ## 常见问题
 
-| 现象 | 先检查 |
-| --- | --- |
+| 现象                            | 先检查                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------- |
 | 改了 `.env.prod` 但本地没有变化 | 当前是否跑的是 `pnpm --filter skyroc-admin dev`。这个命令读 `.env.test`。 |
-| Network 里还是 `/proxy-default` | 代理开启时这是预期行为。看终端代理日志确认真实目标。 |
-| 代理没有创建 | 是否是 dev server、是否不是 preview、`VITE_HTTP_PROXY` 是否为 `Y`。 |
-| `/proxy-demo` 是 undefined | `VITE_OTHER_SERVICE_BASE_URL` 是否能被 JSON5 解析，`demo` key 是否存在。 |
-| 新增 key 后 TypeScript 报错 | 同步 `Api.Service.OtherBaseURLKey`。 |
-| 真实后端返回成功但前端提示失败 | `VITE_SERVICE_SUCCESS_CODE` 是否和后端一致。 |
-| token 过期没有刷新 | 后端过期 code 是否包含在 `VITE_SERVICE_EXPIRED_TOKEN_CODES`。 |
-| 关闭代理后跨域失败 | 这是浏览器 CORS 限制；恢复代理或让后端允许当前 origin。 |
+| Network 里还是 `/proxy-default` | 代理开启时这是预期行为。看终端代理日志确认真实目标。                      |
+| 代理没有创建                    | 是否是 dev server、是否不是 preview、`VITE_HTTP_PROXY` 是否为 `Y`。       |
+| `/proxy-demo` 是 undefined      | `VITE_OTHER_SERVICE_BASE_URL` 是否能被 JSON5 解析，`demo` key 是否存在。  |
+| 新增 key 后 TypeScript 报错     | 同步 `Api.Service.OtherBaseURLKey`。                                      |
+| 真实后端返回成功但前端提示失败  | `VITE_SERVICE_SUCCESS_CODE` 是否和后端一致。                              |
+| token 过期没有刷新              | 后端过期 code 是否包含在 `VITE_SERVICE_EXPIRED_TOKEN_CODES`。             |
+| 关闭代理后跨域失败              | 这是浏览器 CORS 限制；恢复代理或让后端允许当前 origin。                   |
 
 ## 排查顺序
 
@@ -280,8 +280,8 @@ type Response<T> = {
 
 ## 相关页面
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 请求封装和 token 刷新 | [请求概览](./overview) |
-| 新增业务接口模块 | [服务模块](./service-modules) |
+| 主题                                      | 继续查看                                         |
+| ----------------------------------------- | ------------------------------------------------ |
+| 请求封装和 token 刷新                     | [请求概览](./overview)                           |
+| 新增业务接口模块                          | [服务模块](./service-modules)                    |
 | env、Vite preset 和 application/vite 边界 | [环境变量与 Vite](../configuration/env-and-vite) |

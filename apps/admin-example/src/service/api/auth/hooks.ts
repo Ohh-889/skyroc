@@ -4,7 +4,6 @@ import { fetchGetUserInfo, fetchLogin } from './api';
 import { AUTH_MUTATION_KEYS, AUTH_QUERY_KEYS } from './keys';
 
 export function queryUserInfoOptions() {
-
   return queryOptions({
     gcTime: Infinity,
     queryFn: fetchGetUserInfo,
@@ -23,7 +22,6 @@ export function useLoginMutation() {
 }
 
 export function useUserInfoQuery() {
-
   const query = queryUserInfoOptions();
 
   return useQuery(query);

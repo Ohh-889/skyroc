@@ -45,7 +45,12 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
   const { childMenus, columns, isPageMenu, onSelectChild, permissions, scroll, selectedMenu } = props;
 
   if (!selectedMenu) {
-    return <Empty description="选择菜单后查看关联资源" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+    return (
+      <Empty
+        description="选择菜单后查看关联资源"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    );
   }
 
   if (isPageMenu) {
@@ -65,7 +70,12 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
   }
 
   if (childMenus.length === 0) {
-    return <Empty description="当前目录暂无直属菜单" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+    return (
+      <Empty
+        description="当前目录暂无直属菜单"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    );
   }
 
   return (
@@ -75,8 +85,16 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
       grid={{ gutter: 10, lg: 3, md: 2, sm: 2, xs: 1 }}
       renderItem={menu => (
         <List.Item>
-          <Card hoverable className="h-full" size="small" onClick={() => onSelectChild(menu.menuId)}>
-            <Flex align="center" gap={10}>
+          <Card
+            hoverable
+            className="h-full"
+            size="small"
+            onClick={() => onSelectChild(menu.menuId)}
+          >
+            <Flex
+              align="center"
+              gap={10}
+            >
               <div className="size-32px flex-center shrink-0 rounded-8px bg-info-bg text-info">
                 <SvgIcon icon={getMenuTypeIcon(menu.menuType)} />
               </div>
@@ -84,7 +102,10 @@ const MenuResourceContent = (props: MenuResourceContentProps) => {
                 <div className="truncate font-600 text-base">{menu.menuName}</div>
                 <div className="mt-2px truncate text-11px text-tertiary">{menu.path || '未配置路由'}</div>
               </div>
-              <Tag variant="filled" className="m-0 text-10px">
+              <Tag
+                variant="filled"
+                className="m-0 text-10px"
+              >
                 {getMenuTypeLabel(menu.menuType)}
               </Tag>
             </Flex>
@@ -104,19 +125,34 @@ const MenuResourceCard = (props: MenuResourceCardProps) => {
   const columns = createPermissionColumns(onDeletePermission, onEditPermission);
 
   return (
-    <div className="min-h-320px flex flex-1 flex-col" ref={tableWrapperRef}>
+    <div
+      className="min-h-320px flex flex-1 flex-col"
+      ref={tableWrapperRef}
+    >
       <Card
         className="h-full overflow-hidden card-wrapper"
         extra={
           selectedMenu ? (
-            <Flex align="center" gap={10}>
+            <Flex
+              align="center"
+              gap={10}
+            >
               {isPageMenu ? (
-                <Typography.Text className="lt-lg:hidden" type="secondary">
+                <Typography.Text
+                  className="lt-lg:hidden"
+                  type="secondary"
+                >
                   <span className="mr-6px inline-block size-6px rounded-full bg-primary" />
                   权限变更会影响角色授权
                 </Typography.Text>
               ) : null}
-              <Button icon={<SvgIcon icon="ph:plus" />} size="small" type="primary" ghost onClick={onAdd}>
+              <Button
+                icon={<SvgIcon icon="ph:plus" />}
+                size="small"
+                type="primary"
+                ghost
+                onClick={onAdd}
+              >
                 {isPageMenu ? '新增按钮' : '新增菜单'}
               </Button>
             </Flex>
@@ -168,7 +204,11 @@ function createPermissionColumns(
       key: 'menuName',
       align: 'center',
       render: value => (
-        <Flex align="center" gap={8} justify="center">
+        <Flex
+          align="center"
+          gap={8}
+          justify="center"
+        >
           <div className="size-28px flex-center shrink-0 rounded-7px bg-warning-bg text-warning">
             <SvgIcon icon="ph:key" />
           </div>
@@ -185,7 +225,11 @@ function createPermissionColumns(
       minWidth: 220,
       render: value =>
         value ? (
-          <Flex align="center" gap={4} justify="center">
+          <Flex
+            align="center"
+            gap={4}
+            justify="center"
+          >
             <code className="truncate text-12px">{value}</code>
             <ButtonIcon
               aria-label="复制权限字符"
@@ -203,7 +247,12 @@ function createPermissionColumns(
     {
       dataIndex: 'status',
       key: 'status',
-      render: value => <Badge status={value === '0' ? 'success' : 'warning'} text={value === '0' ? '正常' : '停用'} />,
+      render: value => (
+        <Badge
+          status={value === '0' ? 'success' : 'warning'}
+          text={value === '0' ? '正常' : '停用'}
+        />
+      ),
       title: '状态',
       width: 100
     },
@@ -218,11 +267,21 @@ function createPermissionColumns(
       fixed: 'right',
       key: 'actions',
       render: (_value, record) => (
-        <Flex justify="end" gap={4}>
-          <Button size="small" onClick={() => onEdit(record)}>
+        <Flex
+          justify="end"
+          gap={4}
+        >
+          <Button
+            size="small"
+            onClick={() => onEdit(record)}
+          >
             编辑
           </Button>
-          <Button danger size="small" onClick={() => onDelete(record)}>
+          <Button
+            danger
+            size="small"
+            onClick={() => onDelete(record)}
+          >
             删除
           </Button>
         </Flex>

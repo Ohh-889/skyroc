@@ -4,7 +4,12 @@ import { ButtonIcon } from '../src/preset/button';
 import { render, screen } from './helpers/render';
 
 vi.mock('@iconify/react', () => ({
-  Icon: (props: { icon: string }) => <span data-icon={props.icon} data-testid="iconify-icon" />
+  Icon: (props: { icon: string }) => (
+    <span
+      data-icon={props.icon}
+      data-testid="iconify-icon"
+    />
+  )
 }));
 
 describe('ButtonIcon', () => {
@@ -28,11 +33,7 @@ describe('ButtonIcon', () => {
   });
 
   it('renders children instead of the icon fallback when children are provided', () => {
-    render(
-      <ButtonIcon icon="lucide:settings">
-        Custom action
-      </ButtonIcon>
-    );
+    render(<ButtonIcon icon="lucide:settings">Custom action</ButtonIcon>);
 
     const button = screen.getByRole('button', { name: 'Custom action' });
 

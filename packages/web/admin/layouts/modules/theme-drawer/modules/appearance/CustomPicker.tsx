@@ -58,18 +58,31 @@ const CustomPicker = (props: Props) => {
   };
 
   const customPanelRender: ColorPickerProps['panelRender'] = (_, { components: { Picker } }) => (
-    <ASpace className="w-250px" orientation="vertical">
+    <ASpace
+      className="w-250px"
+      orientation="vertical"
+    >
       <>
         <Picker />
-        <AFlex wrap gap="small">
+        <AFlex
+          wrap
+          gap="small"
+        >
           {swatches.map(item => (
-            <ATooltip key={item.name} title={item.name}>
+            <ATooltip
+              key={item.name}
+              title={item.name}
+            >
               <span
                 onClick={() => {
                   handleUpdateColor(item.color, selectTheme as Theme.ThemeColorKey);
                 }}
               >
-                <AColorPicker defaultValue={item.color} open={false} size="small" />
+                <AColorPicker
+                  defaultValue={item.color}
+                  open={false}
+                  size="small"
+                />
               </span>
             </ATooltip>
           ))}
@@ -83,7 +96,10 @@ const CustomPicker = (props: Props) => {
       label={t(`theme.appearance.themeColor.${label}`)}
       suffix={
         label === 'info' && (
-          <ACheckbox checked={isInfoFollowPrimary} onChange={onChange}>
+          <ACheckbox
+            checked={isInfoFollowPrimary}
+            onChange={onChange}
+          >
             {t('theme.appearance.themeColor.followPrimary')}
           </ACheckbox>
         )

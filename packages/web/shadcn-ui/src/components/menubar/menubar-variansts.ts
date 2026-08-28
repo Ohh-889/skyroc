@@ -12,19 +12,19 @@ export const menubarVariants = tv({
       '2xl': {
         root: 'gap-2.5 p-1.25'
       },
-      'lg': {
+      lg: {
         root: 'gap-1.75 p-0.875'
       },
-      'md': {
+      md: {
         root: 'gap-1.5 p-0.75'
       },
-      'sm': {
+      sm: {
         root: 'gap-1.25 p-0.625 text-xs'
       },
-      'xl': {
+      xl: {
         root: 'gap-2 p-1'
       },
-      'xs': {
+      xs: {
         root: 'gap-1 p-0.5 text-2xs'
       }
     }

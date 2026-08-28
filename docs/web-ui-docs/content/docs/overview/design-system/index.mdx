@@ -7,38 +7,38 @@ Skyroc UI 的设计系统不是一组孤立样式，而是由 **设计令牌**�
 
 ## 体系分层
 
-| 层级 | 包 | 职责 |
-| --- | --- | --- |
-| 设计令牌 | `@skyroc/tailwind-plugin` | 语义色令牌（`src/tokens.ts`）+ 主题变量生成 |
-| 样式注入 | `@skyroc/tailwind-plugin` | 将主题变量注册到 Tailwind CSS 环境 |
-| 组件实现 | `@skyroc/web-ui` | 基于 Radix UI 与 Tailwind CSS 提供面向 Next.js 应用的组件 |
+| 层级     | 包                        | 职责                                                      |
+| -------- | ------------------------- | --------------------------------------------------------- |
+| 设计令牌 | `@skyroc/tailwind-plugin` | 语义色令牌（`src/tokens.ts`）+ 主题变量生成               |
+| 样式注入 | `@skyroc/tailwind-plugin` | 将主题变量注册到 Tailwind CSS 环境                        |
+| 组件实现 | `@skyroc/web-ui`          | 基于 Radix UI 与 Tailwind CSS 提供面向 Next.js 应用的组件 |
 
 ## 颜色语义
 
 组件统一使用语义颜色，而不是直接绑定某个固定色值。这样可以让业务表达稳定，主题色可以按项目切换。
 
-| 颜色 | 语义 | 典型场景 |
-| --- | --- | --- |
-| `primary` | 主操作 | 页面最重要的提交、创建、确认 |
-| `secondary` | 次级操作 | 辅助行为、低优先级入口 |
+| 颜色          | 语义     | 典型场景                     |
+| ------------- | -------- | ---------------------------- |
+| `primary`     | 主操作   | 页面最重要的提交、创建、确认 |
+| `secondary`   | 次级操作 | 辅助行为、低优先级入口       |
 | `destructive` | 危险操作 | 删除、移除、重置等不可逆行为 |
-| `success` | 成功状态 | 完成、启用、通过 |
-| `warning` | 警告状态 | 需要注意但未阻断的状态 |
-| `info` | 信息提示 | 中性信息、说明、引导 |
-| `carbon` | 中性深色 | 工具型按钮、非语义强调 |
-| `accent` | 特殊强调 | 需要额外视觉关注的入口 |
+| `success`     | 成功状态 | 完成、启用、通过             |
+| `warning`     | 警告状态 | 需要注意但未阻断的状态       |
+| `info`        | 信息提示 | 中性信息、说明、引导         |
+| `carbon`      | 中性深色 | 工具型按钮、非语义强调       |
+| `accent`      | 特殊强调 | 需要额外视觉关注的入口       |
 
 ## 尺寸体系
 
 Skyroc UI 统一使用 `xs` 到 `2xl` 的尺寸刻度。尺寸不是单个组件的私有样式，而是跨按钮、输入框、弹层、导航和反馈组件的统一密度语言。
 
-| 尺寸 | 使用建议 |
-| --- | --- |
-| `xs` | 表格行内操作、紧凑工具栏 |
-| `sm` | 次级操作、筛选区、侧栏控件 |
-| `md` | 常规页面默认尺寸 |
-| `lg` | 表单提交、关键操作 |
-| `xl` | 强入口、空状态主按钮 |
+| 尺寸  | 使用建议                   |
+| ----- | -------------------------- |
+| `xs`  | 表格行内操作、紧凑工具栏   |
+| `sm`  | 次级操作、筛选区、侧栏控件 |
+| `md`  | 常规页面默认尺寸           |
+| `lg`  | 表单提交、关键操作         |
+| `xl`  | 强入口、空状态主按钮       |
 | `2xl` | 首屏、营销位、少量特殊 CTA |
 
 ## 圆角与空间
@@ -53,13 +53,27 @@ Skyroc UI 统一使用 `xs` 到 `2xl` 的尺寸刻度。尺寸不是单个组件
 
 ```css
 @import 'tailwindcss';
-@import '@skyroc/tailwind-plugin' with (darkSelector: '[data-theme="dark"]');
+@import '@skyroc/tailwind-plugin' with (
+  darkSelector: '[data-theme="dark"]'
+);
 ```
 
 ## 与组件文档的关系
 
 <Cards>
-  <Card title="主题系统" description="ConfigProvider、语义颜色、暗色模式与全局配置" href="/overview/theming" />
-  <Card title="设计令牌" description="颜色、间距、圆角、字体的使用边界" href="/overview/design-system/tokens" />
-  <Card title="组件总览" description="查看所有可用组件与 API" href="/components" />
+  <Card
+    title="主题系统"
+    description="ConfigProvider、语义颜色、暗色模式与全局配置"
+    href="/overview/theming"
+  />
+  <Card
+    title="设计令牌"
+    description="颜色、间距、圆角、字体的使用边界"
+    href="/overview/design-system/tokens"
+  />
+  <Card
+    title="组件总览"
+    description="查看所有可用组件与 API"
+    href="/components"
+  />
 </Cards>

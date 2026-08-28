@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Input } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const InputBasic = () => {
   const [value, setValue] = useState('');

@@ -12,11 +12,9 @@ import { gitConfig } from '@/lib/shared';
 /**
  * 中间导航与侧栏的 7 个 root 一一对应。
  *
- * root 切换器是折叠的（可见 DOM 只渲染当前项），header 是唯一常驻可见的站内导航，
- * 所以这里把 7 棵树全部平铺出来，读者不点开下拉也能看见文档站有哪几块。
+ * Root 切换器是折叠的（可见 DOM 只渲染当前项），header 是唯一常驻可见的站内导航， 所以这里把 7 棵树全部平铺出来，读者不点开下拉也能看见文档站有哪几块。
  *
- * `match` 是这一项「拥有」的路径前缀，用来算高亮。现在是一一对应，
- * 但保留数组形态：以后某棵树被合并或新增子树时，把前缀挂到对应项名下即可。
+ * `match` 是这一项「拥有」的路径前缀，用来算高亮。现在是一一对应， 但保留数组形态：以后某棵树被合并或新增子树时，把前缀挂到对应项名下即可。
  *
  * 增减导航项时记得同步 `match`：所有 root 都要被某一项认领，且不能被两项同时认领。
  */
@@ -38,8 +36,7 @@ function matchesPrefix(pathname: string, prefix: string) {
 /**
  * 取命中前缀最长的那一项。
  *
- * 简单的 `some(startsWith)` 在前缀互不重叠时也够用，但一旦有人把 `/docs/core` 提成独立项、
- * 又忘了从「包文档」的 `match` 里删掉，就会两项同时高亮。取最长命中可以让更具体的那项赢。
+ * 简单的 `some(startsWith)` 在前缀互不重叠时也够用，但一旦有人把 `/docs/core` 提成独立项、 又忘了从「包文档」的 `match` 里删掉，就会两项同时高亮。取最长命中可以让更具体的那项赢。
  */
 function getActiveHref(pathname: string) {
   let activeHref = '';
@@ -65,8 +62,7 @@ function getActiveHref(pathname: string) {
  *
  * 第一项是主推的 demo，用 primary 底色；其余走描边样式，避免右侧出现两个同等份量的 CTA。
  *
- * RuoYi 那台是临时云服务器，走 HTTP 且直接暴露公网 IP：链接一旦进了公开文档就会被搜索引擎
- * 和镜像站长期留存，换机器后也不会自动失效。已知并接受，换机器或下线时记得回来删这一条。
+ * RuoYi 那台是临时云服务器，走 HTTP 且直接暴露公网 IP：链接一旦进了公开文档就会被搜索引擎 和镜像站长期留存，换机器后也不会自动失效。已知并接受，换机器或下线时记得回来删这一条。
  */
 const DOCS_PREVIEWS = [
   { href: 'https://admin.skyroc.me/', label: 'Admin 预览', primary: true },

@@ -39,18 +39,38 @@ export const PluginPageHeader = (props: PluginPageHeaderProps) => {
   const { icon, resources = [], tags = [], title } = props;
 
   return (
-    <Card className="card-wrapper" size="small" variant="borderless">
-      <Space className="w-full" orientation="vertical" size={12}>
-        <Space align="center" wrap>
-          <SvgIcon className="text-28px text-primary" icon={icon} />
-          <Typography.Title className="m-0" level={3}>
+    <Card
+      className="card-wrapper"
+      size="small"
+      variant="borderless"
+    >
+      <Space
+        className="w-full"
+        orientation="vertical"
+        size={12}
+      >
+        <Space
+          align="center"
+          wrap
+        >
+          <SvgIcon
+            className="text-28px text-primary"
+            icon={icon}
+          />
+          <Typography.Title
+            className="m-0"
+            level={3}
+          >
             {title}
           </Typography.Title>
         </Space>
         {tags.length > 0 && (
           <Space wrap>
             {tags.map(tag => (
-              <Tag color="processing" key={tag}>
+              <Tag
+                color="processing"
+                key={tag}
+              >
                 {tag}
               </Tag>
             ))}
@@ -59,7 +79,12 @@ export const PluginPageHeader = (props: PluginPageHeaderProps) => {
         {resources.length > 0 && (
           <Space wrap>
             {resources.map(resource => (
-              <Typography.Link href={resource.url} key={resource.url} rel="noreferrer" target="_blank">
+              <Typography.Link
+                href={resource.url}
+                key={resource.url}
+                rel="noreferrer"
+                target="_blank"
+              >
                 {resource.label}
               </Typography.Link>
             ))}
@@ -79,7 +104,12 @@ export const ExamplePanel = (props: ExamplePanelProps) => {
       size="small"
       title={
         <Space>
-          {icon && <SvgIcon className="text-primary" icon={icon} />}
+          {icon && (
+            <SvgIcon
+              className="text-primary"
+              icon={icon}
+            />
+          )}
           <span>{title}</span>
         </Space>
       }

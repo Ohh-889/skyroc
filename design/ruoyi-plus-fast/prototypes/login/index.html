@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc 管理系统 - 登录原型</title>
     <style>
       :root {
@@ -945,45 +951,114 @@
   </head>
   <body>
     <main class="auth-shell">
-      <aside class="brand-panel" aria-label="Skyroc 品牌介绍">
-        <div class="brand-grid" aria-hidden="true"></div>
-        <div class="orbit" aria-hidden="true">
+      <aside
+        class="brand-panel"
+        aria-label="Skyroc 品牌介绍"
+      >
+        <div
+          class="brand-grid"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="orbit"
+          aria-hidden="true"
+        >
           <span class="orbit-dot one"></span>
           <span class="orbit-dot two"></span>
           <span class="orbit-dot three"></span>
         </div>
-        <div class="glass-ellipse" aria-hidden="true"></div>
-        <div class="cube" aria-hidden="true"></div>
+        <div
+          class="glass-ellipse"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="cube"
+          aria-hidden="true"
+        ></div>
 
         <header class="brand-header">
-          <svg class="brand-logo" aria-hidden="true" viewBox="0 0 160 160">
+          <svg
+            class="brand-logo"
+            aria-hidden="true"
+            viewBox="0 0 160 160"
+          >
             <use href="#skyroc-logo"></use>
           </svg>
-          <p class="brand-name" data-i18n="brandName">Skyroc 管理系统</p>
+          <p
+            class="brand-name"
+            data-i18n="brandName"
+          >
+            Skyroc 管理系统
+          </p>
         </header>
 
         <section class="brand-copy">
-          <h1 class="brand-title" data-i18n="brandTitle">让企业管理更清晰、更安全</h1>
+          <h1
+            class="brand-title"
+            data-i18n="brandTitle"
+          >
+            让企业管理更清晰、更安全
+          </h1>
           <ul class="brand-features">
             <li class="brand-feature">
-              <svg fill="none" viewBox="0 0 24 24">
-                <path d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z" stroke-width="1.5" />
-                <path d="M9 12.2 11.1 14 15.5 9.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M9 12.2 11.1 14 15.5 9.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
               </svg>
               <span data-i18n="featurePermission">统一组织与权限</span>
             </li>
             <li class="brand-feature">
-              <svg fill="none" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="8.5" stroke-width="1.5" />
-                <path d="M12 7.5v5l3.2 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="8.5"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12 7.5v5l3.2 2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                />
               </svg>
               <span data-i18n="featureAudit">关键操作可追溯</span>
             </li>
             <li class="brand-feature">
-              <svg fill="none" viewBox="0 0 24 24">
-                <path d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z" stroke-width="1.5" />
-                <path d="M12 9v3.5" stroke-linecap="round" stroke-width="1.5" />
-                <circle cx="12" cy="15.6" r=".8" fill="currentColor" stroke="none" />
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 3 20 7v5c0 4.7-3 7.8-8 9-5-1.2-8-4.3-8-9V7l8-4Z"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12 9v3.5"
+                  stroke-linecap="round"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="12"
+                  cy="15.6"
+                  r=".8"
+                  fill="currentColor"
+                  stroke="none"
+                />
               </svg>
               <span data-i18n="featureSecure">安全可靠的管理入口</span>
             </li>
@@ -993,23 +1068,56 @@
 
       <section class="login-panel">
         <div class="top-actions">
-          <button class="icon-button" id="themeToggle" type="button" aria-label="切换主题" title="切换主题">
-            <svg id="sunIcon" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3.5" stroke-width="1.5" />
+          <button
+            class="icon-button"
+            id="themeToggle"
+            type="button"
+            aria-label="切换主题"
+            title="切换主题"
+          >
+            <svg
+              id="sunIcon"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="3.5"
+                stroke-width="1.5"
+              />
               <path
                 d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
                 stroke-linecap="round"
                 stroke-width="1.5"
               />
             </svg>
-            <svg id="moonIcon" fill="none" viewBox="0 0 24 24" hidden>
-              <path d="M20 15.1A8 8 0 0 1 8.9 4a8 8 0 1 0 11.1 11.1Z" stroke-linejoin="round" stroke-width="1.5" />
+            <svg
+              id="moonIcon"
+              fill="none"
+              viewBox="0 0 24 24"
+              hidden
+            >
+              <path
+                d="M20 15.1A8 8 0 0 1 8.9 4a8 8 0 1 0 11.1 11.1Z"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+              />
             </svg>
           </button>
 
           <div class="language-wrap">
-            <button class="icon-button" id="languageToggle" type="button" aria-label="切换语言" title="切换语言">
-              <svg fill="none" viewBox="0 0 24 24">
+            <button
+              class="icon-button"
+              id="languageToggle"
+              type="button"
+              aria-label="切换语言"
+              title="切换语言"
+            >
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <path
                   d="M4 5h9M8.5 3v2M6 8c1.5 2.8 3.8 5 6.5 6.2M11.5 8c-1.2 3.2-3.5 5.8-6.5 7.5"
                   stroke-linecap="round"
@@ -1023,26 +1131,72 @@
                 />
               </svg>
             </button>
-            <div class="language-menu" id="languageMenu" role="menu">
-              <button class="language-option active" data-lang="zh-CN" type="button">中文</button>
-              <button class="language-option" data-lang="en-US" type="button">English</button>
+            <div
+              class="language-menu"
+              id="languageMenu"
+              role="menu"
+            >
+              <button
+                class="language-option active"
+                data-lang="zh-CN"
+                type="button"
+              >
+                中文
+              </button>
+              <button
+                class="language-option"
+                data-lang="en-US"
+                type="button"
+              >
+                English
+              </button>
             </div>
           </div>
         </div>
 
         <div class="auth-content">
           <header class="auth-heading">
-            <h2 class="auth-title" data-i18n="loginTitle">欢迎登录 Skyroc</h2>
-            <p class="auth-subtitle" data-i18n="loginSubtitle">使用企业账号继续</p>
+            <h2
+              class="auth-title"
+              data-i18n="loginTitle"
+            >
+              欢迎登录 Skyroc
+            </h2>
+            <p
+              class="auth-subtitle"
+              data-i18n="loginSubtitle"
+            >
+              使用企业账号继续
+            </p>
           </header>
 
-          <form class="auth-form" id="passwordForm">
+          <form
+            class="auth-form"
+            id="passwordForm"
+          >
             <div class="form-field">
-              <label class="field-label" for="account" data-i18n="accountLabel">账号</label>
+              <label
+                class="field-label"
+                for="account"
+                data-i18n="accountLabel"
+                >账号</label
+              >
               <div class="field-control">
-                <svg fill="none" viewBox="0 0 24 24">
-                  <circle cx="12" cy="8" r="3.5" stroke-width="1.5" />
-                  <path d="M5 20c.5-4.1 3-6.5 7-6.5s6.5 2.4 7 6.5" stroke-linecap="round" stroke-width="1.5" />
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="8"
+                    r="3.5"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M5 20c.5-4.1 3-6.5 7-6.5s6.5 2.4 7 6.5"
+                    stroke-linecap="round"
+                    stroke-width="1.5"
+                  />
                 </svg>
                 <input
                   class="text-input"
@@ -1058,11 +1212,30 @@
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="password" data-i18n="passwordLabel">密码</label>
+              <label
+                class="field-label"
+                for="password"
+                data-i18n="passwordLabel"
+                >密码</label
+              >
               <div class="field-control">
-                <svg fill="none" viewBox="0 0 24 24">
-                  <rect x="5" y="10" width="14" height="10" rx="2" stroke-width="1.5" />
-                  <path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke-linecap="round" stroke-width="1.5" />
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <rect
+                    x="5"
+                    y="10"
+                    width="14"
+                    height="10"
+                    rx="2"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M8 10V7.5a4 4 0 0 1 8 0V10"
+                    stroke-linecap="round"
+                    stroke-width="1.5"
+                  />
                 </svg>
                 <input
                   class="text-input"
@@ -1074,17 +1247,38 @@
                   placeholder="请输入密码"
                   required
                 />
-                <button class="password-toggle" id="passwordToggle" type="button" aria-label="显示密码">
-                  <svg fill="none" viewBox="0 0 24 24">
-                    <path d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z" stroke-width="1.5" />
-                    <circle cx="12" cy="12" r="2.4" stroke-width="1.5" />
+                <button
+                  class="password-toggle"
+                  id="passwordToggle"
+                  type="button"
+                  aria-label="显示密码"
+                >
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                      stroke-width="1.5"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="2.4"
+                      stroke-width="1.5"
+                    />
                   </svg>
                 </button>
               </div>
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="captcha" data-i18n="captchaLabel">图形验证码</label>
+              <label
+                class="field-label"
+                for="captcha"
+                data-i18n="captchaLabel"
+                >图形验证码</label
+              >
               <div class="captcha-row">
                 <div class="field-control">
                   <input
@@ -1098,12 +1292,33 @@
                     required
                   />
                 </div>
-                <button class="captcha-box" id="captchaBox" type="button" aria-label="刷新验证码">
-                  <span class="captcha-value" id="captchaValue">7K9P</span>
+                <button
+                  class="captcha-box"
+                  id="captchaBox"
+                  type="button"
+                  aria-label="刷新验证码"
+                >
+                  <span
+                    class="captcha-value"
+                    id="captchaValue"
+                    >7K9P</span
+                  >
                 </button>
-                <button class="refresh-button" id="captchaRefresh" type="button">
-                  <svg fill="none" viewBox="0 0 24 24">
-                    <path d="M20 7v5h-5M4 17v-5h5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
+                <button
+                  class="refresh-button"
+                  id="captchaRefresh"
+                  type="button"
+                >
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M20 7v5h-5M4 17v-5h5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                    />
                     <path
                       d="M18.2 9A7 7 0 0 0 6.5 6.5L4 9M5.8 15A7 7 0 0 0 17.5 17.5L20 15"
                       stroke-linecap="round"
@@ -1117,59 +1332,139 @@
 
             <div class="form-options">
               <label class="checkbox-label">
-                <input name="remember" type="checkbox" />
+                <input
+                  name="remember"
+                  type="checkbox"
+                />
                 <span class="checkbox-box"></span>
                 <span data-i18n="keepSignedIn">保持登录</span>
               </label>
-              <button class="text-link" type="button" data-action="unavailable" data-i18n="forgotPassword">
+              <button
+                class="text-link"
+                type="button"
+                data-action="unavailable"
+                data-i18n="forgotPassword"
+              >
                 忘记密码？
               </button>
             </div>
 
-            <button class="primary-button" type="submit" data-i18n="loginButton">登录</button>
+            <button
+              class="primary-button"
+              type="submit"
+              data-i18n="loginButton"
+            >
+              登录
+            </button>
 
             <div class="switch-mode">
-              <button class="text-link" id="showCodeLogin" type="button" data-i18n="useCodeLogin">
+              <button
+                class="text-link"
+                id="showCodeLogin"
+                type="button"
+                data-i18n="useCodeLogin"
+              >
                 使用验证码登录
               </button>
             </div>
 
-            <div class="divider" data-i18n="otherLogin">其他方式登录</div>
+            <div
+              class="divider"
+              data-i18n="otherLogin"
+            >
+              其他方式登录
+            </div>
 
             <div class="social-buttons">
-              <button class="social-button" type="button" data-action="unavailable">
+              <button
+                class="social-button"
+                type="button"
+                data-action="unavailable"
+              >
                 <span class="provider-icon"><span class="wechat-icon"></span></span>
                 <span data-i18n="wechatLogin">微信登录</span>
               </button>
-              <button class="social-button" type="button" data-action="unavailable">
+              <button
+                class="social-button"
+                type="button"
+                data-action="unavailable"
+              >
                 <span class="provider-icon"><span class="feishu-icon"></span></span>
                 <span data-i18n="feishuLogin">飞书登录</span>
               </button>
             </div>
 
             <p class="admin-hint">
-              <svg fill="none" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9" stroke-width="1.5" />
-                <path d="M12 11v5M12 8h.01" stroke-linecap="round" stroke-width="1.5" />
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12 11v5M12 8h.01"
+                  stroke-linecap="round"
+                  stroke-width="1.5"
+                />
               </svg>
               <span data-i18n="adminHint">账号由管理员创建，如需帮助请联系管理员</span>
             </p>
           </form>
 
-          <form class="auth-form" id="codeForm" hidden>
+          <form
+            class="auth-form"
+            id="codeForm"
+            hidden
+          >
             <div class="login-tabs">
-              <button class="login-tab active" type="button" data-code-mode="phone" data-i18n="phoneCode">
+              <button
+                class="login-tab active"
+                type="button"
+                data-code-mode="phone"
+                data-i18n="phoneCode"
+              >
                 手机验证码
               </button>
-              <button class="login-tab" type="button" data-code-mode="email" data-i18n="emailCode">邮箱验证码</button>
+              <button
+                class="login-tab"
+                type="button"
+                data-code-mode="email"
+                data-i18n="emailCode"
+              >
+                邮箱验证码
+              </button>
             </div>
 
             <div class="form-field">
-              <label class="field-label" id="codeAccountLabel" for="codeAccount" data-i18n="phoneLabel">手机号</label>
+              <label
+                class="field-label"
+                id="codeAccountLabel"
+                for="codeAccount"
+                data-i18n="phoneLabel"
+                >手机号</label
+              >
               <div class="field-control">
-                <svg fill="none" viewBox="0 0 24 24">
-                  <rect x="7" y="2.5" width="10" height="19" rx="2" stroke-width="1.5" />
-                  <path d="M10 5h4M11 18.5h2" stroke-linecap="round" stroke-width="1.5" />
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <rect
+                    x="7"
+                    y="2.5"
+                    width="10"
+                    height="19"
+                    rx="2"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M10 5h4M11 18.5h2"
+                    stroke-linecap="round"
+                    stroke-width="1.5"
+                  />
                 </svg>
                 <input
                   class="text-input"
@@ -1185,12 +1480,31 @@
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="verificationCode" data-i18n="verificationLabel">验证码</label>
+              <label
+                class="field-label"
+                for="verificationCode"
+                data-i18n="verificationLabel"
+                >验证码</label
+              >
               <div class="verification-row">
                 <div class="field-control">
-                  <svg fill="none" viewBox="0 0 24 24">
-                    <rect x="5" y="10" width="14" height="10" rx="2" stroke-width="1.5" />
-                    <path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke-linecap="round" stroke-width="1.5" />
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect
+                      x="5"
+                      y="10"
+                      width="14"
+                      height="10"
+                      rx="2"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      d="M8 10V7.5a4 4 0 0 1 8 0V10"
+                      stroke-linecap="round"
+                      stroke-width="1.5"
+                    />
                   </svg>
                   <input
                     class="text-input"
@@ -1204,62 +1518,126 @@
                     required
                   />
                 </div>
-                <button class="code-button" id="sendCode" type="button" data-i18n="getCode">获取验证码</button>
+                <button
+                  class="code-button"
+                  id="sendCode"
+                  type="button"
+                  data-i18n="getCode"
+                >
+                  获取验证码
+                </button>
               </div>
             </div>
 
             <div class="form-options">
               <label class="checkbox-label">
-                <input name="rememberCode" type="checkbox" />
+                <input
+                  name="rememberCode"
+                  type="checkbox"
+                />
                 <span class="checkbox-box"></span>
                 <span data-i18n="keepSignedIn">保持登录</span>
               </label>
-              <button class="text-link" type="button" data-action="unavailable" data-i18n="forgotPassword">
+              <button
+                class="text-link"
+                type="button"
+                data-action="unavailable"
+                data-i18n="forgotPassword"
+              >
                 忘记密码？
               </button>
             </div>
 
-            <button class="primary-button" type="submit" data-i18n="loginButton">登录</button>
+            <button
+              class="primary-button"
+              type="submit"
+              data-i18n="loginButton"
+            >
+              登录
+            </button>
 
             <div class="switch-mode">
-              <button class="text-link" id="showPasswordLogin" type="button" data-i18n="usePasswordLogin">
+              <button
+                class="text-link"
+                id="showPasswordLogin"
+                type="button"
+                data-i18n="usePasswordLogin"
+              >
                 使用密码登录
               </button>
             </div>
 
-            <div class="divider" data-i18n="otherLogin">其他方式登录</div>
+            <div
+              class="divider"
+              data-i18n="otherLogin"
+            >
+              其他方式登录
+            </div>
 
             <div class="social-buttons">
-              <button class="social-button" type="button" data-action="unavailable">
+              <button
+                class="social-button"
+                type="button"
+                data-action="unavailable"
+              >
                 <span class="provider-icon"><span class="wechat-icon"></span></span>
                 <span data-i18n="wechatLogin">微信登录</span>
               </button>
-              <button class="social-button" type="button" data-action="unavailable">
+              <button
+                class="social-button"
+                type="button"
+                data-action="unavailable"
+              >
                 <span class="provider-icon"><span class="feishu-icon"></span></span>
                 <span data-i18n="feishuLogin">飞书登录</span>
               </button>
             </div>
 
             <p class="admin-hint">
-              <svg fill="none" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="9" stroke-width="1.5" />
-                <path d="M12 11v5M12 8h.01" stroke-linecap="round" stroke-width="1.5" />
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12 11v5M12 8h.01"
+                  stroke-linecap="round"
+                  stroke-width="1.5"
+                />
               </svg>
               <span data-i18n="adminHint">账号由管理员创建，如需帮助请联系管理员</span>
             </p>
           </form>
 
           <footer class="auth-footer">
-            <a href="#" data-i18n="privacy">隐私政策</a>
+            <a
+              href="#"
+              data-i18n="privacy"
+              >隐私政策</a
+            >
             <span>·</span>
-            <a href="#" data-i18n="terms">服务条款</a>
+            <a
+              href="#"
+              data-i18n="terms"
+              >服务条款</a
+            >
             <span class="copyright">© 2026 Skyroc</span>
           </footer>
         </div>
       </section>
     </main>
 
-    <svg aria-hidden="true" height="0" style="position: absolute" width="0">
+    <svg
+      aria-hidden="true"
+      height="0"
+      style="position: absolute"
+      width="0"
+    >
       <defs>
         <path
           id="skyroc-logo"

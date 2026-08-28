@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import type { OssItem } from '@/service/api/system-oss';
 
-import OssFileIcon from './OssFileIcon';
 import { isPreviewableImage } from './oss-utils';
+import OssFileIcon from './OssFileIcon';
 
 interface OssThumbnailProps {
   /** 当前行的文件记录。 */

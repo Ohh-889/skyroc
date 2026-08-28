@@ -39,7 +39,7 @@ export const selectVariants = tv({
   variants: {
     position: {
       'item-aligned': '',
-      'popper': {
+      popper: {
         content: `data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1`,
         viewport: `h-[var(--radix-select-trigger-height)] w-full  min-w-[var(--radix-select-trigger-width)]`
       }
@@ -55,7 +55,7 @@ export const selectVariants = tv({
         trigger: 'h-12 px-4 text-xl',
         viewport: 'p-1.75'
       },
-      'lg': {
+      lg: {
         content: 'max-h-90 text-base',
         groupLabel: 'p-2',
         item: 'gap-2.5 px-2.5 py-1.5',
@@ -65,7 +65,7 @@ export const selectVariants = tv({
         trigger: 'h-9 px-3 text-base',
         viewport: 'p-1.25'
       },
-      'md': {
+      md: {
         content: 'max-h-80 text-sm',
         groupLabel: 'p-1.75',
         item: 'gap-2 px-2 py-1.5',
@@ -75,7 +75,7 @@ export const selectVariants = tv({
         trigger: 'h-8 px-2.5 text-sm',
         viewport: 'p-1'
       },
-      'sm': {
+      sm: {
         content: 'max-h-75 text-xs',
         groupLabel: 'p-1.25',
         item: 'gap-1.5 px-1.5 py-1',
@@ -85,7 +85,7 @@ export const selectVariants = tv({
         trigger: 'h-7 px-2 text-xs',
         viewport: 'p-0.875'
       },
-      'xl': {
+      xl: {
         content: 'max-h-100 text-lg',
         groupLabel: 'p-2.5',
         item: 'gap-3 px-3 py-2',
@@ -95,7 +95,7 @@ export const selectVariants = tv({
         trigger: 'h-10 px-3.5 text-lg',
         viewport: 'p-1.5'
       },
-      'xs': {
+      xs: {
         content: 'max-h-70 text-2xs',
         groupLabel: 'p-1',
         item: 'gap-1 px-1 py-1',

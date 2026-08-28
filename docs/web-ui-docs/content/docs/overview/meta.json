@@ -5,13 +5,5 @@
   "root": true,
   "defaultOpen": true,
   "collapsible": false,
-  "pages": [
-    "introduction",
-    "getting-started",
-    "theming",
-    "design-system",
-    "usage-guides",
-    "examples",
-    "migration"
-  ]
+  "pages": ["introduction", "getting-started", "theming", "design-system", "usage-guides", "examples", "migration"]
 }

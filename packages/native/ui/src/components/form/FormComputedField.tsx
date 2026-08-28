@@ -16,16 +16,16 @@ import type { FormComputedFieldProps } from './types';
  * 子组件是 Input 时 `compute` 要返回字符串 —— RN 的 TextInput 只接受字符串，返回数字不会显示。
  *
  * @example
- * ```tsx
- * <FormComputedField
- *   name="total"
- *   label="合计"
- *   deps={['price', 'quantity']}
- *   compute={(get) => (get('price') || 0) * (get('quantity') || 0)}
- * >
- *   <Input />
- * </FormComputedField>
- * ```
+ *   ```tsx
+ *   <FormComputedField
+ *     name="total"
+ *     label="合计"
+ *     deps={['price', 'quantity']}
+ *     compute={get => (get('price') || 0) * (get('quantity') || 0)}
+ *   >
+ *     <Input />
+ *   </FormComputedField>;
+ *   ```;
  */
 const FormComputedField = <Values = any,>(props: FormComputedFieldProps<Values>) => {
   const {

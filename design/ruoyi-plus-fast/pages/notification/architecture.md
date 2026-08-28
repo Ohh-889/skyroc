@@ -37,12 +37,12 @@ class Notification(BaseModel):
 
 直接后果：
 
-| 问题 | 表现 |
-| --- | --- |
-| 公告写扩散不可控 | 给 1 万人发一条公告 = 1 万行完全相同的 `title/content` |
-| 无法撤回 | 撤回要 UPDATE 1 万行；改文案更是不可能 |
-| 无法统计 | "这条公告送达/已读多少"要全表扫 `metadata` |
-| 幂等靠约定 | `metadata.occurred_at` 被当成幂等键（`models.py:79` 的注释），但它不是唯一索引 |
+| 问题                 | 表现                                                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| 公告写扩散不可控     | 给 1 万人发一条公告 = 1 万行完全相同的 `title/content`                                    |
+| 无法撤回             | 撤回要 UPDATE 1 万行；改文案更是不可能                                                    |
+| 无法统计             | "这条公告送达/已读多少"要全表扫 `metadata`                                                |
+| 幂等靠约定           | `metadata.occurred_at` 被当成幂等键（`models.py:79` 的注释），但它不是唯一索引            |
 | 批量操作 O(N) 次往返 | `mark_as_read_batch` 是 for 循环里 `find_by_id` + `save`（`notification_service.py:402`） |
 
 `NotificationFanoutResult` 里有 `status="skipped"` + `existing_count`，说明去重是在应用层"查一下有没有"实现的——并发下会漏。
@@ -128,22 +128,22 @@ const offMessage = client.on('message', raw => {
 interface NotificationEvent {
   id: string;
   /** 幂等键，唯一索引。同一业务事实重复投递直接冲突丢弃 */
-  dedupeKey: string;          // 例：`approval.passed:${approvalId}`
-  eventType: string;          // 例：`approval.passed`
+  dedupeKey: string; // 例：`approval.passed:${approvalId}`
+  eventType: string; // 例：`approval.passed`
   payload: Record<string, unknown>;
   occurredAt: string;
-  producedBy: string;         // 来源模块，排查用
+  producedBy: string; // 来源模块，排查用
 }
 
 /** 消息：给人看的内容，一条事件可能生成多条消息（不同受众/不同文案） */
 interface NotificationMessage {
   id: string;
-  eventId: string | null;     // null = 管理员手工发布的公告
+  eventId: string | null; // null = 管理员手工发布的公告
   category: NotificationCategory;
   priority: NotificationPriority;
   title: string;
   summary: string;
-  body: string | null;        // 详情，列表接口不返回
+  body: string | null; // 详情，列表接口不返回
   /** 语义化的关联对象，前端自己决定怎么跳 */
   reference: { type: string; id: string } | null;
   /** 需要用户动作时才有 */
@@ -173,7 +173,7 @@ interface InboxEntry {
   /** 处理态，与已读态正交。见 §3.3 */
   actionState: ActionState;
   actionUpdatedAt: string | null;
-  dismissedAt: string | null;  // 用户视图删除，不删数据
+  dismissedAt: string | null; // 用户视图删除，不删数据
   deliveredAt: string | null;
   /** 客户端按它把同一对象的多条变化折叠成一组展示；null 表示不分组 */
   collapseKey: string | null;
@@ -192,12 +192,12 @@ interface InboxEntry {
 
 ```ts
 type NotificationCategory =
-  | 'task'          // 待办：需要我做事
-  | 'announcement'  // 公告：组织下发
-  | 'message'       // 协作：有人 @ 我
-  | 'event'         // 系统事件：我发起的操作有结果了
-  | 'alert'         // 异常告警
-  | 'security';     // 安全
+  | 'task' // 待办：需要我做事
+  | 'announcement' // 公告：组织下发
+  | 'message' // 协作：有人 @ 我
+  | 'event' // 系统事件：我发起的操作有结果了
+  | 'alert' // 异常告警
+  | 'security'; // 安全
 
 type NotificationPriority = 'low' | 'normal' | 'high' | 'urgent';
 ```
@@ -283,13 +283,13 @@ GET /api/notifications/sync?inbox=1042&bcast=88
 
 这一个接口同时解决：
 
-| 场景 | 怎么解决 |
-| --- | --- |
-| 重复推送 | `changeSeq <= lastCursor` 直接丢弃，不需要 `msg_id` |
-| 断线补齐 | 重连后 `sync?inbox=<lastCursor>` |
-| 多设备已读同步 | 已读也是一次 `changeSeq` 推进 |
-| 未读数漂移 | 每次 sync 返回权威值，客户端不自己算 |
-| 落后太多 | `truncated: true` → 丢弃本地缓存全量重拉 |
+| 场景           | 怎么解决                                            |
+| -------------- | --------------------------------------------------- |
+| 重复推送       | `changeSeq <= lastCursor` 直接丢弃，不需要 `msg_id` |
+| 断线补齐       | 重连后 `sync?inbox=<lastCursor>`                    |
+| 多设备已读同步 | 已读也是一次 `changeSeq` 推进                       |
+| 未读数漂移     | 每次 sync 返回权威值，客户端不自己算                |
+| 落后太多       | `truncated: true` → 丢弃本地缓存全量重拉            |
 
 ### 4.3 实时通道退化成一行信号
 
@@ -321,10 +321,10 @@ type Audience =
 
 策略：
 
-| 受众规模 | 策略 | 理由 |
-| --- | --- | --- |
-| ≤ 阈值（建议 1000） | **写扩散**：发布时插入 N 条 `InboxEntry` | 查询简单，一条 SQL 出列表 |
-| > 阈值 / `all` | **读扩散**：不插 entry，查询时 union | 不然发一条全员公告要写几十万行 |
+| 受众规模            | 策略                                     | 理由                           |
+| ------------------- | ---------------------------------------- | ------------------------------ |
+| ≤ 阈值（建议 1000） | **写扩散**：发布时插入 N 条 `InboxEntry` | 查询简单，一条 SQL 出列表      |
+| > 阈值 / `all`      | **读扩散**：不插 entry，查询时 union     | 不然发一条全员公告要写几十万行 |
 
 读扩散需要一张辅助表记录"用户对广播消息的状态"：
 
@@ -390,13 +390,13 @@ subscribeRealtime('notification.changed', data => {
 
 ### 6.3 运行时 vs 收件箱
 
-| | 收件箱 `inbox.ts` | 运行时 `notification-runtime.ts` |
-| --- | --- | --- |
-| 数据来源 | 服务端 | 本地 |
-| 持久化 | 服务端 + 可选 IndexedDB 缓存 | 无（配置存 localStorage） |
-| 容量 | 分页，无上限 | 无状态 |
-| 职责 | 列表 · 未读数 · 已读 · 分页 · 同步 | 响铃 · 弹浏览器通知 · 免打扰判定 |
-| 现在在哪 | 不存在 | `notification-store.ts` 里混着 |
+|          | 收件箱 `inbox.ts`                  | 运行时 `notification-runtime.ts` |
+| -------- | ---------------------------------- | -------------------------------- |
+| 数据来源 | 服务端                             | 本地                             |
+| 持久化   | 服务端 + 可选 IndexedDB 缓存       | 无（配置存 localStorage）        |
+| 容量     | 分页，无上限                       | 无状态                           |
+| 职责     | 列表 · 未读数 · 已读 · 分页 · 同步 | 响铃 · 弹浏览器通知 · 免打扰判定 |
+| 现在在哪 | 不存在                             | `notification-store.ts` 里混着   |
 
 新消息到达时的编排：
 
@@ -466,12 +466,15 @@ interface NotificationPreferences {
   /** 全局免打扰 */
   dnd: { enabled: boolean; start: string; end: string } | null;
   /** 按分类 × 渠道的开关 */
-  channels: Record<NotificationCategory, {
-    inApp: boolean;      // 恒为 true，不可关（站内是兜底）
-    browser: boolean;
-    sound: boolean;
-    email: boolean;
-  }>;
+  channels: Record<
+    NotificationCategory,
+    {
+      inApp: boolean; // 恒为 true，不可关（站内是兜底）
+      browser: boolean;
+      sound: boolean;
+      email: boolean;
+    }
+  >;
 }
 ```
 
@@ -530,14 +533,14 @@ interface NotificationPreferences {
 
 ## 11. 迁移：现有代码怎么办
 
-| 现状 | 处理 |
-| --- | --- |
-| `NotificationStore`（PriorityQueue，容量 99） | 拆成 `NotificationRuntime`（保留音效/免打扰/浏览器通知）+ 删掉队列。队列职责移交 `features/notification/inbox.ts` |
-| `parseRealtimeNotification` 返回 `AddNotificationInput` | 改为 realtime 只分发信封；通知模块自己订阅 `notification.changed` |
-| `features/realtime/message.ts` 的 `withMsgId` 去重 | 删掉，由 `seq` 取代 |
-| WS + SSE 同时连接 | 见决策 D1，倾向只保留一条 |
-| `NotificationPanel` 直接读 store 快照 | 改为读 `useInbox()`，支持分页/加载更多/错误重试 |
-| **`compareNotifications`（先按优先级，再按时间）** | **删掉优先级参与排序**，见 §11.1。这是唯一一处和现有实现语义冲突、必须改的地方 |
+| 现状                                                    | 处理                                                                                                              |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `NotificationStore`（PriorityQueue，容量 99）           | 拆成 `NotificationRuntime`（保留音效/免打扰/浏览器通知）+ 删掉队列。队列职责移交 `features/notification/inbox.ts` |
+| `parseRealtimeNotification` 返回 `AddNotificationInput` | 改为 realtime 只分发信封；通知模块自己订阅 `notification.changed`                                                 |
+| `features/realtime/message.ts` 的 `withMsgId` 去重      | 删掉，由 `seq` 取代                                                                                               |
+| WS + SSE 同时连接                                       | 见决策 D1，倾向只保留一条                                                                                         |
+| `NotificationPanel` 直接读 store 快照                   | 改为读 `useInbox()`，支持分页/加载更多/错误重试                                                                   |
+| **`compareNotifications`（先按优先级，再按时间）**      | **删掉优先级参与排序**，见 §11.1。这是唯一一处和现有实现语义冲突、必须改的地方                                    |
 
 ### 11.1 ★ 列表排序：优先级不参与
 
@@ -582,17 +585,17 @@ function compareNotifications(a, b) {
 
 ## 12. 需要你拍板的决策
 
-| 编号 | 问题 | 我的建议 | 影响面 |
-| --- | --- | --- | --- |
-| ~~D1~~ | ~~WS 和 SSE 是不是要同时连？~~ | **问题问错了，已修正。** 后端 `send_to_user` 按 user_id 聚合、不区分传输——"两条通道"实际是"一个用户 N 条连接"（多标签页 + 多设备）。WS 和 SSE 都是一等公民，不做降级，传输由客户端自选。信号幂等由 `changeSeq` 保证，与连接数无关。同浏览器多标签页在**前端**用 BroadcastChannel 选主，避免 N 次 sync 和 N 次响铃。详见 `infra.md` §1 | — |
-| **D2** | `type`（视觉）和 `category`（业务）是否都保留？ | **只留 `category` + `priority`**，视觉由前端映射 | 中，改契约 |
-| **D3** | 铃铛徽标显示未读数还是待办数？ | 显示**未读数**，待办数在面板顶部单独一行"N 项待处理"。两个数字挤一个徽标一定误导 | 低 |
-| **D4** | 已读是否可逆（标记为未读）？ | **可逆**。用户会用它当"稍后处理"。代价是未读数要走 sync 而不是本地自减 | 低 |
-| **D5** | 写扩散阈值定多少？P0 是否直接上读扩散？ | 阈值 1000。**P0 只做写扩散 + 超阈值拒绝发布**，M2 再补读扩散 | 中 |
-| **D6** | `GET /{id}` 是否自动标已读？ | **否**。已读必须显式。与 benai 现有行为不一致，需要确认调用方 | 中 |
-| **D7** | 处理态由谁写？ | **业务系统回写**（审批服务完成后调通知服务）。通知里的按钮只做跳转。反过来做会让通知服务依赖所有业务域 | 高，跨团队约定 |
-| **D8** | 重连补齐的历史消息要不要响铃？ | **不响**。只对"本次会话建立后新产生"的提醒 | 低 |
-| ~~D9~~ | ~~这套是给 ruoyi-plus-fast 后端还是复用 benai 那套？~~ | **已确认：ruoyi-plus-fast 自有服务**，benai 仅作反面参考。后端设计见 `backend.md`，无约束版见 `platform.md` | — |
+| 编号   | 问题                                                   | 我的建议                                                                                                                                                                                                                                                                                                                              | 影响面         |
+| ------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| ~~D1~~ | ~~WS 和 SSE 是不是要同时连？~~                         | **问题问错了，已修正。** 后端 `send_to_user` 按 user_id 聚合、不区分传输——"两条通道"实际是"一个用户 N 条连接"（多标签页 + 多设备）。WS 和 SSE 都是一等公民，不做降级，传输由客户端自选。信号幂等由 `changeSeq` 保证，与连接数无关。同浏览器多标签页在**前端**用 BroadcastChannel 选主，避免 N 次 sync 和 N 次响铃。详见 `infra.md` §1 | —              |
+| **D2** | `type`（视觉）和 `category`（业务）是否都保留？        | **只留 `category` + `priority`**，视觉由前端映射                                                                                                                                                                                                                                                                                      | 中，改契约     |
+| **D3** | 铃铛徽标显示未读数还是待办数？                         | 显示**未读数**，待办数在面板顶部单独一行"N 项待处理"。两个数字挤一个徽标一定误导                                                                                                                                                                                                                                                      | 低             |
+| **D4** | 已读是否可逆（标记为未读）？                           | **可逆**。用户会用它当"稍后处理"。代价是未读数要走 sync 而不是本地自减                                                                                                                                                                                                                                                                | 低             |
+| **D5** | 写扩散阈值定多少？P0 是否直接上读扩散？                | 阈值 1000。**P0 只做写扩散 + 超阈值拒绝发布**，M2 再补读扩散                                                                                                                                                                                                                                                                          | 中             |
+| **D6** | `GET /{id}` 是否自动标已读？                           | **否**。已读必须显式。与 benai 现有行为不一致，需要确认调用方                                                                                                                                                                                                                                                                         | 中             |
+| **D7** | 处理态由谁写？                                         | **业务系统回写**（审批服务完成后调通知服务）。通知里的按钮只做跳转。反过来做会让通知服务依赖所有业务域                                                                                                                                                                                                                                | 高，跨团队约定 |
+| **D8** | 重连补齐的历史消息要不要响铃？                         | **不响**。只对"本次会话建立后新产生"的提醒                                                                                                                                                                                                                                                                                            | 低             |
+| ~~D9~~ | ~~这套是给 ruoyi-plus-fast 后端还是复用 benai 那套？~~ | **已确认：ruoyi-plus-fast 自有服务**，benai 仅作反面参考。后端设计见 `backend.md`，无约束版见 `platform.md`                                                                                                                                                                                                                           | —              |
 
 ---
 

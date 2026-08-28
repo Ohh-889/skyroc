@@ -3,9 +3,7 @@
   "name": "slider",
   "type": "registry:block",
   "title": "Slider",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/slider/Slider.tsx",

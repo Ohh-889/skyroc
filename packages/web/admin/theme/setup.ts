@@ -57,7 +57,7 @@ export function getInternalStorage(): ThemeStorage | null {
  *   setupTheme({
  *     buildTime: BUILD_TIME
  *   });
- *   ```
+ *   ```;
  */
 export function setupTheme(options: SetupThemeOptions = {}) {
   const {
@@ -108,7 +108,7 @@ function createDefaultStorage(storagePrefix: string) {
  *     themeColor: '#6366F1',
  *     themeScheme: 'dark'
  *   });
- *   ```
+ *   ```;
  */
 export function defineThemeOverrides(overrides: Partial<Theme.ThemeSetting>): Partial<Theme.ThemeSetting> {
   return overrides;

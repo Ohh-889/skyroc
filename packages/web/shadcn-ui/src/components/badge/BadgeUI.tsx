@@ -16,18 +16,16 @@ const BadgeUI = forwardRef<HTMLDivElement, BadgeProps>((props, ref) => {
     >
       {children}
 
-      {open
-        ? (
-          <BadgeContent
-            className={classNames?.content}
-            color={color}
-            position={position}
-            size={size}
-          >
-            {content}
-          </BadgeContent>
-        )
-        : null}
+      {open ? (
+        <BadgeContent
+          className={classNames?.content}
+          color={color}
+          position={position}
+          size={size}
+        >
+          {content}
+        </BadgeContent>
+      ) : null}
     </BadgeRoot>
   );
 });

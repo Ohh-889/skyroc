@@ -1,6 +1,6 @@
-import { defaultPresetColors, derivative, derivativeDark } from '../antd-algorithm';
 import { transformColorWithOpacity } from '@skyroc/color';
 import type { ConfigProviderProps } from 'antd';
+import { defaultPresetColors, derivative, derivativeDark } from '../antd-algorithm';
 
 // 注册自定义 token，antd cssVar 会据此生成 --color-inverted
 declare module 'antd/es/theme/interface' {

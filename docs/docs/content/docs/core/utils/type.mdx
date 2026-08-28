@@ -1,6 +1,6 @@
 ---
-title: "类型工具"
-description: "@skyroc/utils/type —— 零运行时的 TypeScript 工具类型：深度路径推导、递归可选化、联合类型变换与函数类型提取"
+title: '类型工具'
+description: '@skyroc/utils/type —— 零运行时的 TypeScript 工具类型：深度路径推导、递归可选化、联合类型变换与函数类型提取'
 ---
 
 ## 概述
@@ -12,29 +12,28 @@ import type { LeafPaths, PathValue, DeepPartial } from '@skyroc/utils/type';
 ```
 
 <Callout type="info">
-  这些类型原先住在独立的 `@skyroc/type-utils` 包里。该包唯一的两个消费者（`@skyroc/form` 与
-  `@skyroc/utils` 自身）都已经依赖 `@skyroc/utils`，独立发包只是在重复付版本、README、构建与
-  发布的成本，因此从 `@skyroc/utils@4.0.0` 起并入本子入口。迁移方式见
-  [迁移](#从-skyroctype-utils-迁移)。
+  这些类型原先住在独立的 `@skyroc/type-utils` 包里。该包唯一的两个消费者（`@skyroc/form` 与 `@skyroc/utils`
+  自身）都已经依赖 `@skyroc/utils`，独立发包只是在重复付版本、README、构建与 发布的成本，因此从 `@skyroc/utils@4.0.0`
+  起并入本子入口。迁移方式见 [迁移](#从-skyroctype-utils-迁移)。
 </Callout>
 
 ## 入口划分
 
-| 导入路径 | 内容 | 需要 DOM lib |
-| --- | --- | --- |
-| `@skyroc/utils/type` | 本页的全部类型 | 否 |
-| `@skyroc/utils/web` | `FieldElement`、`CustomElement` | 是 |
+| 导入路径             | 内容                            | 需要 DOM lib |
+| -------------------- | ------------------------------- | ------------ |
+| `@skyroc/utils/type` | 本页的全部类型                  | 否           |
+| `@skyroc/utils/web`  | `FieldElement`、`CustomElement` | 是           |
 
 这个拆分是必要的：React Native 侧会导入 `./type`，那里只要出现一处 DOM 全局类型，无 DOM lib 的环境就编译不过。该边界和运行时代码走同一套 tsconfig 强制——`./type` 所属的 TS 项目 `lib` 只有 `ESNext`。
 
 ## 原始类型与判定
 
-| 类型 | 说明 |
-| --- | --- |
-| `Primitive` | 真正的 JS 原始类型：`string \| number \| boolean \| bigint \| symbol \| null \| undefined` |
-| `Atomic` | 递归终止集合：`Primitive` 加上 `Date`、`RegExp`、`Error`、`Map`、`Set`、`WeakMap`、`WeakSet` 以及任意函数 |
-| `IsAny<T>` | 只有 `any` 为 `true` |
-| `IsTuple<T>` | 定长元组为 `true`，变长数组为 `false` |
+| 类型         | 说明                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| `Primitive`  | 真正的 JS 原始类型：`string \| number \| boolean \| bigint \| symbol \| null \| undefined`                |
+| `Atomic`     | 递归终止集合：`Primitive` 加上 `Date`、`RegExp`、`Error`、`Map`、`Set`、`WeakMap`、`WeakSet` 以及任意函数 |
+| `IsAny<T>`   | 只有 `any` 为 `true`                                                                                      |
+| `IsTuple<T>` | 定长元组为 `true`，变长数组为 `false`                                                                     |
 
 `Primitive` 刻意保持狭义。想表达「不要再往里递归」的，用 `Atomic`——本子入口所有深度工具都停在它这里。
 
@@ -91,14 +90,14 @@ type A = AllPaths<FormValues>;
 
 ### 其余路径工具
 
-| 类型 | 说明 |
-| --- | --- |
-| `AllPathsKeys<T>` / `AllPathsShape<T>` | 路径键联合 / 路径到值类型的映射 |
-| `PathValue<T, P>` | 取出路径 `P` 上的值类型 |
+| 类型                                        | 说明                              |
+| ------------------------------------------- | --------------------------------- |
+| `AllPathsKeys<T>` / `AllPathsShape<T>`      | 路径键联合 / 路径到值类型的映射   |
+| `PathValue<T, P>`                           | 取出路径 `P` 上的值类型           |
 | `PathToType<T, P>` / `PathToDeepType<T, P>` | 由单条路径反推对象结构（浅 / 深） |
-| `ShapeFromPaths<T, Ps>` | 由一组路径反推对象结构 |
-| `ArrayKeys<T>` / `ArrayElementValue<T, K>` | 数组字段键 / 其元素类型 |
-| `Join<P, K>` | 路径片段拼接 |
+| `ShapeFromPaths<T, Ps>`                     | 由一组路径反推对象结构            |
+| `ArrayKeys<T>` / `ArrayElementValue<T, K>`  | 数组字段键 / 其元素类型           |
+| `Join<P, K>`                                | 路径片段拼接                      |
 
 ### 递归深度
 
@@ -118,18 +117,18 @@ type Q = AllPaths<TreeNode, '', 3>; // 更浅，编译更快
 
 ## 函数类型
 
-| 类型 | 说明 |
-| --- | --- |
-| `Fn<A, R>` | 通用函数签名 |
-| `Noop` | `() => void` |
-| `FunctionKeys<T>` | `T` 中值为函数的键 |
-| `FunctionUnion<T>` | `T` 中所有函数值的联合 |
+| 类型               | 说明                     |
+| ------------------ | ------------------------ |
+| `Fn<A, R>`         | 通用函数签名             |
+| `Noop`             | `() => void`             |
+| `FunctionKeys<T>`  | `T` 中值为函数的键       |
+| `FunctionUnion<T>` | `T` 中所有函数值的联合   |
 | `OnlyFunctions<T>` | 只保留函数字段的对象类型 |
 
 ## 零散工具类型
 
-| 类型 | 说明 |
-| --- | --- |
+| 类型            | 说明                                                                         |
+| --------------- | ---------------------------------------------------------------------------- |
 | `MaybeArray<T>` | `T \| T[]`。原属 `@skyroc/ui-types`，它和 `DeepPartial` 是同类，一并归到这里 |
 
 ## Web 表单元素类型
@@ -142,18 +141,18 @@ import type { CustomElement, FieldElement } from '@skyroc/utils/web';
 
 ## 与 `@skyroc/types` 的区别
 
-| 包 | 内容 | 形态 |
-| --- | --- | --- |
-| [`@skyroc/types`](/docs/core/types) | 业务 / 全局类型（Api、Router、I18n…） | `declare global` 全局注入 |
-| `@skyroc/utils/type` | 通用**工具类型**（路径、变换、函数） | 普通 `export`，按需 import |
+| 包                                  | 内容                                  | 形态                       |
+| ----------------------------------- | ------------------------------------- | -------------------------- |
+| [`@skyroc/types`](/docs/core/types) | 业务 / 全局类型（Api、Router、I18n…） | `declare global` 全局注入  |
+| `@skyroc/utils/type`                | 通用**工具类型**（路径、变换、函数）  | 普通 `export`，按需 import |
 
 ## 从 `@skyroc/type-utils` 迁移
 
 类型本身的名字、签名、语义都没有变，只换导入路径：
 
-| 旧 | 新 |
-| --- | --- |
-| `import type { LeafPaths } from '@skyroc/type-utils'` | `from '@skyroc/utils/type'` |
-| `import type { FieldElement } from '@skyroc/type-utils/web'` | `from '@skyroc/utils/web'` |
+| 旧                                                           | 新                          |
+| ------------------------------------------------------------ | --------------------------- |
+| `import type { LeafPaths } from '@skyroc/type-utils'`        | `from '@skyroc/utils/type'` |
+| `import type { FieldElement } from '@skyroc/type-utils/web'` | `from '@skyroc/utils/web'`  |
 
 `@skyroc/type-utils` 已废弃，不再发布新版本。

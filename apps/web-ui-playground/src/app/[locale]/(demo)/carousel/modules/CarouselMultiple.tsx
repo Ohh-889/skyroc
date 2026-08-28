@@ -12,9 +12,7 @@ const CarouselMultiple = () => {
       >
         {index => (
           <Card className="size-full">
-            <div className="flex-center size-full text-2xl font-semibold">
-              {index + 1}
-            </div>
+            <div className="flex-center size-full text-2xl font-semibold">{index + 1}</div>
           </Card>
         )}
       </Carousel>

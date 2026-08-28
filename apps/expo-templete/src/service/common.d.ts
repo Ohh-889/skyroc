@@ -1,8 +1,7 @@
 /**
  * 通用 API 响应 / 请求类型
  *
- * 走 `service/request` 的接口拿到的已经是拆过信封的 data，不用关心外层包装；
- * 只有绕开它自己发请求时（见 `api/auth/refresh.ts`）才会用到这里的类型。
+ * 走 `service/request` 的接口拿到的已经是拆过信封的 data，不用关心外层包装； 只有绕开它自己发请求时（见 `api/auth/refresh.ts`）才会用到这里的类型。
  */
 declare namespace Api {
   namespace Service {

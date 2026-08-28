@@ -376,11 +376,11 @@ export const buttonVariants = tv({
       accent: `focus-visible:ring-accent-foreground/20`
     },
     size: {
-      'xs': 'gap-1 text-2xs',
-      'sm': 'gap-2 text-xs',
-      'md': 'gap-3 text-sm',
-      'lg': 'gap-4 text-base',
-      'xl': 'gap-5 text-lg',
+      xs: 'gap-1 text-2xs',
+      sm: 'gap-2 text-xs',
+      md: 'gap-3 text-sm',
+      lg: 'gap-4 text-base',
+      xl: 'gap-5 text-lg',
       '2xl': 'gap-6 text-xl'
     },
     shadow: {

@@ -63,7 +63,7 @@ npm install @skyroc/axios
 export function fetchUserList(params: Api.UserListParams) {
   return request<Api.UserList>({
     url: '/api/users',
-    params,
+    params
   });
 }
 
@@ -71,15 +71,14 @@ export function fetchUserList(params: Api.UserListParams) {
 export function useUserListQuery(params: Api.UserListParams) {
   return useQuery({
     queryKey: ['users', params],
-    queryFn: () => fetchUserList(params),
+    queryFn: () => fetchUserList(params)
   });
 }
 
 // 3. 封装 Mutation Hook —— 写操作同理
 export function useCreateUserMutation() {
   return useMutation({
-    mutationFn: (data: Api.CreateUserParams) =>
-      request<Api.User>({ url: '/api/users', method: 'post', data }),
+    mutationFn: (data: Api.CreateUserParams) => request<Api.User>({ url: '/api/users', method: 'post', data })
   });
 }
 
@@ -107,16 +106,16 @@ function createRequest<
 >(
   axiosConfig?: CreateAxiosDefaults,
   options?: Partial<RequestOption<ResponseData, ApiData, State>>
-): RequestInstance<ApiData, State>
+): RequestInstance<ApiData, State>;
 ```
 
 **类型参数：**
 
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `ResponseData` | 后端原始响应体类型，如 `{ code: number; data: any; msg: string }` | 必填 |
-| `ApiData` | `transform` 转换后的业务数据类型 | `unknown` |
-| `State` | 挂载在实例上的自定义状态类型 | `Record<string, unknown>` |
+| 参数           | 说明                                                              | 默认值                    |
+| -------------- | ----------------------------------------------------------------- | ------------------------- |
+| `ResponseData` | 后端原始响应体类型，如 `{ code: number; data: any; msg: string }` | 必填                      |
+| `ApiData`      | `transform` 转换后的业务数据类型                                  | `unknown`                 |
+| `State`        | 挂载在实例上的自定义状态类型                                      | `Record<string, unknown>` |
 
 `ApiData` 默认 `unknown` 而不是 `any`：请求实例的调用签名是 `<T extends ApiData>`，`ApiData` 一旦
 是具体类型，`request<Api.UserInfo>({ url })` 就会因为 `Api.UserInfo` 不满足约束而报错——信封式后端
@@ -135,13 +134,13 @@ interface BackendResponse<T = any> {
 const request = createRequest<BackendResponse>(
   { baseURL: 'https://api.example.com' },
   {
-    isBackendSuccess: (response) => response.data.code === 200,
-    transform: (response) => response.data.data,
-    onRequest: async (config) => {
+    isBackendSuccess: response => response.data.code === 200,
+    transform: response => response.data.data,
+    onRequest: async config => {
       config.headers.set('Authorization', `Bearer ${getToken()}`);
       return config;
     },
-    onError: (error) => console.error(error.message),
+    onError: error => console.error(error.message)
   }
 );
 
@@ -160,7 +159,7 @@ function createFlatRequest<
 >(
   axiosConfig?: CreateAxiosDefaults,
   options?: Partial<RequestOption<ResponseData, ApiData, State>>
-): FlatRequestInstance<ResponseData, ApiData, State>
+): FlatRequestInstance<ResponseData, ApiData, State>;
 ```
 
 **返回值：**
@@ -182,8 +181,8 @@ function createFlatRequest<
 const flatRequest = createFlatRequest<BackendResponse, BackendResponse['data']>(
   { baseURL: 'https://api.example.com' },
   {
-    isBackendSuccess: (response) => response.data.code === 200,
-    transform: (response) => response.data.data,
+    isBackendSuccess: response => response.data.code === 200,
+    transform: response => response.data.data
   }
 );
 
@@ -201,25 +200,25 @@ console.log(data);
 
 通过第一个参数传入，会与以下默认值合并：
 
-| 配置 | 默认值 |
-|------|--------|
+| 配置                   | 默认值             |
+| ---------------------- | ------------------ |
 | `headers.Content-Type` | `application/json` |
-| `timeout` | `10000`（10 秒） |
-| `paramsSerializer` | `qs.stringify` |
-| `validateStatus` | `200-299` 或 `304` |
+| `timeout`              | `10000`（10 秒）   |
+| `paramsSerializer`     | `qs.stringify`     |
+| `validateStatus`       | `200-299` 或 `304` |
 
 ### RequestOption
 
-| 选项 | 说明 |
-|------|------|
-| `isBackendSuccess` | HTTP 成功后判断业务是否成功（仅 JSON） |
-| `transform` | 将原始响应转换为业务数据（仅 JSON 且业务成功） |
-| `onRequest` | 请求前修改配置（注入 Token 等），**必须返回 config** |
-| `onBackendFail` | 业务失败处理，可返回新响应实现重试 |
-| `onError` | 所有错误的统一回调 |
-| `defaultState` | 初始化实例的 `state` |
-| `requestIdKey` | 请求 id 的 header 名，默认 `'X-Request-Id'`，传 `false` 关闭 |
-| `retry` | axios-retry 配置，默认 `{ retries: 0 }`（不重试） |
+| 选项               | 说明                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| `isBackendSuccess` | HTTP 成功后判断业务是否成功（仅 JSON）                       |
+| `transform`        | 将原始响应转换为业务数据（仅 JSON 且业务成功）               |
+| `onRequest`        | 请求前修改配置（注入 Token 等），**必须返回 config**         |
+| `onBackendFail`    | 业务失败处理，可返回新响应实现重试                           |
+| `onError`          | 所有错误的统一回调                                           |
+| `defaultState`     | 初始化实例的 `state`                                         |
+| `requestIdKey`     | 请求 id 的 header 名，默认 `'X-Request-Id'`，传 `false` 关闭 |
+| `retry`            | axios-retry 配置，默认 `{ retries: 0 }`（不重试）            |
 
 `onRequest` 返回空值不会被兜底成原始 config——那样「忘记 return」会变成一个能跑但少了认证头的请求，
 只能从后端 401 反推。这里直接抛出 `code` 为 `ERR_BAD_OPTION` 的 `AxiosError`。
@@ -250,13 +249,13 @@ createRequest<BackendResponse>(axiosConfig, { requestIdKey: 'X-Trace-Id' });
 
 ## 错误处理
 
-| 场景 | `createRequest` | `createFlatRequest` |
-|------|----------------|---------------------|
-| HTTP 错误 (4xx/5xx) | `onError` → 抛出异常 | `{ data: null, error, response }` |
-| 业务错误 | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }` |
-| 请求取消 | `onError`（`ERR_CANCELED`）→ 抛出 | `{ data: null, error, response: undefined }` |
-| 网络错误 / 超时 | `onError` → 抛出 | `{ data: null, error, response: undefined }` |
-| `transform` 内部抛异常 | 原样抛出 | `{ data: null, error }`（包装成 `ERR_BAD_RESPONSE`） |
+| 场景                   | `createRequest`                        | `createFlatRequest`                                  |
+| ---------------------- | -------------------------------------- | ---------------------------------------------------- |
+| HTTP 错误 (4xx/5xx)    | `onError` → 抛出异常                   | `{ data: null, error, response }`                    |
+| 业务错误               | `onBackendFail` → `onError` → 抛出异常 | `{ data: null, error, response }`                    |
+| 请求取消               | `onError`（`ERR_CANCELED`）→ 抛出      | `{ data: null, error, response: undefined }`         |
+| 网络错误 / 超时        | `onError` → 抛出                       | `{ data: null, error, response: undefined }`         |
+| `transform` 内部抛异常 | 原样抛出                               | `{ data: null, error }`（包装成 `ERR_BAD_RESPONSE`） |
 
 通过 `BACKEND_ERROR_CODE` 区分业务错误与 HTTP 错误：
 
@@ -285,7 +284,7 @@ createRequest<BackendResponse>(axiosConfig, {
       }
     }
     return null;
-  },
+  }
 });
 ```
 
@@ -302,7 +301,7 @@ await request({ url: '/api/data' });
 const controller = new AbortController();
 request({ url: '/api/data', signal: controller.signal });
 request.cancelAllRequest(); // 不会取消上面的请求
-controller.abort();         // 手动取消
+controller.abort(); // 手动取消
 ```
 
 托管的请求共用一个 `AbortController`，`cancelAllRequest` 把它 abort 掉再换一个新的。不按请求 id
@@ -314,10 +313,10 @@ controller.abort();         // 手动取消
 `document`、`stream`、`formdata`。TypeScript 会据此推导返回值类型：
 
 ```ts
-const data = await request<Api.User>({ url: '/user' });                        // → Api.User
-const blob = await request({ url: '/file', responseType: 'blob' });            // → Blob
-const text = await request({ url: '/text', responseType: 'text' });            // → string
-const buf  = await request({ url: '/bin', responseType: 'arraybuffer' });      // → ArrayBuffer
+const data = await request<Api.User>({ url: '/user' }); // → Api.User
+const blob = await request({ url: '/file', responseType: 'blob' }); // → Blob
+const text = await request({ url: '/text', responseType: 'text' }); // → string
+const buf = await request({ url: '/bin', responseType: 'arraybuffer' }); // → ArrayBuffer
 ```
 
 非 JSON 响应不经过 `transform`，直接返回 `response.data`。但如果 `blob` / `arraybuffer` 请求失败、
@@ -328,10 +327,9 @@ const buf  = await request({ url: '/bin', responseType: 'arraybuffer' });      /
 请求实例的 `state` 属性用于在请求生命周期中共享状态：
 
 ```ts
-const request = createFlatRequest<BackendResponse, any, { token: string }>(
-  axiosConfig,
-  { defaultState: { token: '' } }
-);
+const request = createFlatRequest<BackendResponse, any, { token: string }>(axiosConfig, {
+  defaultState: { token: '' }
+});
 
 request.state.token = 'new-token';
 ```
@@ -340,23 +338,23 @@ request.state.token = 'new-token';
 
 **常量：**
 
-| 常量 | 值 | 说明 |
-|------|-----|------|
+| 常量                 | 值                | 说明                       |
+| -------------------- | ----------------- | -------------------------- |
 | `BACKEND_ERROR_CODE` | `'BACKEND_ERROR'` | 业务失败的 AxiosError code |
-| `REQUEST_ID_KEY` | `'X-Request-Id'` | 请求 ID header key |
+| `REQUEST_ID_KEY`     | `'X-Request-Id'`  | 请求 ID header key         |
 
 **类型：**
 
-| 类型 | 说明 |
-|------|------|
-| `RequestOption` | 请求选项 |
-| `RequestInstance` | `createRequest` 返回类型 |
-| `FlatRequestInstance` | `createFlatRequest` 返回类型 |
-| `FlatResponseData` | Flat 请求的联合返回类型 |
+| 类型                       | 说明                               |
+| -------------------------- | ---------------------------------- |
+| `RequestOption`            | 请求选项                           |
+| `RequestInstance`          | `createRequest` 返回类型           |
+| `FlatRequestInstance`      | `createFlatRequest` 返回类型       |
+| `FlatResponseData`         | Flat 请求的联合返回类型            |
 | `CustomAxiosRequestConfig` | 请求配置（支持 responseType 推导） |
-| `MappedType` | 响应类型映射 |
-| `ResponseType` | 响应类型字面量 |
-| `ContentType` | Content-Type 字面量 |
+| `MappedType`               | 响应类型映射                       |
+| `ResponseType`             | 响应类型字面量                     |
+| `ContentType`              | Content-Type 字面量                |
 
 ## 相关包
 

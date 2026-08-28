@@ -1,8 +1,8 @@
 'use client';
 
+import { Button, Form, FormField, Input, useForm } from '@skyroc/web-ui';
 import Schema from 'async-validator';
 import type { RuleItem } from 'async-validator';
-import { Button, Form, FormField, Input, useForm } from '@skyroc/web-ui';
 
 // 定义 async-validator 规则
 const descriptor: Record<string, RuleItem | RuleItem[]> = {
@@ -25,8 +25,7 @@ const initialValues: Inputs = {
 };
 
 function normalizeKeys(name?: string | string[]): string[] | undefined {
-  if (!name)
-    return undefined;
+  if (!name) return undefined;
   if (typeof name === 'string') {
     return [name];
   }
@@ -39,8 +38,7 @@ async function asyncValidatorResolver(state: Inputs, name: string | string[] | u
       keys: normalizeKeys(name)
     });
     return []; // ✅ 校验通过
-  }
-  catch (err: any) {
+  } catch (err: any) {
     // ❌ 校验失败
     return (
       err.errors?.map((e: any) => ({

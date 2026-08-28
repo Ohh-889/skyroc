@@ -1,7 +1,7 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
 import { Tag } from '@skyroc/web-ui';
+import { Check, X } from 'lucide-react';
 
 const TagBasic = () => {
   return (

@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 /* eslint-disable no-bitwise */
 
-/**
- * Form field change event system
- * Uses bitwise flags to efficiently track and combine different types of field changes
- */
+/** Form field change event system Uses bitwise flags to efficiently track and combine different types of field changes */
 
 /**
- * Enumeration of change tags using bitwise flags
- * Each tag represents a different type of field change that can be tracked
+ * Enumeration of change tags using bitwise flags Each tag represents a different type of field change that can be
+ * tracked
  */
 export enum ChangeTag {
   /** Field value has changed */
@@ -35,34 +32,22 @@ export enum ChangeTag {
   /** Combination of all validation status flags */
   Status = Errors | Warnings | Validated | Validating | Disabled | Hidden,
   /** All possible change flags */
-  All = 0x7FFFFFFF
+  All = 0x7fffffff
 }
 
-/**
- * Type representing a bitmask of change flags
- * Used to efficiently combine and check multiple change types
- */
+/** Type representing a bitmask of change flags Used to efficiently combine and check multiple change types */
 export type ChangeMask = number;
 
-/**
- * Checks if a change mask contains a specific tag
- */
+/** Checks if a change mask contains a specific tag */
 export const hasTag = (mask: ChangeMask, tag: ChangeTag) => (mask & tag) !== 0;
 
-/**
- * Adds one or more tags to a change mask
- */
+/** Adds one or more tags to a change mask */
 export const addTag = (mask: ChangeMask, ...tags: ChangeTag[]) => tags.reduce((m, t) => m | t, mask);
 
-/**
- * Removes one or more tags from a change mask
- */
+/** Removes one or more tags from a change mask */
 export const delTag = (mask: ChangeMask, ...tags: ChangeTag[]) => tags.reduce((m, t) => m & ~t, mask);
 
-/**
- * Options for configuring subscription masks
- * Used to specify which types of changes to listen for
- */
+/** Options for configuring subscription masks Used to specify which types of changes to listen for */
 export interface SubscribeMaskOptions {
   /** Subscribe to all change types */
   all?: boolean;
@@ -88,9 +73,7 @@ export interface SubscribeMaskOptions {
   warnings?: boolean;
 }
 
-/**
- * Converts subscription options to a change mask
- */
+/** Converts subscription options to a change mask */
 export const toMask = (opt: SubscribeMaskOptions = {}): ChangeMask => {
   // If 'all' is specified, return mask for all changes
   if (opt.all) return ChangeTag.All;

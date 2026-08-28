@@ -1,10 +1,10 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { Item as _Item } from '@radix-ui/react-menu';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
-import MenuShortcut from './MenuShortcut';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import { menuVariants } from './menu-variants';
+import MenuShortcut from './MenuShortcut';
 import type { MenuItemProps } from './types';
 
 const MenuItem = forwardRef<ComponentRef<typeof _Item>, MenuItemProps>((props, ref) => {
@@ -34,15 +34,13 @@ const MenuItem = forwardRef<ComponentRef<typeof _Item>, MenuItemProps>((props, r
       <span>{children}</span>
       {trailing}
 
-      {shortcut
-        ? (
-          <MenuShortcut
-            className={classNames?.shortcut}
-            size={size}
-            value={shortcut}
-          />
-        )
-        : null}
+      {shortcut ? (
+        <MenuShortcut
+          className={classNames?.shortcut}
+          size={size}
+          value={shortcut}
+        />
+      ) : null}
     </Item>
   );
 });

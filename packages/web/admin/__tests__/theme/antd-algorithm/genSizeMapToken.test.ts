@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import {
   SPACING_MULTIPLIERS,
   calcSpacing,
@@ -6,6 +5,7 @@ import {
   genSpacingSizes,
   genSpacingVars
 } from '@shell/theme/antd-algorithm/shared/genSizeMapToken';
+import { describe, expect, it } from 'vitest';
 
 describe('calcSpacing', () => {
   it('默认 sizeUnit=4 时应正确计算', () => {

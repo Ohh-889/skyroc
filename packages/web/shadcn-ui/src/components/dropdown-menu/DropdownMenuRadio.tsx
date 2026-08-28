@@ -4,8 +4,8 @@ import DropdownMenuRadioGroup from './DropdownMenuRadioGroup';
 import type { DropdownMenuRadioProps } from './types';
 
 const DropdownMenuRadio = (props: DropdownMenuRadioProps) => {
-  const { children, className, classNames, contentProps, defaultOpen, dir, modal, onOpenChange, open, size, ...rest }
-    = props;
+  const { children, className, classNames, contentProps, defaultOpen, dir, modal, onOpenChange, open, size, ...rest } =
+    props;
 
   return (
     <Root

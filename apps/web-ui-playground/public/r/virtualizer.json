@@ -3,9 +3,7 @@
   "name": "virtualizer",
   "type": "registry:block",
   "title": "Virtualizer",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/virtualizer/VirtualGrid.tsx",

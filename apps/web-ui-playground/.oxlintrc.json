@@ -1,8 +1,6 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "extends": [
-    "../../internal/config/oxlint/next.json"
-  ],
+  "extends": ["../../internal/config/oxlint/next.json"],
   "settings": {
     "next": {
       "rootDir": "apps/web-ui-playground/"

@@ -8,9 +8,17 @@ const ToggleControlled = () => {
   const [pressed, setPressed] = useState(false);
 
   return (
-    <Card split title="Controlled">
+    <Card
+      split
+      title="Controlled"
+    >
       <div className="flex items-center gap-3">
-        <Toggle pressed={pressed} variant="outline" aria-label="Toggle bold" onPressedChange={setPressed}>
+        <Toggle
+          pressed={pressed}
+          variant="outline"
+          aria-label="Toggle bold"
+          onPressedChange={setPressed}
+        >
           <Bold className="size-4" />
         </Toggle>
         <span className="text-sm text-muted-foreground">{pressed ? 'Pressed' : 'Unpressed'}</span>

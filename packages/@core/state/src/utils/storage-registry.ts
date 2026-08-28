@@ -18,7 +18,7 @@ const registry = new Map<string, AtomStorage>();
  *     setItem: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
  *     removeItem: key => localStorage.removeItem(key)
  *   });
- *   ```
+ *   ```;
  */
 export function registerStorage(name: string, storage: AtomStorage): void {
   registry.set(name, storage);

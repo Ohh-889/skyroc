@@ -44,8 +44,7 @@ function createMockAdapter(overrides: Partial<RequestAdapter> = {}): RequestAdap
 /**
  * 用自定义 axios adapter 替掉真实网络
  *
- * 走完整的 axios 请求链路（拦截器、mergeConfig 都照跑），只把最后发包那一步换掉——续签标记
- * 能不能熬过 `instance.request()` 的 config 重新合并，正是这个用例要验的东西。
+ * 走完整的 axios 请求链路（拦截器、mergeConfig 都照跑），只把最后发包那一步换掉——续签标记 能不能熬过 `instance.request()` 的 config 重新合并，正是这个用例要验的东西。
  */
 function createCountingAdapter(codesInOrder: string[]) {
   const calls: string[] = [];

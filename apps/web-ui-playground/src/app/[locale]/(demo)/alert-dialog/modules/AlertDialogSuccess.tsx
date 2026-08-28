@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { AlertDialog, Button } from '@skyroc/web-ui';
+import React from 'react';
 
 const AlertDialogSuccess = () => {
   return (
@@ -10,14 +10,14 @@ const AlertDialogSuccess = () => {
       showCancel={false}
       title="Congratulations"
       type="success"
-      trigger={(
+      trigger={
         <Button
           color="success"
           variant="outline"
         >
           Show Dialog
         </Button>
-      )}
+      }
     />
   );
 };

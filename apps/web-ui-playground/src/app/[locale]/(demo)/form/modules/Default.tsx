@@ -29,10 +29,10 @@ const Default = () => {
     <Form
       className="w-[480px] space-y-4 max-sm:w-full"
       form={form}
-      onFinish={(values) => {
+      onFinish={values => {
         showToastCode('You submitted the following values', values);
       }}
-      onFinishFailed={(errors) => {
+      onFinishFailed={errors => {
         showToastCode('You failed to submit the form', errors);
       }}
       onValuesChange={(changedValues, values) => {

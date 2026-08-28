@@ -1,6 +1,6 @@
-import { type ComponentRef, forwardRef } from 'react';
 import { Overlay as _Overlay } from '@radix-ui/react-dialog';
 import { cn } from '@skyroc/utils';
+import { type ComponentRef, forwardRef } from 'react';
 import { dialogVariants } from './dialog-variants';
 import type { DialogOverlayProps } from './types';
 

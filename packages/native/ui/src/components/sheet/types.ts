@@ -1,5 +1,5 @@
-import type { ReactNode, Ref } from 'react';
 import type { BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
+import type { ReactNode, Ref } from 'react';
 import type { SlotClassNames } from '../../types';
 
 /** Sheet 组件可覆盖的 slot 名称 */
@@ -17,10 +17,9 @@ export type SheetSlots =
 /**
  * 从 BottomSheetModalProps 中排除的属性，由 Sheet 内部管理。
  *
- * 这些属性一旦从外部透传就会覆盖内部实现（内部值写在 `{...rest}` 之前，会被 rest 覆盖）：
- * onDismiss 被覆盖会让 onUpdateShow 永远不触发，父级的 show 卡在 true，面板再也无法重新打开；
- * handleComponent 承载的是标题栏；backgroundStyle 承载的是圆角与底色，要改用 className / classNames.background，
- * 才能继续走主题 token；backgroundComponent 排除掉是为了守住这条路径。
+ * 这些属性一旦从外部透传就会覆盖内部实现（内部值写在 `{...rest}` 之前，会被 rest 覆盖）： onDismiss 被覆盖会让 onUpdateShow 永远不触发，父级的 show 卡在 true，面板再也无法重新打开；
+ * handleComponent 承载的是标题栏；backgroundStyle 承载的是圆角与底色，要改用 className / classNames.background， 才能继续走主题
+ * token；backgroundComponent 排除掉是为了守住这条路径。
  */
 type SheetOmitProps =
   | 'backdropComponent'
@@ -42,12 +41,10 @@ export interface SheetProps extends Omit<BottomSheetModalProps, SheetOmitProps> 
   /**
    * 面板内容，必须自带 gorhom 的容器组件。
    *
-   * 普通内容用 `BottomSheetView`，长列表用 `BottomSheetFlatList` / `BottomSheetScrollView`。
-   * Sheet 不再代为包裹：外层若套一层 BottomSheetView，它的 effect 会在子组件之后把
-   * scrollable 注册覆盖成 VIEW 类型，内层列表的滚动手势就被吞掉了。
+   * 普通内容用 `BottomSheetView`，长列表用 `BottomSheetFlatList` / `BottomSheetScrollView`。 Sheet 不再代为包裹：外层若套一层
+   * BottomSheetView，它的 effect 会在子组件之后把 scrollable 注册覆盖成 VIEW 类型，内层列表的滚动手势就被吞掉了。
    *
-   * 底部安全区同理交给容器处理——列表要把留白写进 contentContainerStyle 才能跟着滚动，
-   * 写在外层容器上只会压缩滚动视口。
+   * 底部安全区同理交给容器处理——列表要把留白写进 contentContainerStyle 才能跟着滚动， 写在外层容器上只会压缩滚动视口。
    */
   children?: ReactNode;
 
@@ -75,8 +72,8 @@ export interface SheetProps extends Omit<BottomSheetModalProps, SheetOmitProps> 
   /**
    * 底层 BottomSheetModal 的实例引用。
    *
-   * Sheet 自己也要用它来做 present / dismiss，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 snapToIndex / expand /
-   * collapse 等 show 表达不了的命令式操作。
+   * Sheet 自己也要用它来做 present / dismiss，所以内外两个 ref 用 useComposedRefs 合成； 拿到后可以调 snapToIndex / expand / collapse 等 show
+   * 表达不了的命令式操作。
    */
   ref?: Ref<BottomSheetModal>;
 

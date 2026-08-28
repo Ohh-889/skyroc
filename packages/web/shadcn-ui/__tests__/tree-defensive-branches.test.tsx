@@ -35,7 +35,7 @@ const treeSharedMock = vi.hoisted(() => ({
     bind: {
       'aria-posinset': 2,
       'aria-setsize': 2,
-      'data': {
+      data: {
         children: [{ label: 'Orphan Leaf', value: 'orphan-leaf' }],
         label: 'Orphan Branch',
         value: 'orphan-branch'
@@ -59,7 +59,7 @@ const treeSharedMock = vi.hoisted(() => ({
     bind: {
       'aria-posinset': 1,
       'aria-setsize': 1,
-      'data': { label: 'Orphan Child', value: 'orphan-child' },
+      data: { label: 'Orphan Child', value: 'orphan-child' },
       level: 1
     },
     data: { label: 'Orphan Child', value: 'orphan-child' },
@@ -116,12 +116,13 @@ vi.mock('@tanstack/react-virtual', () => ({
 
     return {
       getTotalSize: () => options.count * options.estimateSize(0),
-      getVirtualItems: () => Array.from({ length: options.count }, (_, index) => ({
-        index,
-        key: index,
-        size: options.estimateSize(index),
-        start: index * options.estimateSize(index)
-      })),
+      getVirtualItems: () =>
+        Array.from({ length: options.count }, (_, index) => ({
+          index,
+          key: index,
+          size: options.estimateSize(index),
+          start: index * options.estimateSize(index)
+        })),
       scrollToIndex: vi.fn()
     };
   })
@@ -145,22 +146,24 @@ describe('Tree defensive branches', () => {
           onExpandedChange={onRootExpandedChange}
           onValueChange={onRootValueChange}
         >
-          {({ flattenItems }) => flattenItems.map(item => (
-            <TreeItem
-              key={item._id}
-              level={item.level}
-              value={item.value}
-            >
-              {item.value === 'orphan-child' ? 'Root orphan child' : 'Root orphan branch'}
-            </TreeItem>
-          ))}
+          {({ flattenItems }) =>
+            flattenItems.map(item => (
+              <TreeItem
+                key={item._id}
+                level={item.level}
+                value={item.value}
+              >
+                {item.value === 'orphan-child' ? 'Root orphan child' : 'Root orphan branch'}
+              </TreeItem>
+            ))
+          }
         </TreeRoot>
         <TreeVirtualizer
           bubbleSelect
           height={80}
           items={[]}
           multiple
-          renderItem={({ item }) => item.value === 'orphan-child' ? 'Virtual orphan child' : 'Virtual orphan branch'}
+          renderItem={({ item }) => (item.value === 'orphan-child' ? 'Virtual orphan child' : 'Virtual orphan branch')}
           toggleBehavior="single"
           onExpandedChange={onVirtualExpandedChange}
           onValueChange={onVirtualValueChange}

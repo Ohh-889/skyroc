@@ -4,7 +4,6 @@ import { Button, Drawer } from '@skyroc/web-ui';
 
 const ContentScrollable = () => {
   return (
-
     <Drawer
       title="Drawer Title"
       trigger={<Button variant="plain">Scrollable</Button>}
@@ -13,7 +12,6 @@ const ContentScrollable = () => {
         <div key={i}>Drawer Content</div>
       ))}
     </Drawer>
-
   );
 };
 

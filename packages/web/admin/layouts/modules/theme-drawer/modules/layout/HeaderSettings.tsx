@@ -44,16 +44,28 @@ const HeaderSettings = () => {
   return (
     <div className="flex-col-stretch gap-12px">
       <SettingItem label={t('theme.layout.header.height')}>
-        <AInputNumber className="w-120px" min={0} step={1} value={header.height} onChange={handleHeightChange} />
+        <AInputNumber
+          className="w-120px"
+          min={0}
+          step={1}
+          value={header.height}
+          onChange={handleHeightChange}
+        />
       </SettingItem>
 
       <SettingItem label={t('theme.layout.header.breadcrumb.visible')}>
-        <ASwitch checked={header.breadcrumb.visible} onChange={handleBreadcrumbVisibleChange} />
+        <ASwitch
+          checked={header.breadcrumb.visible}
+          onChange={handleBreadcrumbVisibleChange}
+        />
       </SettingItem>
 
       <AnimatedCollapse visible={header.breadcrumb.visible}>
         <SettingItem label={t('theme.layout.header.breadcrumb.showIcon')}>
-          <ASwitch checked={header.breadcrumb.showIcon} onChange={handleBreadcrumbShowIconChange} />
+          <ASwitch
+            checked={header.breadcrumb.showIcon}
+            onChange={handleBreadcrumbShowIconChange}
+          />
         </SettingItem>
       </AnimatedCollapse>
     </div>

@@ -30,7 +30,7 @@ function isTextNode(node: unknown) {
  *   <Search placeholder="搜索商品" onSearch={handleSearch} />
  *
  *   <Search showAction shape="round" label="城市" onCancel={handleCancel} />
- *   ```
+ *   ```;
  */
 const Search = (props: SearchProps) => {
   const {

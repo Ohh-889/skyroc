@@ -1,8 +1,8 @@
 'use client';
 
-import { forwardRef } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { Eye, EyeOff } from 'lucide-react';
+import { forwardRef } from 'react';
 import Input from '../input/InputUI';
 import type { PasswordProps } from './types';
 
@@ -28,8 +28,8 @@ const PasswordUI = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
   }
 
   const VisibleIcon = visible
-    ? (visibleIcon || <Eye className="cursor-pointer" />)
-    : (hiddenIcon || <EyeOff className="cursor-pointer" />);
+    ? visibleIcon || <Eye className="cursor-pointer" />
+    : hiddenIcon || <EyeOff className="cursor-pointer" />;
 
   return (
     <Input
@@ -39,9 +39,8 @@ const PasswordUI = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
       ref={ref}
       type={visible ? 'text' : 'password'}
       {...rest}
-
       // eslint-disable-next-line react/jsx-props-no-multi-spaces
-      trailing={(
+      trailing={
         <>
           {trailing}
 
@@ -52,7 +51,7 @@ const PasswordUI = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
             {VisibleIcon}
           </span>
         </>
-      )}
+      }
     />
   );
 });

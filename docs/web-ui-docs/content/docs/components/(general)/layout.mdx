@@ -49,12 +49,12 @@ import {
 ```tsx
 <Layout
   defaultOpen
-  header={(
+  header={
     <div className="flex items-center gap-2 px-4">
       <LayoutTrigger />
       <span>Dashboard</span>
     </div>
-  )}
+  }
   sidebar={<nav className="p-2">Menu</nav>}
 >
   <main className="p-4">Content</main>
@@ -75,10 +75,10 @@ import {
 
 通过 `collapsible` 控制桌面端折叠行为。
 
-| 模式        | 说明                                   |
-| ----------- | -------------------------------------- |
+| 模式        | 说明                                         |
+| ----------- | -------------------------------------------- |
 | `icon`      | 折叠到 `collapsedSidebarWidth`，适合图标菜单 |
-| `offcanvas` | 折叠时侧边栏滑出画布并隐藏             |
+| `offcanvas` | 折叠时侧边栏滑出画布并隐藏                   |
 
 ## 方向与尺寸
 
@@ -259,7 +259,11 @@ import {
       name: 'LayoutRootProps',
       description: '布局根组件属性，负责状态、上下文和 CSS 宽度变量。',
       fields: [
-        { name: 'children', type: 'ReactNode | LayoutRootRenderFn', description: '子节点或接收 open 的 render function。' },
+        {
+          name: 'children',
+          type: 'ReactNode | LayoutRootRenderFn',
+          description: '子节点或接收 open 的 render function。'
+        },
         { name: 'className', type: 'ClassValue', description: '根容器 class。' },
         { name: 'collapsedSidebarWidth', type: 'number', description: '折叠侧边栏宽度，单位 px。' },
         { name: 'collapsible', type: "'offcanvas' | 'icon'", description: '侧边栏折叠模式。' },
@@ -276,7 +280,11 @@ import {
       name: 'LayoutSidebarProps',
       description: '侧边栏组件属性。桌面端渲染固定侧栏，移动端渲染抽屉内容。',
       fields: [
-        { name: 'children', type: 'ReactNode | LayoutSidebarRenderFn', description: '侧边栏内容或接收 collapsed 状态的 render function。' },
+        {
+          name: 'children',
+          type: 'ReactNode | LayoutSidebarRenderFn',
+          description: '侧边栏内容或接收 collapsed 状态的 render function。'
+        },
         { name: 'className', type: 'ClassValue', description: '侧边栏主体 class。' },
         { name: 'collapsible', type: "'offcanvas' | 'icon'", description: '折叠模式。' },
         { name: 'side', type: "'left' | 'right'", description: '侧边栏方向。' },

@@ -1,5 +1,5 @@
-import { useCaptcha } from '@skyroc/hooks';
 import { SvgIcon } from '@shell/ui/compose';
+import { useCaptcha } from '@skyroc/hooks';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 

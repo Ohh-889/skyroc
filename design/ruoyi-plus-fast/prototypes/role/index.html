@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 角色管理设计稿</title>
     <style>
       :root {
@@ -1400,10 +1406,16 @@
           <span class="brand-mark">S</span>
           <span>Skyroc Admin</span>
         </div>
-        <nav class="nav" aria-label="主导航">
+        <nav
+          class="nav"
+          aria-label="主导航"
+        >
           <div class="nav-label">工作台</div>
           <button class="nav-item">
-            <svg class="icon" viewBox="0 0 24 24">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
               <path d="M3 12l9-9 9 9" />
               <path d="M5 10v10h14V10" />
             </svg>
@@ -1411,8 +1423,15 @@
           </button>
           <div class="nav-label">系统管理</div>
           <button class="nav-item">
-            <svg class="icon" viewBox="0 0 24 24">
-              <circle cx="12" cy="8" r="4" />
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="8"
+                r="4"
+              />
               <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
             <span>用户管理</span>
@@ -1423,7 +1442,10 @@
           <button class="nav-item child">
             <span>岗位管理</span>
           </button>
-          <button class="nav-item active child" aria-current="page">
+          <button
+            class="nav-item active child"
+            aria-current="page"
+          >
             <span>角色管理</span>
           </button>
           <button class="nav-item child">
@@ -1431,7 +1453,10 @@
           </button>
           <div class="nav-label">运维与审计</div>
           <button class="nav-item">
-            <svg class="icon" viewBox="0 0 24 24">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
               <path d="M4 19V5m0 14h16" />
               <path d="M8 15l3-3 3 2 5-6" />
             </svg>
@@ -1451,16 +1476,35 @@
         <header class="topbar">
           <div class="breadcrumb"><span>系统管理</span><span>/</span><strong>角色管理</strong></div>
           <div class="top-actions">
-            <button class="icon-button" id="themeButton" aria-label="切换深浅主题" title="切换主题">
-              <svg class="icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="4" />
+            <button
+              class="icon-button"
+              id="themeButton"
+              aria-label="切换深浅主题"
+              title="切换主题"
+            >
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="4"
+                />
                 <path
                   d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
                 />
               </svg>
             </button>
-            <button class="icon-button" aria-label="通知" title="通知">
-              <svg class="icon" viewBox="0 0 24 24">
+            <button
+              class="icon-button"
+              aria-label="通知"
+              title="通知"
+            >
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+              >
                 <path d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
                 <path d="M10 21h4" />
               </svg>
@@ -1476,7 +1520,10 @@
               <p>维护访问权限、数据范围与角色成员，所有授权变更均记录审计。</p>
             </div>
             <div class="tenant">
-              <svg class="icon small" viewBox="0 0 24 24">
+              <svg
+                class="icon small"
+                viewBox="0 0 24 24"
+              >
                 <path d="M4 21V5l8-3 8 3v16" />
                 <path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h6" />
               </svg>
@@ -1484,32 +1531,64 @@
             </div>
           </div>
 
-          <section class="stats" aria-label="角色概览">
+          <section
+            class="stats"
+            aria-label="角色概览"
+          >
             <div class="stat">
               <div class="stat-icon">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
               </div>
               <div>
                 <div class="stat-label">角色总数</div>
-                <div class="stat-value" id="roleCount">4</div>
+                <div
+                  class="stat-value"
+                  id="roleCount"
+                >
+                  4
+                </div>
               </div>
             </div>
             <div class="stat">
               <div class="stat-icon">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <circle cx="9" cy="8" r="4" />
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="9"
+                    cy="8"
+                    r="4"
+                  />
                   <path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 11a3 3 0 100-6M18 14c2.4.5 4 2.6 4 5" />
                 </svg>
               </div>
               <div>
                 <div class="stat-label">停用角色</div>
-                <div class="stat-value" id="disabledCount">1</div>
+                <div
+                  class="stat-value"
+                  id="disabledCount"
+                >
+                  1
+                </div>
               </div>
             </div>
             <div class="stat">
               <div class="stat-icon">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="9" />
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                  />
                   <path d="M9 12h6" />
                 </svg>
               </div>
@@ -1520,7 +1599,12 @@
             </div>
             <div class="stat">
               <div class="stat-icon">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M10 18h4" /></svg>
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M3 6h18M7 12h10M10 18h4" />
+                </svg>
               </div>
               <div>
                 <div class="stat-label">系统保护角色</div>
@@ -1529,39 +1613,84 @@
             </div>
           </section>
 
-          <section class="panel filters" aria-label="角色查询">
+          <section
+            class="panel filters"
+            aria-label="角色查询"
+          >
             <div class="field">
               <label for="roleNameQuery">角色名称</label
-              ><input class="control" id="roleNameQuery" placeholder="输入角色名称" />
+              ><input
+                class="control"
+                id="roleNameQuery"
+                placeholder="输入角色名称"
+              />
             </div>
             <div class="field">
               <label for="roleKeyQuery">权限字符</label
-              ><input class="control" id="roleKeyQuery" placeholder="如：admin、dept-lead" />
+              ><input
+                class="control"
+                id="roleKeyQuery"
+                placeholder="如：admin、dept-lead"
+              />
             </div>
             <div class="field">
               <label for="statusQuery">状态</label
-              ><select class="select" id="statusQuery">
+              ><select
+                class="select"
+                id="statusQuery"
+              >
                 <option value="">全部状态</option>
                 <option value="normal">正常</option>
                 <option value="disabled">停用</option>
               </select>
             </div>
             <div class="filter-actions">
-              <button class="button ghost" id="moreFilter" aria-expanded="false">更多筛选</button>
-              <button class="button" id="resetButton">重置</button>
-              <button class="button primary" id="queryButton">
-                <svg class="icon small" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="7" />
+              <button
+                class="button ghost"
+                id="moreFilter"
+                aria-expanded="false"
+              >
+                更多筛选
+              </button>
+              <button
+                class="button"
+                id="resetButton"
+              >
+                重置
+              </button>
+              <button
+                class="button primary"
+                id="queryButton"
+              >
+                <svg
+                  class="icon small"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7"
+                  />
                   <path d="M20 20l-4-4" /></svg
                 >查询
               </button>
             </div>
-            <div class="extra-filters" id="extraFilters">
+            <div
+              class="extra-filters"
+              id="extraFilters"
+            >
               <div class="field">
                 <label for="createdQuery">创建时间</label
-                ><input class="control" id="createdQuery" value="2026-07-01 — 2026-08-06" />
+                ><input
+                  class="control"
+                  id="createdQuery"
+                  value="2026-07-01 — 2026-08-06"
+                />
               </div>
-              <div class="inline" style="align-self: end; min-height: 36px">
+              <div
+                class="inline"
+                style="align-self: end; min-height: 36px"
+              >
                 <span class="pill">创建时间：近 30 天</span>
               </div>
             </div>
@@ -1571,19 +1700,56 @@
             <div class="table-toolbar">
               <div class="toolbar-title">角色列表 <span id="resultCount">4 个角色</span></div>
               <div class="toolbar-actions">
-                <button class="button primary" id="addButton">
-                  <svg class="icon small" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>新增角色
+                <button
+                  class="button primary"
+                  id="addButton"
+                >
+                  <svg
+                    class="icon small"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 5v14M5 12h14" /></svg
+                  >新增角色
                 </button>
-                <button class="button danger" id="deleteSelectedButton" disabled>批量删除</button>
-                <button class="button" id="exportButton">导出</button>
-                <button class="icon-button" id="refreshButton" title="刷新列表" aria-label="刷新列表">
-                  <svg class="icon" viewBox="0 0 24 24">
+                <button
+                  class="button danger"
+                  id="deleteSelectedButton"
+                  disabled
+                >
+                  批量删除
+                </button>
+                <button
+                  class="button"
+                  id="exportButton"
+                >
+                  导出
+                </button>
+                <button
+                  class="icon-button"
+                  id="refreshButton"
+                  title="刷新列表"
+                  aria-label="刷新列表"
+                >
+                  <svg
+                    class="icon"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M20 11a8 8 0 10-2.3 5.7" />
                     <path d="M20 4v7h-7" />
                   </svg>
                 </button>
-                <button class="icon-button" id="columnsButton" title="列设置" aria-label="列设置">
-                  <svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM10 5v14M16 5v14" /></svg>
+                <button
+                  class="icon-button"
+                  id="columnsButton"
+                  title="列设置"
+                  aria-label="列设置"
+                >
+                  <svg
+                    class="icon"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 5h16v14H4zM10 5v14M16 5v14" />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -1601,7 +1767,13 @@
                 </colgroup>
                 <thead>
                   <tr>
-                    <th><input type="checkbox" id="selectAll" aria-label="选择当前页全部可操作角色" /></th>
+                    <th>
+                      <input
+                        type="checkbox"
+                        id="selectAll"
+                        aria-label="选择当前页全部可操作角色"
+                      />
+                    </th>
                     <th>角色</th>
                     <th>权限字符</th>
                     <th>排序</th>
@@ -1625,11 +1797,20 @@
                     data-remark="系统内置超级管理员角色"
                     data-protected="true"
                   >
-                    <td><input type="checkbox" disabled aria-label="超级管理员是系统角色，不可选择" /></td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        disabled
+                        aria-label="超级管理员是系统角色，不可选择"
+                      />
+                    </td>
                     <td>
                       <div class="role-cell">
                         <div class="role-mark">
-                          <svg class="icon" viewBox="0 0 24 24">
+                          <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             <path d="M9 12l2 2 4-4" />
                           </svg>
@@ -1665,11 +1846,20 @@
                     data-buttons="76"
                     data-remark="负责用户、菜单与审计管理"
                   >
-                    <td><input class="row-check" type="checkbox" aria-label="选择系统管理员" /></td>
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择系统管理员"
+                      />
+                    </td>
                     <td>
                       <div class="role-cell">
                         <div class="role-mark">
-                          <svg class="icon" viewBox="0 0 24 24">
+                          <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                          >
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                           </svg>
                         </div>
@@ -1689,11 +1879,30 @@
                         ><button class="link-button edit-row">编辑</button
                         ><button class="link-button permission-row">授权</button
                         ><button class="link-button members-row">成员</button
-                        ><button class="icon-button more-row" title="更多操作" aria-label="系统管理员更多操作">
-                          <svg class="icon small" viewBox="0 0 24 24">
-                            <circle cx="5" cy="12" r="1" />
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="19" cy="12" r="1" />
+                        ><button
+                          class="icon-button more-row"
+                          title="更多操作"
+                          aria-label="系统管理员更多操作"
+                        >
+                          <svg
+                            class="icon small"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="5"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="19"
+                              cy="12"
+                              r="1"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -1711,12 +1920,25 @@
                     data-buttons="18"
                     data-remark="管理本部门及下级部门的用户和业务审批"
                   >
-                    <td><input class="row-check" type="checkbox" aria-label="选择部门负责人" /></td>
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择部门负责人"
+                      />
+                    </td>
                     <td>
                       <div class="role-cell">
                         <div class="role-mark">
-                          <svg class="icon" viewBox="0 0 24 24">
-                            <circle cx="12" cy="8" r="3" />
+                          <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="12"
+                              cy="8"
+                              r="3"
+                            />
                             <path d="M5 21c0-4 3-7 7-7s7 3 7 7" />
                           </svg>
                         </div>
@@ -1736,11 +1958,30 @@
                         ><button class="link-button edit-row">编辑</button
                         ><button class="link-button permission-row">授权</button
                         ><button class="link-button members-row">成员</button
-                        ><button class="icon-button more-row" title="更多操作" aria-label="部门负责人更多操作">
-                          <svg class="icon small" viewBox="0 0 24 24">
-                            <circle cx="5" cy="12" r="1" />
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="19" cy="12" r="1" />
+                        ><button
+                          class="icon-button more-row"
+                          title="更多操作"
+                          aria-label="部门负责人更多操作"
+                        >
+                          <svg
+                            class="icon small"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="5"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="19"
+                              cy="12"
+                              r="1"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -1758,11 +1999,22 @@
                     data-buttons="2"
                     data-remark="仅查看指定部门的财务报表"
                   >
-                    <td><input class="row-check" type="checkbox" aria-label="选择财务查看员" /></td>
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                        aria-label="选择财务查看员"
+                      />
+                    </td>
                     <td>
                       <div class="role-cell">
                         <div class="role-mark">
-                          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V8l8-5 8 5v12M8 20v-7h8v7" /></svg>
+                          <svg
+                            class="icon"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M4 20V8l8-5 8 5v12M8 20v-7h8v7" />
+                          </svg>
                         </div>
                         <div>
                           <div class="role-name">财务查看员</div>
@@ -1780,11 +2032,30 @@
                         ><button class="link-button edit-row">编辑</button
                         ><button class="link-button permission-row">授权</button
                         ><button class="link-button members-row">成员</button
-                        ><button class="icon-button more-row" title="更多操作" aria-label="财务查看员更多操作">
-                          <svg class="icon small" viewBox="0 0 24 24">
-                            <circle cx="5" cy="12" r="1" />
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="19" cy="12" r="1" />
+                        ><button
+                          class="icon-button more-row"
+                          title="更多操作"
+                          aria-label="财务查看员更多操作"
+                        >
+                          <svg
+                            class="icon small"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="5"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="1"
+                            />
+                            <circle
+                              cx="19"
+                              cy="12"
+                              r="1"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -1798,10 +2069,24 @@
                 已选 <strong id="selectedCount">0</strong> 项 <span class="muted">· 系统角色不可选择</span>
               </div>
               <div class="pagination">
-                <span>共 4 条</span><button class="page-button" disabled>‹</button
-                ><button class="page-button active">1</button><button class="page-button" disabled>›</button>
+                <span>共 4 条</span
+                ><button
+                  class="page-button"
+                  disabled
+                >
+                  ‹</button
+                ><button class="page-button active">1</button
+                ><button
+                  class="page-button"
+                  disabled
+                >
+                  ›
+                </button>
                 <div class="pagination-right">
-                  <select class="select" style="width: 98px; height: 30px">
+                  <select
+                    class="select"
+                    style="width: 98px; height: 30px"
+                  >
                     <option>10 条/页</option>
                     <option>20 条/页</option>
                     <option>50 条/页</option>
@@ -1814,50 +2099,116 @@
       </div>
     </div>
 
-    <div class="overlay" id="drawerOverlay"></div>
-    <aside class="drawer member-drawer" id="detailDrawer" aria-hidden="true" aria-labelledby="detailTitle">
+    <div
+      class="overlay"
+      id="drawerOverlay"
+    ></div>
+    <aside
+      class="drawer member-drawer"
+      id="detailDrawer"
+      aria-hidden="true"
+      aria-labelledby="detailTitle"
+    >
       <div class="drawer-header">
         <div>
           <div class="inline">
             <h2 id="detailTitle">角色详情</h2>
-            <span class="pill protected" id="detailProtected" hidden>系统保护</span>
+            <span
+              class="pill protected"
+              id="detailProtected"
+              hidden
+              >系统保护</span
+            >
           </div>
-          <p class="muted" id="detailSubtitle">查看角色基础信息与授权摘要</p>
+          <p
+            class="muted"
+            id="detailSubtitle"
+          >
+            查看角色基础信息与授权摘要
+          </p>
         </div>
-        <button class="icon-button close-detail" aria-label="关闭角色详情">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg>
+        <button
+          class="icon-button close-detail"
+          aria-label="关闭角色详情"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+          >
+            <path d="M5 5l14 14M19 5L5 19" />
+          </svg>
         </button>
       </div>
       <div class="drawer-body detail-body">
         <div class="detail-hero">
           <div class="role-mark">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
           </div>
           <div>
-            <div class="role-name" id="detailRoleName">—</div>
-            <div class="mono" id="detailRoleKey">—</div>
+            <div
+              class="role-name"
+              id="detailRoleName"
+            >
+              —
+            </div>
+            <div
+              class="mono"
+              id="detailRoleKey"
+            >
+              —
+            </div>
           </div>
         </div>
         <div class="detail-grid">
           <div class="detail-item">
             <div class="detail-label">角色 ID</div>
-            <div class="detail-value" id="detailRoleId">—</div>
+            <div
+              class="detail-value"
+              id="detailRoleId"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item">
             <div class="detail-label">显示顺序</div>
-            <div class="detail-value" id="detailRoleSort">—</div>
+            <div
+              class="detail-value"
+              id="detailRoleSort"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item">
             <div class="detail-label">状态</div>
-            <div class="detail-value" id="detailStatus">—</div>
+            <div
+              class="detail-value"
+              id="detailStatus"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item">
             <div class="detail-label">创建时间</div>
-            <div class="detail-value" id="detailCreated">—</div>
+            <div
+              class="detail-value"
+              id="detailCreated"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item full">
             <div class="detail-label">数据范围</div>
-            <div class="detail-value" id="detailScope">—</div>
+            <div
+              class="detail-value"
+              id="detailScope"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item">
             <div class="detail-label">菜单选择</div>
@@ -1869,20 +2220,48 @@
           </div>
           <div class="detail-item">
             <div class="detail-label">已授权菜单</div>
-            <div class="detail-value" id="detailMenus">—</div>
+            <div
+              class="detail-value"
+              id="detailMenus"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item">
             <div class="detail-label">已授权按钮</div>
-            <div class="detail-value" id="detailButtons">—</div>
+            <div
+              class="detail-value"
+              id="detailButtons"
+            >
+              —
+            </div>
           </div>
           <div class="detail-item full">
             <div class="detail-label">备注</div>
-            <div class="detail-value" id="detailRemark">—</div>
+            <div
+              class="detail-value"
+              id="detailRemark"
+            >
+              —
+            </div>
           </div>
         </div>
-        <div class="warning-box" id="detailProtectionNotice" hidden>
-          <svg class="icon small" viewBox="0 0 24 24">
-            <rect x="5" y="11" width="14" height="10" rx="2" />
+        <div
+          class="warning-box"
+          id="detailProtectionNotice"
+          hidden
+        >
+          <svg
+            class="icon small"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              x="5"
+              y="11"
+              width="14"
+              height="10"
+              rx="2"
+            />
             <path d="M8 11V7a4 4 0 018 0v4" />
           </svg>
           <span>该角色由系统保护，只能查看详情，不能通过普通角色管理入口编辑或删除。</span>
@@ -1890,48 +2269,128 @@
       </div>
       <div class="drawer-footer">
         <button class="button close-detail">关闭</button>
-        <button class="button primary" id="editFromDetail">编辑角色</button>
+        <button
+          class="button primary"
+          id="editFromDetail"
+        >
+          编辑角色
+        </button>
       </div>
     </aside>
-    <aside class="drawer" id="roleDrawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <aside
+      class="drawer"
+      id="roleDrawer"
+      aria-hidden="true"
+      aria-labelledby="drawerTitle"
+    >
       <div class="drawer-header">
         <div>
           <h2 id="drawerTitle">新增角色</h2>
           <p class="muted">分区配置基础信息和功能权限，保存前查看影响。</p>
         </div>
-        <button class="icon-button close-role" aria-label="关闭角色抽屉">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg>
+        <button
+          class="icon-button close-role"
+          aria-label="关闭角色抽屉"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+          >
+            <path d="M5 5l14 14M19 5L5 19" />
+          </svg>
         </button>
       </div>
       <div class="drawer-body">
-        <div class="tabs" role="tablist">
-          <button class="tab-button active" data-tab="basic" role="tab">1 基础信息</button
-          ><button class="tab-button" data-tab="permission" role="tab">2 功能权限</button
-          ><button class="tab-button" data-tab="review" role="tab">3 变更摘要</button>
+        <div
+          class="tabs"
+          role="tablist"
+        >
+          <button
+            class="tab-button active"
+            data-tab="basic"
+            role="tab"
+          >
+            1 基础信息</button
+          ><button
+            class="tab-button"
+            data-tab="permission"
+            role="tab"
+          >
+            2 功能权限</button
+          ><button
+            class="tab-button"
+            data-tab="review"
+            role="tab"
+          >
+            3 变更摘要
+          </button>
         </div>
-        <section class="tab-panel active" id="tab-basic">
+        <section
+          class="tab-panel active"
+          id="tab-basic"
+        >
           <h3 class="section-title">角色基本信息</h3>
           <p class="section-description">角色权限字符用于程序识别，创建后修改会影响代码判断和外部集成。</p>
-          <form class="form-grid" id="roleForm">
+          <form
+            class="form-grid"
+            id="roleForm"
+          >
             <div class="form-field">
-              <label class="required" for="formRoleName">角色名称</label
-              ><input class="control" id="formRoleName" placeholder="如：部门负责人" />
+              <label
+                class="required"
+                for="formRoleName"
+                >角色名称</label
+              ><input
+                class="control"
+                id="formRoleName"
+                placeholder="如：部门负责人"
+              />
               <div class="help">当前租户内唯一，最多 30 个字符</div>
             </div>
             <div class="form-field">
-              <label class="required" for="formRoleKey">权限字符</label
-              ><input class="control" id="formRoleKey" placeholder="如：dept-lead" />
+              <label
+                class="required"
+                for="formRoleKey"
+                >权限字符</label
+              ><input
+                class="control"
+                id="formRoleKey"
+                placeholder="如：dept-lead"
+              />
               <div class="help">建议小写英文和连字符，最多 100 个字符</div>
             </div>
             <div class="form-field">
-              <label class="required" for="formSort">显示顺序</label
-              ><input class="control" id="formSort" type="number" min="0" value="0" />
+              <label
+                class="required"
+                for="formSort"
+                >显示顺序</label
+              ><input
+                class="control"
+                id="formSort"
+                type="number"
+                min="0"
+                value="0"
+              />
             </div>
             <div class="form-field">
               <label>角色状态</label>
               <div class="radio-row">
-                <label><input type="radio" name="roleStatus" value="normal" checked /> 正常</label
-                ><label><input type="radio" name="roleStatus" value="disabled" /> 停用</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="roleStatus"
+                    value="normal"
+                    checked
+                  />
+                  正常</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="roleStatus"
+                    value="disabled"
+                  />
+                  停用</label
+                >
               </div>
             </div>
             <div class="form-field full">
@@ -1942,61 +2401,129 @@
                 maxlength="500"
                 placeholder="说明角色用途和管理边界"
               ></textarea>
-              <div class="help" style="text-align: right"><span id="remarkCount">0</span>/500</div>
+              <div
+                class="help"
+                style="text-align: right"
+              >
+                <span id="remarkCount">0</span>/500
+              </div>
             </div>
           </form>
           <div class="info-box">
-            <svg class="icon small" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" />
+            <svg
+              class="icon small"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
               <path d="M12 11v5m0-8h.01" /></svg
             ><span>新角色默认使用“仅本人”数据范围；创建后通过列表中的数据范围入口单独配置。</span>
           </div>
         </section>
-        <section class="tab-panel" id="tab-permission">
+        <section
+          class="tab-panel"
+          id="tab-permission"
+        >
           <h3 class="section-title">菜单与按钮权限</h3>
           <p class="section-description">只显示当前管理员可授予、且租户套餐已开放的资源。</p>
           <div class="permission-layout">
             <div class="tree-card">
               <div class="tree-toolbar">
-                <input class="control" id="permissionSearch" style="height: 32px" placeholder="搜索菜单或按钮名称" />
+                <input
+                  class="control"
+                  id="permissionSearch"
+                  style="height: 32px"
+                  placeholder="搜索菜单或按钮名称"
+                />
                 <div class="tree-tools">
-                  <button class="link-button" id="expandTree">展开</button
-                  ><button class="link-button" id="selectAllPermissions">全选</button>
+                  <button
+                    class="link-button"
+                    id="expandTree"
+                  >
+                    展开</button
+                  ><button
+                    class="link-button"
+                    id="selectAllPermissions"
+                  >
+                    全选
+                  </button>
                 </div>
               </div>
-              <div class="tree-content" id="permissionTree">
-                <label class="tree-line" data-label="系统管理"
-                  ><input class="permission-check menu-check" type="checkbox" checked />▾ <strong>系统管理</strong
-                  ><span class="tree-type">目录</span></label
-                ><label class="tree-line level-1" data-label="用户管理"
-                  ><input class="permission-check menu-check" type="checkbox" checked />▾ 用户管理<span
-                    class="tree-type"
-                    >菜单</span
-                  ></label
-                ><label class="tree-line level-2" data-label="用户查询"
-                  ><input class="permission-check button-check" type="checkbox" checked />用户查询
-                  <span class="tree-type">按钮</span></label
-                ><label class="tree-line level-2" data-label="用户新增"
-                  ><input class="permission-check button-check" type="checkbox" />用户新增
-                  <span class="tree-type">按钮</span></label
-                ><label class="tree-line level-1" data-label="部门管理"
-                  ><input class="permission-check menu-check" type="checkbox" checked />▾ 部门管理<span
-                    class="tree-type"
-                    >菜单</span
-                  ></label
-                ><label class="tree-line level-2" data-label="部门查询"
-                  ><input class="permission-check button-check" type="checkbox" checked />部门查询
-                  <span class="tree-type">按钮</span></label
-                ><label class="tree-line level-1" data-label="角色管理"
-                  ><input class="permission-check menu-check" type="checkbox" />▾ 角色管理<span class="tree-type"
-                    >菜单</span
-                  ></label
-                ><label class="tree-line level-2" data-label="角色编辑"
-                  ><input class="permission-check button-check" type="checkbox" />角色编辑
-                  <span class="tree-type">按钮</span></label
-                ><label class="tree-line" data-label="审计中心"
-                  ><input class="permission-check menu-check" type="checkbox" />▸ <strong>审计中心</strong
-                  ><span class="tree-type">目录</span></label
+              <div
+                class="tree-content"
+                id="permissionTree"
+              >
+                <label
+                  class="tree-line"
+                  data-label="系统管理"
+                  ><input
+                    class="permission-check menu-check"
+                    type="checkbox"
+                    checked
+                  />▾ <strong>系统管理</strong><span class="tree-type">目录</span></label
+                ><label
+                  class="tree-line level-1"
+                  data-label="用户管理"
+                  ><input
+                    class="permission-check menu-check"
+                    type="checkbox"
+                    checked
+                  />▾ 用户管理<span class="tree-type">菜单</span></label
+                ><label
+                  class="tree-line level-2"
+                  data-label="用户查询"
+                  ><input
+                    class="permission-check button-check"
+                    type="checkbox"
+                    checked
+                  />用户查询 <span class="tree-type">按钮</span></label
+                ><label
+                  class="tree-line level-2"
+                  data-label="用户新增"
+                  ><input
+                    class="permission-check button-check"
+                    type="checkbox"
+                  />用户新增 <span class="tree-type">按钮</span></label
+                ><label
+                  class="tree-line level-1"
+                  data-label="部门管理"
+                  ><input
+                    class="permission-check menu-check"
+                    type="checkbox"
+                    checked
+                  />▾ 部门管理<span class="tree-type">菜单</span></label
+                ><label
+                  class="tree-line level-2"
+                  data-label="部门查询"
+                  ><input
+                    class="permission-check button-check"
+                    type="checkbox"
+                    checked
+                  />部门查询 <span class="tree-type">按钮</span></label
+                ><label
+                  class="tree-line level-1"
+                  data-label="角色管理"
+                  ><input
+                    class="permission-check menu-check"
+                    type="checkbox"
+                  />▾ 角色管理<span class="tree-type">菜单</span></label
+                ><label
+                  class="tree-line level-2"
+                  data-label="角色编辑"
+                  ><input
+                    class="permission-check button-check"
+                    type="checkbox"
+                  />角色编辑 <span class="tree-type">按钮</span></label
+                ><label
+                  class="tree-line"
+                  data-label="审计中心"
+                  ><input
+                    class="permission-check menu-check"
+                    type="checkbox"
+                  />▸ <strong>审计中心</strong><span class="tree-type">目录</span></label
                 >
               </div>
             </div>
@@ -2006,7 +2533,10 @@
               <div class="summary-number"><span>按钮</span><strong id="buttonPermissionCount">2 项</strong></div>
               <div class="summary-number"><span>父子联动</span><strong>已开启</strong></div>
               <div class="warning-box">
-                <svg class="icon small" viewBox="0 0 24 24">
+                <svg
+                  class="icon small"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M12 3l10 18H2L12 3z" />
                   <path d="M12 9v5m0 3h.01" /></svg
                 ><span>全选或新增角色、用户、菜单管理权限时，保存前需要再次确认。</span>
@@ -2014,7 +2544,10 @@
             </aside>
           </div>
         </section>
-        <section class="tab-panel" id="tab-review">
+        <section
+          class="tab-panel"
+          id="tab-review"
+        >
           <h3 class="section-title">保存前确认</h3>
           <p class="section-description">确认角色标识、权限变化和可能受影响的用户会话。</p>
           <div class="review-grid">
@@ -2035,9 +2568,19 @@
             </div>
             <div class="impact-card full">
               <h3>会话与审计影响</h3>
-              <div class="info-box" style="margin-top: 0">
-                <svg class="icon small" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="9" />
+              <div
+                class="info-box"
+                style="margin-top: 0"
+              >
+                <svg
+                  class="icon small"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                  />
                   <path d="M12 11v5m0-8h.01" /></svg
                 ><span>正式保存后，后端需要清理角色权限缓存并按策略刷新在线会话；本原型不会执行真实授权。</span>
               </div>
@@ -2046,47 +2589,111 @@
         </section>
       </div>
       <div class="drawer-footer">
-        <button class="button close-role">取消</button><button class="button" id="previousStep" disabled>上一步</button
-        ><button class="button primary" id="nextStep">下一步</button
-        ><button class="button primary" id="saveRole" style="display: none">保存角色</button>
+        <button class="button close-role">取消</button
+        ><button
+          class="button"
+          id="previousStep"
+          disabled
+        >
+          上一步</button
+        ><button
+          class="button primary"
+          id="nextStep"
+        >
+          下一步</button
+        ><button
+          class="button primary"
+          id="saveRole"
+          style="display: none"
+        >
+          保存角色
+        </button>
       </div>
     </aside>
 
-    <aside class="drawer member-drawer" id="memberDrawer" aria-hidden="true" aria-labelledby="memberTitle">
+    <aside
+      class="drawer member-drawer"
+      id="memberDrawer"
+      aria-hidden="true"
+      aria-labelledby="memberTitle"
+    >
       <div class="drawer-header">
         <div>
           <h2 id="memberTitle">角色成员</h2>
-          <p class="muted" id="memberSubtitle">部门负责人 · dept-lead</p>
+          <p
+            class="muted"
+            id="memberSubtitle"
+          >
+            部门负责人 · dept-lead
+          </p>
         </div>
-        <button class="icon-button close-members" aria-label="关闭成员抽屉">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg>
+        <button
+          class="icon-button close-members"
+          aria-label="关闭成员抽屉"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+          >
+            <path d="M5 5l14 14M19 5L5 19" />
+          </svg>
         </button>
       </div>
       <div class="drawer-body">
         <div class="member-summary">
           <div class="role-mark">
-            <svg class="icon" viewBox="0 0 24 24">
-              <circle cx="9" cy="8" r="4" />
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="9"
+                cy="8"
+                r="4"
+              />
               <path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 11a3 3 0 100-6M18 14c2.4.5 4 2.6 4 5" />
             </svg>
           </div>
           <div>
-            <div class="member-name" id="memberRoleName">部门负责人</div>
+            <div
+              class="member-name"
+              id="memberRoleName"
+            >
+              部门负责人
+            </div>
             <div class="member-detail">当前 16 名成员 · 正常角色 · 本部门及以下数据</div>
           </div>
         </div>
-        <div class="tabs" role="tablist">
-          <button class="tab-button member-tab active" data-member-tab="allocated">已分配成员</button
-          ><button class="tab-button member-tab" data-member-tab="available">添加成员</button>
+        <div
+          class="tabs"
+          role="tablist"
+        >
+          <button
+            class="tab-button member-tab active"
+            data-member-tab="allocated"
+          >
+            已分配成员</button
+          ><button
+            class="tab-button member-tab"
+            data-member-tab="available"
+          >
+            添加成员
+          </button>
         </div>
         <div class="member-filter">
-          <input class="control" placeholder="搜索用户名、姓名或手机号" /><select class="select">
+          <input
+            class="control"
+            placeholder="搜索用户名、姓名或手机号"
+          /><select class="select">
             <option>全部部门</option>
             <option>技术中心</option>
             <option>产品中心</option></select
           ><button class="button primary">查询</button>
         </div>
-        <div class="member-list" id="allocatedMembers">
+        <div
+          class="member-list"
+          id="allocatedMembers"
+        >
           <div class="member-card">
             <div class="avatar">李</div>
             <div class="member-meta">
@@ -2112,16 +2719,26 @@
             <button class="button danger remove-member">移除</button>
           </div>
         </div>
-        <div class="member-list" id="availableMembers" style="display: none">
+        <div
+          class="member-list"
+          id="availableMembers"
+          style="display: none"
+        >
           <label class="member-card"
-            ><input type="checkbox" class="available-check" />
+            ><input
+              type="checkbox"
+              class="available-check"
+            />
             <div class="avatar">林</div>
             <div class="member-meta">
               <div class="member-name">林雪 <span class="mono">linxue</span></div>
               <div class="member-detail">质量保障部 · 当前角色：普通用户</div>
             </div></label
           ><label class="member-card"
-            ><input type="checkbox" class="available-check" />
+            ><input
+              type="checkbox"
+              class="available-check"
+            />
             <div class="avatar">赵</div>
             <div class="member-meta">
               <div class="member-name">赵敏 <span class="mono">zhaomin</span></div>
@@ -2132,59 +2749,129 @@
       </div>
       <div class="drawer-footer">
         <button class="button close-members">关闭</button
-        ><button class="button primary" id="addMembers" style="display: none" disabled>添加所选成员</button>
+        ><button
+          class="button primary"
+          id="addMembers"
+          style="display: none"
+          disabled
+        >
+          添加所选成员
+        </button>
       </div>
     </aside>
 
-    <div class="modal-wrap" id="scopeModal" role="dialog" aria-modal="true" aria-labelledby="scopeTitle">
+    <div
+      class="modal-wrap"
+      id="scopeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="scopeTitle"
+    >
       <div class="modal">
         <div class="modal-header">
           <div>
             <h2 id="scopeTitle">配置数据范围</h2>
-            <p class="muted" id="scopeSubtitle">部门负责人 · dept-lead</p>
+            <p
+              class="muted"
+              id="scopeSubtitle"
+            >
+              部门负责人 · dept-lead
+            </p>
           </div>
-          <button class="icon-button close-scope" aria-label="关闭数据范围弹窗">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg>
+          <button
+            class="icon-button close-scope"
+            aria-label="关闭数据范围弹窗"
+          >
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 5l14 14M19 5L5 19" />
+            </svg>
           </button>
         </div>
         <div class="modal-body">
           <div class="scope-options">
             <label class="scope-option"
-              ><input type="radio" name="dataScope" value="1" /><strong>全部数据权限</strong
-              ><span>可访问当前租户内全部受约束数据</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="1"
+              /><strong>全部数据权限</strong><span>可访问当前租户内全部受约束数据</span></label
             ><label class="scope-option"
-              ><input type="radio" name="dataScope" value="2" /><strong>自定数据权限</strong
-              ><span>仅访问选中的部门范围</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="2"
+              /><strong>自定数据权限</strong><span>仅访问选中的部门范围</span></label
             ><label class="scope-option"
-              ><input type="radio" name="dataScope" value="3" /><strong>本部门数据权限</strong
-              ><span>仅当前用户所属部门</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="3"
+              /><strong>本部门数据权限</strong><span>仅当前用户所属部门</span></label
             ><label class="scope-option"
-              ><input type="radio" name="dataScope" value="4" checked /><strong>本部门及以下</strong
-              ><span>当前部门和全部下级部门</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="4"
+                checked
+              /><strong>本部门及以下</strong><span>当前部门和全部下级部门</span></label
             ><label class="scope-option"
-              ><input type="radio" name="dataScope" value="5" /><strong>仅本人数据权限</strong
-              ><span>仅与当前用户本人相关的数据</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="5"
+              /><strong>仅本人数据权限</strong><span>仅与当前用户本人相关的数据</span></label
             ><label class="scope-option"
-              ><input type="radio" name="dataScope" value="6" /><strong>部门及以下或本人</strong
-              ><span>部门范围与本人数据的并集</span></label
+              ><input
+                type="radio"
+                name="dataScope"
+                value="6"
+              /><strong>部门及以下或本人</strong><span>部门范围与本人数据的并集</span></label
             >
           </div>
-          <div class="dept-tree" id="deptTree">
+          <div
+            class="dept-tree"
+            id="deptTree"
+          >
             <div class="tree-toolbar">
-              <input class="control" placeholder="搜索部门" style="height: 32px" />
+              <input
+                class="control"
+                placeholder="搜索部门"
+                style="height: 32px"
+              />
               <div class="tree-tools">父子联动：开</div>
             </div>
             <div class="tree-content">
-              <label class="tree-line"><input type="checkbox" checked />▾ Skyroc 集团</label
-              ><label class="tree-line level-1"><input type="checkbox" checked />▾ 技术中心</label
-              ><label class="tree-line level-2"><input type="checkbox" checked />研发一部</label
+              <label class="tree-line"
+                ><input
+                  type="checkbox"
+                  checked
+                />▾ Skyroc 集团</label
+              ><label class="tree-line level-1"
+                ><input
+                  type="checkbox"
+                  checked
+                />▾ 技术中心</label
+              ><label class="tree-line level-2"
+                ><input
+                  type="checkbox"
+                  checked
+                />研发一部</label
               ><label class="tree-line level-2"><input type="checkbox" />研发二部</label
               ><label class="tree-line level-1"><input type="checkbox" />产品中心</label
               ><label class="tree-line level-1"><input type="checkbox" />财务部</label>
             </div>
           </div>
-          <div class="warning-box" id="scopeWarning">
-            <svg class="icon small" viewBox="0 0 24 24">
+          <div
+            class="warning-box"
+            id="scopeWarning"
+          >
+            <svg
+              class="icon small"
+              viewBox="0 0 24 24"
+            >
               <path d="M12 3l10 18H2L12 3z" />
               <path d="M12 9v5m0 3h.01" /></svg
             ><span>扩大数据范围会影响该角色的全部成员，保存后按后端策略刷新权限缓存和在线会话。</span>
@@ -2192,45 +2879,90 @@
         </div>
         <div class="modal-footer">
           <button class="button close-scope">取消</button
-          ><button class="button primary" id="saveScope">保存数据范围</button>
+          ><button
+            class="button primary"
+            id="saveScope"
+          >
+            保存数据范围
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="modal-wrap" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div
+      class="modal-wrap"
+      id="deleteModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deleteTitle"
+    >
       <div class="modal compact">
         <div class="modal-header">
           <h2 id="deleteTitle">删除已选角色？</h2>
-          <button class="icon-button close-delete" aria-label="关闭删除确认">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg>
+          <button
+            class="icon-button close-delete"
+            aria-label="关闭删除确认"
+          >
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 5l14 14M19 5L5 19" />
+            </svg>
           </button>
         </div>
         <div class="modal-body">
           <div class="danger-message">
             <div class="danger-icon">
-              <svg class="icon" viewBox="0 0 24 24">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+              >
                 <path d="M12 3l10 18H2L12 3z" />
                 <path d="M12 9v5m0 3h.01" />
               </svg>
             </div>
             <div>
               <strong>删除后不可恢复</strong>
-              <p class="muted" style="margin-top: 7px; line-height: 1.6">
+              <p
+                class="muted"
+                style="margin-top: 7px; line-height: 1.6"
+              >
                 若任一角色已分配用户、受系统保护或数据已变化，正式接口应拒绝整批删除并返回具体原因。
               </p>
-              <div class="danger-summary" id="deleteSummary">未选择角色</div>
+              <div
+                class="danger-summary"
+                id="deleteSummary"
+              >
+                未选择角色
+              </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button class="button close-delete">取消</button
-          ><button class="button danger" id="confirmDelete">确认删除</button>
+          ><button
+            class="button danger"
+            id="confirmDelete"
+          >
+            确认删除
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite">
-      <svg class="icon small" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6" /></svg><span id="toastText">操作成功</span>
+    <div
+      class="toast"
+      id="toast"
+      role="status"
+      aria-live="polite"
+    >
+      <svg
+        class="icon small"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 12l4 4L19 6" /></svg
+      ><span id="toastText">操作成功</span>
     </div>
 
     <script>

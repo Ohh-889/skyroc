@@ -1,12 +1,12 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { CheckboxItem as _CheckboxItem } from '@radix-ui/react-menu';
-import { Check } from 'lucide-react';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
+import { Check } from 'lucide-react';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import MenuShortcut from '../menu/MenuShortcut';
-import MenuItemIndicator from './MenuItemIndicator';
 import { menuVariants } from './menu-variants';
+import MenuItemIndicator from './MenuItemIndicator';
 import type { MenuCheckboxItemProps } from './types';
 
 const MenuCheckboxItem = forwardRef<ComponentRef<typeof _CheckboxItem>, MenuCheckboxItemProps>((props, ref) => {
@@ -45,15 +45,13 @@ const MenuCheckboxItem = forwardRef<ComponentRef<typeof _CheckboxItem>, MenuChec
       {children}
       {trailing}
 
-      {shortcut
-        ? (
-          <MenuShortcut
-            className={classNames?.shortcut}
-            size={size}
-            value={shortcut}
-          />
-        )
-        : null}
+      {shortcut ? (
+        <MenuShortcut
+          className={classNames?.shortcut}
+          size={size}
+          value={shortcut}
+        />
+      ) : null}
     </CheckboxItem>
   );
 });

@@ -1,6 +1,6 @@
 ---
-title: "菜单系统"
-description: "Admin Layouts 菜单系统的公共概念：生成入口、统一结构、权限、badge、extra 与 menuNodeCallback"
+title: '菜单系统'
+description: 'Admin Layouts 菜单系统的公共概念：生成入口、统一结构、权限、badge、extra 与 menuNodeCallback'
 ---
 
 菜单系统把 TanStack Router 的 `staticData` 或后端返回的 `BackendRoute` 转成统一的 `GeneratedMenu`，再渲染成 Ant Design Menu 项。
@@ -38,18 +38,18 @@ renderCommonMenus(...)
 
 菜单生成由 `setupAdminLayouts({ routeMode })` 决定：
 
-| 模式 | 数据来源 | 适用场景 | 深入文档 |
-| --- | --- | --- | --- |
-| `static` | TanStack Router route 的 `staticData` | 路由和菜单由前端仓库管理，权限也由前端 meta 参与过滤。 | [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation) |
-| `dynamic` | `loadDynamicRoutes` 返回的后端路由树 | 菜单、首页和路由树由后端或权限中心下发。 | [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation) |
+| 模式      | 数据来源                              | 适用场景                                               | 深入文档                                                            |
+| --------- | ------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------- |
+| `static`  | TanStack Router route 的 `staticData` | 路由和菜单由前端仓库管理，权限也由前端 meta 参与过滤。 | [静态路由菜单生成](/docs/web/admin-layouts/static-menu-generation)  |
+| `dynamic` | `loadDynamicRoutes` 返回的后端路由树  | 菜单、首页和路由树由后端或权限中心下发。               | [动态路由菜单生成](/docs/web/admin-layouts/dynamic-menu-generation) |
 
 无论哪种模式，最终都会得到同一组运行时数据：
 
-| 数据 | 说明 |
-| --- | --- |
-| `allMenus` | `Map<categoryKey, GeneratedMenu[]>`，用于渲染菜单树。 |
+| 数据                  | 说明                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| `allMenus`            | `Map<categoryKey, GeneratedMenu[]>`，用于渲染菜单树。                                       |
 | `quickReferenceMenus` | `Map<categoryKey, Map<path, routeInfo>>`，用于根据路由快速定位菜单、tab、父级路径和激活项。 |
-| `home` | 当前用户首页。静态模式来自 `defaultHome`，动态模式可以由后端返回值覆盖。 |
+| `home`                | 当前用户首页。静态模式来自 `defaultHome`，动态模式可以由后端返回值覆盖。                    |
 
 ## 菜单分类
 
@@ -68,11 +68,11 @@ setupAdminLayouts({
 
 这组配置有三个用途：
 
-| 场景 | 分类的作用 |
-| --- | --- |
-| 静态模式 | 通过 `layout` 找到 TanStack Router 的 layout route，只扫描该 layout 下的子路由生成菜单。 |
+| 场景     | 分类的作用                                                                                |
+| -------- | ----------------------------------------------------------------------------------------- |
+| 静态模式 | 通过 `layout` 找到 TanStack Router 的 layout route，只扫描该 layout 下的子路由生成菜单。  |
 | 动态模式 | 后端顶层 `BackendRoute.layout` 写分类 key，例如 `admin`，布局包据此把路由放进对应菜单组。 |
-| 渲染布局 | `AdminLayout` 通过 `categoryKey` 选择要读取的菜单组，未传时默认使用第一个分类。 |
+| 渲染布局 | `AdminLayout` 通过 `categoryKey` 选择要读取的菜单组，未传时默认使用第一个分类。           |
 
 单后台应用通常只需要一个 `admin` 分类。只有多后台入口、多工作台，或同一个应用里需要多套独立菜单时，才需要增加第二个分类。
 
@@ -98,19 +98,19 @@ interface GeneratedMenu {
 
 ## 通用菜单字段
 
-| 字段 | 说明 |
-| --- | --- |
-| `title` | 菜单和 tab 的兜底标题。 |
-| `i18nKey` | 多语言 key，存在时优先由 `I18nLabel` 渲染。 |
-| `permissions` | 当前路由需要的角色列表。 |
-| `menu.icon` | Iconify 图标名。 |
-| `menu.localIcon` | 本地图标名。 |
-| `menu.order` | 同级菜单排序值。 |
-| `menu.hide` | 是否从菜单树隐藏，但仍可进入路由。 |
-| `menu.activeMenu` | 隐藏详情页进入时激活哪个菜单。 |
-| `menu.type` | 菜单类型，常用 `item` 或 `divider`。 |
-| `menu.badge` | 标准菜单状态，例如红点、数字、`new`、`hot`。 |
-| `menu.extra` | 自定义菜单额外组件 key，用于标准 badge 不能表达的业务 UI。 |
+| 字段              | 说明                                                       |
+| ----------------- | ---------------------------------------------------------- |
+| `title`           | 菜单和 tab 的兜底标题。                                    |
+| `i18nKey`         | 多语言 key，存在时优先由 `I18nLabel` 渲染。                |
+| `permissions`     | 当前路由需要的角色列表。                                   |
+| `menu.icon`       | Iconify 图标名。                                           |
+| `menu.localIcon`  | 本地图标名。                                               |
+| `menu.order`      | 同级菜单排序值。                                           |
+| `menu.hide`       | 是否从菜单树隐藏，但仍可进入路由。                         |
+| `menu.activeMenu` | 隐藏详情页进入时激活哪个菜单。                             |
+| `menu.type`       | 菜单类型，常用 `item` 或 `divider`。                       |
+| `menu.badge`      | 标准菜单状态，例如红点、数字、`new`、`hot`。               |
+| `menu.extra`      | 自定义菜单额外组件 key，用于标准 badge 不能表达的业务 UI。 |
 
 ## 权限过滤
 
@@ -154,13 +154,13 @@ menu: {
 
 字段：
 
-| 字段 | 说明 |
-| --- | --- |
-| `type` | `normal` 显示内容 badge，`dot` 显示红点。 |
-| `value` | 静态内容，可以是数字或文本。 |
-| `valueKey` | 动态值 key，从布局包的 badge 值表读取。 |
-| `variant` | 可选状态色：`default`、`primary`、`success`、`warning`、`error`、`info`。 |
-| `showZero` | 值为 `0` 时是否仍显示。 |
+| 字段       | 说明                                                                      |
+| ---------- | ------------------------------------------------------------------------- |
+| `type`     | `normal` 显示内容 badge，`dot` 显示红点。                                 |
+| `value`    | 静态内容，可以是数字或文本。                                              |
+| `valueKey` | 动态值 key，从布局包的 badge 值表读取。                                   |
+| `variant`  | 可选状态色：`default`、`primary`、`success`、`warning`、`error`、`info`。 |
+| `showZero` | 值为 `0` 时是否仍显示。                                                   |
 
 动态更新：
 
@@ -227,13 +227,13 @@ staticData: {
 
 ### Badge 和 Extra 的选择
 
-| 场景 | 推荐 |
-| --- | --- |
-| 数字、红点、`new`、`hot`、简单状态文本 | `menu.badge` |
-| 后端动态菜单需要表达通用状态 | `menu.badge` |
-| 需要订阅统一动态数量 | `valueKey` + `useAdminMenuBadges` |
-| 完全不同的业务 UI 或组合样式 | `menu.extra` |
-| 需要组件内部自行读取业务数据 | `menu.extra` |
+| 场景                                   | 推荐                              |
+| -------------------------------------- | --------------------------------- |
+| 数字、红点、`new`、`hot`、简单状态文本 | `menu.badge`                      |
+| 后端动态菜单需要表达通用状态           | `menu.badge`                      |
+| 需要订阅统一动态数量                   | `valueKey` + `useAdminMenuBadges` |
+| 完全不同的业务 UI 或组合样式           | `menu.extra`                      |
+| 需要组件内部自行读取业务数据           | `menu.extra`                      |
 
 ## menuNodeCallback
 
@@ -241,20 +241,20 @@ staticData: {
 
 它适合这些场景：
 
-| 场景 | 说明 |
-| --- | --- |
-| 分割菜单区块 | 在某个 layout 或菜单节点下追加 `type: 'divider'`。 |
-| 追加项目级入口 | 追加由项目配置决定的菜单，例如固定功能入口、聚合入口或手写子菜单。 |
-| 复用同一套扩展逻辑 | 静态路由和动态路由都需要同样的额外节点时，放在一个 callback 里。 |
+| 场景               | 说明                                                               |
+| ------------------ | ------------------------------------------------------------------ |
+| 分割菜单区块       | 在某个 layout 或菜单节点下追加 `type: 'divider'`。                 |
+| 追加项目级入口     | 追加由项目配置决定的菜单，例如固定功能入口、聚合入口或手写子菜单。 |
+| 复用同一套扩展逻辑 | 静态路由和动态路由都需要同样的额外节点时，放在一个 callback 里。   |
 
 不要把普通页面菜单写进 `menuNodeCallback`。普通页面应该优先通过静态 route 的 `staticData.menu` 或动态接口返回的 `menu` 声明。`menuNodeCallback` 只处理“路由树之外的补充节点”。
 
 `routeId` 表示当前正在生成菜单的 route 节点：
 
-| 模式 | `routeId` 来源 |
-| --- | --- |
+| 模式     | `routeId` 来源                                                    |
+| -------- | ----------------------------------------------------------------- |
 | 静态模式 | TanStack Router 的 route id，例如 `/(admin)`、`/(admin)/manage`。 |
-| 动态模式 | 后端 `BackendRoute.id`，例如 `system`。 |
+| 动态模式 | 后端 `BackendRoute.id`，例如 `system`。                           |
 
 没有要追加的节点时返回空数组。
 

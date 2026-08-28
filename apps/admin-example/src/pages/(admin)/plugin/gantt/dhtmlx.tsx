@@ -27,15 +27,25 @@ const DhtmlxGanttDemo = () => {
   }, []);
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:timeline-clock-outline"
         resources={[{ label: 'dhtmlxGantt', url: 'https://docs.dhtmlx.com/gantt/' }]}
         tags={['dhtmlx-gantt', 'Project Schedule']}
         title="甘特图示例"
       />
-      <ExamplePanel icon="mdi:timeline-clock-outline" title="dhtmlxGantt">
-        <div className="h-560px overflow-hidden rounded-lg border border-border" ref={ganttRef} />
+      <ExamplePanel
+        icon="mdi:timeline-clock-outline"
+        title="dhtmlxGantt"
+      >
+        <div
+          className="h-560px overflow-hidden rounded-lg border border-border"
+          ref={ganttRef}
+        />
       </ExamplePanel>
     </Space>
   );

@@ -1,30 +1,23 @@
 /**
- * Form middleware system for action processing and validation
- * Provides type-safe action definitions and middleware composition utilities
+ * Form middleware system for action processing and validation Provides type-safe action definitions and middleware
+ * composition utilities
  */
 
-import type { AllPathsKeys, PathToDeepType } from '@skyroc/utils/type';
 import type { NamePath } from '@skyroc/utils';
+import type { AllPathsKeys, PathToDeepType } from '@skyroc/utils/type';
 
 import type { ValidateOptions } from './validation';
 
-/**
- * Extended validation options for validating multiple fields
- */
+/** Extended validation options for validating multiple fields */
 export interface ValidateFieldsOptions extends ValidateOptions {
   /** Only validate fields that have been modified (dirty) */
   dirty?: boolean;
 }
 
-/**
- * Available array operations for form field arrays
- */
+/** Available array operations for form field arrays */
 export type ArrayOp = 'insert' | 'move' | 'remove' | 'replace' | 'swap';
 
-/**
- * Arguments for different array operations
- * Each operation type has its own specific argument structure
- */
+/** Arguments for different array operations Each operation type has its own specific argument structure */
 export type ArrayOpArgs =
   | { index: number; item: any; op: 'insert' } // Insert item at index
   | { index: number; op: 'remove' } // Remove item at index
@@ -32,20 +25,13 @@ export type ArrayOpArgs =
   | { from: number; op: 'swap'; to: number } // Swap items at two indices
   | { index: number; item: any; op: 'replace' }; // Replace item at index
 
-/**
- * Utility type to extract arguments for a specific array operation
- */
+/** Utility type to extract arguments for a specific array operation */
 export type ArgsOf<T extends ArrayOp> = Extract<ArrayOpArgs, { op: T }>;
 
-/**
- * Action type for array operations on form fields
- */
+/** Action type for array operations on form fields */
 export type ArrayOpAction = { args: ArgsOf<ArrayOp>; name: NamePath; type: 'arrayOp' };
 
-/**
- * Union type representing all possible form actions
- * Each action type corresponds to a specific form operation
- */
+/** Union type representing all possible form actions Each action type corresponds to a specific form operation */
 export type Action<Values = any, T extends AllPathsKeys<Values> = AllPathsKeys<Values>> =
   | { name: T; type: 'setFieldValue'; validate?: boolean; value: PathToDeepType<Values, T> } // Set single field value
   | { type: 'setFieldsValue'; validate?: boolean; values: Values } // Set multiple field values
@@ -55,10 +41,7 @@ export type Action<Values = any, T extends AllPathsKeys<Values> = AllPathsKeys<V
   | { entries: Array<[T, string[]]>; type: 'setExternalErrors' } // Set external validation errors
   | ArrayOpAction; // Array operations
 
-/**
- * Context object provided to middleware functions
- * Contains methods to interact with the form state and dispatch actions
- */
+/** Context object provided to middleware functions Contains methods to interact with the form state and dispatch actions */
 export type MiddlewareCtx<Values, T extends AllPathsKeys<Values> = AllPathsKeys<Values>> = {
   /** Dispatch an action to the form store */
   dispatch(a: Action<Values, T>): void;
@@ -67,17 +50,16 @@ export type MiddlewareCtx<Values, T extends AllPathsKeys<Values> = AllPathsKeys<
 };
 
 /**
- * Middleware function type for form action processing
- * Follows the standard middleware pattern: (ctx) => (next) => (action) => void
- * Allows intercepting and modifying form actions before they reach the store
+ * Middleware function type for form action processing Follows the standard middleware pattern: (ctx) => (next) =>
+ * (action) => void Allows intercepting and modifying form actions before they reach the store
  */
 export type Middleware<Values = any, T extends AllPathsKeys<Values> = AllPathsKeys<Values>> = (
   ctx: MiddlewareCtx<Values, T>
 ) => (next: (a: Action<Values, T>) => void) => (a: Action<Values, T>) => void;
 
 /**
- * Composes multiple functions into a single function
- * Used to combine multiple middleware functions into a single middleware chain
+ * Composes multiple functions into a single function Used to combine multiple middleware functions into a single
+ * middleware chain
  */
 export function compose(...fns: ((...args: any[]) => any)[]) {
   // No functions provided, return identity function

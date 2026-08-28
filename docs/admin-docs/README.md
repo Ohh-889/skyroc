@@ -6,14 +6,14 @@
 
 ## 文档结构
 
-| 目录 | 内容 |
-| --- | --- |
-| `content/docs` | Fumadocs 正文页面和侧边栏 `meta.json`。 |
-| `app/docs` | 文档页路由和布局。 |
-| `app/(home)` | 文档站入口页。 |
-| `components` | 文档站自己的 UI 和 MDX 渲染组件。 |
-| `lib/source.ts` | Fumadocs content source 适配。 |
-| `lib/shared.ts` | 文档站应用名、仓库信息和路由常量。 |
+| 目录            | 内容                                    |
+| --------------- | --------------------------------------- |
+| `content/docs`  | Fumadocs 正文页面和侧边栏 `meta.json`。 |
+| `app/docs`      | 文档页路由和布局。                      |
+| `app/(home)`    | 文档站入口页。                          |
+| `components`    | 文档站自己的 UI 和 MDX 渲染组件。       |
+| `lib/source.ts` | Fumadocs content source 适配。          |
+| `lib/shared.ts` | 文档站应用名、仓库信息和路由常量。      |
 
 ## 常用命令
 

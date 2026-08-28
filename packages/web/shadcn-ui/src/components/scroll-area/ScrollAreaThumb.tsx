@@ -11,7 +11,13 @@ const ScrollAreaScrollbar = (props: ScrollAreaThumbProps) => {
 
   const mergedCls = cn(thumb(), className);
 
-  return <Thumb className={mergedCls} data-slot="scroll-area-thumb" {...rest} />;
+  return (
+    <Thumb
+      className={mergedCls}
+      data-slot="scroll-area-thumb"
+      {...rest}
+    />
+  );
 };
 
 ScrollAreaScrollbar.displayName = 'ScrollAreaScrollbar';

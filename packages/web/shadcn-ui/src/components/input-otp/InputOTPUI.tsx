@@ -3,13 +3,24 @@
 import type { ComponentRef } from 'react';
 import { Fragment, forwardRef } from 'react';
 import InputOTPGroup from './InputOTPGroup';
+import InputOtpRoot from './InputOtpRoot';
 import InputOTPSeparator from './InputOTPSeparator';
 import InputOTPSlot from './InputOTPSlot';
-import InputOtpRoot from './InputOtpRoot';
 import type { InputOTPProps } from './types';
 
 const InputOTPUI = forwardRef<ComponentRef<typeof InputOtpRoot>, InputOTPProps>((props, ref) => {
-  const { className, classNames, groupProps, inputCount = 6, mask, separator, separatorProps, size, slotProps, ...rest } = props;
+  const {
+    className,
+    classNames,
+    groupProps,
+    inputCount = 6,
+    mask,
+    separator,
+    separatorProps,
+    size,
+    slotProps,
+    ...rest
+  } = props;
 
   const isSeparator = Boolean(separator);
 
@@ -37,17 +48,15 @@ const InputOTPUI = forwardRef<ComponentRef<typeof InputOtpRoot>, InputOTPProps>(
               {...slotProps}
             />
 
-            {isSeparator && index !== inputCount - 1
-              ? (
-                <InputOTPSeparator
-                  className={classNames?.separator}
-                  size={size}
-                  {...separatorProps}
-                >
-                  {separator}
-                </InputOTPSeparator>
-              )
-              : null}
+            {isSeparator && index !== inputCount - 1 ? (
+              <InputOTPSeparator
+                className={classNames?.separator}
+                size={size}
+                {...separatorProps}
+              >
+                {separator}
+              </InputOTPSeparator>
+            ) : null}
           </Fragment>
         ))}
       </InputOTPGroup>

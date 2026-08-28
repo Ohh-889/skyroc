@@ -13,10 +13,20 @@ const items: ToggleGroupProps['items'] = [
 
 const ToggleGroupSize = () => {
   return (
-    <Card split title="Size">
+    <Card
+      split
+      title="Size"
+    >
       <div className="flex flex-col items-start gap-3">
         {sizes.map(size => (
-          <ToggleGroup key={size} items={items} size={size} type="single" defaultValue="a" variant="outline" />
+          <ToggleGroup
+            key={size}
+            items={items}
+            size={size}
+            type="single"
+            defaultValue="a"
+            variant="outline"
+          />
         ))}
       </div>
     </Card>

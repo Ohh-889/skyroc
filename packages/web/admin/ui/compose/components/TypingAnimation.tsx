@@ -76,7 +76,11 @@ export function TypingAnimation({
   }, [children, duration, started]);
 
   return (
-    <MotionComponent className={clsx('tracking-[-0.02em]', className)} ref={elementRef} {...props}>
+    <MotionComponent
+      className={clsx('tracking-[-0.02em]', className)}
+      ref={elementRef}
+      {...props}
+    >
       {displayedText}
     </MotionComponent>
   );

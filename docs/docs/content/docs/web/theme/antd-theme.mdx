@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/adapter-antd-theme"
-description: "Ant Design 主题算法适配器 — 用 OKLCH 感知均匀色彩空间替换默认调色板生成器，输出符合 Ant Design token 规范的完整色彩与样式 token"
+title: '@skyroc/adapter-antd-theme'
+description: 'Ant Design 主题算法适配器 — 用 OKLCH 感知均匀色彩空间替换默认调色板生成器，输出符合 Ant Design token 规范的完整色彩与样式 token'
 ---
 
 ## 概述
@@ -94,7 +94,7 @@ const colorToken = genColorMapToken(
     colorSuccess: '#10B981',
     colorWarning: '#F59E0B',
     colorError: '#F43F5E',
-    colorInfo: '#0EA5E9',
+    colorInfo: '#0EA5E9'
   },
   { darkMode: false }
 );
@@ -115,7 +115,7 @@ const colorToken = genColorMapToken(
 import type { SeedToken } from 'antd/es/theme/interface';
 import type { DerivativeFunc } from '@ant-design/cssinjs';
 
-const derivative: DerivativeFunc<SeedToken, MapToken>
+const derivative: DerivativeFunc<SeedToken, MapToken>;
 ```
 
 内部流程：
@@ -154,13 +154,13 @@ genSizeMapToken   → 间距 token
 
 暗色模式对色板的语义映射做了特殊处理：
 
-| 语义 token | 亮色来源 | 暗色来源 |
-|-----------|---------|---------|
-| `colorPrimaryBg` | palette[1]（最浅） | palette[3]（边框色）|
-| `colorPrimaryBgHover` | palette[2] | palette[4] |
-| `colorPrimaryBorder` | palette[3] | palette[5]（hover）|
-| `colorPrimaryHover` | palette[5] | palette[6]（主色）|
-| `colorPrimary` | palette[6] | palette[5] |
+| 语义 token            | 亮色来源           | 暗色来源             |
+| --------------------- | ------------------ | -------------------- |
+| `colorPrimaryBg`      | palette[1]（最浅） | palette[3]（边框色） |
+| `colorPrimaryBgHover` | palette[2]         | palette[4]           |
+| `colorPrimaryBorder`  | palette[3]         | palette[5]（hover）  |
+| `colorPrimaryHover`   | palette[5]         | palette[6]（主色）   |
+| `colorPrimary`        | palette[6]         | palette[5]           |
 
 这种反转映射确保暗色背景下的视觉层次感与亮色模式保持一致的交互反馈。
 
@@ -173,7 +173,7 @@ genSizeMapToken   → 间距 token
 亮色模式下，从单一 hex 色生成 Ant Design 1–10 索引的调色板：
 
 ```ts
-function generateColorPalettes(color: string): Record<number, string>
+function generateColorPalettes(color: string): Record<number, string>;
 ```
 
 ```ts
@@ -192,7 +192,7 @@ const palette = generateColorPalettes('#6366F1');
 暗色模式调色板，明度曲线反转：
 
 ```ts
-function generateDarkColorPalettes(color: string): Record<number, string>
+function generateDarkColorPalettes(color: string): Record<number, string>;
 ```
 
 ---
@@ -202,10 +202,7 @@ function generateDarkColorPalettes(color: string): Record<number, string>
 生成亮色模式中性色（文字、背景、边框）：
 
 ```ts
-function generateNeutralColorPalettes(
-  bgBaseColor: string,
-  textBaseColor: string
-): NeutralColorPalette
+function generateNeutralColorPalettes(bgBaseColor: string, textBaseColor: string): NeutralColorPalette;
 ```
 
 ---
@@ -215,10 +212,7 @@ function generateNeutralColorPalettes(
 暗色模式中性色：
 
 ```ts
-function generateDarkNeutralColorPalettes(
-  bgBaseColor: string,
-  textBaseColor: string
-): NeutralColorPalette
+function generateDarkNeutralColorPalettes(bgBaseColor: string, textBaseColor: string): NeutralColorPalette;
 ```
 
 ---
@@ -239,7 +233,7 @@ function genColorMapToken(
     colorInfo: string;
   },
   options: { darkMode: boolean }
-): ColorMapToken
+): ColorMapToken;
 ```
 
 对每个功能色（primary / success / warning / error / info）生成完整语义链：
@@ -264,7 +258,7 @@ colorXxxTextActive 文字 active
 生成字体相关 token，基于 `fontSize`（基准字号）推导出各级字号和行高：
 
 ```ts
-function genFontMapToken(fontSize: number): FontMapToken
+function genFontMapToken(fontSize: number): FontMapToken;
 ```
 
 ```ts
@@ -282,7 +276,7 @@ const fontTokens = genFontMapToken(14);
 基于基准圆角（`borderRadius`）生成各级圆角 token：
 
 ```ts
-function genRadiusMapToken(borderRadius: number): RadiusMapToken
+function genRadiusMapToken(borderRadius: number): RadiusMapToken;
 ```
 
 ```ts
@@ -299,7 +293,7 @@ const radiusTokens = genRadiusMapToken(6);
 生成间距 / 尺寸 token：
 
 ```ts
-function genSizeMapToken(seed: SeedToken): SizeMapToken
+function genSizeMapToken(seed: SeedToken): SizeMapToken;
 ```
 
 ---
@@ -309,7 +303,7 @@ function genSizeMapToken(seed: SeedToken): SizeMapToken
 生成通用 token（动画时长、线宽等）：
 
 ```ts
-function genCommonMapToken(seed: SeedToken): CommonMapToken
+function genCommonMapToken(seed: SeedToken): CommonMapToken;
 ```
 
 ---
@@ -319,7 +313,7 @@ function genCommonMapToken(seed: SeedToken): CommonMapToken
 生成控件高度 token（controlHeight / controlHeightSM / controlHeightLG）：
 
 ```ts
-function genControlHeight(seed: SeedToken): Pick<MapToken, 'controlHeight'>
+function genControlHeight(seed: SeedToken): Pick<MapToken, 'controlHeight'>;
 ```
 
 ---
@@ -331,13 +325,11 @@ function genControlHeight(seed: SeedToken): Pick<MapToken, 'controlHeight'>
 生成 CSS 变量格式的调色板：
 
 ```ts
-function genPaletteVars(
-  colorName: string,
-  palette: Record<number, string>
-): Record<string, string>
+function genPaletteVars(colorName: string, palette: Record<number, string>): Record<string, string>;
 ```
 
 输出格式：
+
 - `primary-1` ... `primary-10`（Ant Design 风格）
 - `primary-50` ... `primary-950`（Tailwind 风格）
 
@@ -353,7 +345,7 @@ function genSemanticColors(
   palette: Record<number, string>,
   config: SemanticColorConfig,
   darkMode?: boolean
-): Record<string, string>
+): Record<string, string>;
 ```
 
 ---
@@ -363,8 +355,8 @@ function genSemanticColors(
 ```ts
 import { adjustLightness, darkenColor, lightenColor, mixColor } from '@skyroc/adapter-antd-theme';
 
-adjustLightness('#6366F1', 20);   // 调亮 20%
-adjustLightness('#6366F1', -20);  // 调暗 20%
+adjustLightness('#6366F1', 20); // 调亮 20%
+adjustLightness('#6366F1', -20); // 调暗 20%
 lightenColor('#6366F1', 20);
 darkenColor('#6366F1', 20);
 mixColor('#6366F1', '#ffffff', 0.3); // 混合
@@ -406,7 +398,7 @@ import { defaultPresetColors } from '@skyroc/adapter-antd-theme';
 Ant Design 色板索引（1-10）到 Tailwind 色阶（50-950）的映射表：
 
 ```ts
-const ANTD_INDEXES: Record<number, ColorPaletteNumber>
+const ANTD_INDEXES: Record<number, ColorPaletteNumber>;
 // { 1: 50, 2: 100, 3: 200, 4: 300, 5: 400, 6: 500, 7: 600, 8: 700, 9: 800, 10: 900 }
 ```
 
@@ -415,7 +407,7 @@ const ANTD_INDEXES: Record<number, ColorPaletteNumber>
 反向映射：
 
 ```ts
-const TAILWIND_INDEXES: Record<ColorPaletteNumber, number>
+const TAILWIND_INDEXES: Record<ColorPaletteNumber, number>;
 // { 50: 1, 100: 2, 200: 3, ... }
 ```
 

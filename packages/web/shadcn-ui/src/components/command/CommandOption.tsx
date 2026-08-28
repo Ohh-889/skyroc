@@ -10,20 +10,40 @@ const CommandOption = (props: CommandOptionProps) => {
   if (isGroup(item)) {
     const { children, label, ...rest2 } = item;
     return (
-      <CommandGroup classNames={classNames} heading={label} size={size} {...rest2}>
+      <CommandGroup
+        classNames={classNames}
+        heading={label}
+        size={size}
+        {...rest2}
+      >
         {children.map((child, index) => (
-          <CommandOption classNames={classNames} item={child} key={String(index)} size={size} />
+          <CommandOption
+            classNames={classNames}
+            item={child}
+            key={String(index)}
+            size={size}
+          />
         ))}
       </CommandGroup>
     );
   }
 
   if (isSeparator(item)) {
-    return <CommandSeparator className={classNames?.separator} size={size} {...item} />;
+    return (
+      <CommandSeparator
+        className={classNames?.separator}
+        size={size}
+        {...item}
+      />
+    );
   }
 
   return (
-    <CommandItem className={classNames?.item} size={size} {...item}>
+    <CommandItem
+      className={classNames?.item}
+      size={size}
+      {...item}
+    >
       {item.label}
     </CommandItem>
   );

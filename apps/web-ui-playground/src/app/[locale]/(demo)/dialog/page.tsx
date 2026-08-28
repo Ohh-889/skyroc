@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { Card } from '@skyroc/web-ui';
+import type { Metadata } from 'next';
 import { generateComponentMetadata } from '../components-meta';
 import DialogBasic from './modules/DialogBasic';
 import DialogWithFooter from './modules/DialogWithFooter';

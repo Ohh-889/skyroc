@@ -84,8 +84,14 @@ function dataScopeLabel(value: RoleDataScope) {
 function renderBasicTab() {
   return (
     <div>
-      <Typography.Text className="flex items-center gap-7px" strong>
-        <SvgIcon className="text-primary" icon="ph:identification-card" />
+      <Typography.Text
+        className="flex items-center gap-7px"
+        strong
+      >
+        <SvgIcon
+          className="text-primary"
+          icon="ph:identification-card"
+        />
         角色基本信息
       </Typography.Text>
       <Divider className="my-12px" />
@@ -104,7 +110,11 @@ function renderBasicTab() {
             { max: 30, message: '角色名称最多 30 个字符' }
           ]}
         >
-          <Input allowClear maxLength={30} placeholder="例如 部门负责人" />
+          <Input
+            allowClear
+            maxLength={30}
+            placeholder="例如 部门负责人"
+          />
         </Form.Item>
         <Form.Item
           extra="建议使用小写英文、数字、连字符或下划线。"
@@ -115,12 +125,27 @@ function renderBasicTab() {
             { max: 100, message: '权限字符最多 100 个字符' }
           ]}
         >
-          <Input allowClear maxLength={100} placeholder="例如 dept-lead" />
+          <Input
+            allowClear
+            maxLength={100}
+            placeholder="例如 dept-lead"
+          />
         </Form.Item>
-        <Form.Item label="显示顺序" name="roleSort" rules={[{ message: '请输入显示顺序', required: true }]}>
-          <InputNumber className="w-full" min={0} precision={0} />
+        <Form.Item
+          label="显示顺序"
+          name="roleSort"
+          rules={[{ message: '请输入显示顺序', required: true }]}
+        >
+          <InputNumber
+            className="w-full"
+            min={0}
+            precision={0}
+          />
         </Form.Item>
-        <Form.Item label="角色状态" name="status">
+        <Form.Item
+          label="角色状态"
+          name="status"
+        >
           <Radio.Group
             options={[
               { label: '正常', value: '0' },
@@ -129,8 +154,18 @@ function renderBasicTab() {
           />
         </Form.Item>
       </div>
-      <Form.Item label="备注" name="remark" rules={[{ max: 500, message: '备注最多 500 个字符' }]}>
-        <Input.TextArea allowClear maxLength={500} placeholder="说明角色用途和管理边界" rows={4} showCount />
+      <Form.Item
+        label="备注"
+        name="remark"
+        rules={[{ max: 500, message: '备注最多 500 个字符' }]}
+      >
+        <Input.TextArea
+          allowClear
+          maxLength={500}
+          placeholder="说明角色用途和管理边界"
+          rows={4}
+          showCount
+        />
       </Form.Item>
     </div>
   );
@@ -250,12 +285,24 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
   function renderPermissionTab() {
     return (
       <div>
-        <Flex align="flex-start" className="mb-12px" justify="space-between" wrap gap={10}>
+        <Flex
+          align="flex-start"
+          className="mb-12px"
+          justify="space-between"
+          wrap
+          gap={10}
+        >
           <div>
-            <Typography.Text className="block" strong>
+            <Typography.Text
+              className="block"
+              strong
+            >
               菜单与按钮权限
             </Typography.Text>
-            <Typography.Text className="text-12px" type="secondary">
+            <Typography.Text
+              className="text-12px"
+              type="secondary"
+            >
               选择该角色可以访问的页面和操作按钮。
             </Typography.Text>
           </div>
@@ -267,12 +314,23 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
           </Checkbox>
         </Flex>
         <div className="grid grid-cols-[minmax(0,1fr)_220px] gap-14px lt-md:grid-cols-1">
-          <Card className="border-border-secondary" size="small">
-            <Flex className="mb-10px" gap={8}>
+          <Card
+            className="border-border-secondary"
+            size="small"
+          >
+            <Flex
+              className="mb-10px"
+              gap={8}
+            >
               <Input
                 allowClear
                 placeholder="搜索菜单或按钮名称"
-                prefix={<SvgIcon className="text-tertiary" icon="ph:magnifying-glass" />}
+                prefix={
+                  <SvgIcon
+                    className="text-tertiary"
+                    icon="ph:magnifying-glass"
+                  />
+                }
                 value={permissionKeyword}
                 onChange={event => setPermissionKeyword(event.target.value)}
               />
@@ -294,7 +352,11 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
               </div>
             </Spin>
           </Card>
-          <Card className="h-fit bg-layout" size="small" title="已选权限摘要">
+          <Card
+            className="h-fit bg-layout"
+            size="small"
+            title="已选权限摘要"
+          >
             <div className="grid gap-12px">
               <Flex justify="space-between">
                 <span className="text-secondary">菜单</span>
@@ -327,7 +389,10 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
         <Typography.Title level={5}>保存前确认</Typography.Title>
         <Typography.Paragraph type="secondary">确认角色标识、授权范围和可能受影响的用户会话。</Typography.Paragraph>
         <div className="grid grid-cols-2 gap-12px lt-sm:grid-cols-1">
-          <Card size="small" title="基本信息">
+          <Card
+            size="small"
+            title="基本信息"
+          >
             <div className="grid gap-10px text-13px">
               <Flex justify="space-between">
                 <span className="text-secondary">角色名称</span>
@@ -343,7 +408,10 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
               </Flex>
             </div>
           </Card>
-          <Card size="small" title="授权摘要">
+          <Card
+            size="small"
+            title="授权摘要"
+          >
             <div className="grid gap-10px text-13px">
               <Flex justify="space-between">
                 <span className="text-secondary">菜单</span>
@@ -374,22 +442,38 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
     <Drawer
       destroyOnHidden
       footer={
-        <Flex gap={8} justify="flex-end">
-          <Button disabled={loading} onClick={onClose}>
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
           {activeTab !== 'basic' ? (
-            <Button disabled={loading} onClick={handlePrevious}>
+            <Button
+              disabled={loading}
+              onClick={handlePrevious}
+            >
               上一步
             </Button>
           ) : null}
           {activeTab !== 'review' ? (
-            <Button type="primary" onClick={handleNext}>
+            <Button
+              type="primary"
+              onClick={handleNext}
+            >
               下一步
             </Button>
           ) : null}
           {activeTab === 'review' ? (
-            <Button loading={loading} type="primary" onClick={() => form.submit()}>
+            <Button
+              loading={loading}
+              type="primary"
+              onClick={() => form.submit()}
+            >
               保存角色
             </Button>
           ) : null}
@@ -411,7 +495,10 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
       {detailQuery.isError || menuTreeQuery.isError ? (
         <Alert
           action={
-            <Button size="small" onClick={() => Promise.all([detailQuery.refetch(), menuTreeQuery.refetch()])}>
+            <Button
+              size="small"
+              onClick={() => Promise.all([detailQuery.refetch(), menuTreeQuery.refetch()])}
+            >
               重试
             </Button>
           }
@@ -422,7 +509,12 @@ const RoleEditorDrawer = (props: RoleEditorDrawerProps) => {
         />
       ) : null}
       <Spin spinning={detailLoading}>
-        <Form<RoleFormValues> form={form} layout="vertical" requiredMark onFinish={handleFinish}>
+        <Form<RoleFormValues>
+          form={form}
+          layout="vertical"
+          requiredMark
+          onFinish={handleFinish}
+        >
           <Tabs
             activeKey={activeTab}
             items={[

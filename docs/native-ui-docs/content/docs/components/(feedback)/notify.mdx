@@ -28,12 +28,12 @@ import { showNotify, closeNotify } from '@skyroc/native-ui';
 
 `type` 决定背景色与文字色，四种语义各取对应的 `-foreground` token（而不是写死白字：`warning` / `success` 的背景在浅色主题下并不深，固定白字对比度不达标，主题切换时也无从跟随）：
 
-| 类型      | 背景             |
-| --------- | ---------------- |
+| 类型      | 背景                     |
+| --------- | ------------------------ |
 | `danger`  | `bg-destructive`（默认） |
-| `primary` | `bg-primary`     |
-| `success` | `bg-success`     |
-| `warning` | `bg-warning`     |
+| `primary` | `bg-primary`             |
+| `success` | `bg-success`             |
+| `warning` | `bg-warning`             |
 
 <Demo src="@playground/notify/NotifyTypes" />
 
@@ -84,11 +84,11 @@ resetNotifyDefaultOptions();
 
 `className` / `classNames` 优先使用主题类名；`background` / `color` 只在颜色来自主题之外（如服务端下发的品牌色）时使用。`message` 也可以传自定义节点。
 
-| slot      | 作用位置                             |
-| --------- | ------------------------------------ |
-| `root`    | 色带本体（背景色、安全区补偿）        |
-| `content` | 内容容器（内边距、居中）              |
-| `message` | 消息文字                             |
+| slot      | 作用位置                       |
+| --------- | ------------------------------ |
+| `root`    | 色带本体（背景色、安全区补偿） |
+| `content` | 内容容器（内边距、居中）       |
+| `message` | 消息文字                       |
 
 <Demo src="@playground/notify/NotifyCustom" />
 

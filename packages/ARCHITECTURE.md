@@ -38,13 +38,13 @@ packages/
 
 ## 放置规则
 
-| 位置 | 放入条件 | 不应包含 |
-| --- | --- | --- |
-| `@core/` | 与业务无关、可独立复用的运行时基础设施、跨端共享的构建工具或 CLI；纯类型也归到这里的既有包 | 页面逻辑、业务组件、具体平台 UI |
-| `hooks/` | 可跨应用复用的 React Hooks；浏览器能力使用独立子入口 | UI 组件、应用业务流程、未隔离的平台副作用 |
-| `primitives/` | 可跨应用复用、有独立状态或交互模型的底层原语 | 完整页面、管理端业务物料 |
-| `web/` | 依赖 DOM、浏览器、Ant Design、Web 构建工具或管理端运行时 | React Native 或 Expo API |
-| `native/` | 依赖 React Native、Expo、Uniwind 或原生模块 | DOM、Ant Design、Web 构建工具 |
+| 位置          | 放入条件                                                                                   | 不应包含                                  |
+| ------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| `@core/`      | 与业务无关、可独立复用的运行时基础设施、跨端共享的构建工具或 CLI；纯类型也归到这里的既有包 | 页面逻辑、业务组件、具体平台 UI           |
+| `hooks/`      | 可跨应用复用的 React Hooks；浏览器能力使用独立子入口                                       | UI 组件、应用业务流程、未隔离的平台副作用 |
+| `primitives/` | 可跨应用复用、有独立状态或交互模型的底层原语                                               | 完整页面、管理端业务物料                  |
+| `web/`        | 依赖 DOM、浏览器、Ant Design、Web 构建工具或管理端运行时                                   | React Native 或 Expo API                  |
+| `native/`     | 依赖 React Native、Expo、Uniwind 或原生模块                                                | DOM、Ant Design、Web 构建工具             |
 
 判断新包位置时按以下顺序：
 
@@ -57,13 +57,13 @@ packages/
 
 ### 纯类型的归属
 
-| 内容 | 归属 |
-| --- | --- |
-| 通用 TS 工具类型（路径推导、递归变换、函数类型） | `@skyroc/utils` 的 `./type` 子入口 |
-| 依赖 DOM 的类型（`FieldElement` 等） | `@skyroc/utils` 的 `./web` 子入口 |
-| 设计令牌与三端组件词汇（`ThemeColor`、`ThemeSize` 等） | `@skyroc/tailwind-plugin` 的 `./ui` 子入口 |
-| 只有一个 UI 包在用的类型（`WithClassName` 等） | 该包自己的 `types/shared.ts` |
-| 全局命名空间声明（`Api`、`App`、`Theme` 等） | `packages/web/admin/types/`（随 shell 走，见下方「admin shell」） |
+| 内容                                                   | 归属                                                              |
+| ------------------------------------------------------ | ----------------------------------------------------------------- |
+| 通用 TS 工具类型（路径推导、递归变换、函数类型）       | `@skyroc/utils` 的 `./type` 子入口                                |
+| 依赖 DOM 的类型（`FieldElement` 等）                   | `@skyroc/utils` 的 `./web` 子入口                                 |
+| 设计令牌与三端组件词汇（`ThemeColor`、`ThemeSize` 等） | `@skyroc/tailwind-plugin` 的 `./ui` 子入口                        |
+| 只有一个 UI 包在用的类型（`WithClassName` 等）         | 该包自己的 `types/shared.ts`                                      |
+| 全局命名空间声明（`Api`、`App`、`Theme` 等）           | `packages/web/admin/types/`（随 shell 走，见下方「admin shell」） |
 
 这条规则来自一次实际回退：`packages/shared/` 曾经装着 `@skyroc/ui-types` 与
 `@skyroc/type-utils` 两个纯类型包，为几十行类型长期支付版本、README、构建与发布的成本；
@@ -98,11 +98,11 @@ packages/
 
 ## 包命名
 
-| 包类别 | 命名方式 | 示例 |
-| --- | --- | --- |
-| 跨平台能力 | 不带平台前缀 | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/form` |
-| Web 专属能力 | `@skyroc/web-*` | `@skyroc/web-ui`、`@skyroc/web-admin-vite` |
-| Native 专属能力 | `@skyroc/native-*` | `@skyroc/native-ui` |
+| 包类别          | 命名方式           | 示例                                             |
+| --------------- | ------------------ | ------------------------------------------------ |
+| 跨平台能力      | 不带平台前缀       | `@skyroc/utils`、`@skyroc/hooks`、`@skyroc/form` |
+| Web 专属能力    | `@skyroc/web-*`    | `@skyroc/web-ui`、`@skyroc/web-admin-vite`       |
+| Native 专属能力 | `@skyroc/native-*` | `@skyroc/native-ui`                              |
 
 新增平台 UI 包时不要使用 `@skyroc/ui` 这种无法识别所属平台的裸名。
 目录名和发布包名不要求完全相同，最终名称以 `package.json#name` 为准。
@@ -143,10 +143,10 @@ hooks
 
 ## 平台样式边界
 
-| 平台 | 当前方案 | 配置归属 |
-| --- | --- | --- |
-| Web | UnoCSS + `@skyroc/tailwind-plugin` | Web 应用和 Web 构建包 |
-| Native | Uniwind（Tailwind CSS v4）+ `@skyroc/tailwind-plugin` | Expo 宿主应用 |
+| 平台   | 当前方案                                              | 配置归属              |
+| ------ | ----------------------------------------------------- | --------------------- |
+| Web    | UnoCSS + `@skyroc/tailwind-plugin`                    | Web 应用和 Web 构建包 |
+| Native | Uniwind（Tailwind CSS v4）+ `@skyroc/tailwind-plugin` | Expo 宿主应用         |
 
 组件包不接管宿主应用的构建配置。具体的 className、语义色、安全区和构建入口约定，
 以对应平台的 `AGENTS.md` 为准。

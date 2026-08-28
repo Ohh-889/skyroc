@@ -61,16 +61,16 @@ import { AnchorNav } from '@skyroc/native-ui';
 
 `classNames` 覆盖 `AnchorNav` 自己的插槽，`sidebarClassNames` 透传给默认 `Sidebar` 的插槽，两者分层清晰：
 
-| slot                | 作用位置                                    |
-| ------------------- | ------------------------------------------- |
-| `root`              | 根容器（横向布局）                          |
-| `sidebar`           | 默认侧栏的外层容器（宽度约束写在这里）      |
-| `content`           | 右侧 `SectionList`                          |
-| `sectionHeader`     | 分组标题容器                                |
-| `sectionHeaderText` | 分组标题文字                                |
-| `item`              | 默认子项的 `Pressable`                      |
-| `itemText`          | 默认子项文字                                |
-| `separator`         | 子项之间的分隔线（不要改粗细）              |
+| slot                | 作用位置                               |
+| ------------------- | -------------------------------------- |
+| `root`              | 根容器（横向布局）                     |
+| `sidebar`           | 默认侧栏的外层容器（宽度约束写在这里） |
+| `content`           | 右侧 `SectionList`                     |
+| `sectionHeader`     | 分组标题容器                           |
+| `sectionHeaderText` | 分组标题文字                           |
+| `item`              | 默认子项的 `Pressable`                 |
+| `itemText`          | 默认子项文字                           |
+| `separator`         | 子项之间的分隔线（不要改粗细）         |
 
 `sticky` 关闭分组标题吸顶，`haptic` 关闭点击侧栏时的轻触反馈（基于 `expo-haptics` 的 `selectionAsync`）。
 
@@ -210,7 +210,12 @@ import type {
       description: 'renderSidebar 拿到的上下文。',
       fields: [
         { name: 'activeIndex', type: 'number', required: true, description: '当前激活分组索引。' },
-        { name: 'items', type: 'AnchorNavSection[]', required: true, description: '分组数据，与传入的 items 是同一份引用。' },
+        {
+          name: 'items',
+          type: 'AnchorNavSection[]',
+          required: true,
+          description: '分组数据，与传入的 items 是同一份引用。'
+        },
         {
           name: 'onPressIndex',
           type: '(index: number) => void',

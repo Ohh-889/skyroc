@@ -9,26 +9,26 @@ description: 理解 App.tsx 的 QueryClient、Jotai、Devtools、AntdProvider、
 
 ## 适用场景
 
-| 场景 | 重点位置 |
-| --- | --- |
-| 新增 React Provider | `apps/admin/src/App.tsx` |
-| 调整 React Query、Jotai 或 Devtools 关系 | `queryClient`、`globalStore`、`AdminDevtools` |
-| 修改 Ant Design locale、主题或 message API | `features/antd/AntdProvider.tsx` |
-| 修改通知系统能力 | `NotificationProvider`、`wechat-style-notification.wav` |
-| 修改路由上下文或全局 effect | `RouterProvider`、`GlobalEffect` |
-| 排查更新检测、NProgress、Dayjs、Iconify | `apps/admin/src/plugins`、`pages/__root.tsx` |
+| 场景                                       | 重点位置                                                |
+| ------------------------------------------ | ------------------------------------------------------- |
+| 新增 React Provider                        | `apps/admin/src/App.tsx`                                |
+| 调整 React Query、Jotai 或 Devtools 关系   | `queryClient`、`globalStore`、`AdminDevtools`           |
+| 修改 Ant Design locale、主题或 message API | `features/antd/AntdProvider.tsx`                        |
+| 修改通知系统能力                           | `NotificationProvider`、`wechat-style-notification.wav` |
+| 修改路由上下文或全局 effect                | `RouterProvider`、`GlobalEffect`                        |
+| 排查更新检测、NProgress、Dayjs、Iconify    | `apps/admin/src/plugins`、`pages/__root.tsx`            |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/App.tsx` | 组合 React Query、Jotai、Devtools、Ant Design、通知、动画、路由和全局副作用。 |
-| `apps/admin/src/service/queryClient.ts` | 创建全局 `queryClient`，开发环境记录 query 和 mutation error。 |
-| `apps/admin/src/features/antd/AntdProvider.tsx` | 连接 Ant Design locale、主题 token、modal/message/notification 静态 API holder。 |
-| `apps/admin/src/features/router/RouterProvider.tsx` | 把认证、用户、菜单首页和初始化函数注入 TanStack Router context。 |
-| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载主题 effect 和语言 effect。 |
-| `apps/admin/src/plugins/index.ts` | 注册 Dayjs、应用更新检测、Iconify 离线服务和 NProgress。 |
-| `apps/admin/src/pages/__root.tsx` | 根路由中处理 NProgress、auth 初始化、错误页、404 和 pending loading。 |
+| 文件                                                | 职责                                                                             |
+| --------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `apps/admin/src/App.tsx`                            | 组合 React Query、Jotai、Devtools、Ant Design、通知、动画、路由和全局副作用。    |
+| `apps/admin/src/service/queryClient.ts`             | 创建全局 `queryClient`，开发环境记录 query 和 mutation error。                   |
+| `apps/admin/src/features/antd/AntdProvider.tsx`     | 连接 Ant Design locale、主题 token、modal/message/notification 静态 API holder。 |
+| `apps/admin/src/features/router/RouterProvider.tsx` | 把认证、用户、菜单首页和初始化函数注入 TanStack Router context。                 |
+| `apps/admin/src/features/effects/GlobalEffect.tsx`  | 挂载主题 effect 和语言 effect。                                                  |
+| `apps/admin/src/plugins/index.ts`                   | 注册 Dayjs、应用更新检测、Iconify 离线服务和 NProgress。                         |
+| `apps/admin/src/pages/__root.tsx`                   | 根路由中处理 NProgress、auth 初始化、错误页、404 和 pending loading。            |
 
 ## Provider 顺序
 
@@ -47,16 +47,16 @@ QueryClientProvider
 
 这不是随意嵌套。每一层都有下游依赖：
 
-| 层 | 依赖或提供能力 |
-| --- | --- |
-| `QueryClientProvider` | 给认证、路由守卫、服务 hooks、Ant Design provider 等下游代码提供同一个 query client。 |
-| `JotaiProvider` | 给主题、语言、认证状态、Devtools 等 atom 状态提供 store。 |
-| `Devtools` | 只在开发环境加载，接入 `queryClient`、`router`、`globalStore` 和当前主题。 |
-| `AntdProvider` | 读取语言和主题状态，提供 Ant Design ConfigProvider 以及静态 API holder。 |
-| `NotificationProvider` | 提供应用内通知上下文，并由 `apps/admin` 注入通知音效资源。 |
-| `LazyAnimate` | 给下层路由页面和全局 effect 提供动画运行时。 |
-| `RouterProvider` | 注入 TanStack Router context，承接页面路由、守卫和布局。 |
-| `GlobalEffect` | 挂载主题、语言等全局副作用，不渲染业务 UI。 |
+| 层                     | 依赖或提供能力                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `QueryClientProvider`  | 给认证、路由守卫、服务 hooks、Ant Design provider 等下游代码提供同一个 query client。 |
+| `JotaiProvider`        | 给主题、语言、认证状态、Devtools 等 atom 状态提供 store。                             |
+| `Devtools`             | 只在开发环境加载，接入 `queryClient`、`router`、`globalStore` 和当前主题。            |
+| `AntdProvider`         | 读取语言和主题状态，提供 Ant Design ConfigProvider 以及静态 API holder。              |
+| `NotificationProvider` | 提供应用内通知上下文，并由 `apps/admin` 注入通知音效资源。                            |
+| `LazyAnimate`          | 给下层路由页面和全局 effect 提供动画运行时。                                          |
+| `RouterProvider`       | 注入 TanStack Router context，承接页面路由、守卫和布局。                              |
+| `GlobalEffect`         | 挂载主题、语言等全局副作用，不渲染业务 UI。                                           |
 
 ## Devtools 的边界
 
@@ -64,12 +64,12 @@ QueryClientProvider
 
 Devtools 当前接收四类运行时对象：
 
-| 对象 | 来源 | 作用 |
-| --- | --- | --- |
-| `config` | `globalConfig.devtools` + 当前 `darkMode` | 控制 devtools 展示配置和明暗主题。 |
-| `queryClient` | `apps/admin/src/service/queryClient.ts` | 查看 React Query 缓存和请求状态。 |
-| `router` | `apps/admin/src/features/router` | 查看路由信息。 |
-| `store` | `@skyroc/core-state` 的 `globalStore` | 查看 Jotai 全局 store。 |
+| 对象          | 来源                                      | 作用                               |
+| ------------- | ----------------------------------------- | ---------------------------------- |
+| `config`      | `globalConfig.devtools` + 当前 `darkMode` | 控制 devtools 展示配置和明暗主题。 |
+| `queryClient` | `apps/admin/src/service/queryClient.ts`   | 查看 React Query 缓存和请求状态。  |
+| `router`      | `apps/admin/src/features/router`          | 查看路由信息。                     |
+| `store`       | `@skyroc/core-state` 的 `globalStore`     | 查看 Jotai 全局 store。            |
 
 这里的主题配置使用 `useSettingsTheme()` 读取当前暗色模式。不要把 devtools 主题写死，否则暗色模式切换后调试面板会和应用主题脱节。
 
@@ -79,11 +79,11 @@ Devtools 当前接收四类运行时对象：
 
 认证链路会直接使用这个 `queryClient`：
 
-| 位置 | 行为 |
-| --- | --- |
-| `useAuth().initAuth()` | `ensureQueryData(queryUserInfoOptions())` 拉用户信息，再初始化菜单。 |
-| `useAuth().clearAuth()` | `queryClient.clear()` 清空缓存，避免退出后保留旧用户数据。 |
-| 根路由 `beforeLoad` | 已登录但未初始化时调用 `context.initAuth()`。 |
+| 位置                    | 行为                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| `useAuth().initAuth()`  | `ensureQueryData(queryUserInfoOptions())` 拉用户信息，再初始化菜单。 |
+| `useAuth().clearAuth()` | `queryClient.clear()` 清空缓存，避免退出后保留旧用户数据。           |
+| 根路由 `beforeLoad`     | 已登录但未初始化时调用 `context.initAuth()`。                        |
 
 如果新增跨页面共享数据，优先进入服务模块的 query hooks，不要在 Provider 里额外创建第二个 query client。
 
@@ -91,12 +91,12 @@ Devtools 当前接收四类运行时对象：
 
 不是所有运行时能力都应该放进 `App.tsx`。
 
-| 类型 | 放置位置 | 示例 |
-| --- | --- | --- |
-| React context 或 hooks 能力 | `App.tsx` | React Query、Jotai、Ant Design、通知、路由。 |
-| 渲染前一次性初始化 | `bootstrap.tsx` | `setupTheme()`、`setupAdminLayouts()`、`setupI18n()`。 |
-| 浏览器级运行时副作用 | `plugins/index.ts` | Dayjs、NProgress、Iconify、生产环境更新检测。 |
-| 页面路由生命周期 | `pages/__root.tsx`、layout route | NProgress done/start、登录初始化、权限守卫。 |
+| 类型                        | 放置位置                         | 示例                                                   |
+| --------------------------- | -------------------------------- | ------------------------------------------------------ |
+| React context 或 hooks 能力 | `App.tsx`                        | React Query、Jotai、Ant Design、通知、路由。           |
+| 渲染前一次性初始化          | `bootstrap.tsx`                  | `setupTheme()`、`setupAdminLayouts()`、`setupI18n()`。 |
+| 浏览器级运行时副作用        | `plugins/index.ts`               | Dayjs、NProgress、Iconify、生产环境更新检测。          |
+| 页面路由生命周期            | `pages/__root.tsx`、layout route | NProgress done/start、登录初始化、权限守卫。           |
 
 生产环境应用更新检测属于插件。它由 `globalConfig.automaticallyDetectUpdate` 和 `import.meta.env.PROD` 共同控制，检测到新版本后通过 notification 提示用户刷新当前路由。
 
@@ -138,13 +138,13 @@ const Provider = (props: ProviderProps) => {
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
-| 在 `bootstrap.tsx` 里调用 React hook | hook 只能在组件或自定义 hook 中调用，Provider 放 `App.tsx`。 |
-| 为某个页面单独创建新的 `QueryClient` | 复用全局 `queryClient`，否则缓存和退出清理会分裂。 |
-| 把更新检测写成 React Provider | 当前更新检测是浏览器级插件，放在 `plugins/app.tsx`。 |
-| 在页面里手动同步 Ant Design locale | 由 `AntdProvider` 和 i18n effect 统一处理。 |
-| 退出登录只删 token | 还要清 query cache、菜单和 tabs，走 `useAuth().clearAuth()`。 |
+| 误区                                 | 正确做法                                                      |
+| ------------------------------------ | ------------------------------------------------------------- |
+| 在 `bootstrap.tsx` 里调用 React hook | hook 只能在组件或自定义 hook 中调用，Provider 放 `App.tsx`。  |
+| 为某个页面单独创建新的 `QueryClient` | 复用全局 `queryClient`，否则缓存和退出清理会分裂。            |
+| 把更新检测写成 React Provider        | 当前更新检测是浏览器级插件，放在 `plugins/app.tsx`。          |
+| 在页面里手动同步 Ant Design locale   | 由 `AntdProvider` 和 i18n effect 统一处理。                   |
+| 退出登录只删 token                   | 还要清 query cache、菜单和 tabs，走 `useAuth().clearAuth()`。 |
 
 ## 相关链接
 

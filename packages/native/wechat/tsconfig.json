@@ -4,13 +4,6 @@
     "outDir": "build",
     "rootDir": "."
   },
-  "include": [
-    "index.ts",
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "android",
-    "ios"
-  ]
+  "include": ["index.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "android", "ios"]
 }

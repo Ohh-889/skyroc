@@ -93,9 +93,7 @@ export default function LiveActivityDemoScreen() {
       return;
     }
 
-    showFailToast(
-      isSupported ? '创建失败：检查系统设置里的「实时活动」开关' : '当前设备不支持 Live Activity'
-    );
+    showFailToast(isSupported ? '创建失败：检查系统设置里的「实时活动」开关' : '当前设备不支持 Live Activity');
   };
 
   const handleFinish = async () => {
@@ -285,11 +283,10 @@ export default function LiveActivityDemoScreen() {
             color="muted"
             size="xs"
           >
-            · 前台 update 只是兜底，用户锁屏后 App 会被挂起，真正让卡片动起来的是后端拿 pushToken 推 APNs{'\n'}
-            · 一条活动最多活 8 小时，超过 12 小时系统强制结束，长流程要分段重开{'\n'}
-            · content state 序列化后不能超过 4KB，别把整个订单塞进去{'\n'}
-            · widget 进程不能发网络请求，头像之类的图片要先下到 App Group 目录里再引用{'\n'}
-            · 用户可以在系统设置里单独关掉本 App 的实时活动，start 会直接失败，必须有降级路径
+            · 前台 update 只是兜底，用户锁屏后 App 会被挂起，真正让卡片动起来的是后端拿 pushToken 推 APNs{'\n'}·
+            一条活动最多活 8 小时，超过 12 小时系统强制结束，长流程要分段重开{'\n'}· content state 序列化后不能超过
+            4KB，别把整个订单塞进去{'\n'}· widget 进程不能发网络请求，头像之类的图片要先下到 App Group 目录里再引用
+            {'\n'}· 用户可以在系统设置里单独关掉本 App 的实时活动，start 会直接失败，必须有降级路径
           </Text>
         </View>
       </ScrollView>

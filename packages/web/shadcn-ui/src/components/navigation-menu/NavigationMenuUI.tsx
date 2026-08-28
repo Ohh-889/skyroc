@@ -11,7 +11,13 @@ import NavigationMenuList from './NavigationMenuList';
 import NavigationMenuRoot from './NavigationMenuRoot';
 import NavigationMenuTrigger from './NavigationMenuTrigger';
 import NavigationMenuViewport from './NavigationMenuViewport';
-import type { NavigationMenuItemChildOption, NavigationMenuItemOption, NavigationMenuLinkBaseOption, NavigationMenuProps, NavigationMenuTriggerProps } from './types';
+import type {
+  NavigationMenuItemChildOption,
+  NavigationMenuItemOption,
+  NavigationMenuLinkBaseOption,
+  NavigationMenuProps,
+  NavigationMenuTriggerProps
+} from './types';
 
 function isLink(item: NavigationMenuItemOption): item is NavigationMenuLinkBaseOption {
   return item.type === 'link' || !item.children;
@@ -28,12 +34,24 @@ function getItem(itemOption: NavigationMenuItemOption): [NavigationMenuItemOptio
 }
 
 const NavigationMenuUI = (props: NavigationMenuProps) => {
-  const { childLinkProps, childListItemProps, childListProps, classNames, contentProps, itemProps, items, linkProps, listProps, showArrow: _showArrow, size, triggerProps, ...rest } = props;
+  const {
+    childLinkProps,
+    childListItemProps,
+    childListProps,
+    classNames,
+    contentProps,
+    itemProps,
+    items,
+    linkProps,
+    listProps,
+    showArrow: _showArrow,
+    size,
+    triggerProps,
+    ...rest
+  } = props;
 
   return (
-    <NavigationMenuRoot
-      {...rest}
-    >
+    <NavigationMenuRoot {...rest}>
       <NavigationMenuList
         className={classNames?.list}
         size={size}
@@ -50,39 +68,37 @@ const NavigationMenuUI = (props: NavigationMenuProps) => {
               key={itemKey}
               {...itemProps}
             >
-              {isLink(itemOption)
-                ? (
-                  <NavigationMenuLink
+              {isLink(itemOption) ? (
+                <NavigationMenuLink
+                  classNames={classNames}
+                  size={size}
+                  {...linkProps}
+                  {...(item as Omit<NavigationMenuLinkBaseOption, 'children'>)}
+                >
+                  {item.label}
+                </NavigationMenuLink>
+              ) : (
+                <>
+                  <NavigationMenuTrigger
                     classNames={classNames}
                     size={size}
-                    {...linkProps}
-                    {...item as Omit<NavigationMenuLinkBaseOption, 'children'>}
+                    {...triggerProps}
+                    {...(item as Omit<NavigationMenuTriggerProps, 'children'>)}
                   >
                     {item.label}
-                  </NavigationMenuLink>
-                )
-                : (
-                  <>
-                    <NavigationMenuTrigger
-                      classNames={classNames}
-                      size={size}
-                      {...triggerProps}
-                      {...item as Omit<NavigationMenuTriggerProps, 'children'>}
-                    >
-                      {item.label}
-                    </NavigationMenuTrigger>
+                  </NavigationMenuTrigger>
 
-                    <NavigationMenuContent
-                      className={classNames?.content}
-                      {...contentProps}
+                  <NavigationMenuContent
+                    className={classNames?.content}
+                    {...contentProps}
+                  >
+                    <NavigationMenuChildList
+                      className={classNames?.subList}
+                      size={size}
+                      {...childListProps}
                     >
-                      <NavigationMenuChildList
-                        className={classNames?.subList}
-                        size={size}
-                        {...childListProps}
-                      >
-                        {children && children.length > 0
-                          ? children.map((child, childIndex) => {
+                      {children && children.length > 0
+                        ? children.map((child, childIndex) => {
                             // Child items should be link type
                             const childItem = child;
 
@@ -103,11 +119,11 @@ const NavigationMenuUI = (props: NavigationMenuProps) => {
                               </NavigationMenuChildListItem>
                             );
                           })
-                          : null}
-                      </NavigationMenuChildList>
-                    </NavigationMenuContent>
-                  </>
-                )}
+                        : null}
+                    </NavigationMenuChildList>
+                  </NavigationMenuContent>
+                </>
+              )}
             </NavigationMenuItem>
           );
         })}
@@ -122,7 +138,6 @@ const NavigationMenuUI = (props: NavigationMenuProps) => {
         classNames={classNames}
         size={size}
       />
-
     </NavigationMenuRoot>
   );
 };

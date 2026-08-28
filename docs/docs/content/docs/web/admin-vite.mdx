@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/web-admin-vite"
-description: "Skyroc Admin 的 Vite 配置预设包 — 收口构建产物、开发代理、路由插件、React 插件、图标插件、自动导入、别名与开发服务器默认配置"
+title: '@skyroc/web-admin-vite'
+description: 'Skyroc Admin 的 Vite 配置预设包 — 收口构建产物、开发代理、路由插件、React 插件、图标插件、自动导入、别名与开发服务器默认配置'
 ---
 
 ## 概述
@@ -139,10 +139,10 @@ export default defineConfig({
 
 这个包刻意没有把 Vite 原生 options 平铺到最外层，而是分成两层：
 
-| 字段 | 职责 | 示例 |
-| --- | --- | --- |
+| 字段          | 职责                                          | 示例                                                                                       |
+| ------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `application` | Skyroc Admin 预设语义，用来描述后台应用的差异 | `plugins.projectInfo: false`、`proxy.enabled`、`buildTimeDefineName`、`css.additionalData` |
-| `vite` | Vite 原生 `UserConfig`，作为最终覆盖层 | `optimizeDeps`、`server.fs`、`resolve.conditions`、第三方 Vite 配置 |
+| `vite`        | Vite 原生 `UserConfig`，作为最终覆盖层        | `optimizeDeps`、`server.fs`、`resolve.conditions`、第三方 Vite 配置                        |
 
 这样设计是为了避免字段语义冲突。比如 `plugins`、`build`、`server`、`resolve` 这些名字在 Vite 里本来就存在，但本包也需要提供 admin 语义：
 
@@ -194,28 +194,28 @@ export default defineConfig({
 
 `defineConfig` 默认会生成这些配置：
 
-| 配置项 | 默认行为 |
-| --- | --- |
-| `base` | 优先使用 `application.base`，否则读取 `VITE_BASE_URL`，再否则为 `/` |
-| `build` | 使用 admin 构建产物命名和基础 manual chunks |
-| `define` | 注入 `BUILD_TIME` |
-| `css` | 按需注入 SCSS `additionalData` |
-| `plugins` | 启用 admin 内置插件组 |
-| `preview` | 默认端口 `9725` |
-| `resolve` | 默认 `@ -> src`、`~ -> .`，并 dedupe React runtime |
-| `server` | 默认 `host = 0.0.0.0`、`open = true`、`port = 9527` |
-| `proxy` | 开发服务下根据环境变量创建代理 |
+| 配置项    | 默认行为                                                            |
+| --------- | ------------------------------------------------------------------- |
+| `base`    | 优先使用 `application.base`，否则读取 `VITE_BASE_URL`，再否则为 `/` |
+| `build`   | 使用 admin 构建产物命名和基础 manual chunks                         |
+| `define`  | 注入 `BUILD_TIME`                                                   |
+| `css`     | 按需注入 SCSS `additionalData`                                      |
+| `plugins` | 启用 admin 内置插件组                                               |
+| `preview` | 默认端口 `9725`                                                     |
+| `resolve` | 默认 `@ -> src`、`~ -> .`，并 dedupe React runtime                  |
+| `server`  | 默认 `host = 0.0.0.0`、`open = true`、`port = 9527`                 |
+| `proxy`   | 开发服务下根据环境变量创建代理                                      |
 
 ## 环境变量
 
 环境变量只负责应用运行和代理相关配置，不再负责图标插件前缀。图标前缀通过插件 options 配置。
 
-| 变量名 | 作用 |
-| --- | --- |
-| `VITE_BASE_URL` | 应用 base url |
-| `VITE_HTTP_PROXY` | 为 `Y` 时，在 dev server 中启用代理 |
-| `VITE_PROXY_LOG` | 为 `Y` 时，打印代理请求日志 |
-| `VITE_SERVICE_BASE_URL` | 默认后端服务地址 |
+| 变量名                        | 作用                                |
+| ----------------------------- | ----------------------------------- |
+| `VITE_BASE_URL`               | 应用 base url                       |
+| `VITE_HTTP_PROXY`             | 为 `Y` 时，在 dev server 中启用代理 |
+| `VITE_PROXY_LOG`              | 为 `Y` 时，打印代理请求日志         |
+| `VITE_SERVICE_BASE_URL`       | 默认后端服务地址                    |
 | `VITE_OTHER_SERVICE_BASE_URL` | 其他后端服务地址，支持 JSON5 字符串 |
 
 示例：
@@ -230,10 +230,10 @@ VITE_OTHER_SERVICE_BASE_URL={ auth: "https://auth.example.com" }
 
 默认代理路径：
 
-| 服务 | 代理前缀 |
-| --- | --- |
-| 主服务 | `/proxy-default` |
-| 其他服务 | `/proxy-${key}` |
+| 服务     | 代理前缀         |
+| -------- | ---------------- |
+| 主服务   | `/proxy-default` |
+| 其他服务 | `/proxy-${key}`  |
 
 例如：
 
@@ -286,15 +286,15 @@ export default defineConfig({
 
 配置函数可读取的上下文：
 
-| 字段 | 说明 |
-| --- | --- |
+| 字段        | 说明                         |
+| ----------- | ---------------------------- |
 | `buildTime` | 当前配置加载时生成的构建时间 |
-| `configEnv` | Vite 传入的 `ConfigEnv` |
-| `env` | `loadEnv()` 读取到的环境变量 |
-| `isBuild` | 当前是否是 `vite build` |
-| `isPreview` | 当前是否是 preview |
-| `isServe` | 当前是否是 dev server |
-| `root` | 当前应用根目录 |
+| `configEnv` | Vite 传入的 `ConfigEnv`      |
+| `env`       | `loadEnv()` 读取到的环境变量 |
+| `isBuild`   | 当前是否是 `vite build`      |
+| `isPreview` | 当前是否是 preview           |
+| `isServe`   | 当前是否是 dev server        |
+| `root`      | 当前应用根目录               |
 
 ### css
 
@@ -317,9 +317,7 @@ export default defineConfig({
   application: {
     css: {
       additionalData: context => {
-        return context.isBuild
-          ? '@use "@/styles/scss/global.scss" as *;'
-          : '@use "@/styles/scss/dev.scss" as *;';
+        return context.isBuild ? '@use "@/styles/scss/global.scss" as *;' : '@use "@/styles/scss/dev.scss" as *;';
       }
     }
   }
@@ -504,15 +502,15 @@ export default defineConfig({
 
 默认别名：
 
-| 别名 | 指向 |
-| --- | --- |
-| `@` | `src` |
-| `~` | 应用根目录 |
+| 别名 | 指向       |
+| ---- | ---------- |
+| `@`  | `src`      |
+| `~`  | 应用根目录 |
 
 默认 dedupe：
 
 ```ts
-['react', 'react-dom', 'react/jsx-dev-runtime', 'react/jsx-runtime']
+['react', 'react-dom', 'react/jsx-dev-runtime', 'react/jsx-runtime'];
 ```
 
 覆盖别名：
@@ -556,7 +554,7 @@ export default defineConfig({
 
 ```ts
 define: {
-  BUILD_TIME: JSON.stringify(buildTime)
+  BUILD_TIME: JSON.stringify(buildTime);
 }
 ```
 
@@ -711,14 +709,14 @@ export default defineConfig({
 
 默认 TanStack Router 配置：
 
-| 选项 | 默认值 |
-| --- | --- |
-| `routesDirectory` | `./src/pages` |
-| `generatedRouteTree` | `./src/features/router/routeTree.gen.ts` |
+| 选项                     | 默认值                                                        |
+| ------------------------ | ------------------------------------------------------------- |
+| `routesDirectory`        | `./src/pages`                                                 |
+| `generatedRouteTree`     | `./src/features/router/routeTree.gen.ts`                      |
 | `routeFileIgnorePattern` | 忽略 `components`、`modules`、`loading`、`error`、`not-found` |
-| `routeToken` | `layout` |
-| `target` | `react` |
-| `autoCodeSplitting` | `true` |
+| `routeToken`             | `layout`                                                      |
+| `target`                 | `react`                                                       |
+| `autoCodeSplitting`      | `true`                                                        |
 
 覆盖路由目录：
 
@@ -744,13 +742,13 @@ export default defineConfig({
 
 默认图标配置：
 
-| 选项 | 默认值 |
-| --- | --- |
-| `iconPrefix` | `icon` |
-| `localIconPrefix` | `icon-local` |
-| `collectionName` | 从 `localIconPrefix` 推导，默认 `local` |
-| `localIconPath` | `src/assets/svg-icon` |
-| `scale` | `1` |
+| 选项              | 默认值                                  |
+| ----------------- | --------------------------------------- |
+| `iconPrefix`      | `icon`                                  |
+| `localIconPrefix` | `icon-local`                            |
+| `collectionName`  | 从 `localIconPrefix` 推导，默认 `local` |
+| `localIconPath`   | `src/assets/svg-icon`                   |
+| `scale`           | `1`                                     |
 
 覆盖图标目录和前缀：
 
@@ -832,7 +830,10 @@ export default defineConfig({
 默认 build 时向 `index.html` 的 `<head>` 注入构建时间：
 
 ```html
-<meta name="buildTime" content="2026-05-25 12:00:00">
+<meta
+  name="buildTime"
+  content="2026-05-25 12:00:00"
+/>
 ```
 
 修改 meta 名称：
@@ -940,30 +941,30 @@ export default defineConfig({
 
 绝大多数应用只用得到 `defineConfig`。下面这些底层 helper 也是公开的，供不想走整套预设、只想复用其中一段的场景使用。
 
-| 符号 | 来源 | 作用 |
-| --- | --- | --- |
-| `defineConfig` | `config.ts` | 主入口，三种重载见[配置入口](#配置入口) |
-| `setupAdminVitePlugins` | `plugins/index.ts` | 按固定顺序装配整组内置插件 |
-| `createAdminBuildOptions` | `build.ts` | 生成 `build` 段：产物命名与 manual chunks |
-| `createAdminScssPreprocessorOptions` | `build.ts` | 生成 SCSS `additionalData` 预处理配置 |
-| `createAdminViteServiceConfig` | `proxy.ts` | 从环境变量解析出主服务与其它服务的 baseURL |
-| `createAdminViteProxy` | `proxy.ts` | 由服务配置生成 dev server `proxy` |
-| `createAdminViteProxyPattern` | `proxy.ts` | 拼出代理匹配前缀 |
-| `getBuildTime` | `time.ts` | 生成注入 html 的 `BUILD_TIME` |
-| `resolveAdminIconOptions` | `plugins/icon-utils.ts` | 统一解析图标前缀、集合名与本地图标目录 |
+| 符号                                 | 来源                    | 作用                                       |
+| ------------------------------------ | ----------------------- | ------------------------------------------ |
+| `defineConfig`                       | `config.ts`             | 主入口，三种重载见[配置入口](#配置入口)    |
+| `setupAdminVitePlugins`              | `plugins/index.ts`      | 按固定顺序装配整组内置插件                 |
+| `createAdminBuildOptions`            | `build.ts`              | 生成 `build` 段：产物命名与 manual chunks  |
+| `createAdminScssPreprocessorOptions` | `build.ts`              | 生成 SCSS `additionalData` 预处理配置      |
+| `createAdminViteServiceConfig`       | `proxy.ts`              | 从环境变量解析出主服务与其它服务的 baseURL |
+| `createAdminViteProxy`               | `proxy.ts`              | 由服务配置生成 dev server `proxy`          |
+| `createAdminViteProxyPattern`        | `proxy.ts`              | 拼出代理匹配前缀                           |
+| `getBuildTime`                       | `time.ts`               | 生成注入 html 的 `BUILD_TIME`              |
+| `resolveAdminIconOptions`            | `plugins/icon-utils.ts` | 统一解析图标前缀、集合名与本地图标目录     |
 
 八个插件工厂可以单独取用，参数类型即同名 `SetupXxxOptions`：
 
-| 符号 | 产出 |
-| --- | --- |
-| `setupAdminRouterPlugins` | TanStack Router 插件（返回数组） |
-| `setupAdminReactPlugin` | `@vitejs/plugin-react` |
-| `setupAdminBabelPlugin` | Jotai preset + React Compiler preset |
-| `setupAdminUnocss` | UnoCSS 及其 icon preset |
-| `setupAdminUnpluginIcon` | `unplugin-icons` + svg sprite（返回数组） |
-| `setupAdminAutoImport` | React / i18n / ahooks / antd / 图标自动导入 |
-| `setupAdminHtmlPlugin` | 往 html 注入 buildTime meta |
-| `setupAdminProjectInfo` | 启动时打印终端项目信息 |
+| 符号                      | 产出                                        |
+| ------------------------- | ------------------------------------------- |
+| `setupAdminRouterPlugins` | TanStack Router 插件（返回数组）            |
+| `setupAdminReactPlugin`   | `@vitejs/plugin-react`                      |
+| `setupAdminBabelPlugin`   | Jotai preset + React Compiler preset        |
+| `setupAdminUnocss`        | UnoCSS 及其 icon preset                     |
+| `setupAdminUnpluginIcon`  | `unplugin-icons` + svg sprite（返回数组）   |
+| `setupAdminAutoImport`    | React / i18n / ahooks / antd / 图标自动导入 |
+| `setupAdminHtmlPlugin`    | 往 html 注入 buildTime meta                 |
+| `setupAdminProjectInfo`   | 启动时打印终端项目信息                      |
 
 类型侧还导出 `AdminViteEnv`、`AdminViteUserConfig`、`AdminViteApplicationOptions`、`DefineAdminViteConfig`、`MaybePluginConfig` 等，可用来给应用自己的配置工厂标注类型。
 
@@ -1012,7 +1013,7 @@ plugins: {
 共享 workspace 包在 Vite dev 模式下可能解析到不同 React 实例，触发 `Invalid hook call`。默认 dedupe 这些运行时入口：
 
 ```ts
-['react', 'react-dom', 'react/jsx-dev-runtime', 'react/jsx-runtime']
+['react', 'react-dom', 'react/jsx-dev-runtime', 'react/jsx-runtime'];
 ```
 
 除非确定所有依赖解析稳定，否则不要关闭 `dedupeReact`。

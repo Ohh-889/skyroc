@@ -8,7 +8,7 @@ const {
   withDangerousMod,
   withEntitlementsPlist,
   withInfoPlist,
-  withXcodeProject,
+  withXcodeProject
 } = require('expo/config-plugins');
 
 /** 微信 SDK 需要能探测到的三个 scheme，且必须落在前 50 个白名单里 */
@@ -22,7 +22,9 @@ function assertProps(props) {
     throw new Error('[wechat] 缺少 appId（开放平台移动应用的 AppID，形如 wx1234567890abcdef）');
   }
   if (!universalLink || !universalLink.startsWith('https://') || !universalLink.endsWith('/')) {
-    throw new Error('[wechat] universalLink 必须是 https 开头、以 / 结尾的 Universal Link，且与开放平台后台填写的完全一致');
+    throw new Error(
+      '[wechat] universalLink 必须是 https 开头、以 / 结尾的 Universal Link，且与开放平台后台填写的完全一致'
+    );
   }
   return { appId, universalLink };
 }
@@ -39,9 +41,7 @@ const withWechatInfoPlist = (config, { appId, universalLink }) =>
 
     // 回跳 scheme 必须就是 AppID 本身
     plist.CFBundleURLTypes = plist.CFBundleURLTypes ?? [];
-    const registered = plist.CFBundleURLTypes.some(entry =>
-      entry.CFBundleURLSchemes?.includes(appId),
-    );
+    const registered = plist.CFBundleURLTypes.some(entry => entry.CFBundleURLSchemes?.includes(appId));
     if (!registered) {
       plist.CFBundleURLTypes.push({ CFBundleURLName: 'weixin', CFBundleURLSchemes: [appId] });
     }
@@ -50,7 +50,7 @@ const withWechatInfoPlist = (config, { appId, universalLink }) =>
     const existing = plist.LSApplicationQueriesSchemes ?? [];
     plist.LSApplicationQueriesSchemes = [
       ...WECHAT_QUERY_SCHEMES,
-      ...existing.filter(scheme => !WECHAT_QUERY_SCHEMES.includes(scheme)),
+      ...existing.filter(scheme => !WECHAT_QUERY_SCHEMES.includes(scheme))
     ];
 
     return cfg;
@@ -87,9 +87,7 @@ const withWechatAndroidManifest = (config, { appId }) =>
     AndroidConfig.Manifest.addMetaDataItemToMainApplication(application, 'WX_APP_ID', appId);
 
     application.activity = application.activity ?? [];
-    const declared = application.activity.some(
-      activity => activity.$['android:name'] === WX_ENTRY_ACTIVITY,
-    );
+    const declared = application.activity.some(activity => activity.$['android:name'] === WX_ENTRY_ACTIVITY);
     if (!declared) {
       application.activity.push({
         $: {
@@ -98,8 +96,8 @@ const withWechatAndroidManifest = (config, { appId }) =>
           'android:launchMode': 'singleTask',
           // 必须和主应用同一个 task，否则回跳后会另开一个空任务
           'android:taskAffinity': androidPackage,
-          'android:theme': '@android:style/Theme.Translucent.NoTitleBar',
-        },
+          'android:theme': '@android:style/Theme.Translucent.NoTitleBar'
+        }
       });
     }
 
@@ -121,7 +119,7 @@ const withWechatEntryActivity = config =>
         cfg.modRequest.platformProjectRoot,
         'app/src/main/java',
         ...androidPackage.split('.'),
-        'wxapi',
+        'wxapi'
       );
       await fs.promises.mkdir(dir, { recursive: true });
       await fs.promises.writeFile(
@@ -156,11 +154,11 @@ class WXEntryActivity : Activity() {
   }
 }
 `,
-        'utf8',
+        'utf8'
       );
 
       return cfg;
-    },
+    }
   ]);
 
 // ---------------------------------------------------------------- 入口
@@ -173,7 +171,7 @@ const withWechat = (config, props) => {
     cfg => withWechatAssociatedDomains(cfg, options),
     withWechatSimulatorArchFix,
     cfg => withWechatAndroidManifest(cfg, options),
-    withWechatEntryActivity,
+    withWechatEntryActivity
   ].reduce((acc, apply) => apply(acc), config);
 };
 

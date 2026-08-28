@@ -12,12 +12,12 @@ function useCountDownTimer(seconds: number): {
 };
 ```
 
-| 返回 | 类型 | 说明 |
-| --- | --- | --- |
-| `count` | `number` | 剩余秒数（毫秒值 `Math.round` 到秒） |
-| `isCounting` | `boolean` | 是否在倒计时中（剩余毫秒 > 0） |
-| `start` | `(updateSeconds?: number) => void` | 开始，不传参用 `seconds`，传参覆盖本次时长 |
-| `stop` | `() => void` | 立即停止，`count` 归 0 |
+| 返回         | 类型                               | 说明                                       |
+| ------------ | ---------------------------------- | ------------------------------------------ |
+| `count`      | `number`                           | 剩余秒数（毫秒值 `Math.round` 到秒）       |
+| `isCounting` | `boolean`                          | 是否在倒计时中（剩余毫秒 > 0）             |
+| `start`      | `(updateSeconds?: number) => void` | 开始，不传参用 `seconds`，传参覆盖本次时长 |
+| `stop`       | `() => void`                       | 立即停止，`count` 归 0                     |
 
 ```tsx
 import { useCountDownTimer } from '@skyroc/hooks';

@@ -1,15 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Bell,
-  Bold,
-  Check,
-  Italic,
-  Moon,
-  Sun,
-  Underline
-} from 'lucide-react';
 import {
   Avatar,
   Badge,
@@ -28,6 +18,8 @@ import {
   Toggle
 } from '@skyroc/web-ui';
 import type { SelectProps, TabsOptionData } from '@skyroc/web-ui';
+import { Bell, Bold, Check, Italic, Moon, Sun, Underline } from 'lucide-react';
+import { useState } from 'react';
 
 const frameworkItems: SelectProps['items'] = [
   { label: 'React', value: 'react' },
@@ -87,20 +79,36 @@ export const BentoShowcase = () => {
 
   return (
     <div className="grid gap-4 md:grid-cols-3 auto-rows-auto">
-
       {/* 大卡片：用户设置面板（占 2 列） */}
-      <Card classNames={{ root: 'md:col-span-2 overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-primary/5' }}>
+      <Card
+        classNames={{
+          root: 'md:col-span-2 overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-primary/5'
+        }}
+      >
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
-            <Icon icon="lucide:settings" className="size-4 text-muted-foreground" />
+            <Icon
+              icon="lucide:settings"
+              className="size-4 text-muted-foreground"
+            />
             <span className="text-sm font-medium text-foreground">用户设置</span>
           </div>
         </div>
         <div className="grid gap-5 p-5 sm:grid-cols-2">
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label htmlFor="bento-username" className="text-sm font-medium text-foreground">用户名</label>
-              <Input id="bento-username" placeholder="请输入用户名" size="sm" defaultValue="skyroc_dev" />
+              <label
+                htmlFor="bento-username"
+                className="text-sm font-medium text-foreground"
+              >
+                用户名
+              </label>
+              <Input
+                id="bento-username"
+                placeholder="请输入用户名"
+                size="sm"
+                defaultValue="skyroc_dev"
+              />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">技术栈</label>
@@ -111,7 +119,11 @@ export const BentoShowcase = () => {
                 value={framework}
               />
             </div>
-            <Button color="primary" size="sm" className="w-full">
+            <Button
+              color="primary"
+              size="sm"
+              className="w-full"
+            >
               <Check className="mr-1.5 size-3.5" />
               保存设置
             </Button>
@@ -122,7 +134,11 @@ export const BentoShowcase = () => {
                 {darkMode ? <Moon className="size-4 text-primary" /> : <Sun className="size-4 text-warning" />}
                 <span className="text-sm text-foreground">深色模式</span>
               </div>
-              <Switch checked={darkMode} onCheckedChange={setDarkMode} aria-label="切换深色模式" />
+              <Switch
+                checked={darkMode}
+                onCheckedChange={setDarkMode}
+                aria-label="切换深色模式"
+              />
             </div>
             <Divider />
             <div className="flex items-center justify-between">
@@ -132,7 +148,7 @@ export const BentoShowcase = () => {
               </div>
               <Checkbox
                 checked={notificationsEnabled}
-                onCheckedChange={(v) => setNotificationsEnabled(v === true)}
+                onCheckedChange={v => setNotificationsEnabled(v === true)}
                 aria-label="开启消息通知"
               />
             </div>
@@ -140,12 +156,18 @@ export const BentoShowcase = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-foreground">字体大小</span>
-                <Tag variant="pure" color="primary" className="text-xs">{volume}%</Tag>
+                <Tag
+                  variant="pure"
+                  color="primary"
+                  className="text-xs"
+                >
+                  {volume}%
+                </Tag>
               </div>
               <Slider
                 defaultValue={[volume]}
                 max={100}
-                onValueChange={(v) => setVolume(v[0]!)}
+                onValueChange={v => setVolume(v[0]!)}
                 step={1}
                 aria-label="字体大小"
               />
@@ -155,21 +177,39 @@ export const BentoShowcase = () => {
       </Card>
 
       {/* 通知中心 */}
-      <Card classNames={{ root: 'overflow-hidden md:row-span-2 border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-info/5' }}>
+      <Card
+        classNames={{
+          root: 'overflow-hidden md:row-span-2 border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-info/5'
+        }}
+      >
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Icon icon="lucide:bell" className="size-4 text-muted-foreground" />
+              <Icon
+                icon="lucide:bell"
+                className="size-4 text-muted-foreground"
+              />
               <span className="text-sm font-medium text-foreground">通知中心</span>
             </div>
-            <Badge color="destructive" content="3" open>
+            <Badge
+              color="destructive"
+              content="3"
+              open
+            >
               <span />
             </Badge>
           </div>
         </div>
-        <div role="list" className="divide-y divide-border">
+        <div
+          role="list"
+          className="divide-y divide-border"
+        >
           {notifications.map((item, i) => (
-            <div key={i} role="listitem" className="flex items-start gap-3 p-4 transition-colors hover:bg-muted/30">
+            <div
+              key={i}
+              role="listitem"
+              className="flex items-start gap-3 p-4 transition-colors hover:bg-muted/30"
+            >
               <Avatar
                 size="sm"
                 className="shrink-0 mt-0.5"
@@ -177,30 +217,42 @@ export const BentoShowcase = () => {
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-foreground">
-                  <span className="font-medium">{item.name}</span>
-                  {' '}
-                  {item.message}
+                  <span className="font-medium">{item.name}</span> {item.message}
                 </p>
                 <span className="text-xs text-muted-foreground">{item.time}</span>
               </div>
-              <Tag color={item.color} variant="pure" className="text-xs shrink-0">
+              <Tag
+                color={item.color}
+                variant="pure"
+                className="text-xs shrink-0"
+              >
                 {notificationTagLabels[item.color]}
               </Tag>
             </div>
           ))}
         </div>
         <div className="border-t border-border px-4 py-3">
-          <Button variant="ghost" size="sm" color="carbon" className="w-full text-xs">
+          <Button
+            variant="ghost"
+            size="sm"
+            color="carbon"
+            className="w-full text-xs"
+          >
             查看全部通知
           </Button>
         </div>
       </Card>
 
       {/* 数据统计 */}
-      <Card classNames={{ root: 'overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-success/5' }}>
+      <Card
+        classNames={{ root: 'overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm shadow-lg shadow-success/5' }}
+      >
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
-            <Icon icon="lucide:bar-chart-3" className="size-4 text-muted-foreground" />
+            <Icon
+              icon="lucide:bar-chart-3"
+              className="size-4 text-muted-foreground"
+            />
             <span className="text-sm font-medium text-foreground">项目统计</span>
           </div>
         </div>
@@ -210,21 +262,33 @@ export const BentoShowcase = () => {
               <span className="text-muted-foreground">组件覆盖率</span>
               <span className="font-medium text-success">92%</span>
             </div>
-            <Progress value={92} color="success" aria-label="组件覆盖率" />
+            <Progress
+              value={92}
+              color="success"
+              aria-label="组件覆盖率"
+            />
           </div>
           <div>
             <div className="flex items-center justify-between text-sm mb-1.5">
               <span className="text-muted-foreground">测试通过率</span>
               <span className="font-medium text-primary">87%</span>
             </div>
-            <Progress value={87} color="primary" aria-label="测试通过率" />
+            <Progress
+              value={87}
+              color="primary"
+              aria-label="测试通过率"
+            />
           </div>
           <div>
             <div className="flex items-center justify-between text-sm mb-1.5">
               <span className="text-muted-foreground">文档完善度</span>
               <span className="font-medium text-warning">64%</span>
             </div>
-            <Progress value={64} color="warning" aria-label="文档完善度" />
+            <Progress
+              value={64}
+              color="warning"
+              aria-label="文档完善度"
+            />
           </div>
         </div>
       </Card>
@@ -233,7 +297,10 @@ export const BentoShowcase = () => {
       <Card classNames={{ root: 'overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm' }}>
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
-            <Icon icon="lucide:folder-kanban" className="size-4 text-muted-foreground" />
+            <Icon
+              icon="lucide:folder-kanban"
+              className="size-4 text-muted-foreground"
+            />
             <span className="text-sm font-medium text-foreground">选项卡</span>
           </div>
         </div>
@@ -248,9 +315,7 @@ export const BentoShowcase = () => {
           <div className="rounded-lg border border-border bg-muted/30 p-3">
             <div className="flex items-center gap-2">
               <div className={`size-2 rounded-full ${activeTabMeta.indicatorClassName}`} />
-              <span className="text-xs text-muted-foreground">
-                当前面板：{activeTabMeta.label}
-              </span>
+              <span className="text-xs text-muted-foreground">当前面板：{activeTabMeta.label}</span>
             </div>
           </div>
         </div>
@@ -260,19 +325,31 @@ export const BentoShowcase = () => {
       <Card classNames={{ root: 'overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm' }}>
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
-            <Icon icon="lucide:toggle-right" className="size-4 text-muted-foreground" />
+            <Icon
+              icon="lucide:toggle-right"
+              className="size-4 text-muted-foreground"
+            />
             <span className="text-sm font-medium text-foreground">控件 & 标签</span>
           </div>
         </div>
         <div className="p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <Toggle aria-label="粗体" size="sm">
+            <Toggle
+              aria-label="粗体"
+              size="sm"
+            >
               <Bold className="size-4" />
             </Toggle>
-            <Toggle aria-label="斜体" size="sm">
+            <Toggle
+              aria-label="斜体"
+              size="sm"
+            >
               <Italic className="size-4" />
             </Toggle>
-            <Toggle aria-label="下划线" size="sm">
+            <Toggle
+              aria-label="下划线"
+              size="sm"
+            >
               <Underline className="size-4" />
             </Toggle>
           </div>
@@ -291,7 +368,10 @@ export const BentoShowcase = () => {
       <Card classNames={{ root: 'overflow-hidden border-border/60 bg-card/60 backdrop-blur-sm' }}>
         <div className="border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
-            <Icon icon="lucide:palette" className="size-4 text-muted-foreground" />
+            <Icon
+              icon="lucide:palette"
+              className="size-4 text-muted-foreground"
+            />
             <span className="text-sm font-medium text-foreground">颜色主题</span>
           </div>
         </div>
@@ -315,9 +395,26 @@ export const BentoShowcase = () => {
             </div>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <Button size="sm" color="primary">主要</Button>
-            <Button size="sm" color="success" variant="soft">成功</Button>
-            <Button size="sm" color="warning" variant="outline">警告</Button>
+            <Button
+              size="sm"
+              color="primary"
+            >
+              主要
+            </Button>
+            <Button
+              size="sm"
+              color="success"
+              variant="soft"
+            >
+              成功
+            </Button>
+            <Button
+              size="sm"
+              color="warning"
+              variant="outline"
+            >
+              警告
+            </Button>
           </div>
         </div>
       </Card>

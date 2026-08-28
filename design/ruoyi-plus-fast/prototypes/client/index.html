@@ -1,589 +1,2118 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light dark" />
-  <title>Skyroc Admin - 客户端管理设计稿</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --primary: #6366f1;
-      --primary-hover: #514fda;
-      --primary-soft: #eef0ff;
-      --page: #f5f6f8;
-      --surface: #ffffff;
-      --surface-2: #fafbfc;
-      --text: #303139;
-      --muted: #6d707b;
-      --quiet: #9699a3;
-      --border: #e5e7ec;
-      --border-strong: #d6d8df;
-      --sidebar: #171922;
-      --sidebar-hover: #242733;
-      --success: #0f9f6e;
-      --success-soft: #eaf9f2;
-      --warning: #d2850b;
-      --warning-soft: #fff7e8;
-      --danger: #e04755;
-      --danger-soft: #fff0f1;
-      --info: #1686d9;
-      --info-soft: #edf7ff;
-      --mask: rgb(18 20 28 / 48%);
-      --shadow: 0 20px 58px rgb(25 29 48 / 15%);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
+    <title>Skyroc Admin - 客户端管理设计稿</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --primary: #6366f1;
+        --primary-hover: #514fda;
+        --primary-soft: #eef0ff;
+        --page: #f5f6f8;
+        --surface: #ffffff;
+        --surface-2: #fafbfc;
+        --text: #303139;
+        --muted: #6d707b;
+        --quiet: #9699a3;
+        --border: #e5e7ec;
+        --border-strong: #d6d8df;
+        --sidebar: #171922;
+        --sidebar-hover: #242733;
+        --success: #0f9f6e;
+        --success-soft: #eaf9f2;
+        --warning: #d2850b;
+        --warning-soft: #fff7e8;
+        --danger: #e04755;
+        --danger-soft: #fff0f1;
+        --info: #1686d9;
+        --info-soft: #edf7ff;
+        --mask: rgb(18 20 28 / 48%);
+        --shadow: 0 20px 58px rgb(25 29 48 / 15%);
+      }
 
-    :root[data-theme='dark'] {
-      color-scheme: dark;
-      --primary: #8587ff;
-      --primary-hover: #9b9cff;
-      --primary-soft: #292b50;
-      --page: #111318;
-      --surface: #1b1e24;
-      --surface-2: #20232a;
-      --text: #eceef3;
-      --muted: #b2b5bf;
-      --quiet: #808591;
-      --border: #30333b;
-      --border-strong: #424650;
-      --sidebar: #0d0f14;
-      --sidebar-hover: #1d2029;
-      --success: #49c991;
-      --success-soft: #18372b;
-      --warning: #f0a13b;
-      --warning-soft: #3a2a17;
-      --danger: #ff737d;
-      --danger-soft: #3f2024;
-      --info: #55aef0;
-      --info-soft: #183044;
-      --mask: rgb(0 0 0 / 65%);
-      --shadow: 0 22px 62px rgb(0 0 0 / 45%);
-    }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --primary: #8587ff;
+        --primary-hover: #9b9cff;
+        --primary-soft: #292b50;
+        --page: #111318;
+        --surface: #1b1e24;
+        --surface-2: #20232a;
+        --text: #eceef3;
+        --muted: #b2b5bf;
+        --quiet: #808591;
+        --border: #30333b;
+        --border-strong: #424650;
+        --sidebar: #0d0f14;
+        --sidebar-hover: #1d2029;
+        --success: #49c991;
+        --success-soft: #18372b;
+        --warning: #f0a13b;
+        --warning-soft: #3a2a17;
+        --danger: #ff737d;
+        --danger-soft: #3f2024;
+        --info: #55aef0;
+        --info-soft: #183044;
+        --mask: rgb(0 0 0 / 65%);
+        --shadow: 0 22px 62px rgb(0 0 0 / 45%);
+      }
 
-    * { box-sizing: border-box; }
-    html, body { min-width: 320px; min-height: 100%; margin: 0; }
-    body {
-      background: var(--page);
-      color: var(--text);
-      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
-    }
-    button, input, select { font: inherit; }
-    button { color: inherit; }
-    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
-    }
-    .icon { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
-    .app { min-height: 100vh; display: grid; grid-template-columns: 216px minmax(0, 1fr); }
-    .sidebar { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: var(--sidebar); color: #f4f5f8; }
-    .brand { height: 60px; display: flex; align-items: center; gap: 11px; padding: 0 18px; border-bottom: 1px solid rgb(255 255 255 / 7%); font-size: 16px; font-weight: 650; }
-    .brand-mark { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 7px; background: #6366f1; color: #fff; font-weight: 800; }
-    .nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
-    .nav-label { margin: 15px 10px 7px; color: #6f7380; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .nav-item { width: 100%; height: 40px; display: flex; align-items: center; gap: 10px; margin: 2px 0; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: #9296a5; cursor: pointer; text-align: left; }
-    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
-    .nav-item.child { padding-left: 39px; }
-    .nav-item.active { background: rgb(99 102 241 / 20%); box-shadow: inset 3px 0 0 #8183ff; color: #fff; }
-    .nav-item .end { margin-left: auto; }
-    .sidebar-user { display: flex; align-items: center; gap: 10px; margin: 10px; padding: 12px 10px; border-top: 1px solid rgb(255 255 255 / 7%); }
-    .avatar { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 7px; background: #384152; color: #fff; font-size: 12px; font-weight: 700; }
-    .sidebar-user strong, .sidebar-user span { display: block; }
-    .sidebar-user strong { font-size: 13px; font-weight: 600; }
-    .sidebar-user span { margin-top: 2px; color: #777c8b; font-size: 11px; }
-    .shell { min-width: 0; }
-    .topbar { position: sticky; top: 0; z-index: 20; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(12px); }
-    .top-left, .top-actions, .breadcrumbs { display: flex; align-items: center; }
-    .top-left { gap: 18px; }
-    .breadcrumbs { gap: 8px; color: var(--quiet); font-size: 13px; }
-    .breadcrumbs strong { color: var(--text); font-weight: 600; }
-    .top-actions { gap: 6px; }
-    .icon-btn { width: 36px; height: 36px; display: inline-grid; place-items: center; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; }
-    .icon-btn:hover { border-color: var(--border); background: var(--surface-2); }
-    main { padding: 24px; }
-    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
-    .page-head h1 { margin: 0; font-size: 25px; line-height: 1.25; letter-spacing: 0; }
-    .page-head p { margin: 7px 0 0; color: var(--muted); }
-    .security-note { max-width: 430px; display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--warning) 24%, var(--border)); border-radius: 6px; background: var(--warning-soft); color: color-mix(in srgb, var(--warning) 72%, var(--text)); font-size: 12px; }
-    .panel { overflow: hidden; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
-    .filters { display: grid; grid-template-columns: minmax(190px, 1.2fr) minmax(180px, .8fr) 150px auto; gap: 14px; align-items: end; padding: 18px 20px; border-bottom: 1px solid var(--border); }
-    .field label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 600; }
-    .field label .hint { color: var(--quiet); font-weight: 400; }
-    .control { width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface); color: var(--text); }
-    .control::placeholder { color: var(--quiet); }
-    .filter-actions, .toolbar, .row-actions, .modal-actions, .drawer-actions { display: flex; align-items: center; gap: 8px; }
-    .btn { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 13px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; white-space: nowrap; }
-    .btn:hover { background: var(--surface-2); }
-    .btn.primary { border-color: var(--primary); background: var(--primary); color: #fff; }
-    .btn.primary:hover { background: var(--primary-hover); }
-    .btn.danger { border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); color: var(--danger); }
-    .btn.danger-solid { border-color: var(--danger); background: var(--danger); color: #fff; }
-    .btn.text { min-height: 30px; padding: 0 4px; border-color: transparent; background: transparent; color: var(--primary); }
-    .btn.text.danger { color: var(--danger); }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .list-head { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; }
-    .list-title strong { display: block; font-size: 16px; }
-    .list-title small { display: block; margin-top: 2px; color: var(--quiet); }
-    .selection { display: none; align-items: center; justify-content: space-between; gap: 16px; margin: 0 20px 12px; padding: 9px 12px; border: 1px solid color-mix(in srgb, var(--primary) 26%, var(--border)); border-radius: 6px; background: var(--primary-soft); color: var(--muted); }
-    .selection.show { display: flex; }
-    .table-wrap { overflow-x: auto; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    table { width: 100%; min-width: 1040px; border-collapse: collapse; }
-    th, td { padding: 13px 14px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-    th { background: var(--surface-2); color: var(--muted); font-size: 12px; font-weight: 650; }
-    tbody tr:hover { background: color-mix(in srgb, var(--primary-soft) 35%, transparent); }
-    tbody tr:last-child td { border-bottom: 0; }
-    .client-cell strong, .client-cell code { display: block; }
-    .client-cell strong { margin-bottom: 4px; font-weight: 650; }
-    code, .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
-    .client-cell code { max-width: 275px; overflow: hidden; color: var(--quiet); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-    .device { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); }
-    .device-mark { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; background: var(--info-soft); color: var(--info); font-size: 11px; font-weight: 700; }
-    .tags { display: flex; flex-wrap: wrap; gap: 5px; }
-    .tag { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 12px; }
-    .tag.primary { border-color: color-mix(in srgb, var(--primary) 25%, var(--border)); background: var(--primary-soft); color: var(--primary); }
-    .token-policy strong, .token-policy span { display: block; }
-    .token-policy strong { font-size: 13px; font-weight: 600; }
-    .token-policy span { margin-top: 2px; color: var(--quiet); font-size: 12px; }
-    .status { display: inline-flex; align-items: center; gap: 7px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-    .status::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
-    .status.normal { background: var(--success-soft); color: var(--success); }
-    .status.disabled { background: var(--danger-soft); color: var(--danger); }
-    .footer { min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 20px; color: var(--muted); }
-    .pages { display: flex; align-items: center; gap: 6px; }
-    .page-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; }
-    .page-btn.active { border-color: var(--primary); background: var(--primary); color: #fff; }
-    .overlay { position: fixed; inset: 0; z-index: 50; display: none; background: var(--mask); }
-    .overlay.show { display: block; }
-    .drawer { position: absolute; top: 0; right: 0; width: min(590px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--surface); box-shadow: var(--shadow); }
-    .drawer-head { min-height: 74px; display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 20px 22px; border-bottom: 1px solid var(--border); }
-    .drawer-head h2 { margin: 0; font-size: 19px; }
-    .drawer-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
-    .drawer-body { flex: 1; overflow-y: auto; padding: 22px; }
-    .drawer-foot { min-height: 68px; display: flex; align-items: center; justify-content: flex-end; padding: 14px 22px; border-top: 1px solid var(--border); background: var(--surface); }
-    .form-section + .form-section { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border); }
-    .section-title { margin: 0 0 14px; font-size: 14px; font-weight: 700; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-grid .full { grid-column: 1 / -1; }
-    .required { color: var(--danger); }
-    .input-wrap { position: relative; }
-    .input-wrap .control { padding-right: 42px; }
-    .inside { position: absolute; top: 1px; right: 1px; width: 38px; height: 36px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer; }
-    .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-    .check-card { min-height: 48px; display: flex; align-items: center; gap: 9px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; }
-    .check-card:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
-    .check-card span { display: block; }
-    .check-card small { display: block; color: var(--quiet); }
-    .help { margin-top: 7px; color: var(--quiet); font-size: 12px; }
-    .notice { display: flex; gap: 9px; margin-top: 14px; padding: 10px 11px; border: 1px solid color-mix(in srgb, var(--warning) 24%, var(--border)); border-radius: 6px; background: var(--warning-soft); color: var(--muted); font-size: 12px; }
-    .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); }
-    .segmented label { height: 34px; display: grid; place-items: center; margin: 0; border-radius: 5px; cursor: pointer; }
-    .segmented label:has(input:checked) { background: var(--surface); box-shadow: 0 1px 4px rgb(25 29 48 / 10%); color: var(--primary); }
-    .segmented input { position: absolute; opacity: 0; pointer-events: none; }
-    .detail-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .detail-mark { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 8px; background: var(--primary-soft); color: var(--primary); font-size: 18px; font-weight: 800; }
-    .detail-hero h3 { margin: 0; font-size: 18px; }
-    .detail-hero p { margin: 4px 0 0; color: var(--quiet); font-size: 12px; }
-    .detail-block { margin-top: 20px; }
-    .detail-block h4 { margin: 0 0 10px; font-size: 13px; }
-    .detail-list { border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
-    .detail-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 50px; padding: 10px 13px; border-bottom: 1px solid var(--border); }
-    .detail-row:last-child { border-bottom: 0; }
-    .detail-row > span:first-child { color: var(--muted); }
-    .secret-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .modal-wrap { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; padding: 20px; background: var(--mask); }
-    .modal-wrap.show { display: grid; }
-    .modal { width: min(460px, 100%); border: 1px solid var(--border); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
-    .modal-body { padding: 22px; }
-    .modal-icon { width: 40px; height: 40px; display: grid; place-items: center; margin-bottom: 14px; border-radius: 8px; background: var(--warning-soft); color: var(--warning); }
-    .modal-icon.danger { background: var(--danger-soft); color: var(--danger); }
-    .modal h3 { margin: 0; font-size: 18px; }
-    .modal p { margin: 9px 0 0; color: var(--muted); }
-    .impact { margin-top: 14px; padding: 10px 12px; border-radius: 6px; background: var(--surface-2); color: var(--muted); font-size: 12px; }
-    .modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 22px; border-top: 1px solid var(--border); }
-    .toast { position: fixed; left: 50%; bottom: 28px; z-index: 100; transform: translate(-50%, 20px); padding: 10px 15px; border-radius: 6px; background: #20232a; color: #fff; opacity: 0; pointer-events: none; transition: .2s ease; }
-    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+      body {
+        background: var(--page);
+        color: var(--text);
+        font:
+          14px/1.5 -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          'Noto Sans',
+          'PingFang SC',
+          'Microsoft YaHei',
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        color: inherit;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      .icon {
+        width: 17px;
+        height: 17px;
+        flex: 0 0 auto;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 216px minmax(0, 1fr);
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--sidebar);
+        color: #f4f5f8;
+      }
+      .brand {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 18px;
+        border-bottom: 1px solid rgb(255 255 255 / 7%);
+        font-size: 16px;
+        font-weight: 650;
+      }
+      .brand-mark {
+        width: 29px;
+        height: 29px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: #6366f1;
+        color: #fff;
+        font-weight: 800;
+      }
+      .nav {
+        flex: 1;
+        padding: 14px 10px;
+        overflow-y: auto;
+      }
+      .nav-label {
+        margin: 15px 10px 7px;
+        color: #6f7380;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .nav-item {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 2px 0;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #9296a5;
+        cursor: pointer;
+        text-align: left;
+      }
+      .nav-item:hover {
+        background: var(--sidebar-hover);
+        color: #fff;
+      }
+      .nav-item.child {
+        padding-left: 39px;
+      }
+      .nav-item.active {
+        background: rgb(99 102 241 / 20%);
+        box-shadow: inset 3px 0 0 #8183ff;
+        color: #fff;
+      }
+      .nav-item .end {
+        margin-left: auto;
+      }
+      .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px;
+        padding: 12px 10px;
+        border-top: 1px solid rgb(255 255 255 / 7%);
+      }
+      .avatar {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: #384152;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .sidebar-user strong,
+      .sidebar-user span {
+        display: block;
+      }
+      .sidebar-user strong {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .sidebar-user span {
+        margin-top: 2px;
+        color: #777c8b;
+        font-size: 11px;
+      }
+      .shell {
+        min-width: 0;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border);
+        background: color-mix(in srgb, var(--surface) 94%, transparent);
+        backdrop-filter: blur(12px);
+      }
+      .top-left,
+      .top-actions,
+      .breadcrumbs {
+        display: flex;
+        align-items: center;
+      }
+      .top-left {
+        gap: 18px;
+      }
+      .breadcrumbs {
+        gap: 8px;
+        color: var(--quiet);
+        font-size: 13px;
+      }
+      .breadcrumbs strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .top-actions {
+        gap: 6px;
+      }
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+      }
+      .icon-btn:hover {
+        border-color: var(--border);
+        background: var(--surface-2);
+      }
+      main {
+        padding: 24px;
+      }
+      .page-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+      .page-head h1 {
+        margin: 0;
+        font-size: 25px;
+        line-height: 1.25;
+        letter-spacing: 0;
+      }
+      .page-head p {
+        margin: 7px 0 0;
+        color: var(--muted);
+      }
+      .security-note {
+        max-width: 430px;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        padding: 10px 12px;
+        border: 1px solid color-mix(in srgb, var(--warning) 24%, var(--border));
+        border-radius: 6px;
+        background: var(--warning-soft);
+        color: color-mix(in srgb, var(--warning) 72%, var(--text));
+        font-size: 12px;
+      }
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .filters {
+        display: grid;
+        grid-template-columns: minmax(190px, 1.2fr) minmax(180px, 0.8fr) 150px auto;
+        gap: 14px;
+        align-items: end;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .field label {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .field label .hint {
+        color: var(--quiet);
+        font-weight: 400;
+      }
+      .control {
+        width: 100%;
+        height: 38px;
+        padding: 0 11px;
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+      }
+      .control::placeholder {
+        color: var(--quiet);
+      }
+      .filter-actions,
+      .toolbar,
+      .row-actions,
+      .modal-actions,
+      .drawer-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 13px;
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        background: var(--surface-2);
+      }
+      .btn.primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.danger {
+        border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+        color: var(--danger);
+      }
+      .btn.danger-solid {
+        border-color: var(--danger);
+        background: var(--danger);
+        color: #fff;
+      }
+      .btn.text {
+        min-height: 30px;
+        padding: 0 4px;
+        border-color: transparent;
+        background: transparent;
+        color: var(--primary);
+      }
+      .btn.text.danger {
+        color: var(--danger);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .list-head {
+        min-height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 20px;
+      }
+      .list-title strong {
+        display: block;
+        font-size: 16px;
+      }
+      .list-title small {
+        display: block;
+        margin-top: 2px;
+        color: var(--quiet);
+      }
+      .selection {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 20px 12px;
+        padding: 9px 12px;
+        border: 1px solid color-mix(in srgb, var(--primary) 26%, var(--border));
+        border-radius: 6px;
+        background: var(--primary-soft);
+        color: var(--muted);
+      }
+      .selection.show {
+        display: flex;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+      table {
+        width: 100%;
+        min-width: 1040px;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+      tbody tr:hover {
+        background: color-mix(in srgb, var(--primary-soft) 35%, transparent);
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .client-cell strong,
+      .client-cell code {
+        display: block;
+      }
+      .client-cell strong {
+        margin-bottom: 4px;
+        font-weight: 650;
+      }
+      code,
+      .mono {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      }
+      .client-cell code {
+        max-width: 275px;
+        overflow: hidden;
+        color: var(--quiet);
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .device {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+      }
+      .device-mark {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 6px;
+        background: var(--info-soft);
+        color: var(--info);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 2px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .tag.primary {
+        border-color: color-mix(in srgb, var(--primary) 25%, var(--border));
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .token-policy strong,
+      .token-policy span {
+        display: block;
+      }
+      .token-policy strong {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .token-policy span {
+        margin-top: 2px;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status::before {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        content: '';
+      }
+      .status.normal {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+      .status.disabled {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+      .footer {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 20px;
+        color: var(--muted);
+      }
+      .pages {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .page-btn {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .page-btn.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        background: var(--mask);
+      }
+      .overlay.show {
+        display: block;
+      }
+      .drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: min(590px, 100%);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .drawer-head {
+        min-height: 74px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      .drawer-head h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+      .drawer-head p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 22px;
+      }
+      .drawer-foot {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .form-section + .form-section {
+        margin-top: 24px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+      }
+      .section-title {
+        margin: 0 0 14px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+      .required {
+        color: var(--danger);
+      }
+      .input-wrap {
+        position: relative;
+      }
+      .input-wrap .control {
+        padding-right: 42px;
+      }
+      .inside {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        width: 38px;
+        height: 36px;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .check-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+      .check-card {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 11px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+      .check-card:has(input:checked) {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+      }
+      .check-card span {
+        display: block;
+      }
+      .check-card small {
+        display: block;
+        color: var(--quiet);
+      }
+      .help {
+        margin-top: 7px;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+      .notice {
+        display: flex;
+        gap: 9px;
+        margin-top: 14px;
+        padding: 10px 11px;
+        border: 1px solid color-mix(in srgb, var(--warning) 24%, var(--border));
+        border-radius: 6px;
+        background: var(--warning-soft);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .segmented {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3px;
+        padding: 3px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: var(--surface-2);
+      }
+      .segmented label {
+        height: 34px;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .segmented label:has(input:checked) {
+        background: var(--surface);
+        box-shadow: 0 1px 4px rgb(25 29 48 / 10%);
+        color: var(--primary);
+      }
+      .segmented input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .detail-hero {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .detail-mark {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .detail-hero h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .detail-hero p {
+        margin: 4px 0 0;
+        color: var(--quiet);
+        font-size: 12px;
+      }
+      .detail-block {
+        margin-top: 20px;
+      }
+      .detail-block h4 {
+        margin: 0 0 10px;
+        font-size: 13px;
+      }
+      .detail-list {
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        overflow: hidden;
+      }
+      .detail-row {
+        display: grid;
+        grid-template-columns: 130px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        min-height: 50px;
+        padding: 10px 13px;
+        border-bottom: 1px solid var(--border);
+      }
+      .detail-row:last-child {
+        border-bottom: 0;
+      }
+      .detail-row > span:first-child {
+        color: var(--muted);
+      }
+      .secret-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .modal-wrap {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: none;
+        place-items: center;
+        padding: 20px;
+        background: var(--mask);
+      }
+      .modal-wrap.show {
+        display: grid;
+      }
+      .modal {
+        width: min(460px, 100%);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .modal-body {
+        padding: 22px;
+      }
+      .modal-icon {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+        border-radius: 8px;
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+      .modal-icon.danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+      .modal h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .modal p {
+        margin: 9px 0 0;
+        color: var(--muted);
+      }
+      .impact {
+        margin-top: 14px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        z-index: 100;
+        transform: translate(-50%, 20px);
+        padding: 10px 15px;
+        border-radius: 6px;
+        background: #20232a;
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.2s ease;
+      }
+      .toast.show {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
 
-    @media (max-width: 980px) {
-      .app { grid-template-columns: 72px minmax(0, 1fr); }
-      .brand { justify-content: center; padding: 0; }
-      .brand span, .nav-label, .nav-item span, .sidebar-user div { display: none; }
-      .nav-item, .nav-item.child { justify-content: center; padding: 0; }
-      .sidebar-user { justify-content: center; }
-      .filters { grid-template-columns: 1fr 1fr; }
-      .filter-actions { justify-content: flex-end; }
-      .page-head { flex-direction: column; }
-      .security-note { max-width: none; }
-    }
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 72px minmax(0, 1fr);
+        }
+        .brand {
+          justify-content: center;
+          padding: 0;
+        }
+        .brand span,
+        .nav-label,
+        .nav-item span,
+        .sidebar-user div {
+          display: none;
+        }
+        .nav-item,
+        .nav-item.child {
+          justify-content: center;
+          padding: 0;
+        }
+        .sidebar-user {
+          justify-content: center;
+        }
+        .filters {
+          grid-template-columns: 1fr 1fr;
+        }
+        .filter-actions {
+          justify-content: flex-end;
+        }
+        .page-head {
+          flex-direction: column;
+        }
+        .security-note {
+          max-width: none;
+        }
+      }
 
-    @media (max-width: 680px) {
-      .app { display: block; }
-      .sidebar { display: none; }
-      .topbar { padding: 0 14px; }
-      main { padding: 14px; }
-      .page-head h1 { font-size: 22px; }
-      .filters { grid-template-columns: 1fr; padding: 16px; }
-      .filter-actions { justify-content: stretch; }
-      .filter-actions .btn { flex: 1; }
-      .list-head { align-items: flex-start; flex-direction: column; padding: 16px; }
-      .toolbar { width: 100%; overflow-x: auto; padding-bottom: 2px; }
-      .selection { margin: 0 16px 12px; }
-      .footer { align-items: flex-start; flex-direction: column; }
-      .form-grid, .check-grid { grid-template-columns: 1fr; }
-      .detail-row { grid-template-columns: 100px minmax(0, 1fr); }
-      .detail-row .btn { grid-column: 2; justify-self: start; }
-    }
-  </style>
-</head>
-<body>
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
-    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.57 15 1.7 1.7 0 0 0 3 14H3v-4h.08A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.57 1.7 1.7 0 0 0 10 3V3h4v.08A1.7 1.7 0 0 0 15.06 4.6a1.7 1.7 0 0 0 1.88-.34L17 4.2 19.83 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 21 10h.08v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
-    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
-    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
-    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></symbol>
-    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M15 8l3 3M17 6l3 3"/></symbol>
-  </svg>
+      @media (max-width: 680px) {
+        .app {
+          display: block;
+        }
+        .sidebar {
+          display: none;
+        }
+        .topbar {
+          padding: 0 14px;
+        }
+        main {
+          padding: 14px;
+        }
+        .page-head h1 {
+          font-size: 22px;
+        }
+        .filters {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+        .filter-actions {
+          justify-content: stretch;
+        }
+        .filter-actions .btn {
+          flex: 1;
+        }
+        .list-head {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px;
+        }
+        .toolbar {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 2px;
+        }
+        .selection {
+          margin: 0 16px 12px;
+        }
+        .footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .form-grid,
+        .check-grid {
+          grid-template-columns: 1fr;
+        }
+        .detail-row {
+          grid-template-columns: 100px minmax(0, 1fr);
+        }
+        .detail-row .btn {
+          grid-column: 2;
+          justify-self: start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      width="0"
+      height="0"
+      aria-hidden="true"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-grid"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="7"
+          height="7"
+        />
+        <rect
+          x="14"
+          y="3"
+          width="7"
+          height="7"
+        />
+        <rect
+          x="3"
+          y="14"
+          width="7"
+          height="7"
+        />
+        <rect
+          x="14"
+          y="14"
+          width="7"
+          height="7"
+        />
+      </symbol>
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+        <path
+          d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.57 15 1.7 1.7 0 0 0 3 14H3v-4h.08A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.57 1.7 1.7 0 0 0 10 3V3h4v.08A1.7 1.7 0 0 0 15.06 4.6a1.7 1.7 0 0 0 1.88-.34L17 4.2 19.83 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 21 10h.08v4H21a1.7 1.7 0 0 0-1.6 1Z"
+        />
+      </symbol>
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </symbol>
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol
+        id="i-download"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+      </symbol>
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
+        <path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7" />
+      </symbol>
+      <symbol
+        id="i-moon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+      </symbol>
+      <symbol
+        id="i-x"
+        viewBox="0 0 24 24"
+      >
+        <path d="M18 6 6 18M6 6l12 12" />
+      </symbol>
+      <symbol
+        id="i-eye"
+        viewBox="0 0 24 24"
+      >
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        />
+      </symbol>
+      <symbol
+        id="i-copy"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="9"
+          y="9"
+          width="13"
+          height="13"
+          rx="2"
+        />
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+      </symbol>
+      <symbol
+        id="i-alert"
+        viewBox="0 0 24 24"
+      >
+        <path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z" />
+        <path d="M12 9v4M12 17h.01" />
+      </symbol>
+      <symbol
+        id="i-trash"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" />
+      </symbol>
+      <symbol
+        id="i-key"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="8"
+          cy="15"
+          r="4"
+        />
+        <path d="m11 12 9-9M15 8l3 3M17 6l3 3" />
+      </symbol>
+    </svg>
 
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-mark">S</div><span>Skyroc Admin</span></div>
-      <nav class="nav">
-        <div class="nav-label">Workspace</div>
-        <button class="nav-item"><svg class="icon"><use href="#i-grid"/></svg><span>工作台</span></button>
-        <div class="nav-label">Management</div>
-        <button class="nav-item"><svg class="icon"><use href="#i-users"/></svg><span>用户与组织</span><span class="end">›</span></button>
-        <button class="nav-item"><svg class="icon"><use href="#i-settings"/></svg><span>系统管理</span><span class="end">⌄</span></button>
-        <button class="nav-item child"><span>用户管理</span></button>
-        <button class="nav-item child"><span>角色管理</span></button>
-        <button class="nav-item child active"><span>客户端管理</span></button>
-        <button class="nav-item child"><span>参数设置</span></button>
-        <div class="nav-label">Security</div>
-        <button class="nav-item"><svg class="icon"><use href="#i-shield"/></svg><span>登录审计</span></button>
-      </nav>
-      <div class="sidebar-user"><div class="avatar">SA</div><div><strong>超级管理员</strong><span>系统级权限</span></div></div>
-    </aside>
-
-    <div class="shell">
-      <header class="topbar">
-        <div class="top-left"><div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>客户端管理</strong></div></div>
-        <div class="top-actions"><button class="icon-btn" id="themeBtn" title="切换主题" aria-label="切换主题"><svg class="icon"><use href="#i-moon"/></svg></button><div class="avatar">SA</div></div>
-      </header>
-
-      <main>
-        <div class="page-head">
-          <div><h1>客户端管理</h1><p>管理接入认证系统的应用端、授权方式与令牌策略。</p></div>
-          <div class="security-note"><svg class="icon"><use href="#i-alert"/></svg><span>客户端密钥属于敏感凭据。列表默认不展示，查看、复制和导出都应保留审计记录。</span></div>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>Skyroc Admin</span>
         </div>
+        <nav class="nav">
+          <div class="nav-label">Workspace</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-grid" /></svg><span>工作台</span>
+          </button>
+          <div class="nav-label">Management</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-users" /></svg><span>用户与组织</span><span class="end">›</span>
+          </button>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-settings" /></svg><span>系统管理</span><span class="end">⌄</span>
+          </button>
+          <button class="nav-item child"><span>用户管理</span></button>
+          <button class="nav-item child"><span>角色管理</span></button>
+          <button class="nav-item child active"><span>客户端管理</span></button>
+          <button class="nav-item child"><span>参数设置</span></button>
+          <div class="nav-label">Security</div>
+          <button class="nav-item">
+            <svg class="icon"><use href="#i-shield" /></svg><span>登录审计</span>
+          </button>
+        </nav>
+        <div class="sidebar-user">
+          <div class="avatar">SA</div>
+          <div><strong>超级管理员</strong><span>系统级权限</span></div>
+        </div>
+      </aside>
 
-        <section class="panel">
-          <div class="filters">
-            <div class="field"><label for="clientId">客户端 ID</label><input class="control" id="clientId" placeholder="输入完整 clientId 精确查询" /></div>
-            <div class="field"><label for="clientKey">客户端 Key</label><input class="control" id="clientKey" placeholder="例如 pc、android" /></div>
-            <div class="field"><label for="statusFilter">状态</label><select class="control" id="statusFilter"><option value="">全部状态</option><option value="0">正常</option><option value="1">停用</option></select></div>
-            <div class="filter-actions"><button class="btn primary" id="searchBtn">查询</button><button class="btn" id="resetBtn">重置</button></div>
+      <div class="shell">
+        <header class="topbar">
+          <div class="top-left">
+            <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>客户端管理</strong></div>
           </div>
+          <div class="top-actions">
+            <button
+              class="icon-btn"
+              id="themeBtn"
+              title="切换主题"
+              aria-label="切换主题"
+            >
+              <svg class="icon"><use href="#i-moon" /></svg>
+            </button>
+            <div class="avatar">SA</div>
+          </div>
+        </header>
 
-          <div class="list-head">
-            <div class="list-title"><strong>客户端列表</strong><small id="countText">共 4 个客户端</small></div>
-            <div class="toolbar">
-              <button class="btn primary" id="addBtn"><svg class="icon"><use href="#i-plus"/></svg>新增客户端</button>
-              <button class="btn danger" id="batchDeleteBtn" disabled><svg class="icon"><use href="#i-trash"/></svg>批量删除</button>
-              <button class="btn" id="exportBtn"><svg class="icon"><use href="#i-download"/></svg>导出</button>
-              <button class="icon-btn" id="refreshBtn" title="刷新列表" aria-label="刷新列表"><svg class="icon"><use href="#i-refresh"/></svg></button>
+        <main>
+          <div class="page-head">
+            <div>
+              <h1>客户端管理</h1>
+              <p>管理接入认证系统的应用端、授权方式与令牌策略。</p>
+            </div>
+            <div class="security-note">
+              <svg class="icon"><use href="#i-alert" /></svg
+              ><span>客户端密钥属于敏感凭据。列表默认不展示，查看、复制和导出都应保留审计记录。</span>
             </div>
           </div>
 
-          <div class="selection" id="selectionBar"><span>已选择 <strong id="selectedCount">0</strong> 个客户端</span><button class="btn text" id="clearSelectionBtn">取消选择</button></div>
+          <section class="panel">
+            <div class="filters">
+              <div class="field">
+                <label for="clientId">客户端 ID</label
+                ><input
+                  class="control"
+                  id="clientId"
+                  placeholder="输入完整 clientId 精确查询"
+                />
+              </div>
+              <div class="field">
+                <label for="clientKey">客户端 Key</label
+                ><input
+                  class="control"
+                  id="clientKey"
+                  placeholder="例如 pc、android"
+                />
+              </div>
+              <div class="field">
+                <label for="statusFilter">状态</label
+                ><select
+                  class="control"
+                  id="statusFilter"
+                >
+                  <option value="">全部状态</option>
+                  <option value="0">正常</option>
+                  <option value="1">停用</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button
+                  class="btn primary"
+                  id="searchBtn"
+                >
+                  查询</button
+                ><button
+                  class="btn"
+                  id="resetBtn"
+                >
+                  重置
+                </button>
+              </div>
+            </div>
 
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th style="width:46px"><input type="checkbox" id="checkAll" aria-label="选择当前页" /></th><th style="min-width:290px">客户端</th><th style="width:135px">设备类型</th><th style="min-width:245px">授权方式</th><th style="min-width:180px">令牌策略</th><th style="width:90px">状态</th><th style="width:170px">操作</th></tr></thead>
-              <tbody id="tableBody">
-                <tr data-id="1" data-key="pc" data-client-id="e5cd7c0d8e7b7f6d1785b1f18c9ab97f" data-device="PC" data-device-value="pc" data-grants="password,sms,email,social" data-active="1800" data-timeout="604800" data-status="0" data-secret="pc123">
-                  <td><input class="row-check" type="checkbox" /></td><td class="client-cell"><strong>PC 管理端</strong><code>e5cd7c0d8e7b7f6d1785b1f18c9ab97f</code></td><td><span class="device"><span class="device-mark">PC</span>PC</span></td><td><div class="tags"><span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">邮件</span><span class="tag">社交</span></div></td><td><div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div></td><td><span class="status normal">正常</span></td><td><div class="row-actions"><button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button><button class="btn text status-btn">停用</button></div></td>
-                </tr>
-                <tr data-id="2" data-key="android" data-client-id="428a8310cd442757ae699df5d8944b9a" data-device="Android" data-device-value="android" data-grants="password,sms,social" data-active="1800" data-timeout="604800" data-status="0" data-secret="app123">
-                  <td><input class="row-check" type="checkbox" /></td><td class="client-cell"><strong>Android App</strong><code>428a8310cd442757ae699df5d8944b9a</code></td><td><span class="device"><span class="device-mark">AN</span>Android</span></td><td><div class="tags"><span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">社交</span></div></td><td><div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div></td><td><span class="status normal">正常</span></td><td><div class="row-actions"><button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button><button class="btn text status-btn">停用</button></div></td>
-                </tr>
-                <tr data-id="3" data-key="ios" data-client-id="5f03bd9c3946648118f988a8f92cc47a" data-device="iOS" data-device-value="ios" data-grants="password,sms,email" data-active="7200" data-timeout="2592000" data-status="0" data-secret="ios-demo-2026">
-                  <td><input class="row-check" type="checkbox" /></td><td class="client-cell"><strong>iOS App</strong><code>5f03bd9c3946648118f988a8f92cc47a</code></td><td><span class="device"><span class="device-mark">iOS</span>iOS</span></td><td><div class="tags"><span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">邮件</span></div></td><td><div class="token-policy"><strong>2 小时活跃</strong><span>30 天固定有效期</span></div></td><td><span class="status normal">正常</span></td><td><div class="row-actions"><button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button><button class="btn text status-btn">停用</button></div></td>
-                </tr>
-                <tr data-id="4" data-key="miniapp" data-client-id="57b8809e1f462d564bca8ab95d196371" data-device="小程序" data-device-value="xcx" data-grants="xcx,social" data-active="1800" data-timeout="604800" data-status="1" data-secret="miniapp-demo">
-                  <td><input class="row-check" type="checkbox" /></td><td class="client-cell"><strong>微信小程序</strong><code>57b8809e1f462d564bca8ab95d196371</code></td><td><span class="device"><span class="device-mark">MP</span>小程序</span></td><td><div class="tags"><span class="tag primary">小程序</span><span class="tag">社交</span></div></td><td><div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div></td><td><span class="status disabled">停用</span></td><td><div class="row-actions"><button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button><button class="btn text status-btn">启用</button></div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="footer"><span>显示 1 - 4，共 4 项</span><div class="pages"><span>20 条/页</span><button class="page-btn" aria-label="上一页">‹</button><button class="page-btn active">1</button><button class="page-btn" aria-label="下一页">›</button></div></div>
-        </section>
-      </main>
-    </div>
-  </div>
+            <div class="list-head">
+              <div class="list-title"><strong>客户端列表</strong><small id="countText">共 4 个客户端</small></div>
+              <div class="toolbar">
+                <button
+                  class="btn primary"
+                  id="addBtn"
+                >
+                  <svg class="icon"><use href="#i-plus" /></svg>新增客户端
+                </button>
+                <button
+                  class="btn danger"
+                  id="batchDeleteBtn"
+                  disabled
+                >
+                  <svg class="icon"><use href="#i-trash" /></svg>批量删除
+                </button>
+                <button
+                  class="btn"
+                  id="exportBtn"
+                >
+                  <svg class="icon"><use href="#i-download" /></svg>导出
+                </button>
+                <button
+                  class="icon-btn"
+                  id="refreshBtn"
+                  title="刷新列表"
+                  aria-label="刷新列表"
+                >
+                  <svg class="icon"><use href="#i-refresh" /></svg>
+                </button>
+              </div>
+            </div>
 
-  <div class="overlay" id="formOverlay">
-    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="formTitle">
-      <div class="drawer-head"><div><h2 id="formTitle">新增客户端</h2><p id="formSubtitle">创建允许接入认证系统的应用端。</p></div><button class="icon-btn close-form" aria-label="关闭"><svg class="icon"><use href="#i-x"/></svg></button></div>
-      <form id="clientForm" class="drawer-body">
-        <input type="hidden" id="recordId" />
-        <section class="form-section"><h3 class="section-title">客户端标识</h3><div class="form-grid">
-          <div class="field full" id="readonlyClientIdField" hidden><label>客户端 ID <span class="hint">创建后保持稳定</span></label><input class="control mono" id="readonlyClientId" readonly /></div>
-          <div class="field"><label for="formKey">客户端 Key <span class="required">*</span></label><input class="control" id="formKey" maxlength="32" required placeholder="例如 pc" /></div>
-          <div class="field"><label for="formDevice">设备类型</label><select class="control" id="formDevice"><option value="pc">PC</option><option value="android">Android</option><option value="ios">iOS</option><option value="xcx">小程序</option><option value="">未指定</option></select></div>
-          <div class="field full"><label for="formSecret">客户端密钥 <span class="required">*</span><span class="hint">最长 255 字符</span></label><div class="input-wrap"><input class="control mono" id="formSecret" type="password" required placeholder="输入客户端密钥" /><button class="inside" type="button" id="secretToggle" title="显示或隐藏密钥" aria-label="显示或隐藏密钥"><svg class="icon"><use href="#i-eye"/></svg></button></div><div class="help">修改密钥不会改变 clientId，但已分发的密钥需要同步更新。</div></div>
-        </div></section>
-        <section class="form-section"><h3 class="section-title">授权方式 <span class="required">*</span></h3><div class="check-grid">
-          <label class="check-card"><input type="checkbox" name="grant" value="password" /><span>密码认证<small>账号与密码登录</small></span></label>
-          <label class="check-card"><input type="checkbox" name="grant" value="sms" /><span>短信认证<small>手机号验证码登录</small></span></label>
-          <label class="check-card"><input type="checkbox" name="grant" value="email" /><span>邮件认证<small>邮箱验证码登录</small></span></label>
-          <label class="check-card"><input type="checkbox" name="grant" value="social" /><span>社交认证<small>需对应策略支持</small></span></label>
-          <label class="check-card"><input type="checkbox" name="grant" value="xcx" /><span>小程序认证<small>需对应策略支持</small></span></label>
-        </div><div class="help">客户端开通某种方式，不代表服务端已实现对应认证策略。</div></section>
-        <section class="form-section"><h3 class="section-title">令牌策略</h3><div class="form-grid">
-          <div class="field"><label for="activeTimeout">活跃超时（秒）</label><input class="control" id="activeTimeout" type="number" min="-1" value="1800" required /></div>
-          <div class="field"><label for="fixedTimeout">固定超时（秒）</label><input class="control" id="fixedTimeout" type="number" min="-1" value="604800" required /></div>
-        </div><div class="notice"><svg class="icon"><use href="#i-alert"/></svg><span>当前后端会保存这两个值，但认证签发仍可能使用全局时长。`-1` 表示永不过期。</span></div></section>
-        <section class="form-section"><h3 class="section-title">客户端状态</h3><div class="segmented"><label><input type="radio" name="formStatus" value="0" checked />正常</label><label><input type="radio" name="formStatus" value="1" />停用</label></div></section>
-      </form>
-      <div class="drawer-foot"><div class="drawer-actions"><button class="btn close-form" type="button">取消</button><button class="btn primary" type="submit" form="clientForm">保存客户端</button></div></div>
-    </aside>
-  </div>
+            <div
+              class="selection"
+              id="selectionBar"
+            >
+              <span>已选择 <strong id="selectedCount">0</strong> 个客户端</span
+              ><button
+                class="btn text"
+                id="clearSelectionBtn"
+              >
+                取消选择
+              </button>
+            </div>
 
-  <div class="overlay" id="detailOverlay">
-    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="drawer-head"><div><h2 id="detailTitle">客户端详情</h2><p>查看接入标识、授权能力和令牌策略。</p></div><button class="icon-btn close-detail" aria-label="关闭"><svg class="icon"><use href="#i-x"/></svg></button></div>
-      <div class="drawer-body">
-        <div class="detail-hero"><div class="detail-mark" id="detailMark">PC</div><div><h3 id="detailName">PC 管理端</h3><p id="detailStatusText">正常 · PC</p></div></div>
-        <div class="detail-block"><h4>基本标识</h4><div class="detail-list">
-          <div class="detail-row"><span>客户端 Key</span><strong id="detailKey">pc</strong><button class="btn text copy-btn" data-copy-target="detailKey"><svg class="icon"><use href="#i-copy"/></svg>复制</button></div>
-          <div class="detail-row"><span>客户端 ID</span><code id="detailClientId">-</code><button class="btn text copy-btn" data-copy-target="detailClientId"><svg class="icon"><use href="#i-copy"/></svg>复制</button></div>
-          <div class="detail-row"><span>客户端密钥</span><code class="secret-value" id="detailSecret">••••••••••••</code><button class="btn text" id="revealSecretBtn"><svg class="icon"><use href="#i-eye"/></svg>显示 10 秒</button></div>
-        </div></div>
-        <div class="detail-block"><h4>授权能力</h4><div class="detail-list"><div class="detail-row"><span>授权方式</span><div class="tags" id="detailGrants"></div><span></span></div><div class="detail-row"><span>设备类型</span><strong id="detailDevice">PC</strong><span></span></div></div></div>
-        <div class="detail-block"><h4>令牌策略</h4><div class="detail-list"><div class="detail-row"><span>活跃超时</span><strong id="detailActive">1800 秒（30 分钟）</strong><span></span></div><div class="detail-row"><span>固定超时</span><strong id="detailTimeout">604800 秒（7 天）</strong><span></span></div></div></div>
-        <div class="notice"><svg class="icon"><use href="#i-alert"/></svg><span>停用或删除该客户端只会阻止新的登录，现有会话不会立即下线。</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 46px">
+                      <input
+                        type="checkbox"
+                        id="checkAll"
+                        aria-label="选择当前页"
+                      />
+                    </th>
+                    <th style="min-width: 290px">客户端</th>
+                    <th style="width: 135px">设备类型</th>
+                    <th style="min-width: 245px">授权方式</th>
+                    <th style="min-width: 180px">令牌策略</th>
+                    <th style="width: 90px">状态</th>
+                    <th style="width: 170px">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr
+                    data-id="1"
+                    data-key="pc"
+                    data-client-id="e5cd7c0d8e7b7f6d1785b1f18c9ab97f"
+                    data-device="PC"
+                    data-device-value="pc"
+                    data-grants="password,sms,email,social"
+                    data-active="1800"
+                    data-timeout="604800"
+                    data-status="0"
+                    data-secret="pc123"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                      />
+                    </td>
+                    <td class="client-cell"><strong>PC 管理端</strong><code>e5cd7c0d8e7b7f6d1785b1f18c9ab97f</code></td>
+                    <td>
+                      <span class="device"><span class="device-mark">PC</span>PC</span>
+                    </td>
+                    <td>
+                      <div class="tags">
+                        <span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">邮件</span
+                        ><span class="tag">社交</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button
+                        ><button class="btn text status-btn">停用</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="2"
+                    data-key="android"
+                    data-client-id="428a8310cd442757ae699df5d8944b9a"
+                    data-device="Android"
+                    data-device-value="android"
+                    data-grants="password,sms,social"
+                    data-active="1800"
+                    data-timeout="604800"
+                    data-status="0"
+                    data-secret="app123"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                      />
+                    </td>
+                    <td class="client-cell">
+                      <strong>Android App</strong><code>428a8310cd442757ae699df5d8944b9a</code>
+                    </td>
+                    <td>
+                      <span class="device"><span class="device-mark">AN</span>Android</span>
+                    </td>
+                    <td>
+                      <div class="tags">
+                        <span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">社交</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button
+                        ><button class="btn text status-btn">停用</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="3"
+                    data-key="ios"
+                    data-client-id="5f03bd9c3946648118f988a8f92cc47a"
+                    data-device="iOS"
+                    data-device-value="ios"
+                    data-grants="password,sms,email"
+                    data-active="7200"
+                    data-timeout="2592000"
+                    data-status="0"
+                    data-secret="ios-demo-2026"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                      />
+                    </td>
+                    <td class="client-cell"><strong>iOS App</strong><code>5f03bd9c3946648118f988a8f92cc47a</code></td>
+                    <td>
+                      <span class="device"><span class="device-mark">iOS</span>iOS</span>
+                    </td>
+                    <td>
+                      <div class="tags">
+                        <span class="tag primary">密码</span><span class="tag">短信</span><span class="tag">邮件</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="token-policy"><strong>2 小时活跃</strong><span>30 天固定有效期</span></div>
+                    </td>
+                    <td><span class="status normal">正常</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button
+                        ><button class="btn text status-btn">停用</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-id="4"
+                    data-key="miniapp"
+                    data-client-id="57b8809e1f462d564bca8ab95d196371"
+                    data-device="小程序"
+                    data-device-value="xcx"
+                    data-grants="xcx,social"
+                    data-active="1800"
+                    data-timeout="604800"
+                    data-status="1"
+                    data-secret="miniapp-demo"
+                  >
+                    <td>
+                      <input
+                        class="row-check"
+                        type="checkbox"
+                      />
+                    </td>
+                    <td class="client-cell">
+                      <strong>微信小程序</strong><code>57b8809e1f462d564bca8ab95d196371</code>
+                    </td>
+                    <td>
+                      <span class="device"><span class="device-mark">MP</span>小程序</span>
+                    </td>
+                    <td>
+                      <div class="tags"><span class="tag primary">小程序</span><span class="tag">社交</span></div>
+                    </td>
+                    <td>
+                      <div class="token-policy"><strong>30 分钟活跃</strong><span>7 天固定有效期</span></div>
+                    </td>
+                    <td><span class="status disabled">停用</span></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn text view-btn">查看</button><button class="btn text edit-btn">编辑</button
+                        ><button class="btn text status-btn">启用</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="footer">
+              <span>显示 1 - 4，共 4 项</span>
+              <div class="pages">
+                <span>20 条/页</span
+                ><button
+                  class="page-btn"
+                  aria-label="上一页"
+                >
+                  ‹</button
+                ><button class="page-btn active">1</button
+                ><button
+                  class="page-btn"
+                  aria-label="下一页"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
-      <div class="drawer-foot"><div class="drawer-actions"><button class="btn close-detail">关闭</button><button class="btn primary" id="detailEditBtn">编辑客户端</button></div></div>
-    </aside>
-  </div>
+    </div>
 
-  <div class="modal-wrap" id="confirmModal"><div class="modal" role="alertdialog" aria-modal="true"><div class="modal-body"><div class="modal-icon" id="confirmIcon"><svg class="icon"><use href="#i-alert"/></svg></div><h3 id="confirmTitle">确认操作</h3><p id="confirmMessage"></p><div class="impact" id="confirmImpact"></div></div><div class="modal-foot"><button class="btn" id="confirmCancel">取消</button><button class="btn primary" id="confirmOk">确认</button></div></div></div>
-  <div class="toast" id="toast">操作成功</div>
+    <div
+      class="overlay"
+      id="formOverlay"
+    >
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="formTitle"
+      >
+        <div class="drawer-head">
+          <div>
+            <h2 id="formTitle">新增客户端</h2>
+            <p id="formSubtitle">创建允许接入认证系统的应用端。</p>
+          </div>
+          <button
+            class="icon-btn close-form"
+            aria-label="关闭"
+          >
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <form
+          id="clientForm"
+          class="drawer-body"
+        >
+          <input
+            type="hidden"
+            id="recordId"
+          />
+          <section class="form-section">
+            <h3 class="section-title">客户端标识</h3>
+            <div class="form-grid">
+              <div
+                class="field full"
+                id="readonlyClientIdField"
+                hidden
+              >
+                <label>客户端 ID <span class="hint">创建后保持稳定</span></label
+                ><input
+                  class="control mono"
+                  id="readonlyClientId"
+                  readonly
+                />
+              </div>
+              <div class="field">
+                <label for="formKey">客户端 Key <span class="required">*</span></label
+                ><input
+                  class="control"
+                  id="formKey"
+                  maxlength="32"
+                  required
+                  placeholder="例如 pc"
+                />
+              </div>
+              <div class="field">
+                <label for="formDevice">设备类型</label
+                ><select
+                  class="control"
+                  id="formDevice"
+                >
+                  <option value="pc">PC</option>
+                  <option value="android">Android</option>
+                  <option value="ios">iOS</option>
+                  <option value="xcx">小程序</option>
+                  <option value="">未指定</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="formSecret"
+                  >客户端密钥 <span class="required">*</span><span class="hint">最长 255 字符</span></label
+                >
+                <div class="input-wrap">
+                  <input
+                    class="control mono"
+                    id="formSecret"
+                    type="password"
+                    required
+                    placeholder="输入客户端密钥"
+                  /><button
+                    class="inside"
+                    type="button"
+                    id="secretToggle"
+                    title="显示或隐藏密钥"
+                    aria-label="显示或隐藏密钥"
+                  >
+                    <svg class="icon"><use href="#i-eye" /></svg>
+                  </button>
+                </div>
+                <div class="help">修改密钥不会改变 clientId，但已分发的密钥需要同步更新。</div>
+              </div>
+            </div>
+          </section>
+          <section class="form-section">
+            <h3 class="section-title">授权方式 <span class="required">*</span></h3>
+            <div class="check-grid">
+              <label class="check-card"
+                ><input
+                  type="checkbox"
+                  name="grant"
+                  value="password"
+                /><span>密码认证<small>账号与密码登录</small></span></label
+              >
+              <label class="check-card"
+                ><input
+                  type="checkbox"
+                  name="grant"
+                  value="sms"
+                /><span>短信认证<small>手机号验证码登录</small></span></label
+              >
+              <label class="check-card"
+                ><input
+                  type="checkbox"
+                  name="grant"
+                  value="email"
+                /><span>邮件认证<small>邮箱验证码登录</small></span></label
+              >
+              <label class="check-card"
+                ><input
+                  type="checkbox"
+                  name="grant"
+                  value="social"
+                /><span>社交认证<small>需对应策略支持</small></span></label
+              >
+              <label class="check-card"
+                ><input
+                  type="checkbox"
+                  name="grant"
+                  value="xcx"
+                /><span>小程序认证<small>需对应策略支持</small></span></label
+              >
+            </div>
+            <div class="help">客户端开通某种方式，不代表服务端已实现对应认证策略。</div>
+          </section>
+          <section class="form-section">
+            <h3 class="section-title">令牌策略</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="activeTimeout">活跃超时（秒）</label
+                ><input
+                  class="control"
+                  id="activeTimeout"
+                  type="number"
+                  min="-1"
+                  value="1800"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="fixedTimeout">固定超时（秒）</label
+                ><input
+                  class="control"
+                  id="fixedTimeout"
+                  type="number"
+                  min="-1"
+                  value="604800"
+                  required
+                />
+              </div>
+            </div>
+            <div class="notice">
+              <svg class="icon"><use href="#i-alert" /></svg
+              ><span>当前后端会保存这两个值，但认证签发仍可能使用全局时长。`-1` 表示永不过期。</span>
+            </div>
+          </section>
+          <section class="form-section">
+            <h3 class="section-title">客户端状态</h3>
+            <div class="segmented">
+              <label
+                ><input
+                  type="radio"
+                  name="formStatus"
+                  value="0"
+                  checked
+                />正常</label
+              ><label
+                ><input
+                  type="radio"
+                  name="formStatus"
+                  value="1"
+                />停用</label
+              >
+            </div>
+          </section>
+        </form>
+        <div class="drawer-foot">
+          <div class="drawer-actions">
+            <button
+              class="btn close-form"
+              type="button"
+            >
+              取消</button
+            ><button
+              class="btn primary"
+              type="submit"
+              form="clientForm"
+            >
+              保存客户端
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
 
-  <script>
-    const $ = selector => document.querySelector(selector);
-    const $$ = selector => [...document.querySelectorAll(selector)];
-    const grantLabels = { password: '密码', sms: '短信', email: '邮件', social: '社交', xcx: '小程序' };
-    const deviceMarks = { pc: 'PC', android: 'AN', ios: 'iOS', xcx: 'MP', '': '--' };
-    let activeRow = null;
-    let confirmAction = null;
-    let secretTimer = null;
+    <div
+      class="overlay"
+      id="detailOverlay"
+    >
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailTitle"
+      >
+        <div class="drawer-head">
+          <div>
+            <h2 id="detailTitle">客户端详情</h2>
+            <p>查看接入标识、授权能力和令牌策略。</p>
+          </div>
+          <button
+            class="icon-btn close-detail"
+            aria-label="关闭"
+          >
+            <svg class="icon"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <div class="drawer-body">
+          <div class="detail-hero">
+            <div
+              class="detail-mark"
+              id="detailMark"
+            >
+              PC
+            </div>
+            <div>
+              <h3 id="detailName">PC 管理端</h3>
+              <p id="detailStatusText">正常 · PC</p>
+            </div>
+          </div>
+          <div class="detail-block">
+            <h4>基本标识</h4>
+            <div class="detail-list">
+              <div class="detail-row">
+                <span>客户端 Key</span><strong id="detailKey">pc</strong
+                ><button
+                  class="btn text copy-btn"
+                  data-copy-target="detailKey"
+                >
+                  <svg class="icon"><use href="#i-copy" /></svg>复制
+                </button>
+              </div>
+              <div class="detail-row">
+                <span>客户端 ID</span><code id="detailClientId">-</code
+                ><button
+                  class="btn text copy-btn"
+                  data-copy-target="detailClientId"
+                >
+                  <svg class="icon"><use href="#i-copy" /></svg>复制
+                </button>
+              </div>
+              <div class="detail-row">
+                <span>客户端密钥</span
+                ><code
+                  class="secret-value"
+                  id="detailSecret"
+                  >••••••••••••</code
+                ><button
+                  class="btn text"
+                  id="revealSecretBtn"
+                >
+                  <svg class="icon"><use href="#i-eye" /></svg>显示 10 秒
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="detail-block">
+            <h4>授权能力</h4>
+            <div class="detail-list">
+              <div class="detail-row">
+                <span>授权方式</span>
+                <div
+                  class="tags"
+                  id="detailGrants"
+                ></div>
+                <span></span>
+              </div>
+              <div class="detail-row"><span>设备类型</span><strong id="detailDevice">PC</strong><span></span></div>
+            </div>
+          </div>
+          <div class="detail-block">
+            <h4>令牌策略</h4>
+            <div class="detail-list">
+              <div class="detail-row">
+                <span>活跃超时</span><strong id="detailActive">1800 秒（30 分钟）</strong><span></span>
+              </div>
+              <div class="detail-row">
+                <span>固定超时</span><strong id="detailTimeout">604800 秒（7 天）</strong><span></span>
+              </div>
+            </div>
+          </div>
+          <div class="notice">
+            <svg class="icon"><use href="#i-alert" /></svg
+            ><span>停用或删除该客户端只会阻止新的登录，现有会话不会立即下线。</span>
+          </div>
+        </div>
+        <div class="drawer-foot">
+          <div class="drawer-actions">
+            <button class="btn close-detail">关闭</button
+            ><button
+              class="btn primary"
+              id="detailEditBtn"
+            >
+              编辑客户端
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
 
-    function toast(message) {
-      const node = $('#toast');
-      node.textContent = message;
-      node.classList.add('show');
-      window.setTimeout(() => node.classList.remove('show'), 2200);
-    }
+    <div
+      class="modal-wrap"
+      id="confirmModal"
+    >
+      <div
+        class="modal"
+        role="alertdialog"
+        aria-modal="true"
+      >
+        <div class="modal-body">
+          <div
+            class="modal-icon"
+            id="confirmIcon"
+          >
+            <svg class="icon"><use href="#i-alert" /></svg>
+          </div>
+          <h3 id="confirmTitle">确认操作</h3>
+          <p id="confirmMessage"></p>
+          <div
+            class="impact"
+            id="confirmImpact"
+          ></div>
+        </div>
+        <div class="modal-foot">
+          <button
+            class="btn"
+            id="confirmCancel"
+          >
+            取消</button
+          ><button
+            class="btn primary"
+            id="confirmOk"
+          >
+            确认
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="toast"
+      id="toast"
+    >
+      操作成功
+    </div>
 
-    function rows() { return $$('#tableBody tr'); }
+    <script>
+      const $ = selector => document.querySelector(selector);
+      const $$ = selector => [...document.querySelectorAll(selector)];
+      const grantLabels = { password: '密码', sms: '短信', email: '邮件', social: '社交', xcx: '小程序' };
+      const deviceMarks = { pc: 'PC', android: 'AN', ios: 'iOS', xcx: 'MP', '': '--' };
+      let activeRow = null;
+      let confirmAction = null;
+      let secretTimer = null;
 
-    function humanDuration(seconds) {
-      const value = Number(seconds);
-      if (value === -1) return '永不过期';
-      if (value % 86400 === 0) return `${value / 86400} 天`;
-      if (value % 3600 === 0) return `${value / 3600} 小时`;
-      if (value % 60 === 0) return `${value / 60} 分钟`;
-      return `${value} 秒`;
-    }
+      function toast(message) {
+        const node = $('#toast');
+        node.textContent = message;
+        node.classList.add('show');
+        window.setTimeout(() => node.classList.remove('show'), 2200);
+      }
 
-    function syncSelection() {
-      const visibleRows = rows().filter(row => !row.hidden);
-      const selected = visibleRows.filter(row => row.querySelector('.row-check').checked);
-      $('#selectedCount').textContent = selected.length;
-      $('#selectionBar').classList.toggle('show', Boolean(selected.length));
-      $('#batchDeleteBtn').disabled = !Boolean(selected.length);
-      $('#checkAll').checked = Boolean(visibleRows.length) && selected.length === visibleRows.length;
-    }
+      function rows() {
+        return $$('#tableBody tr');
+      }
 
-    function openForm(row = null) {
-      activeRow = row;
-      const editing = Boolean(row);
-      $('#formTitle').textContent = editing ? '编辑客户端' : '新增客户端';
-      $('#formSubtitle').textContent = editing ? 'clientId 创建后保持稳定，不随 key 或密钥修改。' : 'clientId 将由服务端根据 key 与密钥生成。';
-      $('#readonlyClientIdField').hidden = !editing;
-      $('#recordId').value = row?.dataset.id || '';
-      $('#readonlyClientId').value = row?.dataset.clientId || '';
-      $('#formKey').value = row?.dataset.key || '';
-      $('#formDevice').value = row?.dataset.deviceValue || 'pc';
-      $('#formSecret').value = row?.dataset.secret || '';
-      $('#formSecret').type = 'password';
-      $('#activeTimeout').value = row?.dataset.active || '1800';
-      $('#fixedTimeout').value = row?.dataset.timeout || '604800';
-      $$('input[name="grant"]').forEach(input => { input.checked = Boolean(row?.dataset.grants.split(',').includes(input.value)); });
-      if (!editing) $('input[name="grant"][value="password"]').checked = true;
-      $(`input[name="formStatus"][value="${row?.dataset.status || '0'}"]`).checked = true;
-      $('#formOverlay').classList.add('show');
-    }
+      function humanDuration(seconds) {
+        const value = Number(seconds);
+        if (value === -1) return '永不过期';
+        if (value % 86400 === 0) return `${value / 86400} 天`;
+        if (value % 3600 === 0) return `${value / 3600} 小时`;
+        if (value % 60 === 0) return `${value / 60} 分钟`;
+        return `${value} 秒`;
+      }
 
-    function closeForm() { $('#formOverlay').classList.remove('show'); }
+      function syncSelection() {
+        const visibleRows = rows().filter(row => !row.hidden);
+        const selected = visibleRows.filter(row => row.querySelector('.row-check').checked);
+        $('#selectedCount').textContent = selected.length;
+        $('#selectionBar').classList.toggle('show', Boolean(selected.length));
+        $('#batchDeleteBtn').disabled = !Boolean(selected.length);
+        $('#checkAll').checked = Boolean(visibleRows.length) && selected.length === visibleRows.length;
+      }
 
-    function openDetail(row) {
-      activeRow = row;
-      const normal = row.dataset.status === '0';
-      const grants = row.dataset.grants.split(',');
-      $('#detailMark').textContent = deviceMarks[row.dataset.deviceValue] || '--';
-      $('#detailName').textContent = row.querySelector('.client-cell strong').textContent;
-      $('#detailStatusText').textContent = `${normal ? '正常' : '停用'} · ${row.dataset.device}`;
-      $('#detailKey').textContent = row.dataset.key;
-      $('#detailClientId').textContent = row.dataset.clientId;
-      $('#detailSecret').textContent = '••••••••••••';
-      $('#detailSecret').dataset.value = row.dataset.secret;
-      $('#revealSecretBtn').disabled = false;
-      $('#detailDevice').textContent = row.dataset.device;
-      $('#detailGrants').innerHTML = grants.map((grant, index) => `<span class="tag ${index === 0 ? 'primary' : ''}">${grantLabels[grant] || grant}</span>`).join('');
-      $('#detailActive').textContent = `${row.dataset.active} 秒（${humanDuration(row.dataset.active)}）`;
-      $('#detailTimeout').textContent = `${row.dataset.timeout} 秒（${humanDuration(row.dataset.timeout)}）`;
-      $('#detailOverlay').classList.add('show');
-    }
+      function openForm(row = null) {
+        activeRow = row;
+        const editing = Boolean(row);
+        $('#formTitle').textContent = editing ? '编辑客户端' : '新增客户端';
+        $('#formSubtitle').textContent = editing
+          ? 'clientId 创建后保持稳定，不随 key 或密钥修改。'
+          : 'clientId 将由服务端根据 key 与密钥生成。';
+        $('#readonlyClientIdField').hidden = !editing;
+        $('#recordId').value = row?.dataset.id || '';
+        $('#readonlyClientId').value = row?.dataset.clientId || '';
+        $('#formKey').value = row?.dataset.key || '';
+        $('#formDevice').value = row?.dataset.deviceValue || 'pc';
+        $('#formSecret').value = row?.dataset.secret || '';
+        $('#formSecret').type = 'password';
+        $('#activeTimeout').value = row?.dataset.active || '1800';
+        $('#fixedTimeout').value = row?.dataset.timeout || '604800';
+        $$('input[name="grant"]').forEach(input => {
+          input.checked = Boolean(row?.dataset.grants.split(',').includes(input.value));
+        });
+        if (!editing) $('input[name="grant"][value="password"]').checked = true;
+        $(`input[name="formStatus"][value="${row?.dataset.status || '0'}"]`).checked = true;
+        $('#formOverlay').classList.add('show');
+      }
 
-    function closeDetail() {
-      $('#detailOverlay').classList.remove('show');
-      window.clearTimeout(secretTimer);
-    }
+      function closeForm() {
+        $('#formOverlay').classList.remove('show');
+      }
 
-    function openConfirm(options) {
-      confirmAction = options.action;
-      $('#confirmTitle').textContent = options.title;
-      $('#confirmMessage').textContent = options.message;
-      $('#confirmImpact').textContent = options.impact;
-      $('#confirmIcon').classList.toggle('danger', Boolean(options.danger));
-      $('#confirmOk').className = `btn ${options.danger ? 'danger-solid' : 'primary'}`;
-      $('#confirmOk').textContent = options.confirmText || '确认';
-      $('#confirmModal').classList.add('show');
-    }
+      function openDetail(row) {
+        activeRow = row;
+        const normal = row.dataset.status === '0';
+        const grants = row.dataset.grants.split(',');
+        $('#detailMark').textContent = deviceMarks[row.dataset.deviceValue] || '--';
+        $('#detailName').textContent = row.querySelector('.client-cell strong').textContent;
+        $('#detailStatusText').textContent = `${normal ? '正常' : '停用'} · ${row.dataset.device}`;
+        $('#detailKey').textContent = row.dataset.key;
+        $('#detailClientId').textContent = row.dataset.clientId;
+        $('#detailSecret').textContent = '••••••••••••';
+        $('#detailSecret').dataset.value = row.dataset.secret;
+        $('#revealSecretBtn').disabled = false;
+        $('#detailDevice').textContent = row.dataset.device;
+        $('#detailGrants').innerHTML = grants
+          .map(
+            (grant, index) => `<span class="tag ${index === 0 ? 'primary' : ''}">${grantLabels[grant] || grant}</span>`
+          )
+          .join('');
+        $('#detailActive').textContent = `${row.dataset.active} 秒（${humanDuration(row.dataset.active)}）`;
+        $('#detailTimeout').textContent = `${row.dataset.timeout} 秒（${humanDuration(row.dataset.timeout)}）`;
+        $('#detailOverlay').classList.add('show');
+      }
 
-    function closeConfirm() { $('#confirmModal').classList.remove('show'); confirmAction = null; }
+      function closeDetail() {
+        $('#detailOverlay').classList.remove('show');
+        window.clearTimeout(secretTimer);
+      }
 
-    function bindRows() {
-      rows().forEach(row => {
-        row.querySelector('.row-check').onchange = syncSelection;
-        row.querySelector('.view-btn').onclick = () => openDetail(row);
-        row.querySelector('.edit-btn').onclick = () => openForm(row);
-        row.querySelector('.status-btn').onclick = () => {
-          const disabling = row.dataset.status === '0';
-          openConfirm({
-            title: disabling ? '确认停用客户端' : '确认启用客户端',
-            message: `${disabling ? '停用' : '启用'}“${row.dataset.key}”客户端？`,
-            impact: disabling ? '停用后将阻止新的登录，但已建立的会话不会立即失效。' : '启用后，该客户端可再次使用已开通的授权方式登录。',
-            danger: disabling,
-            confirmText: disabling ? '确认停用' : '确认启用',
-            action: () => {
-              row.dataset.status = disabling ? '1' : '0';
-              const status = row.querySelector('.status');
-              status.className = `status ${disabling ? 'disabled' : 'normal'}`;
-              status.textContent = disabling ? '停用' : '正常';
-              row.querySelector('.status-btn').textContent = disabling ? '启用' : '停用';
-              toast(disabling ? '客户端已停用' : '客户端已启用');
-            }
+      function openConfirm(options) {
+        confirmAction = options.action;
+        $('#confirmTitle').textContent = options.title;
+        $('#confirmMessage').textContent = options.message;
+        $('#confirmImpact').textContent = options.impact;
+        $('#confirmIcon').classList.toggle('danger', Boolean(options.danger));
+        $('#confirmOk').className = `btn ${options.danger ? 'danger-solid' : 'primary'}`;
+        $('#confirmOk').textContent = options.confirmText || '确认';
+        $('#confirmModal').classList.add('show');
+      }
+
+      function closeConfirm() {
+        $('#confirmModal').classList.remove('show');
+        confirmAction = null;
+      }
+
+      function bindRows() {
+        rows().forEach(row => {
+          row.querySelector('.row-check').onchange = syncSelection;
+          row.querySelector('.view-btn').onclick = () => openDetail(row);
+          row.querySelector('.edit-btn').onclick = () => openForm(row);
+          row.querySelector('.status-btn').onclick = () => {
+            const disabling = row.dataset.status === '0';
+            openConfirm({
+              title: disabling ? '确认停用客户端' : '确认启用客户端',
+              message: `${disabling ? '停用' : '启用'}“${row.dataset.key}”客户端？`,
+              impact: disabling
+                ? '停用后将阻止新的登录，但已建立的会话不会立即失效。'
+                : '启用后，该客户端可再次使用已开通的授权方式登录。',
+              danger: disabling,
+              confirmText: disabling ? '确认停用' : '确认启用',
+              action: () => {
+                row.dataset.status = disabling ? '1' : '0';
+                const status = row.querySelector('.status');
+                status.className = `status ${disabling ? 'disabled' : 'normal'}`;
+                status.textContent = disabling ? '停用' : '正常';
+                row.querySelector('.status-btn').textContent = disabling ? '启用' : '停用';
+                toast(disabling ? '客户端已停用' : '客户端已启用');
+              }
+            });
+          };
+        });
+      }
+
+      $('#themeBtn').onclick = () => {
+        const root = document.documentElement;
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      };
+      $('#addBtn').onclick = () => openForm();
+      $$('.close-form').forEach(button => {
+        button.onclick = closeForm;
+      });
+      $$('.close-detail').forEach(button => {
+        button.onclick = closeDetail;
+      });
+      $('#detailEditBtn').onclick = () => {
+        const row = activeRow;
+        closeDetail();
+        openForm(row);
+      };
+      $('#secretToggle').onclick = () => {
+        const input = $('#formSecret');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      };
+
+      $('#clientForm').onsubmit = event => {
+        event.preventDefault();
+        const grants = $$('input[name="grant"]:checked').map(input => input.value);
+        if (!grants.length) {
+          toast('请至少选择一种授权方式');
+          return;
+        }
+        closeForm();
+        toast(activeRow ? '客户端修改成功' : '客户端新增成功，clientId 已由服务端生成');
+      };
+
+      $('#checkAll').onchange = event => {
+        rows()
+          .filter(row => !row.hidden)
+          .forEach(row => {
+            row.querySelector('.row-check').checked = event.target.checked;
           });
+        syncSelection();
+      };
+      $('#clearSelectionBtn').onclick = () => {
+        rows().forEach(row => {
+          row.querySelector('.row-check').checked = false;
+        });
+        syncSelection();
+      };
+
+      $('#batchDeleteBtn').onclick = () => {
+        const selected = rows().filter(row => row.querySelector('.row-check').checked);
+        openConfirm({
+          title: `删除 ${selected.length} 个客户端`,
+          message: '删除后页面中无法恢复这些客户端。',
+          impact: '删除只会阻止新的登录，现有会话不会立即失效；任一目标已不存在时整批都不会执行。',
+          danger: true,
+          confirmText: '确认删除',
+          action: () => {
+            selected.forEach(row => row.remove());
+            syncSelection();
+            $('#countText').textContent = `共 ${rows().length} 个客户端`;
+            toast('客户端删除成功');
+          }
+        });
+      };
+
+      $('#exportBtn').onclick = () =>
+        openConfirm({
+          title: '导出客户端数据',
+          message: '将按当前筛选条件导出全部命中数据，不受当前分页限制。',
+          impact: '导出文件包含明文客户端密钥，请按敏感凭据管理，不要通过公开渠道传输。',
+          danger: false,
+          confirmText: '确认导出',
+          action: () => toast('客户端管理.xlsx 已开始下载')
+        });
+
+      $('#confirmCancel').onclick = closeConfirm;
+      $('#confirmOk').onclick = () => {
+        const action = confirmAction;
+        closeConfirm();
+        action?.();
+      };
+      $('#refreshBtn').onclick = () => toast('列表已刷新');
+
+      $('#searchBtn').onclick = () => {
+        const id = $('#clientId').value.trim().toLowerCase();
+        const key = $('#clientKey').value.trim().toLowerCase();
+        const status = $('#statusFilter').value;
+        let visible = 0;
+        rows().forEach(row => {
+          const matched =
+            (!id || row.dataset.clientId.toLowerCase() === id) &&
+            (!key || row.dataset.key.toLowerCase() === key) &&
+            (!status || row.dataset.status === status);
+          row.hidden = !matched;
+          if (matched) visible += 1;
+        });
+        $('#countText').textContent = `共 ${visible} 个客户端`;
+        syncSelection();
+        toast(`查询完成，共 ${visible} 条结果`);
+      };
+
+      $('#resetBtn').onclick = () => {
+        $('#clientId').value = '';
+        $('#clientKey').value = '';
+        $('#statusFilter').value = '';
+        rows().forEach(row => {
+          row.hidden = false;
+        });
+        $('#countText').textContent = `共 ${rows().length} 个客户端`;
+        syncSelection();
+        toast('筛选条件已重置');
+      };
+
+      $('#revealSecretBtn').onclick = () => {
+        const secret = $('#detailSecret');
+        secret.textContent = secret.dataset.value;
+        $('#revealSecretBtn').disabled = true;
+        window.clearTimeout(secretTimer);
+        secretTimer = window.setTimeout(() => {
+          secret.textContent = '••••••••••••';
+          $('#revealSecretBtn').disabled = false;
+        }, 10000);
+      };
+
+      $$('.copy-btn').forEach(button => {
+        button.onclick = async () => {
+          const value = document.getElementById(button.dataset.copyTarget).textContent;
+          try {
+            await navigator.clipboard.writeText(value);
+            toast('已复制到剪贴板');
+          } catch {
+            toast(`复制内容：${value}`);
+          }
         };
       });
-    }
 
-    $('#themeBtn').onclick = () => {
-      const root = document.documentElement;
-      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    };
-    $('#addBtn').onclick = () => openForm();
-    $$('.close-form').forEach(button => { button.onclick = closeForm; });
-    $$('.close-detail').forEach(button => { button.onclick = closeDetail; });
-    $('#detailEditBtn').onclick = () => { const row = activeRow; closeDetail(); openForm(row); };
-    $('#secretToggle').onclick = () => { const input = $('#formSecret'); input.type = input.type === 'password' ? 'text' : 'password'; };
-
-    $('#clientForm').onsubmit = event => {
-      event.preventDefault();
-      const grants = $$('input[name="grant"]:checked').map(input => input.value);
-      if (!grants.length) { toast('请至少选择一种授权方式'); return; }
-      closeForm();
-      toast(activeRow ? '客户端修改成功' : '客户端新增成功，clientId 已由服务端生成');
-    };
-
-    $('#checkAll').onchange = event => { rows().filter(row => !row.hidden).forEach(row => { row.querySelector('.row-check').checked = event.target.checked; }); syncSelection(); };
-    $('#clearSelectionBtn').onclick = () => { rows().forEach(row => { row.querySelector('.row-check').checked = false; }); syncSelection(); };
-
-    $('#batchDeleteBtn').onclick = () => {
-      const selected = rows().filter(row => row.querySelector('.row-check').checked);
-      openConfirm({
-        title: `删除 ${selected.length} 个客户端`,
-        message: '删除后页面中无法恢复这些客户端。',
-        impact: '删除只会阻止新的登录，现有会话不会立即失效；任一目标已不存在时整批都不会执行。',
-        danger: true,
-        confirmText: '确认删除',
-        action: () => { selected.forEach(row => row.remove()); syncSelection(); $('#countText').textContent = `共 ${rows().length} 个客户端`; toast('客户端删除成功'); }
-      });
-    };
-
-    $('#exportBtn').onclick = () => openConfirm({
-      title: '导出客户端数据',
-      message: '将按当前筛选条件导出全部命中数据，不受当前分页限制。',
-      impact: '导出文件包含明文客户端密钥，请按敏感凭据管理，不要通过公开渠道传输。',
-      danger: false,
-      confirmText: '确认导出',
-      action: () => toast('客户端管理.xlsx 已开始下载')
-    });
-
-    $('#confirmCancel').onclick = closeConfirm;
-    $('#confirmOk').onclick = () => { const action = confirmAction; closeConfirm(); action?.(); };
-    $('#refreshBtn').onclick = () => toast('列表已刷新');
-
-    $('#searchBtn').onclick = () => {
-      const id = $('#clientId').value.trim().toLowerCase();
-      const key = $('#clientKey').value.trim().toLowerCase();
-      const status = $('#statusFilter').value;
-      let visible = 0;
-      rows().forEach(row => {
-        const matched = (!id || row.dataset.clientId.toLowerCase() === id) && (!key || row.dataset.key.toLowerCase() === key) && (!status || row.dataset.status === status);
-        row.hidden = !matched;
-        if (matched) visible += 1;
-      });
-      $('#countText').textContent = `共 ${visible} 个客户端`;
-      syncSelection();
-      toast(`查询完成，共 ${visible} 条结果`);
-    };
-
-    $('#resetBtn').onclick = () => {
-      $('#clientId').value = '';
-      $('#clientKey').value = '';
-      $('#statusFilter').value = '';
-      rows().forEach(row => { row.hidden = false; });
-      $('#countText').textContent = `共 ${rows().length} 个客户端`;
-      syncSelection();
-      toast('筛选条件已重置');
-    };
-
-    $('#revealSecretBtn').onclick = () => {
-      const secret = $('#detailSecret');
-      secret.textContent = secret.dataset.value;
-      $('#revealSecretBtn').disabled = true;
-      window.clearTimeout(secretTimer);
-      secretTimer = window.setTimeout(() => { secret.textContent = '••••••••••••'; $('#revealSecretBtn').disabled = false; }, 10000);
-    };
-
-    $$('.copy-btn').forEach(button => {
-      button.onclick = async () => {
-        const value = document.getElementById(button.dataset.copyTarget).textContent;
-        try { await navigator.clipboard.writeText(value); toast('已复制到剪贴板'); } catch { toast(`复制内容：${value}`); }
-      };
-    });
-
-    bindRows();
-  </script>
-</body>
+      bindRows();
+    </script>
+  </body>
 </html>

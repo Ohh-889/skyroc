@@ -19,10 +19,8 @@ const CODE_FIELD_DEFAULTS = {
 } as const;
 
 /**
- * 承接触摸的透明输入框：CodeField 自己那份定位来自它模块内的 `...StyleSheet.absoluteFill`，
- * 在本仓库实测没有生效（输入框退回文档流、宽度塌成 0，导致整个组件点不动），这里用我们自己的
- * 对象把定位写死。CodeField 会把 textInputStyle 合并在它自身样式之后，所以这份能覆盖它。
- * opacity 与 fontSize 沿用库的取值：不能真正透明，否则收不到触摸；1px 字号让光标始终落在末尾。
+ * 承接触摸的透明输入框：CodeField 自己那份定位来自它模块内的 `...StyleSheet.absoluteFill`， 在本仓库实测没有生效（输入框退回文档流、宽度塌成 0，导致整个组件点不动），这里用我们自己的
+ * 对象把定位写死。CodeField 会把 textInputStyle 合并在它自身样式之后，所以这份能覆盖它。 opacity 与 fontSize 沿用库的取值：不能真正透明，否则收不到触摸；1px 字号让光标始终落在末尾。
  */
 const CODE_FIELD_INPUT_STYLE: TextStyle = {
   bottom: 0,
@@ -75,7 +73,7 @@ const PasswordInput = (props: PasswordInputProps) => {
   /**
    * 变体槽与调用方覆盖类合并成最终类名，集中一处，避免 JSX 里散落 cn 调用。
    *
-   * cell 槽依赖格子下标与聚焦态，只能在 renderCell 里逐格算，不参与这里。
+   * Cell 槽依赖格子下标与聚焦态，只能在 renderCell 里逐格算，不参与这里。
    */
   function resolveSlotClassNames() {
     return {

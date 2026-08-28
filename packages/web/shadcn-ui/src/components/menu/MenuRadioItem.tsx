@@ -1,12 +1,12 @@
-import type { ComponentRef } from 'react';
-import { forwardRef, isValidElement } from 'react';
 import { RadioItem as _RadioItem } from '@radix-ui/react-dropdown-menu';
-import { CircleSmall } from 'lucide-react';
 import { cn } from '@skyroc/utils';
 import { withClassName } from '@skyroc/utils/web';
+import { CircleSmall } from 'lucide-react';
+import type { ComponentRef } from 'react';
+import { forwardRef, isValidElement } from 'react';
 import MenuShortcut from '../menu/MenuShortcut';
-import DropdownMenuItemIndicator from './MenuItemIndicator';
 import { menuVariants } from './menu-variants';
+import DropdownMenuItemIndicator from './MenuItemIndicator';
 import type { MenuRadioItemProps } from './types';
 
 const MenuRadioItem = forwardRef<ComponentRef<typeof _RadioItem>, MenuRadioItemProps>((props, ref) => {
@@ -47,15 +47,13 @@ const MenuRadioItem = forwardRef<ComponentRef<typeof _RadioItem>, MenuRadioItemP
       {children}
       {trailing}
 
-      {shortcut
-        ? (
-          <MenuShortcut
-            className={classNames?.shortcut}
-            size={size}
-            value={shortcut}
-          />
-        )
-        : null}
+      {shortcut ? (
+        <MenuShortcut
+          className={classNames?.shortcut}
+          size={size}
+          value={shortcut}
+        />
+      ) : null}
     </RadioItem>
   );
 });

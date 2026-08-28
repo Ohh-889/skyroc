@@ -21,15 +21,14 @@ const DefaultIndicator = ({ isExpanded }: { isExpanded: boolean }) => {
 };
 
 // eslint-disable-next-line max-params
-function defaultRenderItemContent<T extends TreeItemData>(item: FlattenedItem<T>, isExpanded: boolean, hasChildren: boolean, isSelected: boolean) {
-  const indicator = hasChildren
-    ? (
-      <DefaultIndicator
-        isExpanded={isExpanded}
-      />
-    )
-    : <span className="w-4" />;
-  const label = 'label' in item.data ? (item.data).label : item.value;
+function defaultRenderItemContent<T extends TreeItemData>(
+  item: FlattenedItem<T>,
+  isExpanded: boolean,
+  hasChildren: boolean,
+  isSelected: boolean
+) {
+  const indicator = hasChildren ? <DefaultIndicator isExpanded={isExpanded} /> : <span className="w-4" />;
+  const label = 'label' in item.data ? item.data.label : item.value;
   return (
     <div
       className="hover:bg-muted focus-visible:ring-primary data-[selected]:bg-primary/10 data-selected:text-primary flex size-full items-center gap-2 rounded-md py-2 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none data-[disabled]:hover:bg-transparent"
@@ -42,7 +41,20 @@ function defaultRenderItemContent<T extends TreeItemData>(item: FlattenedItem<T>
 }
 
 const TreeUI = <T extends TreeItemData = TreeItemData>(props: TreeProps<T>) => {
-  const { className, classNames, disabledSelect, disabledToggle, indentSize, items, onSelect, onToggle, ref, renderItem, size, ...rest } = props;
+  const {
+    className,
+    classNames,
+    disabledSelect,
+    disabledToggle,
+    indentSize,
+    items,
+    onSelect,
+    onToggle,
+    ref,
+    renderItem,
+    size,
+    ...rest
+  } = props;
 
   return (
     <TreeRoot
@@ -52,23 +64,39 @@ const TreeUI = <T extends TreeItemData = TreeItemData>(props: TreeProps<T>) => {
       size={size}
       {...rest}
     >
-      {({ expanded, flattenItems, modelValue, select, toggle }) => flattenItems.map(item => (
-        <TreeItem
-          className={classNames?.item}
-          disabled={item.data.disabled}
-          disabledSelect={disabledSelect}
-          disabledToggle={disabledToggle}
-          indentSize={indentSize}
-          key={item._id}
-          level={item.level}
-          value={item.value}
-          onSelect={onSelect}
-          onToggle={onToggle}
-        >
-          {({ hasChildren, isExpanded, isIndeterminate, isSelected }) =>
-            renderItem ? renderItem({ item, isExpanded, isSelected, isIndeterminate, hasChildren, flattenItems, modelValue, expanded, select, toggle }) : defaultRenderItemContent(item, isExpanded, hasChildren, isSelected)}
-        </TreeItem>
-      ))}
+      {({ expanded, flattenItems, modelValue, select, toggle }) =>
+        flattenItems.map(item => (
+          <TreeItem
+            className={classNames?.item}
+            disabled={item.data.disabled}
+            disabledSelect={disabledSelect}
+            disabledToggle={disabledToggle}
+            indentSize={indentSize}
+            key={item._id}
+            level={item.level}
+            value={item.value}
+            onSelect={onSelect}
+            onToggle={onToggle}
+          >
+            {({ hasChildren, isExpanded, isIndeterminate, isSelected }) =>
+              renderItem
+                ? renderItem({
+                    item,
+                    isExpanded,
+                    isSelected,
+                    isIndeterminate,
+                    hasChildren,
+                    flattenItems,
+                    modelValue,
+                    expanded,
+                    select,
+                    toggle
+                  })
+                : defaultRenderItemContent(item, isExpanded, hasChildren, isSelected)
+            }
+          </TreeItem>
+        ))
+      }
     </TreeRoot>
   );
 };

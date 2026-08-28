@@ -19,11 +19,20 @@ const OperLogDetailDrawer = (props: OperLogDetailDrawerProps) => {
     ? [
         { children: String(record.operId), key: 'operId', label: '日志编号' },
         {
-          children: <Badge status={record.status === 0 ? 'success' : 'error'} text={getStatusLabel(record.status)} />,
+          children: (
+            <Badge
+              status={record.status === 0 ? 'success' : 'error'}
+              text={getStatusLabel(record.status)}
+            />
+          ),
           key: 'status',
           label: '操作状态'
         },
-        { children: `${record.title} / ${getBusinessTypeLabel(record.businessType)}`, key: 'module', label: '系统模块' },
+        {
+          children: `${record.title} / ${getBusinessTypeLabel(record.businessType)}`,
+          key: 'module',
+          label: '系统模块'
+        },
         {
           children: `${record.operName} / ${record.deptName || '—'} / ${record.operIp} / ${record.operLocation || '—'}`,
           key: 'operator',
@@ -57,7 +66,19 @@ const OperLogDetailDrawer = (props: OperLogDetailDrawerProps) => {
       title="操作日志详情"
       onClose={onClose}
     >
-      {record ? <Descriptions bordered column={1} items={items} size="small" /> : <Alert description="未选择日志记录" type="info" />}
+      {record ? (
+        <Descriptions
+          bordered
+          column={1}
+          items={items}
+          size="small"
+        />
+      ) : (
+        <Alert
+          description="未选择日志记录"
+          type="info"
+        />
+      )}
     </Drawer>
   );
 };

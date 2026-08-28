@@ -1,7 +1,7 @@
-import type { LayoutMode } from './materials';
-import { AdminLayout as AdminLayoutComponent, LAYOUT_SCROLL_EL_ID } from './materials';
 import { useSettingsTheme } from '@shell/theme';
 import { Suspense, lazy } from 'react';
+import type { LayoutMode } from './materials';
+import { AdminLayout as AdminLayoutComponent, LAYOUT_SCROLL_EL_ID } from './materials';
 
 import {
   LAYOUT_MODE_HORIZONTAL,

@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { Card } from '@skyroc/web-ui';
+import type { Metadata } from 'next';
 import { generateComponentMetadata } from '../components-meta';
 import AlertDialogCustomIcon from './modules/AlertDialogCustomIcon';
 import AlertDialogDestructive from './modules/AlertDialogDestructive';
@@ -15,7 +15,6 @@ export async function generateMetadata(): Promise<Metadata> {
 const AlertDialogPage = () => {
   return (
     <div className="flex-c gap-4">
-
       <Card
         split
         title="Destructive"
@@ -57,7 +56,6 @@ const AlertDialogPage = () => {
       >
         <AlertDialogCustomIcon />
       </Card>
-
     </div>
   );
 };

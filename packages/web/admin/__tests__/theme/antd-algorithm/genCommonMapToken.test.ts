@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import genCommonMapToken from '@shell/theme/antd-algorithm/shared/genCommonMapToken';
 import type { SeedToken } from 'antd/es/theme/internal';
+import { describe, expect, it } from 'vitest';
 
 function makeToken(overrides: Partial<SeedToken> = {}): SeedToken {
   return {

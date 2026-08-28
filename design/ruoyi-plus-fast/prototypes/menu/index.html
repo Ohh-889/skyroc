@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 菜单管理原型</title>
     <style>
       :root {
@@ -1460,87 +1466,262 @@
     </style>
   </head>
   <body>
-    <svg width="0" height="0" style="position: absolute">
-      <symbol id="i-grid" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-grid"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="3"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
+        <rect
+          x="14"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        />
       </symbol>
-      <symbol id="i-home" viewBox="0 0 24 24">
+      <symbol
+        id="i-home"
+        viewBox="0 0 24 24"
+      >
         <path d="m3 11 9-8 9 8" />
         <path d="M5 10v10h14V10M9 20v-6h6v6" />
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
       </symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" />
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        />
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.09a1.7 1.7 0 0 0-1.1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.09A1.7 1.7 0 0 0 4.64 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.09A1.7 1.7 0 0 0 15.5 4.64a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.36.7.64.96.3.28.69.43 1.1.44H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"
         />
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
         <path d="m9 12 2 2 4-4" />
       </symbol>
-      <symbol id="i-file" viewBox="0 0 24 24">
+      <symbol
+        id="i-file"
+        viewBox="0 0 24 24"
+      >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
         <path d="M14 2v6h6M8 13h8M8 17h6" />
       </symbol>
-      <symbol id="i-folder" viewBox="0 0 24 24">
+      <symbol
+        id="i-folder"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
       </symbol>
-      <symbol id="i-key" viewBox="0 0 24 24">
-        <circle cx="8" cy="15" r="4" />
+      <symbol
+        id="i-key"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="8"
+          cy="15"
+          r="4"
+        />
         <path d="m11 12 9-9M17 6l2 2M14 9l2 2" />
       </symbol>
-      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8" />
+      <symbol
+        id="i-chevron"
+        viewBox="0 0 24 24"
+      >
+        <path d="m9 18 6-6-6-6" />
+      </symbol>
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="8"
+        />
         <path d="m21 21-4.35-4.35" />
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
-      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" /></symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol
+        id="i-trash"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6" />
+      </symbol>
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
         <path d="M20 11a8 8 0 1 0-2.34 5.66L20 14" />
         <path d="M20 7v4h-4" />
       </symbol>
-      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" /></symbol>
-      <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /></symbol>
-      <symbol id="i-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4" />
+      <symbol
+        id="i-expand"
+        viewBox="0 0 24 24"
+      >
+        <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" />
+      </symbol>
+      <symbol
+        id="i-collapse"
+        viewBox="0 0 24 24"
+      >
+        <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+      </symbol>
+      <symbol
+        id="i-sun"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="4"
+        />
         <path
           d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
         />
       </symbol>
-      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" /></symbol>
-      <symbol id="i-copy" viewBox="0 0 24 24">
-        <rect x="9" y="9" width="12" height="12" rx="2" />
+      <symbol
+        id="i-moon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+      </symbol>
+      <symbol
+        id="i-copy"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="9"
+          y="9"
+          width="12"
+          height="12"
+          rx="2"
+        />
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
       </symbol>
-      <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12" /></symbol>
-      <symbol id="i-info" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" />
+      <symbol
+        id="i-close"
+        viewBox="0 0 24 24"
+      >
+        <path d="m18 6-12 12M6 6l12 12" />
+      </symbol>
+      <symbol
+        id="i-info"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
         <path d="M12 16v-4M12 8h.01" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5" /></symbol>
-      <symbol id="i-more" viewBox="0 0 24 24">
-        <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
-        <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
-        <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
+      <symbol
+        id="i-check"
+        viewBox="0 0 24 24"
+      >
+        <path d="m20 6-11 11-5-5" />
       </symbol>
-      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></symbol>
-      <symbol id="i-columns" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
+      <symbol
+        id="i-more"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="5"
+          cy="12"
+          r="1"
+          fill="currentColor"
+          stroke="none"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="1"
+          fill="currentColor"
+          stroke="none"
+        />
+        <circle
+          cx="19"
+          cy="12"
+          r="1"
+          fill="currentColor"
+          stroke="none"
+        />
+      </symbol>
+      <symbol
+        id="i-menu"
+        viewBox="0 0 24 24"
+      >
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </symbol>
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        />
         <path d="M9 4v16M15 4v16" />
       </symbol>
     </svg>
 
     <div class="app">
-      <aside class="sidebar" aria-label="主导航">
+      <aside
+        class="sidebar"
+        aria-label="主导航"
+      >
         <div class="brand">
           <div class="brand-mark">
             <svg class="icon"><use href="#i-grid" /></svg>
@@ -1559,7 +1740,10 @@
           <button class="nav-item">
             <svg class="icon"><use href="#i-shield" /></svg><span>角色管理</span>
           </button>
-          <button class="nav-item active" aria-current="page">
+          <button
+            class="nav-item active"
+            aria-current="page"
+          >
             <svg class="icon"><use href="#i-menu" /></svg><span>菜单管理</span>
           </button>
           <button class="nav-item">
@@ -1581,11 +1765,26 @@
         <header class="topbar">
           <div class="breadcrumbs"><span>系统管理</span><span>/</span><strong>菜单管理</strong></div>
           <div class="top-actions">
-            <button class="icon-button" id="densityButton" title="切换表格密度" aria-label="切换表格密度">
+            <button
+              class="icon-button"
+              id="densityButton"
+              title="切换表格密度"
+              aria-label="切换表格密度"
+            >
               <svg class="icon"><use href="#i-columns" /></svg>
             </button>
-            <button class="icon-button" id="themeButton" title="切换明暗主题" aria-label="切换明暗主题">
-              <svg class="icon"><use id="themeIcon" href="#i-moon" /></svg>
+            <button
+              class="icon-button"
+              id="themeButton"
+              title="切换明暗主题"
+              aria-label="切换明暗主题"
+            >
+              <svg class="icon">
+                <use
+                  id="themeIcon"
+                  href="#i-moon"
+                />
+              </svg>
             </button>
             <div class="avatar">WS</div>
           </div>
@@ -1600,12 +1799,19 @@
             <div class="context-pill"><span class="context-dot"></span>动态路由已连接 · 平台级资源</div>
           </div>
 
-          <section class="card filter-card" aria-label="菜单查询">
+          <section
+            class="card filter-card"
+            aria-label="菜单查询"
+          >
             <div class="field grow">
               <label for="keyword">菜单名称</label>
               <div class="input-wrap">
                 <svg class="icon"><use href="#i-search" /></svg
-                ><input id="keyword" placeholder="输入菜单名称或权限标识" autocomplete="off" />
+                ><input
+                  id="keyword"
+                  placeholder="输入菜单名称或权限标识"
+                  autocomplete="off"
+                />
               </div>
             </div>
             <div class="field compact">
@@ -1626,10 +1832,16 @@
               </select>
             </div>
             <div class="filter-actions toolbar">
-              <button class="button primary" id="searchButton">
+              <button
+                class="button primary"
+                id="searchButton"
+              >
                 <svg class="icon"><use href="#i-search" /></svg>查询
               </button>
-              <button class="button" id="resetButton">
+              <button
+                class="button"
+                id="resetButton"
+              >
                 <svg class="icon"><use href="#i-refresh" /></svg>重置
               </button>
             </div>
@@ -1638,29 +1850,55 @@
           <section class="card resource-card">
             <div class="resource-head">
               <div class="resource-title">
-                <strong>菜单资源</strong><span class="count-badge" id="resourceCount">42 个节点</span>
+                <strong>菜单资源</strong
+                ><span
+                  class="count-badge"
+                  id="resourceCount"
+                  >42 个节点</span
+                >
               </div>
               <div class="toolbar">
-                <button class="button primary" id="addRootButton">
+                <button
+                  class="button primary"
+                  id="addRootButton"
+                >
                   <svg class="icon"><use href="#i-plus" /></svg>新增根节点
                 </button>
-                <button class="button danger" id="cascadeButton">
+                <button
+                  class="button danger"
+                  id="cascadeButton"
+                >
                   <svg class="icon"><use href="#i-trash" /></svg>级联删除
                 </button>
                 <span class="split"></span>
-                <button class="button" id="expandButton">
+                <button
+                  class="button"
+                  id="expandButton"
+                >
                   <svg class="icon"><use href="#i-expand" /></svg><span>展开全部</span>
                 </button>
-                <button class="icon-button" id="refreshButton" title="刷新列表" aria-label="刷新列表">
+                <button
+                  class="icon-button"
+                  id="refreshButton"
+                  title="刷新列表"
+                  aria-label="刷新列表"
+                >
                   <svg class="icon"><use href="#i-refresh" /></svg>
                 </button>
-                <button class="icon-button" title="列设置" aria-label="列设置">
+                <button
+                  class="icon-button"
+                  title="列设置"
+                  aria-label="列设置"
+                >
                   <svg class="icon"><use href="#i-columns" /></svg>
                 </button>
               </div>
             </div>
 
-            <div class="table-scroll" id="tableWrap">
+            <div
+              class="table-scroll"
+              id="tableWrap"
+            >
               <table aria-label="菜单资源树表格">
                 <colgroup>
                   <col style="width: 250px" />
@@ -1669,7 +1907,10 @@
                   <col style="width: 205px" />
                   <col style="width: 180px" />
                   <col style="width: 84px" />
-                  <col class="hide-medium" style="width: 120px" />
+                  <col
+                    class="hide-medium"
+                    style="width: 120px"
+                  />
                   <col style="width: 145px" />
                 </colgroup>
                 <thead>
@@ -1687,14 +1928,22 @@
                 <tbody id="menuBody"></tbody>
               </table>
             </div>
-            <div class="empty-state" id="emptyState">
+            <div
+              class="empty-state"
+              id="emptyState"
+            >
               <div>
                 <div class="empty-icon">
                   <svg class="icon"><use href="#i-search" /></svg>
                 </div>
                 <h3>未找到匹配的菜单</h3>
                 <p>请调整名称、状态或节点类型后重试。</p>
-                <button class="button" id="emptyReset">清空筛选</button>
+                <button
+                  class="button"
+                  id="emptyReset"
+                >
+                  清空筛选
+                </button>
               </div>
             </div>
             <div class="table-footer">
@@ -1705,15 +1954,28 @@
       </main>
     </div>
 
-    <div class="overlay" id="overlay"></div>
+    <div
+      class="overlay"
+      id="overlay"
+    ></div>
 
-    <aside class="drawer" id="editorDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <aside
+      class="drawer"
+      id="editorDrawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawerTitle"
+    >
       <div class="drawer-head">
         <div>
           <h2 id="drawerTitle">新增菜单</h2>
           <p id="drawerSubtitle">上级：主类目</p>
         </div>
-        <button class="icon-button" data-close="drawer" aria-label="关闭">
+        <button
+          class="icon-button"
+          data-close="drawer"
+          aria-label="关闭"
+        >
           <svg class="icon"><use href="#i-close" /></svg>
         </button>
       </div>
@@ -1723,23 +1985,38 @@
           <div class="form-grid">
             <div class="field span-2">
               <label class="required">上级菜单</label
-              ><button class="fake-select" id="parentSelect">
+              ><button
+                class="fake-select"
+                id="parentSelect"
+              >
                 <span id="parentLabel">主类目</span><svg class="icon"><use href="#i-chevron" /></svg>
               </button>
               <div class="help">不能选择当前节点或其下级；按钮节点不能作为上级。</div>
             </div>
             <div class="field span-2">
               <span class="field-label required">菜单类型</span>
-              <div class="type-tabs" role="radiogroup">
-                <button class="type-tab active" data-type="M">
+              <div
+                class="type-tabs"
+                role="radiogroup"
+              >
+                <button
+                  class="type-tab active"
+                  data-type="M"
+                >
                   <svg class="icon"><use href="#i-folder" /></svg
                   ><span><strong>目录</strong><small>导航分组或父级容器</small></span>
                 </button>
-                <button class="type-tab" data-type="C">
+                <button
+                  class="type-tab"
+                  data-type="C"
+                >
                   <svg class="icon"><use href="#i-file" /></svg
                   ><span><strong>菜单</strong><small>可访问页面或链接</small></span>
                 </button>
-                <button class="type-tab" data-type="F">
+                <button
+                  class="type-tab"
+                  data-type="F"
+                >
                   <svg class="icon"><use href="#i-key" /></svg
                   ><span><strong>按钮</strong><small>页面内操作权限</small></span>
                 </button>
@@ -1754,18 +2031,37 @@
           </div>
           <div class="form-grid">
             <div class="field">
-              <label class="required" for="menuName">菜单名称</label
-              ><input id="menuName" maxlength="50" placeholder="例如：菜单管理" />
+              <label
+                class="required"
+                for="menuName"
+                >菜单名称</label
+              ><input
+                id="menuName"
+                maxlength="50"
+                placeholder="例如：菜单管理"
+              />
             </div>
             <div class="field">
-              <label class="required" for="orderNum">显示排序</label
-              ><input id="orderNum" type="number" min="0" value="1" />
+              <label
+                class="required"
+                for="orderNum"
+                >显示排序</label
+              ><input
+                id="orderNum"
+                type="number"
+                min="0"
+                value="1"
+              />
             </div>
             <div class="field span-2 conditional route-field">
               <label>菜单图标</label
               ><button class="fake-select">
-                <span class="inline" style="gap: 8px"
-                  ><span class="node-icon" style="width: 25px; height: 25px"
+                <span
+                  class="inline"
+                  style="gap: 8px"
+                  ><span
+                    class="node-icon"
+                    style="width: 25px; height: 25px"
                     ><svg class="icon"><use href="#i-menu" /></svg></span
                   ><span>menu-2-line</span></span
                 ><svg class="icon"><use href="#i-chevron" /></svg>
@@ -1782,39 +2078,100 @@
             <div class="field">
               <span class="field-label">打开方式</span>
               <div class="radio-row">
-                <label><input type="radio" name="frame" value="1" checked />内部路由</label
-                ><label><input type="radio" name="frame" value="0" />外部链接</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="frame"
+                    value="1"
+                    checked
+                  />内部路由</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="frame"
+                    value="0"
+                  />外部链接</label
+                >
               </div>
             </div>
             <div class="field">
               <span class="field-label">显示状态</span>
               <div class="radio-row">
-                <label><input type="radio" name="visible" value="0" checked />显示</label
-                ><label><input type="radio" name="visible" value="1" />隐藏</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="visible"
+                    value="0"
+                    checked
+                  />显示</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="visible"
+                    value="1"
+                  />隐藏</label
+                >
               </div>
             </div>
             <div class="field span-2">
-              <label class="required" for="routePath">路由地址</label
-              ><input id="routePath" maxlength="200" placeholder="例如：menu；外链需以 http(s):// 开头" />
+              <label
+                class="required"
+                for="routePath"
+                >路由地址</label
+              ><input
+                id="routePath"
+                maxlength="200"
+                placeholder="例如：menu；外链需以 http(s):// 开头"
+              />
               <div class="help">一级目录会由后端转换为以 / 开头的路由，不需要手动拼接。</div>
             </div>
             <div class="field conditional menu-only">
-              <label class="required" for="componentPath">组件路径</label
-              ><input id="componentPath" maxlength="255" placeholder="system/menu/index" />
+              <label
+                class="required"
+                for="componentPath"
+                >组件路径</label
+              ><input
+                id="componentPath"
+                maxlength="255"
+                placeholder="system/menu/index"
+              />
             </div>
             <div class="field conditional menu-only">
               <label for="queryParam">路由参数</label
-              ><input id="queryParam" maxlength="255" placeholder='例如：{"source":"menu"}' />
+              ><input
+                id="queryParam"
+                maxlength="255"
+                placeholder='例如：{"source":"menu"}'
+              />
             </div>
             <div class="field conditional menu-only">
               <span class="field-label">页面缓存</span>
               <div class="radio-row">
-                <label><input type="radio" name="cache" value="0" checked />缓存</label
-                ><label><input type="radio" name="cache" value="1" />不缓存</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="cache"
+                    value="0"
+                    checked
+                  />缓存</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="cache"
+                    value="1"
+                  />不缓存</label
+                >
               </div>
             </div>
-            <div class="field conditional menu-only hidden" id="activePathField">
-              <label for="activePath">激活路由</label><input id="activePath" placeholder="例如：/system/menu" />
+            <div
+              class="field conditional menu-only hidden"
+              id="activePathField"
+            >
+              <label for="activePath">激活路由</label
+              ><input
+                id="activePath"
+                placeholder="例如：/system/menu"
+              />
               <div class="help">隐藏页面访问时，侧栏默认高亮的可见菜单。</div>
             </div>
           </div>
@@ -1826,15 +2183,34 @@
           </div>
           <div class="form-grid">
             <div class="field span-2 conditional permission-field hidden">
-              <label id="permissionLabel" for="permissionInput">权限标识</label
-              ><input id="permissionInput" maxlength="100" placeholder="例如：system:menu:list" />
+              <label
+                id="permissionLabel"
+                for="permissionInput"
+                >权限标识</label
+              ><input
+                id="permissionInput"
+                maxlength="100"
+                placeholder="例如：system:menu:list"
+              />
               <div class="help">建议使用“模块:资源:动作”格式，按钮节点必须填写且全局不能冲突。</div>
             </div>
             <div class="field span-2">
               <span class="field-label">菜单状态</span>
               <div class="radio-row">
-                <label><input type="radio" name="nodeStatus" value="normal" checked />正常</label
-                ><label><input type="radio" name="nodeStatus" value="disabled" />停用</label>
+                <label
+                  ><input
+                    type="radio"
+                    name="nodeStatus"
+                    value="normal"
+                    checked
+                  />正常</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="nodeStatus"
+                    value="disabled"
+                  />停用</label
+                >
               </div>
             </div>
             <div class="info-callout span-2">
@@ -1847,16 +2223,35 @@
       <div class="drawer-footer">
         <small id="drawerMeta">新节点将创建在当前选择的父级下</small>
         <div class="drawer-actions">
-          <button class="button" data-close="drawer">取消</button
-          ><button class="button primary" id="saveButton">保存菜单</button>
+          <button
+            class="button"
+            data-close="drawer"
+          >
+            取消</button
+          ><button
+            class="button primary"
+            id="saveButton"
+          >
+            保存菜单
+          </button>
         </div>
       </div>
     </aside>
 
-    <section class="modal" id="cascadeModal" role="dialog" aria-modal="true" aria-labelledby="cascadeTitle">
+    <section
+      class="modal"
+      id="cascadeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cascadeTitle"
+    >
       <div class="modal-head">
         <div><h2 id="cascadeTitle">级联删除菜单</h2></div>
-        <button class="icon-button" data-close="modal" aria-label="关闭">
+        <button
+          class="icon-button"
+          data-close="modal"
+          aria-label="关闭"
+        >
           <svg class="icon"><use href="#i-close" /></svg>
         </button>
       </div>
@@ -1866,36 +2261,60 @@
           <div>勾选父节点会包含全部后代。提交前应由后端重新计算角色、租户套餐和系统保护资源影响。</div>
         </div>
         <div class="cascade-layout">
-          <div class="cascade-tree" id="cascadeTree">
+          <div
+            class="cascade-tree"
+            id="cascadeTree"
+          >
             <label class="cascade-node"
-              ><input type="checkbox" value="system" /><svg class="icon"><use href="#i-folder" /></svg
-              ><span>系统管理</span></label
+              ><input
+                type="checkbox"
+                value="system"
+              /><svg class="icon"><use href="#i-folder" /></svg><span>系统管理</span></label
             >
             <label class="cascade-node level-1"
-              ><input type="checkbox" value="user" data-parent="system" /><svg class="icon"><use href="#i-file" /></svg
-              ><span>用户管理</span></label
+              ><input
+                type="checkbox"
+                value="user"
+                data-parent="system"
+              /><svg class="icon"><use href="#i-file" /></svg><span>用户管理</span></label
             >
             <label class="cascade-node level-2"
-              ><input type="checkbox" value="user-query" data-parent="user" /><svg class="icon">
+              ><input
+                type="checkbox"
+                value="user-query"
+                data-parent="user"
+              /><svg class="icon">
                 <use href="#i-key" /></svg
               ><span>用户查询</span></label
             >
             <label class="cascade-node level-2"
-              ><input type="checkbox" value="user-add" data-parent="user" /><svg class="icon"><use href="#i-key" /></svg
-              ><span>用户新增</span></label
+              ><input
+                type="checkbox"
+                value="user-add"
+                data-parent="user"
+              /><svg class="icon"><use href="#i-key" /></svg><span>用户新增</span></label
             >
             <label class="cascade-node level-1"
-              ><input type="checkbox" value="menu" data-parent="system" /><svg class="icon"><use href="#i-file" /></svg
-              ><span>菜单管理</span></label
+              ><input
+                type="checkbox"
+                value="menu"
+                data-parent="system"
+              /><svg class="icon"><use href="#i-file" /></svg><span>菜单管理</span></label
             >
             <label class="cascade-node level-2"
-              ><input type="checkbox" value="menu-query" data-parent="menu" /><svg class="icon">
+              ><input
+                type="checkbox"
+                value="menu-query"
+                data-parent="menu"
+              /><svg class="icon">
                 <use href="#i-key" /></svg
               ><span>菜单查询</span></label
             >
             <label class="cascade-node"
-              ><input type="checkbox" value="monitor" /><svg class="icon"><use href="#i-folder" /></svg
-              ><span>系统监控</span></label
+              ><input
+                type="checkbox"
+                value="monitor"
+              /><svg class="icon"><use href="#i-folder" /></svg><span>系统监控</span></label
             >
           </div>
           <aside class="impact-panel">
@@ -1911,8 +2330,18 @@
       <div class="modal-footer">
         <div class="selection-summary">已选择 <strong id="selectionCount">0</strong> 个节点</div>
         <div class="toolbar">
-          <button class="button" data-close="modal">取消</button
-          ><button class="button danger" id="cascadeConfirm" disabled>查看影响并确认</button>
+          <button
+            class="button"
+            data-close="modal"
+          >
+            取消</button
+          ><button
+            class="button danger"
+            id="cascadeConfirm"
+            disabled
+          >
+            查看影响并确认
+          </button>
         </div>
       </div>
     </section>
@@ -1932,12 +2361,21 @@
           </div>
           <h2 id="deleteTitle">删除菜单</h2>
         </div>
-        <button class="icon-button" data-close="modal" aria-label="关闭">
+        <button
+          class="icon-button"
+          data-close="modal"
+          aria-label="关闭"
+        >
           <svg class="icon"><use href="#i-close" /></svg>
         </button>
       </div>
       <div class="modal-body">
-        <p class="confirm-copy" id="deleteCopy">删除前将检查子节点、角色和租户套餐引用。该操作无法撤销。</p>
+        <p
+          class="confirm-copy"
+          id="deleteCopy"
+        >
+          删除前将检查子节点、角色和租户套餐引用。该操作无法撤销。
+        </p>
         <div class="warning-callout">
           <svg class="icon"><use href="#i-info" /></svg>
           <div>此原型不会删除真实数据，确认后仅展示交互反馈。</div>
@@ -1946,13 +2384,26 @@
       <div class="modal-footer">
         <span></span>
         <div class="toolbar">
-          <button class="button" data-close="modal">取消</button
-          ><button class="button danger" id="deleteConfirm">确认删除</button>
+          <button
+            class="button"
+            data-close="modal"
+          >
+            取消</button
+          ><button
+            class="button danger"
+            id="deleteConfirm"
+          >
+            确认删除
+          </button>
         </div>
       </div>
     </section>
 
-    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+    <div
+      class="toast-stack"
+      id="toastStack"
+      aria-live="polite"
+    ></div>
 
     <script>
       const menus = [

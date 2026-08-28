@@ -35,19 +35,19 @@ export const layoutVariants = tv({
   },
   variants: {
     size: {
-      'xs': {
+      xs: {
         root: 'text-2xs [--skyroc-layout-spacing:0.75rem]'
       },
-      'sm': {
+      sm: {
         root: 'text-xs [--skyroc-layout-spacing:0.875rem]'
       },
-      'md': {
+      md: {
         root: 'text-sm [--skyroc-layout-spacing:1rem]'
       },
-      'lg': {
+      lg: {
         root: 'text-base [--skyroc-layout-spacing:1.25rem]'
       },
-      'xl': {
+      xl: {
         root: 'text-lg [--skyroc-layout-spacing:1.5rem]'
       },
       '2xl': {

@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import DropdownMenuUI from '../../components/dropdown-menu/DropdownMenuUI';
 import type { DropdownMenuProps } from '../../components/dropdown-menu/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const DropdownMenu = (props: DropdownMenuProps) => {
   const config = useComponentConfig('dropdownMenu');
@@ -12,11 +12,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
     ...props
   };
 
-  return (
-    <DropdownMenuUI
-      {...mergedProps}
-    />
-  );
+  return <DropdownMenuUI {...mergedProps} />;
 };
 
 DropdownMenu.displayName = 'DropdownMenu';

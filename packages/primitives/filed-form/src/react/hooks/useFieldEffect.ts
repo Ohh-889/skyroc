@@ -1,7 +1,7 @@
 'use client';
 /**
- * Hook for creating reactive side effects based on form field changes
- * Allows running custom logic when specified form fields change
+ * Hook for creating reactive side effects based on form field changes Allows running custom logic when specified form
+ * fields change
  */
 
 import type { AllPathsKeys } from '@skyroc/utils/type';
@@ -11,31 +11,31 @@ import type { FormInstance, InternalFormInstance } from './FieldContext';
 import { useFieldContext } from './FieldContext';
 
 /**
- * Hook to create reactive side effects that run when form fields change
- * Unlike computed fields, effects don't write back to the form - they're for side effects only
+ * Hook to create reactive side effects that run when form fields change Unlike computed fields, effects don't write
+ * back to the form - they're for side effects only
  *
  * @example
- * ```tsx
- * // Log when name fields change
- * function UserForm() {
- *   useEffectField(['firstName', 'lastName'], (get) => {
- *     const firstName = get('firstName');
- *     const lastName = get('lastName');
- *     console.log(`Name changed: ${firstName} ${lastName}`);
+ *   ```tsx
+ *   // Log when name fields change
+ *   function UserForm() {
+ *   useEffectField(['firstName', 'lastName'], get => {
+ *   const firstName = get('firstName');
+ *   const lastName = get('lastName');
+ *   console.log(`Name changed: ${firstName} ${lastName}`);
  *   });
  *
  *   return (
- *     <Form>
- *       <Field name="firstName">
- *         <Input placeholder="First Name" />
- *       </Field>
- *       <Field name="lastName">
- *         <Input placeholder="Last Name" />
- *       </Field>
- *     </Form>
+ *   <Form>
+ *   <Field name="firstName">
+ *   <Input placeholder="First Name" />
+ *   </Field>
+ *   <Field name="lastName">
+ *   <Input placeholder="Last Name" />
+ *   </Field>
+ *   </Form>
  *   );
- * }
- * ```
+ *   }
+ *   ```
  */
 export function useEffectField<Values = any>(
   deps: AllPathsKeys<Values>[],

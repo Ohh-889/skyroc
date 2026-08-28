@@ -168,11 +168,10 @@ export interface HookTableResult<Params, T, Column> {
 }
 
 /** 表格配置。 */
-export interface TableConfig<Params, Response, T = GetTableDataFromResponse<Response>>
-  extends Omit<
-    TableProps<TableDataWithIndex<T>>,
-    'columns' | 'dataSource' | 'loading' | 'onChange' | 'pagination' | 'rowKey'
-  > {
+export interface TableConfig<Params, Response, T = GetTableDataFromResponse<Response>> extends Omit<
+  TableProps<TableDataWithIndex<T>>,
+  'columns' | 'dataSource' | 'loading' | 'onChange' | 'pagination' | 'rowKey'
+> {
   /** 接口默认查询参数。 */
   apiParams?: Partial<Params>;
   /** Ant Design 表格列工厂。 */

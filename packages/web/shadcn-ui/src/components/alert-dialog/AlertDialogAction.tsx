@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { Action } from '@radix-ui/react-alert-dialog';
+import { forwardRef } from 'react';
 import { Button, type ButtonProps } from '../button';
 
 const AlertDialogAction = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {

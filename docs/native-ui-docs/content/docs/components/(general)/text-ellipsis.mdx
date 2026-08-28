@@ -76,11 +76,11 @@ import { TextEllipsis } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖；`color` / `size` / `weight` 等 `Text` 属性照常生效，并且会同步到隐藏的测量文本上（否则量出来的行数与正文对不上）。
 
-| slot     | 作用位置                             |
-| -------- | ------------------------------------ |
-| `root`   | 承载正文与隐藏测量文本的容器          |
-| `text`   | 正文 `Text`                           |
-| `action` | 内联在末行的展开 / 收起文本           |
+| slot     | 作用位置                     |
+| -------- | ---------------------------- |
+| `root`   | 承载正文与隐藏测量文本的容器 |
+| `text`   | 正文 `Text`                  |
+| `action` | 内联在末行的展开 / 收起文本  |
 
 <Demo src="@playground/text-ellipsis/TextEllipsisStyles" />
 

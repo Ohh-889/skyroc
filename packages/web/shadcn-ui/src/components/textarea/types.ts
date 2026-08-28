@@ -12,7 +12,7 @@ import type { TextareaSlots } from './textarea-variants';
  *     maxLength: 500,
  *     value: 'Some text'
  *   };
- *   ```
+ *   ```;
  */
 export interface TextareaContentProps extends HTMLComponentProps<'textarea'> {}
 
@@ -27,7 +27,7 @@ export interface TextareaContentProps extends HTMLComponentProps<'textarea'> {}
  *     content: 'custom-textarea',
  *     count: 'custom-count'
  *   };
- *   ```
+ *   ```;
  */
 export type TextareaClassNames = Partial<Record<TextareaSlots, ClassValue>>;
 
@@ -37,10 +37,10 @@ export type TextareaClassNames = Partial<Record<TextareaSlots, ClassValue>>;
  * @example
  *   ```tsx
  *   const countProps: TextareaCountProps = {
- *     value: 'text',
- *     maxLength: 100,
- *     children: count => `${count}/100`,
- *     countGraphemes: input => input.length
+ *   value: 'text',
+ *   maxLength: 100,
+ *   children: count => `${count}/100`,
+ *   countGraphemes: input => input.length
  *   };
  *   ```
  */
@@ -67,12 +67,12 @@ export interface TextareaRootProps extends HTMLComponentProps<'div'> {}
  * @example
  *   ```tsx
  *   <Textarea
- *     placeholder="Enter your message..."
- *     maxLength={500}
- *     showCount={true}
- *     countRender={count => `${count}/500`}
- *     onTextChange={value => console.log(value)}
- *     classNames={{ count: 'text-gray-500' }}
+ *   placeholder="Enter your message..."
+ *   maxLength={500}
+ *   showCount={true}
+ *   countRender={count => `${count}/500`}
+ *   onTextChange={value => console.log(value)}
+ *   classNames={{ count: 'text-gray-500' }}
  *   />;
  *   ```
  */

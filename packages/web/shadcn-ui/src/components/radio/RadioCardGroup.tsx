@@ -42,7 +42,7 @@ const RadioCardGroup = (props: RadioCardGroupProps) => {
       onValueChange={setCurrentValue}
       {...rest}
     >
-      {items.map((item) => {
+      {items.map(item => {
         const isChecked = currentValue === item.value;
         const isDisabled = disabled || item.disabled;
 

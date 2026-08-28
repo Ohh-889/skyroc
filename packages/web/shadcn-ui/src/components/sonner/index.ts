@@ -3,7 +3,6 @@ export { toast, useSonner } from 'sonner';
 // Message API - Lightweight global toast
 export { default as Message, message } from './message';
 
-
 export type { MessageConfig, MessageGlobalConfig, MessagePromiseData, MessageType } from './message';
 
 // Notification API - Rich notification toast

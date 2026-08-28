@@ -1,9 +1,9 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import type { Content } from '@radix-ui/react-popover';
 import { Close, Portal, Root, Trigger } from '@radix-ui/react-popover';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import PopoverAnchor from './PopoverAnchor';
 import PopoverArrow from './PopoverArrow';
 import PopoverContent from './PopoverContent';
@@ -45,17 +45,15 @@ const PopoverUI = forwardRef<ComponentRef<typeof Content>, PopoverProps>((props,
       {children}
       {closeIcon ? <Close asChild>{closeIcon}</Close> : null}
 
-      {showArrow
-        ? (
-          <PopoverArrow
-            className={classNames?.arrow}
-            height={arrowHeight}
-            size={size}
-            width={arrowWidth}
-            {...arrowProps}
-          />
-        )
-        : null}
+      {showArrow ? (
+        <PopoverArrow
+          className={classNames?.arrow}
+          height={arrowHeight}
+          size={size}
+          width={arrowWidth}
+          {...arrowProps}
+        />
+      ) : null}
     </PopoverContent>
   );
 
@@ -70,17 +68,17 @@ const PopoverUI = forwardRef<ComponentRef<typeof Content>, PopoverProps>((props,
 
       <Trigger asChild>{trigger}</Trigger>
 
-      {disabledPortal
-        ? content
-        : (
-          <Portal
-            container={container}
-            data-slot="popover-portal"
-            forceMount={forceMountPortal || forceMount}
-          >
-            {content}
-          </Portal>
-        )}
+      {disabledPortal ? (
+        content
+      ) : (
+        <Portal
+          container={container}
+          data-slot="popover-portal"
+          forceMount={forceMountPortal || forceMount}
+        >
+          {content}
+        </Portal>
+      )}
     </Root>
   );
 });

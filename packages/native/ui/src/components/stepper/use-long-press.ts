@@ -18,9 +18,9 @@ interface UseLongPressOptions<T> {
 interface UseLongPressResult<T> {
   /** 本次 press 是否由长按补发；返回 true 表示应当吞掉，读取后自动复位 */
   consumeLongPress: () => boolean;
-  /** press-in 时开始计时 */
+  /** Press-in 时开始计时 */
   start: (payload: T) => void;
-  /** press-out 或提前终止时调用 */
+  /** Press-out 或提前终止时调用 */
   stop: () => void;
 }
 

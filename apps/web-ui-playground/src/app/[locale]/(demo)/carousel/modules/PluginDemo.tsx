@@ -1,8 +1,8 @@
 'use client';
 
+import { Card, Carousel } from '@skyroc/web-ui';
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
-import { Card, Carousel } from '@skyroc/web-ui';
 
 const PluginDemo = () => {
   return (

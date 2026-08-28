@@ -1,4 +1,3 @@
-import type { ComponentType, ElementType, ReactNode } from 'react';
 import type {
   MenuArrowProps as _MenuArrowProps,
   MenuCheckboxItemProps as _MenuCheckboxItemProps,
@@ -13,50 +12,42 @@ import type {
   MenuSubContentProps as _MenuSubContentProps,
   MenuSubTriggerProps as _MenuSubTriggerProps
 } from '@radix-ui/react-menu';
+import type { ComponentType, ElementType, ReactNode } from 'react';
 import type { ClassValue, HTMLComponentProps, StyledComponentProps, ThemeSize } from '../../types/shared';
 import type { MenuSlots } from './menu-variants';
 
-/**
- * Class names for different slots in the menu component.
- * Allows customizing styles for specific parts of the menu.
- */
+/** Class names for different slots in the menu component. Allows customizing styles for specific parts of the menu. */
 export type MenuClassNames = Partial<Record<MenuSlots, ClassValue>>;
 
-/**
- * Props for the MenuArrow component.
- * Renders a decorative arrow pointing to the menu trigger.
- */
+/** Props for the MenuArrow component. Renders a decorative arrow pointing to the menu trigger. */
 export type MenuArrowProps = StyledComponentProps<_MenuArrowProps> & {
   /** Custom component to use for rendering the arrow */
   component?: ElementType<MenuArrowProps>;
 };
 
-/**
- * Union type for checkbox group items.
- * Can be a label, separator, or checkbox item with optional label.
- */
-export type MenuCheckboxGroupItemProps
-  = | MenuLabelOption
-    | MenuSeparatorOption
-    | (Omit<MenuCheckboxItemProps, 'children'> & {
+/** Union type for checkbox group items. Can be a label, separator, or checkbox item with optional label. */
+export type MenuCheckboxGroupItemProps =
+  | MenuLabelOption
+  | MenuSeparatorOption
+  | (Omit<MenuCheckboxItemProps, 'children'> & {
       label?: ReactNode;
     });
 
 /**
- * Props for a group of checkbox menu items.
- * Renders multiple checkbox items that can be independently checked/unchecked.
+ * Props for a group of checkbox menu items. Renders multiple checkbox items that can be independently
+ * checked/unchecked.
  *
  * @example
- * <MenuCheckboxGroup
- *   items={[
- *     { label: 'Bold', value: 'bold' },
- *     { label: 'Italic', value: 'italic' },
- *     { type: 'separator' },
- *     { label: 'Strikethrough', value: 'strike' }
- *   ]}
- *   checks={['bold']}
- *   onChecksChange={(checks) => console.log(checks)}
- * />
+ *   <MenuCheckboxGroup
+ *     items={[
+ *       { label: 'Bold', value: 'bold' },
+ *       { label: 'Italic', value: 'italic' },
+ *       { type: 'separator' },
+ *       { label: 'Strikethrough', value: 'strike' }
+ *     ]}
+ *     checks={['bold']}
+ *     onChecksChange={checks => console.log(checks)}
+ *   />;
  */
 export interface MenuCheckboxGroupProps extends MenuCommonProps, StyledComponentProps<_MenuGroupProps> {
   /** Array of checked item values */
@@ -76,14 +67,13 @@ export interface MenuCheckboxGroupProps extends MenuCommonProps, StyledComponent
 }
 
 /**
- * Props for a checkbox menu item.
- * A menu item with a checkbox indicator that can be toggled.
+ * Props for a checkbox menu item. A menu item with a checkbox indicator that can be toggled.
  *
  * @example
- * <MenuCheckboxItem value="notifications">
- *   <MenuItemIndicator icon={<Check />} />
- *   Enable Notifications
- * </MenuCheckboxItem>
+ *   <MenuCheckboxItem value="notifications">
+ *     <MenuItemIndicator icon={<Check />} />
+ *     Enable Notifications
+ *   </MenuCheckboxItem>;
  */
 export interface MenuCheckboxItemProps extends StyledComponentProps<_MenuCheckboxItemProps> {
   /** Class names for customizing checkbox item slots */
@@ -105,14 +95,16 @@ export interface MenuCheckboxItemProps extends StyledComponentProps<_MenuCheckbo
 }
 
 /**
- * Props for the MenuContent component.
- * Renders the content area of a menu with optional arrow and portal support.
+ * Props for the MenuContent component. Renders the content area of a menu with optional arrow and portal support.
  *
  * @example
- * <MenuContent showArrow sideOffset={5}>
- *   <MenuItem>Edit</MenuItem>
- *   <MenuItem>Delete</MenuItem>
- * </MenuContent>
+ *   <MenuContent
+ *     showArrow
+ *     sideOffset={5}
+ *   >
+ *     <MenuItem>Edit</MenuItem>
+ *     <MenuItem>Delete</MenuItem>
+ *   </MenuContent>;
  */
 export type MenuContentProps = StyledComponentProps<_MenuContentProps> & {
   /** Class names for the arrow element */
@@ -128,14 +120,13 @@ export type MenuContentProps = StyledComponentProps<_MenuContentProps> & {
 };
 
 /**
- * Props for a basic menu item.
- * A clickable item in the menu that triggers an action.
+ * Props for a basic menu item. A clickable item in the menu that triggers an action.
  *
  * @example
- * <MenuItem value="edit">
- *   <Edit className="w-4 h-4" />
- *   Edit
- * </MenuItem>
+ *   <MenuItem value="edit">
+ *     <Edit className="w-4 h-4" />
+ *     Edit
+ *   </MenuItem>;
  */
 export interface MenuItemProps extends StyledComponentProps<_MenuItemProps> {
   /** Class names for customizing menu item slots */
@@ -150,23 +141,19 @@ export interface MenuItemProps extends StyledComponentProps<_MenuItemProps> {
   trailing?: ReactNode;
 }
 
-/**
- * Props for the MenuItemIndicator component.
- * Renders an indicator (check mark, radio button, etc.) within a menu item.
- */
+/** Props for the MenuItemIndicator component. Renders an indicator (check mark, radio button, etc.) within a menu item. */
 export interface MenuItemIndicatorProps extends StyledComponentProps<_MenuItemIndicatorProps> {
   /** Custom component for rendering the indicator */
   component?: ComponentType<_MenuItemIndicatorProps>;
 }
 
 /**
- * Props for a menu label.
- * A non-interactive text label used to group or describe menu items.
+ * Props for a menu label. A non-interactive text label used to group or describe menu items.
  *
  * @example
- * <MenuLabel>Edit Options</MenuLabel>
- * <MenuItem>Cut</MenuItem>
- * <MenuItem>Copy</MenuItem>
+ *   <MenuLabel>Edit Options</MenuLabel>
+ *   <MenuItem>Cut</MenuItem>
+ *   <MenuItem>Copy</MenuItem>
  */
 export interface MenuLabelProps extends StyledComponentProps<_MenuLabelProps> {
   /** Class names for customizing label slots */
@@ -179,10 +166,7 @@ export interface MenuLabelProps extends StyledComponentProps<_MenuLabelProps> {
   trailing?: ReactNode;
 }
 
-/**
- * Data structure for a basic menu option.
- * Use this when rendering menu items from data.
- */
+/** Data structure for a basic menu option. Use this when rendering menu items from data. */
 export interface MenuOption extends Omit<MenuItemProps, 'children'> {
   /** Display text for the menu item */
   label?: ReactNode;
@@ -190,10 +174,7 @@ export interface MenuOption extends Omit<MenuItemProps, 'children'> {
   type?: 'item';
 }
 
-/**
- * Data structure for a menu label option.
- * Use this to add non-interactive labels to data-driven menus.
- */
+/** Data structure for a menu label option. Use this to add non-interactive labels to data-driven menus. */
 export interface MenuLabelOption extends Omit<MenuLabelProps, 'children'> {
   /** Display text for the label */
   label?: ReactNode;
@@ -201,28 +182,24 @@ export interface MenuLabelOption extends Omit<MenuLabelProps, 'children'> {
   type: 'label';
 }
 
-/**
- * Data structure for a menu separator option.
- * Use this to add visual separators between menu items.
- */
+/** Data structure for a menu separator option. Use this to add visual separators between menu items. */
 export interface MenuSeparatorOption extends Omit<MenuSeparatorProps, 'children'> {
   /** Option type identifier */
   type: 'separator';
 }
 
 /**
- * Data structure for a submenu option.
- * Represents a menu item that opens a nested submenu.
+ * Data structure for a submenu option. Represents a menu item that opens a nested submenu.
  *
  * @example
- * {
- *   type: 'sub',
- *   label: 'More Options',
- *   children: [
- *     { type: 'item', label: 'Settings' },
- *     { type: 'item', label: 'Preferences' }
- *   ]
- * }
+ *   {
+ *     type: 'sub',
+ *     label: 'More Options',
+ *     children: [
+ *       { type: 'item', label: 'Settings' },
+ *       { type: 'item', label: 'Preferences' }
+ *     ]
+ *   }
  */
 export interface MenuSubOption extends Omit<MenuSubTriggerProps, 'children'> {
   /** Submenu items to display when expanded */
@@ -237,16 +214,10 @@ export interface MenuSubOption extends Omit<MenuSubTriggerProps, 'children'> {
   type: 'sub';
 }
 
-/**
- * Union type for all menu option data types.
- * Can be any of: item, label, separator, or submenu.
- */
+/** Union type for all menu option data types. Can be any of: item, label, separator, or submenu. */
 export type MenuOptionData = MenuOption | MenuLabelOption | MenuSeparatorOption | MenuSubOption;
 
-/**
- * Common props shared by multiple menu components.
- * Includes styling and sizing options.
- */
+/** Common props shared by multiple menu components. Includes styling and sizing options. */
 export interface MenuCommonProps {
   /** Class names for customizing different parts of the menu */
   classNames?: MenuClassNames;
@@ -254,10 +225,7 @@ export interface MenuCommonProps {
   size?: ThemeSize;
 }
 
-/**
- * Props for rendering a menu option from data.
- * Used internally to render menu items dynamically.
- */
+/** Props for rendering a menu option from data. Used internally to render menu items dynamically. */
 export interface MenuOptionProps extends MenuCommonProps {
   /** Custom component for rendering menu items */
   component?: ElementType<MenuItemProps>;
@@ -275,32 +243,25 @@ export interface MenuOptionProps extends MenuCommonProps {
   subTriggerComponent?: ElementType<MenuSubTriggerProps>;
 }
 
-/**
- * Props for the MenuSeparator component.
- * A visual divider between menu items.
- */
+/** Props for the MenuSeparator component. A visual divider between menu items. */
 export type MenuSeparatorProps = StyledComponentProps<_MenuSeparatorProps> & {
   /** Custom component for rendering the separator */
   component?: ElementType<MenuSeparatorProps>;
 };
 
 /**
- * Props for the MenuShortcut component.
- * Displays a keyboard shortcut hint next to menu items.
+ * Props for the MenuShortcut component. Displays a keyboard shortcut hint next to menu items.
  *
  * @example
- * <MenuShortcut value={['Cmd', 'K']} />
- * // renders: Cmd K
+ *   <MenuShortcut value={['Cmd', 'K']} />;
+ *   // renders: Cmd K
  */
 export type MenuShortcutProps = HTMLComponentProps<'div'> & {
   /** The keyboard shortcut to display */
   value?: string | string[];
 };
 
-/**
- * Props for the MenuSubContent component.
- * Container for submenu items that appear when a submenu is opened.
- */
+/** Props for the MenuSubContent component. Container for submenu items that appear when a submenu is opened. */
 export type MenuSubContentProps = StyledComponentProps<_MenuSubContentProps> & {
   /** Custom component for the content wrapper */
   component?: ElementType<MenuSubContentProps>;
@@ -311,13 +272,10 @@ export type MenuSubContentProps = StyledComponentProps<_MenuSubContentProps> & {
 };
 
 /**
- * Props for the MenuSubTrigger component.
- * A menu item that opens a submenu when triggered.
+ * Props for the MenuSubTrigger component. A menu item that opens a submenu when triggered.
  *
  * @example
- * <MenuSubTrigger triggerIcon={<ChevronRight />}>
- *   More Options
- * </MenuSubTrigger>
+ *   <MenuSubTrigger triggerIcon={<ChevronRight />}>More Options</MenuSubTrigger>;
  */
 export interface MenuSubTriggerProps extends StyledComponentProps<_MenuSubTriggerProps> {
   /** Class names for customizing submenu trigger icon slot */
@@ -333,14 +291,13 @@ export interface MenuSubTriggerProps extends StyledComponentProps<_MenuSubTrigge
 }
 
 /**
- * Props for a radio menu item.
- * A menu item with a radio button indicator, typically used in mutually exclusive groups.
+ * Props for a radio menu item. A menu item with a radio button indicator, typically used in mutually exclusive groups.
  *
  * @example
- * <MenuRadioItem value="light">
- *   <MenuItemIndicator icon={<Radio />} />
- *   Light Theme
- * </MenuRadioItem>
+ *   <MenuRadioItem value="light">
+ *     <MenuItemIndicator icon={<Radio />} />
+ *     Light Theme
+ *   </MenuRadioItem>;
  */
 export interface MenuRadioItemProps extends StyledComponentProps<_MenuRadioItemProps> {
   /** Class names for customizing radio item slots */
@@ -361,29 +318,25 @@ export interface MenuRadioItemProps extends StyledComponentProps<_MenuRadioItemP
   type?: 'item';
 }
 
-/**
- * Union type for radio group items.
- * Can be a label, separator, or radio item with optional label.
- */
-export type MenuRadioItemOptionProps
-  = | MenuLabelOption
-    | MenuSeparatorOption
-    | (Omit<MenuRadioItemProps, 'children'> & {
+/** Union type for radio group items. Can be a label, separator, or radio item with optional label. */
+export type MenuRadioItemOptionProps =
+  | MenuLabelOption
+  | MenuSeparatorOption
+  | (Omit<MenuRadioItemProps, 'children'> & {
       label?: ReactNode;
     });
 
 /**
- * Props for a group of radio menu items.
- * Renders multiple radio items where only one can be selected at a time.
+ * Props for a group of radio menu items. Renders multiple radio items where only one can be selected at a time.
  *
  * @example
- * <MenuRadioGroup
- *   items={[
- *     { label: 'Small', value: 'sm' },
- *     { label: 'Medium', value: 'md' },
- *     { label: 'Large', value: 'lg' }
- *   ]}
- * />
+ *   <MenuRadioGroup
+ *     items={[
+ *       { label: 'Small', value: 'sm' },
+ *       { label: 'Medium', value: 'md' },
+ *       { label: 'Large', value: 'lg' }
+ *     ]}
+ *   />;
  */
 export interface MenuRadioGroupProps extends MenuCommonProps, StyledComponentProps<_MenuRadioGroupProps> {
   /** Custom component for rendering radio items */
@@ -398,13 +351,8 @@ export interface MenuRadioGroupProps extends MenuCommonProps, StyledComponentPro
   separatorComponent?: ElementType<MenuSeparatorProps>;
 }
 
-/**
- * Props for the main Menu component.
- * A composable menu component that wraps Radix UI's menu primitives.
- */
+/** Props for the main Menu component. A composable menu component that wraps Radix UI's menu primitives. */
 export interface MenuProps extends MenuCommonProps {
-  /**
-   * Menu content/children
-   */
+  /** Menu content/children */
   children?: ReactNode;
 }

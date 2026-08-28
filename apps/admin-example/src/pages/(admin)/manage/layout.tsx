@@ -28,7 +28,10 @@ export const Route = createFileRoute('/(admin)/manage')({
   }
 });
 
-function stripManageSearchParams<TSearch extends object>({ next, search }: ManageSearchMiddlewareContext<TSearch>): TSearch {
+function stripManageSearchParams<TSearch extends object>({
+  next,
+  search
+}: ManageSearchMiddlewareContext<TSearch>): TSearch {
   const result = next(search);
   const entries = Object.entries(result).filter(([, value]) => {
     return !shouldStripManageSearchParam(value);

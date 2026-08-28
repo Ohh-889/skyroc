@@ -3,13 +3,8 @@
   "name": "accordion",
   "type": "registry:block",
   "title": "Accordion",
-  "dependencies": [
-    "@radix-ui/react-accordion",
-    "@radix-ui/react-slot"
-  ],
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "dependencies": ["@radix-ui/react-accordion", "@radix-ui/react-slot"],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/accordion/Accordion.tsx",

@@ -9,7 +9,10 @@ const aligns: TooltipAlign[] = ['start', 'center', 'end'];
 
 const TooltipDemo = () => {
   return (
-    <Card split title="Tooltip Position">
+    <Card
+      split
+      title="Tooltip Position"
+    >
       {sides.map(side => {
         return (
           <div key={side}>

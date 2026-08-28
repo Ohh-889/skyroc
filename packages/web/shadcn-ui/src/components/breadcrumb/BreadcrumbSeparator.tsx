@@ -1,6 +1,6 @@
-import { forwardRef } from 'react';
-import { ChevronRight } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { ChevronRight } from 'lucide-react';
+import { forwardRef } from 'react';
 import { breadcrumbVariants } from './breadcrumb-variants';
 import type { BreadcrumbSeparatorProps } from './types';
 

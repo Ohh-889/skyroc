@@ -1,17 +1,17 @@
 ---
-title: "@skyroc/tsconfig"
+title: '@skyroc/tsconfig'
 description: 7 个分场景的 TypeScript 编译预设（base / library / node / web / web-app / RN / RN-app）
 ---
 
 ## 概览
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/tsconfig` |
-| 目录 | `internal/tsconfig` |
-| 版本 | 1.0.0 |
-| private | ✅ |
-| 内容 | 7 个 JSON 预设，无 JS 源码、无构建 |
+| 项      | 值                                 |
+| ------- | ---------------------------------- |
+| 包名    | `@skyroc/tsconfig`                 |
+| 目录    | `internal/tsconfig`                |
+| 版本    | 1.0.0                              |
+| private | ✅                                 |
+| 内容    | 7 个 JSON 预设，无 JS 源码、无构建 |
 
 所有包通过 `extends` 引用对应预设，避免重复维护 `compilerOptions`。
 
@@ -58,15 +58,15 @@ description: 7 个分场景的 TypeScript 编译预设（base / library / node /
 
 ## 7 个预设
 
-| 文件 | display | extends | 适用场景 |
-| --- | --- | --- | --- |
-| `base.json` | Base | — | 所有 TS 包的共同基线 |
-| `library.json` | Library Package | base | 需要产出 `.d.ts` 的库包 |
-| `node.json` | Node Config | base | Node 工具 / 脚本包 |
-| `web.json` | Web Package | base | Web 端包（DOM lib + vitest globals） |
-| `web-app.json` | Web Application | web | Web 应用（额外注入应用级全局类型） |
-| `react-native.json` | React Native Package | base | RN 库包 |
-| `react-native-app.json` | React Native Application | react-native | RN 应用 |
+| 文件                    | display                  | extends      | 适用场景                             |
+| ----------------------- | ------------------------ | ------------ | ------------------------------------ |
+| `base.json`             | Base                     | —            | 所有 TS 包的共同基线                 |
+| `library.json`          | Library Package          | base         | 需要产出 `.d.ts` 的库包              |
+| `node.json`             | Node Config              | base         | Node 工具 / 脚本包                   |
+| `web.json`              | Web Package              | base         | Web 端包（DOM lib + vitest globals） |
+| `web-app.json`          | Web Application          | web          | Web 应用（额外注入应用级全局类型）   |
+| `react-native.json`     | React Native Package     | base         | RN 库包                              |
+| `react-native-app.json` | React Native Application | react-native | RN 应用                              |
 
 ## 预设详解
 
@@ -110,13 +110,13 @@ description: 7 个分场景的 TypeScript 编译预设（base / library / node /
 
 几个值得注意的取舍：
 
-| Option | 值 | 说明 |
-| --- | --- | --- |
-| `noUncheckedIndexedAccess` | `false` | **未开启**：数组 / 索引访问不会自动加 `\| undefined`，避免业务代码里大量非空断言 |
-| `noUnusedLocals` / `noUnusedParameters` | `true` | 未使用的局部变量与参数直接编译报错，和 oxlint 的 `no-unused-vars` 双保险 |
-| `noEmit` | `true` | 基线不产出文件；只有 `library.json` 覆写为 `false` 来出类型 |
-| `target` | `ESNext` | 不降级，交给 Vite / esbuild / tsdown |
-| `moduleResolution` | `bundler` | 现代 bundler 解析；只有 `node.json` 覆写成 `node` |
+| Option                                  | 值        | 说明                                                                             |
+| --------------------------------------- | --------- | -------------------------------------------------------------------------------- |
+| `noUncheckedIndexedAccess`              | `false`   | **未开启**：数组 / 索引访问不会自动加 `\| undefined`，避免业务代码里大量非空断言 |
+| `noUnusedLocals` / `noUnusedParameters` | `true`    | 未使用的局部变量与参数直接编译报错，和 oxlint 的 `no-unused-vars` 双保险         |
+| `noEmit`                                | `true`    | 基线不产出文件；只有 `library.json` 覆写为 `false` 来出类型                      |
+| `target`                                | `ESNext`  | 不降级，交给 Vite / esbuild / tsdown                                             |
+| `moduleResolution`                      | `bundler` | 现代 bundler 解析；只有 `node.json` 覆写成 `node`                                |
 
 > `internal/tsconfig/README.md` 里写的 `noUncheckedIndexedAccess: true` 已经过期，以 `base.json` 为准。
 
@@ -208,13 +208,13 @@ import { someValue, type SomeType } from './module';
 }
 ```
 
-| types 项 | 带来什么 |
-| --- | --- |
-| `vite/client` | `import.meta.env` 类型 |
-| `node` | 应用侧 vite 配置 / 脚本用到的 Node 全局 |
-| `unplugin-icons/types/react` | `~icons/*` 模块声明 |
-| `@skyroc/types/types` | 全局 `Api`、`Router`、`App` namespace |
-| `@skyroc/web-admin-theme/types` | 全局 `Theme` namespace |
+| types 项                        | 带来什么                                |
+| ------------------------------- | --------------------------------------- |
+| `vite/client`                   | `import.meta.env` 类型                  |
+| `node`                          | 应用侧 vite 配置 / 脚本用到的 Node 全局 |
+| `unplugin-icons/types/react`    | `~icons/*` 模块声明                     |
+| `@skyroc/types/types`           | 全局 `Api`、`Router`、`App` namespace   |
+| `@skyroc/web-admin-theme/types` | 全局 `Theme` namespace                  |
 
 因此应用代码可以直接写 `Api.Auth.UserInfo`、`Theme.ColorPaletteFamily` 而不需要 import。注意 `types` 是**整体覆盖**而非追加，所以这里重复列出了 `vite/client`，但 `vitest/globals` 被覆盖掉了——应用层如需在 vitest 里用全局 API，得自己补回。
 
@@ -248,15 +248,15 @@ import { someValue, type SomeType } from './module';
 
 ## 仓库内实际使用
 
-| 预设 | 使用方 |
-| --- | --- |
-| `base.json` | `internal/config`、`packages/@core/types`、`packages/@core/logger` |
-| `library.json` | `packages/@core/utils`、`packages/@core/tailwind-plugin` |
-| `web.json` | `packages/hooks`、`packages/@core/{axios,color,service,state}`、`packages/web/{admin,admin-i18n,admin-layouts,admin-notification,admin-runtime,admin-theme,admin-vite,antd-theme,materials}`、`packages/@core/utils/tsconfig.web.json` |
-| `web-app.json` | `apps/admin`、`apps/admin-example`、`apps/ruoyi-plus-fast`；`create-skyroc` 构建时会展平到生成项目 |
-| `react-native.json` | `packages/native/ui` |
-| `node.json` | 暂无 |
-| `react-native-app.json` | 暂无 |
+| 预设                    | 使用方                                                                                                                                                                                                                                 |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base.json`             | `internal/config`、`packages/@core/types`、`packages/@core/logger`                                                                                                                                                                     |
+| `library.json`          | `packages/@core/utils`、`packages/@core/tailwind-plugin`                                                                                                                                                                               |
+| `web.json`              | `packages/hooks`、`packages/@core/{axios,color,service,state}`、`packages/web/{admin,admin-i18n,admin-layouts,admin-notification,admin-runtime,admin-theme,admin-vite,antd-theme,materials}`、`packages/@core/utils/tsconfig.web.json` |
+| `web-app.json`          | `apps/admin`、`apps/admin-example`、`apps/ruoyi-plus-fast`；`create-skyroc` 构建时会展平到生成项目                                                                                                                                     |
+| `react-native.json`     | `packages/native/ui`                                                                                                                                                                                                                   |
+| `node.json`             | 暂无                                                                                                                                                                                                                                   |
+| `react-native-app.json` | 暂无                                                                                                                                                                                                                                   |
 
 两点偏差值得知道：
 
@@ -265,14 +265,14 @@ import { someValue, type SomeType } from './module';
 
 ## 新建包该选哪个
 
-| 包类型 | extends | 备注 |
-| --- | --- | --- |
-| Web 应用 | `@skyroc/tsconfig/web-app.json` | + `paths` |
-| Web 库 / 组件 | `@skyroc/tsconfig/web.json` | 需要产出 `.d.ts` 时改用 `library.json` |
-| 跨端 / 纯逻辑库 | `@skyroc/tsconfig/library.json` | 不绑 DOM |
-| Node 工具 | `@skyroc/tsconfig/node.json` | |
-| RN 库 | `@skyroc/tsconfig/react-native.json` | |
-| RN 应用 | `@skyroc/tsconfig/react-native-app.json` | |
+| 包类型          | extends                                  | 备注                                   |
+| --------------- | ---------------------------------------- | -------------------------------------- |
+| Web 应用        | `@skyroc/tsconfig/web-app.json`          | + `paths`                              |
+| Web 库 / 组件   | `@skyroc/tsconfig/web.json`              | 需要产出 `.d.ts` 时改用 `library.json` |
+| 跨端 / 纯逻辑库 | `@skyroc/tsconfig/library.json`          | 不绑 DOM                               |
+| Node 工具       | `@skyroc/tsconfig/node.json`             |                                        |
+| RN 库           | `@skyroc/tsconfig/react-native.json`     |                                        |
+| RN 应用         | `@skyroc/tsconfig/react-native-app.json` |                                        |
 
 ## 相关文档
 

@@ -4,14 +4,7 @@ import type { ReactNode } from 'react';
 export type { MaybeArray } from '@skyroc/utils/type';
 
 // 三端共用的组件词汇表，单一数据源在设计令牌包里
-export type {
-  ThemeAlign,
-  ThemeColor,
-  ThemeOrientation,
-  ThemeSide,
-  ThemeSize,
-  Value
-} from '@skyroc/tailwind-plugin/ui';
+export type { ThemeAlign, ThemeColor, ThemeOrientation, ThemeSide, ThemeSize, Value } from '@skyroc/tailwind-plugin/ui';
 
 export type { ClassValue };
 

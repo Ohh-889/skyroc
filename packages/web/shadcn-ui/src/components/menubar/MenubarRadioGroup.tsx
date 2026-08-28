@@ -1,6 +1,6 @@
+import { RadioGroup } from '@radix-ui/react-menubar';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { RadioGroup } from '@radix-ui/react-menubar';
 import MenuRadioGroup from '../menu/MenuRadioGroup';
 import MenubarLabel from './MenubarLabel';
 import MenubarRadioItem from './MenubarRadioItem';

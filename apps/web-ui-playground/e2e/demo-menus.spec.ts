@@ -57,7 +57,9 @@ test.describe('menu and select demos', () => {
 
     await gotoDemo(page, 'command');
     await demoCardContent(page, 'Command').locator('[data-slot="command-input"]').fill('mail');
-    await expect(demoCardContent(page, 'Command').locator('[data-slot="command-item"]').filter({ hasText: 'Mail' })).toBeVisible();
+    await expect(
+      demoCardContent(page, 'Command').locator('[data-slot="command-item"]').filter({ hasText: 'Mail' })
+    ).toBeVisible();
     await demoCardContent(page, 'Command Dialog').getByRole('button', { name: 'Open command' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByPlaceholder('Type a command or search...')).toBeVisible();

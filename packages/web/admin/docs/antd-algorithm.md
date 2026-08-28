@@ -89,23 +89,20 @@ import { defaultPresetColors, derivative, seedToken } from '../antd-algorithm';
   theme={{
     algorithm: [derivative],
     token: {
-      ...seedToken,            // 默认 fontSize=14、borderRadius=6 + 全部预设色
-      ...defaultPresetColors,  // 仅注入 22 个预设色族
+      ...seedToken, // 默认 fontSize=14、borderRadius=6 + 全部预设色
+      ...defaultPresetColors, // 仅注入 22 个预设色族
       colorPrimary: '#6366F1'
     }
   }}
 >
   {children}
-</ConfigProvider>
+</ConfigProvider>;
 ```
 
 ### 3. 单独生成调色板
 
 ```ts
-import {
-  generateColorPalettes,
-  generateDarkColorPalettes
-} from '../antd-algorithm';
+import { generateColorPalettes, generateDarkColorPalettes } from '../antd-algorithm';
 
 const palette = generateColorPalettes('#6366F1');
 // palette[1]  → 最浅背景色
@@ -188,10 +185,10 @@ genSizeMapToken / genControlHeight / genCommonMapToken
 
 暗色模式对色板的语义映射做了特殊处理：
 
-| 语义 token              | 亮色来源        | 暗色来源              |
-| --------------------- | ----------- | ----------------- |
-| `colorPrimaryBg`      | palette[1]  | palette[3]（边框色）   |
-| `colorPrimaryBgHover` | palette[2]  | palette[4]        |
+| 语义 token            | 亮色来源   | 暗色来源             |
+| --------------------- | ---------- | -------------------- |
+| `colorPrimaryBg`      | palette[1] | palette[3]（边框色） |
+| `colorPrimaryBgHover` | palette[2] | palette[4]           |
 
 参考 Ant Design 官方实现 [issue#30524](https://github.com/ant-design/ant-design/issues/30524#issuecomment-871961867)，使用 `colorPrimaryBorder` 作为选中项背景，提升暗色场景下的视觉反馈。
 
@@ -199,12 +196,12 @@ genSizeMapToken / genControlHeight / genCommonMapToken
 
 ### 调色板生成
 
-| 函数                                | 说明                                    |
-| --------------------------------- | ------------------------------------- |
-| `generateColorPalettes(color)`    | 亮色模式调色板，返回 `Record<number, string>`，键为 1–10 与 50–950 |
-| `generateDarkColorPalettes(color)` | 暗色模式调色板（明度曲线反转）                       |
-| `generateNeutralColorPalettes(bg, text)` | 亮色中性色（背景、文字、边框）                       |
-| `generateDarkNeutralColorPalettes(bg, text)` | 暗色中性色                                 |
+| 函数                                         | 说明                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------ |
+| `generateColorPalettes(color)`               | 亮色模式调色板，返回 `Record<number, string>`，键为 1–10 与 50–950 |
+| `generateDarkColorPalettes(color)`           | 暗色模式调色板（明度曲线反转）                                     |
+| `generateNeutralColorPalettes(bg, text)`     | 亮色中性色（背景、文字、边框）                                     |
+| `generateDarkNeutralColorPalettes(bg, text)` | 暗色中性色                                                         |
 
 ```ts
 import { generateColorPalettes } from '../antd-algorithm';
@@ -326,18 +323,13 @@ genSemanticColors({
 #### 颜色工具（来自 `@skyroc/color`）
 
 ```ts
-import {
-  adjustLightness,
-  darkenColor,
-  lightenColor,
-  mixColor
-} from '../antd-algorithm';
+import { adjustLightness, darkenColor, lightenColor, mixColor } from '../antd-algorithm';
 
-adjustLightness('#6366F1', 20);        // 调亮 20%
-adjustLightness('#6366F1', -20);       // 调暗 20%
+adjustLightness('#6366F1', 20); // 调亮 20%
+adjustLightness('#6366F1', -20); // 调暗 20%
 lightenColor('#6366F1', 20);
 darkenColor('#6366F1', 20);
-mixColor('#6366F1', '#ffffff', 0.3);   // 混合
+mixColor('#6366F1', '#ffffff', 0.3); // 混合
 ```
 
 ---
@@ -348,13 +340,13 @@ mixColor('#6366F1', '#ffffff', 0.3);   // 混合
 
 内置 Tailwind 风格的预设色（含 13 个色族 + 5 个功能色），可直接注入 `ConfigProvider.theme.token`：
 
-| 类别  | 色族                                   |
-| --- | ------------------------------------ |
-| 蓝   | `blue` `geekblue` `cyan`             |
-| 紫粉  | `purple` `magenta` `pink`            |
-| 红橙  | `red` `orange` `volcano`             |
-| 黄金  | `yellow` `gold`                      |
-| 绿   | `green` `lime`                       |
+| 类别   | 色族                                                                  |
+| ------ | --------------------------------------------------------------------- |
+| 蓝     | `blue` `geekblue` `cyan`                                              |
+| 紫粉   | `purple` `magenta` `pink`                                             |
+| 红橙   | `red` `orange` `volcano`                                              |
+| 黄金   | `yellow` `gold`                                                       |
+| 绿     | `green` `lime`                                                        |
 | 功能色 | `colorPrimary` `colorInfo` `colorSuccess` `colorWarning` `colorError` |
 
 #### `seedToken`
@@ -365,19 +357,19 @@ mixColor('#6366F1', '#ffffff', 0.3);   // 混合
 
 ### 常量
 
-| 常量                | 说明                                                        |
-| ----------------- | --------------------------------------------------------- |
-| `ANTD_INDEXES`    | Ant Design 色板索引数组 `[1, 2, ..., 10]`                       |
-| `TAILWIND_INDEXES`| Tailwind 色阶数组 `[50, 100, ..., 950]`                       |
-| `LIGHT_BG_BASE`   | 亮色模式背景基准                                                  |
-| `LIGHT_TEXT_BASE` | 亮色模式文字基准                                                  |
-| `DARK_BG_BASE`    | 暗色模式背景基准                                                  |
-| `DARK_TEXT_BASE`  | 暗色模式文字基准                                                  |
-| `FONT_SIZES` / `LINE_HEIGHTS` | UnoCSS 风格 rem 字号与行高表（xs ~ 9xl）                |
-| `RADIUS_MULTIPLIERS` | 圆角倍率表（none / xs / sm / md / lg / xl / 2xl / 3xl / 4xl / full） |
-| `SPACING_MULTIPLIERS` | 间距倍率表（3xs / 2xs / xs / md / lg / xl / 2xl ... 9xl）    |
-| `PRIMARY_SEMANTIC_CONFIG` | 主色语义映射配置                                          |
-| `FUNCTIONAL_SEMANTIC_CONFIG` | 功能色语义映射配置（hover 走 4 档）                         |
+| 常量                          | 说明                                                                 |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `ANTD_INDEXES`                | Ant Design 色板索引数组 `[1, 2, ..., 10]`                            |
+| `TAILWIND_INDEXES`            | Tailwind 色阶数组 `[50, 100, ..., 950]`                              |
+| `LIGHT_BG_BASE`               | 亮色模式背景基准                                                     |
+| `LIGHT_TEXT_BASE`             | 亮色模式文字基准                                                     |
+| `DARK_BG_BASE`                | 暗色模式背景基准                                                     |
+| `DARK_TEXT_BASE`              | 暗色模式文字基准                                                     |
+| `FONT_SIZES` / `LINE_HEIGHTS` | UnoCSS 风格 rem 字号与行高表（xs ~ 9xl）                             |
+| `RADIUS_MULTIPLIERS`          | 圆角倍率表（none / xs / sm / md / lg / xl / 2xl / 3xl / 4xl / full） |
+| `SPACING_MULTIPLIERS`         | 间距倍率表（3xs / 2xs / xs / md / lg / xl / 2xl ... 9xl）            |
+| `PRIMARY_SEMANTIC_CONFIG`     | 主色语义映射配置                                                     |
+| `FUNCTIONAL_SEMANTIC_CONFIG`  | 功能色语义映射配置（hover 走 4 档）                                  |
 
 ---
 

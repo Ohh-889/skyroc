@@ -1,8 +1,8 @@
 'use client';
 
-import { Apple, Banana, Cherry, Ear, Link2Icon } from 'lucide-react';
 import type { SelectProps } from '@skyroc/web-ui';
 import { Select } from '@skyroc/web-ui';
+import { Apple, Banana, Cherry, Ear, Link2Icon } from 'lucide-react';
 
 const fruits: SelectProps['items'] = [
   { label: 'Apple', leading: <Apple />, trailing: <Link2Icon className="size-4" />, value: 'apple' },
@@ -17,7 +17,6 @@ const fruits: SelectProps['items'] = [
 
 const DisabledOption = () => {
   return (
-
     <div className="lt-sm:w-auto w-[240px]">
       <Select
         items={fruits}
@@ -26,7 +25,6 @@ const DisabledOption = () => {
         }}
       />
     </div>
-
   );
 };
 

@@ -188,31 +188,31 @@ export const alertVariants = tv({
         title: 'text-2xl leading-6.25',
         wrapper: 'gap-2'
       },
-      'lg': {
+      lg: {
         close: 'top-3 right-5',
         root: 'gap-3.5 px-5 py-3.5 text-base',
         title: 'text-lg leading-5',
         wrapper: 'gap-1.25'
       },
-      'md': {
+      md: {
         close: 'top-2.5 right-4',
         root: 'gap-3 px-4 py-3 text-sm',
         title: 'text-base leading-[calc(var(--spacing)*4.375)]',
         wrapper: 'gap-1'
       },
-      'sm': {
+      sm: {
         close: 'top-2 right-3',
         root: 'gap-2.5 px-3 py-2.5 text-xs',
         title: 'text-sm leading-3.75',
         wrapper: 'gap-1'
       },
-      'xl': {
+      xl: {
         close: 'top-3.5 right-6',
         root: 'gap-4 px-6 py-4 text-lg',
         title: 'text-xl leading-[var(--spacing)*5.625]',
         wrapper: 'gap-1.5'
       },
-      'xs': {
+      xs: {
         close: 'top-1.25 right-2',
         root: 'gap-2 px-2 py-1.75 text-2xs',
         title: 'text-xs leading-[calc(var(--spacing)*3.125)]',

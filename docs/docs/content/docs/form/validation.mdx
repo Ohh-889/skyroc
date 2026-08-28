@@ -49,7 +49,9 @@ const errors = useFieldError(['email', 'age']);
 const { touched } = useFieldState('email');
 const errors = useFieldError('email');
 
-{touched && errors?.length ? <span>{errors[0]}</span> : null}
+{
+  touched && errors?.length ? <span>{errors[0]}</span> : null;
+}
 ```
 
 ## 多语言消息

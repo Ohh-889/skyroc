@@ -1,163 +1,172 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Expo Snack Unistyles Probe</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1" />
-  <title>Expo Snack Unistyles Probe</title>
-  <style>
-    :root {
-      color-scheme: light;
-      font-family:
-        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+      body {
+        margin: 0;
+        background: #f6f7f9;
+        color: #171923;
+      }
 
-    body {
-      margin: 0;
-      background: #f6f7f9;
-      color: #171923;
-    }
-
-    main {
-      width: min(1180px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 32px 0;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      line-height: 1.2;
-    }
-
-    p {
-      max-width: 820px;
-      margin: 0 0 24px;
-      color: #4a5568;
-      line-height: 1.6;
-    }
-
-    .grid {
-      display: grid;
-      gap: 28px;
-    }
-
-    .case {
-      min-width: 0;
-    }
-
-    .case h2 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .case p {
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-
-    .snack-player {
-      width: 100%;
-      height: 620px;
-      overflow: hidden;
-      border: 1px solid #d8dee8;
-      border-radius: 8px;
-      background: #ffffff;
-    }
-
-    code {
-      padding: 2px 5px;
-      border-radius: 4px;
-      background: #edf2f7;
-      color: #1a202c;
-    }
-
-    .direct-link {
-      display: inline-flex;
-      align-items: center;
-      min-height: 36px;
-      padding: 0 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      background: #ffffff;
-      color: #0f172a;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    @media (max-width: 520px) {
       main {
-        width: min(100vw - 20px, 1180px);
-        padding: 20px 0;
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      p {
+        max-width: 820px;
+        margin: 0 0 24px;
+        color: #4a5568;
+        line-height: 1.6;
       }
 
       .grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        gap: 28px;
+      }
+
+      .case {
+        min-width: 0;
+      }
+
+      .case h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .case p {
+        margin-bottom: 12px;
+        font-size: 14px;
       }
 
       .snack-player {
-        height: 560px;
+        width: 100%;
+        height: 620px;
+        overflow: hidden;
+        border: 1px solid #d8dee8;
+        border-radius: 8px;
+        background: #ffffff;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <main>
-    <h1>Expo Snack Unistyles Probe</h1>
+      code {
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: #edf2f7;
+        color: #1a202c;
+      }
+
+      .direct-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      @media (max-width: 520px) {
+        main {
+          width: min(100vw - 20px, 1180px);
+          padding: 20px 0;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .snack-player {
+          height: 560px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>Expo Snack Unistyles Probe</h1>
       <p>
-        This page passes <code>react-native-unistyles</code>,
-      <code>react-native-nitro-modules</code>,
-      <code>@react-native/normalize-colors</code>,
-      <code>react-native-edge-to-edge</code>,
-      <code>react-native-reanimated</code>,
-      <code>react-native-worklets</code>, and a virtual
-      <code>babel.config.js</code> to
-      Snack. The probe keeps the component under <code>src/</code> so the
-      Unistyles Babel plugin
-      can target the same root configured below.
-    </p>
+        This page passes <code>react-native-unistyles</code>, <code>react-native-nitro-modules</code>,
+        <code>@react-native/normalize-colors</code>, <code>react-native-edge-to-edge</code>,
+        <code>react-native-reanimated</code>, <code>react-native-worklets</code>, and a virtual
+        <code>babel.config.js</code> to Snack. The probe keeps the component under <code>src/</code> so the Unistyles
+        Babel plugin can target the same root configured below.
+      </p>
 
-    <section class="grid"
-             aria-label="Snack probes">
-      <article class="case">
-        <h2>Baseline: files parameter works</h2>
-        <p>This should render normally. It only proves
-          <code>data-snack-files</code> is accepted.</p>
-        <div id="baseline"
-             class="snack-player"></div>
-      </article>
+      <section
+        class="grid"
+        aria-label="Snack probes"
+      >
+        <article class="case">
+          <h2>Baseline: files parameter works</h2>
+          <p>This should render normally. It only proves <code>data-snack-files</code> is accepted.</p>
+          <div
+            id="baseline"
+            class="snack-player"
+          ></div>
+        </article>
 
-      <article class="case">
-        <h2>Probe: Unistyles dependency + Babel config</h2>
-        <p>
-          This imports <code>StyleSheet</code> from
-          <code>react-native-unistyles</code> and adds
-          the two npm dependencies through <code>data-snack-dependencies</code>.
-        </p>
-        <div id="probe"
-             class="snack-player"></div>
-      </article>
+        <article class="case">
+          <h2>Probe: Unistyles dependency + Babel config</h2>
+          <p>
+            This imports <code>StyleSheet</code> from <code>react-native-unistyles</code> and adds the two npm
+            dependencies through <code>data-snack-dependencies</code>.
+          </p>
+          <div
+            id="probe"
+            class="snack-player"
+          ></div>
+        </article>
 
-      <article class="case">
-        <h2>Direct URL: files + dependencies parameters</h2>
-        <p>
-          This uses the official query-parameter shape:
-          <code>https://snack.expo.dev?files=...&amp;dependencies=...</code>.
-        </p>
-        <a id="direct-url"
-           class="direct-link"
-           href="https://snack.expo.dev"
-           target="_blank"
-           rel="noreferrer">Open direct Snack URL</a>
-      </article>
-    </section>
-  </main>
+        <article class="case">
+          <h2>Direct URL: files + dependencies parameters</h2>
+          <p>
+            This uses the official query-parameter shape:
+            <code>https://snack.expo.dev?files=...&amp;dependencies=...</code>.
+          </p>
+          <a
+            id="direct-url"
+            class="direct-link"
+            href="https://snack.expo.dev"
+            target="_blank"
+            rel="noreferrer"
+            >Open direct Snack URL</a
+          >
+        </article>
+      </section>
+    </main>
 
-  <script>
-    function appSource(message, accent) {
-      return `
+    <script>
+      function appSource(message, accent) {
+        return `
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -195,10 +204,10 @@ const styles = StyleSheet.create({
   },
 });
 `;
-    }
+      }
 
-    function probeAppSource() {
-      return `
+      function probeAppSource() {
+        return `
 import React from 'react';
 import { SafeAreaView } from 'react-native';
 import { MyComponent } from './src/MyComponent';
@@ -207,10 +216,10 @@ export default function App() {
   return <SafeAreaView style={{ flex: 1 }}><MyComponent /></SafeAreaView>;
 }
 `;
-    }
+      }
 
-    function myComponentSource() {
-      return `
+      function myComponentSource() {
+        return `
 import React from 'react';
 import { Text, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -241,10 +250,10 @@ const styles = StyleSheet.create({
 
 export { MyComponent };
 `;
-    }
+      }
 
-    function babelConfigSource() {
-      return `
+      function babelConfigSource() {
+        return `
 module.exports = function (api) {
   api.cache(true);
 
@@ -258,83 +267,76 @@ module.exports = function (api) {
   };
 };
 `;
-    }
-
-    const unistylesDependencies =
-      'react-native-unistyles,react-native-nitro-modules,@react-native/normalize-colors,react-native-edge-to-edge,react-native-reanimated@~4.1.1,react-native-worklets@0.5.1';
-
-    const unistylesFiles = {
-      'App.tsx': {
-        type: 'CODE',
-        contents: probeAppSource(),
-      },
-      'src/MyComponent.tsx': {
-        type: 'CODE',
-        contents: myComponentSource(),
-      },
-      'babel.config.js': {
-        type: 'CODE',
-        contents: babelConfigSource(),
-      },
-    };
-
-    function attachSnack(elementId, files, name, dependencies) {
-      const element = document.getElementById(elementId);
-
-      element.dataset.snackFiles = encodeURIComponent(JSON.stringify(files));
-      element.dataset.snackName = encodeURIComponent(name);
-      if (dependencies) {
-        element.dataset.snackDependencies = dependencies;
       }
-      element.dataset.snackPlatform = 'web';
-      element.dataset.snackPreview = 'true';
-      element.dataset.snackSdkVersion = '54.0.0';
-      element.dataset.snackTheme = 'light';
-      element.dataset.snackLoading = 'lazy';
-    }
 
-    function createDirectSnackUrl(files, dependencies) {
-      const params = new URLSearchParams({
-        dependencies,
-        files: JSON.stringify(files),
-        name: 'Unistyles dependency probe',
-        platform: 'web',
-        preview: 'true',
-        sdkVersion: '54.0.0',
-      });
+      const unistylesDependencies =
+        'react-native-unistyles,react-native-nitro-modules,@react-native/normalize-colors,react-native-edge-to-edge,react-native-reanimated@~4.1.1,react-native-worklets@0.5.1';
 
-      return `https://snack.expo.dev?${params.toString()}`;
-    }
-
-    attachSnack(
-      'baseline',
-      {
+      const unistylesFiles = {
         'App.tsx': {
           type: 'CODE',
-          contents: appSource('data-snack-files is running this multi-file Snack.', '#2563eb'),
+          contents: probeAppSource()
         },
-        'README.md': {
+        'src/MyComponent.tsx': {
           type: 'CODE',
-          contents: '# Baseline\\n\\nThis file proves the files parameter accepts extra files.',
+          contents: myComponentSource()
         },
-      },
-      'Baseline files probe'
-    );
+        'babel.config.js': {
+          type: 'CODE',
+          contents: babelConfigSource()
+        }
+      };
 
-    attachSnack(
-      'probe',
-      unistylesFiles,
-      'Unistyles dependency probe',
-      unistylesDependencies
-    );
+      function attachSnack(elementId, files, name, dependencies) {
+        const element = document.getElementById(elementId);
 
-    document.getElementById('direct-url').href = createDirectSnackUrl(
-      unistylesFiles,
-      unistylesDependencies
-    );
-  </script>
-  <script async
-          src="https://snack.expo.dev/embed.js"></script>
-</body>
+        element.dataset.snackFiles = encodeURIComponent(JSON.stringify(files));
+        element.dataset.snackName = encodeURIComponent(name);
+        if (dependencies) {
+          element.dataset.snackDependencies = dependencies;
+        }
+        element.dataset.snackPlatform = 'web';
+        element.dataset.snackPreview = 'true';
+        element.dataset.snackSdkVersion = '54.0.0';
+        element.dataset.snackTheme = 'light';
+        element.dataset.snackLoading = 'lazy';
+      }
 
+      function createDirectSnackUrl(files, dependencies) {
+        const params = new URLSearchParams({
+          dependencies,
+          files: JSON.stringify(files),
+          name: 'Unistyles dependency probe',
+          platform: 'web',
+          preview: 'true',
+          sdkVersion: '54.0.0'
+        });
+
+        return `https://snack.expo.dev?${params.toString()}`;
+      }
+
+      attachSnack(
+        'baseline',
+        {
+          'App.tsx': {
+            type: 'CODE',
+            contents: appSource('data-snack-files is running this multi-file Snack.', '#2563eb')
+          },
+          'README.md': {
+            type: 'CODE',
+            contents: '# Baseline\\n\\nThis file proves the files parameter accepts extra files.'
+          }
+        },
+        'Baseline files probe'
+      );
+
+      attachSnack('probe', unistylesFiles, 'Unistyles dependency probe', unistylesDependencies);
+
+      document.getElementById('direct-url').href = createDirectSnackUrl(unistylesFiles, unistylesDependencies);
+    </script>
+    <script
+      async
+      src="https://snack.expo.dev/embed.js"
+    ></script>
+  </body>
 </html>

@@ -6,11 +6,10 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 /**
- * 主入口与 `./type` 出口必须保持平台中立：React Native 侧会从 `@skyroc/utils` 与
- * `@skyroc/utils/type` 导入，一旦这里泄漏 DOM 全局类型，无 DOM lib 的环境就会编译失败。
+ * 主入口与 `./type` 出口必须保持平台中立：React Native 侧会从 `@skyroc/utils` 与 `@skyroc/utils/type` 导入，一旦这里泄漏 DOM 全局类型，无 DOM lib
+ * 的环境就会编译失败。
  *
- * tsconfig 的中立项目（lib 只有 ESNext、exclude `src/web`）已经能在编译期挡住绝大多数
- * 泄漏，但类型断言无法表达「某个 barrel 没有导出什么」，所以这一层用源码静态检查兜底。
+ * Tsconfig 的中立项目（lib 只有 ESNext、exclude `src/web`）已经能在编译期挡住绝大多数 泄漏，但类型断言无法表达「某个 barrel 没有导出什么」，所以这一层用源码静态检查兜底。
  */
 
 const SRC_DIR = fileURLToPath(new URL('../src', import.meta.url));

@@ -5,11 +5,7 @@ import { Checkbox } from '@skyroc/web-ui';
 const CheckboxIndeterminate = () => {
   return (
     <div className="flex flex-wrap gap-[12px]">
-      <Checkbox
-        checked={false}
-      >
-        Unchecked
-      </Checkbox>
+      <Checkbox checked={false}>Unchecked</Checkbox>
 
       <Checkbox
         checked="indeterminate"

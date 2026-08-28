@@ -47,11 +47,11 @@ import { Picker, PickerView } from '@skyroc/native-ui';
 
 数据里没有 `label` / `value` / `children` 时，用 `fieldNames` 映射：
 
-| 字段       | 默认值       | 含义         |
-| ---------- | ------------ | ------------ |
-| `label`    | `'label'`    | 显示文本     |
-| `value`    | `'value'`    | 选项值       |
-| `children` | `'children'` | 级联子选项   |
+| 字段       | 默认值       | 含义       |
+| ---------- | ------------ | ---------- |
+| `label`    | `'label'`    | 显示文本   |
+| `value`    | `'value'`    | 选项值     |
+| `children` | `'children'` | 级联子选项 |
 
 <Demo src="@playground/picker/PickerFieldNames" />
 
@@ -63,11 +63,11 @@ import { Picker, PickerView } from '@skyroc/native-ui';
 
 ## 滚轮尺寸与反馈
 
-| 属性           | 含义                                            | 默认值 |
-| -------------- | ----------------------------------------------- | ------ |
-| `itemHeight`   | 每个选项的高度（px）                            | 48     |
-| `visibleCount` | 每列可见的选项数，**必须是奇数**                 | 5      |
-| `haptic`       | 滚过一格时触发一次轻触反馈                       | false  |
+| 属性           | 含义                             | 默认值 |
+| -------------- | -------------------------------- | ------ |
+| `itemHeight`   | 每个选项的高度（px）             | 48     |
+| `visibleCount` | 每列可见的选项数，**必须是奇数** | 5      |
+| `haptic`       | 滚过一格时触发一次轻触反馈       | false  |
 
 <Demo src="@playground/picker/PickerWheel" />
 
@@ -91,21 +91,21 @@ import { Picker, PickerView } from '@skyroc/native-ui';
 
 `className` 追加到滚轮块的根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot                | 作用位置                                     |
-| ------------------- | -------------------------------------------- |
-| `root`              | 滚轮块根容器（圆角、背景）                   |
-| `toolbar`           | 顶部工具栏容器                               |
-| `cancel`            | 取消按钮容器                                 |
-| `cancelText`        | 取消按钮文字                                 |
-| `title`             | 工具栏标题                                   |
-| `confirm`           | 确定按钮容器                                 |
-| `confirmText`       | 确定按钮文字                                 |
-| `columns`           | 所有列的横向容器                             |
-| `column`            | 单列容器                                     |
-| `item`              | 单个选项容器                                 |
-| `itemText`          | 选项文字                                     |
-| `selectedIndicator` | 中间的选中指示线                             |
-| `loading`           | 加载遮罩                                     |
+| slot                | 作用位置                   |
+| ------------------- | -------------------------- |
+| `root`              | 滚轮块根容器（圆角、背景） |
+| `toolbar`           | 顶部工具栏容器             |
+| `cancel`            | 取消按钮容器               |
+| `cancelText`        | 取消按钮文字               |
+| `title`             | 工具栏标题                 |
+| `confirm`           | 确定按钮容器               |
+| `confirmText`       | 确定按钮文字               |
+| `columns`           | 所有列的横向容器           |
+| `column`            | 单列容器                   |
+| `item`              | 单个选项容器               |
+| `itemText`          | 选项文字                   |
+| `selectedIndicator` | 中间的选中指示线           |
+| `loading`           | 加载遮罩                   |
 
 <Demo src="@playground/picker/PickerStyles" />
 
@@ -198,7 +198,14 @@ import { Picker, PickerView } from '@skyroc/native-ui';
 ## 类型
 
 ```ts
-import type { PickerColumnType, PickerFieldNames, PickerOption, PickerProps, PickerSlots, PickerViewProps } from '@skyroc/native-ui';
+import type {
+  PickerColumnType,
+  PickerFieldNames,
+  PickerOption,
+  PickerProps,
+  PickerSlots,
+  PickerViewProps
+} from '@skyroc/native-ui';
 ```
 
 <UnionType

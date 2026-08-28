@@ -66,7 +66,9 @@ test.describe('overlay demos', () => {
     const pageErrors = watchPageErrors(page);
 
     await gotoDemo(page, 'sonner');
-    await demoCardContent(page, 'Message').getByRole('button', { name: /^Success$/ }).click();
+    await demoCardContent(page, 'Message')
+      .getByRole('button', { name: /^Success$/ })
+      .click();
     await expectTextVisible(page, 'This is a success message');
 
     await demoCardContent(page, 'Notification').getByRole('button', { name: 'Double Buttons' }).click();

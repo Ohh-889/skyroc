@@ -1,7 +1,31 @@
 {
   "name": "expo-templete",
-  "main": "expo-router/entry",
   "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "dotenv -e .env.dev -- expo start",
+    "start:staging": "dotenv -e .env.staging -- expo start --clear",
+    "start:prod": "dotenv -e .env.production -- expo start --clear",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "dotenv -e .env.dev -- expo run:android",
+    "android:staging": "dotenv -e .env.staging -- expo run:android",
+    "ios": "dotenv -e .env.dev -- expo run:ios --device",
+    "ios:staging": "dotenv -e .env.staging -- expo run:ios --device",
+    "prebuild:android": "expo prebuild --platform android",
+    "prebuild:android:clean": "expo prebuild --platform android --clean",
+    "prebuild:ios": "expo prebuild --platform ios",
+    "prebuild:ios:clean": "expo prebuild --platform ios --clean",
+    "build:apk": "./scripts/bin/ns.sh android build-apk",
+    "build:ipa": "./scripts/bin/ns.sh ios build-ipa",
+    "clean:native": "./scripts/bin/ns.sh clean",
+    "doctor": "./scripts/bin/ns.sh doctor",
+    "keystore:generate": "./scripts/bin/ns.sh keystore generate",
+    "keystore:info": "./scripts/bin/ns.sh keystore info",
+    "keystore:sha256": "./scripts/bin/ns.sh keystore sha256",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
+  },
   "dependencies": {
     "@expo/ui": "~57.0.12",
     "@expo/vector-icons": "15.1.1",
@@ -59,29 +83,5 @@
     "oxlint": "catalog:dev",
     "tsx": "^4.23.12",
     "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "dotenv -e .env.dev -- expo start",
-    "start:staging": "dotenv -e .env.staging -- expo start --clear",
-    "start:prod": "dotenv -e .env.production -- expo start --clear",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "dotenv -e .env.dev -- expo run:android",
-    "android:staging": "dotenv -e .env.staging -- expo run:android",
-    "ios": "dotenv -e .env.dev -- expo run:ios --device",
-    "ios:staging": "dotenv -e .env.staging -- expo run:ios --device",
-    "prebuild:android": "expo prebuild --platform android",
-    "prebuild:android:clean": "expo prebuild --platform android --clean",
-    "prebuild:ios": "expo prebuild --platform ios",
-    "prebuild:ios:clean": "expo prebuild --platform ios --clean",
-    "build:apk": "./scripts/bin/ns.sh android build-apk",
-    "build:ipa": "./scripts/bin/ns.sh ios build-ipa",
-    "clean:native": "./scripts/bin/ns.sh clean",
-    "doctor": "./scripts/bin/ns.sh doctor",
-    "keystore:generate": "./scripts/bin/ns.sh keystore generate",
-    "keystore:info": "./scripts/bin/ns.sh keystore info",
-    "keystore:sha256": "./scripts/bin/ns.sh keystore sha256",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
-  },
-  "private": true
+  }
 }

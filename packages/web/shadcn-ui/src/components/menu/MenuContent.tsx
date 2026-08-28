@@ -1,9 +1,9 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Content as _Content, Portal as _Portal } from '@radix-ui/react-menu';
 import { cn } from '@skyroc/utils';
-import MenuArrow from './MenuArrow';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { menuVariants } from './menu-variants';
+import MenuArrow from './MenuArrow';
 import type { MenuContentProps } from './types';
 
 const MenuContent = forwardRef<ComponentRef<typeof _Content>, MenuContentProps>((props, ref) => {
@@ -32,14 +32,12 @@ const MenuContent = forwardRef<ComponentRef<typeof _Content>, MenuContentProps>(
       >
         {children}
 
-        {showArrow
-          ? (
-            <MenuArrow
-              className={arrowClass}
-              component={Arrow}
-            />
-          )
-          : null}
+        {showArrow ? (
+          <MenuArrow
+            className={arrowClass}
+            component={Arrow}
+          />
+        ) : null}
       </Content>
     </Portal>
   );

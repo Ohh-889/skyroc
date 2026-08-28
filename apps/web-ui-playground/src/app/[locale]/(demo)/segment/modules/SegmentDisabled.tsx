@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import type { SegmentProps } from '@skyroc/web-ui';
 import { Card, Segment } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const items: SegmentProps['items'] = [
   { value: 'day', label: 'Day' },

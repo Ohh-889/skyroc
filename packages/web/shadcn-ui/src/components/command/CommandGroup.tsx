@@ -13,7 +13,11 @@ const CommandGroup = (props: CommandGroupProps) => {
   const mergedLabelClass = cn(groupLabel(), classNames?.groupLabel);
 
   return (
-    <_CommandGroup className={mergedClass} data-slot="command-group" {...rest}>
+    <_CommandGroup
+      className={mergedClass}
+      data-slot="command-group"
+      {...rest}
+    >
       {heading ? <div className={mergedLabelClass}>{heading}</div> : null}
       {children}
     </_CommandGroup>

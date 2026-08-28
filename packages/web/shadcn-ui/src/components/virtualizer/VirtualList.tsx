@@ -1,51 +1,74 @@
 'use client';
+import { Slot } from '@radix-ui/react-slot';
+import { cn } from '@skyroc/utils';
+import { useVirtualizer } from '@tanstack/react-virtual';
 /* eslint-disable react-hooks/incompatible-library */
 import type { CSSProperties, Ref } from 'react';
 import { Fragment, useImperativeHandle, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { Slot } from '@radix-ui/react-slot';
-import { cn } from '@skyroc/utils';
-import { virtualizerVariants } from './virtualizer-variants';
 import type { VirtualListProps, VirtualizerList } from './types';
+import { virtualizerVariants } from './virtualizer-variants';
 
 /**
  * A styled virtual list component for efficiently rendering large lists.
  *
  * @example
- * ```tsx
- * // Basic usage
- * <VirtualList
+ *   ```tsx
+ *   // Basic usage
+ *   <VirtualList
  *   data={items}
  *   height={400}
  *   itemSize={50}
  *   keyExtractor='id'
  *   renderItem={(item) => (
- *     <div className="flex items-center px-4 border-b">
- *       {item.name}
- *     </div>
+ *   <div className="flex items-center px-4 border-b">
+ *   {item.name}
+ *   </div>
  *   )}
- * />
+ *   />
  *
- * // With custom styling
- * <VirtualList
+ *   // With custom styling
+ *   <VirtualList
  *   data={items}
  *   height={400}
  *   itemSize={50}
  *   keyExtractor={(item, index) => item.id}
  *   classNames={{
- *     root: 'border rounded-lg',
- *     item: 'hover:bg-accent'
+ *   root: 'border rounded-lg',
+ *   item: 'hover:bg-accent'
  *   }}
  *   renderItem={(item, index) => (
- *     <div>
- *       {item.name}
- *     </div>
+ *   <div>
+ *   {item.name}
+ *   </div>
  *   )}
- * />
- * ```
+ *   />
+ *   ```
  */
-const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, TItemElement extends Element = HTMLDivElement>(props: VirtualListProps<T, TScrollElement, TItemElement>) => {
-  const { className, classNames, containerProps, data, dynamic, height, horizontal, itemSize, keyExtractor, onChange, onScroll, ref, renderItem, style, width, ...rest } = props;
+const VirtualList = <
+  T,
+  TScrollElement extends HTMLDivElement = HTMLDivElement,
+  TItemElement extends Element = HTMLDivElement
+>(
+  props: VirtualListProps<T, TScrollElement, TItemElement>
+) => {
+  const {
+    className,
+    classNames,
+    containerProps,
+    data,
+    dynamic,
+    height,
+    horizontal,
+    itemSize,
+    keyExtractor,
+    onChange,
+    onScroll,
+    ref,
+    renderItem,
+    style,
+    width,
+    ...rest
+  } = props;
 
   const { inner, root } = virtualizerVariants();
 
@@ -76,7 +99,7 @@ const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, 
   });
 
   const containerStyle: CSSProperties = {
-    height: horizontal ? height : height ?? '100%',
+    height: horizontal ? height : (height ?? '100%'),
     width: horizontal ? (width ?? '100%') : width,
     overflow: 'auto',
     contain: 'strict',
@@ -88,15 +111,15 @@ const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, 
 
   const innerStyle: CSSProperties = horizontal
     ? {
-      width: totalSize,
-      height: '100%',
-      position: 'relative'
-    }
+        width: totalSize,
+        height: '100%',
+        position: 'relative'
+      }
     : {
-      height: totalSize,
-      width: '100%',
-      position: 'relative'
-    };
+        height: totalSize,
+        width: '100%',
+        position: 'relative'
+      };
 
   useImperativeHandle(ref, () => {
     return {
@@ -114,34 +137,40 @@ const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, 
           {...(horizontal
             ? {}
             : {
-              style: {
-                position: 'absolute' as const,
-                top: 0,
-                left: 0,
-                width: '100%',
-                transform: `translateY(${items[0]?.start ?? 0}px)`
-              }
-            })}
+                style: {
+                  position: 'absolute' as const,
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${items[0]?.start ?? 0}px)`
+                }
+              })}
         >
-          {items.map((virtualItem) => {
+          {items.map(virtualItem => {
             const item = data[virtualItem.index];
 
             // eslint-disable-next-line no-nested-ternary
-            const key = keyExtractor ? typeof keyExtractor === 'function' ? keyExtractor(item, virtualItem.index) : item[keyExtractor] : virtualItem.index;
+            const key = keyExtractor
+              ? typeof keyExtractor === 'function'
+                ? keyExtractor(item, virtualItem.index)
+                : item[keyExtractor]
+              : virtualItem.index;
             return (
               <div
                 data-index={virtualItem.index}
                 key={String(key)}
                 ref={elementVirtualizer.measureElement as Ref<HTMLDivElement>}
-                style={horizontal
-                  ? {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    height: '100%',
-                    transform: `translateX(${virtualItem.start}px)`
-                  }
-                  : undefined}
+                style={
+                  horizontal
+                    ? {
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        height: '100%',
+                        transform: `translateX(${virtualItem.start}px)`
+                      }
+                    : undefined
+                }
               >
                 {renderItem({
                   item,
@@ -150,36 +179,39 @@ const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, 
                   virtualizer: elementVirtualizer
                 })}
               </div>
-
             );
           })}
         </Comp>
       );
       return dynamicContent;
     }
-    return items.map((virtualItem) => {
+    return items.map(virtualItem => {
       const item = data[virtualItem.index];
 
       const itemStyle: CSSProperties = horizontal
         ? {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          height: '100%',
-          width: `${virtualItem.size}px`,
-          transform: `translateX(${virtualItem.start}px)`
-        }
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: `${virtualItem.size}px`,
+            transform: `translateX(${virtualItem.start}px)`
+          }
         : {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: `${virtualItem.size}px`,
-          transform: `translateY(${virtualItem.start}px)`
-        };
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: `${virtualItem.size}px`,
+            transform: `translateY(${virtualItem.start}px)`
+          };
 
       // eslint-disable-next-line no-nested-ternary
-      const key = keyExtractor ? typeof keyExtractor === 'function' ? keyExtractor(item, virtualItem.index) : item[keyExtractor] : virtualItem.index;
+      const key = keyExtractor
+        ? typeof keyExtractor === 'function'
+          ? keyExtractor(item, virtualItem.index)
+          : item[keyExtractor]
+        : virtualItem.index;
 
       return (
         <Slot
@@ -194,7 +226,7 @@ const VirtualList = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, 
           })}
         </Slot>
       );
-    }); ;
+    });
   };
 
   return (

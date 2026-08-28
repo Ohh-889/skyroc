@@ -1,8 +1,8 @@
 'use client';
 
+import { Root, Trigger } from '@radix-ui/react-hover-card';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { Root, Trigger } from '@radix-ui/react-hover-card';
 import HoverCardArrow from './HoverCardArrow';
 import HoverCardContent from './HoverCardContent';
 import type { HoverCardProps } from './types';
@@ -29,14 +29,12 @@ const HoverCardUI = forwardRef<ComponentRef<typeof HoverCardContent>, HoverCardP
       >
         {children}
 
-        {showArrow
-          ? (
-            <HoverCardArrow
-              className={classNames?.arrow}
-              {...arrowProps}
-            />
-          )
-          : null}
+        {showArrow ? (
+          <HoverCardArrow
+            className={classNames?.arrow}
+            {...arrowProps}
+          />
+        ) : null}
       </HoverCardContent>
     </Root>
   );

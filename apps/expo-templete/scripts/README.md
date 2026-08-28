@@ -50,14 +50,14 @@ env=staging version=1.2.0 pnpm build:apk
 
 写进 `.env`（或 CI 的凭据），仓库里不带任何证书信息。
 
-| 变量                                     | 用途                                                     |
-| ---------------------------------------- | -------------------------------------------------------- |
-| `IOS_TEAM_ID`                            | Apple Developer Team ID，打 IPA 必填                     |
-| `IOS_CODE_SIGN_STYLE`                    | 默认 `Automatic`，见下方「两个靶子」                     |
-| `IOS_PROVISIONING_PROFILE`               | 主 App 描述文件名，手动签名时必填                        |
-| `IOS_WIDGET_PROVISIONING_PROFILE`        | Live Activity 扩展的描述文件名                           |
-| `IOS_EXPORT_METHOD`                      | 默认 `app-store`                                         |
-| `KEYSTORE_NAME` / `KEY_ALIAS` / `STORE_PASSWORD` / `DNAME` | keystore 命令用                        |
+| 变量                                                       | 用途                                 |
+| ---------------------------------------------------------- | ------------------------------------ |
+| `IOS_TEAM_ID`                                              | Apple Developer Team ID，打 IPA 必填 |
+| `IOS_CODE_SIGN_STYLE`                                      | 默认 `Automatic`，见下方「两个靶子」 |
+| `IOS_PROVISIONING_PROFILE`                                 | 主 App 描述文件名，手动签名时必填    |
+| `IOS_WIDGET_PROVISIONING_PROFILE`                          | Live Activity 扩展的描述文件名       |
+| `IOS_EXPORT_METHOD`                                        | 默认 `app-store`                     |
+| `KEYSTORE_NAME` / `KEY_ALIAS` / `STORE_PASSWORD` / `DNAME` | keystore 命令用                      |
 
 ## 两个靶子的 iOS 签名
 

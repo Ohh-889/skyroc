@@ -4,7 +4,6 @@ import { Password } from '@skyroc/web-ui';
 
 const PasswordDisabled = () => {
   return (
-
     <div className="w-80 max-sm:w-auto">
       <Password
         disabled
@@ -12,7 +11,6 @@ const PasswordDisabled = () => {
         placeholder="Please input password"
       />
     </div>
-
   );
 };
 

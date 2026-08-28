@@ -1,6 +1,6 @@
+import { useSettingsTheme } from '@shell/theme';
 import { transformColorWithOpacity } from '@skyroc/color';
 import { ScrollArea } from '@skyroc/web-ui';
-import { useSettingsTheme } from '@shell/theme';
 import { clsx } from 'clsx';
 import { cloneElement, memo } from 'react';
 
@@ -132,7 +132,10 @@ const FirstLevelMenu = memo((props: FirstLevelMenuProps) => {
     <div className="h-full flex-col-stretch flex-1-hidden">
       {children}
       <ScrollArea className="flex-1">
-        <div className="h-full" style={firstLevelMenuStyle}>
+        <div
+          className="h-full"
+          style={firstLevelMenuStyle}
+        >
           {menus
             .filter(item => item.type !== 'divider')
             .map(item => (
@@ -148,7 +151,10 @@ const FirstLevelMenu = memo((props: FirstLevelMenuProps) => {
             ))}
         </div>
       </ScrollArea>
-      <MenuToggler arrowIcon className={clsx({ 'text-white:88 !hover:text-white': inverted })} />
+      <MenuToggler
+        arrowIcon
+        className={clsx({ 'text-white:88 !hover:text-white': inverted })}
+      />
     </div>
   );
 });

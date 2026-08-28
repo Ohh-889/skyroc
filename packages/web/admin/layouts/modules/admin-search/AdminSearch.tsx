@@ -1,5 +1,5 @@
-import { ButtonIcon } from '@shell/ui/antd';
 import { useSettingsTheme } from '@shell/theme';
+import { ButtonIcon } from '@shell/ui/antd';
 import { SvgIcon } from '@shell/ui/compose';
 import { useBoolean } from 'ahooks';
 import { Suspense, lazy, memo } from 'react';
@@ -22,12 +22,20 @@ const GlobalSearch = memo(() => {
 
   return (
     <>
-      <ButtonIcon className="px-12px" hoverAnimation="scale" tooltipContent={t('common.search')} onClick={toggle}>
+      <ButtonIcon
+        className="px-12px"
+        hoverAnimation="scale"
+        tooltipContent={t('common.search')}
+        onClick={toggle}
+      >
         <SvgIcon icon="uil:search" />
       </ButtonIcon>
 
       <Suspense>
-        <SearchModal show={show} onClose={setFalse} />
+        <SearchModal
+          show={show}
+          onClose={setFalse}
+        />
       </Suspense>
     </>
   );

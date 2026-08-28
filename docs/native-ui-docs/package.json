@@ -44,20 +44,20 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.2",
+    "@tailwindcss/node": "^4",
     "@tailwindcss/postcss": "^4.3.3",
+    "@types/hast": "^3.0.5",
     "@types/mdx": "^2.0.14",
     "@types/node": "^26.2.0",
     "@types/react": "catalog:dev",
-    "@tailwindcss/node": "^4",
     "@types/react-dom": "catalog:dev",
-    "postcss": "^8.5.26",
     "lightningcss": ">=1.30.2",
+    "oxlint": "^1.78.0",
+    "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "oxlint": "^1.78.0",
     "uniwind-turbo-plugin-next": "0.1.0",
-    "@types/hast": "^3.0.5",
-    "@opennextjs/cloudflare": "1.20.2",
     "wrangler": "4.123.0"
   }
 }

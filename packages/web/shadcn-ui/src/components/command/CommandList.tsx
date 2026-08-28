@@ -1,5 +1,5 @@
-import { CommandList as _CommandList } from 'cmdk';
 import { cn } from '@skyroc/utils';
+import { CommandList as _CommandList } from 'cmdk';
 import { commandVariants } from './command-variants';
 import type { CommandListProps } from './types';
 

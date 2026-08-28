@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Progress } from '@skyroc/web-ui';
+import { useEffect, useState } from 'react';
 
 const ProgressAnimated = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setProgress((prev) => {
+      setProgress(prev => {
         if (prev >= 100) {
           return 0;
         }

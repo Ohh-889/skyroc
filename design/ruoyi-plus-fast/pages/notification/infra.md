@@ -10,20 +10,20 @@
 
 ## 0. 先把基础设施摸清楚（全部可核对）
 
-| 项 | 实际情况 | 证据 |
-| --- | --- | --- |
-| 数据库 | **MySQL**（asyncmy 驱动） | `pyproject.toml` `asyncmy>=0.2.9` |
-| 缓存 | Redis，有成熟原语层 | `app/infra/redis/`：`client` / `counter` / `keyspec` / `ratelimit` / `sequence` |
-| 任务队列 | **没有**。无 Celery、无 arq、无 dramatiq、无 taskiq | `pyproject.toml` 依赖清单 |
-| MQTT | **没有** | 同上 |
-| 定时调度 | **没有**。无 APScheduler、无 cron 集成 | 同上 |
-| 后台异步范式 | **有**：`asyncio.Queue` + 常驻消费协程 + lifespan 启停 | `app/core/operlog/recorder.py` |
-| 实时推送 | 成熟。WS + SSE 共用一张注册表，Redis Pub/Sub 跨实例 | `app/infra/realtime/{runtime,broker,registry}.py` |
-| 邮件 | 有 | `app/infra/mail/`，`aiosmtplib` |
-| 短信 | 有 | `app/infra/sms/` |
-| 模板引擎 | 有 | `jinja2` |
-| 主键 | **自增 BigInteger**，不是雪花 | `sys_notice.notice_id` `autoincrement=True` |
-| 租户/审计 | ORM 层自动填充 | `install_tenant_scoping` / `install_audit_filling` |
+| 项           | 实际情况                                               | 证据                                                                            |
+| ------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| 数据库       | **MySQL**（asyncmy 驱动）                              | `pyproject.toml` `asyncmy>=0.2.9`                                               |
+| 缓存         | Redis，有成熟原语层                                    | `app/infra/redis/`：`client` / `counter` / `keyspec` / `ratelimit` / `sequence` |
+| 任务队列     | **没有**。无 Celery、无 arq、无 dramatiq、无 taskiq    | `pyproject.toml` 依赖清单                                                       |
+| MQTT         | **没有**                                               | 同上                                                                            |
+| 定时调度     | **没有**。无 APScheduler、无 cron 集成                 | 同上                                                                            |
+| 后台异步范式 | **有**：`asyncio.Queue` + 常驻消费协程 + lifespan 启停 | `app/core/operlog/recorder.py`                                                  |
+| 实时推送     | 成熟。WS + SSE 共用一张注册表，Redis Pub/Sub 跨实例    | `app/infra/realtime/{runtime,broker,registry}.py`                               |
+| 邮件         | 有                                                     | `app/infra/mail/`，`aiosmtplib`                                                 |
+| 短信         | 有                                                     | `app/infra/sms/`                                                                |
+| 模板引擎     | 有                                                     | `jinja2`                                                                        |
+| 主键         | **自增 BigInteger**，不是雪花                          | `sys_notice.notice_id` `autoincrement=True`                                     |
+| 租户/审计    | ORM 层自动填充                                         | `install_tenant_scoping` / `install_audit_filling`                              |
 
 结论先行：**这三个问题都不需要引入任何新组件。** 缺的东西用现有的 MySQL + Redis + 那个消费协程范式全部能补齐，而且补出来的东西比引入 Celery/MQTT 更贴合。
 
@@ -64,7 +64,7 @@ async def send_to_users(user_ids, data, *, message_type, msg="ok", cross_instanc
 不会。因为信号载荷只有一个 `seq`：
 
 ```json
-{"code":"0000","msg":"ok","type":"message.inbox.changed","msg_id":"...","data":{"seq":1045}}
+{ "code": "0000", "msg": "ok", "type": "message.inbox.changed", "msg_id": "...", "data": { "seq": 1045 } }
 ```
 
 4 条连接各收到一份 → 4 个客户端实例各自做 `if (seq > lastSeq) scheduleSync()`。结果是 4 次 sync 请求，返回同样的数据，各自更新到同一个 lastSeq。**没有正确性问题，只有 3 次多余的请求。**
@@ -87,8 +87,8 @@ async def send_to_users(user_ids, data, *, message_type, msg="ok", cross_instanc
 
 ### 1.4 修正后的 P12
 
-| 原 | 修正后 |
-| --- | --- |
+| 原                                | 修正后                                                                                                                                                                                                                        |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 保留一条（WebSocket），SSE 作降级 | **WS 和 SSE 都是一等公民，不做降级，传输由客户端自选。** 服务端只调 `send_to_user`，不关心对方挂的是什么。信号幂等由 `seq` 保证，与连接数无关。同浏览器多标签页在**前端**用 BroadcastChannel 选主，避免 N 次 sync 和 N 次响铃 |
 
 ### 1.5 修正 `backend.md` §7.3
@@ -97,13 +97,13 @@ async def send_to_users(user_ids, data, *, message_type, msg="ok", cross_instanc
 
 `RedisRealtimeBroker` 已经把这件事做完了，而且做得比我提的方案更周全：
 
-| 我提的 | 项目已有的 |
-| --- | --- |
-| Redis Pub/Sub 跨实例 | ✅ `broker.py`，`REALTIME_TOPIC = "global:websocket"` |
-| — | ✅ **回环去重**：`if delivery.source == self._instance_id: return`（发布者一定会收到自己的消息） |
-| — | ✅ **频道带项目前缀**：多项目共用一台 Redis 不串消息 |
-| — | ✅ **listener 异常兜底**：静默退出会导致跨实例推送全断且无报错，所以整个循环外兜一层 |
-| — | ✅ **关闭顺序**：先停订阅再关连接，且必须排在关 Redis 之前 |
+| 我提的               | 项目已有的                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| Redis Pub/Sub 跨实例 | ✅ `broker.py`，`REALTIME_TOPIC = "global:websocket"`                                            |
+| —                    | ✅ **回环去重**：`if delivery.source == self._instance_id: return`（发布者一定会收到自己的消息） |
+| —                    | ✅ **频道带项目前缀**：多项目共用一台 Redis 不串消息                                             |
+| —                    | ✅ **listener 异常兜底**：静默退出会导致跨实例推送全断且无报错，所以整个循环外兜一层             |
+| —                    | ✅ **关闭顺序**：先停订阅再关连接，且必须排在关 Redis 之前                                       |
 
 `local_connections` 只是返回值语义——`runtime.py` 的 docstring 明确写了「返回值只统计本机。转发给其他实例走的是 redis pub/sub，至多一次、没有回执」。这是**正确的设计**（跨实例投递数没法同步得知，等它就是把请求挂在 pub/sub 上），不是缺口。
 
@@ -117,14 +117,14 @@ async def send_to_users(user_ids, data, *, message_type, msg="ok", cross_instanc
 
 MQTT 解决的是这些问题：
 
-| MQTT 的能力 | 我们的场景需要吗 |
-| --- | --- |
-| 海量设备（十万级）长连接 | ❌ 后台管理系统，连接数和用户数同阶 |
-| 弱网、断续、低带宽（物联网） | ❌ 浏览器 + 企业网络 |
-| QoS 0/1/2 分级投递保证 | ❌ **已经有更好的方案**：真相在 `sync` 游标，推送本身可以完全不可靠 |
-| 遗嘱消息（Last Will） | ❌ 用不上 |
-| 主题通配符订阅树 | ❌ 我们的路由就是 user_id，注册表足够 |
-| 保留消息（Retained） | ❌ `sync` 就是这个语义，且顺带对账未读数 |
+| MQTT 的能力                  | 我们的场景需要吗                                                    |
+| ---------------------------- | ------------------------------------------------------------------- |
+| 海量设备（十万级）长连接     | ❌ 后台管理系统，连接数和用户数同阶                                 |
+| 弱网、断续、低带宽（物联网） | ❌ 浏览器 + 企业网络                                                |
+| QoS 0/1/2 分级投递保证       | ❌ **已经有更好的方案**：真相在 `sync` 游标，推送本身可以完全不可靠 |
+| 遗嘱消息（Last Will）        | ❌ 用不上                                                           |
+| 主题通配符订阅树             | ❌ 我们的路由就是 user_id，注册表足够                               |
+| 保留消息（Retained）         | ❌ `sync` 就是这个语义，且顺带对账未读数                            |
 
 引入的成本是实打实的：多一个 broker（EMQX/Mosquitto）要部署、监控、备份、做认证桥接（把 JWT 换成 MQTT 的 username/password 或客户端证书），还要在前端引 MQTT.js。
 
@@ -142,11 +142,11 @@ Celery 功能上够用，但对这个项目有两个具体的不合适：
 
 把需求剥到底，异步只需要：
 
-| 需要 | 谁来提供 |
-| --- | --- |
-| **(a) 提交后异步执行**（不阻塞请求，且必须晚于事务提交） | `sys_msg_outbox` 表 + 消费协程 |
-| **(b) 失败重试**（带退避，可观测，不丢） | 表上的 `attempts` / `next_retry_at` / `last_error` |
-| **(c) 定时触发**（延迟队列，可取消可改期） | `sys_msg_task` 表 + 扫描协程（§3） |
+| 需要                                                     | 谁来提供                                           |
+| -------------------------------------------------------- | -------------------------------------------------- |
+| **(a) 提交后异步执行**（不阻塞请求，且必须晚于事务提交） | `sys_msg_outbox` 表 + 消费协程                     |
+| **(b) 失败重试**（带退避，可观测，不丢）                 | 表上的 `attempts` / `next_retry_at` / `last_error` |
+| **(c) 定时触发**（延迟队列，可取消可改期）               | `sys_msg_task` 表 + 扫描协程（§3）                 |
 
 这三件事**MySQL 表 + 进程内消费协程全部能做**，而且项目里已经有这个范式。
 
@@ -268,11 +268,11 @@ UPDATE sys_msg_outbox
 
 ### 2.7 三层演进路径（每层都不引入新组件）
 
-| 层 | 什么时候上 | 做法 | 新增组件 |
-| --- | --- | --- | --- |
-| **L1** | 现在 | MySQL 表 + 进程内消费协程 + 1 秒轮询 | 无 |
-| **L2** | 多实例部署且嫌 1 秒延迟高 | 加一个 Redis Pub/Sub 频道 `notify:outbox:wake`，提交后 publish，所有实例立刻醒 | 无（Redis 已有，`broker.py` 就是现成模板） |
-| **L3** | 真到量了（每秒几百条扇出） | Redis Stream（消费组 + ack + pending 列表），或独立 worker 进程 | 无（Redis 已有） |
+| 层     | 什么时候上                 | 做法                                                                           | 新增组件                                   |
+| ------ | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------ |
+| **L1** | 现在                       | MySQL 表 + 进程内消费协程 + 1 秒轮询                                           | 无                                         |
+| **L2** | 多实例部署且嫌 1 秒延迟高  | 加一个 Redis Pub/Sub 频道 `notify:outbox:wake`，提交后 publish，所有实例立刻醒 | 无（Redis 已有，`broker.py` 就是现成模板） |
+| **L3** | 真到量了（每秒几百条扇出） | Redis Stream（消费组 + ack + pending 列表），或独立 worker 进程                | 无（Redis 已有）                           |
 
 **L2 的设计要点：Redis 只做加速，不做真相。** Pub/Sub 是至多一次，消息丢了没关系——1 秒轮询兜底。这条界限一定要守住，一旦让 Redis 承载"待处理任务列表"，就要处理"Redis 和表不一致"，那是 L3 才值得付的复杂度。
 
@@ -292,26 +292,26 @@ L3 才考虑 Redis Stream，理由：它引入两份真相（Stream 里的 pendi
 
 它们看起来是不同功能，其实是同一个机制：
 
-| 场景 | 延迟量级 | 能不能取消/改期 |
-| --- | --- | --- |
-| 定时公告（明天 9 点发） | 天 | **必须能**（改期、取消是常规操作） |
-| collapse 窗口冲刷 | 秒~分钟 | 不需要 |
-| 投递重试退避 | 秒~小时 | 需要（消息撤回了就别重试了） |
-| snooze（2 小时后再提醒我） | 小时 | 需要 |
-| 升级阶梯下一跳 | 分钟 | **必须能**（确认了要取消后续所有跳） |
-| 摘要（每天本地 9 点） | 天，周期性 | 需要 |
-| 过期清理、计数器对账 | 周期性 | 不需要 |
+| 场景                       | 延迟量级   | 能不能取消/改期                      |
+| -------------------------- | ---------- | ------------------------------------ |
+| 定时公告（明天 9 点发）    | 天         | **必须能**（改期、取消是常规操作）   |
+| collapse 窗口冲刷          | 秒~分钟    | 不需要                               |
+| 投递重试退避               | 秒~小时    | 需要（消息撤回了就别重试了）         |
+| snooze（2 小时后再提醒我） | 小时       | 需要                                 |
+| 升级阶梯下一跳             | 分钟       | **必须能**（确认了要取消后续所有跳） |
+| 摘要（每天本地 9 点）      | 天，周期性 | 需要                                 |
+| 过期清理、计数器对账       | 周期性     | 不需要                               |
 
 **一张到期任务表全部覆盖。**
 
 ### 3.2 为什么不用 APScheduler / cron
 
-| 方案 | 问题 |
-| --- | --- |
-| **APScheduler（内存 jobstore）** | 调度状态在进程内存 → 多实例重复执行，重启丢任务 |
+| 方案                               | 问题                                                                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **APScheduler（内存 jobstore）**   | 调度状态在进程内存 → 多实例重复执行，重启丢任务                                                                                                        |
 | **APScheduler（数据库 jobstore）** | 状态已经在数据库了，那就是我下面这张表，只是多一层抽象。而且它的 job 是"要执行的函数 + 参数"，表达不了"这个公告改期了"——要先 remove 再 add，不是幂等的 |
-| **系统 cron** | 只能表达周期，表达不了"明天 9 点这一次"；且要单独的进程和部署 |
-| **到期任务表** | 全部能表达，可查询、可取消、可改期、可审计、重启不丢 |
+| **系统 cron**                      | 只能表达周期，表达不了"明天 9 点这一次"；且要单独的进程和部署                                                                                          |
+| **到期任务表**                     | 全部能表达，可查询、可取消、可改期、可审计、重启不丢                                                                                                   |
 
 APScheduler 唯一的优势是"少写 100 行代码"。但那 100 行换来的是**能用 SQL 回答"明天有哪些公告要发"**——这是运营会问的问题。
 
@@ -403,13 +403,13 @@ SELECT task_id, kind, payload FROM sys_msg_task
 
 够，而且**别追求更准**：
 
-| 场景 | 1 秒延迟可接受吗 |
-| --- | --- |
-| 定时公告 | ✅ 差 1 秒无人在意 |
+| 场景          | 1 秒延迟可接受吗     |
+| ------------- | -------------------- |
+| 定时公告      | ✅ 差 1 秒无人在意   |
 | collapse 冲刷 | ✅ 窗口本身是 5 分钟 |
-| 重试退避 | ✅ 退避本身是秒级起 |
-| 升级阶梯 | ✅ 阶梯间隔是分钟级 |
-| 摘要 | ✅ 天级 |
+| 重试退避      | ✅ 退避本身是秒级起  |
+| 升级阶梯      | ✅ 阶梯间隔是分钟级  |
+| 摘要          | ✅ 天级              |
 
 轮询的实际成本：一条走索引的 `SELECT ... LIMIT 100`，空扫时几乎零开销。真嫌它吵可以做**自适应间隔**——查一下"下一个任务什么时候到期"，没有近期任务就睡久一点：
 
@@ -538,16 +538,16 @@ app/main.py                         ← 改：lifespan 里起停两个协程
 
 `platform.md` 和 `backend.md` 的 DDL 是按 Postgres 写的。MySQL 下的对应写法：
 
-| 用途 | Postgres | MySQL |
-| --- | --- | --- |
-| **分配 seq** | `UPDATE ... RETURNING next_seq - 1` | `UPDATE cursor SET next_seq = LAST_INSERT_ID(next_seq + 1) WHERE user_id=?;` 然后 `SELECT LAST_INSERT_ID();` ★ |
-| **批量分配 seq** | `WITH ordered AS (...) UPDATE ... RETURNING` | 同事务内两条：`UPDATE ... WHERE user_id IN (...)` 然后 `SELECT user_id, next_seq-1 FROM cursor WHERE user_id IN (...)`。UPDATE 已持锁，SELECT 读到的就是本事务分配的值 |
-| **幂等插入** | `ON CONFLICT DO NOTHING` | `ON DUPLICATE KEY UPDATE msg_id = msg_id`（**不用 `INSERT IGNORE`**，它会吞掉真错误） |
-| **抢占领取** | `FOR UPDATE SKIP LOCKED` | 同（8.0+）；5.7 退化为乐观 UPDATE 查 affected_rows |
-| **数组参数** | `= ANY($1::bigint[])` | `IN (...)` 展开占位符，注意长度上限，分批 |
-| **JSON** | `jsonb` | `json`（MySQL 8 有函数索引可补） |
-| **毫秒时间** | `timestamptz` | `datetime(3)`，且**统一存 UTC**（MySQL 的 `datetime` 不带时区） |
-| **advisory lock** | `pg_advisory_xact_lock` | `SELECT ... FOR UPDATE` 锁一行租户配置行 |
+| 用途              | Postgres                                     | MySQL                                                                                                                                                                  |
+| ----------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **分配 seq**      | `UPDATE ... RETURNING next_seq - 1`          | `UPDATE cursor SET next_seq = LAST_INSERT_ID(next_seq + 1) WHERE user_id=?;` 然后 `SELECT LAST_INSERT_ID();` ★                                                         |
+| **批量分配 seq**  | `WITH ordered AS (...) UPDATE ... RETURNING` | 同事务内两条：`UPDATE ... WHERE user_id IN (...)` 然后 `SELECT user_id, next_seq-1 FROM cursor WHERE user_id IN (...)`。UPDATE 已持锁，SELECT 读到的就是本事务分配的值 |
+| **幂等插入**      | `ON CONFLICT DO NOTHING`                     | `ON DUPLICATE KEY UPDATE msg_id = msg_id`（**不用 `INSERT IGNORE`**，它会吞掉真错误）                                                                                  |
+| **抢占领取**      | `FOR UPDATE SKIP LOCKED`                     | 同（8.0+）；5.7 退化为乐观 UPDATE 查 affected_rows                                                                                                                     |
+| **数组参数**      | `= ANY($1::bigint[])`                        | `IN (...)` 展开占位符，注意长度上限，分批                                                                                                                              |
+| **JSON**          | `jsonb`                                      | `json`（MySQL 8 有函数索引可补）                                                                                                                                       |
+| **毫秒时间**      | `timestamptz`                                | `datetime(3)`，且**统一存 UTC**（MySQL 的 `datetime` 不带时区）                                                                                                        |
+| **advisory lock** | `pg_advisory_xact_lock`                      | `SELECT ... FOR UPDATE` 锁一行租户配置行                                                                                                                               |
 
 ★ `LAST_INSERT_ID(expr)` 这个用法值得单独说：它把 expr 写进会话级的 last_insert_id 并返回 expr，所以一条 UPDATE 就完成"自增并记住新值"，再用 `SELECT LAST_INSERT_ID()` 读回来。**这个读是会话级的，不受其他连接影响**，所以不需要 `FOR UPDATE` 再查一次。行锁仍然持有到提交，§ `platform.md` §13.2 的正确性论证完全不变。
 
@@ -561,31 +561,31 @@ app/main.py                         ← 改：lifespan 里起停两个协程
 
 ### 6.1 先分清两种"定时"，它们根本不是一回事
 
-| | A. 周期任务（cron） | B. 一次性延迟任务（delayed / one-shot） |
-| --- | --- | --- |
-| 例子 | 每小时对账、每天清理 | 明天 9 点发这条公告、30 秒后重试、5 分钟没确认就升级 |
-| 数量 | 固定几个，部署时就知道 | **无上界**，数据驱动 |
-| 来源 | 配置 | 业务写入 |
-| 要不要能取消/改期 | 不要 | **必须要** |
-| 谁定义 | 工程 | 用户/运营 |
+|                   | A. 周期任务（cron）    | B. 一次性延迟任务（delayed / one-shot）              |
+| ----------------- | ---------------------- | ---------------------------------------------------- |
+| 例子              | 每小时对账、每天清理   | 明天 9 点发这条公告、30 秒后重试、5 分钟没确认就升级 |
+| 数量              | 固定几个，部署时就知道 | **无上界**，数据驱动                                 |
+| 来源              | 配置                   | 业务写入                                             |
+| 要不要能取消/改期 | 不要                   | **必须要**                                           |
+| 谁定义            | 工程                   | 用户/运营                                            |
 
 **Python 生态里绝大多数工具做好了 A，做不好 B。** 而通知平台的定时发布、重试、snooze、升级阶梯全部是 B。这是选型的分水岭。
 
 ### 6.2 生态盘点
 
-| 工具 | 模型 | asyncio | A（cron） | B（延迟/可取消） | 存储 |
-| --- | --- | --- | --- | --- | --- |
-| **Celery** | 老牌全能 | ✗ 同步 worker，async 支持一直别扭 | ✅ `celery beat` | ⚠️ `eta`/`countdown` 有坑，见 §6.3 | Redis/RabbitMQ |
-| **RQ** | 极简 | ✗ fork-per-job | 插件 `rq-scheduler` | ⚠️ 同上 | Redis |
-| **Dramatiq** | Celery 平替，更干净 | ✗ 同步优先 | 插件 `periodiq` | ⚠️ | Redis/RabbitMQ |
-| **arq** | asyncio 原生，极简 | ✅ | ✅ 内置 `cron()` | ✅ `_defer_until` + `_job_id` 唯一 + `abort()` | Redis |
-| **taskiq** | asyncio 原生，FastAPI 风格 DI | ✅ | ✅ `TaskiqScheduler` | ✅ | 可插拔 |
-| **SAQ** | asyncio 原生，比 arq 快，带 UI | ✅ | ✅ | ✅ | Redis / Postgres |
-| **procrastinate** | **Postgres 原生**，事务性入队 | ✅ | ✅ | ✅ | **仅 Postgres** ← 本项目 MySQL，出局 |
-| **Huey** | 轻量 | 部分 | ✅ | ✅ | Redis/SQLite |
-| **APScheduler** | **纯调度器，不是队列** | ✅ v3 有 `AsyncIOScheduler` | ✅ 强项 | ⚠️ 见 §6.4 | 可插拔 jobstore |
-| **Temporal** | 持久化工作流引擎 | ✅ | ✅ | ✅ | 自带 server + DB |
-| **K8s CronJob** | 外部触发 | — | ✅ | ✗ | — |
+| 工具              | 模型                           | asyncio                           | A（cron）            | B（延迟/可取消）                               | 存储                                 |
+| ----------------- | ------------------------------ | --------------------------------- | -------------------- | ---------------------------------------------- | ------------------------------------ |
+| **Celery**        | 老牌全能                       | ✗ 同步 worker，async 支持一直别扭 | ✅ `celery beat`     | ⚠️ `eta`/`countdown` 有坑，见 §6.3             | Redis/RabbitMQ                       |
+| **RQ**            | 极简                           | ✗ fork-per-job                    | 插件 `rq-scheduler`  | ⚠️ 同上                                        | Redis                                |
+| **Dramatiq**      | Celery 平替，更干净            | ✗ 同步优先                        | 插件 `periodiq`      | ⚠️                                             | Redis/RabbitMQ                       |
+| **arq**           | asyncio 原生，极简             | ✅                                | ✅ 内置 `cron()`     | ✅ `_defer_until` + `_job_id` 唯一 + `abort()` | Redis                                |
+| **taskiq**        | asyncio 原生，FastAPI 风格 DI  | ✅                                | ✅ `TaskiqScheduler` | ✅                                             | 可插拔                               |
+| **SAQ**           | asyncio 原生，比 arq 快，带 UI | ✅                                | ✅                   | ✅                                             | Redis / Postgres                     |
+| **procrastinate** | **Postgres 原生**，事务性入队  | ✅                                | ✅                   | ✅                                             | **仅 Postgres** ← 本项目 MySQL，出局 |
+| **Huey**          | 轻量                           | 部分                              | ✅                   | ✅                                             | Redis/SQLite                         |
+| **APScheduler**   | **纯调度器，不是队列**         | ✅ v3 有 `AsyncIOScheduler`       | ✅ 强项              | ⚠️ 见 §6.4                                     | 可插拔 jobstore                      |
+| **Temporal**      | 持久化工作流引擎               | ✅                                | ✅                   | ✅                                             | 自带 server + DB                     |
+| **K8s CronJob**   | 外部触发                       | —                                 | ✅                   | ✗                                              | —                                    |
 
 ### 6.3 `eta` / `countdown` 是个陷阱（Celery 系通病）
 
@@ -641,13 +641,13 @@ Celery 官方文档自己不建议长 ETA，原因：
 
 ### 6.6 所以：如果你想用库，选什么
 
-| 场景 | 选择 |
-| --- | --- |
-| **本项目（MySQL + 全 async + 已有 Redis + 无队列）** | **表 + 协程**（§2）。发件箱躲不掉，而表有了之后队列库只省 80 行 |
-| 如果数据库是 Postgres | **procrastinate**。入队即事务，这个问题从根上没有了 |
-| 如果一定要个库、且接受发件箱 + relay 两段 | **taskiq**（FastAPI 风格 DI，最贴合）或 **arq**（最简单，`_job_id` 天然是 dedupe_key） |
-| 如果有复杂长流程（多步、补偿、人工介入） | **Temporal**。但那是给"审批流"级别的东西用的，通知平台不需要 |
-| 纯周期任务、不想写任何调度代码 | **K8s CronJob 打内部接口**。土但极其可靠，且和应用解耦 |
+| 场景                                                 | 选择                                                                                   |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **本项目（MySQL + 全 async + 已有 Redis + 无队列）** | **表 + 协程**（§2）。发件箱躲不掉，而表有了之后队列库只省 80 行                        |
+| 如果数据库是 Postgres                                | **procrastinate**。入队即事务，这个问题从根上没有了                                    |
+| 如果一定要个库、且接受发件箱 + relay 两段            | **taskiq**（FastAPI 风格 DI，最贴合）或 **arq**（最简单，`_job_id` 天然是 dedupe_key） |
+| 如果有复杂长流程（多步、补偿、人工介入）             | **Temporal**。但那是给"审批流"级别的东西用的，通知平台不需要                           |
+| 纯周期任务、不想写任何调度代码                       | **K8s CronJob 打内部接口**。土但极其可靠，且和应用解耦                                 |
 
 ### 6.7 两个立刻能用的具体技巧
 
@@ -699,10 +699,10 @@ async def run_hourly(redis: PrefixedRedis, name: str, fn) -> None:
 
 ## 7. 待确认
 
-| # | 问题 | 为什么要确认 |
-| --- | --- | --- |
-| **R1** | 部署是单实例还是多实例？ | 单实例可以省掉 `locked_by` / `SKIP LOCKED`（但**表字段别省**，加字段比改并发模型容易）。也决定 §2.7 的 L2 要不要现在做 |
-| ~~R2~~ | ~~MySQL 版本？8.0+ 吗？~~ | **已确认 8.0+**。`SKIP LOCKED` 可用，§2.5 走主方案，不需要乐观抢占的退化写法 |
-| **R3** | 有没有独立部署 worker 的可能？ | 如果运维接受多一个部署单元，L3 可以直接做独立 worker 进程，省掉"消费协程和 API 抢 CPU"的顾虑 |
-| **R4** | `sys_notice` 现有的 5 个接口要不要保持兼容？ | 决定 `backend.md` §2 的方案 C 是否成立。看代码是 `TenantBase` + 自增 `notice_id`，扩展表方案可行 |
-| **R5** | 主键统一自增还是引入雪花？ | `sys_notice` 现在是自增。`sys_msg_inbox` 用 `(user_id, msg_id)` 复合主键不需要自增；但 `sys_msg` 需要 id，跟现有约定用自增即可（**注意：自增 id 不能当 seq 用**，原因见 `platform.md` §13.2） |
+| #      | 问题                                         | 为什么要确认                                                                                                                                                                                  |
+| ------ | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R1** | 部署是单实例还是多实例？                     | 单实例可以省掉 `locked_by` / `SKIP LOCKED`（但**表字段别省**，加字段比改并发模型容易）。也决定 §2.7 的 L2 要不要现在做                                                                        |
+| ~~R2~~ | ~~MySQL 版本？8.0+ 吗？~~                    | **已确认 8.0+**。`SKIP LOCKED` 可用，§2.5 走主方案，不需要乐观抢占的退化写法                                                                                                                  |
+| **R3** | 有没有独立部署 worker 的可能？               | 如果运维接受多一个部署单元，L3 可以直接做独立 worker 进程，省掉"消费协程和 API 抢 CPU"的顾虑                                                                                                  |
+| **R4** | `sys_notice` 现有的 5 个接口要不要保持兼容？ | 决定 `backend.md` §2 的方案 C 是否成立。看代码是 `TenantBase` + 自增 `notice_id`，扩展表方案可行                                                                                              |
+| **R5** | 主键统一自增还是引入雪花？                   | `sys_notice` 现在是自增。`sys_msg_inbox` 用 `(user_id, msg_id)` 复合主键不需要自增；但 `sys_msg` 需要 id，跟现有约定用自增即可（**注意：自增 id 不能当 seq 用**，原因见 `platform.md` §13.2） |

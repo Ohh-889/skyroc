@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import ScrollAreaUI from '../../components/scroll-area/ScrollAreaUI';
 import type { ScrollAreaProps } from '../../components/scroll-area/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const ScrollArea = (props: ScrollAreaProps) => {
   const config = useComponentConfig('scrollArea');

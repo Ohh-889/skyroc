@@ -248,7 +248,11 @@ const LanguageStatus = () => {
   }
 
   return (
-    <button disabled={isCurrentLang('en-US')} type="button" onClick={changeToEnglish}>
+    <button
+      disabled={isCurrentLang('en-US')}
+      type="button"
+      onClick={changeToEnglish}
+    >
       {currentOption?.label ?? locale} / {localeOptions.length}
     </button>
   );
@@ -274,7 +278,12 @@ const LanguageStatus = () => {
 import { LangSwitch } from '@skyroc/web-admin-i18n';
 
 const HeaderActions = () => {
-  return <LangSwitch showTooltip visible />;
+  return (
+    <LangSwitch
+      showTooltip
+      visible
+    />
+  );
 };
 ```
 

@@ -31,13 +31,12 @@ const FILL = { flex: 1 } as const;
 /**
  * 带 ScrollViewMarker 的滚动容器，交给 FlashList 的 `renderScrollComponent`。
  *
- * marker **只认「自己的直接子节点就是 ScrollView」**（`RNSScrollViewMarkerComponentView.mm` 的
- * `resolveScrollViewFromChildView` 不往下递归），而 FlashList v2 在自己的 ScrollView 外面还包了一层
- * 布局用的 View。所以别像另外三个 tab 那样在页面里把 `<List>` 整个套进 marker —— 那样它拿到的是那层
+ * Marker **只认「自己的直接子节点就是 ScrollView」**（`RNSScrollViewMarkerComponentView.mm` 的 `resolveScrollViewFromChildView`
+ * 不往下递归），而 FlashList v2 在自己的 ScrollView 外面还包了一层 布局用的 View。所以别像另外三个 tab 那样在页面里把 `<List>` 整个套进 marker —— 那样它拿到的是那层
  * View，`RCTAssert(foundScrollView != nil)` 当场把 App 打崩，表现就是「点开这个 tab 就闪退」。
  *
- * 改成从内部接：marker 紧贴着真正的 ScrollView，而它往上找 tab bar 走的是 `reactSuperview`，
- * 塞在 FlashList 内部一样登记得上，contentInset 和 tab bar 的贴边态照常。
+ * 改成从内部接：marker 紧贴着真正的 ScrollView，而它往上找 tab bar 走的是 `reactSuperview`， 塞在 FlashList 内部一样登记得上，contentInset 和 tab bar
+ * 的贴边态照常。
  */
 const MarkedScrollView = (props: ScrollViewProps & { ref?: Ref<ScrollView> }) => {
   const { ref, ...rest } = props;

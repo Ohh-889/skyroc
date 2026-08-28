@@ -36,8 +36,14 @@ const ThemeColor = () => {
         }
       >
         <div>
-          <SettingItem key="recommend-color" label={t('theme.appearance.recommendColor')}>
-            <Switch checked={recommendColor} onChange={handleRecommendColorChange} />
+          <SettingItem
+            key="recommend-color"
+            label={t('theme.appearance.recommendColor')}
+          >
+            <Switch
+              checked={recommendColor}
+              onChange={handleRecommendColorChange}
+            />
           </SettingItem>
         </div>
       </Tooltip>

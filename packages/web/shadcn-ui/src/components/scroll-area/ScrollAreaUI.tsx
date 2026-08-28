@@ -24,16 +24,34 @@ const ScrollAreaUI = (props: ScrollAreaProps) => {
   } = props;
 
   return (
-    <ScrollAreaRoot className={className || classNames?.root} {...rest}>
-      <ScrollAreaViewport className={classNames?.viewport} nonce={nonce} {...viewportProps}>
+    <ScrollAreaRoot
+      className={className || classNames?.root}
+      {...rest}
+    >
+      <ScrollAreaViewport
+        className={classNames?.viewport}
+        nonce={nonce}
+        {...viewportProps}
+      >
         {children}
       </ScrollAreaViewport>
 
-      <ScrollAreaScrollbar className={classNames?.scrollbar} orientation={orientation} size={size} {...scrollbarProps}>
-        <ScrollAreaThumb className={classNames?.thumb} {...thumbProps} />
+      <ScrollAreaScrollbar
+        className={classNames?.scrollbar}
+        orientation={orientation}
+        size={size}
+        {...scrollbarProps}
+      >
+        <ScrollAreaThumb
+          className={classNames?.thumb}
+          {...thumbProps}
+        />
       </ScrollAreaScrollbar>
 
-      <ScrollAreaCorner className={cn(classNames?.corner)} data-slot="scroll-area-corner" />
+      <ScrollAreaCorner
+        className={cn(classNames?.corner)}
+        data-slot="scroll-area-corner"
+      />
     </ScrollAreaRoot>
   );
 };

@@ -5,10 +5,8 @@ import { resolveLink, setPendingLink } from '@/feature/linking';
 /**
  * 所有外部链接进 App 的唯一入口。
  *
- * expo-router 的 linking 配置是 `prefixes: []`：任何 URL 都会被剥掉 scheme / origin 后
- * 直接当路由路径去匹配。好处是自定义 scheme 和 Universal Link 天然同一套路由，代价是
- * 「域名下的任意网页路径」也会被当成路由，匹配不上就落 +not-found。所以外部 URL 到内部
- * 路由的映射、以及未登录时的拦截，都必须在这里做完——它跑在导航器挂载**之前**，
+ * Expo-router 的 linking 配置是 `prefixes: []`：任何 URL 都会被剥掉 scheme / origin 后 直接当路由路径去匹配。好处是自定义 scheme 和 Universal Link
+ * 天然同一套路由，代价是 「域名下的任意网页路径」也会被当成路由，匹配不上就落 +not-found。所以外部 URL 到内部 路由的映射、以及未登录时的拦截，都必须在这里做完——它跑在导航器挂载**之前**，
  * 是唯一能在用户看到任何一帧之前改写目标的地方。
  */
 
@@ -26,8 +24,7 @@ const wechatUniversalLink = wechatProps.universalLink ? new URL(wechatProps.univ
 /**
  * 微信回跳有两条通道：Universal Link，以及以 AppID 为 scheme 的兜底 URL。
  *
- * 只比对**路径前缀**而不是整个域名：微信的回跳地址和业务深链通常在同一个域名下
- * （见 app.config.ts 的 APP_LINK_HOST 与 WECHAT_UNIVERSAL_LINK），按 host 判断会把
+ * 只比对**路径前缀**而不是整个域名：微信的回跳地址和业务深链通常在同一个域名下 （见 app.config.ts 的 APP_LINK_HOST 与 WECHAT_UNIVERSAL_LINK），按 host 判断会把
  * /app/... 的业务深链一起吞掉。
  */
 function isWechatCallback(url: string) {

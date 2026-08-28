@@ -16,9 +16,25 @@ export const tabsVariants = tv({
     { class: { content: 'mt-3.5', indicatorRoot: 'py-1.5' }, orientation: 'horizontal', size: '2xl' },
     { class: { content: 'ml-3.5', indicatorRoot: 'px-1.5' }, orientation: 'vertical', size: '2xl' },
     // Line type horizontal
-    { class: { indicator: '-bottom-[2px] h-[2px] w-full ', list: 'border-b-[2px] border-border bg-transparent rounded-none', trigger: 'rounded-none data-[state=active]:text-primary data-[state=active]:font-bold' }, orientation: 'horizontal', type: 'line' },
+    {
+      class: {
+        indicator: '-bottom-[2px] h-[2px] w-full ',
+        list: 'border-b-[2px] border-border bg-transparent rounded-none',
+        trigger: 'rounded-none data-[state=active]:text-primary data-[state=active]:font-bold'
+      },
+      orientation: 'horizontal',
+      type: 'line'
+    },
     // Line type vertical
-    { class: { indicator: '-left-[2px] h-full w-[2px] ', list: 'border-l-[2px] border-border bg-transparent rounded-none', trigger: 'rounded-none data-[state=active]:text-primary data-[state=active]:font-bold' }, orientation: 'vertical', type: 'line' }
+    {
+      class: {
+        indicator: '-left-[2px] h-full w-[2px] ',
+        list: 'border-l-[2px] border-border bg-transparent rounded-none',
+        trigger: 'rounded-none data-[state=active]:text-primary data-[state=active]:font-bold'
+      },
+      orientation: 'vertical',
+      type: 'line'
+    }
   ],
   defaultVariants: {
     size: 'md',
@@ -86,27 +102,27 @@ export const tabsVariants = tv({
         root: 'text-xl',
         trigger: `gap-4 px-6 py-1.5`
       },
-      'lg': {
+      lg: {
         list: `p-1.125`,
         root: 'text-base',
         trigger: `gap-2.5 px-4 py-1.125`
       },
-      'md': {
+      md: {
         list: `p-1`,
         root: 'text-sm',
         trigger: `gap-2 px-3 py-1`
       },
-      'sm': {
+      sm: {
         list: `p-0.875`,
         root: 'text-xs',
         trigger: `gap-1.5 px-2 py-1`
       },
-      'xl': {
+      xl: {
         list: `p-1.25`,
         root: 'text-lg',
         trigger: `gap-3 px-5 py-1.25`
       },
-      'xs': {
+      xs: {
         list: `p-0.75`,
         root: 'text-2xs',
         trigger: `gap-1 px-1.5 py-0.75`

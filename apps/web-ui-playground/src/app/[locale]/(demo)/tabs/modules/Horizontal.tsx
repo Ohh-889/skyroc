@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import type { TabsOptionData } from '@skyroc/web-ui';
 import { Tabs } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const tabs = [
   {

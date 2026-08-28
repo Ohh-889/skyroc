@@ -32,19 +32,19 @@ export const drawerVariants = tv({
       '2xl': {
         content: `gap-y-6 px-7 py-6 text-xl`
       },
-      'lg': {
+      lg: {
         content: `gap-y-4 px-5 py-4 text-base`
       },
-      'md': {
+      md: {
         content: `gap-y-3 px-4 py-3 text-sm`
       },
-      'sm': {
+      sm: {
         content: `gap-y-2 px-3 py-2 text-xs`
       },
-      'xl': {
+      xl: {
         content: `gap-y-5 px-6 py-5 text-lg`
       },
-      'xs': {
+      xs: {
         content: `gap-y-1.5 px-2 py-1.5 text-2xs`
       }
     }

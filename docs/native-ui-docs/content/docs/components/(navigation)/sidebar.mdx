@@ -74,11 +74,11 @@ import { Sidebar } from '@skyroc/native-ui';
 
 | slot        | 作用位置                                       |
 | ----------- | ---------------------------------------------- |
-| `root`      | 根节点（`scrollable` 时即 `ScrollView` 本身）    |
-| `content`   | 内容容器（`scrollable` 时是 contentContainer）  |
-| `item`      | 单项（激活态换成 `bg-background`）              |
-| `itemText`  | 单项文字（激活态加粗）                          |
-| `indicator` | 激活项左侧的指示条                              |
+| `root`      | 根节点（`scrollable` 时即 `ScrollView` 本身）  |
+| `content`   | 内容容器（`scrollable` 时是 contentContainer） |
+| `item`      | 单项（激活态换成 `bg-background`）             |
+| `itemText`  | 单项文字（激活态加粗）                         |
+| `indicator` | 激活项左侧的指示条                             |
 
 <Demo src="@playground/sidebar/SidebarCustomSlots" />
 
@@ -144,7 +144,12 @@ import type { SidebarItem, SidebarProps, SidebarSlots } from '@skyroc/native-ui'
       description: '侧边栏单项配置。',
       fields: [
         { name: 'key', type: 'string', description: '唯一标识。', required: true },
-        { name: 'title', type: 'ReactNode', description: '标题；字符串会自动包裹为 Text 并作为无障碍标签。', required: true },
+        {
+          name: 'title',
+          type: 'ReactNode',
+          description: '标题；字符串会自动包裹为 Text 并作为无障碍标签。',
+          required: true
+        },
         { name: 'badge', type: 'ReactNode', description: '徽标内容。' },
         { name: 'dot', type: 'boolean', description: '是否显示小红点。' },
         { name: 'disabled', type: 'boolean', description: '是否禁用该项。' }

@@ -5,11 +5,10 @@ import type { TemplateName } from '../templates';
 /**
  * 模板物化元数据。
  *
- * 模板里满是只有 monorepo 才能解析的写法：`workspace:*`、`catalog:dev`、指向 `internal/` 的 extends
- * 链。这些写法在仓库外一律无解，而 create-skyroc 恰恰要在仓库外跑。
+ * 模板里满是只有 monorepo 才能解析的写法：`workspace:*`、`catalog:dev`、指向 `internal/` 的 extends 链。这些写法在仓库外一律无解，而 create-skyroc
+ * 恰恰要在仓库外跑。
  *
- * 解法是把「解析」和「生成」拆到两个时刻：构建 create-skyroc 时在 monorepo 内把所有协议解析成具体值，写进本文件描述的
- * sidecar；用户创建项目时只做替换，不需要 monorepo 在场。
+ * 解法是把「解析」和「生成」拆到两个时刻：构建 create-skyroc 时在 monorepo 内把所有协议解析成具体值，写进本文件描述的 sidecar；用户创建项目时只做替换，不需要 monorepo 在场。
  */
 export interface TemplateMeta {
   /** 协议已解析的运行时依赖。 */

@@ -30,12 +30,12 @@ packages/
 
 ### 1. `@core/` —— 跨平台无 UI 业务核心
 
-| 性质 | 含义 |
-| --- | --- |
-| 平台无关 | 不引用 DOM、不引用 RN API |
-| 无 UI | 不包含组件、不输出 DOM/JSX |
-| 业务相关 | 是项目长期沉淀的领域能力 |
-| 适配器 | 平台差异通过 [Adapter Pattern](/docs/guide/architecture/adapter-pattern) 注入 |
+| 性质     | 含义                                                                          |
+| -------- | ----------------------------------------------------------------------------- |
+| 平台无关 | 不引用 DOM、不引用 RN API                                                     |
+| 无 UI    | 不包含组件、不输出 DOM/JSX                                                    |
+| 业务相关 | 是项目长期沉淀的领域能力                                                      |
+| 适配器   | 平台差异通过 [Adapter Pattern](/docs/guide/architecture/adapter-pattern) 注入 |
 
 包（9 个）：`types`、`utils`、`color`、`axios`、`state`、`logger`、`service`、`tailwind-plugin`、`scripts`。
 
@@ -43,18 +43,17 @@ packages/
 
 ### 2. `hooks/` —— 跨平台 React hooks
 
-| 性质 | 含义 |
-| --- | --- |
-| 跨端 | Web、RN、小程序都可用 |
+| 性质         | 含义                            |
+| ------------ | ------------------------------- |
+| 跨端         | Web、RN、小程序都可用           |
 | React 运行时 | 依赖 React，因此不放进 `@core/` |
-| 平台子入口 | 浏览器专用 hooks 隔离在 `./web` |
+| 平台子入口   | 浏览器专用 hooks 隔离在 `./web` |
 
 包（1 个）：`@skyroc/hooks`。
 
 <Callout type="info">
   这里曾经还有一个 `shared/` 目录，放 `@skyroc/ui-types` 与 `@skyroc/type-utils` 两个纯类型包。
-  为几十行类型单开一个包要长期付版本、构建与发布的成本，它们已分别并入
-  [`@skyroc/utils/type`](/docs/core/utils/type) 与
+  为几十行类型单开一个包要长期付版本、构建与发布的成本，它们已分别并入 [`@skyroc/utils/type`](/docs/core/utils/type) 与
   [`@skyroc/tailwind-plugin/ui`](/docs/core/tailwind-plugin#子入口)，`shared/` 目录已删除。
 </Callout>
 
@@ -62,21 +61,21 @@ packages/
 
 ### 3. `primitives/` —— UI-agnostic 能力原语
 
-| 性质 | 含义 |
-| --- | --- |
-| 跨端 | 不绑定渲染层 |
-| 能力 | 解决一类问题（form / router / media） |
-| 无样式 | 不提供视觉，由消费方组合 |
+| 性质   | 含义                                  |
+| ------ | ------------------------------------- |
+| 跨端   | 不绑定渲染层                          |
+| 能力   | 解决一类问题（form / router / media） |
+| 无样式 | 不提供视觉，由消费方组合              |
 
 包：`filed-form`（即 `@skyroc/form`，类型安全的表单原语）。后续会有 router / media / dnd 等。
 
 ### 4. `web/` —— Web 专属
 
-| 子目录 | 性质 |
-| --- | --- |
-| `tailwind-plugin`、`antd-theme` | 设计系统基础 |
-| `materials` | 骨架结构组件 |
-| `ui/`（shadcn / antd / compose） | 设计系统层 |
+| 子目录                                                                                                                              | 性质         |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `tailwind-plugin`、`antd-theme`                                                                                                     | 设计系统基础 |
+| `materials`                                                                                                                         | 骨架结构组件 |
+| `ui/`（shadcn / antd / compose）                                                                                                    | 设计系统层   |
 | `admin-theme`、`admin-i18n`、`admin-layouts`、`admin-notification`、`admin-runtime`、`admin-styles`、`admin-vite`、`admin/devtools` | Admin 应用层 |
 
 详见 [Web 端包总览](/docs/web)。
@@ -91,12 +90,12 @@ packages/
 
 ## 为什么这样切
 
-| 替代方案 | 缺陷 |
-| --- | --- |
+| 替代方案                                        | 缺陷                                                |
+| ----------------------------------------------- | --------------------------------------------------- |
 | 按类型切分（`components/`、`hooks/`、`utils/`） | 跨平台代码与平台特定代码混居，无法按平台 tree-shake |
-| 单一 universal 包 | bundle 必然带上跨平台代码，体积膨胀 |
-| 复制粘贴到每个端 | 业务逻辑漂移，维护噩梦 |
-| `condition` 字段（browser/react-native） | 类型推断脆弱，调试困难 |
+| 单一 universal 包                               | bundle 必然带上跨平台代码，体积膨胀                 |
+| 复制粘贴到每个端                                | 业务逻辑漂移，维护噩梦                              |
+| `condition` 字段（browser/react-native）        | 类型推断脆弱，调试困难                              |
 
 **平台优先 + Adapter Pattern** 的组合让：
 
@@ -119,11 +118,11 @@ packages/
              └── miniapp/*（只能往左依赖）
 ```
 
-| 不允许的依赖 | 为何 |
-| --- | --- |
-| `@core/*` 依赖 `web/*` | core 应保持跨平台，不能绑死端 |
-| `shared/*` 依赖 `web/*` | 同上 |
-| `web/*` 依赖 `native/*`（或反之） | 平台间互不依赖 |
+| 不允许的依赖                      | 为何                          |
+| --------------------------------- | ----------------------------- |
+| `@core/*` 依赖 `web/*`            | core 应保持跨平台，不能绑死端 |
+| `shared/*` 依赖 `web/*`           | 同上                          |
+| `web/*` 依赖 `native/*`（或反之） | 平台间互不依赖                |
 
 具体可视化关系见 [依赖图](/docs/guide/architecture/dependency-graph)。
 
@@ -133,13 +132,13 @@ packages/
 
 ## 跨平台代码的常见做法
 
-| 场景 | 做法 |
-| --- | --- |
-| 类型 / 常量 / 数据 | `shared/`，零依赖 |
-| 业务核心逻辑（无 DOM） | `@core/` |
-| 平台差异（存储 / fetch） | `@core/` 暴露抽象，端项目注入实现 |
+| 场景                     | 做法                                                          |
+| ------------------------ | ------------------------------------------------------------- |
+| 类型 / 常量 / 数据       | `shared/`，零依赖                                             |
+| 业务核心逻辑（无 DOM）   | `@core/`                                                      |
+| 平台差异（存储 / fetch） | `@core/` 暴露抽象，端项目注入实现                             |
 | 同名 Hook 跨平台行为不同 | `@skyroc/hooks` 主入口（RN 安全）+ `./web` 子入口（DOM-only） |
-| 同名组件 | 不共用，分别建 `web/ui/*` 与 `native/ui/*` |
+| 同名组件                 | 不共用，分别建 `web/ui/*` 与 `native/ui/*`                    |
 
 ## 与包分层、适配器模式的关系
 

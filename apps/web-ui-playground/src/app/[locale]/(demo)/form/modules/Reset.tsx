@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { Button, Form, FormField, Input, useForm } from '@skyroc/web-ui';
+import React from 'react';
 
 interface Inputs {
   info: { city: string; company: string };

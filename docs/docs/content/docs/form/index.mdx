@@ -5,16 +5,16 @@ description: 类型安全的 React 表单 primitive，路径级精确订阅 + St
 
 ## 概览
 
-| 项 | 值 |
-| --- | --- |
-| 包名 | `@skyroc/form` |
-| 目录 | `packages/primitives/filed-form` |
-| 版本 | 0.0.2 |
+| 项         | 值                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| 包名       | `@skyroc/form`                                                                                 |
+| 目录       | `packages/primitives/filed-form`                                                               |
+| 版本       | 0.0.2                                                                                          |
 | 运行时依赖 | `@radix-ui/react-slot`、[`@skyroc/utils`](/docs/core/utils/overview)（类型走 `./type` 子入口） |
-| peer | react、react-dom（^16.8 – ^19） |
-| 子入口 | `.`、`./react` |
-| 测试 | ✅ 5 个 |
-| README | ✅ `README.md` + `README.zh.md` |
+| peer       | react、react-dom（^16.8 – ^19）                                                                |
+| 子入口     | `.`、`./react`                                                                                 |
+| 测试       | ✅ 5 个                                                                                        |
+| README     | ✅ `README.md` + `README.zh.md`                                                                |
 
 `@skyroc/form` 是一个**类型安全的 React 表单库**。设计核心是把表单数据形状（`Values`）作为泛型贯穿所有 API，让字段路径不是 `string` 而是由 `Values` 结构推导出的合法字面量联合，再配合 `ChangeTag` bitmask 实现精确订阅、避免无关字段触发重渲染。
 
@@ -27,21 +27,21 @@ description: 类型安全的 React 表单 primitive，路径级精确订阅 + St
 
 ## 四条主线
 
-| 主线 | 说明 | 详见 |
-| --- | --- | --- |
-| 泛型 `Values` 贯穿全链路 | 路径与值类型从数据形状推导，写错编译期就报 | [类型安全](/docs/form/type-safety) |
+| 主线                     | 说明                                               | 详见                                |
+| ------------------------ | -------------------------------------------------- | ----------------------------------- |
+| 泛型 `Values` 贯穿全链路 | 路径与值类型从数据形状推导，写错编译期就报         | [类型安全](/docs/form/type-safety)  |
 | `ChangeTag` bitmask 订阅 | 值 / 校验状态 / 数组结构变化标记为不同位，按位匹配 | [精确订阅](/docs/form/subscription) |
-| StandardSchema 集成 | 通过 `~standard.validate` 接入，兼容主流校验库 | [校验](/docs/form/validation) |
-| form-core 与 React 分层 | 状态引擎框架无关，React 层只做桥接 | [form-core](/docs/form/form-core) |
+| StandardSchema 集成      | 通过 `~standard.validate` 接入，兼容主流校验库     | [校验](/docs/form/validation)       |
+| form-core 与 React 分层  | 状态引擎框架无关，React 层只做桥接                 | [form-core](/docs/form/form-core)   |
 
 先跑起来看 [快速上手](/docs/form/quick-start)。
 
 ## 子入口
 
-| 子路径 | 内容 |
-| --- | --- |
-| `.` | form-core 类型 + 全部 React API |
-| `./react` | 仅 React 层（组件 + hooks） |
+| 子路径    | 内容                            |
+| --------- | ------------------------------- |
+| `.`       | form-core 类型 + 全部 React API |
+| `./react` | 仅 React 层（组件 + hooks）     |
 
 主入口 `src/index.ts` 除了 `export * from './react'`，还额外导出 form-core 的类型：`SubscribeMaskOptions`、`Action`、`Meta`、`ValidateMessages`、`Rule`，以及从 type-utils 透传的 `AllPathsKeys` 和 `FieldElement`。
 
@@ -83,19 +83,20 @@ src/
 ```
 
 <Callout>
-目录名是 `filed-form`（拼写遗留），发布名是 `@skyroc/form`。以 `package.json#name` 为准，见 [命名规范](/docs/guide/architecture/naming)。
+  目录名是 `filed-form`（拼写遗留），发布名是 `@skyroc/form`。以 `package.json#name` 为准，见
+  [命名规范](/docs/guide/architecture/naming)。
 </Callout>
 
 ## 测试
 
 5 个测试文件：
 
-| 文件主题 | 覆盖 |
-| --- | --- |
-| `createStore` | 状态引擎 |
-| `validation` | 校验逻辑 |
-| `hooks` | React hooks 行为 |
-| `react-components` | 组件交互 |
+| 文件主题                    | 覆盖                        |
+| --------------------------- | --------------------------- |
+| `createStore`               | 状态引擎                    |
+| `validation`                | 校验逻辑                    |
+| `hooks`                     | React hooks 行为            |
+| `react-components`          | 组件交互                    |
 | `event-middleware-resolver` | 事件 + 中间件 + schema 解析 |
 
 ## 详细文档

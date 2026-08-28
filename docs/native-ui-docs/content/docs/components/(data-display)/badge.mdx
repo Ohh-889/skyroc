@@ -37,14 +37,14 @@ import { Badge } from '@skyroc/native-ui';
 
 `color` 提供 6 种语义色，文字角标与圆点角标共用同一份取色，切到 `dot` 不会丢掉颜色语义：
 
-| 颜色          | 语义     | 适用场景                 |
-| ------------- | -------- | ------------------------ |
-| `destructive` | 强提醒   | 未读消息、错误数（默认） |
-| `primary`     | 主题     | 与主色一致的常规标记     |
-| `secondary`   | 次级     | 弱化的辅助标记           |
-| `success`     | 成功     | 已完成、在线             |
-| `warning`     | 警告     | 需要注意的数量           |
-| `info`        | 信息     | 中性的信息提示           |
+| 颜色          | 语义   | 适用场景                 |
+| ------------- | ------ | ------------------------ |
+| `destructive` | 强提醒 | 未读消息、错误数（默认） |
+| `primary`     | 主题   | 与主色一致的常规标记     |
+| `secondary`   | 次级   | 弱化的辅助标记           |
+| `success`     | 成功   | 已完成、在线             |
+| `warning`     | 警告   | 需要注意的数量           |
+| `info`        | 信息   | 中性的信息提示           |
 
 <Demo src="@playground/badge/BadgeColor" />
 
@@ -86,12 +86,12 @@ import { Badge } from '@skyroc/native-ui';
 
 `content` 传 `ReactElement` 时原样渲染，不再包裹 `Text`，也不参与 `max` 封顶——此时字号、颜色都由你自己的节点决定。`classNames` 按 slot 细粒度覆盖：
 
-| slot      | 作用位置                                       |
-| --------- | ---------------------------------------------- |
+| slot      | 作用位置                                         |
+| --------- | ------------------------------------------------ |
 | `root`    | 包裹 `children` 的相对定位容器（独立模式不存在） |
-| `badge`   | 文字角标的圆角容器                             |
-| `content` | 角标内自动包裹的 `Text`                        |
-| `dot`     | 圆点角标                                       |
+| `badge`   | 文字角标的圆角容器                               |
+| `content` | 角标内自动包裹的 `Text`                          |
+| `dot`     | 圆点角标                                         |
 
 <Demo src="@playground/badge/BadgeStyles" />
 

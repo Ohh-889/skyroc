@@ -31,17 +31,17 @@ assert "tenant_id" in _leading_columns(table)   # 必须是某个索引/约束�
 
 ### 0.3 基类选择：只有两张表带租户列
 
-| 表 | 基类 | `tenant_id` | 理由 |
-| --- | --- | --- | --- |
-| `sys_notify_event` | `TenantBase` | ✅ 自动 | 查询是 `(tenant_id, dedupe_key)` 和 `(tenant_id, event_type, ...)`，租户天然最左 |
-| `sys_notify_msg` | `TenantBase` | ✅ 自动 | 查询是"本租户的公告列表 / 全员公告 feed"，租户天然最左 |
-| `sys_notify_msg_revision` | `AuditedBase` | ❌ | 访问路径必然是"先取 msg（已过租户过滤），再取它的修订"，按 `(msg_id, revision)` |
-| `sys_notify_task` | `Base` | ❌ | **租户是消息的属性，不是任务的属性。** relay 跨租户领取，查询是 `(state, fire_at)` |
-| `sys_notify_delivery` | `Base` | ❌ | 同上，claim 是 `(state, next_retry_at)`，统计是 `(msg_id)` |
-| `sys_notify_inbox` | `Base` | ❌ | 量最大，每次访问必带 `user_id`（全局唯一） |
-| `sys_notify_cursor` | `Base` | ❌ | 同上 |
-| `sys_notify_bcast_state` | `Base` | ❌ | 同上 |
-| `sys_notify_preference` | `Base` | ❌ | 同上 |
+| 表                        | 基类          | `tenant_id` | 理由                                                                               |
+| ------------------------- | ------------- | ----------- | ---------------------------------------------------------------------------------- |
+| `sys_notify_event`        | `TenantBase`  | ✅ 自动     | 查询是 `(tenant_id, dedupe_key)` 和 `(tenant_id, event_type, ...)`，租户天然最左   |
+| `sys_notify_msg`          | `TenantBase`  | ✅ 自动     | 查询是"本租户的公告列表 / 全员公告 feed"，租户天然最左                             |
+| `sys_notify_msg_revision` | `AuditedBase` | ❌          | 访问路径必然是"先取 msg（已过租户过滤），再取它的修订"，按 `(msg_id, revision)`    |
+| `sys_notify_task`         | `Base`        | ❌          | **租户是消息的属性，不是任务的属性。** relay 跨租户领取，查询是 `(state, fire_at)` |
+| `sys_notify_delivery`     | `Base`        | ❌          | 同上，claim 是 `(state, next_retry_at)`，统计是 `(msg_id)`                         |
+| `sys_notify_inbox`        | `Base`        | ❌          | 量最大，每次访问必带 `user_id`（全局唯一）                                         |
+| `sys_notify_cursor`       | `Base`        | ❌          | 同上                                                                               |
+| `sys_notify_bcast_state`  | `Base`        | ❌          | 同上                                                                               |
+| `sys_notify_preference`   | `Base`        | ❌          | 同上                                                                               |
 
 不带 `tenant_id` 的表全部用裸 `Base`（不带审计列——系统写入没有操作人，5 列全空是浪费：`inbox` 7300 万行 × 5 列）。
 
@@ -404,10 +404,10 @@ async def allocate_seqs(session: AsyncSession, user_ids: Sequence[int]) -> dict[
 
 分配规则：
 
-| 操作 | `entry_seq` | `change_seq` |
-| --- | --- | --- |
-| 插入 | `allocate_seqs()` | 同 `entry_seq` |
-| 已读 / 取消已读 / 处理态 / 修订传播 / 撤回 | **不变** | `allocate_seqs()` |
+| 操作                                       | `entry_seq`       | `change_seq`      |
+| ------------------------------------------ | ----------------- | ----------------- |
+| 插入                                       | `allocate_seqs()` | 同 `entry_seq`    |
+| 已读 / 取消已读 / 处理态 / 修订传播 / 撤回 | **不变**          | `allocate_seqs()` |
 
 ---
 
@@ -456,12 +456,12 @@ async def fanout(session: AsyncSession, msg: NotifyMsg) -> None:
 
 四个性质，逐条对应：
 
-| 性质 | 靠什么 |
-| --- | --- |
-| 幂等 | `PRIMARY KEY (user_id, msg_id)` + `ON DUPLICATE KEY UPDATE msg_id = msg_id` |
-| 可续跑 | `fanout_cursor`，按 `user_id` 升序推进 |
-| 无死锁 | 块内升序、块间独立事务 |
-| 推送晚于提交 | `signal_changed` 在 `commit()` 之后 |
+| 性质         | 靠什么                                                                      |
+| ------------ | --------------------------------------------------------------------------- |
+| 幂等         | `PRIMARY KEY (user_id, msg_id)` + `ON DUPLICATE KEY UPDATE msg_id = msg_id` |
+| 可续跑       | `fanout_cursor`，按 `user_id` 升序推进                                      |
+| 无死锁       | 块内升序、块间独立事务                                                      |
+| 推送晚于提交 | `signal_changed` 在 `commit()` 之后                                         |
 
 `ON DUPLICATE KEY` 会浪费已分配的 seq（重跑时号被消耗但没插行）。无妨——seq 只要求单调，不要求连续。
 
@@ -588,26 +588,26 @@ _ordered = apply_sort(stmt, sort, columns=_SORT_COLUMNS,
 
 ## 7. 与现有约定的其余对齐
 
-| 项目约定 | 通知模块怎么跟 |
-| --- | --- |
-| `R[T]` 信封 `{code,msg,data}` | 全部接口用 `response_model=R[...]` |
-| `Code` 枚举只放"前端要走特殊流程"的码 | **不新增业务码**。通知的错误都是"弹个 msg"，走默认的 HTTP 状态码字符串 |
-| 权限点模块未落地，暂用 `SuperAdminDep` | 管理端接口用 `SuperAdminDep`，用户端用 `CurrentUserDep` |
-| `OperLogRoute` + `@oper_log`，查询接口不标 | 发布/撤回/修订标 `@oper_log`；list/sync/counts/read 不标 |
-| service 与 repository 共用一个 session，**事务边界在用例** | `notify.emit(session, ...)` 不 commit，由调用方的用例 commit |
-| `AuditMixin` 时间戳是数据库 `CURRENT_TIMESTAMP`，INSERT 后要 `session.refresh()` | 创建公告后要 refresh 才能读 `created_at`/`create_by` |
-| 模块结构 | `models/constants/listing/repository/service/exceptions` + `api/deps.py` + `api/v1/routes.py` + `api/v1/schemas/*` |
-| 时间统一 UTC，要求 MySQL `time_zone='+00:00'` | 所有 `datetime(3)` 存 UTC，`now(3)` 依赖这个部署前提 |
+| 项目约定                                                                         | 通知模块怎么跟                                                                                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `R[T]` 信封 `{code,msg,data}`                                                    | 全部接口用 `response_model=R[...]`                                                                                 |
+| `Code` 枚举只放"前端要走特殊流程"的码                                            | **不新增业务码**。通知的错误都是"弹个 msg"，走默认的 HTTP 状态码字符串                                             |
+| 权限点模块未落地，暂用 `SuperAdminDep`                                           | 管理端接口用 `SuperAdminDep`，用户端用 `CurrentUserDep`                                                            |
+| `OperLogRoute` + `@oper_log`，查询接口不标                                       | 发布/撤回/修订标 `@oper_log`；list/sync/counts/read 不标                                                           |
+| service 与 repository 共用一个 session，**事务边界在用例**                       | `notify.emit(session, ...)` 不 commit，由调用方的用例 commit                                                       |
+| `AuditMixin` 时间戳是数据库 `CURRENT_TIMESTAMP`，INSERT 后要 `session.refresh()` | 创建公告后要 refresh 才能读 `created_at`/`create_by`                                                               |
+| 模块结构                                                                         | `models/constants/listing/repository/service/exceptions` + `api/deps.py` + `api/v1/routes.py` + `api/v1/schemas/*` |
+| 时间统一 UTC，要求 MySQL `time_zone='+00:00'`                                    | 所有 `datetime(3)` 存 UTC，`now(3)` 依赖这个部署前提                                                               |
 
 ---
 
 ## 8. 事件摄入的鉴权（`review.md` H10）
 
-| 来源 | 方式 | 鉴权 |
-| --- | --- | --- |
-| 内部业务模块 | **直接函数调用** `notify.emit(session, event, dedupe_key=...)` | 无需（同进程、同事务） |
-| 内部异步任务 | 同上 | 同上 |
-| 外部系统 | HTTP（P1 再开） | 签名 + `event_type` 白名单 + **不允许提交 `security` 分类** |
+| 来源         | 方式                                                           | 鉴权                                                        |
+| ------------ | -------------------------------------------------------------- | ----------------------------------------------------------- |
+| 内部业务模块 | **直接函数调用** `notify.emit(session, event, dedupe_key=...)` | 无需（同进程、同事务）                                      |
+| 内部异步任务 | 同上                                                           | 同上                                                        |
+| 外部系统     | HTTP（P1 再开）                                                | 签名 + `event_type` 白名单 + **不允许提交 `security` 分类** |
 
 **内部调用不走 HTTP。** 走 HTTP 就得鉴权，而任何鉴权都能被伪造成"内部调用"——包括伪造安全告警。P0 不开 HTTP 摄入口。
 
@@ -680,10 +680,10 @@ ChannelPayload = MailPayload | SmsPayload
 
 ### 9.4 重试分两层（`implementation.md` §2）
 
-| 层 | 管什么 |
-| --- | --- |
+| 层                                     | 管什么                                               |
+| -------------------------------------- | ---------------------------------------------------- |
 | taskiq `SimpleRetryMiddleware`（3 次） | 偶发失败：网络抖动、MySQL 死锁。进程内、秒级、不落库 |
-| `delivery.attempts` + `next_retry_at` | 持续失败：供应商挂了。落库、可观测、退避到小时级 |
+| `delivery.attempts` + `next_retry_at`  | 持续失败：供应商挂了。落库、可观测、退避到小时级     |
 
 判据：**这次重试要不要跨越进程重启？** 要 → 表；不要 → 中间件。
 

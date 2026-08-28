@@ -3,9 +3,7 @@
   "name": "input-otp",
   "type": "registry:block",
   "title": "Input Otp",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/input-otp/InputOTP.tsx",

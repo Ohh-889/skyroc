@@ -40,7 +40,10 @@ const TreeBasic = () => {
   const [expanded, setExpanded] = useState<string[]>(['composables', 'components', 'home']);
 
   return (
-    <Card split title="Basic">
+    <Card
+      split
+      title="Basic"
+    >
       <div className="w-full max-w-[320px]">
         <Tree
           className="w-56 list-none rounded-lg border bg-white p-2 text-sm font-medium text-stone-700 shadow-sm select-none"

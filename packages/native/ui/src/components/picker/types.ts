@@ -1,5 +1,5 @@
-import type { ReactNode, Ref } from 'react';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import type { ReactNode, Ref } from 'react';
 import type { SlotClassNames } from '../../types';
 import type { SheetSlots } from '../sheet/types';
 
@@ -172,8 +172,8 @@ export interface PickerProps extends PickerViewProps {
   /**
    * 是否允许下拉关闭，默认 false。
    *
-   * 滚轮要独占垂直手势，所以 Picker 关掉了面板的内容拖拽（enableContentPanningGesture）， 下拉通道只剩顶部 handle，而 Picker 默认不显示 handle。
-   * 要用这个能力得同时传 `showHandle`，否则开了也无处可拖。
+   * 滚轮要独占垂直手势，所以 Picker 关掉了面板的内容拖拽（enableContentPanningGesture）， 下拉通道只剩顶部 handle，而 Picker 默认不显示 handle。 要用这个能力得同时传
+   * `showHandle`，否则开了也无处可拖。
    */
   enablePanDownToClose?: boolean;
 

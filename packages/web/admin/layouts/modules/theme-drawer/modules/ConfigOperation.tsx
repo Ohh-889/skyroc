@@ -1,5 +1,5 @@
-import { useCopy } from '@skyroc/hooks/web';
 import { showErrorMessage, showSuccessMessage, useSettingsTheme } from '@shell/theme';
+import { useCopy } from '@skyroc/hooks/web';
 import { Button as AButton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -40,10 +40,16 @@ const ConfigOperation = () => {
 
   return (
     <div className="flex justify-between">
-      <AButton danger onClick={handleReset}>
+      <AButton
+        danger
+        onClick={handleReset}
+      >
         {t('theme.configOperation.resetConfig')}
       </AButton>
-      <AButton type="primary" onClick={handleCopy}>
+      <AButton
+        type="primary"
+        onClick={handleCopy}
+      >
         {t('theme.configOperation.copyConfig')}
       </AButton>
     </div>

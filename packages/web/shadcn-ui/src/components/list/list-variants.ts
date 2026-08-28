@@ -19,31 +19,31 @@ export const listVariants = tv({
         root: 'gap-7 text-xl',
         title: 'text-2xl leading-[calc(var(--spacing)*6.25)]'
       },
-      'lg': {
+      lg: {
         content: 'gap-1.25',
         item: 'gap-5',
         root: 'gap-5 text-base',
         title: 'text-lg leading-[calc(var(--spacing)*5)]'
       },
-      'md': {
+      md: {
         content: 'gap-1',
         item: 'gap-4',
         root: 'gap-4 text-sm',
         title: 'text-base leading-[calc(var(--spacing)*4.375)]'
       },
-      'sm': {
+      sm: {
         content: 'gap-1',
         item: 'gap-3',
         root: 'gap-3 text-xs',
         title: 'text-sm leading-[calc(var(--spacing)*3.75)]'
       },
-      'xl': {
+      xl: {
         content: 'gap-1.5',
         item: 'gap-6',
         root: 'gap-6 text-lg',
         title: 'text-xl leading-[calc(var(--spacing)*5.625)]'
       },
-      'xs': {
+      xs: {
         content: 'gap-0.75',
         item: 'gap-2',
         root: 'gap-2 text-2xs',

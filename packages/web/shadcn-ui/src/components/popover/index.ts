@@ -8,7 +8,6 @@ export { default as PopoverContent } from './PopoverContent';
 
 export { default as Popover } from './PopoverUI';
 
-
 export { default as PopoverUI } from './PopoverUI';
 
 export * from './types';

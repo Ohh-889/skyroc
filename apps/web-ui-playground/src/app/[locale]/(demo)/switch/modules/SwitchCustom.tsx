@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
 import { Switch } from '@skyroc/web-ui';
+import { Moon, Sun } from 'lucide-react';
+import { useState } from 'react';
 
 const SwitchCustom = () => {
   const [checked, setChecked] = useState(true);

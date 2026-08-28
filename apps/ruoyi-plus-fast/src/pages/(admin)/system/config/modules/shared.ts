@@ -54,7 +54,5 @@ export function normalizeConfigSearchParams(params: Partial<ConfigListParams>): 
 
 /** 是否存在生效中的筛选条件，用来提示用户当前列表不是全量。 */
 export function hasConfigFilters(params: Partial<ConfigListParams>) {
-  return Boolean(
-    params.configKey || params.configName || params.configType || params.rangeBegin || params.rangeEnd
-  );
+  return Boolean(params.configKey || params.configName || params.configType || params.rangeBegin || params.rangeEnd);
 }

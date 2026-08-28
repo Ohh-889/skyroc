@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/materials"
-description: "管理后台 UI 材料库 — 提供完整的布局框架 AdminLayout 与多风格标签页 PageTab，支持响应式、暗色模式与 CSS 变量驱动的动态主题"
+title: '@skyroc/materials'
+description: '管理后台 UI 材料库 — 提供完整的布局框架 AdminLayout 与多风格标签页 PageTab，支持响应式、暗色模式与 CSS 变量驱动的动态主题'
 ---
 
 ## 概述
@@ -99,80 +99,84 @@ const App = () => {
 
 #### 布局与滚动
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `mode` | `'vertical' \| 'horizontal'` | `'vertical'` | 布局方向，影响 Sider 位置和 Footer 行为 |
-| `scrollMode` | `'content' \| 'wrapper'` | `'content'` | 滚动区域位置，见下方说明 |
-| `scrollElId` | `string` | `'__SCROLL_EL_ID__'` | 滚动容器的 DOM id，用于编程式滚动 |
-| `scrollElClass` | `string` | — | 滚动元素额外 class |
-| `scrollWrapperClass` | `string` | — | 外层包裹 section 的 class |
-| `fixedTop` | `boolean` | `true` | Header 和 Tab 是否固定到顶部（`position: absolute`）|
-| `isMobile` | `boolean` | — | 移动端模式：桌面 Sider 隐藏，启用 Mobile Sider + 遮罩 |
-| `maxZIndex` | `number` | `100` | 所有区域层叠的上限基准值 |
-| `commonClass` | `string` | `'transition-all-300'` | 所有区域公共 class，用于控制过渡动画 |
-| `fullContent` | `boolean` | — | 全屏内容模式：Header、Sider、Footer 全部 `display: none` |
+| Prop                 | 类型                         | 默认值                 | 说明                                                     |
+| -------------------- | ---------------------------- | ---------------------- | -------------------------------------------------------- |
+| `mode`               | `'vertical' \| 'horizontal'` | `'vertical'`           | 布局方向，影响 Sider 位置和 Footer 行为                  |
+| `scrollMode`         | `'content' \| 'wrapper'`     | `'content'`            | 滚动区域位置，见下方说明                                 |
+| `scrollElId`         | `string`                     | `'__SCROLL_EL_ID__'`   | 滚动容器的 DOM id，用于编程式滚动                        |
+| `scrollElClass`      | `string`                     | —                      | 滚动元素额外 class                                       |
+| `scrollWrapperClass` | `string`                     | —                      | 外层包裹 section 的 class                                |
+| `fixedTop`           | `boolean`                    | `true`                 | Header 和 Tab 是否固定到顶部（`position: absolute`）     |
+| `isMobile`           | `boolean`                    | —                      | 移动端模式：桌面 Sider 隐藏，启用 Mobile Sider + 遮罩    |
+| `maxZIndex`          | `number`                     | `100`                  | 所有区域层叠的上限基准值                                 |
+| `commonClass`        | `string`                     | `'transition-all-300'` | 所有区域公共 class，用于控制过渡动画                     |
+| `fullContent`        | `boolean`                    | —                      | 全屏内容模式：Header、Sider、Footer 全部 `display: none` |
 
 #### Header
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `Header` | `ReactNode` | — | Header 插槽内容 |
-| `headerHeight` | `number` | `56` | Header 高度（px），同步写入 CSS 变量 |
-| `headerVisible` | `boolean` | `true` | 为 `false` 时不渲染 Header 区域 |
-| `headerClass` | `string` | — | Header 元素额外 class |
+| Prop            | 类型        | 默认值 | 说明                                 |
+| --------------- | ----------- | ------ | ------------------------------------ |
+| `Header`        | `ReactNode` | —      | Header 插槽内容                      |
+| `headerHeight`  | `number`    | `56`   | Header 高度（px），同步写入 CSS 变量 |
+| `headerVisible` | `boolean`   | `true` | 为 `false` 时不渲染 Header 区域      |
+| `headerClass`   | `string`    | —      | Header 元素额外 class                |
 
 #### Tab
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `Tab` | `ReactNode` | — | 标签页插槽内容 |
-| `tabHeight` | `number` | `44` | Tab 高度（px） |
-| `tabVisible` | `boolean` | `true` | 为 `false` 时不渲染 Tab 区域 |
-| `tabClass` | `string` | — | Tab 元素额外 class |
+| Prop         | 类型        | 默认值 | 说明                         |
+| ------------ | ----------- | ------ | ---------------------------- |
+| `Tab`        | `ReactNode` | —      | 标签页插槽内容               |
+| `tabHeight`  | `number`    | `44`   | Tab 高度（px）               |
+| `tabVisible` | `boolean`   | `true` | 为 `false` 时不渲染 Tab 区域 |
+| `tabClass`   | `string`    | —      | Tab 元素额外 class           |
 
 #### Sider
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `Sider` | `ReactNode` | — | 侧边栏插槽内容 |
-| `siderWidth` | `number` | `220` | 展开时宽度（px） |
-| `siderCollapsedWidth` | `number` | `64` | 折叠时宽度（px） |
-| `siderCollapse` | `boolean` | `false` | 是否处于折叠状态 |
-| `siderVisible` | `boolean` | `true` | 为 `false` 时不渲染 Sider |
-| `siderClass` | `string` | — | Sider 元素额外 class |
-| `mobileSiderClass` | `string` | — | 移动端 Sider 额外 class |
+| Prop                  | 类型         | 默认值   | 说明                       |
+| --------------------- | ------------ | -------- | -------------------------- |
+| `Sider`               | `ReactNode`  | —        | 侧边栏插槽内容             |
+| `siderWidth`          | `number`     | `220`    | 展开时宽度（px）           |
+| `siderCollapsedWidth` | `number`     | `64`     | 折叠时宽度（px）           |
+| `siderCollapse`       | `boolean`    | `false`  | 是否处于折叠状态           |
+| `siderVisible`        | `boolean`    | `true`   | 为 `false` 时不渲染 Sider  |
+| `siderClass`          | `string`     | —        | Sider 元素额外 class       |
+| `mobileSiderClass`    | `string`     | —        | 移动端 Sider 额外 class    |
 | `updateSiderCollapse` | `() => void` | **必填** | 点击移动端遮罩时的折叠回调 |
 
 #### Footer
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `Footer` | `ReactNode` | — | Footer 插槽内容 |
-| `footerHeight` | `number` | `48` | Footer 高度（px） |
-| `footerVisible` | `boolean` | `true` | 为 `false` 时不渲染 Footer |
-| `fixedFooter` | `boolean` | — | Footer 固定到底部（`position: absolute`）|
-| `footerClass` | `string` | — | Footer 元素额外 class |
-| `rightFooter` | `boolean` | `false` | 垂直/水平布局中 Footer 是否跟随 Sider 右移 |
+| Prop            | 类型        | 默认值  | 说明                                       |
+| --------------- | ----------- | ------- | ------------------------------------------ |
+| `Footer`        | `ReactNode` | —       | Footer 插槽内容                            |
+| `footerHeight`  | `number`    | `48`    | Footer 高度（px）                          |
+| `footerVisible` | `boolean`   | `true`  | 为 `false` 时不渲染 Footer                 |
+| `fixedFooter`   | `boolean`   | —       | Footer 固定到底部（`position: absolute`）  |
+| `footerClass`   | `string`    | —       | Footer 元素额外 class                      |
+| `rightFooter`   | `boolean`   | `false` | 垂直/水平布局中 Footer 是否跟随 Sider 右移 |
 
 ### 两种布局模式
 
 **Vertical 模式**（默认）：
+
 - Sider 位于最左侧，覆盖 Header / Tab / Footer 的左侧空间（通过 `padding-left` 让出位置）
 - Header、Footer 在垂直模式下各自独立 `left-gap`，随 sider 展开/折叠动态调整
 - 适合大多数管理后台场景
 
 **Horizontal 模式**：
+
 - Sider 层叠关系降低（z-index = `maxZIndex - 4`），通常用作顶部菜单下的内容侧边
 - Footer 的 `rightFooter` 在此模式下影响是否跟随内容区对齐
 
 ### 两种滚动模式
 
 **content 模式**（默认）：
+
 - `scrollElId` 挂在 `<main>` 元素上
 - 只有内容区域可滚动
 - Header / Tab / Sider / Footer 始终可见，不会随内容滚动消失
 
 **wrapper 模式**：
+
 - `scrollElId` 挂在外层 `<section>` 上
 - 整个布局作为一个滚动区
 - `fixedTop` 或水平布局的 wrapper 滚动模式下，Header/Tab 自动固定（`position: absolute`）
@@ -208,6 +212,7 @@ Mobile Mask    98  ← 移动端遮罩
 ### 移动端行为
 
 当 `isMobile = true`：
+
 - 桌面 Sider（`<aside>`）不渲染
 - 渲染 Mobile Sider + 半透明黑色遮罩（`rgba(0,0,0,0.2)`）
 - 点击遮罩触发 `updateSiderCollapse()`
@@ -248,44 +253,46 @@ import { PageTab } from '@skyroc/materials';
   handleClose={() => closeTab('/dashboard')}
 >
   仪表盘
-</PageTab>
+</PageTab>;
 
 // 渲染一组标签
-{tabs.map(tab => (
-  <PageTab
-    key={tab.path}
-    mode="button"
-    active={tab.path === currentPath}
-    activeColor={themeColor}
-    prefix={tab.icon}
-    onClick={() => navigate(tab.path)}
-    handleClose={() => closeTab(tab.path)}
-  >
-    {tab.title}
-  </PageTab>
-))}
+{
+  tabs.map(tab => (
+    <PageTab
+      key={tab.path}
+      mode="button"
+      active={tab.path === currentPath}
+      activeColor={themeColor}
+      prefix={tab.icon}
+      onClick={() => navigate(tab.path)}
+      handleClose={() => closeTab(tab.path)}
+    >
+      {tab.title}
+    </PageTab>
+  ));
+}
 ```
 
 ### Props
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `mode` | `'chrome' \| 'button' \| 'slider'` | `'chrome'` | 标签外观风格 |
-| `active` | `boolean` | — | 是否为当前激活标签 |
-| `activeColor` | `string` | `'#1890ff'` | 激活色，用于生成 CSS 变量色彩系列 |
-| `prefix` | `ReactNode` | **必填** | 前缀内容（通常为图标）|
-| `suffix` | `ReactNode` | — | 自定义后缀（默认为关闭按钮）|
-| `children` | `ReactNode` | — | 标签文字 |
-| `closable` | `boolean` | `true` | 是否显示关闭按钮 |
-| `handleClose` | `() => void` | — | 关闭按钮回调，点击时阻止冒泡 |
-| `onClick` | `() => void` | **必填** | 标签点击回调 |
-| `darkMode` | `boolean` | — | 暗色模式开关 |
-| `commonClass` | `string` | `'transition-all-300'` | 过渡动画 class |
-| `className` | `string` | — | 外层额外 class |
-| `buttonClass` | `string` | — | Button 风格专用额外 class |
-| `chromeClass` | `string` | — | Chrome 风格专用额外 class |
-| `sliderClass` | `string` | — | Slider 风格专用额外 class |
-| `style` | `CSSProperties` | — | 内联样式（会与 CSS 变量合并）|
+| Prop          | 类型                               | 默认值                 | 说明                              |
+| ------------- | ---------------------------------- | ---------------------- | --------------------------------- |
+| `mode`        | `'chrome' \| 'button' \| 'slider'` | `'chrome'`             | 标签外观风格                      |
+| `active`      | `boolean`                          | —                      | 是否为当前激活标签                |
+| `activeColor` | `string`                           | `'#1890ff'`            | 激活色，用于生成 CSS 变量色彩系列 |
+| `prefix`      | `ReactNode`                        | **必填**               | 前缀内容（通常为图标）            |
+| `suffix`      | `ReactNode`                        | —                      | 自定义后缀（默认为关闭按钮）      |
+| `children`    | `ReactNode`                        | —                      | 标签文字                          |
+| `closable`    | `boolean`                          | `true`                 | 是否显示关闭按钮                  |
+| `handleClose` | `() => void`                       | —                      | 关闭按钮回调，点击时阻止冒泡      |
+| `onClick`     | `() => void`                       | **必填**               | 标签点击回调                      |
+| `darkMode`    | `boolean`                          | —                      | 暗色模式开关                      |
+| `commonClass` | `string`                           | `'transition-all-300'` | 过渡动画 class                    |
+| `className`   | `string`                           | —                      | 外层额外 class                    |
+| `buttonClass` | `string`                           | —                      | Button 风格专用额外 class         |
+| `chromeClass` | `string`                           | —                      | Chrome 风格专用额外 class         |
+| `sliderClass` | `string`                           | —                      | Slider 风格专用额外 class         |
+| `style`       | `CSSProperties`                    | —                      | 内联样式（会与 CSS 变量合并）     |
 
 ### 三种风格详解
 
@@ -337,14 +344,14 @@ import { PageTab } from '@skyroc/materials';
 
 `createTabCssVars(activeColor)` 根据一个颜色生成完整的色彩变量组，注入 PageTab 的 `style` 属性：
 
-| CSS 变量 | 生成方式 | 用途 |
-|---------|---------|------|
-| `--soy-primary-color` | 原色 | 文字激活色、分隔线色 |
-| `--soy-primary-color1` | 主色 + 白底 10% 混合 | Chrome 激活背景（亮色）|
-| `--soy-primary-color2` | 主色 + 黑底 30% 混合 | Chrome 激活背景（暗色）|
-| `--soy-primary-color-opacity1` | 主色 alpha 10% | Button/Slider 激活背景 |
-| `--soy-primary-color-opacity2` | 主色 alpha 15% | 关闭按钮 hover 背景 |
-| `--soy-primary-color-opacity3` | 主色 alpha 30% | 关闭按钮 hover 激活态 |
+| CSS 变量                       | 生成方式             | 用途                    |
+| ------------------------------ | -------------------- | ----------------------- |
+| `--soy-primary-color`          | 原色                 | 文字激活色、分隔线色    |
+| `--soy-primary-color1`         | 主色 + 白底 10% 混合 | Chrome 激活背景（亮色） |
+| `--soy-primary-color2`         | 主色 + 黑底 30% 混合 | Chrome 激活背景（暗色） |
+| `--soy-primary-color-opacity1` | 主色 alpha 10%       | Button/Slider 激活背景  |
+| `--soy-primary-color-opacity2` | 主色 alpha 15%       | 关闭按钮 hover 背景     |
+| `--soy-primary-color-opacity3` | 主色 alpha 30%       | 关闭按钮 hover 激活态   |
 
 颜色混合来自 `@skyroc/color` 的 `transformColorWithOpacity` 和 `addColorAlpha`。
 
@@ -366,7 +373,7 @@ function useTap(onClick: () => void) {
   // touchstart → 记录触摸状态
   // touchmove  → 标记为滑动（取消点击）
   // touchend   → 仅未发生滑动时执行 onClick
-  return { onTouchStart, onTouchMove, onTouchEnd }
+  return { onTouchStart, onTouchMove, onTouchEnd };
 }
 ```
 
@@ -377,8 +384,8 @@ function useTap(onClick: () => void) {
 ```ts
 import { LAYOUT_SCROLL_EL_ID, LAYOUT_MAX_Z_INDEX } from '@skyroc/materials';
 
-LAYOUT_SCROLL_EL_ID  // '__SCROLL_EL_ID__' — 滚动容器的默认 DOM id
-LAYOUT_MAX_Z_INDEX   // 100 — 布局层叠的默认最大值
+LAYOUT_SCROLL_EL_ID; // '__SCROLL_EL_ID__' — 滚动容器的默认 DOM id
+LAYOUT_MAX_Z_INDEX; // 100 — 布局层叠的默认最大值
 ```
 
 ## 类型参考
@@ -438,6 +445,7 @@ type PageTabCssVars = {
 ### 为什么用 CSS 变量而非内联 style
 
 所有尺寸（height / width / z-index）都写入 CSS 变量，CSS 模块通过 `var()` 引用。这样：
+
 - 组件内部样式改动不需要 JS 参与
 - 过渡动画（`transition: all 300ms`）能覆盖 CSS 变量驱动的属性变化
 - 调试时在浏览器 DevTools 修改 CSS 变量即可预览效果

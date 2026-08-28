@@ -3,16 +3,8 @@
   "compilerOptions": {
     "noEmit": true,
     "outDir": "dist",
-    "types": [
-      "react-native"
-    ]
+    "types": ["react-native"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

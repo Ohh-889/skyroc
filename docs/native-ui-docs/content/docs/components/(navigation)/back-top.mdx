@@ -38,10 +38,10 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
 
 `right` / `bottom` 是按钮到**父容器边缘**的距离，`size` 是按钮直径：
 
-| 属性     | 默认值 | 说明                             |
-| -------- | ------ | -------------------------------- |
-| `right`  | 30     | 距父容器右边的距离               |
-| `bottom` | 128    | 距父容器底边的距离，已预留 TabBar |
+| 属性     | 默认值 | 说明                                           |
+| -------- | ------ | ---------------------------------------------- |
+| `right`  | 30     | 距父容器右边的距离                             |
+| `bottom` | 128    | 距父容器底边的距离，已预留 TabBar              |
 | `size`   | 40     | 按钮直径，比 `FloatingButton` 的默认 48 小一号 |
 
 位置是相对父容器的绝对定位，边界取父容器的实测尺寸——挂在整屏容器里就贴屏幕边缘。页面上方还有 NavBar 之类的固定元素时，用 `Portal` 把它挂到页面根节点，避免按钮被这些元素挤下去（示例里就是这么做的）。
@@ -53,7 +53,10 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
 `offset` 是按钮出现所需的滚动距离（像素），默认 200——大约滚过一屏。注意它和 `FloatingButton` 表示坐标的 `offset` 不是一回事。
 
 ```tsx
-<BackTop offset={400} target={scrollRef} />
+<BackTop
+  offset={400}
+  target={scrollRef}
+/>
 ```
 
 阈值判定是 `scrollOffset >= offset`，结果保存在一个 Reanimated 共享值里，直接交给 `FloatingButton` 的 `visible`，滚动过程中不触发任何 JS 端渲染。显隐动画是 180ms 的缩放缓动。
@@ -63,7 +66,10 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
 `immediate` 为 `false`（默认）时走滚动动画，为 `true` 时瞬间跳到顶部。超长列表上瞬间跳顶更利落，也省掉动画期间的连续布局。
 
 ```tsx
-<BackTop immediate target={scrollRef} />
+<BackTop
+  immediate
+  target={scrollRef}
+/>
 ```
 
 `onPress` 在滚动开始前触发，可用于埋点；它不代表滚动已经结束。
@@ -110,7 +116,12 @@ const scrollRef = useAnimatedRef<Animated.FlatList<Item>>();
       default: '128'
     },
     { name: 'size', description: '按钮直径（像素）', type: 'number', default: '40' },
-    { name: 'immediate', description: '为 true 时瞬间跳到顶部，为 false 时走滚动动画', type: 'boolean', default: 'false' },
+    {
+      name: 'immediate',
+      description: '为 true 时瞬间跳到顶部，为 false 时走滚动动画',
+      type: 'boolean',
+      default: 'false'
+    },
     { name: 'children', description: '自定义内容，替换默认的向上箭头', type: 'ReactNode' },
     {
       name: 'disabled',

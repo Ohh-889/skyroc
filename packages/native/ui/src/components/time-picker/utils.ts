@@ -7,8 +7,7 @@ export type TimeParts = [number, number, number];
 /**
  * 生成列所需的全部上下文。
  *
- * 收成一个对象而不是平铺参数：时 / 分 / 秒三列的范围互相牵制（minTime 落在 10:30 时，
- * 只有停在 10 点上分列才从 30 起算），每个环节都要拿到同一份完整上下文，平铺下去参数列表会一路膨胀。
+ * 收成一个对象而不是平铺参数：时 / 分 / 秒三列的范围互相牵制（minTime 落在 10:30 时， 只有停在 10 点上分列才从 30 起算），每个环节都要拿到同一份完整上下文，平铺下去参数列表会一路膨胀。
  */
 interface TimeColumnsContext {
   /** 列类型及其顺序 */
@@ -29,8 +28,7 @@ interface TimeColumnsContext {
   /**
    * 缺列时的兜底时刻。
    *
-   * columnsType 允许不含 hour（只显示分秒），这时分列的上下界没法从选中值里读出来，
-   * 用这个时刻的对应段补位。
+   * ColumnsType 允许不含 hour（只显示分秒），这时分列的上下界没法从选中值里读出来， 用这个时刻的对应段补位。
    */
   referenceParts: TimeParts;
 
@@ -71,8 +69,7 @@ const PART_MAX: TimeParts = [23, 59, 59];
 /**
  * 钳位迭代的最大轮数。
  *
- * 时 → 分 → 秒 逐级收窄，每轮至少定死一列，正常数据下轮数等于列数；
- * 这个上限只防 filter 把各列挖成互相排斥时来回震荡。
+ * 时 → 分 → 秒 逐级收窄，每轮至少定死一列，正常数据下轮数等于列数； 这个上限只防 filter 把各列挖成互相排斥时来回震荡。
  */
 const MAX_RESOLVE_DEPTH = 5;
 
@@ -89,8 +86,7 @@ function clampNumber(value: number, min: number, max: number): number {
 /**
  * 解析 "HH:mm:ss" 成三段数值。
  *
- * 缺省的段按 0 补（`"10"` 等于 `10:00:00`），非法段也落回 0 而不是抛错——
- * min / maxTime 是手写字符串，一个笔误不该把整个滚轮打空。每段还会夹回各自的合法上限。
+ * 缺省的段按 0 补（`"10"` 等于 `10:00:00`），非法段也落回 0 而不是抛错—— min / maxTime 是手写字符串，一个笔误不该把整个滚轮打空。每段还会夹回各自的合法上限。
  */
 function parseTime(time: string): TimeParts {
   const segments = time.split(':');
@@ -128,9 +124,7 @@ function getCurrentTimeParts(): TimeParts {
 /**
  * 补上 min / maxTime 的缺省值并归一化成 "HH:mm:ss"。
  *
- * 返回字符串而不是解析好的数组：调用方要拿它当 memo 依赖，数组每次都是新对象比不出相等。
- * 上界早于下界时退化成下界那一个时刻，而不是留下一个空区间——空列在滚轮上就是一片空白，
- * 比钳成一个点更难让人看出是参数传反了。
+ * 返回字符串而不是解析好的数组：调用方要拿它当 memo 依赖，数组每次都是新对象比不出相等。 上界早于下界时退化成下界那一个时刻，而不是留下一个空区间——空列在滚轮上就是一片空白， 比钳成一个点更难让人看出是参数传反了。
  */
 function resolveTimeBounds(minTime?: string, maxTime?: string): { maxTime: string; minTime: string } {
   const minParts = parseTime(minTime ?? DEFAULT_MIN_TIME);
@@ -220,8 +214,7 @@ function genOptions(range: [number, number], type: TimePickerColumnType, context
 /**
  * 由当前选中值推出各列选项。
  *
- * 渲染和 onChange 都走这一个入口：级联意味着「选中值变了列也要跟着变」，
- * 两处各写一份迟早会在首尾小时这些边界上对不齐。
+ * 渲染和 onChange 都走这一个入口：级联意味着「选中值变了列也要跟着变」， 两处各写一份迟早会在首尾小时这些边界上对不齐。
  */
 function buildColumns(context: TimeColumnsContext): PickerOption[][] {
   return context.columnsType.map(type => genOptions(getColumnRange(type, context), type, context));
@@ -230,8 +223,7 @@ function buildColumns(context: TimeColumnsContext): PickerOption[][] {
 /**
  * 把选中值钳回各列的可选范围内。
  *
- * 按数值比较而不是「取最后一项」：值小于下界时该收到第一项（minTime 是 10:00 时 08 点应当变成 10 点，
- * 而不是被弹到 23 点），被 filter 挖空的中间值则取最接近的可选项。
+ * 按数值比较而不是「取最后一项」：值小于下界时该收到第一项（minTime 是 10:00 时 08 点应当变成 10 点， 而不是被弹到 23 点），被 filter 挖空的中间值则取最接近的可选项。
  */
 function clampValues(values: string[], columns: PickerOption[][]): string[] {
   return columns.map((options, index) => {
@@ -264,10 +256,8 @@ function clampValues(values: string[], columns: PickerOption[][]): string[] {
 /**
  * 归一化列数据并同时修正选中值，迭代到不动点。
  *
- * 这两件事互相依赖：列的范围由选中值决定，而钳位后的值又会改变列的范围。算一轮不够——
- * 时被钳到首尾小时上之后，分列的上下界才该跟着收窄，秒列还要再跟一轮。
- * 只算一轮的话，maxTime 是 10:30 而传进来 11:45 时，时会被钳成 10、分却还留着按 11 点算出的 45，
- * 首屏直接给出一个越界的 10:45。
+ * 这两件事互相依赖：列的范围由选中值决定，而钳位后的值又会改变列的范围。算一轮不够—— 时被钳到首尾小时上之后，分列的上下界才该跟着收窄，秒列还要再跟一轮。 只算一轮的话，maxTime 是 10:30 而传进来 11:45
+ * 时，时会被钳成 10、分却还留着按 11 点算出的 45， 首屏直接给出一个越界的 10:45。
  */
 function resolveTimeColumns(context: TimeColumnsContext): { columns: PickerOption[][]; values: string[] } {
   let values = context.values;
@@ -288,11 +278,9 @@ function resolveTimeColumns(context: TimeColumnsContext): { columns: PickerOptio
 /**
  * 挂载时的初值。
  *
- * 不传 defaultValue 时落在当前时刻而不是区间开头；再按可选区间钳一遍——
- * min / maxTime 把此刻排除在外时，开局就不该拿一个越界值去渲染。
+ * 不传 defaultValue 时落在当前时刻而不是区间开头；再按可选区间钳一遍—— min / maxTime 把此刻排除在外时，开局就不该拿一个越界值去渲染。
  *
- * referenceParts 可以由调用方传入：组件里已经为「缺列兜底」快照过一次当前时刻，
- * 传进来两处才是同一个基准，而不是差了几毫秒的两次读表。
+ * ReferenceParts 可以由调用方传入：组件里已经为「缺列兜底」快照过一次当前时刻， 传进来两处才是同一个基准，而不是差了几毫秒的两次读表。
  */
 function resolveInitialValue(
   options: TimeInitialOptions,

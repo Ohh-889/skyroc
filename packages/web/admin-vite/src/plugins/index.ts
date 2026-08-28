@@ -1,7 +1,7 @@
 import { devtools } from '@tanstack/devtools-vite';
+import type { PluginOption } from 'vite';
 import inspect from 'vite-plugin-inspect';
 import removeConsole from 'vite-plugin-remove-console';
-import type { PluginOption } from 'vite';
 
 import type { AdminVitePluginAppendOptions, MaybePluginConfig } from '../types';
 import { type SetupAdminAutoImportOptions, setupAdminAutoImport } from './auto-import';
@@ -47,7 +47,7 @@ export interface SetupAdminVitePluginsConfig extends AdminVitePluginAppendOption
   /** React plugin config. */
   react?: MaybePluginConfig<SetupAdminReactPluginOptions>;
 
-  /** remove-console plugin config. */
+  /** Remove-console plugin config. */
   removeConsole?: MaybePluginConfig<RemoveConsoleOptions>;
 
   /** TanStack Router plugin config. */

@@ -87,7 +87,7 @@ export const radioVariants = tv({
         group: 'gap-x-4.5 gap-y-3.5',
         root: 'gap-3.5'
       },
-      'lg': {
+      lg: {
         card: 'gap-4 text-base p-4',
         cardContent: 'gap-4',
         cardDescription: 'text-sm',
@@ -96,7 +96,7 @@ export const radioVariants = tv({
         group: 'gap-x-3.5 gap-y-2.5',
         root: 'gap-2.5'
       },
-      'md': {
+      md: {
         card: 'gap-3 text-sm p-3',
         cardContent: 'gap-3',
         cardDescription: 'text-xs',
@@ -105,7 +105,7 @@ export const radioVariants = tv({
         group: 'gap-x-3 gap-y-2',
         root: 'gap-2'
       },
-      'sm': {
+      sm: {
         card: 'gap-2.5 text-xs p-2.5',
         cardContent: 'gap-2.5',
         cardDescription: 'text-2xs',
@@ -114,7 +114,7 @@ export const radioVariants = tv({
         group: 'gap-x-2.5 gap-y-1.75',
         root: 'gap-1.75'
       },
-      'xl': {
+      xl: {
         card: 'gap-5 text-lg p-5',
         cardContent: 'gap-5',
         cardDescription: 'text-base',
@@ -123,7 +123,7 @@ export const radioVariants = tv({
         group: 'gap-x-4 gap-y-3',
         root: 'gap-3'
       },
-      'xs': {
+      xs: {
         card: 'gap-2 text-2xs p-2',
         cardContent: 'gap-2',
         cardDescription: 'text-3xs',

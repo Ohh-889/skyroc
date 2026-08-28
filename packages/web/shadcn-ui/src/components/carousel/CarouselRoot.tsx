@@ -1,9 +1,9 @@
 'use client';
 
+import { cn } from '@skyroc/utils';
+import useEmblaCarousel from 'embla-carousel-react';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import type { KeyboardEvent } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import { cn } from '@skyroc/utils';
 import { carouselVariants } from './carousel-variants';
 import { CarouselContext } from './context';
 import type { CarouselApi, CarouselRootProps } from './types';
@@ -51,8 +51,7 @@ const Carousel = forwardRef<HTMLDivElement, CarouselRootProps>((props, ref) => {
       if (event.key === prevKey) {
         event.preventDefault();
         scrollPrev();
-      }
-      else if (event.key === nextKey) {
+      } else if (event.key === nextKey) {
         event.preventDefault();
         scrollNext();
       }
@@ -83,12 +82,12 @@ const Carousel = forwardRef<HTMLDivElement, CarouselRootProps>((props, ref) => {
     return () => {
       api?.off('select', onSelect);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     checkApi();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 
   return (

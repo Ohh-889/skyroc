@@ -10,7 +10,11 @@ test.describe('static and display demos', () => {
 
     await gotoDemo(page, 'button');
     await expect(demoCardContent(page, 'Disabled').getByRole('button', { name: 'disabled' }).first()).toBeDisabled();
-    await expect(demoCardContent(page, 'Loading').getByRole('button', { name: /Loading/ }).first()).toBeDisabled();
+    await expect(
+      demoCardContent(page, 'Loading')
+        .getByRole('button', { name: /Loading/ })
+        .first()
+    ).toBeDisabled();
 
     await gotoDemo(page, 'card');
     await expectTextVisible(page, 'Card Title');

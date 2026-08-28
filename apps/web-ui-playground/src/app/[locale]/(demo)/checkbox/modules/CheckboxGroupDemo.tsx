@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import { Checkbox, CheckboxGroup } from '@skyroc/web-ui';
 import type { CheckedState } from '@skyroc/web-ui';
+import { useMemo, useState } from 'react';
 
 const items = [
   { label: 'Apple', value: 'apple' },

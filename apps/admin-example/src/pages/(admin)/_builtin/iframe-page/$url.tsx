@@ -14,7 +14,12 @@ const BuiltinIframePage = () => {
   const { url } = useParams({ from: '/(admin)/_builtin/iframe-page/$url' });
   const iframeUrl = decodeIframeUrl(url);
 
-  return <IframePage title={iframeUrl} url={iframeUrl} />;
+  return (
+    <IframePage
+      title={iframeUrl}
+      url={iframeUrl}
+    />
+  );
 };
 
 export const Route = createFileRoute('/(admin)/_builtin/iframe-page/$url')({

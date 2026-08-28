@@ -1,17 +1,16 @@
 'use client';
 
-import { forwardRef, useRef } from 'react';
-import { Minus, Plus, X } from 'lucide-react';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { Minus, Plus, X } from 'lucide-react';
+import { forwardRef, useRef } from 'react';
 import { numberInputVariants } from './number-input-variants';
 import NumberInputControl from './NumberInputControl';
 import type { NumberInputProps } from './types';
 
 function parseNumberValue(v: string): number | undefined {
-  if (v === '' || v === '-')
-    return undefined;
+  if (v === '' || v === '-') return undefined;
   const n = Number(v);
   return Number.isNaN(n) ? undefined : n;
 }
@@ -41,8 +40,7 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
     ...rest
   } = props;
 
-  const { clearable: clearableCls, decrement, increment, root }
-    = numberInputVariants({ size, center });
+  const { clearable: clearableCls, decrement, increment, root } = numberInputVariants({ size, center });
 
   const inputRef = useRef<HTMLInputElement>(null);
   const composedRefs = useComposedRefs(inputRef, ref);
@@ -62,18 +60,15 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
 
   const clamp = (n: number) => {
     let x = n;
-    if (min !== undefined)
-      x = Math.max(x, min);
-    if (max !== undefined)
-      x = Math.min(x, max);
+    if (min !== undefined) x = Math.max(x, min);
+    if (max !== undefined) x = Math.min(x, max);
     return x;
   };
 
   const updateValue = (n: number | undefined) => {
     if (n === undefined) {
       setValue(undefined);
-    }
-    else {
+    } else {
       setValue(clamp(n));
     }
   };
@@ -89,11 +84,9 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
   const hasMin = min !== undefined && hasValue;
   const hasMax = max !== undefined && hasValue;
 
-  const isDecrementDisabled
-    = !isInteractable || (hasMin && numericValue! <= min!);
+  const isDecrementDisabled = !isInteractable || (hasMin && numericValue! <= min!);
 
-  const isIncrementDisabled
-    = !isInteractable || (hasMax && numericValue! >= max!);
+  const isIncrementDisabled = !isInteractable || (hasMax && numericValue! >= max!);
 
   // ---------------------------
   // Events
@@ -109,14 +102,12 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
   };
 
   const handleBlur = () => {
-    if (!hasValue)
-      return;
+    if (!hasValue) return;
     updateValue(numericValue);
   };
 
   const stepChange = (amount: number) => {
-    if (!isInteractable)
-      return;
+    if (!isInteractable) return;
     const current = numericValue ?? 0;
     updateValue(current + amount);
   };
@@ -125,25 +116,21 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
   const handleDecrement = () => stepChange(-step);
 
   const handleClear = () => {
-    if (!isInteractable)
-      return;
+    if (!isInteractable) return;
     updateValue(undefined);
     inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isInteractable)
-      return;
+    if (!isInteractable) return;
 
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       handleIncrement();
-    }
-    else if (e.key === 'ArrowDown') {
+    } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       handleDecrement();
-    }
-    else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       inputRef.current?.blur();
     }
   };
@@ -184,14 +171,12 @@ const NumberInputUI = forwardRef<HTMLInputElement, NumberInputProps>((props, ref
       />
 
       {/* Clear */}
-      {clearable && displayValue !== '' && isInteractable
-        ? (
-          <X
-            className={mergedClearableCls}
-            onClick={handleClear}
-          />
-        )
-        : null}
+      {clearable && displayValue !== '' && isInteractable ? (
+        <X
+          className={mergedClearableCls}
+          onClick={handleClear}
+        />
+      ) : null}
 
       {trailing}
 

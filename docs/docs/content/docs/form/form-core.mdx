@@ -40,20 +40,20 @@ schema resolver 本身就是一个中间件——[校验](/docs/form/validation)
 
 ## resolver
 
-| 文件 | 作用 |
-| --- | --- |
+| 文件                   | 作用                                                     |
+| ---------------------- | -------------------------------------------------------- |
 | `resolver/standard.ts` | 适配 `StandardSchemaV1`（Zod / Yup / Valibot / ArkType） |
-| `resolver/resolver.ts` | 自定义 schema 接入 |
-| `resolver/utils.ts` | 路径与错误结构转换 |
+| `resolver/resolver.ts` | 自定义 schema 接入                                       |
+| `resolver/utils.ts`    | 路径与错误结构转换                                       |
 
 ## React 层怎么接
 
-| React 层 | 做什么 |
-| --- | --- |
-| `Form` | 创建 store，通过 context 向下传 |
-| `Field` | `useSyncExternalStore` 订阅自己那条路径 |
-| 各 hook | 包装 store 方法，提供 React 友好的 API |
-| `FieldContext.ts` | `FormInstance` 的实现与类型核心 |
+| React 层          | 做什么                                  |
+| ----------------- | --------------------------------------- |
+| `Form`            | 创建 store，通过 context 向下传         |
+| `Field`           | `useSyncExternalStore` 订阅自己那条路径 |
+| 各 hook           | 包装 store 方法，提供 React 友好的 API  |
+| `FieldContext.ts` | `FormInstance` 的实现与类型核心         |
 
 ## 能不能脱离 React 用
 

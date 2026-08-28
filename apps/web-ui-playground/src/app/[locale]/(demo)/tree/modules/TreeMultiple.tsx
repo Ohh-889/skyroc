@@ -58,7 +58,10 @@ const TreeMultiple = () => {
   const [expanded, setExpanded] = useState<string[]>(['documents', 'photos']);
 
   return (
-    <Card split title="Multiple Selection">
+    <Card
+      split
+      title="Multiple Selection"
+    >
       <div className="w-full max-w-[320px]">
         <Tree
           multiple

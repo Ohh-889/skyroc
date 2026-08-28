@@ -191,9 +191,11 @@ describe('useTheme - watermark', () => {
     const { Wrapper } = createWrapper('Alice');
     const { result } = renderHook(() => useTheme(), { wrapper: Wrapper });
 
-    act(() => result.current.setSettings({
-      watermark: { ...defaultThemeSettings.watermark, visible: true, enableUserName: true }
-    }));
+    act(() =>
+      result.current.setSettings({
+        watermark: { ...defaultThemeSettings.watermark, visible: true, enableUserName: true }
+      })
+    );
 
     expect(result.current.watermarkContent).toBe(`${defaultThemeSettings.watermark.text} - Alice`);
   });
@@ -202,9 +204,11 @@ describe('useTheme - watermark', () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useTheme(), { wrapper: Wrapper });
 
-    act(() => result.current.setSettings({
-      watermark: { ...defaultThemeSettings.watermark, visible: true, enableUserName: true }
-    }));
+    act(() =>
+      result.current.setSettings({
+        watermark: { ...defaultThemeSettings.watermark, visible: true, enableUserName: true }
+      })
+    );
 
     expect(result.current.watermarkContent).toBe(defaultThemeSettings.watermark.text);
   });
@@ -213,9 +217,11 @@ describe('useTheme - watermark', () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useTheme(), { wrapper: Wrapper });
 
-    act(() => result.current.setSettings({
-      watermark: { ...defaultThemeSettings.watermark, visible: true, enableTime: true }
-    }));
+    act(() =>
+      result.current.setSettings({
+        watermark: { ...defaultThemeSettings.watermark, visible: true, enableTime: true }
+      })
+    );
 
     // 默认 timeFormat 是 'YYYY-MM-DD HH:mm'，包含字符串前缀
     expect(result.current.watermarkContent).toMatch(
@@ -240,9 +246,11 @@ describe('useTheme - updateWatermarkTimer', () => {
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useTheme(), { wrapper: Wrapper });
 
-    act(() => result.current.setSettings({
-      watermark: { ...defaultThemeSettings.watermark, visible: true, enableTime: true }
-    }));
+    act(() =>
+      result.current.setSettings({
+        watermark: { ...defaultThemeSettings.watermark, visible: true, enableTime: true }
+      })
+    );
 
     act(() => result.current.updateWatermarkTimer());
 

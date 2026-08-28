@@ -25,10 +25,10 @@ UnoCSS + `@skyroc/tailwind-plugin`（`platform: 'web'`，默认值），通过 `
 `foreground` `muted-foreground` `border` `carbon`
 
 ```tsx
-className="text-primary"
-className="text-muted-foreground"
-className="bg-secondary"
-className="border-border"
+className = 'text-primary';
+className = 'text-muted-foreground';
+className = 'bg-secondary';
+className = 'border-border';
 ```
 
 ### 色阶 50–950
@@ -38,16 +38,16 @@ className="border-border"
 
 ```tsx
 // ✅ 色阶
-className="bg-primary-50"
-className="text-primary-700"
-className="bg-destructive-100"
+className = 'bg-primary-50';
+className = 'text-primary-700';
+className = 'bg-destructive-100';
 
 // ✅ 或 opacity 修饰符
-className="bg-primary/10"
+className = 'bg-primary/10';
 
 // ❌ 不要手写近似色
-className="bg-[#343C610D]"     // → bg-primary-50 或 bg-primary/5
-className="bg-[#ef44441a]"     // → bg-destructive-50 或 bg-destructive/10
+className = 'bg-[#343C610D]'; // → bg-primary-50 或 bg-primary/5
+className = 'bg-[#ef44441a]'; // → bg-destructive-50 或 bg-destructive/10
 ```
 
 ### ⚠️ style 场景的变量写法与 Native 不同
@@ -67,13 +67,13 @@ style={{ color: 'var(--primary)' }}
 
 遇到这些设计稿色值**必须**用对应 token，不得写死 hex：
 
-| 设计稿色值 | Token |
-| --- | --- |
-| `#343C61` | `primary` |
-| `#343C61` 60% | `muted-foreground` |
-| `#FFA929` | `warning` |
-| `#F7F8FA` | `secondary` / `muted` |
-| 边框灰 | `border` |
+| 设计稿色值    | Token                 |
+| ------------- | --------------------- |
+| `#343C61`     | `primary`             |
+| `#343C61` 60% | `muted-foreground`    |
+| `#FFA929`     | `warning`             |
+| `#F7F8FA`     | `secondary` / `muted` |
+| 边框灰        | `border`              |
 
 ### 优先级
 

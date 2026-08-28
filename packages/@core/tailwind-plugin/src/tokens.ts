@@ -1,13 +1,10 @@
 /**
  * 设计令牌单一数据源，三端（web / native / miniapp）共用。
  *
- * 原 `@skyroc/ui-tokens` 包并入于此：该包唯一的消费者就是本插件，而三端统一走 Tailwind，
- * 本插件即唯一的翻译层，再没有第二个需要读裸 token 的地方。
+ * 原 `@skyroc/ui-tokens` 包并入于此：该包唯一的消费者就是本插件，而三端统一走 Tailwind， 本插件即唯一的翻译层，再没有第二个需要读裸 token 的地方。
  *
- * 下面的 scale 表（spacing / borderRadius / fontSize / fontWeight）当前没有代码消费——插件级的
- * 圆角与字号扩展在 `index.ts` 里按 `radius` 选项动态算，不读这里。保留它们是为了留下一份显式的
- * 尺度基准：既作为写 className 时的参考，也给将来需要以 JS 形式读取尺度的场景（miniapp 主题、
- * 设计稿对表、Figma 同步等）预留接口。
+ * 下面的 scale 表（spacing / borderRadius / fontSize / fontWeight）当前没有代码消费——插件级的 圆角与字号扩展在 `index.ts` 里按 `radius`
+ * 选项动态算，不读这里。保留它们是为了留下一份显式的 尺度基准：既作为写 className 时的参考，也给将来需要以 JS 形式读取尺度的场景（miniapp 主题、 设计稿对表、Figma 同步等）预留接口。
  */
 
 /** 品牌语义色名，与插件生成的 CSS 变量键名一一对应。 */
@@ -147,8 +144,7 @@ export type SpacingToken = keyof typeof spacing;
 /**
  * 圆角尺度，三端（web / native / miniapp）共用。
  *
- * 值是 CSS px 字符串，native 侧需要数值时自行转换。注意这是**基准表**，插件实际注入的
- * `borderRadius` 由 `index.ts` 按 `radius` 选项动态计算，二者不是同一套值。
+ * 值是 CSS px 字符串，native 侧需要数值时自行转换。注意这是**基准表**，插件实际注入的 `borderRadius` 由 `index.ts` 按 `radius` 选项动态计算，二者不是同一套值。
  */
 export const borderRadius = {
   none: '0px',

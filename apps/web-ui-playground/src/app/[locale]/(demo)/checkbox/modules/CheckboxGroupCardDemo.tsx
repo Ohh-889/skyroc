@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { Apple, Banana, Cherry, Grape } from 'lucide-react';
 import { Checkbox, CheckboxGroupCard } from '@skyroc/web-ui';
 import type { CheckedState } from '@skyroc/web-ui';
+import { Apple, Banana, Cherry, Grape } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const items = [
   { icon: <Apple className="size-5" />, label: 'Apple', value: 'apple' },

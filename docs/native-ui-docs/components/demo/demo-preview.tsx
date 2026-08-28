@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { ensureSkiaWeb, needsSkiaWeb } from '@/lib/skia-web';
 
 interface DemoPreviewProps {
-  /** demos 目录下的模块路径（不含扩展名），如 "ButtonDemo"、"button/ButtonVariant" */
+  /** Demos 目录下的模块路径（不含扩展名），如 "ButtonDemo"、"button/ButtonVariant" */
   name: string;
 }
 
@@ -66,7 +66,5 @@ interface DemoFallbackProps {
 const DemoFallback = (props: DemoFallbackProps) => {
   const { text } = props;
 
-  return (
-    <div className="flex h-full w-full items-center justify-center text-xs text-fd-muted-foreground">{text}</div>
-  );
+  return <div className="flex h-full w-full items-center justify-center text-xs text-fd-muted-foreground">{text}</div>;
 };

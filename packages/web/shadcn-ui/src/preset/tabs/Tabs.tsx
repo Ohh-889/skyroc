@@ -2,10 +2,10 @@
 
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import type TabsRoot from '../../components/tabs/TabsRoot';
 import TabsUI from '../../components/tabs/TabsUI';
 import type { TabsOptionData, TabsProps } from '../../components/tabs/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Tabs = forwardRef<ComponentRef<typeof TabsRoot>, TabsProps<TabsOptionData>>((props, ref) => {
   const config = useComponentConfig('tabs');

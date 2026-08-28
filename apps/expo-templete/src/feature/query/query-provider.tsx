@@ -17,9 +17,8 @@ function handleAppStateChange(status: AppStateStatus) {
 }
 
 /**
- * 同理，`onlineManager` 默认监听的是 `window.addEventListener('online')`——RN 的 window 上压根没有
- * addEventListener，那段 setup 直接返回 undefined，于是 onlineManager 永远认为在线。后果有两个，
- * 而且都是静默的：断网时查询照发不误，只能干等到超时；`refetchOnReconnect` 也永远等不到重连事件。
+ * 同理，`onlineManager` 默认监听的是 `window.addEventListener('online')`——RN 的 window 上压根没有 addEventListener，那段 setup 直接返回
+ * undefined，于是 onlineManager 永远认为在线。后果有两个， 而且都是静默的：断网时查询照发不误，只能干等到超时；`refetchOnReconnect` 也永远等不到重连事件。
  *
  * 接上真实网络状态后，这些是白拿的：
  *

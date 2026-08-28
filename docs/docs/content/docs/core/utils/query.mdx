@@ -1,6 +1,6 @@
 ---
-title: "Query"
-description: "URL query 字符串解析与序列化工具，用于路由 search 参数、表格筛选参数和跳转回调地址"
+title: 'Query'
+description: 'URL query 字符串解析与序列化工具，用于路由 search 参数、表格筛选参数和跳转回调地址'
 ---
 
 ## 概述
@@ -117,7 +117,7 @@ stringifyQuery({});
 stringifyQuery({
   enabled: null,
   keyword: undefined,
-  page: 1,
+  page: 1
 });
 // '?enabled&page=1'
 ```
@@ -126,7 +126,7 @@ stringifyQuery({
 
 ```ts
 stringifyQuery({
-  tag: ['a', null, undefined, 'b'],
+  tag: ['a', null, undefined, 'b']
 });
 // '?tag=a&tag&tag=b'
 ```
@@ -138,7 +138,7 @@ stringifyQuery({
 ```ts
 stringifyQuery({
   empty: '',
-  page: 0,
+  page: 0
 });
 // '?empty=&page=0'
 ```
@@ -168,7 +168,7 @@ import { parseQuery, stringifyQuery } from '@skyroc/utils';
 export const router = createRouter({
   parseSearch: parseQuery,
   stringifySearch: stringifyQuery,
-  routeTree,
+  routeTree
 });
 ```
 

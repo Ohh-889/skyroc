@@ -8,12 +8,13 @@ export type TreeClassNames = Partial<Record<TreeSlots, ClassValue>>;
 /** Selection behavior when clicking on a tree item: 'toggle' toggles selection, 'replace' replaces current selection */
 export type TreeSelectBehavior = 'replace' | 'toggle';
 
-/** Toggle behavior for expanding/collapsing tree nodes: 'single' allows only one expanded node, 'multiple' allows multiple */
+/**
+ * Toggle behavior for expanding/collapsing tree nodes: 'single' allows only one expanded node, 'multiple' allows
+ * multiple
+ */
 export type TreeToggleBehavior = 'multiple' | 'single';
 
-/**
- * Base data structure for a tree item.
- */
+/** Base data structure for a tree item. */
 export interface TreeItemBaseData {
   /** Prevents user interaction with the item. Set to `true` to disable. */
   disabled?: boolean;
@@ -25,6 +26,7 @@ export interface TreeItemBaseData {
 
 /**
  * Data structure for a tree item with optional children.
+ *
  * @template T - Type extending TreeItemBaseData
  */
 export type TreeItemData<T extends TreeItemBaseData = TreeItemBaseData> = T & {
@@ -34,6 +36,7 @@ export type TreeItemData<T extends TreeItemBaseData = TreeItemBaseData> = T & {
 
 /**
  * Flattened representation of a tree item for rendering.
+ *
  * @template T - Type extending TreeItemData
  */
 export interface FlattenedItem<T extends TreeItemData> {
@@ -66,23 +69,18 @@ export interface FlattenedItem<T extends TreeItemData> {
 
 /**
  * Context value provided by TreeRoot for child components.
+ *
  * @template T - Type extending TreeItemData
  */
 export interface TreeRootContextValue<T extends TreeItemData = TreeItemData> {
-  /**
-   * Controls whether parent nodes with children can be selected.
-   * Set to `true` to allow parent selection.
-   */
+  /** Controls whether parent nodes with children can be selected. Set to `true` to allow parent selection. */
   allowParentSelect: boolean | undefined;
   /**
-   * Controls whether selecting all children automatically selects the parent.
-   * Set to `true` to enable upward selection propagation.
+   * Controls whether selecting all children automatically selects the parent. Set to `true` to enable upward selection
+   * propagation.
    */
   bubbleSelect: boolean | undefined;
-  /**
-   * Controls user interaction with the entire tree.
-   * Set to `true` to prevent all interactions.
-   */
+  /** Controls user interaction with the entire tree. Set to `true` to prevent all interactions. */
   disabled: boolean | undefined;
   /** Array of currently expanded item keys */
   expanded: string[];
@@ -92,18 +90,15 @@ export interface TreeRootContextValue<T extends TreeItemData = TreeItemData> {
   items: T[];
   /** Current selected value(s) of the tree */
   modelValue?: MaybeArray<string>;
-  /**
-   * Controls the selection mode of the tree.
-   * Set to `true` to allow multiple items to be selected.
-   */
+  /** Controls the selection mode of the tree. Set to `true` to allow multiple items to be selected. */
   multiple: boolean | undefined;
   /** Callback function when an item is selected */
   onSelect: (value: string) => void;
   /** Callback function when an item is toggled (expanded/collapsed) */
   onToggle: (value: string) => void;
   /**
-   * Controls whether selecting a parent automatically selects its children.
-   * Set to `true` to enable downward selection propagation.
+   * Controls whether selecting a parent automatically selects its children. Set to `true` to enable downward selection
+   * propagation.
    */
   propagateSelect: boolean | undefined;
   /** Array of currently selected item keys */
@@ -114,6 +109,7 @@ export interface TreeRootContextValue<T extends TreeItemData = TreeItemData> {
 
 /**
  * Props passed to the render function of TreeRoot.
+ *
  * @template T - Type extending TreeItemData
  */
 export interface TreeRootRenderProps<T extends TreeItemData = TreeItemData> {
@@ -165,7 +161,9 @@ export interface TreeItemRenderProps {
 }
 
 /** Props for the TreeItem component */
-export interface TreeItemProps extends StyledComponentProps<Omit<ComponentPropsWithoutRef<'li'>, 'children' | 'onSelect' | 'onToggle'>> {
+export interface TreeItemProps extends StyledComponentProps<
+  Omit<ComponentPropsWithoutRef<'li'>, 'children' | 'onSelect' | 'onToggle'>
+> {
   /** Content of the tree item, can be a ReactNode or a render function */
   children?: ReactNode | ((props: TreeItemRenderProps) => ReactNode);
   /** Prevents user interaction with the item. Set to `true` to disable. */
@@ -188,20 +186,19 @@ export interface TreeItemProps extends StyledComponentProps<Omit<ComponentPropsW
 
 /**
  * Props for the TreeRoot component with full control over rendering.
+ *
  * @template T - Type extending TreeItemData
  */
-export interface TreeRootProps<T extends TreeItemData = TreeItemData>
-  extends StyledComponentProps<Omit<ComponentPropsWithRef<'ul'>, 'children' | 'defaultValue'>> {
-  /**
-   * Controls whether parent nodes with children can be selected.
-   * Set to `true` to allow parent selection.
-   */
+export interface TreeRootProps<T extends TreeItemData = TreeItemData> extends StyledComponentProps<
+  Omit<ComponentPropsWithRef<'ul'>, 'children' | 'defaultValue'>
+> {
+  /** Controls whether parent nodes with children can be selected. Set to `true` to allow parent selection. */
   allowParentSelect?: boolean;
   /** Content to display at the bottom of the tree */
   bottom?: ReactNode;
   /**
-   * Controls whether selecting all children automatically selects the parent.
-   * Set to `true` to enable upward selection propagation.
+   * Controls whether selecting all children automatically selects the parent. Set to `true` to enable upward selection
+   * propagation.
    */
   bubbleSelect?: boolean;
   /** Render function that receives tree state and utilities for custom rendering */
@@ -210,27 +207,21 @@ export interface TreeRootProps<T extends TreeItemData = TreeItemData>
   defaultExpanded?: string[];
   /** Default value of the tree */
   defaultValue?: MaybeArray<string>;
-  /**
-   * Controls user interaction with the entire tree.
-   * Set to `true` to prevent all interactions.
-   */
+  /** Controls user interaction with the entire tree. Set to `true` to prevent all interactions. */
   disabled?: boolean;
   /** The controlled value of the expanded item. Can be bound-with with `v-model`. */
   expanded?: string[];
   /** List of tree items */
   items: T[];
-  /**
-   * Controls the selection mode of the tree.
-   * Set to `true` to allow multiple items to be selected.
-   */
+  /** Controls the selection mode of the tree. Set to `true` to allow multiple items to be selected. */
   multiple?: boolean;
   /** Callback function that is called when the expanded value changes */
   onExpandedChange?: (expanded: string[]) => void;
   /** Callback function that is called when the value changes */
   onValueChange?: (value: MaybeArray<string>) => void;
   /**
-   * Controls whether selecting a parent automatically selects its children.
-   * Set to `true` to enable downward selection propagation.
+   * Controls whether selecting a parent automatically selects its children. Set to `true` to enable downward selection
+   * propagation.
    */
   propagateSelect?: boolean;
   /** How multiple selection should behave in the collection. */
@@ -251,7 +242,10 @@ export interface TreeRootProps<T extends TreeItemData = TreeItemData>
 }
 
 /** Props for the Tree component with simplified API */
-export interface TreeProps<T extends TreeItemData = TreeItemData> extends Omit<TreeRootProps<T>, 'children' | 'onSelect' | 'onToggle'>, Pick<TreeItemProps, 'disabledSelect' | 'disabledToggle' | 'indentSize' | 'onSelect' | 'onToggle'> {
+export interface TreeProps<T extends TreeItemData = TreeItemData>
+  extends
+    Omit<TreeRootProps<T>, 'children' | 'onSelect' | 'onToggle'>,
+    Pick<TreeItemProps, 'disabledSelect' | 'disabledToggle' | 'indentSize' | 'onSelect' | 'onToggle'> {
   /** Custom class names for tree component slots */
   classNames?: TreeClassNames;
 

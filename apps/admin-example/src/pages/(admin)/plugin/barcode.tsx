@@ -28,7 +28,10 @@ const BarcodePreview = (props: BarcodePreviewProps) => {
   }, [item]);
 
   return (
-    <Card className="h-full text-center" size="small">
+    <Card
+      className="h-full text-center"
+      size="small"
+    >
       <Typography.Text strong>{item.title}</Typography.Text>
       <div className="mt-3 flex justify-center overflow-x-auto">
         <svg ref={svgRef} />
@@ -39,17 +42,27 @@ const BarcodePreview = (props: BarcodePreviewProps) => {
 
 const BarcodeDemo = () => {
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:barcode"
         resources={[{ label: 'JsBarcode', url: 'https://github.com/lindell/JsBarcode' }]}
         tags={['JsBarcode', 'SVG']}
         title="条形码示例"
       />
-      <ExamplePanel icon="mdi:barcode" title="常用条形码样式">
+      <ExamplePanel
+        icon="mdi:barcode"
+        title="常用条形码样式"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {barcodeExamples.map(item => (
-            <BarcodePreview item={item} key={item.id} />
+            <BarcodePreview
+              item={item}
+              key={item.id}
+            />
           ))}
         </div>
       </ExamplePanel>

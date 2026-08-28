@@ -5,27 +5,27 @@ description: 严格模式策略、verbatimModuleSyntax、全局类型增强、�
 
 ## 总体策略
 
-| 维度 | 策略 |
-| --- | --- |
-| 严格度 | 全仓库 `strict: true` + `noUncheckedIndexedAccess: true` |
-| 模块 | ESM-first，`module: ESNext`、`moduleResolution: bundler` |
-| 编译目标 | `ESNext`（不降级，交给 Vite / esbuild） |
-| 类型分发 | `verbatimModuleSyntax: true`，强制 `import type` |
-| 共享 | `@skyroc/tsconfig` 7 个预设，全部包通过 extends 引用 |
-| TS 版本 | `^6.0.3`（通过 `catalog:core` 集中管理） |
+| 维度     | 策略                                                           |
+| -------- | -------------------------------------------------------------- |
+| 严格度   | 全仓库 `strict: true` + `noUncheckedIndexedAccess: true`       |
+| 模块     | ESM-first，`module: ESNext`、`moduleResolution: bundler`       |
+| 编译目标 | `ESNext`（不降级，交给 Vite / esbuild）                        |
+| 类型分发 | `verbatimModuleSyntax: true`，强制 `import type`               |
+| 共享     | `@skyroc/tsconfig` 7 个预设，全部包通过 extends 引用           |
+| TS 版本  | `^6.0.3`（通过 `catalog:core` 集中管理）                       |
 | 类型检查 | `pnpm typecheck` → `turbo run typecheck` → 各包 `tsc --noEmit` |
 
 ## 7 个共享预设
 
-| 预设 | 适用 |
-| --- | --- |
-| `base.json` | 所有 TS 包基线 |
-| `library.json` | 发布到 npm 的库（emit dts） |
-| `node.json` | Node 工具 / 脚本 |
-| `web.json` | Web 端含 DOM lib |
-| `web-app.json` | Web 应用（admin） |
-| `react-native.json` | RN 库 |
-| `react-native-app.json` | RN 应用 |
+| 预设                    | 适用                        |
+| ----------------------- | --------------------------- |
+| `base.json`             | 所有 TS 包基线              |
+| `library.json`          | 发布到 npm 的库（emit dts） |
+| `node.json`             | Node 工具 / 脚本            |
+| `web.json`              | Web 端含 DOM lib            |
+| `web-app.json`          | Web 应用（admin）           |
+| `react-native.json`     | RN 库                       |
+| `react-native-app.json` | RN 应用                     |
 
 详见 [`@skyroc/tsconfig`](/docs/packages/internal/tsconfig)。
 
@@ -41,7 +41,7 @@ description: 严格模式策略、verbatimModuleSyntax、全局类型增强、�
 
 ```ts
 const arr = [1, 2, 3];
-const first = arr[0];   // number | undefined
+const first = arr[0]; // number | undefined
 ```
 
 写代码时必须显式判空或用 `arr.at(0)`、`arr[0]!`。
@@ -78,14 +78,14 @@ import { fn, type Foo } from './module';
 
 效果：
 
-| 命名空间 | 含义 | 来自 |
-| --- | --- | --- |
-| `Api.*` | 后端 API 请求 / 响应类型 | `@skyroc/types` + 应用 typings |
-| `Router.*` | 业务路由 meta / element key | `@skyroc/types` |
-| `App.*` | 应用级类型（service options 等） | `@skyroc/types` |
-| `Theme.*` | 主题 token / palette / 配置 | `@skyroc/web-admin-theme` |
-| `ImportMetaEnv` | `import.meta.env.VITE_*` | `vite/client` + 应用增强 |
-| `~icons/*` | `import IconHome from '~icons/lucide/home'` | `unplugin-icons` |
+| 命名空间        | 含义                                        | 来自                           |
+| --------------- | ------------------------------------------- | ------------------------------ |
+| `Api.*`         | 后端 API 请求 / 响应类型                    | `@skyroc/types` + 应用 typings |
+| `Router.*`      | 业务路由 meta / element key                 | `@skyroc/types`                |
+| `App.*`         | 应用级类型（service options 等）            | `@skyroc/types`                |
+| `Theme.*`       | 主题 token / palette / 配置                 | `@skyroc/web-admin-theme`      |
+| `ImportMetaEnv` | `import.meta.env.VITE_*`                    | `vite/client` + 应用增强       |
+| `~icons/*`      | `import IconHome from '~icons/lucide/home'` | `unplugin-icons`               |
 
 业务代码可以直接：
 
@@ -111,32 +111,32 @@ apps/admin/src/typings/
 
 ## `noEmit` vs 输出 dts
 
-| 包类型 | 配置 | 说明 |
-| --- | --- | --- |
-| 应用 | 仅 typecheck，不 emit | Vite 单独编译 |
-| 库（tsdown 构建） | tsdown 内部生成 dts | 不靠 tsc |
-| 库（极少数 tsc） | `emitDeclarationOnly: true` | extends `library.json` |
-| Internal 配置包 | 仅 emit dts | `@skyroc/config/vitest` |
+| 包类型            | 配置                        | 说明                    |
+| ----------------- | --------------------------- | ----------------------- |
+| 应用              | 仅 typecheck，不 emit       | Vite 单独编译           |
+| 库（tsdown 构建） | tsdown 内部生成 dts         | 不靠 tsc                |
+| 库（极少数 tsc）  | `emitDeclarationOnly: true` | extends `library.json`  |
+| Internal 配置包   | 仅 emit dts                 | `@skyroc/config/vitest` |
 
 `tsdown` 默认产 `*.d.mts` + `*.d.ts`，由 [构建体系](/docs/guide/engineering/build-system) 详细说明。
 
 ## paths 与 alias
 
-| 应用 | paths |
-| --- | --- |
-| `apps/admin` | `@/*` → `src/*`、`~/*` → 项目根 |
-| 包内部 | 一律相对 import；避免设置包内 paths |
+| 应用         | paths                               |
+| ------------ | ----------------------------------- |
+| `apps/admin` | `@/*` → `src/*`、`~/*` → 项目根     |
+| 包内部       | 一律相对 import；避免设置包内 paths |
 
 理由：包内 paths 会破坏 tsdown 编译时的路径解析。
 
 ## ESM-only 与 CJS 兼容
 
-| 维度 | 配置 |
-| --- | --- |
-| 包 `type` | 全部 `"module"` |
-| 入口 | 默认 `index.mjs` |
-| `exports.import` / `exports.types` | tsdown 自动写入 |
-| `exports.require` | **不输出**（除非有强需求） |
+| 维度                               | 配置                       |
+| ---------------------------------- | -------------------------- |
+| 包 `type`                          | 全部 `"module"`            |
+| 入口                               | 默认 `index.mjs`           |
+| `exports.import` / `exports.types` | tsdown 自动写入            |
+| `exports.require`                  | **不输出**（除非有强需求） |
 
 下游用 ESM 即可，CJS 用户需另行兼容。
 
@@ -170,10 +170,10 @@ catalogs:
 
 ## 常见 Bug 与避坑
 
-| 现象 | 原因 / 对策 |
-| --- | --- |
-| `Cannot find namespace 'Api'` | 应用 `tsconfig.json` 未 extends `web-app.json` |
+| 现象                                     | 原因 / 对策                                                         |
+| ---------------------------------------- | ------------------------------------------------------------------- |
+| `Cannot find namespace 'Api'`            | 应用 `tsconfig.json` 未 extends `web-app.json`                      |
 | `Type instantiation is excessively deep` | 通常是 `@skyroc/utils/type` 的 path 类型嵌套太深，调小 `Depth` 参数 |
-| 包内 import 形如 `@skyroc/utils` 报错 | 包未把 `@skyroc/utils` 写进 `dependencies`（不是 devDependencies） |
-| dts 缺少类型 | tsdown 配置漏写 `entry` 子入口 |
-| `verbatimModuleSyntax` 报错 | 漏写 `import type`，按提示修 |
+| 包内 import 形如 `@skyroc/utils` 报错    | 包未把 `@skyroc/utils` 写进 `dependencies`（不是 devDependencies）  |
+| dts 缺少类型                             | tsdown 配置漏写 `entry` 子入口                                      |
+| `verbatimModuleSyntax` 报错              | 漏写 `import type`，按提示修                                        |

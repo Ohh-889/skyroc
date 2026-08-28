@@ -21,24 +21,40 @@ const Home = () => {
   }, []);
 
   return (
-    <ASpace className="w-full" orientation="vertical" size={[16, 16]}>
+    <ASpace
+      className="w-full"
+      orientation="vertical"
+      size={[16, 16]}
+    >
       <HeaderBanner />
 
       <CardData />
 
       <ARow gutter={[16, 16]}>
-        <ACol lg={14} span={24}>
+        <ACol
+          lg={14}
+          span={24}
+        >
           <LineChart />
         </ACol>
-        <ACol lg={10} span={24}>
+        <ACol
+          lg={10}
+          span={24}
+        >
           <PieChart />
         </ACol>
       </ARow>
       <ARow gutter={[16, 16]}>
-        <ACol lg={14} span={24}>
+        <ACol
+          lg={14}
+          span={24}
+        >
           <ProjectNews />
         </ACol>
-        <ACol lg={10} span={24}>
+        <ACol
+          lg={10}
+          span={24}
+        >
           <CreativityBanner />
         </ACol>
       </ARow>

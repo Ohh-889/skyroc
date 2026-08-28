@@ -18,8 +18,7 @@ export interface ThemeModeState {
 /**
  * 读写主题。
  *
- * 两个来源各管一半，不要合并：偏好是自己的持久化状态（`themeModeAtom`），生效的明暗是 Uniwind 算出来的
- * （`system` 时由系统决定）。UI 上「选中哪个按钮」看前者，「现在是不是暗色」看后者。
+ * 两个来源各管一半，不要合并：偏好是自己的持久化状态（`themeModeAtom`），生效的明暗是 Uniwind 算出来的 （`system` 时由系统决定）。UI 上「选中哪个按钮」看前者，「现在是不是暗色」看后者。
  */
 export function useThemeMode(): ThemeModeState {
   const mode = useAtomValue(themeModeAtom);

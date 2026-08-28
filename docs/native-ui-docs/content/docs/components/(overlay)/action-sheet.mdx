@@ -33,12 +33,12 @@ ActionSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时�
 
 单个 `ActionSheetAction` 支持 `subname`（描述）、`disabled`、`loading` 和 `color`：
 
-| 字段       | 表现                                                            |
-| ---------- | --------------------------------------------------------------- |
-| `subname`  | 在名称下方追加一行弱化描述                                        |
-| `disabled` | 降到 50% 不透明度并阻断点击                                       |
-| `loading`  | 降到 70% 不透明度、阻断点击，**并用指示器替换掉名称与描述**       |
-| `color`    | 直接写进 `style.color`，优先级高于选中态的主题色                   |
+| 字段       | 表现                                                        |
+| ---------- | ----------------------------------------------------------- |
+| `subname`  | 在名称下方追加一行弱化描述                                  |
+| `disabled` | 降到 50% 不透明度并阻断点击                                 |
+| `loading`  | 降到 70% 不透明度、阻断点击，**并用指示器替换掉名称与描述** |
+| `color`    | 直接写进 `style.color`，优先级高于选中态的主题色            |
 
 <Demo src="@playground/action-sheet/ActionSheetStatus" />
 
@@ -52,12 +52,12 @@ ActionSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时�
 
 两个变体的差异：
 
-| 维度       | `default`                          | `button`                          |
-| ---------- | ---------------------------------- | --------------------------------- |
-| 操作项外观 | 通栏文字行，行间用 `Divider` 分隔  | 圆角卡片，靠容器 `gap-3` 分隔     |
-| `icon`     | 不渲染                             | 渲染在名称之前                    |
-| 选中态     | 名称变主题色                       | 名称变主题色 + 卡片描边与浅色底   |
-| 取消按钮   | 与列表之间有一条灰色间隔（`cancelGap`） | 圆角卡片，无间隔条            |
+| 维度       | `default`                               | `button`                        |
+| ---------- | --------------------------------------- | ------------------------------- |
+| 操作项外观 | 通栏文字行，行间用 `Divider` 分隔       | 圆角卡片，靠容器 `gap-3` 分隔   |
+| `icon`     | 不渲染                                  | 渲染在名称之前                  |
+| 选中态     | 名称变主题色                            | 名称变主题色 + 卡片描边与浅色底 |
+| 取消按钮   | 与列表之间有一条灰色间隔（`cancelGap`） | 圆角卡片，无间隔条              |
 
 `button` 变体的操作项基态就带了一圈 `border-transparent`，选中时只换颜色，行高不会跳动。
 
@@ -88,16 +88,16 @@ ActionSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时�
 
 `className` 与 `classNames` 作用于操作列表这一层，内部 `Sheet` 面板本体则由 `sheetClassName` / `sheetClassNames` 覆盖 —— 两组属性各管一层，不要混用。
 
-| slot           | 作用位置                                                |
-| -------------- | ------------------------------------------------------- |
-| `root`         | 操作列表容器（含底部安全区内边距）                        |
-| `action`       | 单个操作项的 `Pressable`                                 |
-| `actionName`   | 操作项名称文字                                           |
-| `actionSubname`| 操作项描述文字                                           |
-| `indicator`    | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 类 |
-| `cancelGap`    | 取消按钮上方的灰色间隔条（仅 `default` 变体）             |
-| `cancel`       | 取消按钮的 `Pressable`                                   |
-| `cancelName`   | 取消按钮文字                                             |
+| slot            | 作用位置                                                  |
+| --------------- | --------------------------------------------------------- |
+| `root`          | 操作列表容器（含底部安全区内边距）                        |
+| `action`        | 单个操作项的 `Pressable`                                  |
+| `actionName`    | 操作项名称文字                                            |
+| `actionSubname` | 操作项描述文字                                            |
+| `indicator`     | `loading` 指示器的 `colorClassName`，只接受 `accent-*` 类 |
+| `cancelGap`     | 取消按钮上方的灰色间隔条（仅 `default` 变体）             |
+| `cancel`        | 取消按钮的 `Pressable`                                    |
+| `cancelName`    | 取消按钮文字                                              |
 
 <Demo src="@playground/action-sheet/ActionSheetStyles" />
 
@@ -241,7 +241,12 @@ import type {
       name: 'ActionSheetAction',
       description: '单个操作项。',
       fields: [
-        { name: 'value', type: 'string', required: true, description: '操作项的值，用于 value / onChange 匹配，同时作为列表 key。' },
+        {
+          name: 'value',
+          type: 'string',
+          required: true,
+          description: '操作项的值，用于 value / onChange 匹配，同时作为列表 key。'
+        },
         { name: 'name', type: 'ReactNode', required: true, description: '操作项名称，string / number 自动包裹 Text。' },
         { name: 'subname', type: 'ReactNode', description: '操作项描述信息，显示在名称下方。' },
         { name: 'icon', type: 'ReactNode', description: '操作项图标，仅 variant="button" 时渲染。' },
@@ -249,7 +254,11 @@ import type {
         { name: 'disabled', type: 'boolean', description: '是否禁用，禁用后不可点击并降低透明度。' },
         { name: 'loading', type: 'boolean', description: '是否加载中，加载时名称与描述被指示器替换且不可点击。' },
         { name: 'className', type: 'string', description: '操作项根节点的类名，优先级高于 classNames.action。' },
-        { name: 'callback', type: '() => void', description: '点击后的回调，与 onSelect 同时触发，用于把行为写在数据里。' }
+        {
+          name: 'callback',
+          type: '() => void',
+          description: '点击后的回调，与 onSelect 同时触发，用于把行为写在数据里。'
+        }
       ]
     },
     {

@@ -1,12 +1,6 @@
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  PopoverAnchor,
-  PopoverArrow,
-  PopoverContent,
-  PopoverRoot,
-  PopoverTrigger
-} from '../src/components/popover';
+import { PopoverAnchor, PopoverArrow, PopoverContent, PopoverRoot, PopoverTrigger } from '../src/components/popover';
 import { Popover } from '../src/preset/popover';
 import { render, screen, setupUser, waitFor } from './helpers/render';
 

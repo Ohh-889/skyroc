@@ -1,8 +1,8 @@
 'use client';
 
-import { useComponentConfig } from '../config-provider/context';
 import DrawerUI from '../../components/drawer/DrawerUI';
 import type { DrawerProps } from '../../components/drawer/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Drawer = (props: DrawerProps) => {
   const config = useComponentConfig('drawer');
@@ -12,11 +12,7 @@ const Drawer = (props: DrawerProps) => {
     ...props
   };
 
-  return (
-    <DrawerUI
-      {...mergedProps}
-    />
-  );
+  return <DrawerUI {...mergedProps} />;
 };
 
 Drawer.displayName = 'Drawer';

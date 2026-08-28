@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
 import { alertVariants } from './alert-variants';
 import type { AlertRootProps } from './types';
 

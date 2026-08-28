@@ -33,7 +33,7 @@ export function getWorkspaceRoot(startDir = process.cwd()) {
   throw new Error('Cannot resolve workspace root. Run this command inside the monorepo.');
 }
 
-/** create-skyroc 发布包内的模板资产目录。 */
+/** Create-skyroc 发布包内的模板资产目录。 */
 export function getTemplateAssetsDir() {
   return path.join(getPackageRoot(), 'dist', 'template-assets');
 }

@@ -87,7 +87,14 @@ describe('AlertDialog', () => {
           title: 'custom-title'
         }}
         description="Custom footer description."
-        footer={<button type="button" onClick={onCustomAction}>Archive</button>}
+        footer={
+          <button
+            type="button"
+            onClick={onCustomAction}
+          >
+            Archive
+          </button>
+        }
         title="Archive record"
         trigger={<button type="button">Open custom alert</button>}
       />

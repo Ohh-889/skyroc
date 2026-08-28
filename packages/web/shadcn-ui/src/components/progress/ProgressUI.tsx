@@ -1,9 +1,9 @@
 'use client';
 
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Indicator, Root } from '@radix-ui/react-progress';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { progressVariants } from './progress-variants';
 import type { ProgressProps } from './types';
 

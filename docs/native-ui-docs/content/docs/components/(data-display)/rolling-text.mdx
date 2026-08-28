@@ -39,11 +39,11 @@ import { RollingText } from '@skyroc/native-ui';
 
 ## 动画节奏
 
-| 属性       | 含义                                                     | 默认值 |
-| ---------- | -------------------------------------------------------- | ------ |
-| `circles`  | 数字模式下每列额外空转的圈数，夹在 0 ~ 10                 | 2      |
-| `duration` | 单列滚动时长（毫秒），不含 `delayStep` 的错峰耗时          | 2000   |
-| `height`   | 每个字符所占的行高，字符的 `lineHeight` 跟随此值           | 40     |
+| 属性       | 含义                                              | 默认值 |
+| ---------- | ------------------------------------------------- | ------ |
+| `circles`  | 数字模式下每列额外空转的圈数，夹在 0 ~ 10         | 2      |
+| `duration` | 单列滚动时长（毫秒），不含 `delayStep` 的错峰耗时 | 2000   |
+| `height`   | 每个字符所占的行高，字符的 `lineHeight` 跟随此值  | 40     |
 
 <Demo src="@playground/rolling-text/RollingTextDuration" />
 
@@ -59,10 +59,10 @@ import { RollingText } from '@skyroc/native-ui';
 
 `autoStart={false}` 时挂载后停在起始位置，由 `ref` 驱动：
 
-| 方法      | 说明                                                             |
-| --------- | ---------------------------------------------------------------- |
-| `start()` | 从起始位置播放一次；播放中调用会立即重播                          |
-| `reset()` | 回到起始位置；`autoStart` 为 `true` 时立即重播，否则停在起点      |
+| 方法      | 说明                                                         |
+| --------- | ------------------------------------------------------------ |
+| `start()` | 从起始位置播放一次；播放中调用会立即重播                     |
+| `reset()` | 回到起始位置；`autoStart` 为 `true` 时立即重播，否则停在起点 |
 
 <Demo src="@playground/rolling-text/RollingTextManual" />
 
@@ -80,10 +80,10 @@ import { RollingText } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot   | 作用位置                             |
-| ------ | ------------------------------------ |
-| `root` | 根容器（横向排布）                   |
-| `text` | 每个滚动字符的文字类名               |
+| slot   | 作用位置               |
+| ------ | ---------------------- |
+| `root` | 根容器（横向排布）     |
+| `text` | 每个滚动字符的文字类名 |
 
 <Demo src="@playground/rolling-text/RollingTextStyles" />
 
@@ -177,7 +177,12 @@ import type {
       name: 'RollingTextRef',
       description: '组件实例暴露的命令式方法。',
       fields: [
-        { name: 'start', type: '() => void', description: '从起始位置播放一次，播放中调用会立即重播。', required: true },
+        {
+          name: 'start',
+          type: '() => void',
+          description: '从起始位置播放一次，播放中调用会立即重播。',
+          required: true
+        },
         {
           name: 'reset',
           type: '() => void',

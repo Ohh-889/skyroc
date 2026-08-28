@@ -23,23 +23,23 @@ export const resizableVariants = tv({
         handleIconRoot: 'w-4.5 h-6',
         panelGroup: 'text-xl'
       },
-      'lg': {
+      lg: {
         handleIconRoot: 'w-3.5 h-4.5',
         panelGroup: 'text-base'
       },
-      'md': {
+      md: {
         handleIconRoot: 'w-3 h-4',
         panelGroup: 'text-sm'
       },
-      'sm': {
+      sm: {
         handleIconRoot: 'w-2.5 h-3.25',
         panelGroup: 'text-xs'
       },
-      'xl': {
+      xl: {
         handleIconRoot: 'w-4 h-5.25',
         panelGroup: 'text-lg'
       },
-      'xs': {
+      xs: {
         handleIconRoot: 'w-2 h-2.625',
         panelGroup: 'text-2xs'
       }

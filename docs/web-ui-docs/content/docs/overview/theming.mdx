@@ -9,16 +9,16 @@ Skyroc UI 的主题系统由两层构成：**Tailwind 插件**负责 CSS 变量�
 
 所有组件共享 8 种语义颜色，每种颜色通过 CSS 变量定义，同时自动适配亮色/暗色模式。
 
-| 颜色          | CSS 变量         | 语义     | 典型场景               |
-| ------------- | ---------------- | -------- | ---------------------- |
-| `primary`     | `--primary`      | 主操作   | 页面中最重要的行为     |
-| `destructive` | `--destructive`  | 危险操作 | 删除、移除等不可逆操作 |
-| `success`     | `--success`      | 成功确认 | 操作成功、确认完成     |
-| `warning`     | `--warning`      | 警告提示 | 需要注意的操作         |
-| `info`        | `--info`         | 信息提示 | 信息性操作             |
-| `carbon`      | `--carbon`       | 中性深色 | 不带语义倾向的中性操作 |
-| `secondary`   | `--secondary`    | 次级操作 | 辅助性、低优先级操作   |
-| `accent`      | `--accent`       | 强调色   | 需要特殊视觉关注的操作 |
+| 颜色          | CSS 变量        | 语义     | 典型场景               |
+| ------------- | --------------- | -------- | ---------------------- |
+| `primary`     | `--primary`     | 主操作   | 页面中最重要的行为     |
+| `destructive` | `--destructive` | 危险操作 | 删除、移除等不可逆操作 |
+| `success`     | `--success`     | 成功确认 | 操作成功、确认完成     |
+| `warning`     | `--warning`     | 警告提示 | 需要注意的操作         |
+| `info`        | `--info`        | 信息提示 | 信息性操作             |
+| `carbon`      | `--carbon`      | 中性深色 | 不带语义倾向的中性操作 |
+| `secondary`   | `--secondary`   | 次级操作 | 辅助性、低优先级操作   |
+| `accent`      | `--accent`      | 强调色   | 需要特殊视觉关注的操作 |
 
 每种颜色都附带对应的 `*-foreground` 变量（如 `--primary-foreground`），用于在该颜色背景上的文字/图标。
 
@@ -41,7 +41,9 @@ Skyroc UI 的主题系统由两层构成：**Tailwind 插件**负责 CSS 变量�
 @import '@skyroc/tailwind-plugin';
 
 /* 自定义选择器 */
-@import '@skyroc/tailwind-plugin' with (darkSelector: '[data-theme="dark"]');
+@import '@skyroc/tailwind-plugin' with (
+  darkSelector: '[data-theme="dark"]'
+);
 ```
 
 ## 圆角
@@ -72,7 +74,10 @@ import { ConfigProvider, Button, Input } from '@skyroc/web-ui';
 
 const App = () => {
   return (
-    <ConfigProvider size="lg" theme={{ color: 'blue' }}>
+    <ConfigProvider
+      size="lg"
+      theme={{ color: 'blue' }}
+    >
       <Button>大号按钮</Button>
       <Input placeholder="大号输入框" />
     </ConfigProvider>
@@ -156,10 +161,18 @@ Accordion · Alert · AlertDialog · AspectRatio · Avatar · Badge · BottomShe
       name: 'ThemeOptions',
       description: '主题配置选项，用于 ConfigProvider 的 theme prop 和 Tailwind 插件。',
       fields: [
-        { name: 'color', type: "ThemeConfigColor | ThemeCSSVarsVariant | false", description: '主题配色方案，支持预设名称、自定义 CSS 变量或禁用。默认 default。' },
+        {
+          name: 'color',
+          type: 'ThemeConfigColor | ThemeCSSVarsVariant | false',
+          description: '主题配色方案，支持预设名称、自定义 CSS 变量或禁用。默认 default。'
+        },
         { name: 'darkSelector', type: 'string', description: '深色模式选择器。默认 .dark。' },
         { name: 'radius', type: 'number | false', description: '全局圆角大小（rem）。默认 0.5。' },
-        { name: 'feedbackColor', type: 'FeedbackColorOfThemeCssVarsVariant', description: '自定义反馈色（success / warning / info / carbon）的亮色和暗色值。' },
+        {
+          name: 'feedbackColor',
+          type: 'FeedbackColorOfThemeCssVarsVariant',
+          description: '自定义反馈色（success / warning / info / carbon）的亮色和暗色值。'
+        },
         { name: 'sidebar', type: 'SidebarColorOfThemeCssVarsVariant', description: '自定义侧边栏颜色的亮色和暗色值。' }
       ]
     }

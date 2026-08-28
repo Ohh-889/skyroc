@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import MenubarWrapper from '../src/components/menubar/Menubar';
 import {
   Menubar,
   MenubarContent,
@@ -16,6 +15,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from '../src/components/menubar';
+import MenubarWrapper from '../src/components/menubar/Menubar';
 import { render, screen, setupUser, waitFor, within } from './helpers/render';
 
 describe('Menubar', () => {
@@ -224,9 +224,7 @@ describe('Menubar', () => {
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger leading={<span data-testid="tools-leading-icon">I</span>}>
-              Inspectors
-            </MenubarTrigger>
+            <MenubarTrigger leading={<span data-testid="tools-leading-icon">I</span>}>Inspectors</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Elements</MenubarItem>
             </MenubarContent>

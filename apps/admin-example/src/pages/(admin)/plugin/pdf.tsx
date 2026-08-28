@@ -95,48 +95,93 @@ const PdfDemo = () => {
   }
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:file-pdf-box"
         resources={[{ label: 'react-pdf', url: 'https://github.com/wojtekmaj/react-pdf' }]}
         tags={['react-pdf', 'pdf.js worker']}
         title="PDF 预览示例"
       />
-      <ExamplePanel icon="mdi:file-pdf-box" title="PDF 预览">
-        <Space className="mb-4 w-full justify-end" wrap>
-          <Checkbox checked={showAllPages} onChange={handleShowAllPagesChange}>
+      <ExamplePanel
+        icon="mdi:file-pdf-box"
+        title="PDF 预览"
+      >
+        <Space
+          className="mb-4 w-full justify-end"
+          wrap
+        >
+          <Checkbox
+            checked={showAllPages}
+            onChange={handleShowAllPagesChange}
+          >
             显示全部页面
           </Checkbox>
           <Button onClick={handleRotate}>旋转 90°</Button>
-          <Button disabled={!pdfDocument} loading={isPrinting} onClick={handlePrint}>
+          <Button
+            disabled={!pdfDocument}
+            loading={isPrinting}
+            onClick={handlePrint}
+          >
             打印
           </Button>
-          <Button disabled={!pdfDocument} loading={isDownloading} type="primary" onClick={handleDownload}>
+          <Button
+            disabled={!pdfDocument}
+            loading={isDownloading}
+            type="primary"
+            onClick={handleDownload}
+          >
             下载
           </Button>
         </Space>
         <div className="max-h-720px overflow-auto rounded-lg bg-layout p-4">
           <Document
             file={pdfSource}
-            loading={<Skeleton active paragraph={{ rows: 8 }} />}
+            loading={
+              <Skeleton
+                active
+                paragraph={{ rows: 8 }}
+              />
+            }
             onLoadSuccess={handleDocumentLoadSuccess}
           >
             {showAllPages ? (
               Array.from({ length: pageCount }, (_, index) => (
-                <div className="mb-4 flex justify-center" key={index}>
-                  <Page pageNumber={index + 1} renderTextLayer={false} rotate={rotations[rotationIndex]} width={760} />
+                <div
+                  className="mb-4 flex justify-center"
+                  key={index}
+                >
+                  <Page
+                    pageNumber={index + 1}
+                    renderTextLayer={false}
+                    rotate={rotations[rotationIndex]}
+                    width={760}
+                  />
                 </div>
               ))
             ) : (
               <div className="flex justify-center">
-                <Page pageNumber={currentPage} renderTextLayer={false} rotate={rotations[rotationIndex]} width={760} />
+                <Page
+                  pageNumber={currentPage}
+                  renderTextLayer={false}
+                  rotate={rotations[rotationIndex]}
+                  width={760}
+                />
               </div>
             )}
           </Document>
         </div>
         {!showAllPages && (
           <div className="mt-4 flex justify-center">
-            <Pagination current={currentPage} pageSize={1} total={pageCount} onChange={setCurrentPage} />
+            <Pagination
+              current={currentPage}
+              pageSize={1}
+              total={pageCount}
+              onChange={setCurrentPage}
+            />
           </div>
         )}
       </ExamplePanel>

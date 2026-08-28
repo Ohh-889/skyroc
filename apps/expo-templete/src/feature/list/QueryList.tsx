@@ -55,8 +55,7 @@ export interface QueryListHandle<TItem> {
 
 /** QueryList 组件属性 */
 export interface QueryListProps<TItem, TParams extends object>
-  extends Omit<ListProps<TItem>, ManagedListProps>,
-    UseInfiniteListOptions<TItem, TParams> {
+  extends Omit<ListProps<TItem>, ManagedListProps>, UseInfiniteListOptions<TItem, TParams> {
   /** 命令式句柄，见 `QueryListHandle` */
   ref?: Ref<QueryListHandle<TItem>>;
 }
@@ -79,8 +78,7 @@ export interface QueryListProps<TItem, TParams extends object>
  * />
  * ```
  *
- * 页面要把列表数据参与渲染（头部显示总数、和别的数据联动）时，ref 就不够了 —— 那是渲染期的依赖， 换成 `useInfiniteList` + `<List
- * {...listProps} />`，UI 一行都不用重写。
+ * 页面要把列表数据参与渲染（头部显示总数、和别的数据联动）时，ref 就不够了 —— 那是渲染期的依赖， 换成 `useInfiniteList` + `<List {...listProps} />`，UI 一行都不用重写。
  */
 export const QueryList = <TItem, TParams extends object = Record<string, never>>(
   props: QueryListProps<TItem, TParams>
@@ -94,8 +92,8 @@ export const QueryList = <TItem, TParams extends object = Record<string, never>>
   /**
    * 句柄本身保持同一个对象，值通过 ref 现取。
    *
-   * 不写依赖数组的话每次渲染都换一个新句柄，父组件把它存进 state 或塞进别的 ref 就会拿到过期快照； 依赖写全了又等于每次渲染都重建，一样的问题。所以这里让方法和 getter
-   * 都走 latest.current，句柄只建一次。
+   * 不写依赖数组的话每次渲染都换一个新句柄，父组件把它存进 state 或塞进别的 ref 就会拿到过期快照； 依赖写全了又等于每次渲染都重建，一样的问题。所以这里让方法和 getter 都走
+   * latest.current，句柄只建一次。
    */
   const latest = useRef(result);
 

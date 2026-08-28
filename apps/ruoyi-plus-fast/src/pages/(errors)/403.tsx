@@ -4,7 +4,12 @@ import { createFileRoute } from '@tanstack/react-router';
 const NotAuth = () => {
   const { t } = useTranslation();
 
-  return <ExceptionBase buttonText={t('common.backToHome')} type="403" />;
+  return (
+    <ExceptionBase
+      buttonText={t('common.backToHome')}
+      type="403"
+    />
+  );
 };
 
 export const Route = createFileRoute('/(errors)/403')({

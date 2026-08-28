@@ -43,7 +43,7 @@ const BUILTIN_TYPE_NAMES = new Set([
   'Set',
   'StandardSchema',
   'Values',
-  'VNode',
+  'VNode'
 ]);
 
 function splitTypeParts(typeText: string): TypePart[] {

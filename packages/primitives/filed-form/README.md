@@ -38,7 +38,7 @@ function BasicForm() {
   return (
     <Form
       initialValues={{ username: '', email: '' }}
-      onFinish={(values) => {
+      onFinish={values => {
         console.log('Form submitted:', values);
       }}
     >
@@ -47,7 +47,10 @@ function BasicForm() {
       </Field>
 
       <Field name="email">
-        <input type="email" placeholder="Email" />
+        <input
+          type="email"
+          placeholder="Email"
+        />
       </Field>
 
       <button type="submit">Submit</button>
@@ -68,8 +71,8 @@ function ValidatedForm() {
     <Form
       form={form}
       initialValues={{ email: '', password: '' }}
-      onFinish={(values) => console.log('Submit success:', values)}
-      onFinishFailed={(error) => console.log('Validation failed:', error)}
+      onFinish={values => console.log('Submit success:', values)}
+      onFinishFailed={error => console.log('Validation failed:', error)}
     >
       <Field
         name="email"
@@ -88,11 +91,19 @@ function ValidatedForm() {
           { minLength: 6, message: 'Password must be at least 6 characters' }
         ]}
       >
-        <input type="password" placeholder="Password" />
+        <input
+          type="password"
+          placeholder="Password"
+        />
       </Field>
 
       <button type="submit">Submit</button>
-      <button type="button" onClick={() => form.resetFields()}>Reset</button>
+      <button
+        type="button"
+        onClick={() => form.resetFields()}
+      >
+        Reset
+      </button>
     </Form>
   );
 }
@@ -108,19 +119,19 @@ Form container component that provides form context and state management.
 
 **Props:**
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `form` | `FormInstance` | - | External form instance |
-| `initialValues` | `object` | `{}` | Initial form values |
-| `onFinish` | `(values) => void` | - | Callback on successful submission |
-| `onFinishFailed` | `(error) => void` | - | Callback on failed submission |
-| `onValuesChange` | `(changed, all) => void` | - | Callback on value changes |
-| `onFieldsChange` | `(changed, all) => void` | - | Callback on field metadata changes |
-| `schema` | `FormSchema` | - | Schema validator (supports Zod, etc.) |
-| `validateTrigger` | `string \| string[]` | `'onChange'` | Validation trigger event |
-| `validateMessages` | `ValidateMessages` | - | Custom validation messages |
-| `preserve` | `boolean` | `true` | Whether to preserve field values on unmount |
-| `component` | `ElementType \| false` | `'form'` | Component type to render as |
+| Property           | Type                     | Default      | Description                                 |
+| ------------------ | ------------------------ | ------------ | ------------------------------------------- |
+| `form`             | `FormInstance`           | -            | External form instance                      |
+| `initialValues`    | `object`                 | `{}`         | Initial form values                         |
+| `onFinish`         | `(values) => void`       | -            | Callback on successful submission           |
+| `onFinishFailed`   | `(error) => void`        | -            | Callback on failed submission               |
+| `onValuesChange`   | `(changed, all) => void` | -            | Callback on value changes                   |
+| `onFieldsChange`   | `(changed, all) => void` | -            | Callback on field metadata changes          |
+| `schema`           | `FormSchema`             | -            | Schema validator (supports Zod, etc.)       |
+| `validateTrigger`  | `string \| string[]`     | `'onChange'` | Validation trigger event                    |
+| `validateMessages` | `ValidateMessages`       | -            | Custom validation messages                  |
+| `preserve`         | `boolean`                | `true`       | Whether to preserve field values on unmount |
+| `component`        | `ElementType \| false`   | `'form'`     | Component type to render as                 |
 
 **Examples:**
 
@@ -154,17 +165,17 @@ Field component for wrapping input controls with state management and validation
 
 **Props:**
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `name` | `string` | **Required** | Field name (supports nested paths like `user.email`) |
-| `rules` | `Rule[]` | - | Array of validation rules |
-| `initialValue` | `any` | - | Initial field value |
-| `trigger` | `string` | `'onChange'` | Event that triggers value update |
-| `validateTrigger` | `string \| string[]` | - | Event(s) that trigger validation |
-| `valuePropName` | `string` | `'value'` | Name of the value prop |
-| `getValueFromEvent` | `(...args) => any` | - | Custom value extraction function |
-| `normalize` | `(value, prevValue, allValues) => any` | - | Value normalization/transformation function |
-| `preserve` | `boolean` | `true` | Whether to preserve value on unmount |
+| Property            | Type                                   | Default      | Description                                          |
+| ------------------- | -------------------------------------- | ------------ | ---------------------------------------------------- |
+| `name`              | `string`                               | **Required** | Field name (supports nested paths like `user.email`) |
+| `rules`             | `Rule[]`                               | -            | Array of validation rules                            |
+| `initialValue`      | `any`                                  | -            | Initial field value                                  |
+| `trigger`           | `string`                               | `'onChange'` | Event that triggers value update                     |
+| `validateTrigger`   | `string \| string[]`                   | -            | Event(s) that trigger validation                     |
+| `valuePropName`     | `string`                               | `'value'`    | Name of the value prop                               |
+| `getValueFromEvent` | `(...args) => any`                     | -            | Custom value extraction function                     |
+| `normalize`         | `(value, prevValue, allValues) => any` | -            | Value normalization/transformation function          |
+| `preserve`          | `boolean`                              | `true`       | Whether to preserve value on unmount                 |
 
 **Examples:**
 
@@ -210,11 +221,11 @@ Dynamic array field management component with complete array operations.
 
 **Props:**
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `name` | `string` | **Required** | Array field name |
-| `initialValue` | `any[]` | - | Initial array value |
-| `children` | `(fields, operations) => ReactNode` | **Required** | Render function |
+| Property       | Type                                | Default      | Description         |
+| -------------- | ----------------------------------- | ------------ | ------------------- |
+| `name`         | `string`                            | **Required** | Array field name    |
+| `initialValue` | `any[]`                             | -            | Initial array value |
+| `children`     | `(fields, operations) => ReactNode` | **Required** | Render function     |
 
 **Operations:**
 
@@ -278,14 +289,14 @@ Computed field component that automatically calculates and updates based on othe
 
 **Props:**
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `name` | `string` | **Required** | Computed field name |
-| `deps` | `string[]` | **Required** | Array of dependent field names |
-| `compute` | `(get, all) => any` | **Required** | Compute function |
-| `rules` | `Rule[]` | - | Validation rules array |
-| `valuePropName` | `string` | `'value'` | Name of the value prop |
-| `preserve` | `boolean` | `true` | Whether to preserve value on unmount |
+| Property        | Type                | Default      | Description                          |
+| --------------- | ------------------- | ------------ | ------------------------------------ |
+| `name`          | `string`            | **Required** | Computed field name                  |
+| `deps`          | `string[]`          | **Required** | Array of dependent field names       |
+| `compute`       | `(get, all) => any` | **Required** | Compute function                     |
+| `rules`         | `Rule[]`            | -            | Validation rules array               |
+| `valuePropName` | `string`            | `'value'`    | Name of the value prop               |
+| `preserve`      | `boolean`           | `true`       | Whether to preserve value on unmount |
 
 **Examples:**
 
@@ -346,17 +357,17 @@ Create a form instance for programmatic form control.
 const [form] = useForm<FormValues>();
 
 // Form instance methods
-form.getFieldValue('username');           // Get field value
-form.getFieldsValue();                    // Get all field values
-form.setFieldValue('username', 'John');   // Set field value
+form.getFieldValue('username'); // Get field value
+form.getFieldsValue(); // Get all field values
+form.setFieldValue('username', 'John'); // Set field value
 form.setFieldsValue({ username: 'John', email: 'john@example.com' });
-form.resetFields();                       // Reset all fields
-form.resetFields(['username']);           // Reset specific fields
-form.submit();                            // Trigger submission
-form.validateFields();                    // Validate all fields
-form.validateFields(['email']);           // Validate specific fields
-form.getFieldError('email');              // Get field error
-form.getFieldsError();                    // Get all field errors
+form.resetFields(); // Reset all fields
+form.resetFields(['username']); // Reset specific fields
+form.submit(); // Trigger submission
+form.validateFields(); // Validate all fields
+form.validateFields(['email']); // Validate specific fields
+form.getFieldError('email'); // Get field error
+form.getFieldsError(); // Get all field errors
 ```
 
 #### `useWatch()`
@@ -429,7 +440,10 @@ function TodoList() {
   const { fields, add, remove, move } = useArrayField('todos', form);
 
   return (
-    <Form form={form} initialValues={{ todos: [] }}>
+    <Form
+      form={form}
+      initialValues={{ todos: [] }}
+    >
       {fields.map((field, index) => (
         <div key={field.key}>
           <Field name={`${field.name}.title`}>
@@ -466,7 +480,7 @@ function UserForm() {
   // Log when username changes
   useFieldEffect(
     ['firstName', 'lastName'],
-    (get) => {
+    get => {
       const firstName = get('firstName');
       const lastName = get('lastName');
       console.log(`Name changed to: ${firstName} ${lastName}`);
@@ -528,7 +542,7 @@ const value = useSelector<Values, Result>(
 // Calculate shopping cart total
 function ShoppingCart() {
   const total = useSelector(
-    (get) => {
+    get => {
       const items = get('items') || [];
       return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     },
@@ -540,23 +554,27 @@ function ShoppingCart() {
       <List name="items">
         {(fields, { add, remove }) => (
           <>
-            {fields.map((field) => (
+            {fields.map(field => (
               <div key={field.key}>
                 <Field name={`${field.name}.name`}>
                   <input placeholder="Product Name" />
                 </Field>
                 <Field name={`${field.name}.price`}>
-                  <input type="number" placeholder="Price" />
+                  <input
+                    type="number"
+                    placeholder="Price"
+                  />
                 </Field>
                 <Field name={`${field.name}.quantity`}>
-                  <input type="number" placeholder="Quantity" />
+                  <input
+                    type="number"
+                    placeholder="Quantity"
+                  />
                 </Field>
                 <button onClick={() => remove(field.name)}>Delete</button>
               </div>
             ))}
-            <button onClick={() => add({ name: '', price: 0, quantity: 1 })}>
-              Add Product
-            </button>
+            <button onClick={() => add({ name: '', price: 0, quantity: 1 })}>Add Product</button>
           </>
         )}
       </List>
@@ -568,7 +586,7 @@ function ShoppingCart() {
 // Use custom equality comparison (avoid re-renders from object reference changes)
 function UserProfile() {
   const userInfo = useSelector(
-    (get) => ({
+    get => ({
       name: get('name'),
       age: get('age'),
       email: get('email')
@@ -648,7 +666,7 @@ const { undo, redo, canUndo, canRedo } = useUndoRedo({ form });
     // Value transformation
     {
       type: 'string',
-      transform: (value) => value?.trim(),
+      transform: value => value?.trim(),
       message: 'Invalid string'
     }
   ]}
@@ -675,20 +693,25 @@ form.validateFields({ mode: 'parallelFirst' });
 ```tsx
 import { z } from 'zod';
 
-const schema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Invalid email format'),
-  age: z.number().min(18, 'Must be at least 18 years old'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword']
-});
+const schema = z
+  .object({
+    username: z.string().min(3, 'Username must be at least 3 characters'),
+    email: z.string().email('Invalid email format'),
+    age: z.number().min(18, 'Must be at least 18 years old'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string()
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword']
+  });
 
-<Form schema={schema} onFinish={handleSubmit}>
+<Form
+  schema={schema}
+  onFinish={handleSubmit}
+>
   {/* Fields */}
-</Form>
+</Form>;
 ```
 
 ## 🔧 Advanced Usage
@@ -729,7 +752,7 @@ function LinkedFields() {
     <Form form={form}>
       <Field
         name="country"
-        onChange={(value) => {
+        onChange={value => {
           // Clear city when country changes
           form.setFieldValue('city', undefined);
         }}
@@ -796,7 +819,7 @@ function TypedForm() {
 
   // ✅ Type safe
   const username = form.getFieldValue('username'); // string
-  const age = form.getFieldValue('profile.age');   // number
+  const age = form.getFieldValue('profile.age'); // number
 
   // ✅ Auto-completion
   form.setFieldsValue({
@@ -807,7 +830,7 @@ function TypedForm() {
   return (
     <Form<FormValues>
       form={form}
-      onFinish={(values) => {
+      onFinish={values => {
         // values are fully typed
         console.log(values.username); // ✅
         console.log(values.profile.age); // ✅
@@ -846,8 +869,18 @@ function MyForm() {
   return (
     <Form form={form}>
       {/* Fields */}
-      <button type="button" onClick={handleReset}>Reset</button>
-      <button type="button" onClick={handleFill}>Fill</button>
+      <button
+        type="button"
+        onClick={handleReset}
+      >
+        Reset
+      </button>
+      <button
+        type="button"
+        onClick={handleFill}
+      >
+        Fill
+      </button>
     </Form>
   );
 }
@@ -902,8 +935,13 @@ import { Input, Button } from 'antd';
   <Field name="username">
     <Input placeholder="Username" />
   </Field>
-  <Button type="primary" htmlType="submit">Submit</Button>
-</Form>
+  <Button
+    type="primary"
+    htmlType="submit"
+  >
+    Submit
+  </Button>
+</Form>;
 
 // Integration with Material-UI
 import { TextField, Button } from '@mui/material';
@@ -913,7 +951,7 @@ import { TextField, Button } from '@mui/material';
     <TextField label="Email" />
   </Field>
   <Button type="submit">Submit</Button>
-</Form>
+</Form>;
 ```
 
 ## 📄 License
@@ -924,4 +962,3 @@ MIT License
 
 - [GitHub Repository](https://github.com/Ohh-889/skyroc-ui)
 - [Issue Tracker](https://github.com/Ohh-889/skyroc-ui/issues)
-

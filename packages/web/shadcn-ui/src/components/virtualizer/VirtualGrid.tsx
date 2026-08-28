@@ -1,19 +1,15 @@
 'use client';
 /* eslint-disable react-hooks/incompatible-library */
 
-import type { CSSProperties } from 'react';
-import { Fragment, useImperativeHandle, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@skyroc/utils';
-import { virtualizerVariants } from './virtualizer-variants';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import type { CSSProperties } from 'react';
+import { Fragment, useImperativeHandle, useRef } from 'react';
 import type { VirtualGridProps, VirtualizerGrid } from './types';
+import { virtualizerVariants } from './virtualizer-variants';
 
-const VirtualGrid = <
-  T,
-  TScrollElement extends HTMLDivElement = HTMLDivElement,
-  TItemElement extends Element = Element
->(
+const VirtualGrid = <T, TScrollElement extends HTMLDivElement = HTMLDivElement, TItemElement extends Element = Element>(
   props: VirtualGridProps<T, TScrollElement, TItemElement>
 ) => {
   const {
@@ -45,11 +41,9 @@ const VirtualGrid = <
 
   const rowCount = Math.ceil(data.length / columns);
 
-  const getRowSize = (index: number) =>
-    typeof rowHeight === 'function' ? rowHeight(index) : rowHeight;
+  const getRowSize = (index: number) => (typeof rowHeight === 'function' ? rowHeight(index) : rowHeight);
 
-  const getColumnSize = (index: number) =>
-    typeof columnWidth === 'function' ? columnWidth(index) : columnWidth;
+  const getColumnSize = (index: number) => (typeof columnWidth === 'function' ? columnWidth(index) : columnWidth);
 
   // Vertical virtualization: rows
   const rowVirtualizer = useVirtualizer<TScrollElement, TItemElement>({
@@ -108,13 +102,12 @@ const VirtualGrid = <
       >
         {rowVirtualizer.getVirtualItems().map(virtualRow => (
           <Fragment key={virtualRow.index}>
-            {columnVirtualizer.getVirtualItems().map((virtualColumn) => {
+            {columnVirtualizer.getVirtualItems().map(virtualColumn => {
               const rowIndex = virtualRow.index;
               const colIndex = virtualColumn.index;
               const dataIndex = rowIndex * columns + colIndex;
 
-              if (dataIndex >= data.length)
-                return null;
+              if (dataIndex >= data.length) return null;
 
               const item = data[dataIndex];
 

@@ -1,8 +1,8 @@
 'use client';
 
 import type { ToasterProps } from 'sonner';
-import { useComponentConfig } from '../config-provider/context';
 import SonnerUI from '../../components/sonner/SonnerUI';
+import { useComponentConfig } from '../config-provider/context';
 
 const Sonner = (props: ToasterProps) => {
   const config = useComponentConfig('sonner');

@@ -37,15 +37,25 @@ const VTableDemo = () => {
   }, []);
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:table-large"
         resources={[{ label: 'VTable', url: 'https://visactor.io/vtable' }]}
         tags={['@visactor/vtable', 'Canvas Table']}
         title="VTable 示例"
       />
-      <ExamplePanel icon="mdi:table-large" title="List Table">
-        <div className="h-460px overflow-hidden rounded-lg border border-border" ref={containerRef} />
+      <ExamplePanel
+        icon="mdi:table-large"
+        title="List Table"
+      >
+        <div
+          className="h-460px overflow-hidden rounded-lg border border-border"
+          ref={containerRef}
+        />
       </ExamplePanel>
     </Space>
   );

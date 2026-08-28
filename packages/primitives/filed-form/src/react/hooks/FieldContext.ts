@@ -3,12 +3,10 @@
 /* eslint-disable no-bitwise */
 
 /**
- * Form field context and type definitions
- * Provides comprehensive type-safe interfaces for form state management,
- * field operations, validation, and React context integration
+ * Form field context and type definitions Provides comprehensive type-safe interfaces for form state management, field
+ * operations, validation, and React context integration
  */
 
-import { createContext, useContext } from 'react';
 import type {
   AllPathsKeys,
   ArrayElementValue,
@@ -19,16 +17,14 @@ import type {
   ShapeFromPaths,
   Wrap
 } from '@skyroc/utils/type';
+import { createContext, useContext } from 'react';
 import type { ChangeMask } from '../../form-core/event';
 import type { Action, ArrayOpArgs, Middleware } from '../../form-core/middleware';
 import type { FieldEntity, Meta, StoreValue } from '../../form-core/types';
 import type { ValidateMessages } from '../../form-core/validate';
 import type { Rule, ValidateOptions } from '../../form-core/validation';
 
-/**
- * Interface for list item rendering in dynamic arrays
- * Provides stable keys and field names for array field management
- */
+/** Interface for list item rendering in dynamic arrays Provides stable keys and field names for array field management */
 export type ListRenderItem = {
   /** Stable key for React rendering optimization */
   key: string;
@@ -37,8 +33,8 @@ export type ListRenderItem = {
 };
 
 /**
- * Utility type to build hierarchical metadata structure from field paths
- * Recursively wraps each path segment with Meta information
+ * Utility type to build hierarchical metadata structure from field paths Recursively wraps each path segment with Meta
+ * information
  */
 type BuildMetaShape<T, P extends string> = P extends `${infer K}.${infer R}`
   ? K extends keyof T
@@ -53,17 +49,14 @@ type BuildMetaShape<T, P extends string> = P extends `${infer K}.${infer R}`
     : never;
 
 /**
- * Converts an array of field paths into a hierarchical Meta structure
- * Provides type-safe access to field metadata based on field paths
+ * Converts an array of field paths into a hierarchical Meta structure Provides type-safe access to field metadata based
+ * on field paths
  */
 export type MetaShapeFromPaths<T, Ps extends readonly string[]> = Ps extends never[] | []
   ? { [K in keyof T]: Meta<K & string, PathToDeepType<T, K & string>> }
   : MergeUnion<Ps[number] extends infer P ? (P extends string ? BuildMetaShape<T, P> : never) : never>;
 
-/**
- * Comprehensive form state interface
- * Contains all form-level and field-level state information
- */
+/** Comprehensive form state interface Contains all form-level and field-level state information */
 export interface FormState<Values = any> {
   /** Map of fields that have been modified from initial values */
   dirtyFields: Record<AllPathsKeys<Values>, boolean>;
@@ -103,10 +96,7 @@ export interface FormState<Values = any> {
   warnings: Record<AllPathsKeys<Values>, string[]>;
 }
 
-/**
- * Interface for form value operations
- * Provides methods to get and set form field values
- */
+/** Interface for form value operations Provides methods to get and set form field values */
 export interface ValuesOptions<Values = any> {
   /** Get array operations for a specific array field */
   arrayOp: <K extends ArrayKeys<Values>>(
@@ -137,10 +127,7 @@ export interface ValuesOptions<Values = any> {
   setHidden: (name: AllPathsKeys<Values>, hidden: boolean) => void;
 }
 
-/**
- * Interface for form state query operations
- * Provides methods to access field metadata and form state
- */
+/** Interface for form state query operations Provides methods to access field metadata and form state */
 export interface StateOptions<Values = any> {
   /** Get complete metadata for a specific field */
   getField: <T extends AllPathsKeys<Values>>(name: T) => Meta<T, PathToDeepType<Values, T>>;
@@ -174,18 +161,13 @@ export interface StateOptions<Values = any> {
   isHidden: (name: AllPathsKeys<Values>) => boolean;
 }
 
-/**
- * Extended validation options for multiple fields
- */
+/** Extended validation options for multiple fields */
 export interface ValidateFieldsOptions extends ValidateOptions {
   /** Only validate fields that have been modified */
   dirty?: boolean;
 }
 
-/**
- * Interface for form operation methods
- * Provides methods to perform form actions like validation, reset, and submission
- */
+/** Interface for form operation methods Provides methods to perform form actions like validation, reset, and submission */
 export interface OperationOptions<Values = any> {
   /** Reset specified fields to their initial values */
   resetFields: (names?: AllPathsKeys<Values>[]) => void;
@@ -199,10 +181,7 @@ export interface OperationOptions<Values = any> {
   validateFields: (names?: AllPathsKeys<Values>[], opts?: ValidateFieldsOptions) => Promise<boolean>;
 }
 
-/**
- * Interface for validation error information
- * Used when form submission fails validation
- */
+/** Interface for validation error information Used when form submission fails validation */
 export interface ValidateErrorEntity<Values = any> {
   /** Total number of fields with validation errors */
   errorCount: number;
@@ -220,10 +199,7 @@ export interface ValidateErrorEntity<Values = any> {
   warningMap: Record<string, string[]>;
 }
 
-/**
- * Interface for form lifecycle callback options
- * Defines callbacks that can be registered to respond to form events
- */
+/** Interface for form lifecycle callback options Defines callbacks that can be registered to respond to form events */
 export interface RegisterCallbackOptions<Values = any> {
   /** Called when field metadata changes (errors, validation state, etc.) */
   onFieldsChange?: (
@@ -241,10 +217,7 @@ export interface RegisterCallbackOptions<Values = any> {
   onValuesChange?: (changedValues: Partial<Values>, values: Values) => void;
 }
 
-/**
- * Interface for internal form configuration callbacks
- * Used internally to configure form behavior and lifecycle
- */
+/** Interface for internal form configuration callbacks Used internally to configure form behavior and lifecycle */
 export interface InternalCallbacks<Values = any> {
   /** Destroy form instance and optionally clear data */
   destroyForm: (clearOnDestroy?: boolean) => void;
@@ -262,10 +235,7 @@ export interface InternalCallbacks<Values = any> {
   setValidateMessages: (messages: ValidateMessages) => void;
 }
 
-/**
- * Interface for internal field management hooks
- * Provides low-level field operations and state management
- */
+/** Interface for internal field management hooks Provides low-level field operations and state management */
 export interface InternalFieldHooks<Values = any> {
   /** Perform array operations on array fields */
   arrayOp: (name: AllPathsKeys<Values>, args: ArrayOpArgs) => void;
@@ -308,52 +278,34 @@ export interface InternalFieldHooks<Values = any> {
   transactionAsync: <T>(fn: () => Promise<T>) => Promise<T>;
 }
 
-/**
- * Main form instance interface
- * Combines all form operation interfaces for external API
- */
+/** Main form instance interface Combines all form operation interfaces for external API */
 export interface FormInstance<Values = any>
   extends ValuesOptions<Values>, StateOptions<Values>, OperationOptions<Values> {}
 
-/**
- * Combined interface for all internal form hooks
- * Used internally for form configuration and field management
- */
+/** Combined interface for all internal form hooks Used internally for form configuration and field management */
 export interface InternalFormHooks<Values = any> extends InternalCallbacks<Values>, InternalFieldHooks<Values> {}
 
-/**
- * Internal form context interface
- * Extends FormInstance with additional context-specific properties
- */
+/** Internal form context interface Extends FormInstance with additional context-specific properties */
 export interface InternalFormContext<Values = any> extends FormInstance<Values> {
   /** Default validation trigger events for fields */
   validateTrigger: string | string[];
 }
 
-/**
- * Complete internal form instance interface
- * Provides access to both public API and internal hooks
- */
+/** Complete internal form instance interface Provides access to both public API and internal hooks */
 export interface InternalFormInstance<Values = any> extends InternalFormContext<Values> {
   /** Internal API for accessing low-level form operations - not recommended for external use */
   getInternalHooks: () => InternalFormHooks<Values>;
 }
 
-/**
- * React context for form field management
- * Provides form instance and configuration to child components
- */
+/** React context for form field management Provides form instance and configuration to child components */
 export const FieldContext = createContext<InternalFormContext | null>(null);
 
-/**
- * Context provider component for form fields
- * Wraps form components to provide form context
- */
+/** Context provider component for form fields Wraps form components to provide form context */
 export const FieldContextProvider = FieldContext.Provider;
 
 /**
- * Hook to access form context from child components
- * Returns the form instance and configuration from the nearest Form provider
+ * Hook to access form context from child components Returns the form instance and configuration from the nearest Form
+ * provider
  */
 export const useFieldContext = <Values = any>(): InternalFormContext<Values> | null => {
   const context = useContext(FieldContext);

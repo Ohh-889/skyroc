@@ -1,36 +1,35 @@
+import type { Folder } from 'fumadocs-core/page-tree';
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
-import { defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
-import type { Folder } from 'fumadocs-core/page-tree';
+import { defineDocs } from 'fumadocs-mdx/macro';
 import type { LayoutTab } from 'fumadocs-ui/layouts/shared';
+import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
 
 const docs = defineDocs({
   dir: 'content/docs',
   docs: {
     schema: pageSchema,
     postprocess: {
-      includeProcessedMarkdown: true,
-    },
+      includeProcessedMarkdown: true
+    }
   },
   meta: {
-    schema: metaSchema,
-  },
+    schema: metaSchema
+  }
 });
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
+  plugins: [lucideIconsPlugin()]
 });
 
 /**
  * 取文件夹里第一个能跳转的页面。
  *
- * fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page，
- * 遇到只有分组文件夹、没有 index.mdx 的模块会被判成「没有落地页」而整项丢弃。
+ * Fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page， 遇到只有分组文件夹、没有 index.mdx 的模块会被判成「没有落地页」而整项丢弃。
  * 这里往下递归一层层找，让这类模块也能出现在切换器里。
  */
 function findFirstPageUrl(folder: Folder): string | undefined {
@@ -62,8 +61,8 @@ export function getRootTabs(): LayoutTab[] {
         description: node.description,
         icon: node.icon,
         title: node.name,
-        url,
-      },
+        url
+      }
     ];
   });
 }
@@ -73,7 +72,7 @@ export function getPageImageUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: '/' + [page.locale, ...docsImageRoute.split('/'), ...segments].filter(Boolean).join('/'),
+    url: '/' + [page.locale, ...docsImageRoute.split('/'), ...segments].filter(Boolean).join('/')
   };
 }
 
@@ -82,7 +81,7 @@ export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: '/' + [page.locale, ...docsContentRoute.split('/'), ...segments].filter(Boolean).join('/'),
+    url: '/' + [page.locale, ...docsContentRoute.split('/'), ...segments].filter(Boolean).join('/')
   };
 }
 

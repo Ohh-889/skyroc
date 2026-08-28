@@ -11,13 +11,13 @@
 
 每条都是"按直觉写就会错"，而且**错了不会报错**：
 
-| # | 纪律 | 违反的症状 |
-| --- | --- | --- |
-| 1 | `inboxCursor` 用服务端返回的，**不要自己算** | 永久跳过中间几条消息 |
-| 2 | 列表按 `entrySeq` 倒序，**优先级不参与排序** | 「加载更多」重复和漏项 |
-| 3 | 徽标显示 `unreadThreads`，不是 `unread` | 徽标数字和面板里能看到的条数对不上 |
-| 4 | 未读数用接口返回的，**不要本地加减** | 两个标签页各减一次，数字变负 |
-| 5 | id 类字段是 **string**，seq 类是 **number** | 雪花 id 超 2^53 精度丢失；seq 当字符串比较 `"9" > "10"` |
+| #   | 纪律                                         | 违反的症状                                              |
+| --- | -------------------------------------------- | ------------------------------------------------------- |
+| 1   | `inboxCursor` 用服务端返回的，**不要自己算** | 永久跳过中间几条消息                                    |
+| 2   | 列表按 `entrySeq` 倒序，**优先级不参与排序** | 「加载更多」重复和漏项                                  |
+| 3   | 徽标显示 `unreadThreads`，不是 `unread`      | 徽标数字和面板里能看到的条数对不上                      |
+| 4   | 未读数用接口返回的，**不要本地加减**         | 两个标签页各减一次，数字变负                            |
+| 5   | id 类字段是 **string**，seq 类是 **number**  | 雪花 id 超 2^53 精度丢失；seq 当字符串比较 `"9" > "10"` |
 
 ---
 
@@ -89,8 +89,8 @@ GET /notification/sync?inbox=1042&bcast=88
 cursor = res.data.inboxCursor;
 
 // ❌ 永远不要自己算
-cursor = Math.max(...res.data.changes.map(c => c.changeSeq));  // 空结果时变成 -Infinity
-cursor = lastKnownSeq + res.data.changes.length;               // 服务端 seq 会跳号
+cursor = Math.max(...res.data.changes.map(c => c.changeSeq)); // 空结果时变成 -Infinity
+cursor = lastKnownSeq + res.data.changes.length; // 服务端 seq 会跳号
 ```
 
 服务端返回的 `inboxCursor` **只来自本次返回行的最大 `changeSeq`**，绝不会是一个"更新但你
@@ -101,10 +101,10 @@ cursor = lastKnownSeq + res.data.changes.length;               // 服务端 seq 
 
 ### 2.3 三种 `op`
 
-| op | 客户端该做什么 |
-| --- | --- |
-| `upsert` | 新条目，插进列表（按 `entrySeq` 找位置） |
-| `patch` | **只更新状态字段，不改列表位置**。已读、处理态、内容修订都是这个 |
+| op        | 客户端该做什么                                                               |
+| --------- | ---------------------------------------------------------------------------- |
+| `upsert`  | 新条目，插进列表（按 `entrySeq` 找位置）                                     |
+| `patch`   | **只更新状态字段，不改列表位置**。已读、处理态、内容修订都是这个             |
 | `retract` | 消息被撤回。显示"该消息已撤回"占位，**不要凭空移除** —— 用户会以为自己看错了 |
 
 ### 2.4 `truncated: true`
@@ -123,14 +123,20 @@ cursor = lastKnownSeq + res.data.changes.length;               // 服务端 seq 
 WebSocket / SSE 收到的信封（沿用项目现有格式）：
 
 ```jsonc
-{ "code": "0000", "msg": "ok", "type": "notification.inbox.changed",
-  "msg_id": "...", "request_id": null, "data": { "change_seq": 1045 } }
+{
+  "code": "0000",
+  "msg": "ok",
+  "type": "notification.inbox.changed",
+  "msg_id": "...",
+  "request_id": null,
+  "data": { "change_seq": 1045 }
+}
 ```
 
 **载荷只有一个序号，没有消息内容。** 拿到之后：
 
 ```ts
-if (changeSeq > lastCursor) scheduleSync();   // 带 200ms 防抖合并
+if (changeSeq > lastCursor) scheduleSync(); // 带 200ms 防抖合并
 ```
 
 ### 3.1 为什么不带内容
@@ -213,11 +219,11 @@ changeSeq   变更序，任何变更都推进  只用来做同步游标
 "counts": { "unread": 14, "unreadThreads": 3, "pending": 2, "byCategory": {...} }
 ```
 
-| 字段 | 是什么 | 显示在哪 |
-| --- | --- | --- |
-| `unreadThreads` | 未读**会话**数 | ★ **徽标** |
-| `unread` | 未读**行**数 | 分组头上的"12 条" |
-| `pending` | 待处理数 | 面板顶部"N 项待处理" |
+| 字段            | 是什么         | 显示在哪             |
+| --------------- | -------------- | -------------------- |
+| `unreadThreads` | 未读**会话**数 | ★ **徽标**           |
+| `unread`        | 未读**行**数   | 分组头上的"12 条"    |
+| `pending`       | 待处理数       | 面板顶部"N 项待处理" |
 
 一篇被评论 12 次的文档 + 2 条独立通知 = `unread: 14, unreadThreads: 3`，而面板里按
 `collapseKey` 分组只有 3 组。**徽标显示 14 的话用户会找那 11 条去哪了。**
@@ -276,10 +282,12 @@ GET /notification/preference
 ```
 
 ```jsonc
-{ "items": [
-  { "intent": "transactional", "channel": "email", "state": "on",     "locked": true  },
-  { "intent": "informational", "channel": "email", "state": "digest", "locked": false }
-]}
+{
+  "items": [
+    { "intent": "transactional", "channel": "email", "state": "on", "locked": true },
+    { "intent": "informational", "channel": "email", "state": "digest", "locked": false }
+  ]
+}
 ```
 
 三点：
@@ -361,9 +369,9 @@ PUT /notification/msg/{id}/revise
 
 ```jsonc
 {
-  "msgId": "79600019719872512",   // ← string，雪花 id 超过 2^53
-  "entrySeq": 1043,               // ← number，每用户从 1 开始的计数器
-  "changeSeq": 1045               // ← number
+  "msgId": "79600019719872512", // ← string，雪花 id 超过 2^53
+  "entrySeq": 1043, // ← number，每用户从 1 开始的计数器
+  "changeSeq": 1045 // ← number
 }
 ```
 

@@ -23,13 +23,7 @@ describe('ToggleGroup', () => {
         size="sm"
         type="multiple"
         variant="outline"
-        itemRender={item => (
-          <span>
-            Format
-            {' '}
-            {item.label}
-          </span>
-        )}
+        itemRender={item => <span>Format {item.label}</span>}
         onValueChange={onValueChange}
       />
     );

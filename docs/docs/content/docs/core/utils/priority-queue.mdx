@@ -1,6 +1,6 @@
 ---
-title: "PriorityQueue"
-description: "泛型优先级队列，支持 ID 去重、外部排序策略、变更订阅与批量操作"
+title: 'PriorityQueue'
+description: '泛型优先级队列，支持 ID 去重、外部排序策略、变更订阅与批量操作'
 ---
 
 ## 概述
@@ -27,18 +27,18 @@ const queue = new PriorityQueue<Task>({
   // 从 item 里提取唯一 ID
   getId: t => t.taskId,
   // 排序规则：priority 小的在前（高优先级），priority 相同时 createdAt 早的在前
-  compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt,
+  compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt
 });
 
 queue.enqueue({ taskId: '1', priority: 2, createdAt: 1000 });
 queue.enqueue({ taskId: '2', priority: 1, createdAt: 2000 });
 queue.enqueue({ taskId: '1', priority: 2, createdAt: 1000 }); // 重复，被忽略
 
-console.log(queue.size);           // 2
+console.log(queue.size); // 2
 console.log(queue.peek()?.taskId); // '2'（priority 1，优先级更高）
 
-const top = queue.dequeue();        // 取出 taskId='2'
-console.log(queue.size);           // 1
+const top = queue.dequeue(); // 取出 taskId='2'
+console.log(queue.size); // 1
 ```
 
 ## 核心概念
@@ -65,7 +65,7 @@ queue.enqueue({ taskId: 'a', priority: 1, createdAt: Date.now() }); // 忽略，
 示例：数字越小越优先，相同优先级按入队时间排序：
 
 ```ts
-compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt
+compare: (a, b) => a.priority - b.priority || a.createdAt - b.createdAt;
 ```
 
 ### 变更订阅
@@ -109,7 +109,7 @@ interface QueueConfig<T> {
 const queue = new PriorityQueue<Notice>({
   getId: n => n.id,
   compare: (a, b) => b.weight - a.weight,
-  capacity: 50,
+  capacity: 50
 });
 ```
 
@@ -229,7 +229,7 @@ const task = queue.get('task-id-1');
 返回完整有序队列的不可变快照。返回的是内部缓存的引用，不会每次创建新数组。需要修改时先展开：
 
 ```ts
-const sorted = queue.toArray();       // readonly 引用
+const sorted = queue.toArray(); // readonly 引用
 const mutable = [...queue.toArray()]; // 可变副本
 ```
 
@@ -283,7 +283,7 @@ type Banner = { id: string; priority: number; message: string };
 // 内部队列实例（不放入 atom，避免 Jotai 对其做 snapshot）
 const queue = new PriorityQueue<Banner>({
   getId: b => b.id,
-  compare: (a, b) => a.priority - b.priority,
+  compare: (a, b) => a.priority - b.priority
 });
 
 // 暴露给 React 的只读 atom
@@ -300,6 +300,6 @@ export function initBannerQueue(store: ReturnType<typeof import('jotai').createS
 export const bannerQueue = {
   push: (b: Banner) => queue.enqueue(b),
   dismiss: (id: string) => queue.remove(id),
-  clear: () => queue.clear(),
+  clear: () => queue.clear()
 };
 ```

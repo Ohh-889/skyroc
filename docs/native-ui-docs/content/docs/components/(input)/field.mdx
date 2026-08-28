@@ -39,11 +39,11 @@ import { FieldGroup, FieldItem, useForm } from '@skyroc/native-ui';
 
 `size` 只影响标签 / 错误 / 描述的排版，**不会透传给子组件**——控件自身的尺寸要单独传（例如 `<Input size="sm" />`）。
 
-| 尺寸 | 标签字号 | 提示字号 | 标签与控件间距 |
-| ---- | -------- | -------- | -------------- |
-| `sm` | `text-sm`   | `text-2xs` | `mt-1`   |
-| `md` | `text-base` | `text-xs`  | `mt-1.5` |
-| `lg` | `text-lg`   | `text-sm`  | `mt-2`   |
+| 尺寸 | 标签字号    | 提示字号   | 标签与控件间距 |
+| ---- | ----------- | ---------- | -------------- |
+| `sm` | `text-sm`   | `text-2xs` | `mt-1`         |
+| `md` | `text-base` | `text-xs`  | `mt-1.5`       |
+| `lg` | `text-lg`   | `text-sm`  | `mt-2`         |
 
 <Demo src="@playground/field/FieldSize" />
 
@@ -99,17 +99,17 @@ import { FieldGroup, FieldItem, useForm } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖。
 
-| 组件        | slot          | 作用位置                                     |
-| ----------- | ------------- | -------------------------------------------- |
-| `FieldGroup` | `root`        | 容器组件（`component`）本身                  |
-| `FieldGroup` | `content`     | 子项包裹层，`gap` 就挂在这里                 |
-| `FieldItem`  | `root`        | 字段根容器 View                              |
-| `FieldItem`  | `label`       | 标签文字                                     |
-| `FieldItem`  | `required`    | 必填星号                                     |
-| `FieldItem`  | `control`     | 控件外层容器（有标签时带上间距）             |
-| `FieldItem`  | `extra`       | 错误与描述的外层容器                         |
-| `FieldItem`  | `message`     | 错误文案                                     |
-| `FieldItem`  | `description` | 描述文本                                     |
+| 组件         | slot          | 作用位置                         |
+| ------------ | ------------- | -------------------------------- |
+| `FieldGroup` | `root`        | 容器组件（`component`）本身      |
+| `FieldGroup` | `content`     | 子项包裹层，`gap` 就挂在这里     |
+| `FieldItem`  | `root`        | 字段根容器 View                  |
+| `FieldItem`  | `label`       | 标签文字                         |
+| `FieldItem`  | `required`    | 必填星号                         |
+| `FieldItem`  | `control`     | 控件外层容器（有标签时带上间距） |
+| `FieldItem`  | `extra`       | 错误与描述的外层容器             |
+| `FieldItem`  | `message`     | 错误文案                         |
+| `FieldItem`  | `description` | 描述文本                         |
 
 <Demo src="@playground/field/FieldStyles" />
 
@@ -142,7 +142,11 @@ import { FieldGroup, FieldItem, useForm } from '@skyroc/native-ui';
       default: "'onChange'"
     },
     { name: 'validateMessages', description: '默认错误文案模板，支持 ${min} 这类占位符', type: 'ValidateMessages' },
-    { name: 'schema', description: '表单级 schema 校验（zod / valibot 等 Standard Schema 实现）', type: 'FormSchema<Values>' },
+    {
+      name: 'schema',
+      description: '表单级 schema 校验（zod / valibot 等 Standard Schema 实现）',
+      type: 'FormSchema<Values>'
+    },
     { name: 'preserve', description: '字段卸载后是否保留值', type: 'boolean', default: 'true' },
     { name: 'clearOnDestroy', description: '表单卸载时是否清空数据', type: 'boolean', default: 'false' },
     { name: 'onFinish', description: '提交且校验通过的回调', type: '(values: Values) => void' },
@@ -172,7 +176,12 @@ import { FieldGroup, FieldItem, useForm } from '@skyroc/native-ui';
 <PropsTable
   data={[
     { name: 'name', description: '字段名，支持 a.b[0] 这样的路径', type: 'AllPathsKeys<Values>', required: true },
-    { name: 'children', description: '子组件，接收注入的 value / onChange / error / disabled', type: 'ReactElement', required: true },
+    {
+      name: 'children',
+      description: '子组件，接收注入的 value / onChange / error / disabled',
+      type: 'ReactElement',
+      required: true
+    },
     { name: 'label', description: '标签文本，为空时整行不渲染', type: 'string' },
     {
       name: 'required',

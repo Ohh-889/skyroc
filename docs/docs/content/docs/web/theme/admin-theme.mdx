@@ -1,6 +1,6 @@
 ---
-title: "@skyroc/web-admin-theme"
-description: "Web 管理端主题管理包 — Jotai 状态、React 组件、预设系统、副作用收口与 Ant Design 集成的完整解决方案"
+title: '@skyroc/web-admin-theme'
+description: 'Web 管理端主题管理包 — Jotai 状态、React 组件、预设系统、副作用收口与 Ant Design 集成的完整解决方案'
 ---
 
 ## 概述
@@ -64,8 +64,9 @@ import { setupTheme } from '@skyroc/web-admin-theme';
 import { storagePrefix } from '@/utils/storage';
 
 setupTheme({
-  buildTime: BUILD_TIME,        // vite define 注入的构建时间戳
-  overrides: {                  // 可选：新版本强制覆盖的配置项
+  buildTime: BUILD_TIME, // vite define 注入的构建时间戳
+  overrides: {
+    // 可选：新版本强制覆盖的配置项
     themeColor: '#6366F1'
   },
   storagePrefix
@@ -87,7 +88,10 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const { userInfo } = useAuth();
 
   return (
-    <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+    <AntdProvider
+      locale={antdLocales[locale]}
+      userName={userInfo?.userName}
+    >
       {children}
     </AntdProvider>
   );
@@ -116,25 +120,13 @@ const GlobalEffect = () => <ThemeEffect />;
 import { useTheme } from '@skyroc/web-admin-theme';
 
 const ThemePanel = () => {
-  const {
-    themeScheme,
-    themeColor,
-    darkMode,
-    setThemeScheme,
-    updateThemeColors,
-    setThemeLayout,
-    reset,
-  } = useTheme();
+  const { themeScheme, themeColor, darkMode, setThemeScheme, updateThemeColors, setThemeLayout, reset } = useTheme();
 
   return (
     <div>
       <button onClick={() => setThemeScheme('dark')}>切换暗色</button>
-      <button onClick={() => updateThemeColors('primary', '#6366F1')}>
-        改主题色
-      </button>
-      <button onClick={() => setThemeLayout('horizontal')}>
-        切换布局
-      </button>
+      <button onClick={() => updateThemeColors('primary', '#6366F1')}>改主题色</button>
+      <button onClick={() => setThemeLayout('horizontal')}>切换布局</button>
       <button onClick={reset}>重置</button>
     </div>
   );
@@ -166,12 +158,7 @@ if (preset) {
 ### 6. Ant Design UI 工具函数
 
 ```ts
-import {
-  showSuccessMessage,
-  showErrorMessage,
-  showConfirmModal,
-  showNotification
-} from '@skyroc/web-admin-theme';
+import { showSuccessMessage, showErrorMessage, showConfirmModal, showNotification } from '@skyroc/web-admin-theme';
 
 // 消息提示
 showSuccessMessage('保存成功');
@@ -194,7 +181,7 @@ showNotification({ message: '任务完成', type: 'success' });
 ### setupTheme
 
 ```ts
-function setupTheme(options?: SetupThemeOptions): void
+function setupTheme(options?: SetupThemeOptions): void;
 
 interface SetupThemeOptions {
   /** 构建时间戳，用于检测是否需要应用版本覆盖 */
@@ -226,7 +213,7 @@ interface SetupThemeOptions {
 类型安全的覆盖配置定义辅助，提供完整的 TypeScript 推导：
 
 ```ts
-function defineThemeOverrides(overrides: Partial<Theme.ThemeSetting>): Partial<Theme.ThemeSetting>
+function defineThemeOverrides(overrides: Partial<Theme.ThemeSetting>): Partial<Theme.ThemeSetting>;
 ```
 
 ```ts
@@ -248,38 +235,38 @@ setupTheme({ ..., overrides: themeOverrides });
 主题状态管理 hook，返回当前 theme 状态的所有字段 + 派生计算值 + mutation 函数：
 
 ```ts
-function useTheme(): UseThemeReturn
+function useTheme(): UseThemeReturn;
 ```
 
 **读取值（来自 themeSettingsAtom 的展开）：**
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `settings` | `Theme.ThemeSetting` | 完整配置对象 |
-| `themeScheme` | `ThemeMode` | 当前模式：`'light' \| 'dark' \| 'auto'` |
-| `themeColor` | `string` | 主题色 hex |
-| `darkMode` | `boolean` | 当前是否处于暗色（auto 时跟随系统）|
-| `themeColors` | `ThemeColor` | `{ primary, info, success, warning, error }` |
-| `grayscaleMode` | `boolean` | 灰度模式 |
-| `colourWeaknessMode` | `boolean` | 色弱模式 |
-| `watermarkContent` | `string` | 计算后的水印文字 |
-| `settingsJson` | `string` | 配置序列化字符串（用于比较变化）|
+| 字段                 | 类型                 | 说明                                         |
+| -------------------- | -------------------- | -------------------------------------------- |
+| `settings`           | `Theme.ThemeSetting` | 完整配置对象                                 |
+| `themeScheme`        | `ThemeMode`          | 当前模式：`'light' \| 'dark' \| 'auto'`      |
+| `themeColor`         | `string`             | 主题色 hex                                   |
+| `darkMode`           | `boolean`            | 当前是否处于暗色（auto 时跟随系统）          |
+| `themeColors`        | `ThemeColor`         | `{ primary, info, success, warning, error }` |
+| `grayscaleMode`      | `boolean`            | 灰度模式                                     |
+| `colourWeaknessMode` | `boolean`            | 色弱模式                                     |
+| `watermarkContent`   | `string`             | 计算后的水印文字                             |
+| `settingsJson`       | `string`             | 配置序列化字符串（用于比较变化）             |
 
 **mutation 函数：**
 
-| 函数 | 签名 | 说明 |
-|------|------|------|
-| `setSettings` | `(update: Partial<Theme.ThemeSetting>) => void` | 部分更新配置 |
-| `setThemeScheme` | `(mode: ThemeMode) => void` | 设置亮/暗/自动 |
-| `toggleThemeScheme` | `() => void` | 循环切换 light → dark → auto → light |
-| `updateThemeColors` | `(key: ThemeColorKey, color: string) => void` | 更新主题色（支持推荐色模式）|
-| `setThemeLayout` | `(mode: ThemeLayoutMode) => void` | 切换布局模式 |
-| `setGrayscale` | `(v: boolean) => void` | 灰度模式开关 |
-| `setColourWeakness` | `(v: boolean) => void` | 色弱模式开关 |
-| `setWatermarkEnableUserName` | `(v: boolean) => void` | 水印显示用户名 |
-| `setWatermarkEnableTime` | `(v: boolean) => void` | 水印显示时间 |
-| `updateWatermarkTimer` | `() => void` | 同步水印定时器状态 |
-| `reset` | `() => void` | 重置为默认配置 |
+| 函数                         | 签名                                            | 说明                                 |
+| ---------------------------- | ----------------------------------------------- | ------------------------------------ |
+| `setSettings`                | `(update: Partial<Theme.ThemeSetting>) => void` | 部分更新配置                         |
+| `setThemeScheme`             | `(mode: ThemeMode) => void`                     | 设置亮/暗/自动                       |
+| `toggleThemeScheme`          | `() => void`                                    | 循环切换 light → dark → auto → light |
+| `updateThemeColors`          | `(key: ThemeColorKey, color: string) => void`   | 更新主题色（支持推荐色模式）         |
+| `setThemeLayout`             | `(mode: ThemeLayoutMode) => void`               | 切换布局模式                         |
+| `setGrayscale`               | `(v: boolean) => void`                          | 灰度模式开关                         |
+| `setColourWeakness`          | `(v: boolean) => void`                          | 色弱模式开关                         |
+| `setWatermarkEnableUserName` | `(v: boolean) => void`                          | 水印显示用户名                       |
+| `setWatermarkEnableTime`     | `(v: boolean) => void`                          | 水印显示时间                         |
+| `updateWatermarkTimer`       | `() => void`                                    | 同步水印定时器状态                   |
+| `reset`                      | `() => void`                                    | 重置为默认配置                       |
 
 `updateThemeColors` 在 `settings.recommendColor = true` 时，会先通过推荐算法将输入色映射到最近 Tailwind 色系的 500 档，再写入配置。
 
@@ -288,7 +275,7 @@ function useTheme(): UseThemeReturn
 ### themeSettingsAtom
 
 ```ts
-const themeSettingsAtom: PrimitiveAtom<Theme.ThemeSetting>
+const themeSettingsAtom: PrimitiveAtom<Theme.ThemeSetting>;
 ```
 
 Jotai atom，是 theme 状态的唯一数据源。在 `useTheme` 之外直接操作（如在 Jotai store 中批量更新）：
@@ -306,7 +293,7 @@ setAtomValue(themeSettingsAtom, newSettings);
 ### themeUserNameAtom
 
 ```ts
-const themeUserNameAtom: PrimitiveAtom<string | undefined>
+const themeUserNameAtom: PrimitiveAtom<string | undefined>;
 ```
 
 存储水印用户名，由 `AntdProvider` 自动写入，`useTheme` 内部读取。消费者无需手动操作。
@@ -318,11 +305,11 @@ const themeUserNameAtom: PrimitiveAtom<string | undefined>
 ```tsx
 interface AntdProviderProps {
   children: ReactNode;
-  locale?: Locale;       // Ant Design 国际化 locale 对象
-  userName?: string;     // 用户名（写入 themeUserNameAtom 供水印使用）
+  locale?: Locale; // Ant Design 国际化 locale 对象
+  userName?: string; // 用户名（写入 themeUserNameAtom 供水印使用）
 }
 
-const AntdProvider: React.FC<AntdProviderProps>
+const AntdProvider: React.FC<AntdProviderProps>;
 ```
 
 内部实现：
@@ -349,10 +336,11 @@ function getAntdTheme(
   colors: Theme.ThemeColor,
   darkMode: boolean,
   settings: Theme.ThemeSetting
-): ConfigProviderProps['theme']
+): ConfigProviderProps['theme'];
 ```
 
 生成的配置包含：
+
 - `algorithm`：`[derivative]` 或 `[derivativeDark]`
 - `cssVar`：启用 CSS 变量（prefix 为空，key 为 `'root'`）
 - `hashed: false`：关闭 class hash，方便 CSS 覆盖
@@ -364,18 +352,18 @@ function getAntdTheme(
 ### ThemeEffect
 
 ```tsx
-const ThemeEffect: React.FC
+const ThemeEffect: React.FC;
 ```
 
 渲染为 `null`，无需任何 props。storage 适配器通过 `setupTheme` 注入，包内部统一使用，不向外暴露。管理以下副作用：
 
-| 监听值 | 副作用 |
-|--------|--------|
-| `darkMode` | `toggleCssDarkMode(darkMode)` → `<html>` 加/去 `"dark"` class；写 storage `darkMode` |
-| `grayscaleMode` / `colourWeaknessMode` | `toggleAuxiliaryColorModes()` → `document.documentElement.style.filter` |
-| `themeColors` | 写 storage `themeColor`（主色 hex）|
-| `watermark.visible` / `enableTime` | `updateWatermarkTimer()` → 暂停 / 恢复水印时间定时器 |
-| `beforeunload` 事件 | 写 storage `themeSettings`（仅生产环境）|
+| 监听值                                 | 副作用                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------ |
+| `darkMode`                             | `toggleCssDarkMode(darkMode)` → `<html>` 加/去 `"dark"` class；写 storage `darkMode` |
+| `grayscaleMode` / `colourWeaknessMode` | `toggleAuxiliaryColorModes()` → `document.documentElement.style.filter`              |
+| `themeColors`                          | 写 storage `themeColor`（主色 hex）                                                  |
+| `watermark.visible` / `enableTime`     | `updateWatermarkTimer()` → 暂停 / 恢复水印时间定时器                                 |
+| `beforeunload` 事件                    | 写 storage `themeSettings`（仅生产环境）                                             |
 
 ---
 
@@ -384,7 +372,7 @@ const ThemeEffect: React.FC
 图标按钮，循环切换 light / dark / auto：
 
 ```tsx
-const ThemeSchemaSwitch: React.FC
+const ThemeSchemaSwitch: React.FC;
 ```
 
 点击调用 `useTheme().toggleThemeScheme()`，图标由 `themeSchemeIcons` 驱动。
@@ -396,7 +384,7 @@ const ThemeSchemaSwitch: React.FC
 分段式选择控件，展示三个模式供用户直接选择：
 
 ```tsx
-const ThemeSchemaSegmented: React.FC
+const ThemeSchemaSegmented: React.FC;
 ```
 
 ---
@@ -408,7 +396,7 @@ const ThemeSchemaSegmented: React.FC
 返回所有预设，按 `order` 字段升序排列：
 
 ```ts
-function getAllPresets(): Theme.ThemePreset[]
+function getAllPresets(): Theme.ThemePreset[];
 ```
 
 #### `getPreset`
@@ -416,9 +404,9 @@ function getAllPresets(): Theme.ThemePreset[]
 按名称查找预设：
 
 ```ts
-function getPreset(name: PresetName): Theme.ThemePreset | undefined
+function getPreset(name: PresetName): Theme.ThemePreset | undefined;
 
-type PresetName = 'default' | 'dark' | 'azir' | 'compact' | 'shadcn'
+type PresetName = 'default' | 'dark' | 'azir' | 'compact' | 'shadcn';
 ```
 
 #### 具名导出
@@ -429,13 +417,13 @@ import { defaultPreset, dark, azir, compact, shadcn, presets } from '@skyroc/web
 
 **预设列表：**
 
-| 名称 | 特点 |
-|------|------|
+| 名称      | 特点                                   |
+| --------- | -------------------------------------- |
 | `default` | 标准均衡配置，亮色模式，`#646cff` 主色 |
-| `dark` | 暗色模式优化，调整 token 色值 |
-| `azir` | 备选配色方案 |
-| `compact` | 紧凑间距，小字号，适合信息密集型界面 |
-| `shadcn` | shadcn/ui 风格，中性主色，大圆角 |
+| `dark`    | 暗色模式优化，调整 token 色值          |
+| `azir`    | 备选配色方案                           |
+| `compact` | 紧凑间距，小字号，适合信息密集型界面   |
+| `shadcn`  | shadcn/ui 风格，中性主色，大圆角       |
 
 每个预设是完整的 `Theme.ThemePreset`（`ThemePresetMeta & Partial<ThemeSetting>`），通过 `setSettings(preset)` 应用。
 
@@ -451,7 +439,7 @@ import { defaultPreset, dark, azir, compact, shadcn, presets } from '@skyroc/web
 function mergeThemeSettings(
   source: Partial<Theme.ThemeSetting> | null | undefined,
   base: Theme.ThemeSetting
-): Theme.ThemeSetting
+): Theme.ThemeSetting;
 ```
 
 #### `getThemeColors`
@@ -459,7 +447,7 @@ function mergeThemeSettings(
 从 settings 提取 `ThemeColor`（处理 `isInfoFollowPrimary` 逻辑）：
 
 ```ts
-function getThemeColors(settings: Theme.ThemeSetting): ThemeColor
+function getThemeColors(settings: Theme.ThemeSetting): ThemeColor;
 ```
 
 #### `getDefaultThemeSettings`
@@ -467,7 +455,7 @@ function getThemeColors(settings: Theme.ThemeSetting): ThemeColor
 返回默认配置的深拷贝：
 
 ```ts
-function getDefaultThemeSettings(): Theme.ThemeSetting
+function getDefaultThemeSettings(): Theme.ThemeSetting;
 ```
 
 #### `toggleCssDarkMode`
@@ -475,7 +463,7 @@ function getDefaultThemeSettings(): Theme.ThemeSetting
 切换 `<html>` 元素的 `"dark"` class：
 
 ```ts
-function toggleCssDarkMode(darkMode: boolean): void
+function toggleCssDarkMode(darkMode: boolean): void;
 ```
 
 #### `isDarkModeClass`
@@ -483,7 +471,7 @@ function toggleCssDarkMode(darkMode: boolean): void
 检查当前 `<html>` 是否包含 `"dark"` class：
 
 ```ts
-function isDarkModeClass(): boolean
+function isDarkModeClass(): boolean;
 ```
 
 #### `toggleAuxiliaryColorModes`
@@ -491,10 +479,7 @@ function isDarkModeClass(): boolean
 同步应用灰度和色弱 CSS 滤镜：
 
 ```ts
-function toggleAuxiliaryColorModes(
-  grayscale: boolean,
-  colourWeakness: boolean
-): void
+function toggleAuxiliaryColorModes(grayscale: boolean, colourWeakness: boolean): void;
 ```
 
 灰度：`filter: grayscale(100%)`；色弱：`filter: invert(80%)`；同时开启叠加。
@@ -504,7 +489,7 @@ function toggleAuxiliaryColorModes(
 清除所有辅助颜色滤镜：
 
 ```ts
-function clearAuxiliaryColorModes(): void
+function clearAuxiliaryColorModes(): void;
 ```
 
 ---
@@ -548,18 +533,18 @@ destroyNotification()
 
 ```ts
 interface ThemeSetting {
-  themeScheme: ThemeMode;             // 'light' | 'dark' | 'auto'
-  themeColor: string;                 // 主色 hex
-  themeRadius: number;                // 圆角基准值（默认 6）
-  themeTextSize: number;              // 基准字号（默认 14）
-  grayscale: boolean;                 // 灰度模式
-  colourWeakness: boolean;            // 色弱模式
-  recommendColor: boolean;            // 是否对输入色做推荐色映射
-  isInfoFollowPrimary: boolean;       // info 色是否跟随主色
-  otherColor: OtherColor;             // { info, success, warning, error }
+  themeScheme: ThemeMode; // 'light' | 'dark' | 'auto'
+  themeColor: string; // 主色 hex
+  themeRadius: number; // 圆角基准值（默认 6）
+  themeTextSize: number; // 基准字号（默认 14）
+  grayscale: boolean; // 灰度模式
+  colourWeakness: boolean; // 色弱模式
+  recommendColor: boolean; // 是否对输入色做推荐色映射
+  isInfoFollowPrimary: boolean; // info 色是否跟随主色
+  otherColor: OtherColor; // { info, success, warning, error }
   layout: {
-    mode: ThemeLayoutMode;            // 7 种布局
-    scrollMode: ThemeScrollMode;      // 'wrapper' | 'content'
+    mode: ThemeLayoutMode; // 7 种布局
+    scrollMode: ThemeScrollMode; // 'wrapper' | 'content'
   };
   fixedHeaderAndTab: boolean;
   header: {
@@ -570,9 +555,9 @@ interface ThemeSetting {
   };
   sider: {
     inverted: boolean;
-    width: number;                    // 展开宽度（默认 220）
-    collapsedWidth: number;           // 折叠宽度（默认 64）
-    mixWidth: number;                 // mix 布局父级宽度
+    width: number; // 展开宽度（默认 220）
+    collapsedWidth: number; // 折叠宽度（默认 64）
+    mixWidth: number; // mix 布局父级宽度
     mixCollapsedWidth: number;
     mixChildMenuWidth: number;
     autoSelectFirstMenu: boolean;
@@ -581,7 +566,7 @@ interface ThemeSetting {
     visible: boolean;
     cache: boolean;
     height: number;
-    mode: ThemeTabMode;               // 'chrome' | 'button'
+    mode: ThemeTabMode; // 'chrome' | 'button'
     closeTabByMiddleClick: boolean;
   };
   footer: {
@@ -601,7 +586,7 @@ interface ThemeSetting {
     enableUserName: boolean;
     enableTime: boolean;
     timeFormat: string;
-    settings: WatermarkSettings;      // Ant Design WatermarkProps
+    settings: WatermarkSettings; // Ant Design WatermarkProps
   };
   tokens: {
     light: ThemeSettingToken;
@@ -622,13 +607,13 @@ type ThemeMode = 'auto' | 'dark' | 'light';
 
 ```ts
 type ThemeLayoutMode =
-  | 'vertical'                   // 左侧垂直菜单（默认）
-  | 'horizontal'                 // 顶部水平菜单
-  | 'horizontal-mix'             // 水平混合
-  | 'reversed-horizontal-mix'    // 反转水平混合
-  | 'vertical-mix'               // 双列垂直混合
-  | 'top-hybrid-sidebar-first'   // 左侧一级 + 顶部二级
-  | 'top-hybrid-header-first';   // 顶部一级 + 左侧二级
+  | 'vertical' // 左侧垂直菜单（默认）
+  | 'horizontal' // 顶部水平菜单
+  | 'horizontal-mix' // 水平混合
+  | 'reversed-horizontal-mix' // 反转水平混合
+  | 'vertical-mix' // 双列垂直混合
+  | 'top-hybrid-sidebar-first' // 左侧一级 + 顶部二级
+  | 'top-hybrid-header-first'; // 顶部一级 + 左侧二级
 ```
 
 ### Theme.ThemePageAnimateMode
@@ -639,7 +624,7 @@ type ThemeLayoutMode =
 type ThemePageAnimateMode =
   | 'none'
   | 'fade'
-  | 'fade-slide'       // 默认
+  | 'fade-slide' // 默认
   | 'fade-bottom'
   | 'fade-scale'
   | 'zoom-fade'
@@ -676,7 +661,7 @@ const defaultThemeSettings: Theme.ThemeSetting = {
     info: '#0EA5E9',
     success: '#10B981',
     warning: '#F59E0B',
-    error: '#F43F5E',
+    error: '#F43F5E'
   },
   layout: { mode: 'vertical', scrollMode: 'content' },
   fixedHeaderAndTab: true,
@@ -684,7 +669,7 @@ const defaultThemeSettings: Theme.ThemeSetting = {
     height: 56,
     breadcrumb: { visible: true, showIcon: true },
     multilingual: { visible: true },
-    globalSearch: { visible: true },
+    globalSearch: { visible: true }
   },
   sider: {
     inverted: false,
@@ -693,7 +678,7 @@ const defaultThemeSettings: Theme.ThemeSetting = {
     mixWidth: 90,
     mixCollapsedWidth: 64,
     mixChildMenuWidth: 200,
-    autoSelectFirstMenu: false,
+    autoSelectFirstMenu: false
   },
   tab: { visible: true, cache: true, height: 44, mode: 'chrome', closeTabByMiddleClick: false },
   footer: { visible: true, fixed: false, height: 48, right: true },
@@ -705,7 +690,7 @@ const defaultThemeSettings: Theme.ThemeSetting = {
     enableUserName: false,
     enableTime: false,
     timeFormat: 'YYYY-MM-DD HH:mm',
-    settings: { font: { fontSize: 16 }, height: 64, offset: [12, 60], rotate: -15, width: 344, zIndex: 9999 },
+    settings: { font: { fontSize: 16 }, height: 64, offset: [12, 60], rotate: -15, width: 344, zIndex: 9999 }
   },
   tokens: {
     light: {
@@ -713,22 +698,22 @@ const defaultThemeSettings: Theme.ThemeSetting = {
         container: 'rgb(255, 255, 255)',
         layout: 'rgb(247, 250, 252)',
         inverted: 'rgb(0, 20, 40)',
-        'base-text': 'rgb(31, 31, 31)',
+        'base-text': 'rgb(31, 31, 31)'
       },
       boxShadow: {
         header: '0 1px 2px rgb(0, 21, 41, 0.08)',
         sider: '2px 0 8px 0 rgb(29, 35, 41, 0.05)',
-        tab: '0 1px 2px rgb(0, 21, 41, 0.08)',
-      },
+        tab: '0 1px 2px rgb(0, 21, 41, 0.08)'
+      }
     },
     dark: {
       colors: {
         container: 'rgb(28, 28, 28)',
         layout: 'rgb(18, 18, 18)',
-        'base-text': 'rgb(224, 224, 224)',
-      },
-    },
-  },
+        'base-text': 'rgb(224, 224, 224)'
+      }
+    }
+  }
 };
 ```
 

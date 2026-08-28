@@ -127,10 +127,7 @@ describe('ContextMenu', () => {
       <ContextMenu
         items={[
           {
-            children: [
-              { label: 'Duplicate' },
-              { label: 'Move to trash' }
-            ],
+            children: [{ label: 'Duplicate' }, { label: 'Move to trash' }],
             label: 'More actions',
             type: 'sub'
           }

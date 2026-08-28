@@ -40,7 +40,7 @@ const ComputedDemo = () => {
         deps={['price', 'quantity']}
         label="Total"
         name="total"
-        compute={(get) => {
+        compute={get => {
           return Number(get('price')) * Number(get('quantity')) || 0;
         }}
       >

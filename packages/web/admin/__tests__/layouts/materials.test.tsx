@@ -3,9 +3,9 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { AdminLayout, LAYOUT_MAX_Z_INDEX, LAYOUT_SCROLL_EL_ID, PageTab } from '@shell/layouts/materials';
+import SvgClose from '@shell/layouts/materials/libs/page-tab/SvgClose';
 import adminLayoutStyles from '@shell/layouts/materials/libs/admin-layout/index.module.css';
 import pageTabStyles from '@shell/layouts/materials/libs/page-tab/index.module.css';
-import SvgClose from '@shell/layouts/materials/libs/page-tab/SvgClose';
 
 afterEach(() => {
   cleanup();
@@ -58,7 +58,10 @@ describe('AdminLayout', () => {
     const updateSiderCollapse = vi.fn();
 
     const { container } = render(
-      <AdminLayout scrollMode="wrapper" updateSiderCollapse={updateSiderCollapse}>
+      <AdminLayout
+        scrollMode="wrapper"
+        updateSiderCollapse={updateSiderCollapse}
+      >
         <span>Wrapper content</span>
       </AdminLayout>
     );
@@ -75,7 +78,11 @@ describe('AdminLayout', () => {
     const updateSiderCollapse = vi.fn();
 
     render(
-      <AdminLayout isMobile Sider={<span>Mobile sider</span>} updateSiderCollapse={updateSiderCollapse}>
+      <AdminLayout
+        isMobile
+        Sider={<span>Mobile sider</span>}
+        updateSiderCollapse={updateSiderCollapse}
+      >
         <span>Mobile content</span>
       </AdminLayout>
     );
@@ -94,7 +101,10 @@ describe('AdminLayout', () => {
     const updateSiderCollapse = vi.fn();
 
     const { container } = render(
-      <AdminLayout mode="horizontal" updateSiderCollapse={updateSiderCollapse}>
+      <AdminLayout
+        mode="horizontal"
+        updateSiderCollapse={updateSiderCollapse}
+      >
         <span>Horizontal content</span>
       </AdminLayout>
     );
@@ -146,7 +156,12 @@ describe('PageTab', () => {
     const handleClick = vi.fn();
 
     const { container } = render(
-      <PageTab closable={false} mode="slider" onClick={handleClick} prefix={<span>Icon</span>}>
+      <PageTab
+        closable={false}
+        mode="slider"
+        onClick={handleClick}
+        prefix={<span>Icon</span>}
+      >
         <span>Profile</span>
       </PageTab>
     );
@@ -159,7 +174,11 @@ describe('PageTab', () => {
     const handleClick = vi.fn();
 
     render(
-      <PageTab mode="chrome" onClick={handleClick} prefix={<span>Icon</span>}>
+      <PageTab
+        mode="chrome"
+        onClick={handleClick}
+        prefix={<span>Icon</span>}
+      >
         <span>Reports</span>
       </PageTab>
     );
@@ -176,7 +195,11 @@ describe('PageTab', () => {
     const handleClick = vi.fn();
 
     render(
-      <PageTab mode="chrome" onClick={handleClick} prefix={<span>Icon</span>}>
+      <PageTab
+        mode="chrome"
+        onClick={handleClick}
+        prefix={<span>Icon</span>}
+      >
         <span>Tasks</span>
       </PageTab>
     );
@@ -195,10 +218,24 @@ describe('PageTab', () => {
 
     render(
       <>
-        <PageTab active closable={false} darkMode mode="chrome" onClick={handleClick} prefix={<span>Icon</span>}>
+        <PageTab
+          active
+          closable={false}
+          darkMode
+          mode="chrome"
+          onClick={handleClick}
+          prefix={<span>Icon</span>}
+        >
           <span>Chrome dark</span>
         </PageTab>
-        <PageTab active closable={false} darkMode mode="slider" onClick={handleClick} prefix={<span>Icon</span>}>
+        <PageTab
+          active
+          closable={false}
+          darkMode
+          mode="slider"
+          onClick={handleClick}
+          prefix={<span>Icon</span>}
+        >
           <span>Slider dark</span>
         </PageTab>
       </>

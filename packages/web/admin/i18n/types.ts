@@ -32,7 +32,7 @@ export interface LocaleStorage<TLang extends string = LangType> {
 /** Callback fired after the active locale changes. */
 export type LocaleChangeHandler<TLang extends string = LangType> = (lang: TLang) => void | Promise<void>;
 
-/** i18n setup options shared by apps. */
+/** I18n setup options shared by apps. */
 export interface LocaleSetupOptions<TLang extends string = LangType> {
   /** Initial language, usually resolved from app storage. */
   defaultLocale?: TLang;

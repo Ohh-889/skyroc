@@ -65,7 +65,7 @@ export const menuVariants = tv({
         subContent: 'text-xl p-1.75',
         subTrigger: 'gap-3.5 px-3.5 py-2.5'
       },
-      'lg': {
+      lg: {
         checkboxItem: 'gap-2.5 pl-9 pr-2.5 py-1.5',
         content: 'text-base p-1.25',
         item: 'gap-2.5 px-2.5 py-1.5',
@@ -78,7 +78,7 @@ export const menuVariants = tv({
         subContent: 'text-base p-1.25',
         subTrigger: 'gap-2.5 px-2.5 py-1.5'
       },
-      'md': {
+      md: {
         checkboxItem: 'gap-2 pl-8 pr-2 py-1.5',
         content: 'text-sm p-1',
         item: 'gap-2 px-2 py-1.5',
@@ -91,7 +91,7 @@ export const menuVariants = tv({
         subContent: 'text-sm p-1',
         subTrigger: 'gap-2 px-2 py-1.5'
       },
-      'sm': {
+      sm: {
         checkboxItem: 'gap-1.5 pl-7 pr-1.5 py-1',
         content: 'text-xs p-0.875',
         item: 'gap-1.5 px-1.5 py-1',
@@ -104,7 +104,7 @@ export const menuVariants = tv({
         subContent: 'text-xs p-0.875',
         subTrigger: 'gap-1.5 px-1.5 py-1'
       },
-      'xl': {
+      xl: {
         checkboxItem: 'gap-3 pl-10 pr-3 py-2',
         content: 'text-lg p-1.5',
         item: 'gap-3 px-3 py-2',
@@ -117,7 +117,7 @@ export const menuVariants = tv({
         subContent: 'text-lg p-1.5',
         subTrigger: 'gap-3 px-3 py-2'
       },
-      'xs': {
+      xs: {
         checkboxItem: 'gap-1 pl-6 pr-1 py-1',
         content: 'text-2xs p-0.75',
         item: 'gap-1 px-1 py-1',

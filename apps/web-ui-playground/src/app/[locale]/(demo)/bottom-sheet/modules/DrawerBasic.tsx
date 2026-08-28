@@ -11,7 +11,7 @@ const BottomSheetBasic = () => {
       classNames={{
         contentBody: 'mx-auto max-w-sm w-full'
       }}
-      footer={(
+      footer={
         <>
           <BottomSheetClose asChild>
             <Button variant="plain">Cancel</Button>
@@ -19,11 +19,9 @@ const BottomSheetBasic = () => {
 
           <Button>Submit</Button>
         </>
-      )}
+      }
     >
-      <p>
-        This is a basic drawer with a title and description.
-      </p>
+      <p>This is a basic drawer with a title and description.</p>
     </BottomSheet>
   );
 };

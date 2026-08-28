@@ -21,24 +21,24 @@ apps/admin/src/bootstrap.tsx
 
 ## 适用场景
 
-| 你要做什么 | 先看哪里 |
-| --- | --- |
-| 改默认主色、圆角、字号或布局模式 | `packages/web/admin-theme/src/config/default.ts` 或 `setupTheme({ overrides })` |
-| 改当前应用读取主题缓存的方式 | `apps/admin/src/bootstrap.tsx`、`@skyroc/web-admin-theme/setupTheme` |
-| 改 Ant Design token 生成 | `packages/web/admin-theme/src/antd/shared.ts`、`@skyroc/adapter-antd-theme` |
-| 在页面读取或更新主题 | `@skyroc/web-admin-theme/useTheme()` |
+| 你要做什么                       | 先看哪里                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| 改默认主色、圆角、字号或布局模式 | `packages/web/admin-theme/src/config/default.ts` 或 `setupTheme({ overrides })`           |
+| 改当前应用读取主题缓存的方式     | `apps/admin/src/bootstrap.tsx`、`@skyroc/web-admin-theme/setupTheme`                      |
+| 改 Ant Design token 生成         | `packages/web/admin-theme/src/antd/shared.ts`、`@skyroc/adapter-antd-theme`               |
+| 在页面读取或更新主题             | `@skyroc/web-admin-theme/useTheme()`                                                      |
 | 同步暗色 class、色弱、灰阶、水印 | `@skyroc/web-admin-theme/ThemeEffect`、`apps/admin/src/features/effects/GlobalEffect.tsx` |
 
 ## 当前实现位置
 
-| 文件 | 职责 |
-| --- | --- |
-| `apps/admin/src/bootstrap.tsx` | 在组件渲染前调用 `setupTheme({ buildTime: BUILD_TIME })`。 |
-| `apps/admin/src/config.ts` | 暴露 `defaultThemeColor`、`defaultDarkMode`，并 re-export antd message/modal helpers。 |
-| `apps/admin/src/features/antd/AntdProvider.tsx` | 把当前语言和用户信息传给主题包的 `AntdProvider`。 |
-| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `ThemeEffect`，同步 DOM class、缓存、滤镜和水印。 |
-| `packages/web/admin-theme/src/config/default.ts` | 当前默认主题配置，包括颜色、圆角、字号、布局、header、tab、sider、footer 和 watermark。 |
-| `packages/web/admin-theme/src/setup.ts` | 初始化主题 atom，处理生产缓存和版本覆盖。 |
+| 文件                                               | 职责                                                                                    |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `apps/admin/src/bootstrap.tsx`                     | 在组件渲染前调用 `setupTheme({ buildTime: BUILD_TIME })`。                              |
+| `apps/admin/src/config.ts`                         | 暴露 `defaultThemeColor`、`defaultDarkMode`，并 re-export antd message/modal helpers。  |
+| `apps/admin/src/features/antd/AntdProvider.tsx`    | 把当前语言和用户信息传给主题包的 `AntdProvider`。                                       |
+| `apps/admin/src/features/effects/GlobalEffect.tsx` | 挂载 `ThemeEffect`，同步 DOM class、缓存、滤镜和水印。                                  |
+| `packages/web/admin-theme/src/config/default.ts`   | 当前默认主题配置，包括颜色、圆角、字号、布局、header、tab、sider、footer 和 watermark。 |
+| `packages/web/admin-theme/src/setup.ts`            | 初始化主题 atom，处理生产缓存和版本覆盖。                                               |
 
 ## 核心概念
 
@@ -56,9 +56,9 @@ setupTheme({
 
 `setupTheme()` 的行为分两类：
 
-| 环境 | 行为 |
-| --- | --- |
-| 开发环境 | 直接使用 `defaultThemeSettings` 初始化主题。 |
+| 环境     | 行为                                                                        |
+| -------- | --------------------------------------------------------------------------- |
+| 开发环境 | 直接使用 `defaultThemeSettings` 初始化主题。                                |
 | 生产环境 | 从 storage 读取 `themeSettings`，再用 `BUILD_TIME` 判断是否应用 overrides。 |
 
 生产环境的版本覆盖标记是 `overrideThemeFlag`。当构建时间变化且传入了 overrides，主题包可以在不清空全部用户缓存的前提下覆盖指定主题字段。
@@ -91,7 +91,10 @@ export const defaultThemeSettings: Theme.ThemeSetting = {
 
 ```tsx
 return (
-  <AntdProvider locale={antdLocales[locale]} userName={userInfo?.userName}>
+  <AntdProvider
+    locale={antdLocales[locale]}
+    userName={userInfo?.userName}
+  >
     {children}
   </AntdProvider>
 );
@@ -103,12 +106,12 @@ return (
 
 主题状态改变后，需要同步到 React 之外的系统：
 
-| 同步对象 | 目的 |
-| --- | --- |
+| 同步对象        | 目的                                           |
+| --------------- | ---------------------------------------------- |
 | HTML dark class | 让全局 CSS、UnoCSS 和主题 token 感知暗色模式。 |
-| localStorage | 持久化用户主题选择。 |
-| 灰阶 / 色弱滤镜 | 应用全局视觉辅助模式。 |
-| watermark | 按主题状态和用户信息更新水印。 |
+| localStorage    | 持久化用户主题选择。                           |
+| 灰阶 / 色弱滤镜 | 应用全局视觉辅助模式。                         |
+| watermark       | 按主题状态和用户信息更新水印。                 |
 
 这些副作用集中在 `ThemeEffect`，由 `GlobalEffect` 挂载。页面里不需要再写 effect 去手动改 `document.documentElement`。
 
@@ -156,7 +159,12 @@ import { useTheme } from '@skyroc/web-admin-theme';
 const ThemeAwarePanel = () => {
   const { darkMode, themeColor } = useTheme();
 
-  return <div data-dark={darkMode} style={{ borderColor: themeColor }} />;
+  return (
+    <div
+      data-dark={darkMode}
+      style={{ borderColor: themeColor }}
+    />
+  );
 };
 ```
 
@@ -173,21 +181,21 @@ const ThemeAwarePanel = () => {
 
 ## 常见误区
 
-| 误区 | 正确做法 |
-| --- | --- |
+| 误区                                         | 正确做法                                                    |
+| -------------------------------------------- | ----------------------------------------------------------- |
 | 在业务页面里新建 `ConfigProvider` 改全局主题 | 全局主题走 `AppAntdProvider` 和 `@skyroc/web-admin-theme`。 |
-| 直接改 localStorage 当作主题状态源 | 运行时以主题 atom 为准，localStorage 只负责持久化。 |
-| 把应用专属默认值写进共享主题包 | 只影响 `apps/admin` 的默认值应放在应用侧 overrides。 |
-| 改暗色模式时手动操作 DOM class | 暗色、灰阶、色弱和水印同步由 `ThemeEffect` 负责。 |
-| 认为 `.env` 控制主题默认值 | 当前主题默认值来自代码配置和 storage，不来自 `.env`。 |
+| 直接改 localStorage 当作主题状态源           | 运行时以主题 atom 为准，localStorage 只负责持久化。         |
+| 把应用专属默认值写进共享主题包               | 只影响 `apps/admin` 的默认值应放在应用侧 overrides。        |
+| 改暗色模式时手动操作 DOM class               | 暗色、灰阶、色弱和水印同步由 `ThemeEffect` 负责。           |
+| 认为 `.env` 控制主题默认值                   | 当前主题默认值来自代码配置和 storage，不来自 `.env`。       |
 
 ## 相关链接
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 主题初始化、缓存和版本覆盖 | [主题运行时与缓存](./runtime-and-cache) |
-| Ant Design token、CSS 变量和 loading 主题色 | [主题 Token 与 Ant Design](./tokens-and-antd) |
-| 启动时为什么先初始化主题 | [启动流程](../architecture/bootstrap) |
-| 布局模式如何影响菜单和 tabs | [布局系统](../layout/overview)、[菜单与标签页](../layout/menus-and-tabs) |
-| 语言切换和 Ant Design locale | [国际化与图标](./i18n-and-icons) |
-| 共享主题包完整 API | [Theme 系统概述](/docs/web/theme/overview)、[@skyroc/web-admin-theme](/docs/web/theme/admin-theme) |
+| 主题                                        | 继续查看                                                                                           |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 主题初始化、缓存和版本覆盖                  | [主题运行时与缓存](./runtime-and-cache)                                                            |
+| Ant Design token、CSS 变量和 loading 主题色 | [主题 Token 与 Ant Design](./tokens-and-antd)                                                      |
+| 启动时为什么先初始化主题                    | [启动流程](../architecture/bootstrap)                                                              |
+| 布局模式如何影响菜单和 tabs                 | [布局系统](../layout/overview)、[菜单与标签页](../layout/menus-and-tabs)                           |
+| 语言切换和 Ant Design locale                | [国际化与图标](./i18n-and-icons)                                                                   |
+| 共享主题包完整 API                          | [Theme 系统概述](/docs/web/theme/overview)、[@skyroc/web-admin-theme](/docs/web/theme/admin-theme) |

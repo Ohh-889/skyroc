@@ -34,7 +34,7 @@ const CountDown = (props: CountDownProps) => {
     start
   }));
 
-  /** slot 级与根级覆盖合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
+  /** Slot 级与根级覆盖合并成最终类名，集中一处，避免 JSX 里散落 cn 调用 */
   function resolveSlotClassNames() {
     // 优先级：slot 级覆盖（classNames）< 根级覆盖（className）
     return {
@@ -45,7 +45,7 @@ const CountDown = (props: CountDownProps) => {
 
   const slotClassNames = resolveSlotClassNames();
 
-  /** children 只替换文本内容，根容器始终渲染，className 才不会因为传了 children 就静默失效 */
+  /** Children 只替换文本内容，根容器始终渲染，className 才不会因为传了 children 就静默失效 */
   function renderContent() {
     if (children) {
       return children(current);

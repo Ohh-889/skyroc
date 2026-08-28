@@ -1,13 +1,12 @@
-import * as React from 'react';
-import * as Lucide from 'lucide-react';
 import * as WebUI from '@skyroc/web-ui';
 import Schema from 'async-validator';
+import * as Lucide from 'lucide-react';
+import * as React from 'react';
 import { z } from 'zod';
 
 /**
- * react-live 通过 `new Function(...scopeKeys, code)` 执行 demo，
- * scope 的 key 会被当作函数参数名，所以必须过滤掉 JS 保留字与非法标识符，
- * 否则会得到 `SyntaxError: Unexpected token 'default'`（ESM interop 的 `default` 键就是凶手）。
+ * React-live 通过 `new Function(...scopeKeys, code)` 执行 demo， scope 的 key 会被当作函数参数名，所以必须过滤掉 JS 保留字与非法标识符， 否则会得到
+ * `SyntaxError: Unexpected token 'default'`（ESM interop 的 `default` 键就是凶手）。
  */
 const RESERVED = new Set([
   'default',

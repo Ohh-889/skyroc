@@ -77,18 +77,17 @@ const MenubarUI = (props: MenubarProps) => {
             {...normalRest}
             trigger={label}
           >
-            {Boolean(children)
-              && children.length > 0
+            {Boolean(children) && children.length > 0
               ? children.map((child, childIndex) => {
-                return (
-                  <MenubarOption
-                    classNames={classNames}
-                    item={child}
-                    key={String(childIndex)}
-                    size={size}
-                  />
-                );
-              })
+                  return (
+                    <MenubarOption
+                      classNames={classNames}
+                      item={child}
+                      key={String(childIndex)}
+                      size={size}
+                    />
+                  );
+                })
               : null}
           </MenubarMenuComposed>
         );

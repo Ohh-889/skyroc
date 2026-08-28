@@ -6,13 +6,7 @@ description: 带自定义滚动条的可滚动内容区域
 ScrollArea 用于在固定尺寸容器内展示超出范围的内容，并提供一致的自定义滚动条样式。组件基于 Radix Scroll Area 封装，默认组合 Root、Viewport、Scrollbar、Thumb 和 Corner。
 
 ```tsx
-import {
-  ScrollArea,
-  ScrollAreaRoot,
-  ScrollAreaScrollbar,
-  ScrollAreaThumb,
-  ScrollAreaViewport
-} from '@skyroc/web-ui';
+import { ScrollArea, ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -197,7 +191,11 @@ ScrollArea 也导出结构组件，适合需要同时渲染横向和纵向滚动
         { name: 'scrollHideDelay', type: 'number', description: '滚动条隐藏延迟。' },
         { name: 'dir', type: "'ltr' | 'rtl'", description: '文本方向。' },
         { name: 'className', type: 'ClassValue', description: '根容器 class。' },
-        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '继承字段，Root 当前不直接使用。' }
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '继承字段，Root 当前不直接使用。'
+        }
       ]
     },
     {
@@ -207,7 +205,11 @@ ScrollArea 也导出结构组件，适合需要同时渲染横向和纵向滚动
         { name: 'children', type: 'ReactNode', description: '视口内容。' },
         { name: 'className', type: 'ClassValue', description: '视口 class。' },
         { name: 'nonce', type: 'string', description: '传给 Radix Viewport 的 nonce。' },
-        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '继承字段，Viewport 当前不直接使用。' }
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '继承字段，Viewport 当前不直接使用。'
+        }
       ]
     },
     {
@@ -225,7 +227,11 @@ ScrollArea 也导出结构组件，适合需要同时渲染横向和纵向滚动
       description: '滚动条 thumb 属性，继承 Radix ScrollArea Thumb props。',
       fields: [
         { name: 'className', type: 'ClassValue', description: 'thumb class。' },
-        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '继承字段，Thumb 当前不直接使用。' }
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '继承字段，Thumb 当前不直接使用。'
+        }
       ]
     }
   ]}

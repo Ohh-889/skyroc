@@ -1,7 +1,7 @@
 'use client';
 
-import { Rocket } from 'lucide-react';
 import { Card, Tag } from '@skyroc/web-ui';
+import { Rocket } from 'lucide-react';
 
 const CardTitleSlot = () => {
   return (
@@ -11,9 +11,7 @@ const CardTitleSlot = () => {
       titleLeading={<Rocket className="size-4" />}
       titleTrailing={<Tag variant="soft">New</Tag>}
     >
-      <p className="text-muted-foreground">
-        Use titleLeading and titleTrailing to add content before/after the title.
-      </p>
+      <p className="text-muted-foreground">Use titleLeading and titleTrailing to add content before/after the title.</p>
     </Card>
   );
 };

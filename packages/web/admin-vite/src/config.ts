@@ -1,5 +1,5 @@
-import process from 'node:process';
 import { resolve } from 'node:path';
+import process from 'node:process';
 
 import { defineConfig as defineViteConfig, loadEnv, mergeConfig } from 'vite';
 import type { CSSOptions, ConfigEnv, UserConfig, UserConfigExport } from 'vite';
@@ -78,8 +78,7 @@ export interface AdminViteResolveOptions {
   /**
    * Path used by the `@shell` alias (admin shell source).
    *
-   * 默认值面向 `pnpm create skyroc` 生成的独立项目（shell 源码被复制到 `src/framework`）。
-   * monorepo 内的应用需显式指回 `../../packages/web/admin`。
+   * 默认值面向 `pnpm create skyroc` 生成的独立项目（shell 源码被复制到 `src/framework`）。 monorepo 内的应用需显式指回 `../../packages/web/admin`。
    */
   shellAlias?: false | string;
 
@@ -298,7 +297,10 @@ function createCssOptions<E extends AdminViteEnv>(
   };
 }
 
-function createResolveOptions(resolveOptions: AdminViteResolveOptions | undefined, root: string): UserConfig['resolve'] {
+function createResolveOptions(
+  resolveOptions: AdminViteResolveOptions | undefined,
+  root: string
+): UserConfig['resolve'] {
   const { dedupeReact = true, rootAlias = '.', shellAlias = 'src/framework', srcAlias = 'src' } = resolveOptions ?? {};
   const alias: Record<string, string> = {};
 

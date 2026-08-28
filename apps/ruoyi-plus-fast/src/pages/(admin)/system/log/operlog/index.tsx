@@ -1,8 +1,8 @@
-import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useAdminState } from '@shell/layouts';
 import { showConfirmModal, showSuccessMessage } from '@shell/theme';
 import { TableHeaderOperation, useTable, useTableScroll } from '@shell/ui/compose';
 import type { TableColumn, TableDataWithIndex, TableOnChange } from '@shell/ui/compose';
+import { downloadFileFromBlob } from '@skyroc/utils/web';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router';
 import { Alert, Badge, Button, Card, Collapse, Empty, Flex, Table, Tag, Typography } from 'antd';
@@ -135,7 +135,12 @@ const OperLogManagement = (props: OperLogManagementProps) => {
       {
         dataIndex: 'status',
         key: 'status',
-        render: value => <Badge status={value === 0 ? 'success' : 'error'} text={getStatusLabel(value)} />,
+        render: value => (
+          <Badge
+            status={value === 0 ? 'success' : 'error'}
+            text={getStatusLabel(value)}
+          />
+        ),
         title: '操作状态',
         width: 110
       },
@@ -159,7 +164,10 @@ const OperLogManagement = (props: OperLogManagementProps) => {
         fixed: 'right',
         key: 'actions',
         render: (_value, record) => (
-          <Button size="small" onClick={() => setDetailRecord(record)}>
+          <Button
+            size="small"
+            onClick={() => setDetailRecord(record)}
+          >
             详情
           </Button>
         ),
@@ -247,7 +255,10 @@ const OperLogManagement = (props: OperLogManagementProps) => {
         defaultActiveKey={isMobile ? undefined : '1'}
         items={[{ children: <OperLogSearch {...searchProps} />, key: '1', label: '查询条件' }]}
       />
-      <div ref={tableWrapperRef} className="min-h-0 min-w-0 flex flex-1 flex-col">
+      <div
+        ref={tableWrapperRef}
+        className="min-h-0 min-w-0 flex flex-1 flex-col"
+      >
         <Card
           className="min-h-0 min-w-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -263,14 +274,23 @@ const OperLogManagement = (props: OperLogManagementProps) => {
               setColumnChecks={setColumnChecks}
               onDelete={handleBatchDelete}
               suffix={
-                <Button danger ghost size="small" onClick={handleClean}>
+                <Button
+                  danger
+                  ghost
+                  size="small"
+                  onClick={handleClean}
+                >
                   清空
                 </Button>
               }
             />
           }
           title={
-            <Flex align="center" gap={8} wrap="wrap">
+            <Flex
+              align="center"
+              gap={8}
+              wrap="wrap"
+            >
               <Typography.Text strong>操作日志列表</Typography.Text>
               <Typography.Text type="secondary">共 {total} 条</Typography.Text>
               {selectedRowKeys.length ? <Tag color="blue">已选 {selectedRowKeys.length} 项</Tag> : null}

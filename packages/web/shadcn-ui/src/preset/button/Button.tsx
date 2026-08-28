@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import ButtonUI from '../../components/button/ButtonUI';
 import type { ButtonProps } from '../../components/button/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const config = useComponentConfig('button');

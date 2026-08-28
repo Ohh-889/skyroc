@@ -28,7 +28,7 @@ async function setupApp() {
    *
    * 在任何组件读取主题 atom 之前完成： - 默认配置加载 - localStorage 缓存读取（生产环境） - 版本覆盖检测
    *
-   * storage 显式复用应用级 localStg，确保主题缓存跟随 VITE_STORAGE_PREFIX。
+   * Storage 显式复用应用级 localStg，确保主题缓存跟随 VITE_STORAGE_PREFIX。
    */
   setupTheme({
     buildTime: BUILD_TIME,

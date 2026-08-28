@@ -1,5 +1,5 @@
-import type { FieldElement } from './form';
 import { isEventObject } from '../object';
+import type { FieldElement } from './form';
 
 type Event = { target: any };
 

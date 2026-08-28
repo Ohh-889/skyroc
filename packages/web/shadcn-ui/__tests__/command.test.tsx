@@ -1,12 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import {
-  Command,
-  CommandDialog,
-  CommandGroup,
-  CommandItem,
-  CommandRoot,
-  CommandShortcut
-} from '../src/preset/command';
+import { Command, CommandDialog, CommandGroup, CommandItem, CommandRoot, CommandShortcut } from '../src/preset/command';
 import { render, screen, setupUser } from './helpers/render';
 
 vi.mock('@iconify/react', () => ({
@@ -140,9 +133,7 @@ describe('Command', () => {
         description="Run a command from the palette."
         title="Command palette"
       >
-        <CommandRoot>
-          Dialog command body
-        </CommandRoot>
+        <CommandRoot>Dialog command body</CommandRoot>
       </CommandDialog>
     );
 
@@ -161,9 +152,7 @@ describe('Command', () => {
         description="Configured dialog description."
         title="Configured command palette"
       >
-        <CommandRoot>
-          Configured dialog body
-        </CommandRoot>
+        <CommandRoot>Configured dialog body</CommandRoot>
       </CommandDialog>
     );
 

@@ -9,12 +9,12 @@ export function ExternalLink({ href, ...rest }: Props) {
     <Link
       {...rest}
       href={href}
-      onPress={async (event) => {
+      onPress={async event => {
         // Prevent the default behavior of linking to the default browser on native.
         event.preventDefault();
         // Open the link in an in-app browser.
         await openBrowserAsync(href, {
-          presentationStyle: WebBrowserPresentationStyle.AUTOMATIC,
+          presentationStyle: WebBrowserPresentationStyle.AUTOMATIC
         });
       }}
     />

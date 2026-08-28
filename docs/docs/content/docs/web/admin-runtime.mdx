@@ -381,10 +381,17 @@ export function createAdminAppVersionNotificationPluginOptions(): SetupAppVersio
       showNotification({
         actions: (
           <div className="w-325px flex justify-end gap-3">
-            <AButton key="cancel" onClick={handleCancel}>
+            <AButton
+              key="cancel"
+              onClick={handleCancel}
+            >
               {$t('system.updateCancel')}
             </AButton>
-            <AButton key="ok" type="primary" onClick={handleOk}>
+            <AButton
+              key="ok"
+              type="primary"
+              onClick={handleOk}
+            >
               {$t('system.updateConfirm')}
             </AButton>
           </div>
@@ -428,7 +435,10 @@ ${baseUrl}index.html?time=${Date.now()}
 然后从 HTML 中读取：
 
 ```html
-<meta name="buildTime" content="2026-05-28 10:00:00" />
+<meta
+  name="buildTime"
+  content="2026-05-28 10:00:00"
+/>
 ```
 
 返回值：

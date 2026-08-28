@@ -37,8 +37,13 @@ const UserPasswordModal = (props: UserPasswordModalProps) => {
       open={open}
       title={`重置“${userName}”的密码`}
       onCancel={onClose}
-      onOk={handleOk}>
-      <Form className='px-22px pt-1' form={form} layout="vertical">
+      onOk={handleOk}
+    >
+      <Form
+        className="px-22px pt-1"
+        form={form}
+        layout="vertical"
+      >
         <Form.Item
           label="新密码"
           name="password"
@@ -47,7 +52,10 @@ const UserPasswordModal = (props: UserPasswordModalProps) => {
             { min: 5, max: 64, message: '密码长度为 5 至 64 位' }
           ]}
         >
-          <Input.Password autoComplete="new-password" placeholder="请输入新密码" />
+          <Input.Password
+            autoComplete="new-password"
+            placeholder="请输入新密码"
+          />
         </Form.Item>
       </Form>
     </Modal>

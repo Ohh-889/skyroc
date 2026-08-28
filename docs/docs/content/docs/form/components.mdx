@@ -9,9 +9,9 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 
 表单容器，创建或接收 `FormInstance` 并通过 context 向下传递。
 
-| 导出类型 | 说明 |
-| --- | --- |
-| `FormProps` | 完整 props |
+| 导出类型        | 说明                         |
+| --------------- | ---------------------------- |
+| `FormProps`     | 完整 props                   |
 | `FormBaseProps` | 基础 props（供二次封装继承） |
 
 ```tsx
@@ -32,8 +32,8 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 
 字段绑定，自动处理 `value` / `onChange` / `onBlur`。
 
-| 导出类型 | 说明 |
-| --- | --- |
+| 导出类型     | 说明                                   |
+| ------------ | -------------------------------------- |
 | `FieldProps` | `name` 的类型是 `AllPathsKeys<Values>` |
 
 ```tsx
@@ -47,8 +47,8 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 需要标注可绑定元素时用 `FieldElement`，它在 [`@skyroc/utils/web`](/docs/core/utils/web#表单元素类型)。
 
 <Callout type="warn">
-  本包的根出口**不转发** `FieldElement`——它依赖 DOM lib，而 `@skyroc/native-ui` 也消费本包，
-  转发会把 DOM 类型带进无 DOM lib 的 React Native 环境。Web 侧请直接从 `@skyroc/utils/web` 导入。
+  本包的根出口**不转发** `FieldElement`——它依赖 DOM lib，而 `@skyroc/native-ui` 也消费本包， 转发会把 DOM 类型带进无 DOM
+  lib 的 React Native 环境。Web 侧请直接从 `@skyroc/utils/web` 导入。
 </Callout>
 
 每个 `Field` 是独立订阅单元，见 [精确订阅](/docs/form/subscription)。
@@ -57,8 +57,8 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 
 动态数组字段，负责增删改与 key 管理。
 
-| 导出类型 | 说明 |
-| --- | --- |
+| 导出类型    | 说明                                |
+| ----------- | ----------------------------------- |
 | `ListProps` | `name` 的类型是 `ArrayKeys<Values>` |
 
 ```tsx
@@ -92,8 +92,8 @@ description: Form / Field / List / ComputedField 四个组件的职责与 props 
 
 派生字段——值由其它字段计算得出，并参与表单数据与提交。
 
-| 导出类型 | 说明 |
-| --- | --- |
-| `ComputedFieldProps` | — |
+| 导出类型             | 说明 |
+| -------------------- | ---- |
+| `ComputedFieldProps` | —    |
 
 和「在渲染里算一个变量」的区别是:`ComputedField` 的结果是**表单数据的一部分**,会进 `onFinish` 的 values,也能被校验。纯展示用途不需要它,用 [`useSelector`](/docs/form/subscription) 即可。

@@ -9,7 +9,12 @@ const ROUTE_PATH = '/(admin)/document/tanstack-router';
 const DocumentTanStackRouter = () => {
   const { staticData } = useMatch({ from: ROUTE_PATH });
 
-  return <IframePage title={staticData.title} url={staticData.url} />;
+  return (
+    <IframePage
+      title={staticData.title}
+      url={staticData.url}
+    />
+  );
 };
 
 export const Route = createFileRoute(ROUTE_PATH)({

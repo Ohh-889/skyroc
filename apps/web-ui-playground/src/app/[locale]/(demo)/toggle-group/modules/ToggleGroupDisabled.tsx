@@ -12,8 +12,16 @@ const items: ToggleGroupProps['items'] = [
 
 const ToggleGroupDisabled = () => {
   return (
-    <Card split title="Disabled">
-      <ToggleGroup items={items} type="multiple" defaultValue={['top']} variant="outline" />
+    <Card
+      split
+      title="Disabled"
+    >
+      <ToggleGroup
+        items={items}
+        type="multiple"
+        defaultValue={['top']}
+        variant="outline"
+      />
     </Card>
   );
 };

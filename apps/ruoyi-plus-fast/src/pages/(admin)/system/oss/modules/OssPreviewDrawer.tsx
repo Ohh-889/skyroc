@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 
 import type { OssItem } from '@/service/api/system-oss';
 
-import OssFileIcon from './OssFileIcon';
 import { formatFileSize, formatSuffixLabel, getFileVisual, isPreviewableImage, parseOssExt } from './oss-utils';
+import OssFileIcon from './OssFileIcon';
 
 interface OssPreviewDrawerProps {
   /** 下载请求是否进行中。 */

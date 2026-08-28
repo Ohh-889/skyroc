@@ -15,13 +15,13 @@
 
 设计与代码按以下层级对应：
 
-| 层级            | 当前实现                                            | 职责                         |
-| --------------- | --------------------------------------------------- | ---------------------------- |
-| 基础令牌        | `@skyroc/ui-tokens`                                 | 颜色、间距、圆角、字号和字重 |
-| 颜色算法        | `@skyroc/color`                                     | 色板生成和颜色处理           |
-| Ant Design 映射 | `@shell/theme`（`packages/web/admin/theme`）  | 将主题设置映射为组件令牌     |
-| 后台主题        | `@shell/theme`（`packages/web/admin/theme`）        | 明暗模式、主题预设和布局尺寸 |
-| UI 组件         | `@skyroc/web-ui`、`@shell/ui/antd`、Ant Design      | 页面实际组件                 |
+| 层级            | 当前实现                                       | 职责                         |
+| --------------- | ---------------------------------------------- | ---------------------------- |
+| 基础令牌        | `@skyroc/ui-tokens`                            | 颜色、间距、圆角、字号和字重 |
+| 颜色算法        | `@skyroc/color`                                | 色板生成和颜色处理           |
+| Ant Design 映射 | `@shell/theme`（`packages/web/admin/theme`）   | 将主题设置映射为组件令牌     |
+| 后台主题        | `@shell/theme`（`packages/web/admin/theme`）   | 明暗模式、主题预设和布局尺寸 |
+| UI 组件         | `@skyroc/web-ui`、`@shell/ui/antd`、Ant Design | 页面实际组件                 |
 
 实施规则：
 

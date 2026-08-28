@@ -7,9 +7,7 @@ function randomNumber(min: number, max: number) {
 globalThis.addEventListener('message', event => {
   const { count } = event.data;
 
-  const sentences = Array.from({ length: count }).map(() =>
-    faker.lorem.sentence(randomNumber(20, 70))
-  );
+  const sentences = Array.from({ length: count }).map(() => faker.lorem.sentence(randomNumber(20, 70)));
 
   // oxlint-disable-next-line unicorn/require-post-message-target-origin
   globalThis.postMessage({ sentences });

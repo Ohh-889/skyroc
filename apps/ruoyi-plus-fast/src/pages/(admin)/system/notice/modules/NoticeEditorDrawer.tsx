@@ -57,7 +57,11 @@ const RichTextEditor = (props: RichTextEditorProps) => {
 
   return (
     <div className="overflow-hidden rounded-6px border border-border-secondary bg-white dark:bg-black">
-      <Toolbar editor={editor} defaultConfig={TOOLBAR_CONFIG} mode="default" />
+      <Toolbar
+        editor={editor}
+        defaultConfig={TOOLBAR_CONFIG}
+        mode="default"
+      />
       <Editor
         defaultConfig={EDITOR_CONFIG}
         mode="default"
@@ -108,11 +112,21 @@ const NoticeEditorDrawer = (props: NoticeEditorDrawerProps) => {
     <Drawer
       destroyOnHidden
       footer={
-        <Flex gap={8} justify="flex-end">
-          <Button disabled={loading} onClick={onClose}>
+        <Flex
+          gap={8}
+          justify="flex-end"
+        >
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存公告
           </Button>
         </Flex>
@@ -133,7 +147,11 @@ const NoticeEditorDrawer = (props: NoticeEditorDrawerProps) => {
         />
       ) : null}
       <Spin spinning={isUpdate && detailQuery.isLoading}>
-        <Form<NoticeFormValues> form={form} layout="vertical" onFinish={handleFinish}>
+        <Form<NoticeFormValues>
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+        >
           <div className="grid grid-cols-2 gap-x-16px lt-sm:grid-cols-1">
             <Form.Item
               label="公告标题"
@@ -143,9 +161,17 @@ const NoticeEditorDrawer = (props: NoticeEditorDrawerProps) => {
                 { max: 50, message: '公告标题最多 50 个字符' }
               ]}
             >
-              <Input allowClear maxLength={50} placeholder="请输入公告标题" />
+              <Input
+                allowClear
+                maxLength={50}
+                placeholder="请输入公告标题"
+              />
             </Form.Item>
-            <Form.Item label="公告类型" name="noticeType" rules={[{ message: '请选择公告类型', required: true }]}>
+            <Form.Item
+              label="公告类型"
+              name="noticeType"
+              rules={[{ message: '请选择公告类型', required: true }]}
+            >
               <Select
                 options={[
                   { label: '通知', value: '1' },
@@ -154,7 +180,10 @@ const NoticeEditorDrawer = (props: NoticeEditorDrawerProps) => {
               />
             </Form.Item>
           </div>
-          <Form.Item label="公告状态" name="status">
+          <Form.Item
+            label="公告状态"
+            name="status"
+          >
             <Radio.Group
               options={[
                 { label: '正常', value: '0' },
@@ -162,11 +191,24 @@ const NoticeEditorDrawer = (props: NoticeEditorDrawerProps) => {
               ]}
             />
           </Form.Item>
-          <Form.Item label="公告内容" name="noticeContent">
+          <Form.Item
+            label="公告内容"
+            name="noticeContent"
+          >
             <RichTextEditor />
           </Form.Item>
-          <Form.Item label="备注" name="remark" rules={[{ max: 255, message: '备注最多 255 个字符' }]}>
-            <Input.TextArea allowClear maxLength={255} placeholder="请输入备注" rows={3} showCount />
+          <Form.Item
+            label="备注"
+            name="remark"
+            rules={[{ max: 255, message: '备注最多 255 个字符' }]}
+          >
+            <Input.TextArea
+              allowClear
+              maxLength={255}
+              placeholder="请输入备注"
+              rows={3}
+              showCount
+            />
           </Form.Item>
         </Form>
       </Spin>

@@ -2,9 +2,9 @@
 
 import type { Ref } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import BreadcrumbUI from '../../components/breadcrumb/BreadcrumbUI';
 import type { BreadcrumbItem, BreadcrumbProps } from '../../components/breadcrumb/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const BreadcrumbInner = <T extends BreadcrumbItem>(props: BreadcrumbProps<T>, ref: Ref<HTMLElement>) => {
   const config = useComponentConfig('breadcrumb');

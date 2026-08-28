@@ -93,5 +93,4 @@ describe('Input', () => {
     expect(readonlyInput).toHaveAttribute('readonly');
     expect(readonlyRoot).toHaveAttribute('data-readonly');
   });
-
 });

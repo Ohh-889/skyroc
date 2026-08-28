@@ -15,23 +15,20 @@ import type {
   WechatModuleEvents,
   WechatResult,
   WechatShareResponse,
-  WechatUniversalLinkCheckResult,
+  WechatUniversalLinkCheckResult
 } from './Wechat.types';
 
 /**
- * 原生模块的直接映射，是「原始契约」，不做任何默认值和易用性包装。
- * 业务代码请用 `index.ts` 导出的同名友好函数。
+ * 原生模块的直接映射，是「原始契约」，不做任何默认值和易用性包装。 业务代码请用 `index.ts` 导出的同名友好函数。
  *
  * 通用约定：
+ *
  * - 所有方法都在原生侧自行切主线程，调用方不用关心线程
- * - **除 isWechatInstalledAsync / openWechatAsync 外一律 resolve 成 `WechatResult`，永远不 reject**，
- *   用户取消、未装微信、参数非法都表现为 `{ ok: false, code }`，见 `WechatResultCode`
+ * - **除 isWechatInstalledAsync / openWechatAsync 外一律 resolve 成 `WechatResult`，永远不 reject**， 用户取消、未装微信、参数非法都表现为 `{ ok:
+ *   false, code }`，见 `WechatResultCode`
  */
 declare class WechatModule extends NativeModule<WechatModuleEvents> {
-  /**
-   * 本机是否装了微信（`WXApi.isWXAppInstalled`）。
-   * Android 11+ 需要 manifest 里的 `<queries>` 声明，插件已经写好。
-   */
+  /** 本机是否装了微信（`WXApi.isWXAppInstalled`）。 Android 11+ 需要 manifest 里的 `<queries>` 声明，插件已经写好。 */
   isWechatInstalledAsync(): Promise<boolean>;
 
   /** 直接把微信切到前台（`WXApi.openWXApp`），不发任何请求。返回是否成功唤起 */
@@ -46,13 +43,13 @@ declare class WechatModule extends NativeModule<WechatModuleEvents> {
   /**
    * Universal Link 自检（`WXApi.checkUniversalLinkReady`）。
    *
-   * **仅调试用**，头文件里明确写了「请勿在正式环境的调用」。
-   * 会真的把微信拉起来再跳回本 App，所以只能在真机上跑。
+   * **仅调试用**，头文件里明确写了「请勿在正式环境的调用」。 会真的把微信拉起来再跳回本 App，所以只能在真机上跑。
    */
   checkUniversalLinkAsync(): Promise<WechatUniversalLinkCheckResult>;
 
   /**
    * 设置「从微信返回后等多久判定没有结果」，返回钳制到 [100, 5000] 之后实际生效的毫秒数。
+   *
    * @see configureWechat
    */
   setResumeGraceMsAsync(milliseconds: number): Promise<number>;
@@ -71,8 +68,7 @@ declare class WechatModule extends NativeModule<WechatModuleEvents> {
   /**
    * 取走冷启动期间到达的授权结果，取一次即清空，没有则返回 `null`。
    *
-   * App 被系统杀掉后从微信返回时，原生先于 JS 拿到结果，那时没有挂起的 Promise，
-   * 结果（含「用户取消」这种失败）会被缓存在原生侧等 JS 起来取。
+   * App 被系统杀掉后从微信返回时，原生先于 JS 拿到结果，那时没有挂起的 Promise， 结果（含「用户取消」这种失败）会被缓存在原生侧等 JS 起来取。
    */
   consumePendingAuthResponseAsync(): Promise<WechatResult<WechatAuthResponse> | null>;
 
@@ -110,10 +106,7 @@ declare class WechatModule extends NativeModule<WechatModuleEvents> {
   /** 表情（`WXEmoticonObject`），gif / png，≤10MB */
   shareEmoticonAsync(options: ShareEmoticonOptions): Promise<WechatResult<WechatShareResponse>>;
 
-  /**
-   * 小程序卡片（`WXMiniProgramObject`）。
-   * 微信只允许发到会话，传的 `scene` 会被原生强制改成 `session`。
-   */
+  /** 小程序卡片（`WXMiniProgramObject`）。 微信只允许发到会话，传的 `scene` 会被原生强制改成 `session`。 */
   shareMiniProgramAsync(options: ShareMiniProgramOptions): Promise<WechatResult<WechatShareResponse>>;
 
   /** 取走冷启动期间到达的分享结果，语义同 `consumePendingAuthResponseAsync` */

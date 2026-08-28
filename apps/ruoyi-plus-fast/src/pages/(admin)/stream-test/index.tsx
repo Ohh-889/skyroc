@@ -67,9 +67,17 @@ const StreamTest = () => {
   }
 
   return (
-    <ASpace className="w-full" orientation="vertical" size={16}>
+    <ASpace
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <ACard title="流式输出联调">
-        <ASpace className="w-full" orientation="vertical" size={12}>
+        <ASpace
+          className="w-full"
+          orientation="vertical"
+          size={12}
+        >
           <div className="text-secondary">
             这条流和 SSE 测试页那条常驻连接不是一回事：它是<b>请求作用域</b>的，一次请求一条流，只发给发起它的这个
             标签页，产出完就结束。通知推送才走连接注册表，会发给你所有在线的设备。
@@ -81,7 +89,11 @@ const StreamTest = () => {
       </ACard>
 
       <ACard title="输入">
-        <ASpace className="w-full" orientation="vertical" size={12}>
+        <ASpace
+          className="w-full"
+          orientation="vertical"
+          size={12}
+        >
           <AInput.TextArea
             autoSize={{ maxRows: 8, minRows: 4 }}
             disabled={streaming}
@@ -89,10 +101,18 @@ const StreamTest = () => {
             onChange={event => setPrompt(event.target.value)}
           />
           <ASpace>
-            <AButton loading={streaming} type="primary" onClick={handleStart}>
+            <AButton
+              loading={streaming}
+              type="primary"
+              onClick={handleStart}
+            >
               开始生成
             </AButton>
-            <AButton danger disabled={!streaming} onClick={handleStop}>
+            <AButton
+              danger
+              disabled={!streaming}
+              onClick={handleStop}
+            >
               停止
             </AButton>
           </ASpace>

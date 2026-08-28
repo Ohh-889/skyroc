@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import type {
-  HookTableConfig,
-  HookTableResult,
-  PaginationData,
-  TableColumnCheck,
-  TableDataWithIndex
-} from './types';
+import type { HookTableConfig, HookTableResult, PaginationData, TableColumnCheck, TableDataWithIndex } from './types';
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
@@ -136,10 +130,7 @@ function createSearchParams<T>(params?: Partial<T>) {
   } as unknown as Partial<T>);
 }
 
-function resolveRequestParams<Params>(
-  searchParams: Partial<Params>,
-  transformParams?: (params: Params) => Params
-) {
+function resolveRequestParams<Params>(searchParams: Partial<Params>, transformParams?: (params: Params) => Params) {
   const formattedParams = formatSearchParams(searchParams) as Params;
 
   if (!transformParams) {

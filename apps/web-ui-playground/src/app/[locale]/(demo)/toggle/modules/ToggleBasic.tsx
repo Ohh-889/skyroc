@@ -5,7 +5,10 @@ import { Bold } from 'lucide-react';
 
 const ToggleBasic = () => {
   return (
-    <Card split title="Basic">
+    <Card
+      split
+      title="Basic"
+    >
       <Toggle aria-label="Toggle bold">
         <Bold className="size-4" />
       </Toggle>

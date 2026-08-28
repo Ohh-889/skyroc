@@ -45,7 +45,7 @@ export interface ScrollAreaViewportProps extends StyledComponentProps<_ScrollAre
  *   <ScrollArea classNames={{ viewport: 'max-h-96' }}>
  *     <div>Scrollable content here</div>
  *   </ScrollArea>;
- *   ```
+ *   ```;
  */
 export interface ScrollAreaProps
   extends ScrollAreaRootProps, Omit<ScrollAreaScrollbarProps, 'dir'>, Omit<ScrollAreaViewportProps, 'dir'> {

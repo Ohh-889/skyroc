@@ -50,14 +50,14 @@ jobs:
         run: pnpm build
 ```
 
-| 步骤 | 失败时阻塞合并 |
-| --- | --- |
+| 步骤                             | 失败时阻塞合并          |
+| -------------------------------- | ----------------------- |
 | `pnpm install --frozen-lockfile` | ✅（lockfile 不能漂移） |
-| `pnpm format:check` | ✅ |
-| `pnpm lint` | ✅ |
-| `pnpm typecheck` | ✅ |
-| `pnpm test` | ✅ |
-| `pnpm build` | ✅ |
+| `pnpm format:check`              | ✅                      |
+| `pnpm lint`                      | ✅                      |
+| `pnpm typecheck`                 | ✅                      |
+| `pnpm test`                      | ✅                      |
+| `pnpm build`                     | ✅                      |
 
 ## Turborepo 远程缓存
 
@@ -114,11 +114,11 @@ e2e:
 
 ## 文档站部署
 
-| 文档 | 内容 | 框架 | 部署目标 |
-| --- | --- | --- | --- |
-| `docs/docs` | 主文档门户（指南 / Admin / 跨端核心 / Web 端包 / 包总览） | Next.js + Fumadocs | Vercel |
-| `docs/web-ui-docs` | Web UI 组件站（实时 Demo） | Next.js + Fumadocs | Vercel |
-| `docs/native-ui-docs` | Native UI 组件站（Expo Demo） | Next.js + Fumadocs | Vercel |
+| 文档                  | 内容                                                      | 框架               | 部署目标 |
+| --------------------- | --------------------------------------------------------- | ------------------ | -------- |
+| `docs/docs`           | 主文档门户（指南 / Admin / 跨端核心 / Web 端包 / 包总览） | Next.js + Fumadocs | Vercel   |
+| `docs/web-ui-docs`    | Web UI 组件站（实时 Demo）                                | Next.js + Fumadocs | Vercel   |
+| `docs/native-ui-docs` | Native UI 组件站（Expo Demo）                             | Next.js + Fumadocs | Vercel   |
 
 Vercel 项目通常按目录配置 root，自动跑 `pnpm build` 即可。
 
@@ -175,11 +175,11 @@ jobs:
 
 ## 必填的 GitHub Secrets
 
-| Secret | 用途 |
-| --- | --- |
-| `NPM_TOKEN` | 发布 `@skyroc/*` 公共包 |
+| Secret                       | 用途                           |
+| ---------------------------- | ------------------------------ |
+| `NPM_TOKEN`                  | 发布 `@skyroc/*` 公共包        |
 | `TURBO_TOKEN` / `TURBO_TEAM` | Turborepo Remote Cache（可选） |
-| 部署相关 token | 业务自定义 |
+| 部署相关 token               | 业务自定义                     |
 
 ## 本地复现 CI
 
@@ -195,9 +195,9 @@ pnpm build
 
 如本地不通过、CI 通过（或反之），多数原因：
 
-| 原因 | 排查 |
-| --- | --- |
-| `lockfile` 不一致 | `pnpm install --frozen-lockfile` 是否报错 |
-| Node 版本 | 仓库要求 `>=20`，CI 必须显式 setup |
-| Turbo 缓存影响 | 本地 `pnpm clean` 或 `turbo run build --force` |
-| 平台差异 | 大小写文件名、CRLF；macOS / Linux 不一致 |
+| 原因              | 排查                                           |
+| ----------------- | ---------------------------------------------- |
+| `lockfile` 不一致 | `pnpm install --frozen-lockfile` 是否报错      |
+| Node 版本         | 仓库要求 `>=20`，CI 必须显式 setup             |
+| Turbo 缓存影响    | 本地 `pnpm clean` 或 `turbo run build --force` |
+| 平台差异          | 大小写文件名、CRLF；macOS / Linux 不一致       |

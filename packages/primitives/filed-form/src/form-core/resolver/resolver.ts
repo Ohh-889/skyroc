@@ -1,32 +1,24 @@
-/**
- * Form schema resolver module
- * Provides functionality to resolve different types of form schemas into middleware
- */
+/** Form schema resolver module Provides functionality to resolve different types of form schemas into middleware */
 
 import type { Middleware } from '../middleware';
 import type { StandardSchemaV1, StandardSchemaV1NormalizedIssue } from './standard';
 import { createStandardResolver, isStandardSchema } from './standard';
 import { createGenericResolver } from './utils';
 
-/**
- * Union type representing supported form schema types
- */
+/** Union type representing supported form schema types */
 export type FormSchema<Values = any> =
   | StandardSchemaV1<unknown, unknown> // Standard schema v1 implementation
   | ((state: Values, name: string | string[] | undefined) => Promise<StandardSchemaV1NormalizedIssue[]>); // Custom validation function
 
 /**
- * Creates a no-operation middleware that passes through all actions unchanged
- * Used as a fallback when schema resolution fails
+ * Creates a no-operation middleware that passes through all actions unchanged Used as a fallback when schema resolution
+ * fails
  */
 function noopMiddleware<Values = any>(): Middleware<Values> {
   return () => next => action => next(action);
 }
 
-/**
- * Extracts a raw validate function from a schema
- * Returns a function that validates state and returns normalized issues
- */
+/** Extracts a raw validate function from a schema Returns a function that validates state and returns normalized issues */
 export function extractSchemaValidator<Values = any>(
   schema: FormSchema<Values>
 ): ((state: Values, name?: string | string[]) => Promise<StandardSchemaV1NormalizedIssue[]>) | null {
@@ -53,8 +45,8 @@ export function extractSchemaValidator<Values = any>(
 }
 
 /**
- * Resolves a form schema into appropriate middleware based on its type
- * Supports StandardSchemaV1 and custom validation functions
+ * Resolves a form schema into appropriate middleware based on its type Supports StandardSchemaV1 and custom validation
+ * functions
  */
 export function resolveSchema<Values = any>(schema: FormSchema<Values>): Middleware<Values> {
   // Check if schema follows StandardSchemaV1 interface

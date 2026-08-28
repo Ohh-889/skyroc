@@ -1,6 +1,6 @@
 ---
-title: "Admin Layouts 概览"
-description: "@skyroc/web-admin-layouts 是管理后台应用壳，负责把布局材料、主题状态、菜单、页签、权限和业务插槽组合成可复用的后台框架"
+title: 'Admin Layouts 概览'
+description: '@skyroc/web-admin-layouts 是管理后台应用壳，负责把布局材料、主题状态、菜单、页签、权限和业务插槽组合成可复用的后台框架'
 ---
 
 `@skyroc/web-admin-layouts` 是 Skyroc 管理后台的应用级布局包。它不只是一个视觉布局组件，而是把路由菜单、权限、标签页、主题抽屉、响应式状态和业务插槽组合在一起的后台壳。
@@ -33,15 +33,15 @@ apps/admin
 
 ## 核心模块
 
-| 模块 | 责任 |
-| --- | --- |
-| `setupAdminLayouts` | 在应用启动时注入 routeTree、菜单模式、默认首页、动态路由加载器、缓存适配器和扩展组件。 |
-| `AdminLayout` | 渲染完整后台壳，并通过插槽接入 Logo、Header actions、Footer 和 Content。 |
-| `menu-generator` | 从 TanStack Router 静态路由或后端动态路由生成标准菜单树与快速索引。 |
-| `menu-renderer` | 把 `GeneratedMenu` 转成 Ant Design Menu 可消费的菜单项，处理 icon、title、badge 和 extra。 |
-| `useAdminMenus` | 根据当前路由、菜单分类和布局模式，计算一级、二级、子级菜单、选中项和展开项。 |
-| `useAdminTab` | 管理路由页签，支持首页 tab、固定 tab、缓存、关闭和切换。 |
-| `useAdminState` | 管理布局运行时状态，如移动端、侧边栏折叠、全屏内容和横向滚动。 |
+| 模块                | 责任                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `setupAdminLayouts` | 在应用启动时注入 routeTree、菜单模式、默认首页、动态路由加载器、缓存适配器和扩展组件。     |
+| `AdminLayout`       | 渲染完整后台壳，并通过插槽接入 Logo、Header actions、Footer 和 Content。                   |
+| `menu-generator`    | 从 TanStack Router 静态路由或后端动态路由生成标准菜单树与快速索引。                        |
+| `menu-renderer`     | 把 `GeneratedMenu` 转成 Ant Design Menu 可消费的菜单项，处理 icon、title、badge 和 extra。 |
+| `useAdminMenus`     | 根据当前路由、菜单分类和布局模式，计算一级、二级、子级菜单、选中项和展开项。               |
+| `useAdminTab`       | 管理路由页签，支持首页 tab、固定 tab、缓存、关闭和切换。                                   |
+| `useAdminState`     | 管理布局运行时状态，如移动端、侧边栏折叠、全屏内容和横向滚动。                             |
 
 ## 数据流
 
@@ -79,22 +79,40 @@ AdminLayout
 ## 阅读顺序
 
 <Cards>
-  <Card title="快速接入" href="/docs/web/admin-layouts/quick-start">
+  <Card
+    title="快速接入"
+    href="/docs/web/admin-layouts/quick-start"
+  >
     从应用入口、路由布局页和认证守卫开始接入后台壳。
   </Card>
-  <Card title="菜单系统" href="/docs/web/admin-layouts/menus">
+  <Card
+    title="菜单系统"
+    href="/docs/web/admin-layouts/menus"
+  >
     先理解菜单统一结构、权限、badge、extra 和 menuNodeCallback。
   </Card>
-  <Card title="静态菜单生成" href="/docs/web/admin-layouts/static-menu-generation">
+  <Card
+    title="静态菜单生成"
+    href="/docs/web/admin-layouts/static-menu-generation"
+  >
     从 TanStack Router staticData 生成菜单树和快速索引。
   </Card>
-  <Card title="动态菜单生成" href="/docs/web/admin-layouts/dynamic-menu-generation">
+  <Card
+    title="动态菜单生成"
+    href="/docs/web/admin-layouts/dynamic-menu-generation"
+  >
     从后端路由树生成菜单树，并处理分类、首页和扩展节点。
   </Card>
-  <Card title="布局插槽" href="/docs/web/admin-layouts/slots">
+  <Card
+    title="布局插槽"
+    href="/docs/web/admin-layouts/slots"
+  >
     接入 Logo、Header actions、Footer、Content 和多菜单分类。
   </Card>
-  <Card title="状态与页签" href="/docs/web/admin-layouts/state-tabs">
+  <Card
+    title="状态与页签"
+    href="/docs/web/admin-layouts/state-tabs"
+  >
     使用布局状态、菜单状态、tab 状态和动态 badge 值表。
   </Card>
 </Cards>

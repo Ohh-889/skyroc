@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { Icon } from '../src/preset/icon';
 import { ConfigProvider } from '../src/preset/config-provider';
+import { Icon } from '../src/preset/icon';
 import { render, screen } from './helpers/render';
 
 interface IconifyMockProps {

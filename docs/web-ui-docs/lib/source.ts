@@ -1,26 +1,24 @@
 import { docs } from 'collections/server';
+import type { Folder } from 'fumadocs-core/page-tree';
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
-import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
-import type { Folder } from 'fumadocs-core/page-tree';
 import type { LayoutTab } from 'fumadocs-ui/layouts/shared';
+import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
+  plugins: [lucideIconsPlugin()]
 });
 
 /**
  * 取文件夹里第一个能跳转的页面。
  *
- * fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page，
- * 而 `components/` 的直接子级全是 `(general)` 这类分组文件夹，会被判成「没有落地页」而整项丢弃。
- * 这里往下递归一层层找，让没有 index.mdx 的模块也能出现在切换器里。
+ * Fumadocs 内置的 `getLayoutTabs` 只认 `node.index` 或直接子级里的 page， 而 `components/` 的直接子级全是 `(general)`
+ * 这类分组文件夹，会被判成「没有落地页」而整项丢弃。 这里往下递归一层层找，让没有 index.mdx 的模块也能出现在切换器里。
  *
- * 一旦哪天给 `components/` 补了 index.mdx，这个文件里的两个函数就可以整体删掉，
- * 直接用 fumadocs 默认的 tabs（layout 里不传 `tabs` 即可）。
+ * 一旦哪天给 `components/` 补了 index.mdx，这个文件里的两个函数就可以整体删掉， 直接用 fumadocs 默认的 tabs（layout 里不传 `tabs` 即可）。
  */
 function findFirstPageUrl(folder: Folder): string | undefined {
   if (folder.index) return folder.index.url;
@@ -51,8 +49,8 @@ export function getRootTabs(): LayoutTab[] {
         description: node.description,
         icon: node.icon,
         title: node.name,
-        url,
-      },
+        url
+      }
     ];
   });
 }
@@ -62,7 +60,7 @@ export function getPageImage(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: `${docsImageRoute}/${segments.join('/')}`,
+    url: `${docsImageRoute}/${segments.join('/')}`
   };
 }
 
@@ -71,7 +69,7 @@ export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: `${docsContentRoute}/${segments.join('/')}`,
+    url: `${docsContentRoute}/${segments.join('/')}`
   };
 }
 

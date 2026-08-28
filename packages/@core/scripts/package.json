@@ -1,7 +1,6 @@
 {
   "name": "@skyroc/scripts",
   "version": "2.5.3",
-  "type": "module",
   "description": "Skyroc admin CLI - changelog, release, git-commit, cleanup and other project automation scripts",
   "keywords": [
     "changelog",
@@ -11,38 +10,39 @@
     "skyroc-admin",
     "tooling"
   ],
-  "license": "MIT",
   "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/@core/scripts",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/@core/scripts"
   },
-  "author": {
-    "name": "Ohh",
-    "email": "1509326266@qq.com",
-    "url": "https://github.com/Ohh-889"
+  "bin": {
+    "sa": "./bin.ts"
   },
   "files": [
     "dist",
     "README.md"
   ],
+  "type": "module",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
   },
-  "bin": {
-    "sa": "./bin.ts"
-  },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
     "access": "public",
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
+    "bin": {
+      "sa": "./dist/cli.mjs"
+    },
     "exports": {
       ".": {
         "import": {
@@ -50,9 +50,9 @@
         }
       }
     },
-    "bin": {
-      "sa": "./dist/cli.mjs"
-    }
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",

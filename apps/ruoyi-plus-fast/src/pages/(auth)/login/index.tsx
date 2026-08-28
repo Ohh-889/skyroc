@@ -1,5 +1,5 @@
-import { noop } from '@skyroc/utils';
 import { SvgIcon } from '@shell/ui/compose';
+import { noop } from '@skyroc/utils';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuthFormRules } from '@/features/auth/use-auth-form-rules';
 import { useInitLogin } from '@/features/auth/use-login';

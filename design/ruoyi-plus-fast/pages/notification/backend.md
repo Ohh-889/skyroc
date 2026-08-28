@@ -20,31 +20,31 @@
 
 设计不能凭空开始。下面这些是我从代码里读出来的约束，全部可核对：
 
-| 事实 | 证据 | 对设计的约束 |
-| --- | --- | --- |
+| 事实                                         | 证据                                                                                           | 对设计的约束                                                      |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | 后端是 RuoYi 血统的 Python 服务，`app/` 布局 | `features/realtime/message.ts` 注释指向 `app/core/codes.py`、`app/infra/realtime/constants.py` | 表名走 `sys_*`，字段走 `create_by/create_time/del_flag/tenant_id` |
-| 主键是雪花 bigint，前端不敢当 number 用 | `NoticeId = number \| string`、`UserId = number \| string` | **id 出网关一律序列化为 string**，见 §3.0 |
-| `sys_notice` 已存在且前端接口层已写好 | `service/api/system-notice/`，`/system/notice/list` 等 5 个接口 | 新设计**不许动它**，见 §2 |
-| `sys_notice` 只有内容，没有受众和已读态 | `NoticeItem` 字段仅 `noticeId/noticeTitle/noticeContent/noticeType/status/createBy/remark` | 收件箱必须是新增的一层 |
-| 分页形状是 MyBatis-Plus 的 `Page` | `{current, size, total, records}` | 列表接口沿用；`/sync` 是例外，见 §8.2 |
-| 部门树用 `ancestors` 逗号链 | `system-dept/types.ts:16` `ancestors: string` | **受众展开不需要递归 CTE**，见 §6.1 |
-| 实时信封已经定死 | `{code,msg,data,msg_id,request_id,type}`，`type` 命名 `模块.资源.动作`，`code='0000'/'0001'` | 新消息类型**沿用这个信封**，不发明协议，见 §7.1 |
-| WS 和 SSE 共用一张连接注册表 | `.env`「后端的连接注册表是同一张，推消息不区分两者」 | 信号层只对接注册表，不区分传输 |
-| 推送接口返回的是 `local_connections` | `sse/api.ts`、`websocket/api.ts` | **注册表是进程内的**，多实例部署有缺口，见 §7.3 |
-| 有租户 | `auth.d.ts` 的 `tenantId`、`sys_client` | 每张表带 `tenant_id`，见 §3.6 |
+| 主键是雪花 bigint，前端不敢当 number 用      | `NoticeId = number \| string`、`UserId = number \| string`                                     | **id 出网关一律序列化为 string**，见 §3.0                         |
+| `sys_notice` 已存在且前端接口层已写好        | `service/api/system-notice/`，`/system/notice/list` 等 5 个接口                                | 新设计**不许动它**，见 §2                                         |
+| `sys_notice` 只有内容，没有受众和已读态      | `NoticeItem` 字段仅 `noticeId/noticeTitle/noticeContent/noticeType/status/createBy/remark`     | 收件箱必须是新增的一层                                            |
+| 分页形状是 MyBatis-Plus 的 `Page`            | `{current, size, total, records}`                                                              | 列表接口沿用；`/sync` 是例外，见 §8.2                             |
+| 部门树用 `ancestors` 逗号链                  | `system-dept/types.ts:16` `ancestors: string`                                                  | **受众展开不需要递归 CTE**，见 §6.1                               |
+| 实时信封已经定死                             | `{code,msg,data,msg_id,request_id,type}`，`type` 命名 `模块.资源.动作`，`code='0000'/'0001'`   | 新消息类型**沿用这个信封**，不发明协议，见 §7.1                   |
+| WS 和 SSE 共用一张连接注册表                 | `.env`「后端的连接注册表是同一张，推消息不区分两者」                                           | 信号层只对接注册表，不区分传输                                    |
+| 推送接口返回的是 `local_connections`         | `sse/api.ts`、`websocket/api.ts`                                                               | **注册表是进程内的**，多实例部署有缺口，见 §7.3                   |
+| 有租户                                       | `auth.d.ts` 的 `tenantId`、`sys_client`                                                        | 每张表带 `tenant_id`，见 §3.6                                     |
 
 ---
 
 ## 1. 后端要解决的问题，按难度排序
 
-| 难度 | 问题 | 落在哪一节 |
-| --- | --- | --- |
-| ★★★ | 客户端如何**可靠对账**：多设备、断线、重复投递下未读数始终正确 | §4（`seq`） |
-| ★★★ | 多实例部署时推送怎么跨进程 | §7.3 |
-| ★★ | 一条事件如何**幂等**扇出到 N 人，可中断续跑 | §5、§6 |
-| ★★ | 推送与事务的时序 | §5.1（outbox） |
-| ★ | 和已有 `sys_notice` 怎么共存 | §2 |
-| ★ | 分类、模板、渠道、统计 | §9、§10 |
+| 难度 | 问题                                                           | 落在哪一节     |
+| ---- | -------------------------------------------------------------- | -------------- |
+| ★★★  | 客户端如何**可靠对账**：多设备、断线、重复投递下未读数始终正确 | §4（`seq`）    |
+| ★★★  | 多实例部署时推送怎么跨进程                                     | §7.3           |
+| ★★   | 一条事件如何**幂等**扇出到 N 人，可中断续跑                    | §5、§6         |
+| ★★   | 推送与事务的时序                                               | §5.1（outbox） |
+| ★    | 和已有 `sys_notice` 怎么共存                                   | §2             |
+| ★    | 分类、模板、渠道、统计                                         | §9、§10        |
 
 只有前四个是"设计错了要付几个月代价"的。后面的都是装修。
 
@@ -54,11 +54,11 @@
 
 `sys_notice` 已经有完整的前端接口层（`service/api/system-notice/`：list / detail / create / update / delete）。三个选项：
 
-| 选项 | 做法 | 问题 |
-| --- | --- | --- |
-| A | 扩展 `sys_notice`，加受众、已读、seq | 已读态是 `用户 × 公告` 的关系，塞进 `sys_notice` 就变成 benai 那张单表。而且现有 5 个接口的语义全变 |
-| B | 废弃 `sys_notice`，全部搬到新表 | 前端 5 个接口 + 页面全部重写；以后合并 RuoYi 上游会冲突 |
-| **C** | **`sys_notice` 原样保留，作为「内容源」之一；收件箱是独立新增的一层** | 需要一个订阅关系把两者接起来 |
+| 选项  | 做法                                                                  | 问题                                                                                                |
+| ----- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| A     | 扩展 `sys_notice`，加受众、已读、seq                                  | 已读态是 `用户 × 公告` 的关系，塞进 `sys_notice` 就变成 benai 那张单表。而且现有 5 个接口的语义全变 |
+| B     | 废弃 `sys_notice`，全部搬到新表                                       | 前端 5 个接口 + 页面全部重写；以后合并 RuoYi 上游会冲突                                             |
+| **C** | **`sys_notice` 原样保留，作为「内容源」之一；收件箱是独立新增的一层** | 需要一个订阅关系把两者接起来                                                                        |
 
 **选 C。** 理由不是"改动小"，而是职责本来就不同：
 
@@ -72,6 +72,7 @@ sys_msg_inbox       = 某个用户与某条消息的关系（已读、处理、�
 具体接法：`sys_notice` 发布时产生一条 `sys_msg`，`sys_msg.source_type='notice'`、`source_id=notice_id`。`sys_notice` 表本身**零改动**（受众和定时发布放在 §3.3 的扩展表里，仍然不动主表）。
 
 好处：
+
 - 现有 `/system/notice/*` 5 个接口和前端页面**一行都不用改**
 - 以后 RuoYi 上游改 `sys_notice`，我们的收件箱层不受影响
 - 通知模块可以先只接业务事件上线，公告接入是独立的一步
@@ -468,18 +469,19 @@ SELECT u.user_id
 
 四种受众的解析器：
 
-| `audience.kind` | 解析方式 |
-| --- | --- |
-| `users` | 直接给定 `userIds`，仍需过滤 `del_flag`/`status` |
-| `roles` | `sys_user_role` join，注意一个用户多角色要 `DISTINCT` |
-| `depts` | 上面那条 SQL，`includeChildren` 控制是否带 `ancestors` 条件 |
-| `all` | 读扩散，不展开，见 §6.2 |
+| `audience.kind` | 解析方式                                                    |
+| --------------- | ----------------------------------------------------------- |
+| `users`         | 直接给定 `userIds`，仍需过滤 `del_flag`/`status`            |
+| `roles`         | `sys_user_role` join，注意一个用户多角色要 `DISTINCT`       |
+| `depts`         | 上面那条 SQL，`includeChildren` 控制是否带 `ancestors` 条件 |
+| `all`           | 读扩散，不展开，见 §6.2                                     |
 
 `ORDER BY u.user_id` + `user_id > cursor` 同时满足两件事：**分块续跑**和 **§4.3 的升序加锁**。一个排序解决两个问题。
 
 ### 6.2 读扩散只用于 `all`
 
 **规则**：
+
 - `users` / `roles` / `depts` → 一律写扩散；展开人数 > 1000 **拒绝发布**（提示改用全员公告）
 - `all` → 只有这一种走读扩散
 
@@ -524,12 +526,12 @@ SELECT count(*) FROM sys_msg m
 
 四个性质，逐条对应问题：
 
-| 性质 | 靠什么 |
-| --- | --- |
-| 幂等 | `PRIMARY KEY (user_id, msg_id)` + `ON CONFLICT DO NOTHING` |
-| 可续跑 | `fanout_cursor`，按 user_id 升序推进 |
-| 无死锁 | 块内升序、块间独立事务 |
-| 推送晚于提交 | 推送调用在事务块外 |
+| 性质         | 靠什么                                                     |
+| ------------ | ---------------------------------------------------------- |
+| 幂等         | `PRIMARY KEY (user_id, msg_id)` + `ON CONFLICT DO NOTHING` |
+| 可续跑       | `fanout_cursor`，按 user_id 升序推进                       |
+| 无死锁       | 块内升序、块间独立事务                                     |
+| 推送晚于提交 | 推送调用在事务块外                                         |
 
 `ON CONFLICT DO NOTHING` 会**浪费已分配的 seq**（重跑时号被消耗但没插行）。无妨——seq 只要求单调，不要求连续。
 
@@ -591,11 +593,11 @@ export interface SsePushResponse {
 
 三个选项：
 
-| 选项 | 做法 | 评价 |
-| --- | --- | --- |
-| A | Redis Pub/Sub，每个实例订阅，收到后查本地注册表投递 | **推荐**。RuoYi 血统项目一定有 Redis，零新组件 |
-| B | Redis 存 `user_id → 实例` 路由表，定向转发 | 更省带宽，但要处理路由表过期和实例下线 |
-| C | 不修，客户端靠轮询兜底 | 只在确定单实例部署时可接受 |
+| 选项 | 做法                                                | 评价                                           |
+| ---- | --------------------------------------------------- | ---------------------------------------------- |
+| A    | Redis Pub/Sub，每个实例订阅，收到后查本地注册表投递 | **推荐**。RuoYi 血统项目一定有 Redis，零新组件 |
+| B    | Redis 存 `user_id → 实例` 路由表，定向转发          | 更省带宽，但要处理路由表过期和实例下线         |
+| C    | 不修，客户端靠轮询兜底                              | 只在确定单实例部署时可接受                     |
 
 **关键结论：即使不修，正确性也不受影响。** 因为真相在 `/sync`，推送只是提示。缺口的后果是"通知延迟到用户下次打开页面"，不是"通知丢失"。这正是 §0 那套设计换来的东西——**基础设施可以先欠着**。
 
@@ -692,15 +694,15 @@ MSG_RULES: dict[str, MsgRule] = { ... }
 
 **不假设具体调度器。** 本项目用什么（APScheduler / 自带 worker / 外部 Job 平台）我没核实，这里只定义任务语义：
 
-| 任务 | 频率 | 语义 |
-| --- | --- | --- |
-| `process_outbox` | 秒级 | 领取 outbox → 生成 msg → 触发扇出 |
-| `fanout_msg` | 触发式 | 分块扇出，可重入 |
-| `deliver_pending` | 秒级 | 外部渠道投递 + 指数退避 |
-| `publish_scheduled` | 分钟级 | 定时公告到点发布 |
-| `propagate_revoke` | 触发式 | 撤回后分块推进 seq |
-| `reconcile_counts` | 小时级 | ★ 计数器对账 + 漂移指标（§5.1） |
-| `archive_inbox` | 天级 | 归档超期条目（§13） |
+| 任务                | 频率   | 语义                              |
+| ------------------- | ------ | --------------------------------- |
+| `process_outbox`    | 秒级   | 领取 outbox → 生成 msg → 触发扇出 |
+| `fanout_msg`        | 触发式 | 分块扇出，可重入                  |
+| `deliver_pending`   | 秒级   | 外部渠道投递 + 指数退避           |
+| `publish_scheduled` | 分钟级 | 定时公告到点发布                  |
+| `propagate_revoke`  | 触发式 | 撤回后分块推进 seq                |
+| `reconcile_counts`  | 小时级 | ★ 计数器对账 + 漂移指标（§5.1）   |
+| `archive_inbox`     | 天级   | 归档超期条目（§13）               |
 
 ### 10.1 没有调度器时的降级方案
 
@@ -718,35 +720,35 @@ MSG_RULES: dict[str, MsgRule] = { ... }
 
 按阶段埋点，能定位到哪一层坏了：
 
-| 指标 | 类型 | 作用 |
-| --- | --- | --- |
-| `msg_event_ingested{type,result}` | counter | `result=duplicate` 比例反映上游重复投递程度 |
-| `msg_outbox_lag_seconds` | gauge | 最老 pending 行的年龄。**worker 挂了的第一信号** |
-| `msg_fanout_entries{category}` | counter | 写放大。突增说明有人发了大受众 |
-| `msg_delivery{channel,state}` | counter | 外部渠道成功率 |
-| `msg_sync_changes` | histogram | 每次 sync 的变更数。P99 高说明客户端在积压 |
-| `msg_sync_truncated` | counter | 全量重载次数，应接近 0 |
-| **`msg_unread_drift`** | gauge | **§5.1 的对账差值。最重要的一个** |
-| `msg_cursor_lock_wait_ms` | histogram | §4.2 的行锁等待。持续上升才考虑 §4.4 |
-| `msg_push_cross_instance_miss` | counter | §7.3 的缺口有多严重，用数据决定要不要修 |
+| 指标                              | 类型      | 作用                                             |
+| --------------------------------- | --------- | ------------------------------------------------ |
+| `msg_event_ingested{type,result}` | counter   | `result=duplicate` 比例反映上游重复投递程度      |
+| `msg_outbox_lag_seconds`          | gauge     | 最老 pending 行的年龄。**worker 挂了的第一信号** |
+| `msg_fanout_entries{category}`    | counter   | 写放大。突增说明有人发了大受众                   |
+| `msg_delivery{channel,state}`     | counter   | 外部渠道成功率                                   |
+| `msg_sync_changes`                | histogram | 每次 sync 的变更数。P99 高说明客户端在积压       |
+| `msg_sync_truncated`              | counter   | 全量重载次数，应接近 0                           |
+| **`msg_unread_drift`**            | gauge     | **§5.1 的对账差值。最重要的一个**                |
+| `msg_cursor_lock_wait_ms`         | histogram | §4.2 的行锁等待。持续上升才考虑 §4.4             |
+| `msg_push_cross_instance_miss`    | counter   | §7.3 的缺口有多严重，用数据决定要不要修          |
 
 ---
 
 ## 12. 需要拍板的决策
 
-| 编号 | 问题 | 建议 | 影响 |
-| --- | --- | --- | --- |
-| **B1** | `sys_notice` 保留还是改造？ | **原样保留 + 扩展表**（§2 选项 C）。老接口零改动 | 高 |
-| **B2** | 数据库是 PostgreSQL 还是 MySQL？版本？ | **需要你确认**。影响 `RETURNING`、`SKIP LOCKED`、`ON CONFLICT` 三处写法（MySQL 用 `ON DUPLICATE KEY UPDATE`），机制不变 | 中，落地前必须定 |
-| **B3** | `seq` 用每用户计数器还是全局序列+水位线？ | **每用户计数器**（§4.2）。简单、无延迟、正确性可证 | 高，改不动 |
-| **B4** | 读扩散只允许 `all`？ | **是**（§6.2）。允许 `roles`/`depts` 会引入"换部门后历史公告可见性"的死结 | 高 |
-| **B5** | 写扩散上限 1000？ | 是。到 1000 已经要分 2 块跑，超了该用全员公告 | 中 |
-| **B6** | 多实例推送缺口（§7.3）修不修？ | 看部署形态。**单实例先不修**，但 `msg_push_cross_instance_miss` 指标要先埋 | 中 |
-| **B7** | 新表打破 RuoYi 的 `char(1)` 状态编码？ | **打破**（§3.0 约定二）。6 分类 × 4 优先级 × 4 处理态用数字编码不可读 | 低 |
-| **B8** | `/sse/push`、`/websocket/push` 保留吗？ | 保留为 debug 接口 + 权限点 + 生产可关（§7.2） | 低 |
-| **B9** | 处理态谁回写？ | 业务域调 `resolve_action(ref_type, ref_id, state)`。跨模块约定，要提前谈 | 高 |
-| **B10** | 现在有异步任务基础设施吗？ | **需要你确认**。没有就走 §10.1 降级方案，表结构不变 | 中 |
-| **B11** | `sys_msg_inbox` 现在分区吗？ | 不分。1000 用户 × 20 条/天 × 365 ≈ 730 万行/年，加上 §3.4 的索引毫无压力。预留 `HASH(user_id)` | 低 |
+| 编号    | 问题                                      | 建议                                                                                                                    | 影响             |
+| ------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| **B1**  | `sys_notice` 保留还是改造？               | **原样保留 + 扩展表**（§2 选项 C）。老接口零改动                                                                        | 高               |
+| **B2**  | 数据库是 PostgreSQL 还是 MySQL？版本？    | **需要你确认**。影响 `RETURNING`、`SKIP LOCKED`、`ON CONFLICT` 三处写法（MySQL 用 `ON DUPLICATE KEY UPDATE`），机制不变 | 中，落地前必须定 |
+| **B3**  | `seq` 用每用户计数器还是全局序列+水位线？ | **每用户计数器**（§4.2）。简单、无延迟、正确性可证                                                                      | 高，改不动       |
+| **B4**  | 读扩散只允许 `all`？                      | **是**（§6.2）。允许 `roles`/`depts` 会引入"换部门后历史公告可见性"的死结                                               | 高               |
+| **B5**  | 写扩散上限 1000？                         | 是。到 1000 已经要分 2 块跑，超了该用全员公告                                                                           | 中               |
+| **B6**  | 多实例推送缺口（§7.3）修不修？            | 看部署形态。**单实例先不修**，但 `msg_push_cross_instance_miss` 指标要先埋                                              | 中               |
+| **B7**  | 新表打破 RuoYi 的 `char(1)` 状态编码？    | **打破**（§3.0 约定二）。6 分类 × 4 优先级 × 4 处理态用数字编码不可读                                                   | 低               |
+| **B8**  | `/sse/push`、`/websocket/push` 保留吗？   | 保留为 debug 接口 + 权限点 + 生产可关（§7.2）                                                                           | 低               |
+| **B9**  | 处理态谁回写？                            | 业务域调 `resolve_action(ref_type, ref_id, state)`。跨模块约定，要提前谈                                                | 高               |
+| **B10** | 现在有异步任务基础设施吗？                | **需要你确认**。没有就走 §10.1 降级方案，表结构不变                                                                     | 中               |
+| **B11** | `sys_msg_inbox` 现在分区吗？              | 不分。1000 用户 × 20 条/天 × 365 ≈ 730 万行/年，加上 §3.4 的索引毫无压力。预留 `HASH(user_id)`                          | 低               |
 
 ---
 
@@ -759,6 +761,7 @@ MSG_RULES: dict[str, MsgRule] = { ... }
 **但建议先不分区**（B11）。等单表过 5000 万行再说，届时哈希分区可以在线做。
 
 **归档规则**：
+
 - 已读且 `publish_time < now() - 180 天` → 删
 - **未读的不删**（删了用户会发现未读数少了）
 - **`security` 分类不删**（审计要求）
@@ -797,6 +800,7 @@ benai 的 `Notification` 表把 `user_id` + `title/content` + `is_read` + `targe
 > 这套后端的全部难点集中在：**让"未读数"这个数字在多设备、断线、并发扇出、重复投递、多实例部署下始终正确**。
 >
 > 三条不可妥协的机械保证：
+>
 > 1. 幂等落在**唯一索引**上（`uk_msg_event_dedupe`、`PK(user_id, msg_id)`），不落在应用逻辑里；
 > 2. `seq` 用**每用户计数器行**分配，行锁持有到提交，保证取号序 = 提交序 = 可见序；
 > 3. 推送**永远晚于事务提交**，靠 outbox 结构性保证，不靠 try/except。

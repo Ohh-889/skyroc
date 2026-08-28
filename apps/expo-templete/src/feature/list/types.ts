@@ -31,15 +31,14 @@ export interface PageResult<TItem> {
 /**
  * 列表整体状态；`loading` 只表示首屏，翻页中的状态是 `isFetchingMore`。
  *
- * `offline` 是「首屏还没数据就断网了」：请求被 onlineManager 拦下没发出去，这时候既不是加载中
- * （转不出结果）也不是失败（没人失败过），必须单独占一态，否则就是一个永远转圈的骗子 loading。
+ * `offline` 是「首屏还没数据就断网了」：请求被 onlineManager 拦下没发出去，这时候既不是加载中 （转不出结果）也不是失败（没人失败过），必须单独占一态，否则就是一个永远转圈的骗子 loading。
  */
 export type ListStatus = 'error' | 'loading' | 'offline' | 'success';
 
 /** List 可覆盖的 slot 名称 */
 export type ListSlots = 'content' | 'footer' | 'placeholder' | 'root' | 'separator';
 
-/** footer 渲染上下文 */
+/** Footer 渲染上下文 */
 export interface ListFooterContext {
   /** 是否处于折叠态 */
   collapsed: boolean;

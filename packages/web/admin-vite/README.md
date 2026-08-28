@@ -72,12 +72,12 @@ export default defineConfig(configEnv => {
 
 常用环境变量如下：
 
-| 变量名 | 作用 |
-| --- | --- |
-| `VITE_BASE_URL` | 应用 base url |
-| `VITE_HTTP_PROXY` | 为 `Y` 时，在 dev server 中启用代理 |
-| `VITE_PROXY_LOG` | 为 `Y` 时，打印代理请求日志 |
-| `VITE_SERVICE_BASE_URL` | 默认后端服务地址 |
+| 变量名                        | 作用                                |
+| ----------------------------- | ----------------------------------- |
+| `VITE_BASE_URL`               | 应用 base url                       |
+| `VITE_HTTP_PROXY`             | 为 `Y` 时，在 dev server 中启用代理 |
+| `VITE_PROXY_LOG`              | 为 `Y` 时，打印代理请求日志         |
+| `VITE_SERVICE_BASE_URL`       | 默认后端服务地址                    |
 | `VITE_OTHER_SERVICE_BASE_URL` | 其他后端服务地址，支持 JSON5 字符串 |
 
 示例：
@@ -619,7 +619,10 @@ export default defineConfig({
 默认在 build 时向 `index.html` 的 `<head>` 注入构建时间 meta：
 
 ```html
-<meta name="buildTime" content="2026-05-25 12:00:00">
+<meta
+  name="buildTime"
+  content="2026-05-25 12:00:00"
+/>
 ```
 
 修改 meta 名称：

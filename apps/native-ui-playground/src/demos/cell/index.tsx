@@ -10,10 +10,7 @@ import { CellLeading } from './CellLeading';
 import { CellPress } from './CellPress';
 import { CellSize } from './CellSize';
 
-/**
- * Cell 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/cell/CellBasic" />），
- * 所以这里只负责串场，不要把示例代码写回本文件。
- */
+/** Cell 的总览页，逐节复用同目录下的单点 demo。 文档站按节引用同一批文件（<Demo src="@playground/cell/CellBasic" />）， 所以这里只负责串场，不要把示例代码写回本文件。 */
 const CellDemo = () => {
   return (
     <ScrollView

@@ -28,15 +28,25 @@ const VideoDemo = () => {
   }, []);
 
   return (
-    <Space className="w-full" orientation="vertical" size={16}>
+    <Space
+      className="w-full"
+      orientation="vertical"
+      size={16}
+    >
       <PluginPageHeader
         icon="mdi:play-box-outline"
         resources={[{ label: 'xgplayer', url: 'https://h5player.bytedance.com/' }]}
         tags={['xgplayer', 'HTMLVideoElement']}
         title="视频播放器示例"
       />
-      <ExamplePanel icon="mdi:play-box-outline" title="XGPlayer">
-        <div className="overflow-hidden rounded-lg shadow-sm" ref={playerRef} />
+      <ExamplePanel
+        icon="mdi:play-box-outline"
+        title="XGPlayer"
+      >
+        <div
+          className="overflow-hidden rounded-lg shadow-sm"
+          ref={playerRef}
+        />
       </ExamplePanel>
     </Space>
   );

@@ -1,9 +1,9 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Trigger } from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
-import { ChevronDown } from 'lucide-react';
 import { cn } from '@skyroc/utils';
+import { ChevronDown } from 'lucide-react';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { accordionVariants } from './accordion-variants';
 import type { AccordionTriggerProps } from './types';
 

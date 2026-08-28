@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import { cn } from '@skyroc/utils';
+import { forwardRef } from 'react';
 import { badgeVariants } from './badge-variants';
 import type { BadgeRootProps } from './types';
 

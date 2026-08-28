@@ -1,5 +1,5 @@
-import { ScrollArea } from '@skyroc/web-ui';
 import { ButtonIcon } from '@shell/ui/antd';
+import { ScrollArea } from '@skyroc/web-ui';
 import { Drawer as ADrawer, Segmented as ASegmented } from 'antd';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
@@ -30,7 +30,12 @@ const ThemeDrawer = () => {
       open={themeDrawerVisible}
       styles={{ body: { padding: 0 } }}
       title={t('theme.themeDrawerTitle')}
-      extra={<ButtonIcon icon="ant-design:close-outlined" onClick={closeThemeDrawer} />}
+      extra={
+        <ButtonIcon
+          icon="ant-design:close-outlined"
+          onClick={closeThemeDrawer}
+        />
+      }
       onClose={closeThemeDrawer}
     >
       <ScrollArea className="h-full">
@@ -42,7 +47,10 @@ const ThemeDrawer = () => {
             onChange={setActiveTab}
           />
 
-          <AnimatePresence initial={false} mode="wait">
+          <AnimatePresence
+            initial={false}
+            mode="wait"
+          >
             <motion.div
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}

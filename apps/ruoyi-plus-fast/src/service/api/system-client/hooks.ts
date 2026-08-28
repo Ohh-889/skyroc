@@ -9,13 +9,7 @@ import {
   updateClientStatus
 } from './api';
 import { SYSTEM_CLIENT_MUTATION_KEYS, SYSTEM_CLIENT_QUERY_KEYS } from './keys';
-import type {
-  ClientId,
-  ClientListParams,
-  ClientSavePayload,
-  ClientStatusPayload,
-  ClientUpdatePayload
-} from './types';
+import type { ClientId, ClientListParams, ClientSavePayload, ClientStatusPayload, ClientUpdatePayload } from './types';
 
 type ClientListOptions<Data = Awaited<ReturnType<typeof fetchClientList>>> = Omit<
   UseQueryOptions<Awaited<ReturnType<typeof fetchClientList>>, Error, Data, QueryKey>,

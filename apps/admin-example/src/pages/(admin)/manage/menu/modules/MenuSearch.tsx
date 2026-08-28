@@ -31,22 +31,59 @@ const MenuSearch = (props: MenuSearchProps) => {
   }
 
   return (
-    <Form form={form} initialValues={searchParams} labelCol={{ md: 7, span: 5 }}>
-      <Row gutter={[16, 16]} wrap>
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.menu.menuName')} name="menuName">
-            <Input allowClear placeholder={t('page.manage.menu.form.menuName')} />
+    <Form
+      form={form}
+      initialValues={searchParams}
+      labelCol={{ md: 7, span: 5 }}
+    >
+      <Row
+        gutter={[16, 16]}
+        wrap
+      >
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.menu.menuName')}
+            name="menuName"
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.menu.form.menuName')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.menu.routePath')} name="routePath">
-            <Input allowClear placeholder={t('page.manage.menu.form.routePath')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.menu.routePath')}
+            name="routePath"
+          >
+            <Input
+              allowClear
+              placeholder={t('page.manage.menu.form.routePath')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.menu.menuType')} name="menuType">
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.menu.menuType')}
+            name="menuType"
+          >
             <Select
               allowClear
               options={translateOptions(routeMenuTypeOptions)}
@@ -55,19 +92,46 @@ const MenuSearch = (props: MenuSearchProps) => {
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label={t('page.manage.menu.layout')} name="layout">
-            <Select allowClear options={layoutOptions} placeholder={t('page.manage.menu.form.layout')} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label={t('page.manage.menu.layout')}
+            name="layout"
+          >
+            <Select
+              allowClear
+              options={layoutOptions}
+              placeholder={t('page.manage.menu.form.layout')}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={24} span={24}>
+        <Col
+          lg={24}
+          span={24}
+        >
           <Form.Item className="m-0">
-            <Flex align="center" gap={12} justify="end">
-              <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={reset}>
+            <Flex
+              align="center"
+              gap={12}
+              justify="end"
+            >
+              <Button
+                icon={<SvgIcon icon="ic:round-refresh" />}
+                onClick={reset}
+              >
                 {t('common.reset')}
               </Button>
-              <Button ghost icon={<SvgIcon icon="ic:round-search" />} type="primary" onClick={handleSearch}>
+              <Button
+                ghost
+                icon={<SvgIcon icon="ic:round-search" />}
+                type="primary"
+                onClick={handleSearch}
+              >
                 {t('common.search')}
               </Button>
             </Flex>

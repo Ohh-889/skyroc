@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import type { AllPathsKeys, FormAction } from '@skyroc/web-ui';
 import { Button, Form, FormField, Input, useForm } from '@skyroc/web-ui';
+import { useEffect } from 'react';
 
 // ============ Form field types ============
 interface Inputs {

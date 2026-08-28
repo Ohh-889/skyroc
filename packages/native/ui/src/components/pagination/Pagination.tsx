@@ -19,7 +19,7 @@ import { getPageCount, getPageItems } from './utils';
  *   <Pagination totalItems={120} itemsPerPage={10} showEdges />
  *
  *   <Pagination mode="simple" page={page} totalItems={120} onPageChange={setPage} />
- *   ```
+ *   ```;
  */
 const Pagination = (props: PaginationProps) => {
   const {

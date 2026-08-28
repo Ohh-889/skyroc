@@ -67,27 +67,27 @@ export const sliderVariants = tv({
         thumb: 'size-7 border-[3.5px]',
         track: 'h-3.5 data-[orientation=vertical]:w-3.5'
       },
-      'lg': {
+      lg: {
         root: 'data-[orientation=vertical]:w-2.5',
         thumb: 'size-5.5 border-[2.5px]',
         track: 'h-2.5 data-[orientation=vertical]:w-2.5'
       },
-      'md': {
+      md: {
         root: 'data-[orientation=vertical]:w-2',
         thumb: 'size-5 border-2',
         track: 'h-2 data-[orientation=vertical]:w-2'
       },
-      'sm': {
+      sm: {
         root: 'data-[orientation=vertical]:w-1.5',
         thumb: 'size-4.5 border-[1.75px]',
         track: 'h-1.5 data-[orientation=vertical]:w-1.5'
       },
-      'xl': {
+      xl: {
         root: 'data-[orientation=vertical]:w-3',
         thumb: 'size-6 border-3',
         track: 'h-3 data-[orientation=vertical]:w-3'
       },
-      'xs': {
+      xs: {
         root: 'data-[orientation=vertical]:w-1.25',
         thumb: 'size-4 border-[1.5px]',
         track: 'h-1.25 data-[orientation=vertical]:w-1.25'

@@ -1,15 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Button, Card, Icon, Input, ScrollArea, Tag } from '@skyroc/web-ui';
 import { useTranslations } from 'next-intl';
-import {
-  Button,
-  Card,
-  Icon,
-  Input,
-  ScrollArea,
-  Tag
-} from '@skyroc/web-ui';
+import { useState } from 'react';
 import { Link } from '../../i18n/navigation';
 
 // 组件键名列表
@@ -68,13 +61,10 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
 
-  const filteredComponents = componentKeys.filter((item) => {
+  const filteredComponents = componentKeys.filter(item => {
     const name = tComponents(`${item.key}.name`);
     const description = tComponents(`${item.key}.description`);
-    return (
-      name.toLowerCase().includes(searchQuery.toLowerCase())
-      || description.includes(searchQuery)
-    );
+    return name.toLowerCase().includes(searchQuery.toLowerCase()) || description.includes(searchQuery);
   });
 
   const handleCopy = (text: string, id: string) => {
@@ -97,14 +87,10 @@ const Home = () => {
               <div className="mb-2 flex items-center gap-3">
                 <h1 className="text-primary text-3xl font-bold">{t('title')}</h1>
 
-                <Tag variant="pure">
-                  {t('badge')}
-                </Tag>
+                <Tag variant="pure">{t('badge')}</Tag>
               </div>
 
-              <p className="text-muted-foreground text-sm">
-                {t('subtitle')}
-              </p>
+              <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
             </div>
 
             <div className="flex items-center gap-3">

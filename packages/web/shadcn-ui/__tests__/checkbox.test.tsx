@@ -1,16 +1,10 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRef, forwardRef } from 'react';
 import type { ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CheckboxGroupProvider, useCheckboxGroup } from '../src/components/checkbox/CheckboxGroupContext';
+import type { CheckboxCardProps, CheckboxProps } from '../src/components/checkbox/types';
 import { Checkbox, CheckboxCard, CheckboxGroup, CheckboxGroupCard } from '../src/preset/checkbox';
-import {
-  CheckboxGroupProvider,
-  useCheckboxGroup
-} from '../src/components/checkbox/CheckboxGroupContext';
-import type {
-  CheckboxCardProps,
-  CheckboxProps
-} from '../src/components/checkbox/types';
 
 const checkboxMocks = vi.hoisted(() => ({
   emitCardIndeterminate: false,
@@ -33,7 +27,7 @@ interface MockCheckboxCardProps extends CheckboxCardProps {
   onCheckedChange?: (checked: boolean | 'indeterminate') => void;
 }
 
-vi.mock('../src/components/checkbox/CheckboxUI', async (importOriginal) => {
+vi.mock('../src/components/checkbox/CheckboxUI', async importOriginal => {
   const actual = await importOriginal<typeof import('../src/components/checkbox/CheckboxUI')>();
   const ActualCheckbox = actual.default;
 
@@ -42,13 +36,21 @@ vi.mock('../src/components/checkbox/CheckboxUI', async (importOriginal) => {
 
     if (checkboxMocks.emitControlIndeterminate) {
       return (
-        <button type="button" onClick={() => onCheckedChange?.('indeterminate')}>
+        <button
+          type="button"
+          onClick={() => onCheckedChange?.('indeterminate')}
+        >
           {children}
         </button>
       );
     }
 
-    return <ActualCheckbox {...props} ref={ref} />;
+    return (
+      <ActualCheckbox
+        {...props}
+        ref={ref}
+      />
+    );
   });
 
   return {
@@ -57,7 +59,7 @@ vi.mock('../src/components/checkbox/CheckboxUI', async (importOriginal) => {
   };
 });
 
-vi.mock('../src/components/checkbox/CheckboxCard', async (importOriginal) => {
+vi.mock('../src/components/checkbox/CheckboxCard', async importOriginal => {
   const actual = await importOriginal<typeof import('../src/components/checkbox/CheckboxCard')>();
   const ActualCheckboxCard = actual.default;
 
@@ -66,13 +68,21 @@ vi.mock('../src/components/checkbox/CheckboxCard', async (importOriginal) => {
 
     if (checkboxMocks.emitCardIndeterminate) {
       return (
-        <button type="button" onClick={() => onCheckedChange?.('indeterminate')}>
+        <button
+          type="button"
+          onClick={() => onCheckedChange?.('indeterminate')}
+        >
           {label}
         </button>
       );
     }
 
-    return <ActualCheckboxCard {...props} ref={ref} />;
+    return (
+      <ActualCheckboxCard
+        {...props}
+        ref={ref}
+      />
+    );
   });
 
   return {

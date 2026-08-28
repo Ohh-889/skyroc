@@ -9,67 +9,67 @@ import type { ClassValue, StyledComponentProps } from '../../types/shared';
 import type { PopoverSlots } from './popover-varianst';
 
 /**
- * Class names for different slots in the popover component.
- * Allows customizing styles for specific parts of the popover.
+ * Class names for different slots in the popover component. Allows customizing styles for specific parts of the
+ * popover.
  */
 export type PopoverClassNames = Partial<Record<PopoverSlots, ClassValue>>;
 
 /**
- * Props for the PopoverArrow component.
- * Renders a decorative arrow pointing to the popover trigger.
+ * Props for the PopoverArrow component. Renders a decorative arrow pointing to the popover trigger.
  *
  * @example
- * <PopoverArrow />
+ *   <PopoverArrow />;
  */
 export type PopoverArrowProps = StyledComponentProps<_PopoverArrowProps>;
 
 /**
- * Props for the PopoverContent component.
- * Container for the popover body content.
+ * Props for the PopoverContent component. Container for the popover body content.
  *
  * @example
- * <PopoverContent>
- *   <p>Popover content goes here</p>
- * </PopoverContent>
+ *   <PopoverContent>
+ *     <p>Popover content goes here</p>
+ *   </PopoverContent>;
  */
 export type PopoverContentProps = StyledComponentProps<_PopoverContentProps>;
 
 /**
- * Props for the main Popover component.
- * A component that displays content in a floating panel relative to a trigger element.
- * Combines trigger and content functionality with optional arrow and close button.
+ * Props for the main Popover component. A component that displays content in a floating panel relative to a trigger
+ * element. Combines trigger and content functionality with optional arrow and close button.
  *
  * @example
- * // Basic popover
- * <Popover trigger={<button>Click me</button>} showArrow>
- *   <p>This is the popover content</p>
- * </Popover>
+ *   // Basic popover
+ *   <Popover
+ *     trigger={<button>Click me</button>}
+ *     showArrow
+ *   >
+ *     <p>This is the popover content</p>
+ *   </Popover>;
  *
  * @example
- * // Popover with close button
- * <Popover
- *   trigger={<button>Options</button>}
- *   closeIcon={<XIcon />}
- *   side="bottom"
- *   sideOffset={10}
- * >
- *   <div className="p-4">Settings</div>
- * </Popover>
+ *   // Popover with close button
+ *   <Popover
+ *     trigger={<button>Options</button>}
+ *     closeIcon={<XIcon />}
+ *     side="bottom"
+ *     sideOffset={10}
+ *   >
+ *     <div className="p-4">Settings</div>
+ *   </Popover>;
  *
  * @example
- * // Customized arrow size
- * <Popover
- *   trigger={<button>Help</button>}
- *   showArrow
- *   arrowWidth={20}
- *   arrowHeight={10}
- * >
- *   <p>Help content</p>
- * </Popover>
+ *   // Customized arrow size
+ *   <Popover
+ *     trigger={<button>Help</button>}
+ *     showArrow
+ *     arrowWidth={20}
+ *     arrowHeight={10}
+ *   >
+ *     <p>Help content</p>
+ *   </Popover>;
  */
-export type PopoverProps = _PopoverProps
-  & Pick<PopoverPortalProps, 'container' | 'forceMount'>
-  & Omit<PopoverContentProps, 'forceMount'> & {
+export type PopoverProps = _PopoverProps &
+  Pick<PopoverPortalProps, 'container' | 'forceMount'> &
+  Omit<PopoverContentProps, 'forceMount'> & {
     /** Props for the popover anchor component */
     anchorProps?: PopoverAnchorProps;
     /** Height of the arrow element in pixels */
@@ -95,16 +95,15 @@ export type PopoverProps = _PopoverProps
   };
 
 /**
- * Props for the PopoverAnchor component.
- * An alternative trigger element that anchors the popover without opening it.
+ * Props for the PopoverAnchor component. An alternative trigger element that anchors the popover without opening it.
  * Useful when you want the popover to appear relative to a specific element.
  *
  * @example
- * <Popover>
- *   <PopoverAnchor asChild>
- *     <div ref={anchorRef} />
- *   </PopoverAnchor>
- *   <PopoverContent>Content</PopoverContent>
- * </Popover>
+ *   <Popover>
+ *     <PopoverAnchor asChild>
+ *       <div ref={anchorRef} />
+ *     </PopoverAnchor>
+ *     <PopoverContent>Content</PopoverContent>
+ *   </Popover>;
  */
 export type PopoverAnchorProps = StyledComponentProps<_PopoverAnchorProps>;

@@ -23,7 +23,12 @@ const LoginInfoDetailDrawer = (props: LoginInfoDetailDrawerProps) => {
         { children: record.clientKey || '—', key: 'clientKey', label: '客户端' },
         { children: getDeviceTypeLabel(record.deviceType), key: 'deviceType', label: '设备类型' },
         {
-          children: <Badge status={record.status === '0' ? 'success' : 'error'} text={getStatusLabel(record.status)} />,
+          children: (
+            <Badge
+              status={record.status === '0' ? 'success' : 'error'}
+              text={getStatusLabel(record.status)}
+            />
+          ),
           key: 'status',
           label: '登录状态'
         },
@@ -31,7 +36,10 @@ const LoginInfoDetailDrawer = (props: LoginInfoDetailDrawerProps) => {
         { children: record.loginLocation || '—', key: 'location', label: '登录地点' },
         {
           children: (
-            <Flex align="center" gap={8}>
+            <Flex
+              align="center"
+              gap={8}
+            >
               <SvgIcon icon={getBrowserIcon(record.browser)} />
               {record.browser || '—'}
               <SvgIcon icon={getOsIcon(record.os)} />
@@ -60,9 +68,17 @@ const LoginInfoDetailDrawer = (props: LoginInfoDetailDrawerProps) => {
       onClose={onClose}
     >
       {record ? (
-        <Descriptions bordered column={1} items={items} size="small" />
+        <Descriptions
+          bordered
+          column={1}
+          items={items}
+          size="small"
+        />
       ) : (
-        <Alert description="未选择日志记录" type="info" />
+        <Alert
+          description="未选择日志记录"
+          type="info"
+        />
       )}
     </Drawer>
   );

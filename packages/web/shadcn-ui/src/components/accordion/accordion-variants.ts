@@ -26,27 +26,27 @@ export const accordionVariants = tv({
         root: 'text-2xl',
         trigger: 'py-6 gap-6'
       },
-      'lg': {
+      lg: {
         content: 'data-[state=open]:pb-4.5',
         root: 'text-base',
         trigger: 'py-4.5 gap-4.5'
       },
-      'md': {
+      md: {
         content: 'data-[state=open]:pb-4',
         root: 'text-sm',
         trigger: 'py-4 gap-4'
       },
-      'sm': {
+      sm: {
         content: 'data-[state=open]:pb-3.5',
         root: 'text-xs',
         trigger: 'py-3.5 gap-3.5'
       },
-      'xl': {
+      xl: {
         content: 'data-[state=open]:pb-5',
         root: 'text-lg',
         trigger: 'py-5 gap-5'
       },
-      'xs': {
+      xs: {
         content: 'data-[state=open]:pb-3',
         root: 'text-2xs',
         trigger: 'py-3 gap-3'

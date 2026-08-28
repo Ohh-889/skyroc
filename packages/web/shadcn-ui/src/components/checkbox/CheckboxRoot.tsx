@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@skyroc/utils';
+import React from 'react';
 import { checkboxVariants } from './checkbox-variants';
 import type { CheckboxRootProps } from './types';
 

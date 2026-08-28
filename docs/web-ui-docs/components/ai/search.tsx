@@ -1,4 +1,8 @@
 'use client';
+import { type UseChatHelpers, useChat } from '@ai-sdk/react';
+import { Presence } from '@radix-ui/react-presence';
+import { DefaultChatTransport, type Tool, type UIToolInvocation } from 'ai';
+import { Loader2, MessageCircleIcon, RefreshCw, SearchIcon, Send, X } from 'lucide-react';
 import {
   type ComponentProps,
   type ReactNode,
@@ -9,16 +13,12 @@ import {
   useEffectEvent,
   useMemo,
   useRef,
-  useState,
+  useState
 } from 'react';
-import { Loader2, MessageCircleIcon, RefreshCw, SearchIcon, Send, X } from 'lucide-react';
-import { cn } from '../../lib/cn';
-import { buttonVariants } from '../ui/button';
-import { type UseChatHelpers, useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, type Tool, type UIToolInvocation } from 'ai';
-import { Markdown } from '../markdown';
-import { Presence } from '@radix-ui/react-presence';
 import type { ChatUIMessage, SearchTool } from '../../app/api/chat/route';
+import { cn } from '../../lib/cn';
+import { Markdown } from '../markdown';
+import { buttonVariants } from '../ui/button';
 
 const Context = createContext<{
   chat: UseChatHelpers<ChatUIMessage>;
@@ -33,15 +33,13 @@ export function AISearchPanelHeader({ className, ...props }: ComponentProps<'div
     <div
       className={cn(
         'sticky top-0 flex items-start gap-2 border rounded-xl bg-fd-secondary text-fd-secondary-foreground shadow-sm',
-        className,
+        className
       )}
       {...props}
     >
       <div className="px-3 py-2 flex-1">
         <p className="text-sm font-medium mb-2">AI Chat</p>
-        <p className="text-xs text-fd-muted-foreground">
-          AI can be inaccurate, please verify the answers.
-        </p>
+        <p className="text-xs text-fd-muted-foreground">AI can be inaccurate, please verify the answers.</p>
       </div>
 
       <button
@@ -51,8 +49,8 @@ export function AISearchPanelHeader({ className, ...props }: ComponentProps<'div
           buttonVariants({
             size: 'icon-sm',
             color: 'ghost',
-            className: 'text-fd-muted-foreground rounded-full',
-          }),
+            className: 'text-fd-muted-foreground rounded-full'
+          })
         )}
         onClick={() => setOpen(false)}
       >
@@ -77,8 +75,8 @@ export function AISearchInputActions() {
             buttonVariants({
               color: 'secondary',
               size: 'sm',
-              className: 'rounded-full gap-1.5',
-            }),
+              className: 'rounded-full gap-1.5'
+            })
           )}
           onClick={() => regenerate()}
         >
@@ -92,8 +90,8 @@ export function AISearchInputActions() {
           buttonVariants({
             color: 'secondary',
             size: 'sm',
-            className: 'rounded-full',
-          }),
+            className: 'rounded-full'
+          })
         )}
         onClick={() => setMessages([])}
       >
@@ -120,14 +118,14 @@ export function AISearchInput(props: ComponentProps<'form'>) {
         {
           type: 'data-client',
           data: {
-            location: location.href,
-          },
+            location: location.href
+          }
         },
         {
           type: 'text',
-          text: message,
-        },
-      ],
+          text: message
+        }
+      ]
     }).catch(() => undefined);
     setInput('');
     localStorage.removeItem(StorageKeyInput);
@@ -138,18 +136,22 @@ export function AISearchInput(props: ComponentProps<'form'>) {
   }, [isLoading]);
 
   return (
-    <form {...props} className={cn('flex items-start pe-2', props.className)} onSubmit={onStart}>
+    <form
+      {...props}
+      className={cn('flex items-start pe-2', props.className)}
+      onSubmit={onStart}
+    >
       <Input
         value={input}
         placeholder={isLoading ? 'AI is answering...' : 'Ask a question'}
         autoFocus
         className="p-3"
         disabled={status === 'streaming' || status === 'submitted'}
-        onChange={(e) => {
+        onChange={e => {
           setInput(e.target.value);
           localStorage.setItem(StorageKeyInput, e.target.value);
         }}
-        onKeyDown={(event) => {
+        onKeyDown={event => {
           if (!event.shiftKey && event.key === 'Enter') {
             onStart(event);
           }
@@ -162,8 +164,8 @@ export function AISearchInput(props: ComponentProps<'form'>) {
           className={cn(
             buttonVariants({
               color: 'secondary',
-              className: 'transition-all rounded-full mt-2 gap-2',
-            }),
+              className: 'transition-all rounded-full mt-2 gap-2'
+            })
           )}
           onClick={stop}
         >
@@ -177,8 +179,8 @@ export function AISearchInput(props: ComponentProps<'form'>) {
           className={cn(
             buttonVariants({
               color: 'primary',
-              className: 'transition-all rounded-full mt-2',
-            }),
+              className: 'transition-all rounded-full mt-2'
+            })
           )}
           disabled={input.length === 0}
         >
@@ -200,7 +202,7 @@ function List(props: Omit<ComponentProps<'div'>, 'dir'>) {
 
       container.scrollTo({
         top: container.scrollHeight,
-        behavior: 'instant',
+        behavior: 'instant'
       });
     }
 
@@ -240,10 +242,13 @@ function Input(props: ComponentProps<'textarea'>) {
         {...props}
         className={cn(
           'resize-none bg-transparent placeholder:text-fd-muted-foreground focus-visible:outline-none',
-          shared,
+          shared
         )}
       />
-      <div ref={ref} className={cn(shared, 'break-all invisible')}>
+      <div
+        ref={ref}
+        className={cn(shared, 'break-all invisible')}
+      >
         {`${props.value?.toString() ?? ''}\n`}
       </div>
     </div>
@@ -252,7 +257,7 @@ function Input(props: ComponentProps<'textarea'>) {
 
 const roleName: Record<string, string> = {
   user: 'you',
-  assistant: 'fumadocs',
+  assistant: 'fumadocs'
 };
 
 function Message({ message, ...props }: { message: ChatUIMessage } & ComponentProps<'div'>) {
@@ -273,11 +278,14 @@ function Message({ message, ...props }: { message: ChatUIMessage } & ComponentPr
   }
 
   return (
-    <div onClick={(e) => e.stopPropagation()} {...props}>
+    <div
+      onClick={e => e.stopPropagation()}
+      {...props}
+    >
       <p
         className={cn(
           'mb-1 text-sm font-medium text-fd-muted-foreground',
-          message.role === 'assistant' && 'text-fd-primary',
+          message.role === 'assistant' && 'text-fd-primary'
         )}
       >
         {roleName[message.role] ?? 'unknown'}
@@ -286,7 +294,7 @@ function Message({ message, ...props }: { message: ChatUIMessage } & ComponentPr
         <Markdown text={markdown} />
       </div>
 
-      {searchCalls.map((call) => {
+      {searchCalls.map(call => {
         return (
           <div
             key={call.toolCallId}
@@ -310,13 +318,11 @@ export function AISearch({ children }: { children: ReactNode }) {
   const chat = useChat<ChatUIMessage>({
     id: 'search',
     transport: new DefaultChatTransport({
-      api: '/api/chat',
-    }),
+      api: '/api/chat'
+    })
   });
 
-  return (
-    <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>{children}</Context>
-  );
+  return <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>{children}</Context>;
 }
 
 export function AISearchTrigger({
@@ -332,9 +338,9 @@ export function AISearchTrigger({
       className={cn(
         position === 'float' && [
           'fixed bottom-4 gap-3 w-24 inset-e-[calc(--spacing(4)+var(--removed-body-scroll-bar-size,0px))] shadow-lg z-20 transition-[translate,opacity]',
-          open && 'translate-y-10 opacity-0',
+          open && 'translate-y-10 opacity-0'
         ],
-        className,
+        className
       )}
       onClick={() => setOpen(!open)}
       {...props}
@@ -384,7 +390,7 @@ export function AISearchPanel() {
             'lg:sticky lg:top-0 lg:h-dvh lg:border-s lg:ms-auto lg:in-[#nd-docs-layout]:[grid-area:toc] lg:in-[#nd-notebook-layout]:row-span-full lg:in-[#nd-notebook-layout]:col-start-5',
             open
               ? 'animate-fd-dialog-in lg:animate-[ask-ai-open_200ms]'
-              : 'animate-fd-dialog-out lg:animate-[ask-ai-close_200ms]',
+              : 'animate-fd-dialog-out lg:animate-[ask-ai-close_200ms]'
           )}
         >
           <div className="flex flex-col size-full p-2 lg:p-3 lg:w-(--ai-chat-width)">
@@ -405,35 +411,38 @@ export function AISearchPanel() {
 
 export function AISearchPanelList({ className, style, ...props }: ComponentProps<'div'>) {
   const chat = useChatContext();
-  const messages = chat.messages.filter((msg) => msg.role !== 'system');
+  const messages = chat.messages.filter(msg => msg.role !== 'system');
 
   return (
     <List
       className={cn('py-4 overscroll-contain', className)}
       style={{
-        maskImage:
-          'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',
-        ...style,
+        maskImage: 'linear-gradient(to bottom, transparent, white 1rem, white calc(100% - 1rem), transparent 100%)',
+        ...style
       }}
       {...props}
     >
       {messages.length === 0 ? (
         <div className="text-sm text-fd-muted-foreground/80 size-full flex flex-col items-center justify-center text-center gap-2">
-          <MessageCircleIcon fill="currentColor" stroke="none" />
-          <p onClick={(e) => e.stopPropagation()}>Start a new chat below.</p>
+          <MessageCircleIcon
+            fill="currentColor"
+            stroke="none"
+          />
+          <p onClick={e => e.stopPropagation()}>Start a new chat below.</p>
         </div>
       ) : (
         <div className="flex flex-col px-3 gap-4">
           {chat.error && (
             <div className="p-2 bg-fd-secondary text-fd-secondary-foreground border rounded-lg">
-              <p className="text-xs text-fd-muted-foreground mb-1">
-                Request Failed: {chat.error.name}
-              </p>
+              <p className="text-xs text-fd-muted-foreground mb-1">Request Failed: {chat.error.name}</p>
               <p className="text-sm">{chat.error.message}</p>
             </div>
           )}
-          {messages.map((item) => (
-            <Message key={item.id} message={item} />
+          {messages.map(item => (
+            <Message
+              key={item.id}
+              message={item}
+            />
           ))}
         </div>
       )}

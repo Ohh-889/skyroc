@@ -1,6 +1,6 @@
+import { Group } from '@radix-ui/react-menubar';
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { Group } from '@radix-ui/react-menubar';
 import type { MenubarGroupProps } from './types';
 
 const MenubarGroup = forwardRef<ComponentRef<typeof Group>, MenubarGroupProps>((props, ref) => {

@@ -30,7 +30,7 @@ export interface PickerGroupItem {
   /** 是否显示加载遮罩 */
   loading?: boolean;
 
-  /** tab 标签文字 */
+  /** Tab 标签文字 */
   title: string;
 
   /** 每列可见的选项数 */

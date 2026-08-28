@@ -59,7 +59,12 @@ const items: CommandProps['items'] = [
 ];
 
 const CommandBasic = () => {
-  return <Command className="rounded-lg border shadow-md" items={items} />;
+  return (
+    <Command
+      className="rounded-lg border shadow-md"
+      items={items}
+    />
+  );
 };
 
 export default CommandBasic;

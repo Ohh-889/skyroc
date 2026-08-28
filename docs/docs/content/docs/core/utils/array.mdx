@@ -1,6 +1,6 @@
 ---
-title: "Array"
-description: "数组工具函数：将任意值规范化为数组、无序比较两个数组是否等价"
+title: 'Array'
+description: '数组工具函数：将任意值规范化为数组、无序比较两个数组是否等价'
 ---
 
 ## 概述
@@ -21,7 +21,7 @@ import { toArray, arraysEqual } from '@skyroc/utils';
 ### 签名
 
 ```ts
-function toArray<T>(value?: T | T[] | null): T[]
+function toArray<T>(value?: T | T[] | null): T[];
 ```
 
 ### 问题背景
@@ -39,11 +39,7 @@ type Props = {
 
 ```ts
 // ❌ 重复的模板代码
-const arr = value === null || value === undefined
-  ? []
-  : Array.isArray(value)
-    ? value
-    : [value];
+const arr = value === null || value === undefined ? [] : Array.isArray(value) ? value : [value];
 ```
 
 `toArray` 将这套逻辑封装为一行：
@@ -55,15 +51,15 @@ const arr = toArray(value);
 
 ### 转换规则
 
-| 输入 | 输出 | 说明 |
-| --- | --- | --- |
-| `null` | `[]` | 空值转为空数组 |
-| `undefined` | `[]` | 未传参转为空数组 |
-| `'hello'` | `['hello']` | 单值包裹为数组 |
-| `['a', 'b']` | `['a', 'b']` | 数组原样返回 |
-| `0` | `[0]` | falsy 单值也会被包裹（不是空数组） |
-| `false` | `[false]` | 同上 |
-| `''` | `['']` | 空字符串是单值，不是 nil |
+| 输入         | 输出         | 说明                               |
+| ------------ | ------------ | ---------------------------------- |
+| `null`       | `[]`         | 空值转为空数组                     |
+| `undefined`  | `[]`         | 未传参转为空数组                   |
+| `'hello'`    | `['hello']`  | 单值包裹为数组                     |
+| `['a', 'b']` | `['a', 'b']` | 数组原样返回                       |
+| `0`          | `[0]`        | falsy 单值也会被包裹（不是空数组） |
+| `false`      | `[false]`    | 同上                               |
+| `''`         | `['']`       | 空字符串是单值，不是 nil           |
 
 ### 示例
 
@@ -71,19 +67,19 @@ const arr = toArray(value);
 import { toArray } from '@skyroc/utils';
 
 // 基础用法
-toArray('hello');        // ['hello']
-toArray(['a', 'b']);     // ['a', 'b']
-toArray(null);           // []
-toArray(undefined);      // []
-toArray();               // []
+toArray('hello'); // ['hello']
+toArray(['a', 'b']); // ['a', 'b']
+toArray(null); // []
+toArray(undefined); // []
+toArray(); // []
 
 // 数字 / boolean / 空字符串（非 nil）
-toArray(0);              // [0]
-toArray(false);          // [false]
-toArray('');             // ['']
+toArray(0); // [0]
+toArray(false); // [false]
+toArray(''); // ['']
 
 // 泛型推导
-toArray<number>(42);              // [42]，类型 number[]
+toArray<number>(42); // [42]，类型 number[]
 toArray<string>(['a', 'b', 'c']); // ['a', 'b', 'c']，类型 string[]
 ```
 
@@ -102,7 +98,9 @@ const Tag = (props: TagProps) => {
 
   return (
     <div>
-      {tags.map(tag => <span key={tag}>{tag}</span>)}
+      {tags.map(tag => (
+        <span key={tag}>{tag}</span>
+      ))}
     </div>
   );
 };
@@ -113,7 +111,7 @@ const Tag = (props: TagProps) => {
 ```ts
 // 接口返回可能是单个对象或数组（历史接口常见问题）
 const raw = await api.getItems(); // Item | Item[] | null
-const items = toArray(raw);       // 统一为 Item[]
+const items = toArray(raw); // 统一为 Item[]
 ```
 
 **默认参数展开：**
@@ -132,7 +130,7 @@ function process(ids?: string | string[]) {
 ### 签名
 
 ```ts
-function arraysEqual<T>(a: T[], b: T[]): boolean
+function arraysEqual<T>(a: T[], b: T[]): boolean;
 ```
 
 ### 算法说明
@@ -156,15 +154,15 @@ arraysEqual([1, 2, 3], [3, 2, 1]); // true
 arraysEqual([1, 2, 3], [1, 2, 3]); // true
 
 // 长度不同 → false
-arraysEqual([1, 2], [1, 2, 3]);     // false
+arraysEqual([1, 2], [1, 2, 3]); // false
 
 // 重复元素计数必须一致
 arraysEqual([1, 1, 2], [1, 2, 2]); // false（1 的个数不同）
 arraysEqual([1, 1, 2], [2, 1, 1]); // true（计数相同，顺序无关）
 
 // 空数组
-arraysEqual([], []);                // true
-arraysEqual([], [1]);               // false
+arraysEqual([], []); // true
+arraysEqual([], [1]); // false
 
 // 字符串
 arraysEqual(['a', 'b'], ['b', 'a']); // true
@@ -180,7 +178,7 @@ arraysEqual([1, 2], [2, 1]); // true
 
 // 对象 — 按引用比较 ⚠️
 const obj = { a: 1 };
-arraysEqual([obj], [obj]);          // true（同一引用）
+arraysEqual([obj], [obj]); // true（同一引用）
 arraysEqual([{ a: 1 }], [{ a: 1 }]); // false（不同引用）
 ```
 
@@ -216,9 +214,9 @@ expect(arraysEqual(result, expected)).toBe(true);
 
 ### 与其他方案对比
 
-| 方案 | 有序 | 深度比较 | 适合场景 |
-| --- | --- | --- | --- |
-| `arraysEqual` | ❌ 无序 | ❌ 浅比较（===） | 基本类型集合的无序等价检测 |
-| `JSON.stringify(a) === JSON.stringify(b)` | ✅ 有序 | ✅ 结构比较 | 简单对象，顺序有意义 |
-| `a.every((v, i) => v === b[i])` | ✅ 有序 | ❌ 浅比较 | 有序数组的逐位比较 |
-| lodash `isEqual` | ❌ 无序可选 | ✅ 深度比较 | 复杂嵌套结构 |
+| 方案                                      | 有序        | 深度比较         | 适合场景                   |
+| ----------------------------------------- | ----------- | ---------------- | -------------------------- |
+| `arraysEqual`                             | ❌ 无序     | ❌ 浅比较（===） | 基本类型集合的无序等价检测 |
+| `JSON.stringify(a) === JSON.stringify(b)` | ✅ 有序     | ✅ 结构比较      | 简单对象，顺序有意义       |
+| `a.every((v, i) => v === b[i])`           | ✅ 有序     | ❌ 浅比较        | 有序数组的逐位比较         |
+| lodash `isEqual`                          | ❌ 无序可选 | ✅ 深度比较      | 复杂嵌套结构               |

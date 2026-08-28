@@ -1,9 +1,9 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
 import { ButtonIcon, DropdownMenu, Icon } from '@skyroc/web-ui';
-import { usePathname, useRouter } from '../i18n/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { type Locale, localeNames, locales } from '../i18n/config';
+import { usePathname, useRouter } from '../i18n/navigation';
 
 const LocaleSwitcher = () => {
   const t = useTranslations('header');
@@ -20,19 +20,17 @@ const LocaleSwitcher = () => {
 
   return (
     <DropdownMenu
-      items={
-        [
-          {
-            type: 'radio',
-            value: locale,
-            children: locales.map(loc => ({
-              label: localeNames[loc],
-              value: loc
-            })),
-            onValueChange: (value: string) => handleLocaleChange(value as Locale)
-          }
-        ]
-      }
+      items={[
+        {
+          type: 'radio',
+          value: locale,
+          children: locales.map(loc => ({
+            label: localeNames[loc],
+            value: loc
+          })),
+          onValueChange: (value: string) => handleLocaleChange(value as Locale)
+        }
+      ]}
     >
       <ButtonIcon
         aria-label={t('switchLanguage')}
@@ -42,7 +40,6 @@ const LocaleSwitcher = () => {
         <Icon icon="lucide:languages" />
       </ButtonIcon>
     </DropdownMenu>
-
   );
 };
 

@@ -2,8 +2,14 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>Skyroc Admin - 部门管理设计稿</title>
     <style>
       :root {
@@ -1006,66 +1012,161 @@
     </style>
   </head>
   <body>
-    <svg width="0" height="0" style="position: absolute">
-      <symbol id="i-grid" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+    <svg
+      width="0"
+      height="0"
+      style="position: absolute"
+    >
+      <symbol
+        id="i-grid"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        ></rect>
+        <rect
+          x="14"
+          y="3"
+          width="7"
+          height="7"
+          rx="1"
+        ></rect>
+        <rect
+          x="3"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        ></rect>
+        <rect
+          x="14"
+          y="14"
+          width="7"
+          height="7"
+          rx="1"
+        ></rect>
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
+      <symbol
+        id="i-users"
+        viewBox="0 0 24 24"
+      >
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        ></circle>
         <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
       </symbol>
-      <symbol id="i-building" viewBox="0 0 24 24">
+      <symbol
+        id="i-building"
+        viewBox="0 0 24 24"
+      >
         <path d="M3 21h18M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"></path>
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
+      <symbol
+        id="i-shield"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
       </symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3"></circle>
+      <symbol
+        id="i-settings"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+        ></circle>
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8.5 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3V9.6h.1A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.37.28.6.71.6 1.18v.02h1v4h-.1A1.7 1.7 0 0 0 19.4 15z"
         ></path>
       </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7"></circle>
+      <symbol
+        id="i-search"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
         <path d="m20 20-4-4"></path>
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24">
+      <symbol
+        id="i-plus"
+        viewBox="0 0 24 24"
+      >
         <path d="M12 5v14M5 12h14"></path>
       </symbol>
-      <symbol id="i-refresh" viewBox="0 0 24 24">
+      <symbol
+        id="i-refresh"
+        viewBox="0 0 24 24"
+      >
         <path d="M20 11a8 8 0 1 0-2.34 5.66L20 14"></path>
         <path d="M20 8v6h-6"></path>
       </symbol>
-      <symbol id="i-chevron" viewBox="0 0 24 24">
+      <symbol
+        id="i-chevron"
+        viewBox="0 0 24 24"
+      >
         <path d="m6 9 6 6 6-6"></path>
       </symbol>
-      <symbol id="i-columns" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+      <symbol
+        id="i-columns"
+        viewBox="0 0 24 24"
+      >
+        <rect
+          x="3"
+          y="4"
+          width="18"
+          height="16"
+          rx="2"
+        ></rect>
         <path d="M9 4v16M15 4v16"></path>
       </symbol>
-      <symbol id="i-sun" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="4"></circle>
+      <symbol
+        id="i-sun"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="4"
+        ></circle>
         <path
           d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"
         ></path>
       </symbol>
-      <symbol id="i-bell" viewBox="0 0 24 24">
+      <symbol
+        id="i-bell"
+        viewBox="0 0 24 24"
+      >
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path>
       </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
+      <symbol
+        id="i-x"
+        viewBox="0 0 24 24"
+      >
         <path d="M18 6 6 18M6 6l12 12"></path>
       </symbol>
-      <symbol id="i-alert" viewBox="0 0 24 24">
+      <symbol
+        id="i-alert"
+        viewBox="0 0 24 24"
+      >
         <path
           d="M10.3 3.6 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"
         ></path>
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
+      <symbol
+        id="i-check"
+        viewBox="0 0 24 24"
+      >
         <path d="m5 12 4 4L19 6"></path>
       </symbol>
     </svg>
@@ -1074,38 +1175,64 @@
       <aside class="sidebar">
         <div class="brand">
           <span class="brand-mark">
-            <svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>
+            <svg
+              class="icon"
+              aria-hidden="true"
+            >
+              <use href="#i-grid"></use>
+            </svg>
           </span>
           <span>Skyroc Admin</span>
         </div>
 
-        <nav class="nav" aria-label="主导航">
+        <nav
+          class="nav"
+          aria-label="主导航"
+        >
           <div class="nav-label">工作空间</div>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-grid"></use></svg>
             <span>工作台</span>
           </button>
 
           <div class="nav-label">系统管理</div>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-users"></use></svg>
             <span>用户管理</span>
           </button>
-          <button class="nav-item active" type="button">
+          <button
+            class="nav-item active"
+            type="button"
+          >
             <svg class="icon"><use href="#i-building"></use></svg>
             <span>部门管理</span>
           </button>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-shield"></use></svg>
             <span>角色管理</span>
           </button>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-settings"></use></svg>
             <span>菜单管理</span>
           </button>
 
           <div class="nav-label">系统配置</div>
-          <button class="nav-item" type="button">
+          <button
+            class="nav-item"
+            type="button"
+          >
             <svg class="icon"><use href="#i-settings"></use></svg>
             <span>系统设置</span>
             <svg class="icon chevron"><use href="#i-chevron"></use></svg>
@@ -1129,10 +1256,19 @@
             <strong>部门管理</strong>
           </div>
           <div class="top-actions">
-            <button class="icon-button" id="themeButton" type="button" aria-label="切换明暗主题">
+            <button
+              class="icon-button"
+              id="themeButton"
+              type="button"
+              aria-label="切换明暗主题"
+            >
               <svg class="icon"><use href="#i-sun"></use></svg>
             </button>
-            <button class="icon-button" type="button" aria-label="通知">
+            <button
+              class="icon-button"
+              type="button"
+              aria-label="通知"
+            >
               <svg class="icon"><use href="#i-bell"></use></svg>
             </button>
           </div>
@@ -1153,14 +1289,27 @@
                 <svg class="icon"><use href="#i-search"></use></svg>
                 查询条件
               </div>
-              <button class="icon-button" id="collapseSearch" type="button" aria-label="折叠查询条件">
+              <button
+                class="icon-button"
+                id="collapseSearch"
+                type="button"
+                aria-label="折叠查询条件"
+              >
                 <svg class="icon"><use href="#i-chevron"></use></svg>
               </button>
             </div>
-            <div class="search-body" id="searchBody">
+            <div
+              class="search-body"
+              id="searchBody"
+            >
               <div class="field">
                 <label for="searchName">部门名称</label>
-                <input class="control" id="searchName" type="search" placeholder="请输入部门名称" />
+                <input
+                  class="control"
+                  id="searchName"
+                  type="search"
+                  placeholder="请输入部门名称"
+                />
               </div>
               <div class="field">
                 <label for="searchStatus">状态</label>
@@ -1172,14 +1321,29 @@
               </div>
               <div class="field">
                 <label for="searchCategory">类别编码</label>
-                <input class="control" id="searchCategory" maxlength="100" placeholder="请输入类别编码" />
+                <input
+                  class="control"
+                  id="searchCategory"
+                  maxlength="100"
+                  placeholder="请输入类别编码"
+                />
               </div>
               <div class="search-actions">
-                <button class="button primary" id="searchButton" type="button">
+                <button
+                  class="button primary"
+                  id="searchButton"
+                  type="button"
+                >
                   <svg class="icon"><use href="#i-search"></use></svg>
                   查询
                 </button>
-                <button class="button" id="resetButton" type="button">重置</button>
+                <button
+                  class="button"
+                  id="resetButton"
+                  type="button"
+                >
+                  重置
+                </button>
               </div>
             </div>
           </section>
@@ -1191,19 +1355,35 @@
                 <small id="resultCount">共 8 个部门</small>
               </div>
               <div class="toolbar">
-                <button class="button primary" id="addRootButton" type="button">
+                <button
+                  class="button primary"
+                  id="addRootButton"
+                  type="button"
+                >
                   <svg class="icon"><use href="#i-plus"></use></svg>
                   <span>新增顶级部门</span>
                 </button>
-                <button class="button" id="expandButton" type="button">
+                <button
+                  class="button"
+                  id="expandButton"
+                  type="button"
+                >
                   <svg class="icon"><use href="#i-chevron"></use></svg>
                   <span>全部收起</span>
                 </button>
-                <button class="button" id="refreshButton" type="button">
+                <button
+                  class="button"
+                  id="refreshButton"
+                  type="button"
+                >
                   <svg class="icon"><use href="#i-refresh"></use></svg>
                   <span>刷新</span>
                 </button>
-                <button class="button" type="button" data-message="列设置将在正式页面中接入表格配置。">
+                <button
+                  class="button"
+                  type="button"
+                  data-message="列设置将在正式页面中接入表格配置。"
+                >
                   <svg class="icon"><use href="#i-columns"></use></svg>
                   <span>列设置</span>
                 </button>
@@ -1234,8 +1414,15 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 0"></span>
-                        <button class="tree-toggle" type="button" aria-label="收起 Skyroc 集团">
+                        <span
+                          class="tree-indent"
+                          style="width: 0"
+                        ></span>
+                        <button
+                          class="tree-toggle"
+                          type="button"
+                          aria-label="收起 Skyroc 集团"
+                        >
                           <svg class="icon"><use href="#i-chevron"></use></svg>
                         </button>
                         <span class="dept-symbol"
@@ -1253,10 +1440,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1270,8 +1477,15 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 24px"></span>
-                        <button class="tree-toggle" type="button" aria-label="收起 产品中心">
+                        <span
+                          class="tree-indent"
+                          style="width: 24px"
+                        ></span>
+                        <button
+                          class="tree-toggle"
+                          type="button"
+                          aria-label="收起 产品中心"
+                        >
                           <svg class="icon"><use href="#i-chevron"></use></svg>
                         </button>
                         <span class="dept-symbol"
@@ -1289,10 +1503,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1306,7 +1540,10 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 48px"></span>
+                        <span
+                          class="tree-indent"
+                          style="width: 48px"
+                        ></span>
                         <span class="tree-placeholder"></span>
                         <span class="dept-symbol"
                           ><svg class="icon"><use href="#i-building"></use></svg
@@ -1323,10 +1560,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1340,7 +1597,10 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 48px"></span>
+                        <span
+                          class="tree-indent"
+                          style="width: 48px"
+                        ></span>
                         <span class="tree-placeholder"></span>
                         <span class="dept-symbol"
                           ><svg class="icon"><use href="#i-building"></use></svg
@@ -1357,10 +1617,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1374,8 +1654,15 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 24px"></span>
-                        <button class="tree-toggle" type="button" aria-label="收起 技术中心">
+                        <span
+                          class="tree-indent"
+                          style="width: 24px"
+                        ></span>
+                        <button
+                          class="tree-toggle"
+                          type="button"
+                          aria-label="收起 技术中心"
+                        >
                           <svg class="icon"><use href="#i-chevron"></use></svg>
                         </button>
                         <span class="dept-symbol"
@@ -1393,10 +1680,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1410,7 +1717,10 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 48px"></span>
+                        <span
+                          class="tree-indent"
+                          style="width: 48px"
+                        ></span>
                         <span class="tree-placeholder"></span>
                         <span class="dept-symbol"
                           ><svg class="icon"><use href="#i-building"></use></svg
@@ -1427,10 +1737,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1444,7 +1774,10 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 48px"></span>
+                        <span
+                          class="tree-indent"
+                          style="width: 48px"
+                        ></span>
                         <span class="tree-placeholder"></span>
                         <span class="dept-symbol"
                           ><svg class="icon"><use href="#i-building"></use></svg
@@ -1461,10 +1794,30 @@
                     <td><span class="tag success">正常</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text add-child" type="button">新增下级</button>
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text add-child"
+                          type="button"
+                        >
+                          新增下级
+                        </button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1478,7 +1831,10 @@
                   >
                     <td>
                       <div class="dept-cell">
-                        <span class="tree-indent" style="width: 0"></span>
+                        <span
+                          class="tree-indent"
+                          style="width: 0"
+                        ></span>
                         <span class="tree-placeholder"></span>
                         <span class="dept-symbol"
                           ><svg class="icon"><use href="#i-building"></use></svg
@@ -1493,9 +1849,24 @@
                     <td><span class="tag warning">停用</span></td>
                     <td>
                       <div class="row-actions">
-                        <button class="button text edit-row" type="button">编辑</button>
-                        <button class="button text member-row" type="button">成员</button>
-                        <button class="button text danger delete-row" type="button">删除</button>
+                        <button
+                          class="button text edit-row"
+                          type="button"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="button text member-row"
+                          type="button"
+                        >
+                          成员
+                        </button>
+                        <button
+                          class="button text danger delete-row"
+                          type="button"
+                        >
+                          删除
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1511,14 +1882,37 @@
       </div>
     </div>
 
-    <div class="drawer-mask" id="drawerMask">
-      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div
+      class="drawer-mask"
+      id="drawerMask"
+    >
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawerTitle"
+      >
         <header class="drawer-header">
           <div>
-            <div class="drawer-title" id="drawerTitle">新增部门</div>
-            <div class="drawer-subtitle" id="drawerSubtitle">创建新的组织节点</div>
+            <div
+              class="drawer-title"
+              id="drawerTitle"
+            >
+              新增部门
+            </div>
+            <div
+              class="drawer-subtitle"
+              id="drawerSubtitle"
+            >
+              创建新的组织节点
+            </div>
           </div>
-          <button class="icon-button" id="closeDrawer" type="button" aria-label="关闭抽屉">
+          <button
+            class="icon-button"
+            id="closeDrawer"
+            type="button"
+            aria-label="关闭抽屉"
+          >
             <svg class="icon"><use href="#i-x"></use></svg>
           </button>
         </header>
@@ -1526,8 +1920,15 @@
           <form id="deptForm">
             <div class="form-grid">
               <div class="field span-2">
-                <label class="required" for="parentDept">上级部门</label>
-                <select id="parentDept" required>
+                <label
+                  class="required"
+                  for="parentDept"
+                  >上级部门</label
+                >
+                <select
+                  id="parentDept"
+                  required
+                >
                   <option value="0">顶级部门</option>
                   <option value="100">Skyroc 集团</option>
                   <option value="110">　产品中心</option>
@@ -1537,22 +1938,51 @@
                   <option value="121">　　前端研发部</option>
                   <option value="122">　　平台研发部</option>
                 </select>
-                <p class="field-help move-warning" id="moveWarning">
+                <p
+                  class="field-help move-warning"
+                  id="moveWarning"
+                >
                   移动后，该部门及其全部下级将一起迁移，成员归属不变。
                 </p>
               </div>
               <div class="field span-2">
-                <label class="required" for="deptName">部门名称</label>
-                <input class="control" id="deptName" maxlength="30" required placeholder="请输入部门名称" />
+                <label
+                  class="required"
+                  for="deptName"
+                  >部门名称</label
+                >
+                <input
+                  class="control"
+                  id="deptName"
+                  maxlength="30"
+                  required
+                  placeholder="请输入部门名称"
+                />
               </div>
               <div class="field">
                 <label for="deptCategory">类别编码</label>
-                <input class="control" id="deptCategory" maxlength="100" placeholder="例如 DEPT" />
+                <input
+                  class="control"
+                  id="deptCategory"
+                  maxlength="100"
+                  placeholder="例如 DEPT"
+                />
                 <p class="field-help">当前没有已确认的类别字典，先按编码录入。</p>
               </div>
               <div class="field">
-                <label class="required" for="orderNum">显示顺序</label>
-                <input class="control" id="orderNum" min="0" required type="number" value="0" />
+                <label
+                  class="required"
+                  for="orderNum"
+                  >显示顺序</label
+                >
+                <input
+                  class="control"
+                  id="orderNum"
+                  min="0"
+                  required
+                  type="number"
+                  value="0"
+                />
               </div>
               <div class="field span-2">
                 <label for="leader">负责人</label>
@@ -1566,16 +1996,33 @@
               </div>
               <div class="field">
                 <label for="phone">联系电话</label>
-                <input class="control" id="phone" maxlength="11" placeholder="请输入联系电话" />
+                <input
+                  class="control"
+                  id="phone"
+                  maxlength="11"
+                  placeholder="请输入联系电话"
+                />
               </div>
               <div class="field">
                 <label for="email">联系邮箱</label>
-                <input class="control" id="email" maxlength="50" type="email" placeholder="name@example.com" />
+                <input
+                  class="control"
+                  id="email"
+                  maxlength="50"
+                  type="email"
+                  placeholder="name@example.com"
+                />
               </div>
               <div class="field span-2">
                 <label>部门状态</label>
                 <div class="switch-line">
-                  <button class="switch on" id="statusSwitch" type="button" role="switch" aria-checked="true"></button>
+                  <button
+                    class="switch on"
+                    id="statusSwitch"
+                    type="button"
+                    role="switch"
+                    aria-checked="true"
+                  ></button>
                   <span id="statusText">正常</span>
                 </div>
                 <p class="field-help">停用部门不能作为新增或移动操作的目标上级。</p>
@@ -1584,14 +2031,34 @@
           </form>
         </div>
         <footer class="drawer-footer">
-          <button class="button" id="cancelDrawer" type="button">取消</button>
-          <button class="button primary" id="saveDept" type="button">保存部门</button>
+          <button
+            class="button"
+            id="cancelDrawer"
+            type="button"
+          >
+            取消
+          </button>
+          <button
+            class="button primary"
+            id="saveDept"
+            type="button"
+          >
+            保存部门
+          </button>
         </footer>
       </aside>
     </div>
 
-    <div class="modal-mask" id="deleteMask">
-      <section class="modal" role="alertdialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div
+      class="modal-mask"
+      id="deleteMask"
+    >
+      <section
+        class="modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="deleteTitle"
+      >
         <div class="modal-content">
           <span class="danger-icon">
             <svg class="icon"><use href="#i-alert"></use></svg>
@@ -1602,13 +2069,29 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="button" id="cancelDelete" type="button">取消</button>
-          <button class="button danger" id="confirmDelete" type="button">删除部门</button>
+          <button
+            class="button"
+            id="cancelDelete"
+            type="button"
+          >
+            取消
+          </button>
+          <button
+            class="button danger"
+            id="confirmDelete"
+            type="button"
+          >
+            删除部门
+          </button>
         </div>
       </section>
     </div>
 
-    <div class="toast" id="toast" role="status">
+    <div
+      class="toast"
+      id="toast"
+      role="status"
+    >
       <svg class="icon"><use href="#i-check"></use></svg>
       <span id="toastText">操作成功</span>
     </div>

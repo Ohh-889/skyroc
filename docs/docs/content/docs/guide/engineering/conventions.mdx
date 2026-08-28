@@ -42,11 +42,7 @@ interface PortalProps {
 
 ```tsx
 const Portal = (props: PortalProps) => {
-  const {
-    autoCreate = false,
-    children,
-    container
-  } = props;
+  const { autoCreate = false, children, container } = props;
   // ...
 };
 ```
@@ -109,10 +105,10 @@ const Portal = (props: PortalProps) => {
 
 ### `useState` vs `useRef`
 
-| 用途 | 选择 |
-| --- | --- |
-| 影响渲染 | `useState` |
-| 不影响渲染（命令式 / 生命周期 / 可变状态） | `useRef` |
+| 用途                                       | 选择       |
+| ------------------------------------------ | ---------- |
+| 影响渲染                                   | `useState` |
+| 不影响渲染（命令式 / 生命周期 / 可变状态） | `useRef`   |
 
 **不要混用**。如果一个值变化频繁但不应触发重绘（如鼠标位置追踪），用 `useRef`。
 
@@ -132,27 +128,27 @@ Effect 表示：
 
 所有包统一使用 `@skyroc/*` scope。包名与目录的映射规则见 [命名规范](/docs/guide/architecture/naming)；代码内部的命名风格如下：
 
-| 类别 | 风格 | 示例 |
-| --- | --- | --- |
-| 包名 | `@skyroc/<kebab-case>` | `@skyroc/web-ui` |
-| 文件 | `kebab-case.ts` | `use-table.ts` |
-| 组件文件 | `PascalCase.tsx` | `AdminLayout.tsx` |
-| 组件 | `PascalCase` | `<AdminLayout />` |
-| Hook | `useXxx` 驼峰 | `useAdminState` |
-| Types | `PascalCase` | `UserInfo` |
-| 常量 | `UPPER_SNAKE_CASE` | `DEFAULT_THEME_COLOR` |
+| 类别     | 风格                   | 示例                  |
+| -------- | ---------------------- | --------------------- |
+| 包名     | `@skyroc/<kebab-case>` | `@skyroc/web-ui`      |
+| 文件     | `kebab-case.ts`        | `use-table.ts`        |
+| 组件文件 | `PascalCase.tsx`       | `AdminLayout.tsx`     |
+| 组件     | `PascalCase`           | `<AdminLayout />`     |
+| Hook     | `useXxx` 驼峰          | `useAdminState`       |
+| Types    | `PascalCase`           | `UserInfo`            |
+| 常量     | `UPPER_SNAKE_CASE`     | `DEFAULT_THEME_COLOR` |
 
 详见 [命名规范](/docs/guide/architecture/naming)。
 
 ## TypeScript 风格
 
-| 项 | 约定 |
-| --- | --- |
+| 项                    | 约定                                                      |
+| --------------------- | --------------------------------------------------------- |
 | `interface` vs `type` | 数据结构 / props 用 `interface`；联合 / 工具类型用 `type` |
-| `import type` | 启用 `verbatimModuleSyntax`，强制 |
-| 全局命名空间 | `Api.*`、`Router.*`、`App.*`、`Theme.*`，不要重复 import |
-| 严格度 | 全仓库 `strict + noUncheckedIndexedAccess` |
-| 禁用 `any` | 工具未禁，但 review 不放过 |
+| `import type`         | 启用 `verbatimModuleSyntax`，强制                         |
+| 全局命名空间          | `Api.*`、`Router.*`、`App.*`、`Theme.*`，不要重复 import  |
+| 严格度                | 全仓库 `strict + noUncheckedIndexedAccess`                |
+| 禁用 `any`            | 工具未禁，但 review 不放过                                |
 
 ## 包内目录约定
 
@@ -187,11 +183,11 @@ Effect 表示：
 
 ## 与代码风格冲突的来源
 
-| 优先级 | 内容 |
-| --- | --- |
-| 1（最高） | 用户直接指令 |
-| 2 | `CLAUDE.md` / `AGENTS.md` / Project Rules |
-| 3 | 本文档 |
-| 4 | 工具默认行为 |
+| 优先级    | 内容                                      |
+| --------- | ----------------------------------------- |
+| 1（最高） | 用户直接指令                              |
+| 2         | `CLAUDE.md` / `AGENTS.md` / Project Rules |
+| 3         | 本文档                                    |
+| 4         | 工具默认行为                              |
 
 底层冲突以本文档为准；本文档与项目 Rules 冲突以 Rules 为准。

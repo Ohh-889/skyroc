@@ -71,7 +71,10 @@ export function setupAdminLayouts(adminLayoutsOptions: AdminLayoutsOptions) {
     getItem: key => adminLayoutsOptions.storage.get(key as keyof StorageType.Local),
     removeItem: key => adminLayoutsOptions.storage.remove(key as keyof StorageType.Local),
     setItem: (key, value) =>
-      adminLayoutsOptions.storage.set(key as keyof StorageType.Local, value as StorageType.Local[keyof StorageType.Local])
+      adminLayoutsOptions.storage.set(
+        key as keyof StorageType.Local,
+        value as StorageType.Local[keyof StorageType.Local]
+      )
   });
 }
 

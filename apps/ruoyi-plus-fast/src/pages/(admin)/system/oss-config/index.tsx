@@ -23,9 +23,6 @@ import type {
   OssConfigSavePayload
 } from '@/service/api/system-oss-config';
 
-import type { OssConfigEditorMode } from './modules/OssConfigEditorDrawer';
-import OssConfigSearch from './modules/OssConfigSearch';
-import type { OssConfigTableParams } from './modules/OssConfigSearch';
 import {
   ACCESS_POLICY_COLORS,
   ACCESS_POLICY_LABELS,
@@ -34,6 +31,9 @@ import {
   isDefaultConfig,
   maskAccessKey
 } from './modules/oss-config-utils';
+import type { OssConfigEditorMode } from './modules/OssConfigEditorDrawer';
+import OssConfigSearch from './modules/OssConfigSearch';
+import type { OssConfigTableParams } from './modules/OssConfigSearch';
 
 const OssConfigDeleteModal = lazy(() => import('./modules/OssConfigDeleteModal'));
 const OssConfigEditorDrawer = lazy(() => import('./modules/OssConfigEditorDrawer'));

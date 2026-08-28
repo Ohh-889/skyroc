@@ -6,14 +6,7 @@ description: 点击触发的轻量浮层容器，用于承载表单、操作和�
 Popover 用于在触发元素附近展示可交互浮层。组件基于 Radix Popover 封装，提供触发器、内容容器、Portal、箭头、关闭按钮、受控状态和定位能力。
 
 ```tsx
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverArrow,
-  PopoverContent,
-  PopoverRoot,
-  PopoverTrigger
-} from '@skyroc/web-ui';
+import { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverRoot, PopoverTrigger } from '@skyroc/web-ui';
 ```
 
 ## 何时使用
@@ -61,7 +54,11 @@ import {
 ```tsx
 const [open, setOpen] = useState(false);
 
-<Popover open={open} onOpenChange={setOpen} trigger={<Button>Open</Button>} />
+<Popover
+  open={open}
+  onOpenChange={setOpen}
+  trigger={<Button>Open</Button>}
+/>;
 ```
 
 ## 关闭按钮
@@ -306,7 +303,11 @@ Popover 同时导出 Radix 风格结构组件，适合需要完全手动组织 R
         { name: 'sideOffset', type: 'number', description: '浮层和触发元素之间的距离。默认 5。' },
         { name: 'alignOffset', type: 'number', description: '沿对齐轴偏移的距离。' },
         { name: 'avoidCollisions', type: 'boolean', description: '是否启用碰撞检测。默认 true。' },
-        { name: 'collisionPadding', type: 'number | side padding object', description: '碰撞检测时和边界之间保留的距离。' },
+        {
+          name: 'collisionPadding',
+          type: 'number | side padding object',
+          description: '碰撞检测时和边界之间保留的距离。'
+        },
         { name: 'onEscapeKeyDown', type: '(event) => void', description: '按 Escape 时触发。' },
         { name: 'onPointerDownOutside', type: '(event) => void', description: '在浮层外按下指针时触发。' },
         { name: 'onFocusOutside', type: '(event) => void', description: '焦点移出浮层时触发。' },
@@ -332,7 +333,11 @@ Popover 同时导出 Radix 风格结构组件，适合需要完全手动组织 R
         { name: 'children', type: 'ReactNode', description: '锚点内容。' },
         { name: 'className', type: 'ClassValue', description: '锚点 class。' },
         { name: 'asChild', type: 'boolean', description: '使用子元素作为锚点。' },
-        { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: '类型继承字段，当前锚点样式不直接使用。' }
+        {
+          name: 'size',
+          type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+          description: '类型继承字段，当前锚点样式不直接使用。'
+        }
       ]
     }
   ]}

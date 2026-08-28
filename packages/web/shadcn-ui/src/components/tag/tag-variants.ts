@@ -108,11 +108,11 @@ export const tagVariants = tv({
     },
     size: {
       '2xl': 'gap-2 h-7 px-4 text-base',
-      'lg': 'gap-1.25 h-5 px-2.5 text-xs',
-      'md': 'gap-1 h-4.5 px-2 text-2xs',
-      'sm': 'gap-0.75 h-4 px-1.5 text-3xs',
-      'xl': 'gap-1.5 h-6 px-3 text-sm',
-      'xs': 'gap-0.5 h-3.5 px-1 text-4xs'
+      lg: 'gap-1.25 h-5 px-2.5 text-xs',
+      md: 'gap-1 h-4.5 px-2 text-2xs',
+      sm: 'gap-0.75 h-4 px-1.5 text-3xs',
+      xl: 'gap-1.5 h-6 px-3 text-sm',
+      xs: 'gap-0.5 h-3.5 px-1 text-4xs'
     },
     variant: {
       ghost: '',

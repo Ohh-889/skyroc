@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Root } from '@radix-ui/react-navigation-menu';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { navigationMenuVariants } from './navigation-menu';
 import type { NavigationMenuRootProps } from './types';
 

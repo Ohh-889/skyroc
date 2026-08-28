@@ -24,7 +24,7 @@ function padZero(num: number, targetLength = 2): string {
 /**
  * 根据 format 格式化时间对象为字符串
  *
- * format 里缺失的高位单位会向下累加到相邻的低位单位上，例如 format 为 `mm:ss` 时天与小时都并入分钟， 这样任何单一单位的格式（`ss`、`SSS`）都能表示完整时长而不丢时间。
+ * Format 里缺失的高位单位会向下累加到相邻的低位单位上，例如 format 为 `mm:ss` 时天与小时都并入分钟， 这样任何单一单位的格式（`ss`、`SSS`）都能表示完整时长而不丢时间。
  */
 export function parseFormat(format: string, currentTime: CurrentTime): string {
   const { days } = currentTime;

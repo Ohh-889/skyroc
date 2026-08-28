@@ -85,8 +85,15 @@ const LayoutModeCard = (props: Props) => {
         const isVerticalLayout = VERTICAL_LAYOUT_MODES.includes(layoutMode);
 
         return (
-          <div className="flex-col-center cursor-pointer" key={key} onClick={() => handleChangeMode(layoutMode)}>
-            <Tooltip placement={item.placement} title={t(`theme.layout.layoutMode.${key}_detail`)}>
+          <div
+            className="flex-col-center cursor-pointer"
+            key={key}
+            onClick={() => handleChangeMode(layoutMode)}
+          >
+            <Tooltip
+              placement={item.placement}
+              title={t(`theme.layout.layoutMode.${key}_detail`)}
+            >
               <div
                 className={clsx(
                   'h-64px w-96px gap-6px rd-4px p-6px shadow ring-2 ring-transparent transition-all hover:ring-primary',

@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@skyroc/utils';
+import React from 'react';
 import { cardVariants } from './card-variants';
 import type { CardTitleProps } from './types';
 

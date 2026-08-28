@@ -26,11 +26,11 @@ import { Divider } from '@skyroc/native-ui';
 
 `children` 为字符串时自动包一层 `Text`（`text-sm text-muted-foreground`），线条被切成前后两截。`align` 控制文字的位置：
 
-| 取值     | 表现                                          |
-| -------- | --------------------------------------------- |
-| `center` | 两侧线条等分（默认）                          |
-| `start`  | 前侧线条压到 10%，文字靠近起始端              |
-| `end`    | 后侧线条压到 10%，文字靠近结束端              |
+| 取值     | 表现                             |
+| -------- | -------------------------------- |
+| `center` | 两侧线条等分（默认）             |
+| `start`  | 前侧线条压到 10%，文字靠近起始端 |
+| `end`    | 后侧线条压到 10%，文字靠近结束端 |
 
 <Demo src="@playground/divider/DividerText" />
 
@@ -90,13 +90,13 @@ import { Divider } from '@skyroc/native-ui';
 
 `className` 追加到根容器上，`classNames` 按 slot 细粒度覆盖：
 
-| slot           | 作用位置                                                                     |
-| -------------- | ---------------------------------------------------------------------------- |
-| `root`         | 根容器 `View`，带 `role="separator"`；横向时为 `flex-row`                     |
-| `line`         | 线条本身。无内容时作用于那条完整的线，有内容时两截线条也都会先并上它          |
-| `lineLeading`  | 内容前的那半截线，合并在 `line` 之后                                          |
-| `lineTrailing` | 内容后的那半截线，合并在 `line` 之后                                          |
-| `text`         | 字符串 `children` 自动包裹出来的 `Text`                                       |
+| slot           | 作用位置                                                             |
+| -------------- | -------------------------------------------------------------------- |
+| `root`         | 根容器 `View`，带 `role="separator"`；横向时为 `flex-row`            |
+| `line`         | 线条本身。无内容时作用于那条完整的线，有内容时两截线条也都会先并上它 |
+| `lineLeading`  | 内容前的那半截线，合并在 `line` 之后                                 |
+| `lineTrailing` | 内容后的那半截线，合并在 `line` 之后                                 |
+| `text`         | 字符串 `children` 自动包裹出来的 `Text`                              |
 
 <Demo src="@playground/divider/DividerCustomStyle" />
 
@@ -134,7 +134,8 @@ import { Divider } from '@skyroc/native-ui';
     },
     {
       name: 'hairline',
-      description: '是否使用 1 物理像素细线（0.5 / 0.33dp），关掉为 1dp。仅对 solid 生效，通过 style 注入会盖掉 classNames 里的粗细类',
+      description:
+        '是否使用 1 物理像素细线（0.5 / 0.33dp），关掉为 1dp。仅对 solid 生效，通过 style 注入会盖掉 classNames 里的粗细类',
       type: 'boolean',
       default: 'true'
     },

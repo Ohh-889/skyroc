@@ -1,15 +1,15 @@
 'use client';
 
 /**
- * Field component for form input fields with validation and state management
- * Supports both controlled and uncontrolled modes with flexible event handling
+ * Field component for form input fields with validation and state management Supports both controlled and uncontrolled
+ * modes with flexible event handling
  */
 
+import { Slot } from '@radix-ui/react-slot';
+import { isEqual, omitUndefined, toArray } from '@skyroc/utils';
+import type { AllPathsKeys } from '@skyroc/utils/type';
 import type { ReactElement } from 'react';
 import { useEffect, useId, useRef, useState } from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import type { AllPathsKeys } from '@skyroc/utils/type';
-import { isEqual, omitUndefined, toArray } from '@skyroc/utils';
 import { getEventValue } from '../../form-core/event-value';
 import type { EventArgs, StoreValue } from '../../form-core/types';
 import type { Rule } from '../../form-core/validation';
@@ -42,26 +42,26 @@ export type FieldProps<Values> = {
 } & Record<string, any>;
 
 /**
- * Field component that wraps form input elements with state management and validation
- * Supports both controlled and uncontrolled modes with flexible customization options
+ * Field component that wraps form input elements with state management and validation Supports both controlled and
+ * uncontrolled modes with flexible customization options
  *
  * @example
- * ```tsx
- * // Custom value extraction and normalization
- * <Field
+ *   ```tsx
+ *   // Custom value extraction and normalization
+ *   <Field
  *   name="phone"
- *   getValueFromEvent={(e) => e.target.value.replace(/\D/g, '')}
- *   normalize={(value) => {
- *     // Format phone number: (123) 456-7890
- *     const cleaned = value.replace(/\D/g, '');
- *     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
- *     return match ? `(${match[1]}) ${match[2]}-${match[3]}` : value;
+ *   getValueFromEvent={e => e.target.value.replace(/\D/g, '')}
+ *   normalize={value => {
+ *   // Format phone number: (123) 456-7890
+ *   const cleaned = value.replace(/\D/g, '');
+ *   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+ *   return match ? `(${match[1]}) ${match[2]}-${match[3]}` : value;
  *   }}
  *   rules={[{ required: true, message: 'Phone number is required' }]}
- * >
+ *   >
  *   <Input placeholder="(123) 456-7890" />
- * </Field>
- * ```
+ *   </Field>;
+ *   ```
  */
 function Field<Values = any>(props: FieldProps<Values>) {
   // Destructure props with default values

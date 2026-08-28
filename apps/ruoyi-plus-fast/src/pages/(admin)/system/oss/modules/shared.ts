@@ -66,11 +66,11 @@ export function normalizeOssSearchParams(params: Partial<OssListParams>): OssLis
 export function hasOssFilters(params: Partial<OssListParams>) {
   return Boolean(
     params.beginTime ||
-      params.createBy ||
-      params.endTime ||
-      params.fileName ||
-      params.fileSuffix ||
-      params.originalName ||
-      params.service
+    params.createBy ||
+    params.endTime ||
+    params.fileName ||
+    params.fileSuffix ||
+    params.originalName ||
+    params.service
   );
 }

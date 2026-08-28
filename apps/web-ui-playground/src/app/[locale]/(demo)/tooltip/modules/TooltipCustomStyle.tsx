@@ -4,7 +4,10 @@ import { Button, Card, Tooltip } from '@skyroc/web-ui';
 
 const TooltipCustomStyle = () => {
   return (
-    <Card split title="Custom style">
+    <Card
+      split
+      title="Custom style"
+    >
       <Tooltip
         showArrow
         content="Custom tooltip"

@@ -4,13 +4,17 @@
   "private": false,
   "description": "蓝牙可用性的 Expo 模块封装（状态查询、权限、引导用户开启）",
   "keywords": [
+    "ble",
+    "bluetooth",
     "expo",
     "expo-module",
     "react-native",
-    "skyroc",
-    "bluetooth",
-    "ble"
+    "skyroc"
   ],
+  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/native/bluetooth",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
   "license": "MIT",
   "author": {
     "name": "Ohh",
@@ -22,13 +26,6 @@
     "url": "git+https://github.com/Ohh-889/skyroc.git",
     "directory": "packages/native/bluetooth"
   },
-  "homepage": "https://github.com/Ohh-889/skyroc/tree/master/packages/native/bluetooth",
-  "bugs": {
-    "url": "https://github.com/Ohh-889/skyroc/issues"
-  },
-  "sideEffects": false,
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
   "files": [
     "android/build.gradle",
     "android/src",
@@ -40,6 +37,9 @@
     "LICENSE",
     "README.md"
   ],
+  "sideEffects": false,
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

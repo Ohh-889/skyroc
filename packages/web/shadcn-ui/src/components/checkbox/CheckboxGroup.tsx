@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { cn } from '@skyroc/utils';
+import { useCallback, useMemo } from 'react';
 import type { Value } from '../../types/shared';
-import Checkbox from './CheckboxUI';
-import { CheckboxGroupProvider } from './CheckboxGroupContext';
-import type { CheckboxGroupProps } from './types';
 import { checkboxVariants } from './checkbox-variants';
+import { CheckboxGroupProvider } from './CheckboxGroupContext';
+import Checkbox from './CheckboxUI';
+import type { CheckboxGroupProps } from './types';
 
 const CheckboxGroup = (props: CheckboxGroupProps) => {
   const {
@@ -42,9 +42,7 @@ const CheckboxGroup = (props: CheckboxGroupProps) => {
 
   const handleValueChange = useCallback(
     (itemValue: Value, checked: boolean) => {
-      const newValue = checked
-        ? [...value, itemValue]
-        : value.filter(v => v !== itemValue);
+      const newValue = checked ? [...value, itemValue] : value.filter(v => v !== itemValue);
 
       if (!isControlled) {
         setUncontrolledValue(newValue);
@@ -73,7 +71,7 @@ const CheckboxGroup = (props: CheckboxGroupProps) => {
         data-slot="checkbox-group"
         role="group"
       >
-        {items.map((item) => {
+        {items.map(item => {
           const isChecked = value.includes(item.value || '');
           const isDisabled = disabled || item.disabled;
 
@@ -87,7 +85,7 @@ const CheckboxGroup = (props: CheckboxGroupProps) => {
               indeterminateIcon={indeterminateIcon}
               key={item.value}
               size={size}
-              onCheckedChange={(checked) => {
+              onCheckedChange={checked => {
                 if (checked !== 'indeterminate') {
                   handleValueChange(item.value, checked);
                 }

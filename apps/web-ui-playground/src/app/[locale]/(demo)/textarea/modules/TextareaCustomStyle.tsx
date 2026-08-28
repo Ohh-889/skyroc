@@ -4,7 +4,10 @@ import { Card, Textarea } from '@skyroc/web-ui';
 
 const TextareaCustomStyle = () => {
   return (
-    <Card split title="Custom style">
+    <Card
+      split
+      title="Custom style"
+    >
       <Textarea
         showCount
         defaultValue="Custom textarea style"

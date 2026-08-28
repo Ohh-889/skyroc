@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * Form component with comprehensive form state management and validation
- * Supports polymorphic rendering, schema validation, and flexible configuration
+ * Form component with comprehensive form state management and validation Supports polymorphic rendering, schema
+ * validation, and flexible configuration
  */
 
+import type { DeepPartial } from '@skyroc/utils/type';
 import type { ComponentPropsWithoutRef, ComponentRef, ElementType, HTMLProps, Ref } from 'react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import type { DeepPartial } from '@skyroc/utils/type';
 import type { FormSchema } from '../../form-core/resolver/resolver';
 import { extractSchemaValidator, resolveSchema } from '../../form-core/resolver/resolver';
 import type { ValidateMessages } from '../../form-core/validate';
@@ -20,9 +20,7 @@ import type {
 import { FieldContextProvider } from '../hooks/FieldContext';
 import { useForm } from '../hooks/useForm';
 
-/**
- * Base props interface for Form component
- */
+/** Base props interface for Form component */
 export interface FormBaseProps<Values = any> extends RegisterCallbackOptions<Values> {
   /** Child elements to render within the form */
   children?: React.ReactNode;
@@ -42,9 +40,7 @@ export interface FormBaseProps<Values = any> extends RegisterCallbackOptions<Val
   validateTrigger?: string | string[];
 }
 
-/**
- * Utility type for polymorphic component props
- */
+/** Utility type for polymorphic component props */
 type PolymorphicProps<As extends ElementType, Own> = Own &
   Omit<ComponentPropsWithoutRef<As>, keyof Own> & {
     /** Component type to render as (e.g., 'form', 'div', custom component) */
@@ -52,95 +48,104 @@ type PolymorphicProps<As extends ElementType, Own> = Own &
   };
 
 /**
- * Form component props with polymorphic rendering support
- * Can render as different HTML elements or disable wrapper entirely
+ * Form component props with polymorphic rendering support Can render as different HTML elements or disable wrapper
+ * entirely
  */
 export type FormProps<Values = any, As extends ElementType = 'form'> =
   | PolymorphicProps<As, FormBaseProps<Values>>
   | ({ component: false } & FormBaseProps<Values>);
 
 /**
- * Form component that provides form state management and validation context
- * Supports polymorphic rendering and comprehensive form functionality
+ * Form component that provides form state management and validation context Supports polymorphic rendering and
+ * comprehensive form functionality
  *
  * @example
- * ```tsx
- * // Basic form with validation
- * <Form
- *   initialValues={{ email: '', password: '' }}
- *   onFinish={(values) => console.log('Form submitted:', values)}
- *   onFinishFailed={(error) => console.log('Validation failed:', error)}
- * >
- *   <Field
- *     name="email"
- *     rules={[{ required: true, type: 'email' }]}
+ *   ```tsx
+ *   // Basic form with validation
+ *   <Form
+ *     initialValues={{ email: '', password: '' }}
+ *     onFinish={values => console.log('Form submitted:', values)}
+ *     onFinishFailed={error => console.log('Validation failed:', error)}
  *   >
- *     <Input placeholder="Email" />
- *   </Field>
- *   <Field
- *     name="password"
- *     rules={[{ required: true, min: 6 }]}
- *   >
- *     <Input type="password" placeholder="Password" />
- *   </Field>
- *   <button type="submit">Submit</button>
- * </Form>
- * ```
- *
- * @example
- * ```tsx
- * // Form with schema validation (e.g., Zod)
- * const schema = z.object({
- *   username: z.string().min(3),
- *   age: z.number().min(18)
- * });
- *
- * <Form
- *   schema={schema}
- *   onFinish={(values) => {
- *     // values are automatically typed and validated
- *     console.log(values.username, values.age);
- *   }}
- * >
- *   <Field name="username">
- *     <Input placeholder="Username" />
- *   </Field>
- *   <Field name="age">
- *     <Input type="number" placeholder="Age" />
- *   </Field>
- *   <button type="submit">Submit</button>
- * </Form>
- * ```
- *
- * @example
- * ```tsx
- * // Headless form (no wrapper element)
- * <Form component={false} initialValues={{ items: [] }}>
- *   <div className="custom-form-layout">
- *     <Field name="title">
- *       <Input placeholder="Title" />
+ *     <Field
+ *       name="email"
+ *       rules={[{ required: true, type: 'email' }]}
+ *     >
+ *       <Input placeholder="Email" />
  *     </Field>
- *     <List name="items">
- *       {(fields, { add, remove }) => (
- *         <>
- *           {fields.map((field) => (
- *             <div key={field.key}>
- *               <Field name={field.name}>
- *                 <Input placeholder="Item" />
- *               </Field>
- *               <button onClick={() => remove(field.name)}>Remove</button>
- *             </div>
- *           ))}
- *           <button onClick={() => add()}>Add Item</button>
- *         </>
- *       )}
- *     </List>
- *   </div>
- * </Form>
- * ```
+ *     <Field
+ *       name="password"
+ *       rules={[{ required: true, min: 6 }]}
+ *     >
+ *       <Input
+ *         type="password"
+ *         placeholder="Password"
+ *       />
+ *     </Field>
+ *     <button type="submit">Submit</button>
+ *   </Form>;
+ *   ```;
+ *
+ * @example
+ *   ```tsx
+ *   // Form with schema validation (e.g., Zod)
+ *   const schema = z.object({
+ *     username: z.string().min(3),
+ *     age: z.number().min(18)
+ *   });
+ *
+ *   <Form
+ *     schema={schema}
+ *     onFinish={values => {
+ *       // values are automatically typed and validated
+ *       console.log(values.username, values.age);
+ *     }}
+ *   >
+ *     <Field name="username">
+ *       <Input placeholder="Username" />
+ *     </Field>
+ *     <Field name="age">
+ *       <Input
+ *         type="number"
+ *         placeholder="Age"
+ *       />
+ *     </Field>
+ *     <button type="submit">Submit</button>
+ *   </Form>;
+ *   ```;
+ *
+ * @example
+ *   ```tsx
+ *   // Headless form (no wrapper element)
+ *   <Form
+ *     component={false}
+ *     initialValues={{ items: [] }}
+ *   >
+ *     <div className="custom-form-layout">
+ *       <Field name="title">
+ *         <Input placeholder="Title" />
+ *       </Field>
+ *       <List name="items">
+ *         {(fields, { add, remove }) => (
+ *           <>
+ *             {fields.map(field => (
+ *               <div key={field.key}>
+ *                 <Field name={field.name}>
+ *                   <Input placeholder="Item" />
+ *                 </Field>
+ *                 <button onClick={() => remove(field.name)}>Remove</button>
+ *               </div>
+ *             ))}
+ *             <button onClick={() => add()}>Add Item</button>
+ *           </>
+ *         )}
+ *       </List>
+ *     </div>
+ *   </Form>;
+ *   ```;
  */
 // eslint-disable-next-line prettier/prettier
-const Form = <Values=any, As extends ElementType = 'form'>(props: FormProps<Values, As>, ref: Ref<As>) => {
+const Form = <Values = any, As extends ElementType = 'form'>(props: FormProps<Values, As>, ref: Ref<As>) => {
   // Destructure props with default values
   const {
     children,

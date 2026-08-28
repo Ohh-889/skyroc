@@ -3,9 +3,7 @@
   "name": "toggle",
   "type": "registry:block",
   "title": "Toggle",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/toggle/Toggle.tsx",

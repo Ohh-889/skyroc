@@ -16,7 +16,6 @@ export const ListItem = (props: ListItemProps) => {
       {children}
     </li>
   );
-}
-;
+};
 
 ListItem.displayName = 'ListItem';

@@ -12,7 +12,10 @@ const ReloadButton = (props: Props) => {
 
   return (
     <ButtonIcon {...rest}>
-      <Icon className={isReload ? '' : 'animate-spin animate-duration-750'} icon="ant-design:reload-outlined" />
+      <Icon
+        className={isReload ? '' : 'animate-spin animate-duration-750'}
+        icon="ant-design:reload-outlined"
+      />
     </ButtonIcon>
   );
 };

@@ -2,10 +2,10 @@
 
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import type SelectContent from '../../components/select/SelectContent';
 import SelectUI from '../../components/select/SelectUI';
 import type { SelectProps } from '../../components/select/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const Select = forwardRef<ComponentRef<typeof SelectContent>, SelectProps>((props, ref) => {
   const config = useComponentConfig('select');

@@ -1,6 +1,6 @@
 ---
-title: "静态路由菜单生成"
-description: "从 TanStack Router staticData 生成 Admin Layouts 菜单树、快速索引和首页"
+title: '静态路由菜单生成'
+description: '从 TanStack Router staticData 生成 Admin Layouts 菜单树、快速索引和首页'
 ---
 
 静态模式适合菜单由前端路由文件维护的后台应用。路由文件声明 `staticData`，布局包读取 `routeTree` 后生成菜单树、快速索引和首页。
@@ -115,17 +115,17 @@ Map {
 
 `transformStaticRouteToMenu` 会先读取 `route.options.staticData`。没有 `staticData` 的 route 会直接跳过。
 
-| 输入字段 | 输出到 `GeneratedMenu` |
-| --- | --- |
-| `staticData.title` | `title` |
-| `staticData.i18nKey` | `i18nKey` |
-| `staticData.menu.icon` | `icon` |
-| `staticData.menu.localIcon` | `localIcon` |
-| `staticData.menu.order` | `order` |
-| `staticData.menu.type` | `type`，默认 `item` |
-| `staticData.menu.badge` | `badge` |
-| `staticData.menu.extra` | `extra` |
-| `route.fullPath` | `key` 和 `path`，会先经过 `normalizePath` |
+| 输入字段                    | 输出到 `GeneratedMenu`                    |
+| --------------------------- | ----------------------------------------- |
+| `staticData.title`          | `title`                                   |
+| `staticData.i18nKey`        | `i18nKey`                                 |
+| `staticData.menu.icon`      | `icon`                                    |
+| `staticData.menu.localIcon` | `localIcon`                               |
+| `staticData.menu.order`     | `order`                                   |
+| `staticData.menu.type`      | `type`，默认 `item`                       |
+| `staticData.menu.badge`     | `badge`                                   |
+| `staticData.menu.extra`     | `extra`                                   |
+| `route.fullPath`            | `key` 和 `path`，会先经过 `normalizePath` |
 
 `normalizePath` 会去掉非根路径末尾的 `/`。例如 `/home/` 会变成 `/home`，`/` 会保持不变。
 
@@ -134,7 +134,7 @@ Map {
 静态模式会在生成菜单时调用：
 
 ```ts
-hasRoutePermission(staticData, userInfo)
+hasRoutePermission(staticData, userInfo);
 ```
 
 如果 route 没有权限，它不会进入菜单，也不会进入快速索引。父 route 没有权限时，它的子路由也不会继续生成。
@@ -190,10 +190,10 @@ export const menuNodeCallback: MenuNodeCallback = routeId => {
 
 ## 常见问题
 
-| 问题 | 原因和处理 |
-| --- | --- |
-| 路由能访问但菜单不显示 | 检查 route 是否有 `staticData.menu`，以及父 route 是否被权限过滤。 |
-| 隐藏详情页无法激活父菜单 | 详情页需要声明 `staticData.menu.hide` 和 `staticData.menu.activeMenu`。 |
-| 某个 layout 下的路由都不显示 | 检查 `menuCategories[*].layout` 是否等于 TanStack Router 的 layout route id。 |
-| 菜单顺序不符合预期 | 检查同级 `menu.order`，未声明时会按 `0` 排序。 |
-| badge 数字不会变化 | 路由只声明 `valueKey`，数量更新要通过 `useAdminMenuBadges` 或导出的 badge action 写入。 |
+| 问题                         | 原因和处理                                                                              |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
+| 路由能访问但菜单不显示       | 检查 route 是否有 `staticData.menu`，以及父 route 是否被权限过滤。                      |
+| 隐藏详情页无法激活父菜单     | 详情页需要声明 `staticData.menu.hide` 和 `staticData.menu.activeMenu`。                 |
+| 某个 layout 下的路由都不显示 | 检查 `menuCategories[*].layout` 是否等于 TanStack Router 的 layout route id。           |
+| 菜单顺序不符合预期           | 检查同级 `menu.order`，未声明时会按 `0` 排序。                                          |
+| badge 数字不会变化           | 路由只声明 `valueKey`，数量更新要通过 `useAdminMenuBadges` 或导出的 badge action 写入。 |

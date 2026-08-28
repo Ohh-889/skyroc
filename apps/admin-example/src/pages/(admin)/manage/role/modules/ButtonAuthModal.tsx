@@ -42,10 +42,17 @@ const ButtonAuthModal = (props: ButtonAuthModalProps) => {
       className="w-480px"
       footer={
         <Space className="mt-16px">
-          <Button size="small" onClick={onClose}>
+          <Button
+            size="small"
+            onClick={onClose}
+          >
             {t('common.cancel')}
           </Button>
-          <Button size="small" type="primary" onClick={handleSubmit}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={handleSubmit}
+          >
             {t('common.confirm')}
           </Button>
         </Space>
@@ -54,7 +61,14 @@ const ButtonAuthModal = (props: ButtonAuthModalProps) => {
       title={title}
       onCancel={onClose}
     >
-      <Tree checkable checkedKeys={checks} className="h-280px" height={280} treeData={treeData} onCheck={handleCheck} />
+      <Tree
+        checkable
+        checkedKeys={checks}
+        className="h-280px"
+        height={280}
+        treeData={treeData}
+        onCheck={handleCheck}
+      />
     </Modal>
   );
 };

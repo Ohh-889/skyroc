@@ -5,16 +5,13 @@ import { Badge, Button, SkeletonContainer } from '@skyroc/web-ui';
 const CustomSize = () => {
   return (
     <div className="flex flex-col space-y-6">
-
       {/* SkeletonContainer - User Profile Card */}
       <div className="rounded-lg border p-4">
         <h4 className="text-muted-foreground mb-3 text-sm font-medium">User Profile (Auto Skeletonize)</h4>
 
         <SkeletonContainer loading>
           <div className="flex items-center gap-4">
-            <div
-              className="h-12 w-12 rounded-full"
-            />
+            <div className="h-12 w-12 rounded-full" />
 
             <div>
               <h3 className="text-lg font-semibold">User Name</h3>
@@ -33,8 +30,8 @@ const CustomSize = () => {
             <h2 className="text-xl font-bold">Article Title Here</h2>
 
             <p className="text-muted-foreground">
-              This is a preview of the article content. It shows how the skeleton container
-              can automatically generate placeholders for text content.
+              This is a preview of the article content. It shows how the skeleton container can automatically generate
+              placeholders for text content.
             </p>
 
             <div className="flex gap-2">
@@ -51,9 +48,7 @@ const CustomSize = () => {
 
         <SkeletonContainer loading>
           <div className="flex gap-4">
-            <div
-              className="h-24 w-24 rounded-lg object-cover"
-            />
+            <div className="h-24 w-24 rounded-lg object-cover" />
 
             <div className="flex-1 space-y-2">
               <h3 className="font-semibold">Product Name</h3>

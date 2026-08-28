@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import {
   RADIUS_MULTIPLIERS,
   calcRadius,
@@ -7,6 +6,7 @@ import {
   genRadiusSizes,
   genRadiusVars
 } from '@shell/theme/antd-algorithm/shared/genRadiusMapToken';
+import { describe, expect, it } from 'vitest';
 
 describe('calcRadius', () => {
   it('乘数为 -1（full）时应返回 9999', () => {

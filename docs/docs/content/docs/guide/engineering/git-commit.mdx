@@ -5,13 +5,13 @@ description: sa git-commit 提交规范、changelog 自动化、版本号 + 标�
 
 ## 工具链速览
 
-| 职责 | 工具 | 命令 |
-| --- | --- | --- |
-| 交互式提交 | `@skyroc/scripts` → `sa git-commit` | `pnpm commit` |
-| 提交校验 | `sa git-commit-verify` | git hook（commit-msg） |
-| 变更日志 | `@soybeanjs/changelog` 包装在 `sa changelog` | `sa changelog` |
-| 版本提升 | `bumpp` 包装在 `sa release` | `sa release` |
-| Git hooks | `simple-git-hooks`（待启用） | `pnpm dlx simple-git-hooks` |
+| 职责       | 工具                                         | 命令                        |
+| ---------- | -------------------------------------------- | --------------------------- |
+| 交互式提交 | `@skyroc/scripts` → `sa git-commit`          | `pnpm commit`               |
+| 提交校验   | `sa git-commit-verify`                       | git hook（commit-msg）      |
+| 变更日志   | `@soybeanjs/changelog` 包装在 `sa changelog` | `sa changelog`              |
+| 版本提升   | `bumpp` 包装在 `sa release`                  | `sa release`                |
+| Git hooks  | `simple-git-hooks`（待启用）                 | `pnpm dlx simple-git-hooks` |
 
 所有命令的实现都在 [`@skyroc/scripts`](/docs/core/scripts)。
 
@@ -25,31 +25,31 @@ description: sa git-commit 提交规范、changelog 自动化、版本号 + 标�
 <footer?>
 ```
 
-| type | 含义 | 触发 changelog |
-| --- | --- | --- |
-| `feat` | 新功能 | ✅ Features |
-| `fix` | 修复 | ✅ Bug Fixes |
-| `docs` | 文档 | ✅ Documentation |
-| `style` | 仅格式 | ❌ |
-| `refactor` | 重构 | ✅ Refactor |
-| `perf` | 性能 | ✅ Performance |
-| `test` | 测试 | ❌ |
-| `chore` | 杂项 | ❌ |
-| `build` | 构建系统 | ❌ |
-| `ci` | CI | ❌ |
-| `revert` | 回滚 | ✅ Reverts |
+| type       | 含义     | 触发 changelog   |
+| ---------- | -------- | ---------------- |
+| `feat`     | 新功能   | ✅ Features      |
+| `fix`      | 修复     | ✅ Bug Fixes     |
+| `docs`     | 文档     | ✅ Documentation |
+| `style`    | 仅格式   | ❌               |
+| `refactor` | 重构     | ✅ Refactor      |
+| `perf`     | 性能     | ✅ Performance   |
+| `test`     | 测试     | ❌               |
+| `chore`    | 杂项     | ❌               |
+| `build`    | 构建系统 | ❌               |
+| `ci`       | CI       | ❌               |
+| `revert`   | 回滚     | ✅ Reverts       |
 
 ### scope
 
 通常是包名 / 模块名（不带 scope 前缀）：
 
-| 例子 | scope |
-| --- | --- |
-| 仅 admin 应用变更 | `admin` |
-| `@skyroc/utils` 修复 | `utils` |
-| `@skyroc/web-ui` 新增组件 | `web-ui` |
-| 仓库级变更（CI、turbo） | 不写或 `repo` |
-| 文档站 | `docs` |
+| 例子                      | scope         |
+| ------------------------- | ------------- |
+| 仅 admin 应用变更         | `admin`       |
+| `@skyroc/utils` 修复      | `utils`       |
+| `@skyroc/web-ui` 新增组件 | `web-ui`      |
+| 仓库级变更（CI、turbo）   | 不写或 `repo` |
+| 文档站                    | `docs`        |
 
 ### subject
 
@@ -153,7 +153,7 @@ import { defineConfig } from '@skyroc/scripts';
 
 export default defineConfig({
   changelog: {
-    excludeTypes: ['chore', 'test'],
+    excludeTypes: ['chore', 'test']
   },
   release: {
     tagPrefix: 'v',
@@ -164,10 +164,10 @@ export default defineConfig({
 
 ## 多包发版策略
 
-| 模式 | 说明 |
-| --- | --- |
+| 模式         | 说明                                      |
+| ------------ | ----------------------------------------- |
 | **单一版本** | 所有 `@skyroc/*` 共享一个版本，整体打 tag |
-| **独立版本** | 各包独立 version，独立 tag（适合大库） |
+| **独立版本** | 各包独立 version，独立 tag（适合大库）    |
 
 当前仓库以单一版本为主（admin 的 `version: 3.0.0` 与各包版本并不严格绑定，更多是历史标签）。
 
@@ -175,12 +175,12 @@ export default defineConfig({
 
 ## 推荐的提交粒度
 
-| 场景 | 推荐 |
-| --- | --- |
-| 一次提交一类变更 | ✅ |
-| 跨多个包的同一改动（如类型升级） | 一个提交但写清 body |
-| WIP / 半成品 | 本地多次 commit，PR 合并前 squash |
-| 自动化生成的文件（dist、CHANGELOG） | 单独提交，明确标 `chore:` |
+| 场景                                | 推荐                              |
+| ----------------------------------- | --------------------------------- |
+| 一次提交一类变更                    | ✅                                |
+| 跨多个包的同一改动（如类型升级）    | 一个提交但写清 body               |
+| WIP / 半成品                        | 本地多次 commit，PR 合并前 squash |
+| 自动化生成的文件（dist、CHANGELOG） | 单独提交，明确标 `chore:`         |
 
 ## 常见检查清单
 

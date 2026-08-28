@@ -12,28 +12,39 @@ const Notification = () => {
       <div className="flex flex-wrap gap-3">
         <Button
           variant="plain"
-          onClick={() => notification.success({ title: 'Success', description: 'Your operation has been completed successfully' })}
+          onClick={() =>
+            notification.success({ title: 'Success', description: 'Your operation has been completed successfully' })
+          }
         >
           Success
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.error({ title: 'Error', description: 'Please check your network connection and try again' })}
+          onClick={() =>
+            notification.error({ title: 'Error', description: 'Please check your network connection and try again' })
+          }
         >
           Error
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.warning({ title: 'Warning', description: 'Your account is about to expire, please renew in time' })}
+          onClick={() =>
+            notification.warning({
+              title: 'Warning',
+              description: 'Your account is about to expire, please renew in time'
+            })
+          }
         >
           Warning
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.info({ title: 'New Message', description: 'You have a new message, please check' })}
+          onClick={() =>
+            notification.info({ title: 'New Message', description: 'You have a new message, please check' })
+          }
         >
           Info
         </Button>
@@ -42,46 +53,54 @@ const Notification = () => {
       <div className="flex flex-wrap gap-3">
         <Button
           variant="plain"
-          onClick={() => notification.info({
-            title: 'Confirm Action',
-            description: 'Are you sure you want to perform this action?',
-            action: { label: 'Confirm', onClick: () => message.success('Confirmed') },
-            cancel: { label: 'Cancel', onClick: () => message.info('Cancelled') }
-          })}
+          onClick={() =>
+            notification.info({
+              title: 'Confirm Action',
+              description: 'Are you sure you want to perform this action?',
+              action: { label: 'Confirm', onClick: () => message.success('Confirmed') },
+              cancel: { label: 'Cancel', onClick: () => message.info('Cancelled') }
+            })
+          }
         >
           Double Buttons
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.info({
-            title: 'Single Button Test',
-            description: 'When there is only one button, it should be on the far right',
-            action: { label: 'OK', onClick: () => message.success('OK') }
-          })}
+          onClick={() =>
+            notification.info({
+              title: 'Single Button Test',
+              description: 'When there is only one button, it should be on the far right',
+              action: { label: 'OK', onClick: () => message.success('OK') }
+            })
+          }
         >
           Single Button
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.info({
-            title: 'Notification',
-            description: 'Click the top right corner to close this notification',
-            closeButton: true,
-            duration: 0
-          })}
+          onClick={() =>
+            notification.info({
+              title: 'Notification',
+              description: 'Click the top right corner to close this notification',
+              closeButton: true,
+              duration: 0
+            })
+          }
         >
           With Close Button
         </Button>
 
         <Button
           variant="plain"
-          onClick={() => notification.success({
-            title: 'Custom Duration',
-            description: 'This notification will be displayed for 10 seconds',
-            duration: 10000
-          })}
+          onClick={() =>
+            notification.success({
+              title: 'Custom Duration',
+              description: 'This notification will be displayed for 10 seconds',
+              duration: 10000
+            })
+          }
         >
           Custom Duration
         </Button>

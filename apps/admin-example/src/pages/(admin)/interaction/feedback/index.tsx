@@ -227,20 +227,35 @@ function RouteComponent() {
           </div>
         }
       >
-        <Space size="middle" wrap>
+        <Space
+          size="middle"
+          wrap
+        >
           <Button onClick={handleShowMessage}>普通消息</Button>
-          <Button type="primary" onClick={handleSuccessMessage}>
+          <Button
+            type="primary"
+            onClick={handleSuccessMessage}
+          >
             成功消息
           </Button>
-          <Button danger onClick={handleErrorMessage}>
+          <Button
+            danger
+            onClick={handleErrorMessage}
+          >
             错误消息
           </Button>
           <Button onClick={handleInfoMessage}>信息消息</Button>
           <Button onClick={handleWarningMessage}>警告消息</Button>
-          <Button type="default" onClick={handleLoadingMessage}>
+          <Button
+            type="default"
+            onClick={handleLoadingMessage}
+          >
             加载消息
           </Button>
-          <Button type="dashed" onClick={handleDestroyMessage}>
+          <Button
+            type="dashed"
+            onClick={handleDestroyMessage}
+          >
             清除所有消息
           </Button>
         </Space>
@@ -259,17 +274,29 @@ function RouteComponent() {
           </div>
         }
       >
-        <Space size="middle" wrap>
+        <Space
+          size="middle"
+          wrap
+        >
           <Button onClick={handleShowNotification}>显示通知</Button>
-          <Button type="primary" onClick={handleSuccessNotification}>
+          <Button
+            type="primary"
+            onClick={handleSuccessNotification}
+          >
             成功通知
           </Button>
-          <Button danger onClick={handleErrorNotification}>
+          <Button
+            danger
+            onClick={handleErrorNotification}
+          >
             错误通知
           </Button>
           <Button onClick={handleInfoNotification}>信息通知</Button>
           <Button onClick={handleWarningNotification}>警告通知</Button>
-          <Button type="dashed" onClick={handleDestroyNotification}>
+          <Button
+            type="dashed"
+            onClick={handleDestroyNotification}
+          >
             清除所有通知
           </Button>
         </Space>
@@ -289,14 +316,23 @@ function RouteComponent() {
           </div>
         }
       >
-        <Space size="middle" wrap>
+        <Space
+          size="middle"
+          wrap
+        >
           <Button onClick={handleShowModal}>显示对话框</Button>
-          <Button type="primary" onClick={handleConfirmModal}>
+          <Button
+            type="primary"
+            onClick={handleConfirmModal}
+          >
             确认对话框
           </Button>
           <Button onClick={handleInfoModal}>信息对话框</Button>
           <Button onClick={handleSuccessModal}>成功对话框</Button>
-          <Button danger onClick={handleErrorModal}>
+          <Button
+            danger
+            onClick={handleErrorModal}
+          >
             错误对话框
           </Button>
           <Button onClick={handleWarningModal}>警告对话框</Button>
@@ -316,7 +352,11 @@ function RouteComponent() {
           </div>
         }
       >
-        <Button size="large" type="primary" onClick={handleComprehensiveTest}>
+        <Button
+          size="large"
+          type="primary"
+          onClick={handleComprehensiveTest}
+        >
           🚀 执行综合测试流程
         </Button>
         <div className="mt-4 p-3 text-sm bg-purple-50  rounded-md text-purple-800 ">

@@ -1,7 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
+import { cn } from '@skyroc/utils';
 import { GripVertical } from 'lucide-react';
 import { Separator as PanelResizeHandle } from 'react-resizable-panels';
-import { cn } from '@skyroc/utils';
 import { resizableVariants } from './resizable-variants';
 import type { ResizableHandleProps } from './types';
 
@@ -21,13 +21,11 @@ const ResizableHandle = (props: ResizableHandleProps) => {
       className={mergedCls.handle}
       {...rest}
     >
-      {withHandle
-        ? (
-          <div className={mergedCls.handleIconRoot}>
-            <Slot className={mergedCls.handleIcon}>{children || <GripVertical />}</Slot>
-          </div>
-        )
-        : null}
+      {withHandle ? (
+        <div className={mergedCls.handleIconRoot}>
+          <Slot className={mergedCls.handleIcon}>{children || <GripVertical />}</Slot>
+        </div>
+      ) : null}
     </PanelResizeHandle>
   );
 };

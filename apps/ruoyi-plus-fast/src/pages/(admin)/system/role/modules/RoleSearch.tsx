@@ -29,27 +29,74 @@ const RoleSearch = (props: RoleSearchProps) => {
   }
 
   return (
-    <Form form={form} initialValues={searchParams} labelCol={{ md: 7, span: 5 }}>
-      <Row gutter={[16, 16]} wrap>
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label="角色名称" name="roleName">
-            <Input allowClear placeholder="请输入角色名称" onPressEnter={handleSearch} />
+    <Form
+      form={form}
+      initialValues={searchParams}
+      labelCol={{ md: 7, span: 5 }}
+    >
+      <Row
+        gutter={[16, 16]}
+        wrap
+      >
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="角色名称"
+            name="roleName"
+          >
+            <Input
+              allowClear
+              placeholder="请输入角色名称"
+              onPressEnter={handleSearch}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label="权限字符" name="roleKey">
-            <Input allowClear placeholder="例如 admin、dept-lead" onPressEnter={handleSearch} />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="权限字符"
+            name="roleKey"
+          >
+            <Input
+              allowClear
+              placeholder="例如 admin、dept-lead"
+              onPressEnter={handleSearch}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
-          <Form.Item className="m-0" label="状态" name="status">
-            <Select allowClear options={STATUS_OPTIONS} placeholder="全部状态" />
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="状态"
+            name="status"
+          >
+            <Select
+              allowClear
+              options={STATUS_OPTIONS}
+              placeholder="全部状态"
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={6} md={12} span={24}>
+        <Col
+          lg={6}
+          md={12}
+          span={24}
+        >
           <SearchRangePicker
             form={form}
             granularity="day"
@@ -57,13 +104,28 @@ const RoleSearch = (props: RoleSearchProps) => {
           />
         </Col>
 
-        <Col lg={24} span={24}>
+        <Col
+          lg={24}
+          span={24}
+        >
           <Form.Item className="m-0">
-            <Flex align="center" gap={12} justify="end">
-              <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={reset}>
+            <Flex
+              align="center"
+              gap={12}
+              justify="end"
+            >
+              <Button
+                icon={<SvgIcon icon="ic:round-refresh" />}
+                onClick={reset}
+              >
                 重置
               </Button>
-              <Button ghost icon={<SvgIcon icon="ic:round-search" />} type="primary" onClick={handleSearch}>
+              <Button
+                ghost
+                icon={<SvgIcon icon="ic:round-search" />}
+                type="primary"
+                onClick={handleSearch}
+              >
                 查询
               </Button>
             </Flex>

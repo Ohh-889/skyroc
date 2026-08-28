@@ -20,7 +20,7 @@ export interface JotaiProviderProps {
  *       </JotaiProvider>
  *     );
  *   }
- *   ```
+ *   ```;
  */
 const JotaiProvider = (props: JotaiProviderProps) => {
   const { children } = props;

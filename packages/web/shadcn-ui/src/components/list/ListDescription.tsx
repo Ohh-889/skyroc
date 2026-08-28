@@ -16,7 +16,6 @@ export const ListDescription = (props: ListDescriptionProps) => {
       {children}
     </p>
   );
-}
-;
+};
 
 ListDescription.displayName = 'ListDescription';

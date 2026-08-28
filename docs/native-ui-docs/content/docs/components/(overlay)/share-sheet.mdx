@@ -62,18 +62,18 @@ ShareSheet 不做进出场动画（`animateOnMount={false}` 加档位动画时�
 
 `className` / `classNames` 定制内容与选项，`sheetClassName` / `sheetClassNames` 定制外层面板；`name` 与 `description` 都支持节点。
 
-| slot                | 作用位置                                       |
-| ------------------- | ---------------------------------------------- |
-| `root`              | 交给 Sheet 的内容容器（底部安全区留白在这里）   |
-| `row`               | 单行容器                                       |
-| `options`           | 选项横向滚动区的 contentContainer               |
-| `option`            | 单个选项容器                                   |
-| `optionIcon`        | 选项图标的圆形底衬                             |
-| `optionName`        | 选项名称                                       |
-| `optionDescription` | 选项描述                                       |
-| `cancelGap`         | 取消按钮上方的灰色间隔条                        |
-| `cancel`            | 取消按钮容器                                   |
-| `cancelName`        | 取消按钮文字                                   |
+| slot                | 作用位置                                      |
+| ------------------- | --------------------------------------------- |
+| `root`              | 交给 Sheet 的内容容器（底部安全区留白在这里） |
+| `row`               | 单行容器                                      |
+| `options`           | 选项横向滚动区的 contentContainer             |
+| `option`            | 单个选项容器                                  |
+| `optionIcon`        | 选项图标的圆形底衬                            |
+| `optionName`        | 选项名称                                      |
+| `optionDescription` | 选项描述                                      |
+| `cancelGap`         | 取消按钮上方的灰色间隔条                      |
+| `cancel`            | 取消按钮容器                                  |
+| `cancelName`        | 取消按钮文字                                  |
 
 <Demo src="@playground/share-sheet/ShareSheetStyles" />
 
@@ -158,7 +158,12 @@ function closeShareSheet(): void;
       description: '选中或取消后的通用回调，与 Promise 一同结算，且恰好触发一次',
       type: '(result: ShareSheetResult | null) => void'
     },
-    { name: 'closeOnSelect', description: '点击选项后是否自动关闭；命令式调用下默认为 true', type: 'boolean', default: 'true' }
+    {
+      name: 'closeOnSelect',
+      description: '点击选项后是否自动关闭；命令式调用下默认为 true',
+      type: 'boolean',
+      default: 'true'
+    }
   ]}
 />
 
@@ -199,7 +204,12 @@ import type {
       name: 'ShareSheetOption',
       description: '单个分享选项。',
       fields: [
-        { name: 'value', type: 'string', description: '选项值，同时作为列表 key（必传，因为 name 可能是节点）。', required: true },
+        {
+          name: 'value',
+          type: 'string',
+          description: '选项值，同时作为列表 key（必传，因为 name 可能是节点）。',
+          required: true
+        },
         { name: 'name', type: 'ReactNode', description: '选项名称。', required: true },
         { name: 'icon', type: 'ReactNode', description: '图标节点。' },
         { name: 'description', type: 'ReactNode', description: '选项描述。' },

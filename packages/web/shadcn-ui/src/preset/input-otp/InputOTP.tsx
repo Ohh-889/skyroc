@@ -2,9 +2,9 @@
 
 import type { ComponentRef } from 'react';
 import { forwardRef } from 'react';
-import { useComponentConfig } from '../config-provider/context';
 import InputOTPUI from '../../components/input-otp/InputOTPUI';
 import type { InputOTPProps } from '../../components/input-otp/types';
+import { useComponentConfig } from '../config-provider/context';
 
 const InputOTP = forwardRef<ComponentRef<typeof InputOTPUI>, InputOTPProps>((props, ref) => {
   const config = useComponentConfig('inputOtp');

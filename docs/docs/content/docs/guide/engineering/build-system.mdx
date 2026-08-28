@@ -14,12 +14,12 @@ description: Turborepo 编排 + tsdown 库构建 + Vite 应用构建的三层体
    （库 → dist/）             （应用 → dist/ / build/）
 ```
 
-| 层 | 工具 | 适用 | 产物 |
-| --- | --- | --- | --- |
-| 编排 | Turborepo | 所有任务 | `.turbo/` 缓存 |
-| 库构建 | tsdown（Rolldown 内核） | `packages/**` | `dist/index.mjs` + `dist/*.d.mts` |
-| 应用构建 | Vite | `apps/admin` 等 Web 应用 | `dist/` |
-| 应用构建 | Expo / Metro | `apps/native-ui-playground` 等 RN 应用 | 平台特定 |
+| 层       | 工具                    | 适用                                   | 产物                              |
+| -------- | ----------------------- | -------------------------------------- | --------------------------------- |
+| 编排     | Turborepo               | 所有任务                               | `.turbo/` 缓存                    |
+| 库构建   | tsdown（Rolldown 内核） | `packages/**`                          | `dist/index.mjs` + `dist/*.d.mts` |
+| 应用构建 | Vite                    | `apps/admin` 等 Web 应用               | `dist/`                           |
+| 应用构建 | Expo / Metro            | `apps/native-ui-playground` 等 RN 应用 | 平台特定                          |
 
 ## Turborepo
 
@@ -28,42 +28,46 @@ description: Turborepo 编排 + tsdown 库构建 + Vite 应用构建的三层体
 ```jsonc
 {
   "tasks": {
-    "build":     { "dependsOn": ["^build"], "inputs": ["$TURBO_DEFAULT$", ".env*"], "outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**", ".vercel/**"] },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**", ".vercel/**"]
+    },
     "build:web": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-    "dev":       { "dependsOn": ["^build"], "cache": false, "persistent": true },
-    "test":      { "inputs": ["src/**", "__tests__/**", "vitest.config.*", "vitest.setup.*"], "outputs": ["coverage/**"] },
-    "test:e2e":  { "dependsOn": ["^build"], "cache": false, "outputs": ["playwright-report/**", "test-results/**"] },
-    "test:watch":{ "cache": false, "persistent": true },
-    "lint":      { "dependsOn": ["^build"], "outputs": [] },
+    "dev": { "dependsOn": ["^build"], "cache": false, "persistent": true },
+    "test": { "inputs": ["src/**", "__tests__/**", "vitest.config.*", "vitest.setup.*"], "outputs": ["coverage/**"] },
+    "test:e2e": { "dependsOn": ["^build"], "cache": false, "outputs": ["playwright-report/**", "test-results/**"] },
+    "test:watch": { "cache": false, "persistent": true },
+    "lint": { "dependsOn": ["^build"], "outputs": [] },
     "typecheck": { "dependsOn": ["^build"], "outputs": [] },
-    "clean":     { "cache": false }
+    "clean": { "cache": false }
   }
 }
 ```
 
 ### 关键语义
 
-| 字段 | 作用 |
-| --- | --- |
+| 字段                    | 作用                                         |
+| ----------------------- | -------------------------------------------- |
 | `dependsOn: ["^build"]` | 自动等依赖包 build 完再跑（`^` = topo 上游） |
-| `inputs` | 影响缓存命中的文件 |
-| `outputs` | 缓存写入的目录 |
-| `cache: false` | 不缓存（dev / clean / watch / e2e） |
-| `persistent: true` | 长驻进程（dev / watch） |
-| `ui: "tui"` | 默认终端 UI |
+| `inputs`                | 影响缓存命中的文件                           |
+| `outputs`               | 缓存写入的目录                               |
+| `cache: false`          | 不缓存（dev / clean / watch / e2e）          |
+| `persistent: true`      | 长驻进程（dev / watch）                      |
+| `ui: "tui"`             | 默认终端 UI                                  |
 
 ### 命令
 
-| 命令 | 行为 |
-| --- | --- |
-| `pnpm dev` | 所有包并发 `dev`（library 包多数是 tsdown watch） |
-| `pnpm build` | 全仓 build，使用缓存 |
-| `pnpm test` | 全仓单测 |
-| `pnpm lint` / `pnpm typecheck` | 全仓 lint / 类型检查 |
-| `turbo run build --filter=@skyroc/web-ui` | 仅构建某个包 |
-| `turbo run build --filter=...@skyroc/web-ui` | 构建该包及其下游 |
-| `turbo run lint --filter='[HEAD^1]'` | 只对上次提交以来改动过的包跑 lint |
-| `turbo run build --force` | 强制忽略缓存重跑 |
+| 命令                                         | 行为                                              |
+| -------------------------------------------- | ------------------------------------------------- |
+| `pnpm dev`                                   | 所有包并发 `dev`（library 包多数是 tsdown watch） |
+| `pnpm build`                                 | 全仓 build，使用缓存                              |
+| `pnpm test`                                  | 全仓单测                                          |
+| `pnpm lint` / `pnpm typecheck`               | 全仓 lint / 类型检查                              |
+| `turbo run build --filter=@skyroc/web-ui`    | 仅构建某个包                                      |
+| `turbo run build --filter=...@skyroc/web-ui` | 构建该包及其下游                                  |
+| `turbo run lint --filter='[HEAD^1]'`         | 只对上次提交以来改动过的包跑 lint                 |
+| `turbo run build --force`                    | 强制忽略缓存重跑                                  |
 
 ### 缓存命中
 
@@ -93,18 +97,13 @@ import { defineConfig } from 'tsdown';
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
-    color: 'src/color/index.ts',     // 子入口
+    color: 'src/color/index.ts', // 子入口
     storage: 'src/storage/index.ts'
   },
   format: ['esm'],
   dts: true,
   clean: true,
-  external: [
-    /^node:/,
-    /^@skyroc\//,
-    'react',
-    'react-dom'
-  ]
+  external: [/^node:/, /^@skyroc\//, 'react', 'react-dom']
 });
 ```
 
@@ -132,12 +131,12 @@ export default defineConfig({
 
 ### `external` 模式
 
-| 形式 | 含义 |
-| --- | --- |
-| `'react'` | 完全外部化 |
-| `/^node:/` | 所有 Node 内置模块外部化 |
-| `/^@skyroc\//` | 所有 @skyroc 包外部化（避免重复打包） |
-| 不写 | 跟随 pkg.dependencies / peerDependencies |
+| 形式           | 含义                                     |
+| -------------- | ---------------------------------------- |
+| `'react'`      | 完全外部化                               |
+| `/^node:/`     | 所有 Node 内置模块外部化                 |
+| `/^@skyroc\//` | 所有 @skyroc 包外部化（避免重复打包）    |
+| 不写           | 跟随 pkg.dependencies / peerDependencies |
 
 > 把 `@skyroc/*` 外部化的好处：下游构建可以 dedup 它们，不会出现多份 `@skyroc/utils`。
 
@@ -167,11 +166,11 @@ export default defineConfig({
 
 ### 模式
 
-| 命令 | mode | env 文件 |
-| --- | --- | --- |
-| `pnpm dev` | `test` | `.env`、`.env.test` |
-| `pnpm dev:prod` | `prod` | `.env`、`.env.prod` |
-| `pnpm build` | `prod` | `.env`、`.env.prod` |
+| 命令              | mode   | env 文件            |
+| ----------------- | ------ | ------------------- |
+| `pnpm dev`        | `test` | `.env`、`.env.test` |
+| `pnpm dev:prod`   | `prod` | `.env`、`.env.prod` |
+| `pnpm build`      | `prod` | `.env`、`.env.prod` |
 | `pnpm build:test` | `test` | `.env`、`.env.test` |
 
 ### manualChunks
@@ -192,11 +191,11 @@ export default defineConfig({
 
 ## tsc / typecheck
 
-| 包 | 命令 |
-| --- | --- |
-| 库 | tsdown 内部跑类型，外加 `pnpm typecheck`（可选） |
-| 应用 | `tsc --noEmit --skipLibCheck` |
-| 全局 | `pnpm typecheck` → `turbo run typecheck` |
+| 包   | 命令                                             |
+| ---- | ------------------------------------------------ |
+| 库   | tsdown 内部跑类型，外加 `pnpm typecheck`（可选） |
+| 应用 | `tsc --noEmit --skipLibCheck`                    |
+| 全局 | `pnpm typecheck` → `turbo run typecheck`         |
 
 ## 构建产物清理
 
@@ -208,12 +207,12 @@ pnpm clean   # 全仓 turbo run clean
 
 ## 构建调试
 
-| 工具 | 方式 |
-| --- | --- |
-| Vite inspect | dev 模式访问 `/__inspect/`（admin-vite 内置） |
+| 工具                    | 方式                                               |
+| ----------------------- | -------------------------------------------------- |
+| Vite inspect            | dev 模式访问 `/__inspect/`（admin-vite 内置）      |
 | Turborepo `--summarize` | `pnpm build --summarize` 生成 `.turbo/runs/*.json` |
-| Turborepo `--dry` | `pnpm build --dry` 仅看任务图，不执行 |
-| Build performance | `--profile=trace.json` 配合 chrome://tracing |
+| Turborepo `--dry`       | `pnpm build --dry` 仅看任务图，不执行              |
+| Build performance       | `--profile=trace.json` 配合 chrome://tracing       |
 
 ## 与 Monorepo、Catalog 的协作
 

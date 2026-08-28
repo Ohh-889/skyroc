@@ -1,6 +1,5 @@
 import type { ThemeOptions } from '@skyroc/tailwind-plugin';
 import type { ToasterProps } from 'sonner';
-import type { ThemeSize } from '../../types/shared';
 import type { AccordionProps } from '../../components/accordion/types';
 import type { AlertProps } from '../../components/alert';
 import type { AlertDialogProps } from '../../components/alert-dialog';
@@ -47,6 +46,7 @@ import type { TextareaProps } from '../../components/textarea/types';
 import type { ToggleProps } from '../../components/toggle/types';
 import type { TooltipProps } from '../../components/tooltip/types';
 import type { TreeProps } from '../../components/tree/types';
+import type { ThemeSize } from '../../types/shared';
 
 /**
  * Props for the ConfigProvider component. Provides global configuration and theming for all child components.
@@ -56,7 +56,7 @@ import type { TreeProps } from '../../components/tree/types';
  *   <ConfigProvider theme={{ primary: 'blue' }} direction="ltr" size="md">
  *     <App />
  *   </ConfigProvider>;
- *   ```
+ *   ```;
  */
 export interface ConfigProviderProps extends ConfigProps {
   /** Child components that will inherit the configuration. */
@@ -236,7 +236,7 @@ export interface ComponentConfig {
  *   triggerIcon: <ChevronDown />,
  *   classNames: { trigger: 'custom-trigger' }
  *   }
- *   ```
+ *   ```;
  */
 export type AccordionConfig = Pick<
   AccordionProps,
@@ -268,7 +268,7 @@ export type AccordionConfig = Pick<
  *   size: 'md',
  *   color: 'success'
  *   }
- *   ```
+ *   ```;
  */
 export type AlertConfig = Pick<
   AlertProps,
@@ -287,7 +287,7 @@ export type AlertConfig = Pick<
  *   forceMountOverlay: true,
  *   classNames: { content: 'custom-content' }
  *   }
- *   ```
+ *   ```;
  */
 export type AlertDialogConfig = Pick<
   AlertDialogProps,
@@ -303,7 +303,7 @@ export type AlertDialogConfig = Pick<
  *   aspectRatio: {
  *     className: 'custom-aspect-ratio';
  *   }
- *   ```
+ *   ```;
  */
 export type AspectRatioConfig = Pick<AspectRatioProps, 'className'>;
 
@@ -365,7 +365,7 @@ export type FormFieldConfig = Pick<FormFieldProps, 'className' | 'classNames' | 
  *   height: 24,
  *   color: 'currentColor'
  *   }
- *   ```
+ *   ```;
  */
 export type IconConfig = Pick<IconProps, 'className' | 'color' | 'height' | 'inline' | 'width'>;
 
@@ -383,7 +383,7 @@ export type InputConfig = Pick<InputProps, 'className' | 'size'>;
  *   size: 'md',
  *   shape: 'rounded'
  *   }
- *   ```
+ *   ```;
  */
 export type ButtonConfig = Pick<ButtonProps, 'className' | 'color' | 'shadow' | 'shape' | 'size' | 'variant'>;
 
@@ -465,7 +465,7 @@ export type LayoutConfig = Pick<LayoutProps, 'collapsible' | 'side' | 'size' | '
  *   item: 'custom-item'
  *   }
  *   }
- *   ```
+ *   ```;
  */
 export type ListConfig = Pick<ListProps, 'className' | 'classNames' | 'size'>;
 

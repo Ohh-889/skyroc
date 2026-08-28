@@ -38,7 +38,11 @@ Collapsible 基于 Radix Collapsible 封装，主组件负责组合根容器和�
 ```tsx
 const [open, setOpen] = useState(false);
 
-<Collapsible open={open} onOpenChange={setOpen} content={<div>Details</div>}>
+<Collapsible
+  open={open}
+  onOpenChange={setOpen}
+  content={<div>Details</div>}
+>
   <CollapsibleTrigger>Toggle</CollapsibleTrigger>
 </Collapsible>;
 ```

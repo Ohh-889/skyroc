@@ -1,17 +1,15 @@
 'use client';
 
+import { cn } from '@skyroc/utils';
 import { isValidElement } from 'react';
 import type { ReactNode } from 'react';
-import { cn } from '@skyroc/utils';
 import { Divider } from '../divider';
+import { listVariants } from './list-variants';
 import { ListContent } from './ListContent';
 import { ListDescription } from './ListDescription';
 import { ListItem } from './ListItem';
 import { ListTitle } from './ListTitle';
-import { listVariants } from './list-variants';
 import type { ListItemUIProps } from './types';
-
-
 
 function getDividerNode(divider?: ReactNode) {
   if (!divider) return null;
@@ -56,41 +54,33 @@ export const ListItemUI = (props: ListItemUIProps) => {
           size={size}
           {...contentProps}
         >
+          {title ? (
+            <ListTitle
+              className={classNames?.title}
+              size={size}
+              {...titleProps}
+            >
+              {title}
+            </ListTitle>
+          ) : null}
 
-          {title
-            ? (
-              <ListTitle
-                className={classNames?.title}
-                size={size}
-                {...titleProps}
-              >
-                {title}
-              </ListTitle>
-            )
-            : null}
-
-          {description
-            ? (
-              <ListDescription
-                className={classNames?.description}
-                size={size}
-                {...descriptionProps}
-              >
-                {description}
-              </ListDescription>
-            )
-            : null}
+          {description ? (
+            <ListDescription
+              className={classNames?.description}
+              size={size}
+              {...descriptionProps}
+            >
+              {description}
+            </ListDescription>
+          ) : null}
 
           {content}
         </ListContent>
 
         {trailing}
-
       </ListItem>
 
-      {
-        getDividerNode(divider)
-      }
+      {getDividerNode(divider)}
     </>
   );
 };

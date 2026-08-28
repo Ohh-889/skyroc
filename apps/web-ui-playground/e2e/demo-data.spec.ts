@@ -17,9 +17,12 @@ test.describe('data, scroll, and drag demos', () => {
     await gotoDemo(page, 'virtualizer');
     const virtualList = demoCardContent(page, '基础虚拟列表');
     await expectTextVisible(virtualList, 'Item 1');
-    await virtualList.locator('[style*="overflow"]').first().evaluate(element => {
-      element.scrollTo(0, 1600);
-    });
+    await virtualList
+      .locator('[style*="overflow"]')
+      .first()
+      .evaluate(element => {
+        element.scrollTo(0, 1600);
+      });
     await expect(virtualList.getByText(/Item [3-9][0-9]/).first()).toBeVisible();
 
     expectNoPageErrors(pageErrors);

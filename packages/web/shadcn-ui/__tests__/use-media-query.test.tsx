@@ -71,14 +71,20 @@ describe('useMediaQuery', () => {
       listeners.delete(listener);
     });
 
-    vi.stubGlobal('matchMedia', vi.fn((media: string): MediaQueryList => ({
-      addListener,
-      dispatchEvent: () => true,
-      matches: media === query,
-      media,
-      onchange: null,
-      removeListener
-    }) as unknown as MediaQueryList));
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(
+        (media: string): MediaQueryList =>
+          ({
+            addListener,
+            dispatchEvent: () => true,
+            matches: media === query,
+            media,
+            onchange: null,
+            removeListener
+          }) as unknown as MediaQueryList
+      )
+    );
 
     const { unmount } = render(<MediaQueryProbe options={query} />);
 

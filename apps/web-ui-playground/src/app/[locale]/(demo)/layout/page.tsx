@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Component, Dock, Home } from 'lucide-react';
 import type { BreadcrumbItem, SelectProps, ThemeSize } from '@skyroc/web-ui';
 import { Breadcrumb, Button, ButtonGroup, Layout, LayoutTrigger, Select } from '@skyroc/web-ui';
+import { Component, Dock, Home } from 'lucide-react';
+import { useState } from 'react';
 import type { LayoutCollapsible, LayoutSide, LayoutVariant } from '@/components/layout/layout-variants';
 
 const DemoLayout = () => {
@@ -165,29 +165,19 @@ const DemoLayout = () => {
           sidebar={<div className="group p-2">sidebar</div>}
           size={size as ThemeSize}
           variant={variant as LayoutVariant}
-          footer={(
-            <div className="border-border border-t p-4">
-              This is Footer
-            </div>
-          )}
-          header={(
+          footer={<div className="border-border border-t p-4">This is Footer</div>}
+          header={
             <div className="flex w-full items-center gap-2 px-4">
               <LayoutTrigger size={size as ThemeSize} />
               <Breadcrumb items={breadcrumbItems} />
             </div>
-          )}
-          tab={(
-            <div className="border-border border-b p-4">
-              This is Tab
-            </div>
-          )}
+          }
+          tab={<div className="border-border border-b p-4">This is Tab</div>}
           ui={{
             header: 'h-12'
           }}
         >
-          <div className="flex-1 p-4">
-            This is Content
-          </div>
+          <div className="flex-1 p-4">This is Content</div>
         </Layout>
       </div>
     </>

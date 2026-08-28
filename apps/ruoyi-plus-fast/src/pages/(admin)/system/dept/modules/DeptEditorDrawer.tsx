@@ -184,11 +184,21 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
       size={560}
       onClose={onClose}
       footer={
-        <Flex justify="flex-end" gap={8}>
-          <Button disabled={loading} onClick={onClose}>
+        <Flex
+          justify="flex-end"
+          gap={8}
+        >
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存部门
           </Button>
         </Flex>
@@ -201,7 +211,10 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
           showIcon
           type="error"
           action={
-            <Button size="small" onClick={handleRetry}>
+            <Button
+              size="small"
+              onClick={handleRetry}
+            >
               重试
             </Button>
           }
@@ -209,17 +222,32 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
       ) : null}
 
       <Spin spinning={detailLoading}>
-        <Form<DeptFormValues> form={form} layout="vertical" requiredMark onFinish={handleFinish}>
-          <Typography.Text className="flex items-center gap-7px" strong>
-            <SvgIcon className="text-primary" icon="ph:tree-structure" />
+        <Form<DeptFormValues>
+          form={form}
+          layout="vertical"
+          requiredMark
+          onFinish={handleFinish}
+        >
+          <Typography.Text
+            className="flex items-center gap-7px"
+            strong
+          >
+            <SvgIcon
+              className="text-primary"
+              icon="ph:tree-structure"
+            />
             组织归属
           </Typography.Text>
           <Divider className="my-12px" />
 
-          <Form.Item label="上级部门" name="parentId" rules={[{ message: '请选择上级部门', required: true }]}>
+          <Form.Item
+            label="上级部门"
+            name="parentId"
+            rules={[{ message: '请选择上级部门', required: true }]}
+          >
             <TreeSelect
               showSearch={{
-                treeNodeFilterProp: "title"
+                treeNodeFilterProp: 'title'
               }}
               treeDefaultExpandAll
               placeholder="请选择上级部门"
@@ -243,8 +271,14 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
             />
           ) : null}
 
-          <Typography.Text className="flex items-center gap-7px" strong>
-            <SvgIcon className="text-primary" icon="ph:identification-card" />
+          <Typography.Text
+            className="flex items-center gap-7px"
+            strong
+          >
+            <SvgIcon
+              className="text-primary"
+              icon="ph:identification-card"
+            />
             基础信息
           </Typography.Text>
           <Divider className="my-12px" />
@@ -257,7 +291,10 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
               { max: 30, message: '部门名称最多 30 个字符' }
             ]}
           >
-            <Input allowClear placeholder="请输入部门名称" />
+            <Input
+              allowClear
+              placeholder="请输入部门名称"
+            />
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-x-16px lt-sm:grid-cols-1">
@@ -267,21 +304,41 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
               name="deptCategory"
               rules={[{ max: 100, message: '类别编码最多 100 个字符' }]}
             >
-              <Input allowClear placeholder="例如 DEPT" />
+              <Input
+                allowClear
+                placeholder="例如 DEPT"
+              />
             </Form.Item>
 
-            <Form.Item label="显示顺序" name="orderNum" rules={[{ message: '请输入显示顺序', required: true }]}>
-              <InputNumber className="w-full" min={0} precision={0} />
+            <Form.Item
+              label="显示顺序"
+              name="orderNum"
+              rules={[{ message: '请输入显示顺序', required: true }]}
+            >
+              <InputNumber
+                className="w-full"
+                min={0}
+                precision={0}
+              />
             </Form.Item>
           </div>
 
-          <Typography.Text className="flex items-center gap-7px" strong>
-            <SvgIcon className="text-primary" icon="ph:user-circle" />
+          <Typography.Text
+            className="flex items-center gap-7px"
+            strong
+          >
+            <SvgIcon
+              className="text-primary"
+              icon="ph:user-circle"
+            />
             负责人和联系方式
           </Typography.Text>
           <Divider className="my-12px" />
 
-          <Form.Item label="负责人" name="leader">
+          <Form.Item
+            label="负责人"
+            name="leader"
+          >
             <Select
               allowClear
               disabled={!isUpdate}
@@ -300,7 +357,11 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
                 { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码' }
               ]}
             >
-              <Input allowClear maxLength={11} placeholder="请输入联系电话" />
+              <Input
+                allowClear
+                maxLength={11}
+                placeholder="请输入联系电话"
+              />
             </Form.Item>
 
             <Form.Item
@@ -311,11 +372,19 @@ const DeptEditorDrawer = (props: DeptEditorDrawerProps) => {
                 { message: '请输入正确的邮箱地址', type: 'email' }
               ]}
             >
-              <Input allowClear maxLength={50} placeholder="name@example.com" />
+              <Input
+                allowClear
+                maxLength={50}
+                placeholder="name@example.com"
+              />
             </Form.Item>
           </div>
 
-          <Form.Item extra="停用前后端会校验正常子部门和已分配用户。" label="部门状态" name="status">
+          <Form.Item
+            extra="停用前后端会校验正常子部门和已分配用户。"
+            label="部门状态"
+            name="status"
+          >
             <Radio.Group
               options={[
                 { label: '正常', value: '0' },

@@ -201,15 +201,29 @@ const MenuManage = () => {
         render: (_, record) => (
           <div className="flex-center justify-end gap-8px">
             {record.type !== 'divider' && (
-              <Button ghost size="small" type="primary" onClick={() => handleAddChildMenu(record)}>
+              <Button
+                ghost
+                size="small"
+                type="primary"
+                onClick={() => handleAddChildMenu(record)}
+              >
                 {t('page.manage.menu.addChildMenu')}
               </Button>
             )}
-            <Button size="small" onClick={() => edit(record)}>
+            <Button
+              size="small"
+              onClick={() => edit(record)}
+            >
               {t('common.edit')}
             </Button>
-            <Popconfirm title={t('common.confirmDelete')} onConfirm={handleDelete}>
-              <Button danger size="small">
+            <Popconfirm
+              title={t('common.confirmDelete')}
+              onConfirm={handleDelete}
+            >
+              <Button
+                danger
+                size="small"
+              >
                 {t('common.delete')}
               </Button>
             </Popconfirm>
@@ -237,14 +251,22 @@ const MenuManage = () => {
         defaultActiveKey={isMobile ? undefined : '1'}
         items={[
           {
-            children: <MenuSearch {...searchProps} layoutOptions={layoutOptions} />,
+            children: (
+              <MenuSearch
+                {...searchProps}
+                layoutOptions={layoutOptions}
+              />
+            ),
             key: '1',
             label: t('common.search')
           }
         ]}
       />
 
-      <div className="min-h-0 flex flex-1 flex-col" ref={tableWrapperRef}>
+      <div
+        className="min-h-0 flex flex-1 flex-col"
+        ref={tableWrapperRef}
+      >
         <Card
           className="min-h-0 flex flex-1 flex-col card-wrapper"
           extra={
@@ -261,7 +283,12 @@ const MenuManage = () => {
           title={t('page.manage.menu.title')}
           variant="borderless"
         >
-          <Table rowSelection={rowSelection} scroll={scrollConfig} size="small" {...tableProps} />
+          <Table
+            rowSelection={rowSelection}
+            scroll={scrollConfig}
+            size="small"
+            {...tableProps}
+          />
           <Suspense fallback={null}>
             <MenuOperateDrawer
               {...generalPopupOperation}
@@ -300,9 +327,15 @@ function backendRouteListQueryKey(params: MenuSearchParams) {
 
 function renderRouteIcon(record: MenuTableRecord) {
   const icon = record.localIcon ? (
-    <SvgIcon className="text-20px" localIcon={record.localIcon} />
+    <SvgIcon
+      className="text-20px"
+      localIcon={record.localIcon}
+    />
   ) : (
-    <SvgIcon className="text-20px" icon={record.icon || DEFAULT_MENU_ICON} />
+    <SvgIcon
+      className="text-20px"
+      icon={record.icon || DEFAULT_MENU_ICON}
+    />
   );
 
   return <span className="inline-flex w-full items-center justify-center">{icon}</span>;

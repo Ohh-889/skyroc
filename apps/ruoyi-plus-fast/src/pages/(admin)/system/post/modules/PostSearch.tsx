@@ -54,42 +54,108 @@ const PostSearch = (props: PostSearchProps) => {
   }
 
   return (
-    <Form form={form} initialValues={searchParams} labelCol={{ md: 7, span: 5 }}>
-      <Form.Item hidden name="belongDeptId">
+    <Form
+      form={form}
+      initialValues={searchParams}
+      labelCol={{ md: 7, span: 5 }}
+    >
+      <Form.Item
+        hidden
+        name="belongDeptId"
+      >
         <Input />
       </Form.Item>
 
-      <Row gutter={[16, 16]} wrap>
-        <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="岗位名称" name="postName">
-            <Input allowClear placeholder="请输入岗位名称" onPressEnter={handleSearch} />
+      <Row
+        gutter={[16, 16]}
+        wrap
+      >
+        <Col
+          lg={8}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="岗位名称"
+            name="postName"
+          >
+            <Input
+              allowClear
+              placeholder="请输入岗位名称"
+              onPressEnter={handleSearch}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="岗位编码" name="postCode">
-            <Input allowClear placeholder="请输入岗位编码" onPressEnter={handleSearch} />
+        <Col
+          lg={8}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="岗位编码"
+            name="postCode"
+          >
+            <Input
+              allowClear
+              placeholder="请输入岗位编码"
+              onPressEnter={handleSearch}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="状态" name="status">
-            <Select allowClear options={STATUS_OPTIONS} placeholder="全部状态" />
+        <Col
+          lg={8}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="状态"
+            name="status"
+          >
+            <Select
+              allowClear
+              options={STATUS_OPTIONS}
+              placeholder="全部状态"
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="类别编码" name="postCategory">
-            <Input allowClear placeholder="请输入类别编码" onPressEnter={handleSearch} />
+        <Col
+          lg={8}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="类别编码"
+            name="postCategory"
+          >
+            <Input
+              allowClear
+              placeholder="请输入类别编码"
+              onPressEnter={handleSearch}
+            />
           </Form.Item>
         </Col>
 
-        <Col lg={8} md={12} span={24}>
-          <Form.Item className="m-0" label="精确部门" name="deptId">
+        <Col
+          lg={8}
+          md={12}
+          span={24}
+        >
+          <Form.Item
+            className="m-0"
+            label="精确部门"
+            name="deptId"
+          >
             <Select
               allowClear
               showSearch={{
-                optionFilterProp: "label"
+                optionFilterProp: 'label'
               }}
               options={departments.map(option => ({ label: option.label, value: option.value }))}
               placeholder="只查询一个部门"
@@ -98,13 +164,28 @@ const PostSearch = (props: PostSearchProps) => {
           </Form.Item>
         </Col>
 
-        <Col lg={24} span={24}>
+        <Col
+          lg={24}
+          span={24}
+        >
           <Form.Item className="m-0">
-            <Flex align="center" gap={12} justify="end">
-              <Button icon={<SvgIcon icon="ic:round-refresh" />} onClick={handleReset}>
+            <Flex
+              align="center"
+              gap={12}
+              justify="end"
+            >
+              <Button
+                icon={<SvgIcon icon="ic:round-refresh" />}
+                onClick={handleReset}
+              >
                 重置
               </Button>
-              <Button ghost icon={<SvgIcon icon="ic:round-search" />} type="primary" onClick={handleSearch}>
+              <Button
+                ghost
+                icon={<SvgIcon icon="ic:round-search" />}
+                type="primary"
+                onClick={handleSearch}
+              >
                 查询
               </Button>
             </Flex>

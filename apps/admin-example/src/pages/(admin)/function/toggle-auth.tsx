@@ -107,11 +107,30 @@ const ToggleAuth = () => {
   ];
 
   return (
-    <ASpace className="w-full" direction="vertical" size={16}>
-      <ACard className="card-wrapper" size="small" title={t('request.logout')}>
-        <ADescriptions bordered column={1} items={roleItems} layout="vertical" size="small" />
+    <ASpace
+      className="w-full"
+      direction="vertical"
+      size={16}
+    >
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('request.logout')}
+      >
+        <ADescriptions
+          bordered
+          column={1}
+          items={roleItems}
+          layout="vertical"
+          size="small"
+        />
 
-        <ACard className="card-wrapper" size="small" title={t('page.function.toggleAuth.authHook')} variant="borderless">
+        <ACard
+          className="card-wrapper"
+          size="small"
+          title={t('page.function.toggleAuth.authHook')}
+          variant="borderless"
+        >
           <ASpace>
             {hasAuth('B_CODE1') && <AButton>{t('page.function.toggleAuth.superAdminVisible')}</AButton>}
             {hasAuth('B_CODE2') && <AButton>{t('page.function.toggleAuth.adminVisible')}</AButton>}

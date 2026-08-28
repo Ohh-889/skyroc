@@ -19,12 +19,19 @@ const ProjectDetail = () => {
   }
 
   return (
-    <ACard className="h-full card-wrapper" size="small" variant="borderless">
+    <ACard
+      className="h-full card-wrapper"
+      size="small"
+      variant="borderless"
+    >
       <div className="w-full flex justify-center">
         <div className="w-full px-4">
           <div className="overflow-hidden border border-border rounded-8px bg-container">
             <div className="bg-primary px-24px py-20px">
-              <Typography.Title className="m-0! text-white!" level={4}>
+              <Typography.Title
+                className="m-0! text-white!"
+                level={4}
+              >
                 项目详情
               </Typography.Title>
               <Typography.Text className="text-white/75">显示当前动态路由参数</Typography.Text>
@@ -38,7 +45,10 @@ const ProjectDetail = () => {
 
               <ASpace>
                 <AButton onClick={goProjects}>返回项目入口</AButton>
-                <AButton type="primary" onClick={goProjectEdit}>
+                <AButton
+                  type="primary"
+                  onClick={goProjectEdit}
+                >
                   编辑示例记录
                 </AButton>
               </ASpace>

@@ -56,7 +56,14 @@ const PageTab: FC<PageTabProps> = ({
     if (handleClose) handleClose();
   }
 
-  const suffixComponent = suffix || (closable && <SvgClose className={styles['svg-close']} onClick={closeTab} />);
+  const suffixComponent =
+    suffix ||
+    (closable && (
+      <SvgClose
+        className={styles['svg-close']}
+        onClick={closeTab}
+      />
+    ));
 
   return (
     <ActiveTabComponent

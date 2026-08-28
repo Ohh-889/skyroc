@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { TabsContent as Content } from '@radix-ui/react-tabs';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { tabsVariants } from './tabs-variants';
 import type { TabsContentProps } from './types';
 

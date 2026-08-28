@@ -33,7 +33,12 @@ const CacheChart = (props: CacheChartProps) => {
     };
   }, [option]);
 
-  return <div ref={chartRef} className="h-360px w-full" />;
+  return (
+    <div
+      ref={chartRef}
+      className="h-360px w-full"
+    />
+  );
 };
 
 function formatCpu(value: string | undefined) {
@@ -116,18 +121,42 @@ const CacheManagement = (props: CacheManagementProps) => {
 
   return (
     <div className="h-full min-w-0 overflow-x-hidden overflow-y-auto">
-      <Space className="min-w-0 w-full" orientation="vertical" size={16}>
-        <Card className="card-wrapper" variant="borderless">
-          <Flex align="center" justify="space-between" wrap="wrap" gap={12}>
-            <Flex align="center" gap={8}>
+      <Space
+        className="min-w-0 w-full"
+        orientation="vertical"
+        size={16}
+      >
+        <Card
+          className="card-wrapper"
+          variant="borderless"
+        >
+          <Flex
+            align="center"
+            justify="space-between"
+            wrap="wrap"
+            gap={12}
+          >
+            <Flex
+              align="center"
+              gap={8}
+            >
               <SvgIcon icon="ph:database" />
-              <Typography.Title level={4} className="m-0">
+              <Typography.Title
+                level={4}
+                className="m-0"
+              >
                 Redis 缓存监控
               </Typography.Title>
             </Flex>
-            <Flex align="center" gap={12}>
+            <Flex
+              align="center"
+              gap={12}
+            >
               <Typography.Text type="secondary">自动刷新</Typography.Text>
-              <Switch checked={autoRefresh} onChange={setAutoRefresh} />
+              <Switch
+                checked={autoRefresh}
+                onChange={setAutoRefresh}
+              />
               <Button
                 icon={<SvgIcon icon="ic:round-refresh" />}
                 loading={cacheQuery.isFetching}
@@ -150,7 +179,10 @@ const CacheManagement = (props: CacheManagementProps) => {
         <Card
           className="card-wrapper"
           title={
-            <Flex align="center" gap={8}>
+            <Flex
+              align="center"
+              gap={8}
+            >
               <SvgIcon icon="ph:monitor" />
               Redis 基本信息
             </Flex>
@@ -162,7 +194,12 @@ const CacheManagement = (props: CacheManagementProps) => {
               <Spin />
             </div>
           ) : (
-            <Descriptions bordered column={{ xs: 1, sm: 2, md: 4 }} items={descriptionItems} size="small" />
+            <Descriptions
+              bordered
+              column={{ xs: 1, sm: 2, md: 4 }}
+              items={descriptionItems}
+              size="small"
+            />
           )}
         </Card>
         <div className="min-w-0 grid grid-cols-1 gap-16px lg:grid-cols-2">
@@ -170,7 +207,10 @@ const CacheManagement = (props: CacheManagementProps) => {
             <Card
               className="h-full min-w-0 card-wrapper"
               title={
-                <Flex align="center" gap={8}>
+                <Flex
+                  align="center"
+                  gap={8}
+                >
                   <SvgIcon icon="ph:chart-pie-slice" />
                   命令统计
                 </Flex>
@@ -184,7 +224,10 @@ const CacheManagement = (props: CacheManagementProps) => {
             <Card
               className="h-full min-w-0 card-wrapper"
               title={
-                <Flex align="center" gap={8}>
+                <Flex
+                  align="center"
+                  gap={8}
+                >
                   <SvgIcon icon="ph:gauge" />
                   内存信息
                 </Flex>

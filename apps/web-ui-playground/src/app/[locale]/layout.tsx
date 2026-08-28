@@ -1,11 +1,11 @@
-import { getMessages, setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
 import { Card, Sonner, TooltipProvider } from '@skyroc/web-ui';
 import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
+import { notFound } from 'next/navigation';
+import type { Locale } from '../../i18n/config';
 import { routing } from '../../i18n/routing';
 import { BrandLogo, HeaderActions } from '../_components';
-import type { Locale } from '../../i18n/config';
 
 interface Props {
   /** Page content rendered inside the locale layout. */

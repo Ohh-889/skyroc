@@ -9,30 +9,34 @@ const FieldChange = () => {
     <Form
       className="w-[480px] space-y-4 max-sm:w-full"
       form={form}
-      onFieldsChange={(changedFields) => {
+      onFieldsChange={changedFields => {
         /**
-         * onFieldsChange(changedFields, allFields)
+         * OnFieldsChange(changedFields, allFields)
          *
-         * This callback is triggered whenever a field's value or meta changes.
-         * For a single keystroke, you will typically see up to THREE distinct updates:
+         * This callback is triggered whenever a field's value or meta changes. For a single keystroke, you will
+         * typically see up to THREE distinct updates:
          *
-         * 1) Touched + Value
+         * 1. Touched + Value
+         *
          * - The first interaction marks the field as touched.
          * - The value changes to the latest input.
          * - Mask bits: ChangeTag.Touched (first time only) | ChangeTag.Value | ChangeTag.Dirty
          *
-         * 2) Validating (in progress)
+         * 2. Validating (in progress)
+         *
          * - Async rules start running (debounced).
          * - UI can show a spinner / "validating…" state.
          * - Mask bits: ChangeTag.Validating
          *
-         * 3) Validation settled (validated)
+         * 3. Validation settled (validated)
+         *
          * - Validation completes for the current value.
          * - Errors/Warnings are updated only if they actually changed.
          * - Internal `_validated` is set (the field is considered validated for the current value).
          * - Mask bits: ChangeTag.Validated | (ChangeTag.Errors if changed) | (ChangeTag.Warnings if changed)
          *
          * Notes:
+         *
          * - If rules don't change results, Errors/Warnings bits won't be emitted again.
          * - Hidden/disabled fields short-circuit: old errors are cleared and no validating occurs.
          * - Concurrency is guarded by tokens; only the latest validation result is applied.

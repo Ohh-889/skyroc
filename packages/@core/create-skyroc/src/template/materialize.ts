@@ -15,7 +15,7 @@ interface MaterializeOptions {
 }
 
 interface FlattenedConfigFile {
-  /** extends 链已展平的配置内容。 */
+  /** Extends 链已展平的配置内容。 */
   content: Record<string, unknown>;
   /** 目标文件相对生成目录的路径。 */
   file: string;
@@ -35,8 +35,8 @@ interface StandaloneRewrite {
 }
 
 /**
- * 这些 script 靠 `pnpm --filter` 去构建同一个 workspace 里的 `@skyroc/web-admin-vite`。独立工程里该包直接来自 registry，
- * 已经是构建产物，pre* 钩子只会因为 filter 不到包而失败。
+ * 这些 script 靠 `pnpm --filter` 去构建同一个 workspace 里的 `@skyroc/web-admin-vite`。独立工程里该包直接来自 registry， 已经是构建产物，pre* 钩子只会因为
+ * filter 不到包而失败。
  */
 const DROPPED_PACKAGE_SCRIPTS = [
   'build:admin-vite',
@@ -142,10 +142,7 @@ async function applyStandaloneRewrites(targetDir: string) {
   return missed;
 }
 
-/**
- * shell 源码在生成项目里位于 `src/framework`，monorepo 里位于 `packages/web/admin`。
- * 展平后的 tsconfig 还带着 monorepo 的映射，这里改写成独立工程的路径。
- */
+/** Shell 源码在生成项目里位于 `src/framework`，monorepo 里位于 `packages/web/admin`。 展平后的 tsconfig 还带着 monorepo 的映射，这里改写成独立工程的路径。 */
 function rewriteShellTsconfig(tsconfig: Record<string, unknown>) {
   const rewritten = structuredClone(tsconfig);
   const compilerOptions = (rewritten.compilerOptions ?? {}) as Record<string, unknown>;
@@ -168,8 +165,7 @@ function rewriteShellTsconfig(tsconfig: Record<string, unknown>) {
 /**
  * 把同步期解析好的数据套用到生成目录，产出一个脱离 monorepo 也能 install 的应用。
  *
- * 返回需要提醒用户的问题：命中失败的重写规则、以及依赖里仍然指向未发布 workspace 包的部分。这两类问题都不应该静默——
- * 它们最终会以一句莫名其妙的 install 报错砸到用户脸上。
+ * 返回需要提醒用户的问题：命中失败的重写规则、以及依赖里仍然指向未发布 workspace 包的部分。这两类问题都不应该静默—— 它们最终会以一句莫名其妙的 install 报错砸到用户脸上。
  */
 export async function materializeStandaloneApp(options: MaterializeOptions) {
   const { description, meta, packageName, targetDir } = options;

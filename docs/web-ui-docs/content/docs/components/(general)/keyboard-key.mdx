@@ -38,23 +38,23 @@ import { Kbd, KeyboardKey } from '@skyroc/web-ui';
 
 默认 `symbolize` 为 `true`，常见按键会转换为符号。`meta`、`alt`、`ctrl` 会根据当前系统环境显示不同文本或符号；自定义字符串会转换为大写。
 
-| value        | 显示内容                         |
-| ------------ | -------------------------------- |
-| `command`    | `⌘`                              |
-| `option`     | `⌥`                              |
-| `shift`      | `⇧`                              |
-| `enter`      | `↵`                              |
-| `escape`     | `⎋`                              |
-| `backspace`  | `⌫`                              |
-| `delete`     | `⌦`                              |
-| `arrowup`    | `↑`                              |
-| `arrowdown`  | `↓`                              |
-| `arrowleft`  | `←`                              |
-| `arrowright` | `→`                              |
-| `meta`       | macOS 为 `⌘`，其他系统为 `⊞`     |
-| `alt`        | macOS 为 `⌥`，其他系统为 `alt`   |
-| `ctrl`       | macOS 为 `⌃`，其他系统为 `ctrl`  |
-| 自定义字符串 | 调用 `toUpperCase()` 后展示      |
+| value        | 显示内容                        |
+| ------------ | ------------------------------- |
+| `command`    | `⌘`                             |
+| `option`     | `⌥`                             |
+| `shift`      | `⇧`                             |
+| `enter`      | `↵`                             |
+| `escape`     | `⎋`                             |
+| `backspace`  | `⌫`                             |
+| `delete`     | `⌦`                             |
+| `arrowup`    | `↑`                             |
+| `arrowdown`  | `↓`                             |
+| `arrowleft`  | `←`                             |
+| `arrowright` | `→`                             |
+| `meta`       | macOS 为 `⌘`，其他系统为 `⊞`    |
+| `alt`        | macOS 为 `⌥`，其他系统为 `alt`  |
+| `ctrl`       | macOS 为 `⌃`，其他系统为 `ctrl` |
+| 自定义字符串 | 调用 `toUpperCase()` 后展示     |
 
 如果需要原样展示传入值，可以设置 `symbolize={false}`。如果传入 `children`，会优先展示 `children`，不再使用 `value` 生成内容。
 

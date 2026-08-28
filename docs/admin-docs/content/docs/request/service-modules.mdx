@@ -28,30 +28,30 @@ apps/admin/src/service/api
 
 ## 分层职责
 
-| 文件 | 职责 | 是否直接给页面用 |
-| --- | --- | --- |
-| `urls.ts` | 集中维护接口路径常量。 | 否 |
-| `types.d.ts` | 声明该模块的请求参数、响应 data 和领域类型。 | 间接使用 |
-| `api.ts` | 调用 `request` 或其他请求实例，返回业务 data。 | 少量场景可直接用 |
-| `keys.ts` | 维护 React Query 的 queryKey / mutationKey。 | 否 |
-| `hooks.ts` | 封装 `useQuery`、`useMutation` 或 `queryOptions`。 | 是 |
-| `index.ts` | 模块出口，统一导出 api/hooks/keys。 | 是 |
+| 文件         | 职责                                               | 是否直接给页面用 |
+| ------------ | -------------------------------------------------- | ---------------- |
+| `urls.ts`    | 集中维护接口路径常量。                             | 否               |
+| `types.d.ts` | 声明该模块的请求参数、响应 data 和领域类型。       | 间接使用         |
+| `api.ts`     | 调用 `request` 或其他请求实例，返回业务 data。     | 少量场景可直接用 |
+| `keys.ts`    | 维护 React Query 的 queryKey / mutationKey。       | 否               |
+| `hooks.ts`   | 封装 `useQuery`、`useMutation` 或 `queryOptions`。 | 是               |
+| `index.ts`   | 模块出口，统一导出 api/hooks/keys。                | 是               |
 
 页面优先引用 `hooks.ts` 导出的 hooks。只有下面场景才建议直接用 `api.ts`：
 
-| 场景 | 原因 |
-| --- | --- |
-| 路由守卫、启动流程或非组件上下文 | 无法使用 React hook。 |
-| React Query 的 `queryOptions` 内部 | 需要把请求函数交给 query client。 |
-| 一次性命令式调用且不需要缓存 | 例如临时下载、导出、外部事件回调。 |
+| 场景                               | 原因                               |
+| ---------------------------------- | ---------------------------------- |
+| 路由守卫、启动流程或非组件上下文   | 无法使用 React hook。              |
+| React Query 的 `queryOptions` 内部 | 需要把请求函数交给 query client。  |
+| 一次性命令式调用且不需要缓存       | 例如临时下载、导出、外部事件回调。 |
 
 ## 现有模块示例
 
-| 模块 | 重点接口 | 说明 |
-| --- | --- | --- |
-| `auth` | `fetchLogin`、`fetchGetUserInfo`、`fetchRefreshToken` | 认证、用户信息、刷新 token。 |
-| `route` | `fetchGetBackendRoutes`、`fetchIsRouteExist` | 动态路由和菜单加载。 |
-| `system-manage` | `fetchGetRoleList`、`fetchGetUserList`、`fetchGetMenuList` | 系统管理列表和菜单数据。 |
+| 模块            | 重点接口                                                   | 说明                         |
+| --------------- | ---------------------------------------------------------- | ---------------------------- |
+| `auth`          | `fetchLogin`、`fetchGetUserInfo`、`fetchRefreshToken`      | 认证、用户信息、刷新 token。 |
+| `route`         | `fetchGetBackendRoutes`、`fetchIsRouteExist`               | 动态路由和菜单加载。         |
+| `system-manage` | `fetchGetRoleList`、`fetchGetUserList`、`fetchGetMenuList` | 系统管理列表和菜单数据。     |
 
 `route` 模块还有一个特殊点：`queryMenusOptions()` 会被 `bootstrap.tsx` 里的动态路由加载器消费，所以它既服务页面，也服务后台布局初始化。
 
@@ -267,7 +267,12 @@ const ReportPage = () => {
 
   const { data, isLoading } = useReportListQuery(params);
 
-  return <ReportTable data={data?.records ?? []} loading={isLoading} />;
+  return (
+    <ReportTable
+      data={data?.records ?? []}
+      loading={isLoading}
+    />
+  );
 };
 
 export const Route = createFileRoute('/(admin)/report')({
@@ -279,12 +284,12 @@ export const Route = createFileRoute('/(admin)/report')({
 
 ## 列表、详情和 mutation 的 key 设计
 
-| 接口类型 | query key 建议 | 原因 |
-| --- | --- | --- |
-| 无参数详情 | `['report', 'detail', id]` | id 决定缓存身份。 |
-| 分页列表 | `['report', 'list', params]` | 页码、分页大小、筛选条件都会影响结果。 |
-| 字典/静态选项 | `['report', 'options']` | 可设置较长 `staleTime`。 |
-| 当前用户相关数据 | `['auth', 'userInfo']` | 和登录态绑定，退出登录时要能清理。 |
+| 接口类型         | query key 建议               | 原因                                   |
+| ---------------- | ---------------------------- | -------------------------------------- |
+| 无参数详情       | `['report', 'detail', id]`   | id 决定缓存身份。                      |
+| 分页列表         | `['report', 'list', params]` | 页码、分页大小、筛选条件都会影响结果。 |
+| 字典/静态选项    | `['report', 'options']`      | 可设置较长 `staleTime`。               |
+| 当前用户相关数据 | `['auth', 'userInfo']`       | 和登录态绑定，退出登录时要能清理。     |
 
 写 mutation 后，如果会影响列表或详情，应在 mutation 成功后失效对应 query。失效范围要尽量精确，不要为了一个新增操作清空所有模块缓存。
 
@@ -320,19 +325,19 @@ await queryClient.invalidateQueries({
 
 ## 常见边界
 
-| 问题 | 做法 |
-| --- | --- |
-| 后端路径变了 | 改 `urls.ts`，不要在页面里搜索替换裸字符串。 |
-| 后端字段变了 | 改 `types.d.ts`，再顺着类型错误修页面。 |
-| 成功 code 或登出 code 变了 | 改 `.env*` 的 `VITE_SERVICE_*_CODES`。 |
+| 问题                               | 做法                                                                                |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| 后端路径变了                       | 改 `urls.ts`，不要在页面里搜索替换裸字符串。                                        |
+| 后端字段变了                       | 改 `types.d.ts`，再顺着类型错误修页面。                                             |
+| 成功 code 或登出 code 变了         | 改 `.env*` 的 `VITE_SERVICE_*_CODES`。                                              |
 | 响应结构不是 `{ code, data, msg }` | 考虑单独请求实例或为 `createAppRequest` 传自定义 `transform` / `isBackendSuccess`。 |
-| 新增其他服务 key | 同步 `.env*`、`Api.Service.OtherBaseURLKey` 和请求实例。 |
-| 页面需要接口数据 | 优先新增或复用 `hooks.ts`，不要在组件里直接创建 axios 请求。 |
+| 新增其他服务 key                   | 同步 `.env*`、`Api.Service.OtherBaseURLKey` 和请求实例。                            |
+| 页面需要接口数据                   | 优先新增或复用 `hooks.ts`，不要在组件里直接创建 axios 请求。                        |
 
 ## 相关页面
 
-| 主题 | 继续查看 |
-| --- | --- |
-| 请求实例、token 和错误处理 | [请求概览](./overview) |
-| 代理前缀和真实后端切换 | [代理与后端对接](./proxy-and-backend) |
-| 路由和动态菜单如何消费接口 | [路由概览](../routing/overview) |
+| 主题                       | 继续查看                              |
+| -------------------------- | ------------------------------------- |
+| 请求实例、token 和错误处理 | [请求概览](./overview)                |
+| 代理前缀和真实后端切换     | [代理与后端对接](./proxy-and-backend) |
+| 路由和动态菜单如何消费接口 | [路由概览](../routing/overview)       |

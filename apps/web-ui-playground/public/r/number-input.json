@@ -3,9 +3,7 @@
   "name": "number-input",
   "type": "registry:block",
   "title": "Number Input",
-  "registryDependencies": [
-    "https://ui-play.skyroc.me/r/style.json"
-  ],
+  "registryDependencies": ["https://ui-play.skyroc.me/r/style.json"],
   "files": [
     {
       "path": "src/components/number-input/NumberInput.tsx",

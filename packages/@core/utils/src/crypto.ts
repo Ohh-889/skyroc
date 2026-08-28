@@ -3,8 +3,8 @@ import CryptoJS from 'crypto-js';
 /**
  * AES 对称加解密（基于 crypto-js 的 passphrase 模式）。
  *
- * ⚠️ 安全边界说明：passphrase 模式走的是 OpenSSL `EVP_BytesToKey`（MD5 单轮派生）， 密钥强度取决于口令本身，**不适合**作为真正的安全边界（如保护服务端机密）。
- * 它的合理用途是本地存储混淆 —— 让 localStorage / 缓存里的内容不可直接肉眼读取。 需要真实加密强度时请改用 Web Crypto (`crypto.subtle`) 或服务端加密。
+ * ⚠️ 安全边界说明：passphrase 模式走的是 OpenSSL `EVP_BytesToKey`（MD5 单轮派生）， 密钥强度取决于口令本身，**不适合**作为真正的安全边界（如保护服务端机密）。 它的合理用途是本地存储混淆
+ * —— 让 localStorage / 缓存里的内容不可直接肉眼读取。 需要真实加密强度时请改用 Web Crypto (`crypto.subtle`) 或服务端加密。
  *
  * @example
  *   ```ts

@@ -1,6 +1,6 @@
 ---
 title: 在 web-ui 中的使用
-description: "@skyroc/web-ui 的 Form preset 如何基于本包封装"
+description: '@skyroc/web-ui 的 Form preset 如何基于本包封装'
 ---
 
 [`@skyroc/web-ui`](/docs/web/ui) 的 `Form` preset 组件基于本包封装，业务直接用它就能拿到：
@@ -24,11 +24,11 @@ import { Form, FormField } from '@skyroc/web-ui';
 
 ## 什么时候用哪个
 
-| 场景 | 用 |
-| --- | --- |
-| 后台业务表单 | `@skyroc/web-ui` 的 `Form` / `FormField` |
-| 需要完全自定义视觉，或非 Web 平台 | `@skyroc/form` 原语 |
-| 组件库自己实现表单控件 | `@skyroc/form` 原语 |
+| 场景                              | 用                                       |
+| --------------------------------- | ---------------------------------------- |
+| 后台业务表单                      | `@skyroc/web-ui` 的 `Form` / `FormField` |
+| 需要完全自定义视觉，或非 Web 平台 | `@skyroc/form` 原语                      |
+| 组件库自己实现表单控件            | `@skyroc/form` 原语                      |
 
 `@skyroc/native-ui` 走的是第三种——RN 端直接消费本包，不经过 web-ui。
 

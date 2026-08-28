@@ -41,4 +41,3 @@ export interface ButtonProps extends Omit<PressableProps, 'children'>, ButtonVar
   /** 后置内容（图标等），显示在文字之后 */
   trailing?: ReactNode;
 }
-

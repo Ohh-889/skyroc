@@ -54,20 +54,43 @@ const DictTypeEditorDrawer = (props: DictTypeEditorDrawerProps) => {
       size={460}
       footer={
         <Flex justify="end">
-          <Button disabled={loading} onClick={onClose}>
+          <Button
+            disabled={loading}
+            onClick={onClose}
+          >
             取消
           </Button>
-          <Button className="ml-8px" loading={loading} type="primary" onClick={() => form.submit()}>
+          <Button
+            className="ml-8px"
+            loading={loading}
+            type="primary"
+            onClick={() => form.submit()}
+          >
             保存
           </Button>
         </Flex>
       }
       onClose={onClose}
     >
-      {detailQuery.isError ? <Alert className="mb-16px" title="字典类型加载失败" showIcon type="error" /> : null}
+      {detailQuery.isError ? (
+        <Alert
+          className="mb-16px"
+          title="字典类型加载失败"
+          showIcon
+          type="error"
+        />
+      ) : null}
       <Spin spinning={detailQuery.isLoading}>
-        <Form form={form} layout="vertical" onFinish={handleFinish}>
-          <Form.Item label="字典名称" name="dictName" rules={[{ required: true, message: '请输入字典名称' }]}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+        >
+          <Form.Item
+            label="字典名称"
+            name="dictName"
+            rules={[{ required: true, message: '请输入字典名称' }]}
+          >
             <Input maxLength={100} />
           </Form.Item>
           <Form.Item
@@ -78,9 +101,15 @@ const DictTypeEditorDrawer = (props: DictTypeEditorDrawerProps) => {
               { pattern: /^[a-z][a-z0-9_]*$/, message: '请输入小写字母、数字和下划线' }
             ]}
           >
-            <Input disabled={mode === 'update'} maxLength={100} />
+            <Input
+              disabled={mode === 'update'}
+              maxLength={100}
+            />
           </Form.Item>
-          <Form.Item label="备注" name="remark">
+          <Form.Item
+            label="备注"
+            name="remark"
+          >
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>

@@ -1,8 +1,8 @@
 'use client';
 
-import { Component, Dock, Home } from 'lucide-react';
 import { Breadcrumb } from '@skyroc/web-ui';
 import type { BreadcrumbItem, ThemeSize } from '@skyroc/web-ui';
+import { Component, Dock, Home } from 'lucide-react';
 
 const sizes: ThemeSize[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 

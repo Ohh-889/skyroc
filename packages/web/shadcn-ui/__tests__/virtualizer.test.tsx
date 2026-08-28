@@ -1,8 +1,8 @@
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { VirtualGrid, VirtualList } from '../src/components/virtualizer';
-import * as virtualizerOrigin from '../src/components/virtualizer/origin';
 import type { VirtualizerGrid, VirtualizerList } from '../src/components/virtualizer';
+import * as virtualizerOrigin from '../src/components/virtualizer/origin';
 import { render, screen, waitFor } from './helpers/render';
 
 interface RowItem {
@@ -43,14 +43,10 @@ describe('Virtualizer', () => {
         }}
         ref={listRef}
         width={240}
-        renderItem={(props) => {
+        renderItem={props => {
           const { index, item } = props;
 
-          return (
-            <div data-testid={`row-${index}`}>
-              {item.label}
-            </div>
-          );
+          return <div data-testid={`row-${index}`}>{item.label}</div>;
         }}
       />
     );
@@ -96,7 +92,7 @@ describe('Virtualizer', () => {
           return () => undefined;
         }}
         width={200}
-        renderItem={(props) => {
+        renderItem={props => {
           const { index, item } = props;
 
           return (
@@ -149,7 +145,7 @@ describe('Virtualizer', () => {
         width={180}
         onChange={onChange}
         onScroll={onScroll}
-        renderItem={(props) => {
+        renderItem={props => {
           const { index, item } = props;
 
           return (
@@ -195,14 +191,10 @@ describe('Virtualizer', () => {
             return () => undefined;
           }}
           width={180}
-          renderItem={(props) => {
+          renderItem={props => {
             const { index, item } = props;
 
-            return (
-              <div data-testid={`horizontal-row-${index}`}>
-                {item.label}
-              </div>
-            );
+            return <div data-testid={`horizontal-row-${index}`}>{item.label}</div>;
           }}
         />
         <VirtualList<RowItem>
@@ -221,7 +213,7 @@ describe('Virtualizer', () => {
 
             return () => undefined;
           }}
-          renderItem={(props) => {
+          renderItem={props => {
             const { item } = props;
 
             return <div>{item.label}</div>;
@@ -288,11 +280,7 @@ describe('Virtualizer', () => {
         ref={gridRef}
         rowHeight={40}
         width={200}
-        renderCell={(item, rowIndex, colIndex) => (
-          <div data-testid={`cell-${rowIndex}-${colIndex}`}>
-            {item.label}
-          </div>
-        )}
+        renderCell={(item, rowIndex, colIndex) => <div data-testid={`cell-${rowIndex}-${colIndex}`}>{item.label}</div>}
       />
     );
 
@@ -357,9 +345,7 @@ describe('Virtualizer', () => {
         onChange={onChange}
         onScroll={onScroll}
         renderCell={(item, rowIndex, colIndex) => (
-          <div data-testid={`function-cell-${rowIndex}-${colIndex}`}>
-            {item.label}
-          </div>
+          <div data-testid={`function-cell-${rowIndex}-${colIndex}`}>{item.label}</div>
         )}
       />
     );
@@ -409,9 +395,7 @@ describe('Virtualizer', () => {
         rowHeight={40}
         width={160}
         renderCell={(item, rowIndex, colIndex) => (
-          <div data-testid={`default-key-cell-${rowIndex}-${colIndex}`}>
-            {item.label}
-          </div>
+          <div data-testid={`default-key-cell-${rowIndex}-${colIndex}`}>{item.label}</div>
         )}
       />
     );

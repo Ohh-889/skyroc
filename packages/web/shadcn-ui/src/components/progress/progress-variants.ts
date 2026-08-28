@@ -48,19 +48,19 @@ export const progressVariants = tv({
       '2xl': {
         root: 'h-4'
       },
-      'lg': {
+      lg: {
         root: 'h-3'
       },
-      'md': {
+      md: {
         root: 'h-2.5'
       },
-      'sm': {
+      sm: {
         root: 'h-2'
       },
-      'xl': {
+      xl: {
         root: 'h-3.5'
       },
-      'xs': {
+      xs: {
         root: 'h-1.75'
       }
     }

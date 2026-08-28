@@ -46,8 +46,17 @@ const Tab = () => {
   }
 
   return (
-    <ASpace className="w-full" direction="vertical" size={16}>
-      <ACard className="card-wrapper" size="small" title={t('page.function.tab.tabOperate.title')} variant="borderless">
+    <ASpace
+      className="w-full"
+      direction="vertical"
+      size={16}
+    >
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('page.function.tab.tabOperate.title')}
+        variant="borderless"
+      >
         <ADivider titlePlacement="left">{t('page.function.tab.tabOperate.addTab')}</ADivider>
         <AButton onClick={goAbout}>{t('page.function.tab.tabOperate.addTabDesc')}</AButton>
 
@@ -58,13 +67,21 @@ const Tab = () => {
         </ASpace>
 
         <ADivider titlePlacement="left">跳转多级动态路由</ADivider>
-        <ASpace wrap className="m-0!" size={16}>
+        <ASpace
+          wrap
+          className="m-0!"
+          size={16}
+        >
           <AButton onClick={goProjects}>跳转一级动态路由</AButton>
           <AButton onClick={goProjectsEdit}>跳转多级动态路由</AButton>
         </ASpace>
 
         <ADivider titlePlacement="left">{t('page.function.tab.tabOperate.addMultiTab')}</ADivider>
-        <ASpace wrap className="m-0!" size={16}>
+        <ASpace
+          wrap
+          className="m-0!"
+          size={16}
+        >
           <AButton onClick={() => goMultiTab()}>{t('page.function.tab.tabOperate.addMultiTabDesc1')}</AButton>
           <AButton
             onClick={() => {
@@ -76,9 +93,19 @@ const Tab = () => {
         </ASpace>
       </ACard>
 
-      <ACard className="card-wrapper" size="small" title={t('page.function.tab.tabTitle.title')} variant="borderless">
+      <ACard
+        className="card-wrapper"
+        size="small"
+        title={t('page.function.tab.tabTitle.title')}
+        variant="borderless"
+      >
         <ADivider titlePlacement="left">{t('page.function.tab.tabTitle.changeTitle')}</ADivider>
-        <AInput.Search allowClear className="max-w-240px" enterButton={t('page.function.tab.tabTitle.change')} onSearch={changeTabLabel} />
+        <AInput.Search
+          allowClear
+          className="max-w-240px"
+          enterButton={t('page.function.tab.tabTitle.change')}
+          onSearch={changeTabLabel}
+        />
 
         <ADivider titlePlacement="left">{t('page.function.tab.tabTitle.resetTitle')}</ADivider>
         <AButton onClick={resetLabel}>{t('page.function.tab.tabTitle.reset')}</AButton>

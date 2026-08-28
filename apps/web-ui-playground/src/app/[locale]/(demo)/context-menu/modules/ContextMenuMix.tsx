@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { ContextMenu } from '@skyroc/web-ui';
+import { useState } from 'react';
 
 const menus = [
   {
@@ -40,7 +40,6 @@ const checkboxItems = [
 ];
 
 const radioItems = [
-
   { label: 'Top', value: 'top' },
   { label: 'Right', value: 'right' },
   { label: 'Bottom', value: 'bottom' },

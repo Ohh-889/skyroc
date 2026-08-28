@@ -17,8 +17,16 @@ const TextareaCountGraphemes = () => {
   const [value, setValue] = useState<TextareaProps['value']>('🌷🇨🇳');
 
   return (
-    <Card split title="Count graphemes">
-      <Textarea showCount countGraphemes={countGraphemes} value={value} onTextChange={setValue} />
+    <Card
+      split
+      title="Count graphemes"
+    >
+      <Textarea
+        showCount
+        countGraphemes={countGraphemes}
+        value={value}
+        onTextChange={setValue}
+      />
     </Card>
   );
 };

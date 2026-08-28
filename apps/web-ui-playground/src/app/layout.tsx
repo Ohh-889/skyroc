@@ -127,10 +127,19 @@ const RootLayout = async (props: Props) => {
   const locale = await getLocale();
 
   return (
-    <html suppressHydrationWarning lang={locale}>
+    <html
+      suppressHydrationWarning
+      lang={locale}
+    >
       <head>
-        <meta content={config.META_THEME_COLORS.light} name="theme-color" />
-        <Script id="theme-color" strategy="beforeInteractive">
+        <meta
+          content={config.META_THEME_COLORS.light}
+          name="theme-color"
+        />
+        <Script
+          id="theme-color"
+          strategy="beforeInteractive"
+        >
           {themeColorScript}
         </Script>
       </head>

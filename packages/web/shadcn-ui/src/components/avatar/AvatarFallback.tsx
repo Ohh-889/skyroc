@@ -1,7 +1,7 @@
-import type { ComponentRef } from 'react';
-import { forwardRef } from 'react';
 import { Fallback } from '@radix-ui/react-avatar';
 import { cn } from '@skyroc/utils';
+import type { ComponentRef } from 'react';
+import { forwardRef } from 'react';
 import { avatarVariants } from './avatar-variants';
 import type { AvatarFallbackProps } from './types';
 

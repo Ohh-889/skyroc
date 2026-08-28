@@ -59,7 +59,10 @@ const TreeVirtualizerDemo = () => {
   const [expanded, setExpanded] = useState<string[]>(['folder-0', 'folder-1']);
 
   return (
-    <Card split title="Virtualizer">
+    <Card
+      split
+      title="Virtualizer"
+    >
       <div className="w-full max-w-[360px]">
         <p className="text-muted-foreground mb-2 text-sm">40 folders with nested children</p>
 

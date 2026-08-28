@@ -97,23 +97,23 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 包命名约定
 
-| 命名                | 适用范围                             | 示例                                               |
-| ------------------- | ------------------------------------ | -------------------------------------------------- |
-| `@skyroc/<能力>`    | 跨端基础设施、共享能力或平台无关原语 | `@skyroc/utils`、`@skyroc/service`、`@skyroc/form`、`@skyroc/uno-config` |
-| `@skyroc/web-*`     | Web 布局、主题、UI 与运行时能力      | `@skyroc/web-ui`、`@skyroc/web-admin-vite`         |
-| `@skyroc/native-*`  | React Native / Expo 专属能力         | `@skyroc/native-ui`                                |
-| `@skyroc/expo-*`    | Expo 原生模块（含自定义原生代码）    | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`    |
+| 命名               | 适用范围                             | 示例                                                                     |
+| ------------------ | ------------------------------------ | ------------------------------------------------------------------------ |
+| `@skyroc/<能力>`   | 跨端基础设施、共享能力或平台无关原语 | `@skyroc/utils`、`@skyroc/service`、`@skyroc/form`、`@skyroc/uno-config` |
+| `@skyroc/web-*`    | Web 布局、主题、UI 与运行时能力      | `@skyroc/web-ui`、`@skyroc/web-admin-vite`                               |
+| `@skyroc/native-*` | React Native / Expo 专属能力         | `@skyroc/native-ui`                                                      |
+| `@skyroc/expo-*`   | Expo 原生模块（含自定义原生代码）    | `@skyroc/expo-bluetooth`、`@skyroc/expo-wechat`                          |
 
 ## 📦 Workspace 包地图
 
-| 分层           | 包                                                                                                                                                                                                        |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 分层           | 包                                                                                                                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **跨端内核**   | `@skyroc/utils` · `@skyroc/axios` · `@skyroc/service` · `@skyroc/core-state` · `@skyroc/logger` · `@skyroc/color` · `@skyroc/tailwind-plugin` · `@skyroc/scripts` · `create-skyroc` |
-| **共享与原语** | `@skyroc/hooks` · `@skyroc/form`                                                                                                                                                                          |
-| **Web Kit**    | admin shell（`packages/web/admin`，经 `@shell/*` 别名引用，包含开发调试面板）· `@skyroc/web-admin-vite`                                                                                                     |
-| **UI**         | `@skyroc/web-ui` · `@skyroc/native-ui`（admin 侧复合组件已并入 shell 的 `ui/`）                                                                                                                           |
-| **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                                          |
-| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@skyroc/uno-config`                                                                                                                                              |
+| **共享与原语** | `@skyroc/hooks` · `@skyroc/form`                                                                                                                                                    |
+| **Web Kit**    | admin shell（`packages/web/admin`，经 `@shell/*` 别名引用，包含开发调试面板）· `@skyroc/web-admin-vite`                                                                             |
+| **UI**         | `@skyroc/web-ui` · `@skyroc/native-ui`（admin 侧复合组件已并入 shell 的 `ui/`）                                                                                                     |
+| **原生模块**   | `@skyroc/expo-bluetooth` · `@skyroc/expo-wechat`                                                                                                                                    |
+| **内部配置**   | `@skyroc/config` · `@skyroc/tsconfig` · `@skyroc/uno-config`                                                                                                                        |
 
 <details>
 <summary><strong>查看全部包的职责</strong></summary>
@@ -121,7 +121,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 ### 🧬 跨端内核 — `packages/@core/*`
 
 | 包名                      | 职责                                                                              |
-| ------------------------- | --------------------------------------------------------------------------------- |
+| ------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `@skyroc/utils`           | 平台无关工具集合，通过 `./web`、`./path`、`./cn`、`./crypto` 等子路径隔离特定能力 |
 | `@skyroc/axios`           | 类型安全的 Axios 客户端，提供重试、转换管道、请求取消与后端响应处理               |
 | `@skyroc/service`         | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈                |
@@ -129,15 +129,15 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/logger`          | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
 | `@skyroc/color`           | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
 | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设                 |
-| `create-skyroc`           | `packages/@core/create-skyroc` | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
-| `@skyroc/scripts`         | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI                            |
+| `create-skyroc`           | `packages/@core/create-skyroc`                                                    | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
+| `@skyroc/scripts`         | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI                             |
 
 ### 🔗 共享能力与原语
 
 | 包名            | 位置                             | 职责                                                    |
 | --------------- | -------------------------------- | ------------------------------------------------------- |
-| `@skyroc/hooks` | `packages/hooks`                 | 平台无关 React Hooks，并以 `./web` 隔离浏览器 Hooks      |
-| `@skyroc/form`  | `packages/primitives/filed-form` | 类型安全字段管理、路径级订阅与 Standard Schema 校验原语  |
+| `@skyroc/hooks` | `packages/hooks`                 | 平台无关 React Hooks，并以 `./web` 隔离浏览器 Hooks     |
+| `@skyroc/form`  | `packages/primitives/filed-form` | 类型安全字段管理、路径级订阅与 Standard Schema 校验原语 |
 
 > 零运行时的 TypeScript 工具类型在 `@skyroc/utils/type`，三端组件共用的主题 / 尺寸 / 方向
 > 类型在 `@skyroc/tailwind-plugin/ui`。原先的 `@skyroc/type-utils` 与 `@skyroc/ui-types`
@@ -145,10 +145,10 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 🧩 Web 工程套件 — `packages/web/*`
 
-| 包名                             | 职责                                                              |
-| -------------------------------- | ----------------------------------------------------------------- |
-| `packages/web/admin`（shell）    | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、开发调试面板、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`pnpm create skyroc` 生成独立项目时复制进 `src/framework` |
-| `@skyroc/web-admin-vite`         | Vite、React Compiler、TanStack Router、UnoCSS、自动导入等构建预设 |
+| 包名                          | 职责                                                                                                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/web/admin`（shell） | 后台应用壳源码目录：布局、主题、i18n、通知、运行时、开发调试面板、全局样式与全局类型。不发布，仓库内经 `@shell/*` 别名共享，`pnpm create skyroc` 生成独立项目时复制进 `src/framework` |
+| `@skyroc/web-admin-vite`      | Vite、React Compiler、TanStack Router、UnoCSS、自动导入等构建预设                                                                                                                     |
 
 ### 🎨 UI 组件库与原生模块
 
@@ -161,10 +161,10 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 🛠️ 内部工程配置 — `internal/*`
 
-| 包名               | 职责                                           |
-| ------------------ | ---------------------------------------------- |
-| `@skyroc/config`   | Vitest、Oxlint 等共享开发配置                  |
-| `@skyroc/tsconfig` | 各 workspace 复用的 TypeScript 基础配置        |
+| 包名                 | 职责                                           |
+| -------------------- | ---------------------------------------------- |
+| `@skyroc/config`     | Vitest、Oxlint 等共享开发配置                  |
+| `@skyroc/tsconfig`   | 各 workspace 复用的 TypeScript 基础配置        |
 | `@skyroc/uno-config` | Admin 主题、shortcuts 与设计变量的 UnoCSS 预设 |
 
 </details>
@@ -247,14 +247,14 @@ skyroc-admin/
 
 ## 🛠️ 常用命令
 
-| 命令                                | 用途                           |
-| ----------------------------------- | ------------------------------ |
-| `pnpm dev` / `pnpm build`           | Turborepo 编排全仓开发 / 构建  |
-| `pnpm typecheck` / `pnpm lint`      | TypeScript 检查 / oxlint       |
-| `pnpm format` / `pnpm format:check` | oxfmt 格式化 / 仅检查          |
-| `pnpm test` / `pnpm test:e2e`       | Vitest / Playwright            |
-| `pnpm create:admin <name>`          | 从内置模板创建 Admin 应用      |
-| `pnpm clean`                        | 清理 workspace 构建产物        |
+| 命令                                | 用途                          |
+| ----------------------------------- | ----------------------------- |
+| `pnpm dev` / `pnpm build`           | Turborepo 编排全仓开发 / 构建 |
+| `pnpm typecheck` / `pnpm lint`      | TypeScript 检查 / oxlint      |
+| `pnpm format` / `pnpm format:check` | oxfmt 格式化 / 仅检查         |
+| `pnpm test` / `pnpm test:e2e`       | Vitest / Playwright           |
+| `pnpm create:admin <name>`          | 从内置模板创建 Admin 应用     |
+| `pnpm clean`                        | 清理 workspace 构建产物       |
 
 开发单个 workspace 时优先使用 `pnpm --filter <workspace-name> <command>`，减少无关任务和输出。
 
