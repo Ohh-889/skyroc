@@ -43,9 +43,6 @@ body:
         - Node.js / CLI
         - 文档
         - 全平台
-    validations:
-      required: true
-
   - type: textarea
     id: problem
     attributes:
@@ -60,9 +57,6 @@ body:
     attributes:
       label: 建议方案
       description: 请描述期望行为、交互流程或 API；涉及 UI 时可附草图或参考案例。
-    validations:
-      required: true
-
   - type: textarea
     id: api-compatibility
     attributes:
@@ -83,9 +77,6 @@ body:
         - 愿意提交 Pull Request
         - 可以协助设计或测试
         - 暂时无法参与
-    validations:
-      required: true
-
   - type: textarea
     id: additional-context
     attributes:
@@ -100,6 +91,4 @@ body:
         - label: 我已搜索现有 Issue，确认没有重复提案。
           required: true
         - label: 我已说明实际问题和使用场景，而不只是指定某一种实现方式。
-          required: true
         - label: 该请求具有可复用价值，并非仅适用于单个业务项目的定制功能。
-          required: true

@@ -37,9 +37,6 @@ body:
       label: 使用版本
       description: 请填写包版本、应用版本或 Git 提交哈希。
       placeholder: 例如：@skyroc/native-ui@1.2.0 或 commit a1b2c3d
-    validations:
-      required: true
-
   - type: dropdown
     id: platform
     attributes:
@@ -54,9 +51,6 @@ body:
         - 文档站 / 服务端渲染
         - CI / 发布环境
         - 其他
-    validations:
-      required: true
-
   - type: textarea
     id: environment
     attributes:
@@ -70,9 +64,6 @@ body:
         Expo SDK / React Native：
         设备或模拟器：
         开发模式或生产构建：
-    validations:
-      required: true
-
   - type: input
     id: reproduction-link
     attributes:
@@ -98,9 +89,6 @@ body:
     attributes:
       label: 期望结果
       description: 请说明你认为正确的行为。
-    validations:
-      required: true
-
   - type: textarea
     id: actual
     attributes:
@@ -130,6 +118,4 @@ body:
         - label: 我已搜索现有 Issue，确认没有重复报告。
           required: true
         - label: 我已确认问题能够在当前版本或 master 分支中复现。
-          required: true
         - label: 我已提供足以复现问题的步骤，且内容不包含敏感数据。
-          required: true
