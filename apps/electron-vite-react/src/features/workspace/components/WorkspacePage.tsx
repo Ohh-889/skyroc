@@ -279,9 +279,10 @@ const WorkspacePage = (_props: WorkspacePageProps) => {
           <p className="mt-3 text-[13px] text-[#74786f]">继续正在进行的工作，或从一个本地目录开始。</p>
         </div>
 
-        <label className="flex items-center gap-2.5 rounded-xl border border-black/[0.08] bg-white/65 px-3 py-2 text-xs text-[#676b62] shadow-[0_4px_16px_rgba(38,43,35,0.035)]">
+        <div className="flex items-center gap-2.5 rounded-xl border border-black/[0.08] bg-white/65 px-3 py-2 text-xs text-[#676b62] shadow-[0_4px_16px_rgba(38,43,35,0.035)]">
           <span>示例数据</span>
           <Switch
+            aria-label="切换示例数据"
             checked={showDemoData}
             classNames={{
               root: 'data-[state=checked]:bg-[#718b50]',
@@ -291,7 +292,7 @@ const WorkspacePage = (_props: WorkspacePageProps) => {
             onCheckedChange={handleDemoDataChange}
             size="sm"
           />
-        </label>
+        </div>
       </header>
 
       <div
