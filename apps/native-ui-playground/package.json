@@ -12,7 +12,8 @@
     "prebuild:ios": "expo prebuild --platform ios --clean",
     "test": "jest --watchAll",
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "lint": "oxlint --fix",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "deploy": "npx expo export -p web && npx eas-cli@latest deploy"
   },
   "dependencies": {

@@ -80,7 +80,8 @@
     "keystore:generate": "./scripts/bin/ns.sh keystore generate",
     "keystore:info": "./scripts/bin/ns.sh keystore info",
     "keystore:sha256": "./scripts/bin/ns.sh keystore sha256",
-    "lint": "oxlint --fix"
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
   },
   "private": true
 }

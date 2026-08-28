@@ -11,7 +11,8 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "oxlint --fix",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "worker:build": "opennextjs-cloudflare build"
   },

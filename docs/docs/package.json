@@ -8,6 +8,7 @@
     "deploy": "pnpm run worker:build && opennextjs-cloudflare deploy",
     "dev": "next dev",
     "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "preview": "pnpm run worker:build && opennextjs-cloudflare preview",
     "start": "next start",
     "types:check": "next typegen && tsc --noEmit",

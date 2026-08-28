@@ -8,6 +8,7 @@
     "start": "next start",
     "types:check": "next typegen && tsc --noEmit",
     "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "deploy": "pnpm run worker:build && opennextjs-cloudflare deploy",
     "preview": "pnpm run worker:build && opennextjs-cloudflare preview",

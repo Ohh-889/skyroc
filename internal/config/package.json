@@ -46,6 +46,7 @@
     "clean": "rimraf dist",
     "dev": "tsdown --watch",
     "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "devDependencies": {

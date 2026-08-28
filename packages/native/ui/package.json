@@ -83,7 +83,8 @@
     "build:css": "node -e \"const fs = require('node:fs'); fs.copyFileSync('src/uniwind.css', 'dist/uniwind.css'); fs.copyFileSync('src/uniwind-plugin.js', 'dist/uniwind-plugin.js')\"",
     "clean": "rimraf dist",
     "dev": "tsdown --watch",
-    "lint": "oxlint --fix",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
