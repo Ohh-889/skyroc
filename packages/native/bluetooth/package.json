@@ -45,13 +45,13 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "expo-module build",
+    "build": "EXPO_NONINTERACTIVE=1 expo-module build",
     "clean": "expo-module clean",
     "expo-module": "expo-module",
     "lint": "oxlint --fix",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
-    "typecheck": "expo-module typecheck"
+    "typecheck": "EXPO_NONINTERACTIVE=1 expo-module typecheck"
   },
   "devDependencies": {
     "expo": "~57.0.15",
