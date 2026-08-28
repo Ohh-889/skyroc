@@ -27,8 +27,8 @@
   },
   "publish": {
     "provider": "github",
-    "owner": "electron-vite",
-    "repo": "electron-vite-react",
+    "owner": "Ohh-889",
+    "repo": "skyroc",
     "releaseType": "release"
   }
 }
