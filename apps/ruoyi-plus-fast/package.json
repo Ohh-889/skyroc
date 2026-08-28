@@ -1,7 +1,7 @@
 {
   "name": "ruoyi-plus-fast",
   "version": "3.0.0",
-  "private": false,
+  "private": true,
   "description": "Ruoyi Plus Fast admin application",
   "keywords": [],
   "homepage": "https://github.com/Ohh-889/skyroc",
@@ -77,8 +77,8 @@
     "@iconify/json": "catalog:ui-shared",
     "@iconify/react": "catalog:ui-shared",
     "@iconify/types": "catalog:ui-shared",
-    "@skyroc/uno-config": "workspace:*",
     "@skyroc/scripts": "workspace:*",
+    "@skyroc/uno-config": "workspace:*",
     "@skyroc/web-admin-vite": "workspace:*",
     "@svgr/core": "catalog:web",
     "@svgr/plugin-jsx": "catalog:web",

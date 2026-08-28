@@ -14,11 +14,16 @@
     "test:e2e": "turbo run test:e2e",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "changeset": "changeset",
+    "release:status": "changeset status",
+    "release:version": "changeset version",
+    "release:publish": "changeset publish",
     "test:ui": "vitest --ui",
     "test:watch": "turbo run test:watch",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.1",
     "@skyroc/config": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
     "@testing-library/jest-dom": "catalog:dev",

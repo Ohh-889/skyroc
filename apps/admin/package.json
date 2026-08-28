@@ -1,9 +1,9 @@
 {
   "name": "skyroc-admin",
   "version": "3.0.0",
-  "private": false,
+  "private": true,
   "description": "A fresh and elegant admin template, based on React18、Vite5、TypeScript、Ant Design and UnoCSS. 一个基于React18、Vite5、TypeScript、Ant Design and UnoCSS的清新优雅的中后台模版。",
-  "keywords": [ ],
+  "keywords": [],
   "homepage": "https://github.com/Ohh-889/skyroc",
   "bugs": {
     "url": "https://github.com/Ohh-889/skyroc/issues"
@@ -75,8 +75,8 @@
     "@iconify/json": "catalog:ui-shared",
     "@iconify/react": "catalog:ui-shared",
     "@iconify/types": "catalog:ui-shared",
-    "@skyroc/uno-config": "workspace:*",
     "@skyroc/scripts": "workspace:*",
+    "@skyroc/uno-config": "workspace:*",
     "@skyroc/web-admin-vite": "workspace:*",
     "@svgr/core": "catalog:web",
     "@svgr/plugin-jsx": "catalog:web",

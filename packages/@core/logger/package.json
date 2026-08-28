@@ -1,6 +1,7 @@
 {
   "name": "@skyroc/logger",
   "version": "1.0.0",
+  "private": true,
   "description": "Cross-platform logging system based on LogLayer - Web, React Native, Mini Program",
   "keywords": [
     "cross-platform",
