@@ -60,7 +60,7 @@ export interface AlertDialogTitleProps extends StyledComponentProps<_AlertDialog
  *   >
  *     <Button>Delete</Button>
  *   </AlertDialog>;
- *   ```
+ *   ```;
  */
 export type AlertDialogProps = StyledComponentProps<_AlertDialogProps> &
   AlertDialogContentProps &

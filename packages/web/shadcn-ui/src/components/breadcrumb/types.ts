@@ -61,7 +61,7 @@ export type BreadcrumbUi = Partial<Record<BreadcrumbSlots, ClassValue>>;
  *     separator="/"
  *     handleItemClick={item => navigate(item.value)}
  *   />;
- *   ```
+ *   ```;
  *
  * @template T - Type of breadcrumb item data, extends BreadcrumbItem
  */

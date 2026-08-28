@@ -196,7 +196,7 @@ function showMessage(
  *
  *   // Global config
  *   message.config({ duration: 5000, maxCount: 3 });
- *   ```
+ *   ```;
  */
 export const message = {
   /** Show success message */

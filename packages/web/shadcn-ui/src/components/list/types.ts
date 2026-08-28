@@ -51,7 +51,7 @@ export type ListUi = Partial<Record<ListSlots, ClassValue>>;
  *       Additional content
  *     </ListItem>
  *   </List>;
- *   ```
+ *   ```;
  */
 export interface ListProps
   extends ListRootProps, Pick<ListItemUIProps, 'contentProps' | 'descriptionProps' | 'titleProps'>, SlotProps {

@@ -228,7 +228,7 @@ function showNotification(type: NotificationType | 'default', config: Notificati
  *
  *   // Global config
  *   notification.config({ duration: 5000, maxCount: 3 });
- *   ```
+ *   ```;
  */
 export const notification = {
   /** Show success notification */

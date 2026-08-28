@@ -19,7 +19,7 @@ export type ResizableClassNames = Partial<Record<ResizableSlots, ClassValue>>;
  *     withHandle
  *     classNames={{ handleIcon: 'custom-icon-class' }}
  *   />;
- *   ```
+ *   ```;
  */
 export interface ResizableHandleProps extends StyledComponentProps<ComponentProps<typeof PanelResizeHandle>> {
   /** Class names for customizing the handle icon and its root container. */
@@ -42,6 +42,6 @@ export interface ResizableHandleProps extends StyledComponentProps<ComponentProp
  *     <ResizableHandle withHandle />
  *     <Panel defaultSize={50}>Right Panel</Panel>
  *   </ResizablePanelGroup>;
- *   ```
+ *   ```;
  */
 export interface ResizablePanelGroupProps extends StyledComponentProps<_PanelGroupProps> {}

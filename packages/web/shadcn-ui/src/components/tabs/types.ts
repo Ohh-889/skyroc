@@ -18,7 +18,7 @@ export type TabsShape = 'rounded' | 'square';
  *     position: 0, // Pixel offset from the left
  *     size: 100 // Width of the indicator in pixels
  *   };
- *   ```
+ *   ```;
  */
 export interface IndicatorStyle {
   /** The horizontal position (in pixels) where the indicator should be placed. Null when no indicator is visible. */
@@ -38,7 +38,7 @@ export interface IndicatorStyle {
  *     list: 'custom-list',
  *     indicator: 'custom-indicator'
  *   };
- *   ```
+ *   ```;
  */
 export type TabsUi = Partial<Record<TabsSlots, ClassValue>>;
 
@@ -62,7 +62,7 @@ export interface TabsRootProps extends StyledComponentProps<_TabsRootProps> {
  *     orientation="horizontal"
  *     classNames={{ indicator: 'custom-indicator' }}
  *   />;
- *   ```
+ *   ```;
  */
 export interface TabsListProps extends StyledComponentProps<_TabsListProps>, Pick<_TabsRootProps, 'value'> {
   /** Class names for customizing the indicator and its container. */
@@ -99,7 +99,7 @@ export interface TabsTriggerProps extends StyledComponentProps<Omit<_TabsTrigger
  *   >
  *     Content for tab 1
  *   </TabsContent>;
- *   ```
+ *   ```;
  */
 export interface TabsContentProps extends StyledComponentProps<Omit<_TabsContentProps, 'className'>> {
   /** The direction of the content layout (horizontal or vertical). */
@@ -120,7 +120,7 @@ export interface TabsContentProps extends StyledComponentProps<Omit<_TabsContent
  *       disabled: false
  *     }
  *   ];
- *   ```
+ *   ```;
  */
 export type TabsOptionData = Pick<TabsTriggerProps, 'disabled'> & {
   /**
@@ -150,7 +150,7 @@ export type TabsOptionData = Pick<TabsTriggerProps, 'disabled'> & {
  *   enableIndicator={true}
  *   classNames={{ indicator: 'custom-indicator' }}
  *   />
- *   ```
+ *   ```;
  *
  * @template T - Type of tab item data, defaults to TabsOptionData
  */

@@ -53,7 +53,7 @@ export interface NumberInputControlProps extends StyledComponentProps<
  *
  *   // Disabled state
  *   <NumberInput disabled />
- *   ```
+ *   ```;
  */
 export interface NumberInputProps extends NumberInputControlProps, SlotProps {
   /**

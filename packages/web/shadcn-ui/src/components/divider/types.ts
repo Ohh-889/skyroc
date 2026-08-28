@@ -35,7 +35,7 @@ export type DividerUi = Partial<Record<DividerSlots, ClassValue>>;
  *     align="center"
  *     classNames={{ root: 'my-4' }}
  *   />;
- *   ```
+ *   ```;
  */
 export interface DividerProps
   extends DividerRootProps, Pick<DividerLabelProps, 'align' | 'orientation' | 'size'>, SlotProps {

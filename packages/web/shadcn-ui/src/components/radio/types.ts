@@ -29,7 +29,7 @@ export type RadioClassNames = Partial<Record<RadioSlots, ClassValue>>;
  *     value="option1"
  *     label="Option 1"
  *   />;
- *   ```
+ *   ```;
  */
 export interface RadioProps extends RadioGroupItemProps {
   /** Class names for customizing specific parts of the radio button (control, indicator, label, and root container). */
@@ -63,7 +63,7 @@ export interface RadioProps extends RadioGroupItemProps {
  *     ]}
  *     defaultValue="option1"
  *   />;
- *   ```
+ *   ```;
  */
 export interface RadioGroupProps extends StyledComponentProps<_RadioGroupProps> {
   /** Class names for customizing different parts of the radio group and its items. */
@@ -130,7 +130,7 @@ export interface RadioCardGroupItem extends Omit<RadioProps, 'classNames' | 'col
  *     value="apple"
  *     radioPosition="right"
  *   />;
- *   ```
+ *   ```;
  */
 export interface RadioCardProps extends RadioGroupItemProps {
   /** Whether the radio is checked (controlled). */
@@ -163,7 +163,7 @@ export interface RadioCardProps extends RadioGroupItemProps {
  *     ]}
  *     radioPosition="right"
  *   />;
- *   ```
+ *   ```;
  */
 export interface RadioCardGroupProps extends Omit<StyledComponentProps<_RadioGroupProps>, 'children'> {
   /** Class names for customizing different parts of the radio card group. */

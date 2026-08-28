@@ -73,7 +73,7 @@ export type DropdownMenuCheckboxGroupProps = Omit<
  *     value={['opt1']}
  *     onChange={handleChange}
  *   />;
- *   ```
+ *   ```;
  */
 export interface DropdownMenuCheckboxProps
   extends Omit<DropdownMenuCheckboxGroupProps, 'dir'>, StyledComponentProps<_DropdownMenuProps> {
@@ -104,7 +104,7 @@ export type DropdownMenuRadioGroupProps = Omit<
  *     value="md"
  *     onChange={handleChange}
  *   />;
- *   ```
+ *   ```;
  */
 export interface DropdownMenuRadioProps
   extends Omit<DropdownMenuRadioGroupProps, 'dir'>, StyledComponentProps<_DropdownMenuProps> {
@@ -188,7 +188,7 @@ export type DropdownMenuOption = DropdownMenuCheckboxOption | DropdownMenuOption
  *   >
  *   <button>Menu</button>
  *   </DropdownMenu>
- *   ```
+ *   ```;
  */
 export interface DropdownMenuProps extends StyledComponentProps<_DropdownMenuProps>, Omit<MenuCommonProps, 'items'> {
   /** Child elements of the dropdown menu (typically the trigger). */

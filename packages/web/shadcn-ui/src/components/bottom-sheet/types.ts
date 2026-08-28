@@ -32,7 +32,7 @@ export type BottomSheetClassNames = Partial<Record<BottomSheetSlots | DialogSlot
  *   >
  *     Content here
  *   </BottomSheet.Content>;
- *   ```
+ *   ```;
  */
 export type BottomSheetContentProps = StyledComponentProps<ContentProps> & {
   /**
@@ -86,7 +86,7 @@ export type BottomSheetCloseProps = Omit<DialogCloseProps, 'component'>;
  *   >
  *     BottomSheet content goes here
  *   </BottomSheet>;
- *   ```
+ *   ```;
  */
 export type BottomSheetProps = DialogProps & {
   /** Class names for customizing different parts of the bottom-sheet component. */

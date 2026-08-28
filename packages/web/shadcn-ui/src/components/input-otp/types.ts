@@ -79,7 +79,7 @@ export type InputOTPGroupProps = HTMLComponentProps<'div'> & {
  *   </InputOTPGroup>
  *   )}
  *   />
- *   ```
+ *   ```;
  */
 export type InputOTPRootProps = OTPInputRootStyledComponentProps &
   (
@@ -111,7 +111,7 @@ export type InputOTPRootProps = OTPInputRootStyledComponentProps &
  *   <InputOTPSlot index={2} />
  *   <InputOTPSlot index={3} />
  *   </InputOTPGroup>
- *   ```
+ *   ```;
  */
 export interface InputOTPSeparatorProps extends HTMLComponentProps<'div'> {}
 
@@ -146,7 +146,7 @@ export type InputOTPClassNames = Partial<Record<InputOTPSlots, ClassValue>>;
  *     size="md"
  *     onComplete={handleComplete}
  *   />;
- *   ```
+ *   ```;
  */
 export type InputOTPProps = Omit<OTPInputRootStyledComponentProps, 'maxLength' | 'separate'> & {
   /** Class names for customizing different parts of the OTP input component. */

@@ -46,8 +46,8 @@ export type InputClassNames = Partial<Record<InputSlots, ClassValue>>;
  *   />
  *   ```
  *
- * Supported input types: text, email, password, number, date, time, search,
- * tel, url, color, file, checkbox, radio, range, and more.
+ *   Supported input types: text, email, password, number, date, time, search,
+ *   tel, url, color, file, checkbox, radio, range, and more.
  */
 export interface InputProps extends StyledComponentProps<Omit<ComponentPropsWithRef<'input'>, 'size'>>, SlotProps {
   /** Class names for customizing different parts of the input component. */

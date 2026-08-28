@@ -39,10 +39,11 @@
     ".": "./src/index.ts"
   },
   "publishConfig": {
-    "access": "public",
     "bin": {
       "sa": "./dist/cli.mjs"
     },
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
     "exports": {
       ".": {
         "import": {
@@ -50,8 +51,7 @@
         }
       }
     },
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {

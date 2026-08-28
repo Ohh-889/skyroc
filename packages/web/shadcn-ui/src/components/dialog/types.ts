@@ -21,7 +21,7 @@ export type DialogClassNames = Partial<Record<DialogSlots, ClassValue>>;
  * @example
  *   ```tsx
  *   <DialogClose className="absolute top-4 right-4">X</DialogClose>;
- *   ```
+ *   ```;
  */
 export interface DialogCloseProps extends StyledComponentProps<_DialogCloseProps> {
   /** Custom component to use instead of the default close button. Useful for using a custom icon or button component. */
@@ -55,7 +55,7 @@ export interface DialogDescriptionProps extends StyledComponentProps<_DialogDesc
  *     <Button onClick={onCancel}>Cancel</Button>
  *     <Button onClick={onConfirm}>Confirm</Button>
  *   </DialogFooter>;
- *   ```
+ *   ```;
  */
 export interface DialogFooterProps extends StyledComponentProps<ComponentPropsWithoutRef<'footer'>> {}
 
@@ -68,7 +68,7 @@ export interface DialogFooterProps extends StyledComponentProps<ComponentPropsWi
  *     <DialogTitle>Delete Item</DialogTitle>
  *     <DialogClose />
  *   </DialogHeader>;
- *   ```
+ *   ```;
  */
 export interface DialogHeaderProps extends StyledComponentProps<ComponentPropsWithoutRef<'header'>> {}
 
@@ -104,7 +104,7 @@ export interface DialogTitleProps extends StyledComponentProps<_DialogTitleProps
  *   >
  *     <p>This action cannot be undone.</p>
  *   </Dialog>;
- *   ```
+ *   ```;
  *
  * @template T - Type of content props, defaults to DialogContentProps
  */

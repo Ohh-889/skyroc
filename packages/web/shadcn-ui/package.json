@@ -55,7 +55,9 @@
     "./style.css": "./src/style.css"
   },
   "publishConfig": {
-    "access": "public",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -71,10 +73,8 @@
       },
       "./style.css": "./dist/style.css"
     },
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "registry": "https://registry.npmjs.org/",
-    "types": "./dist/index.d.ts"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown && pnpm build:css",

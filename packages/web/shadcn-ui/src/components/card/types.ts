@@ -82,7 +82,7 @@ export type CardUi = Partial<Record<CardSlots, ClassValue>>;
  *   >
  *     Card content goes here
  *   </Card>;
- *   ```
+ *   ```;
  */
 export interface CardProps extends CardRootProps {
   /** Class names for customizing different parts of the card. */

@@ -19,7 +19,7 @@ import type { ButtonShadow, ButtonShape, ButtonVariant } from './button-variants
  *   >
  *     Click me
  *   </Button>;
- *   ```
+ *   ```;
  */
 export interface ButtonProps extends PrimitiveProps, StyledComponentProps<ComponentProps<'button'>> {
   /** The color theme of the button (e.g., primary, secondary, destructive, success). */
@@ -49,7 +49,7 @@ export interface ButtonProps extends PrimitiveProps, StyledComponentProps<Compon
  *     <Button>Previous</Button>
  *     <Button>Next</Button>
  *   </ButtonGroup>;
- *   ```
+ *   ```;
  */
 export interface ButtonGroupProps extends StyledComponentProps<React.HTMLAttributes<HTMLDivElement>> {
   /** Direction of button group layout (horizontal or vertical). */
@@ -67,7 +67,7 @@ export interface ButtonGroupProps extends StyledComponentProps<React.HTMLAttribu
  *     iconProps={{ size: 'lg' }}
  *     variant="ghost"
  *   />;
- *   ```
+ *   ```;
  */
 export interface ButtonIconProps extends ButtonProps {
   /** Icon identifier or icon element to display in the button. */

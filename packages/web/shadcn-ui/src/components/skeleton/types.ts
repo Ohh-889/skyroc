@@ -19,7 +19,7 @@ import type { StyledComponentProps } from '../../types/shared';
  *
  *   // Skeleton for image placeholder
  *   <Skeleton className="h-32 w-32 rounded-lg" />
- *   ```
+ *   ```;
  */
 export interface SkeletonProps extends StyledComponentProps<ComponentPropsWithoutRef<'div'>> {
   /**
@@ -66,7 +66,7 @@ export type SkeletonAnimation = 'none' | 'pulse' | 'wave';
  *   <button key="action-btn">This button stays visible</button>
  *   </div>
  *   </SkeletonContainer>
- *   ```
+ *   ```;
  */
 export interface SkeletonContainerProps extends SkeletonProps {
   /**
@@ -100,7 +100,7 @@ export interface SkeletonContainerProps extends SkeletonProps {
    *     <button key="submit-btn">This stays visible</button>
    *     <Icon key="icon" />
    *   </SkeletonContainer>;
-   *   ```
+   *   ```;
    *
    * @default [ ]
    */

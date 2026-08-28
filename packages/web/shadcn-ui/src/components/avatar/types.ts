@@ -30,7 +30,7 @@ export interface AvatarImageProps extends StyledComponentProps<_AvatarImageProps
  *     fallback="JD"
  *     delayMs={600}
  *   />;
- *   ```
+ *   ```;
  */
 export interface AvatarProps extends AvatarImageProps, Pick<AvatarFallbackProps, 'delayMs'> {
   /** Class names for customizing different parts of the avatar. */

@@ -28,7 +28,7 @@ import type { InputProps } from '../input';
  *
  *   // Disabled password
  *   <Password disabled placeholder="Disabled" />
- *   ```
+ *   ```;
  */
 export interface PasswordProps extends InputProps {
   /**

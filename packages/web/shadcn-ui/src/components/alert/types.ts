@@ -45,7 +45,7 @@ export type AlertClassNames = Partial<Record<AlertSlots, ClassValue>>;
  *     title="Information"
  *     description="This is an informational alert message."
  *   />;
- *   ```
+ *   ```;
  */
 export interface AlertProps extends Omit<AlertRootProps, 'title'>, SlotProps {
   /** Class names for customizing different parts of the alert. */

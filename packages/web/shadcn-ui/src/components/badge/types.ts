@@ -31,7 +31,7 @@ export type BadgeUi = Partial<Record<BadgeSlots, ClassValue>>;
  *     content="Label"
  *     open={true}
  *   />;
- *   ```
+ *   ```;
  */
 export interface BadgeProps
   extends Omit<BadgeRootProps, 'color' | 'content'>, Pick<BadgeContentProps, 'color' | 'position' | 'size'> {

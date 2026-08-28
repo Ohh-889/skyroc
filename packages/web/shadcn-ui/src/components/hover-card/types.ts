@@ -24,7 +24,7 @@ export type HoverCardClassNames = Partial<Record<HoverCardSlots, ClassValue>>;
  *   >
  *     <p>This content appears on hover</p>
  *   </HoverCard>;
- *   ```
+ *   ```;
  */
 export type HoverCardProps = StyledComponentProps<_HoverCardProps> & {
   /** Props to customize the arrow indicator of the hover card. Only applied when showArrow is true. */

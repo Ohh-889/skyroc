@@ -20,7 +20,7 @@ export type SegmentOptionData = Omit<TabsOptionData, 'children'>;
  *     ]}
  *     defaultValue="day"
  *   />;
- *   ```
+ *   ```;
  *
  * @template T - Type of segment option data, defaults to SegmentOptionData
  */

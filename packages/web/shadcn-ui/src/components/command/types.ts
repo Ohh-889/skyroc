@@ -72,7 +72,7 @@ export type CommandShortcutProps = HTMLComponentProps<'div'> & {
  *       { type: 'item', label: 'About' }
  *     ]
  *   }
- *   ```
+ *   ```;
  */
 export type CommandGroupOptionProps = Omit<CommandGroupProps, 'children' | 'heading'> & {
   /** Array of command items or separators in this group. */
@@ -102,7 +102,7 @@ export type CommandSeparatorOptionProps = CommandSeparatorProps & {
  *     shortcut: 'Cmd+N',
  *     onSelect: () => console.log('File created')
  *   }
- *   ```
+ *   ```;
  */
 export type CommandItemOptionProps = Omit<CommandItemProps, 'children'> & {
   /** Label displayed for the command item. */
@@ -139,7 +139,7 @@ export interface CommandOptionProps {
  *   ]}
  *   inputProps={{ placeholder: 'Search...' }}
  *   />
- *   ```
+ *   ```;
  */
 export interface CommandProps extends CommandRootProps {
   /** Custom class names for different command slots. */
@@ -166,7 +166,7 @@ export interface CommandProps extends CommandRootProps {
  *   >
  *     <Command items={items} />
  *   </CommandDialog>;
- *   ```
+ *   ```;
  */
 export interface CommandDialogProps extends Omit<DialogProps, 'classNames' | 'footer' | 'trigger'> {
   /** Custom class names for dialog-related slots. Limited to overlay, content, and close button styling. */

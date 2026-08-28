@@ -71,7 +71,7 @@ export type ContextMenuCheckboxGroupProps = Omit<
  *       { type: 'item', label: 'Option 2', value: 'opt2' }
  *     ]}
  *   />;
- *   ```
+ *   ```;
  */
 export interface ContextMenuCheckboxProps
   extends Omit<ContextMenuCheckboxGroupProps, 'dir'>, StyledComponentProps<_ContextMenuProps> {
@@ -103,7 +103,7 @@ export type ContextMenuRadioGroupProps = Omit<
  *       { type: 'item', label: 'Option B', value: 'b' }
  *     ]}
  *   />;
- *   ```
+ *   ```;
  */
 export interface ContextMenuRadioProps
   extends Omit<ContextMenuRadioGroupProps, 'dir'>, StyledComponentProps<_ContextMenuProps> {
@@ -187,7 +187,7 @@ export type ContextMenuOption = ContextMenuCheckboxOption | ContextMenuOptionPro
  *   >
  *   <div>Right-click me</div>
  *   </ContextMenu>
- *   ```
+ *   ```;
  */
 export interface ContextMenuProps extends StyledComponentProps<_ContextMenuProps>, Omit<MenuCommonProps, 'items'> {
   /** Element that triggers the context menu on right-click. */

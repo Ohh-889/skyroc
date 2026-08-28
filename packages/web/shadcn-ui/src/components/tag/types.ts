@@ -13,7 +13,7 @@ import type { TagShape, TagVariant } from './tag-variants';
  *   >
  *     New
  *   </Tag>;
- *   ```
+ *   ```;
  */
 export interface TagProps extends StyledComponentProps<React.ComponentProps<'div'>> {
   /** The color theme of the tag (e.g., primary, secondary, destructive, success, etc.). */

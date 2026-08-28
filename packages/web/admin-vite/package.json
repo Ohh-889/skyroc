@@ -47,7 +47,9 @@
     }
   },
   "publishConfig": {
-    "access": "public",
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
     "exports": {
       ".": {
         "import": {
@@ -56,10 +58,8 @@
         }
       }
     },
-    "main": "./dist/index.mjs",
-    "module": "./dist/index.mjs",
-    "registry": "https://registry.npmjs.org/",
-    "types": "./dist/index.d.mts"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",

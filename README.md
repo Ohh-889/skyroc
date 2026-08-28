@@ -120,17 +120,17 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 🧬 跨端内核 — `packages/@core/*`
 
-| 包名                      | 职责                                                                              |
+| 包名 | 职责 |
 | ------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `@skyroc/utils`           | 平台无关工具集合，通过 `./web`、`./path`、`./cn`、`./crypto` 等子路径隔离特定能力 |
-| `@skyroc/axios`           | 类型安全的 Axios 客户端，提供重试、转换管道、请求取消与后端响应处理               |
-| `@skyroc/service`         | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈                |
-| `@skyroc/core-state`      | Jotai 状态封装与可注入存储的跨端状态能力                                          |
-| `@skyroc/logger`          | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配                          |
-| `@skyroc/color`           | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成                    |
-| `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设                 |
-| `create-skyroc`           | `packages/@core/create-skyroc`                                                    | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
-| `@skyroc/scripts`         | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI                             |
+| `@skyroc/utils` | 平台无关工具集合，通过 `./web`、`./path`、`./cn`、`./crypto` 等子路径隔离特定能力 |
+| `@skyroc/axios` | 类型安全的 Axios 客户端，提供重试、转换管道、请求取消与后端响应处理 |
+| `@skyroc/service` | 请求与 TanStack Query 基础设施，通过适配器接入鉴权、导航和消息反馈 |
+| `@skyroc/core-state` | Jotai 状态封装与可注入存储的跨端状态能力 |
+| `@skyroc/logger` | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配 |
+| `@skyroc/color` | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成 |
+| `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设 |
+| `create-skyroc` | `packages/@core/create-skyroc` | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
+| `@skyroc/scripts` | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI |
 
 ### 🔗 共享能力与原语
 

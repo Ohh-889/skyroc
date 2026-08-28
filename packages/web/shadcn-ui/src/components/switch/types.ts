@@ -21,7 +21,7 @@ export type SwitchThumbProps = StyledComponentProps<_SwitchThumbProps>;
  *     root: 'custom-root-class',
  *     thumb: 'custom-thumb-class'
  *   };
- *   ```
+ *   ```;
  */
 export type ClassNames = Partial<Record<SwitchSlots, ClassValue>>;
 
@@ -35,7 +35,7 @@ export type ClassNames = Partial<Record<SwitchSlots, ClassValue>>;
  *     color="primary"
  *     classNames={{ root: 'custom-switch' }}
  *   />;
- *   ```
+ *   ```;
  */
 export interface SwitchProps extends SwitchRootProps {
   /** Class names for customizing different slots within the switch component. */

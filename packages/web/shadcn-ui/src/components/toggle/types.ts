@@ -22,7 +22,7 @@ import type { ToggleVariant } from './toggle-variants';
  *   >
  *   <BoldIcon />
  *   </Toggle>
- *   ```
+ *   ```;
  */
 export interface ToggleProps extends StyledComponentProps<_ToggleProps> {
   /**

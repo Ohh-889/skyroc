@@ -27,7 +27,7 @@ export type ToggleGroupRootProps =
  *     variant: 'outline',
  *     children: 'Bold'
  *   };
- *   ```
+ *   ```;
  */
 export type ToggleGroupItemProps = StyledComponentProps<_ToggleGroupItemProps> & {
   /** Visual variant style for the toggle item (e.g., outline, solid, ghost). */
@@ -44,7 +44,7 @@ export type ToggleGroupItemProps = StyledComponentProps<_ToggleGroupItemProps> &
  *     root: 'custom-group',
  *     item: 'custom-toggle-item'
  *   };
- *   ```
+ *   ```;
  */
 export type ToggleGroupClassNames = Partial<Record<ToggleSlots, ClassValue>>;
 
@@ -58,7 +58,7 @@ export type ToggleGroupClassNames = Partial<Record<ToggleSlots, ClassValue>>;
  *     { value: 'bold', label: 'Bold', disabled: false },
  *     { value: 'italic', label: 'Italic', disabled: false }
  *   ];
- *   ```
+ *   ```;
  */
 export type ToggleGroupItemData = Omit<ToggleGroupItemProps, 'children'> & {
   /** The display label/text shown in the toggle item button. */
@@ -83,7 +83,7 @@ export type ToggleGroupItemData = Omit<ToggleGroupItemProps, 'children'> & {
  *   variant="outline"
  *   classNames={{ item: 'custom-toggle' }}
  *   />
- *   ```
+ *   ```;
  *
  * @template T - Type of toggle group item data, defaults to ToggleGroupItemData
  */

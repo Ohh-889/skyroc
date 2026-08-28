@@ -49,7 +49,7 @@ type FormSharedProps = StyledComponentProps<{
  *     error={errors.email}
  *     component={Input}
  *   />;
- *   ```
+ *   ```;
  *
  * @template Values - The shape of form values object
  */
@@ -65,9 +65,9 @@ export type FormFieldProps<Values = any> = FieldProps<Values> &
  * @example
  *   ```tsx
  *   <FormComputedField<{ firstName: string; lastName: string; fullName: string }>
- *     name="fullName"
- *     compute={values => `${values.firstName} ${values.lastName}`}
- *     label="Full Name"
+ *   name="fullName"
+ *   compute={values => `${values.firstName} ${values.lastName}`}
+ *   label="Full Name"
  *   />;
  *   ```
  *

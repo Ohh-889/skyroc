@@ -52,7 +52,12 @@
     "./web": "./src/web/index.ts"
   },
   "publishConfig": {
-    "access": "public",
+    "sideEffects": [
+      "./dist/date/dayjs.js"
+    ],
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -97,13 +102,8 @@
         }
       }
     },
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "registry": "https://registry.npmjs.org/",
-    "sideEffects": [
-      "./dist/date/dayjs.js"
-    ],
-    "types": "./dist/index.d.ts"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",

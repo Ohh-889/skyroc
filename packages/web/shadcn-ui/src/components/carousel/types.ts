@@ -115,7 +115,7 @@ export type CarouselPropsWithoutChildren = Omit<CarouselRootProps, 'children'> &
  * @example
  *   ```tsx
  *   <Carousel counts={5}>{index => <div key={index}>Slide {index + 1}</div>}</Carousel>;
- *   ```
+ *   ```;
  */
 export interface CarouselWithSlotChildren extends CarouselPropsWithoutChildren {
   /**
@@ -137,7 +137,7 @@ export interface CarouselWithSlotChildren extends CarouselPropsWithoutChildren {
  *     <div>Slide 2</div>
  *     <div>Slide 3</div>
  *   </Carousel>;
- *   ```
+ *   ```;
  */
 export interface CarouselWithChildrenArray extends CarouselPropsWithoutChildren {
   /** Array of React nodes representing carousel slides. */

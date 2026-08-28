@@ -42,7 +42,7 @@ import { virtualizerVariants } from './virtualizer-variants';
  *   </div>
  *   )}
  *   />
- *   ```
+ *   ```;
  */
 const VirtualList = <
   T,

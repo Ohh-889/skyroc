@@ -22,7 +22,7 @@
  *   // - feather: Feather Icons
  *   // - fas: Font Awesome Solid
  *   // And many more from the Iconify library
- *   ```
+ *   ```;
  *
  * @see https://icon-sets.iconify.design/
  */

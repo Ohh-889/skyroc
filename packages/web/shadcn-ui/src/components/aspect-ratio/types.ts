@@ -12,6 +12,6 @@ import type { StyledComponentProps } from '../../types/shared';
  *       alt=""
  *     />
  *   </AspectRatio>;
- *   ```
+ *   ```;
  */
 export interface AspectRatioProps extends StyledComponentProps<_AspectRatioProps> {}

@@ -35,10 +35,10 @@
   ],
   "type": "module",
   "publishConfig": {
-    "access": "public",
     "bin": {
       "create-skyroc": "./dist/index.mjs"
     },
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {

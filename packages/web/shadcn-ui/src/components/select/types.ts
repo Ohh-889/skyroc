@@ -38,7 +38,7 @@ export interface SelectContentProps extends StyledComponentProps<_SelectContentP
  *   >
  *     Option 1
  *   </SelectItem>;
- *   ```
+ *   ```;
  */
 export interface SelectItemProps extends StyledComponentProps<_SelectItemProps>, SlotProps {
   /** Class names for customizing the item and its indicator. */
@@ -62,7 +62,7 @@ export interface SelectSeparatorProps extends StyledComponentProps<_SelectSepara
  *     placeholder="Select an option"
  *     triggerIcon={<ChevronDownIcon />}
  *   />;
- *   ```
+ *   ```;
  */
 export interface SelectTriggerProps
   extends StyledComponentProps<_SelectTriggerProps>, Pick<_SelectValueProps, 'placeholder'>, SlotProps {
@@ -82,7 +82,7 @@ export interface SelectTriggerProps
  *   label: "Apple",
  *   disabled: false
  *   }
- *   ```
+ *   ```;
  */
 export type SelectOptionItemData = Omit<SelectItemProps, 'children'> & {
   /** Display label for the option. */
@@ -110,7 +110,7 @@ export type SelectSeparatorOptionData = SelectSeparatorProps & {
  *   { value: "orange", label: "Orange" }
  *   ]
  *   }
- *   ```
+ *   ```;
  */
 export type SelectGroupOptionData = Omit<SelectLabelProps, 'children'> & {
   /** Array of option items contained in this group. */
@@ -152,7 +152,7 @@ export interface SelectOptionProps extends Pick<SelectItemProps, 'indicatorIcon'
  *     ]}
  *     triggerProps={{ placeholder: 'Select a fruit...' }}
  *   />;
- *   ```
+ *   ```;
  */
 export interface SelectProps
   extends StyledComponentProps<Omit<_SelectProps, 'children'>>, Pick<SelectItemProps, 'indicatorIcon'> {

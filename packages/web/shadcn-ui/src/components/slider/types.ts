@@ -57,7 +57,7 @@ export type SliderClassNames = Partial<Record<SliderSlots, ClassValue>>;
  *   step={5}
  *   color="secondary"
  *   />
- *   ```
+ *   ```;
  */
 export interface SliderProps extends Omit<SliderRootProps, 'children'> {
   /** Class names for customizing different parts of the slider component. */

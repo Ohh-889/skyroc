@@ -270,9 +270,7 @@ type MyState = {
 // 2. 定义 Store（所有逻辑在这里）
 class MyStore extends Store<MyState> {
   constructor() {
-    super({
-      /* 初始状态 */
-    });
+    super({/* 初始状态 */});
   }
 
   // 公开方法必须用箭头函数

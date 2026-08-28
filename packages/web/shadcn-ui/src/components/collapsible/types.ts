@@ -33,7 +33,7 @@ export type CollapsibleClassNames = Partial<Record<CollapsibleSlots, ClassValue>
  *     forceMountContent
  *     defaultOpen={true}
  *   />;
- *   ```
+ *   ```;
  */
 export interface CollapsibleProps extends CollapsibleRootProps {
   /** Custom class names for different collapsible UI slots. Allows styling the root and content areas independently. */

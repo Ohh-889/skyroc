@@ -48,7 +48,9 @@
     "./react": "./src/react/index.ts"
   },
   "publishConfig": {
-    "access": "public",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "import": {
@@ -63,10 +65,8 @@
         }
       }
     },
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "registry": "https://registry.npmjs.org/",
-    "types": "./dist/index.d.ts"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",

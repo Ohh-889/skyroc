@@ -15,7 +15,7 @@ import type { DrawerSide } from './drawer-variants';
  *     </DrawerHeader>
  *     <div>Drawer content goes here</div>
  *   </DrawerContent>;
- *   ```
+ *   ```;
  */
 export interface DrawerContentProps extends StyledComponentProps<DialogContentProps> {
   /** The side of the screen from which the drawer slides in. Can be "top", "right", "bottom", or "left". */
@@ -44,7 +44,7 @@ export type DrawerClassNames = Partial<Record<DrawerSlots, ClassValue>>;
  *       </DrawerBody>
  *     </DrawerContent>
  *   </Drawer>;
- *   ```
+ *   ```;
  */
 export interface DrawerProps extends Omit<DialogProps<DrawerContentProps>, 'contentComponent'> {
   /**

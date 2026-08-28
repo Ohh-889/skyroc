@@ -116,7 +116,7 @@ export interface PaginationEllipsisProps extends StyledComponentProps<React.Comp
  *     siblingCount={1}
  *     showEdges
  *   />;
- *   ```
+ *   ```;
  */
 export interface PaginationProps extends StyledComponentProps<Omit<React.ComponentPropsWithRef<'nav'>, 'onChange'>> {
   /**
