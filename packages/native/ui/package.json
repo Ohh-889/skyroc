@@ -1,6 +1,6 @@
 {
   "name": "@skyroc/native-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "React Native UI component library powered by Uniwind (Tailwind CSS v4) for SoybeanAdmin",
   "keywords": [
