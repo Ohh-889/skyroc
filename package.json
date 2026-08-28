@@ -16,8 +16,9 @@
     "format:check": "oxfmt --check",
     "changeset": "changeset",
     "release:status": "changeset status",
-    "release:version": "changeset version",
-    "release:publish": "changeset publish",
+    "release:version": "changeset version && pnpm install --lockfile-only --ignore-scripts",
+    "release:build": "turbo run build --filter='./packages/**' --filter='@skyroc/uno-config'",
+    "release:publish": "pnpm release:build && changeset publish",
     "test:ui": "vitest --ui",
     "test:watch": "turbo run test:watch",
     "typecheck": "turbo run typecheck"

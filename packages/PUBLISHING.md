@@ -38,29 +38,39 @@ pnpm changeset
 pnpm release:status
 ```
 
-## 准备版本
+## 自动发布
 
-合并准备发布的变更后执行：
+`master` 收到包含 changeset 的提交后，[Release workflow](../.github/workflows/release.yml) 会自动创建或更新 Release PR。该 PR 包含版本号、内部依赖、changelog 和 lockfile 变更。
+
+合并 Release PR 后，同一个 workflow 会：
+
+1. 安装冻结的 lockfile；
+2. 构建全部公共包及其内部依赖；
+3. 发布 registry 中尚不存在的非私有包版本；
+4. 推送包级 Git tag 并创建 GitHub Release。
+
+日常开发只需要提交功能代码和 `pnpm changeset` 生成的文件，不要手动修改版本号，也不需要在本地执行 `release:version` 或 `release:publish`。
+
+### 仓库一次性配置
+
+1. 在 GitHub 仓库的 `Settings → Actions → General` 中允许 GitHub Actions 创建 Pull Request；
+2. 在 npm 创建能够发布本仓库公共包的 granular access token；
+3. 在 GitHub 仓库的 `Settings → Secrets and variables → Actions` 中新增名为 `NPM_TOKEN` 的 secret；
+4. token 必须拥有目标包的读写权限，并允许自动化发布使用；不要把 token 写入仓库文件。
+
+workflow 同时请求 GitHub OIDC 身份并启用 npm provenance，使发布产物能够关联到对应的 GitHub Actions 构建。
+
+## 手动回退流程
+
+只有 GitHub Actions 不可用且必须人工发布时才执行：
 
 ```bash
 pnpm release:version
 pnpm install
-pnpm release:status
-```
-
-`release:version` 会消费 `.changeset/*.md`，更新受影响包的 `version`、内部依赖范围和各包 `CHANGELOG.md`。版本文件和 lockfile 应作为一次独立的 release 提交接受审查。
-
-## 验证与发布
-
-根据待发布包运行针对性的 typecheck、test、build 和 tarball 检查。涉及 `create-skyroc` 时必须验证打包后的脚手架与仓库外生成结果；涉及 Expo 原生模块时必须执行其 `prepublishOnly`、tarball 内容和原生 autolinking 检查。
-
-确认 npm 身份、目标 registry、工作区状态和所有产物无误后，由发布者手动执行：
-
-```bash
 pnpm release:publish
 ```
 
-该命令只发布本地版本高于 npm registry 当前版本的非私有包。真实发布前不要跳过 `pnpm release:status` 和对应包的构建检查。
+`release:version` 会消费 changeset 并同步 lockfile；`release:publish` 会先构建全部公共包及其内部依赖，再发布 registry 中不存在的版本。测试和类型检查应在功能提交阶段针对受影响包完成；涉及 `create-skyroc` 或 Expo 原生模块时，仍需检查 tarball、仓库外脚手架或原生 autolinking 等专属发布门禁。
 
 ## 应用版本
 
