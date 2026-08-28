@@ -30,7 +30,7 @@
 
 ```bash
 pnpm add @skyroc/native-ui uniwind
-pnpm add -D @skyroc/tailwind-plugin tailwindcss
+pnpm add -D tailwindcss
 ```
 
 组件使用到的原生能力以 `peerDependencies` 声明。请根据实际使用的组件，通过 `expo install` 安装对应依赖；版本要求以本包的 [`package.json`](./package.json) 为准。
@@ -53,22 +53,17 @@ module.exports = withUniwindConfig(config, {
 });
 ```
 
-### 2. 接入设计令牌并扫描组件源码
+### 2. 接入 Native UI 样式配置
 
-在宿主应用的 `global.css` 中启用 Native 平台主题：
+在宿主应用的 `global.css` 中导入组件库提供的 Uniwind 配置入口：
 
 ```css
 @import 'tailwindcss';
 @import 'uniwind';
-
-@plugin "@skyroc/tailwind-plugin" {
-  platform: 'native';
-}
-
-@source "./node_modules/@skyroc/native-ui/dist";
+@import '@skyroc/native-ui/uniwind.css';
 ```
 
-`@source` 路径相对于 `global.css`。发布包扫描 `dist`；workspace 软链接开发时扫描 `src`。路径必须指向当前安装方式下实际存在的组件代码，否则 Tailwind 无法发现组件库内部使用的 className。仓库内可直接参考 playground 的 [`global.css`](../../../apps/native-ui-playground/global.css)。
+该入口会以 Native 模式加载 `@skyroc/tailwind-plugin`，并扫描当前安装形态下的组件代码。宿主应用无需区分 workspace 的 `src` 与发布包的 `dist`。仓库内可直接参考 playground 的 [`global.css`](../../../apps/native-ui-playground/global.css)。
 
 ### 3. 在根布局初始化运行时能力
 

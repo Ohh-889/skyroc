@@ -15,13 +15,13 @@ description: 哪些原生依赖需要自己安装、被哪些组件需要，以�
 | **按需原生依赖** | `peerDependencies`，按用到的组件安装          |
 | **已内置**       | 组件库的 `dependencies`，随包自动安装，不用管 |
 
-已内置的有 `react-native-confirmation-code-field`（PasswordInput）、`react-native-ui-datepicker`（Calendar）、`@radix-ui/react-compose-refs`、`@rn-primitives/slot`、`tailwind-variants`，以及 `@skyroc/form` / `@skyroc/hooks` / `@skyroc/utils`。
+已内置的有 `@skyroc/tailwind-plugin`、`react-native-confirmation-code-field`（PasswordInput）、`react-native-ui-datepicker`（Calendar）、`@radix-ui/react-compose-refs`、`@rn-primitives/slot`、`tailwind-variants`，以及 `@skyroc/form` / `@skyroc/hooks` / `@skyroc/utils`。
 
 ## 必装基础
 
 ```bash
 pnpm add @skyroc/native-ui uniwind
-pnpm add -D @skyroc/tailwind-plugin tailwindcss
+pnpm add -D tailwindcss
 ```
 
 | 依赖                      | 版本要求   | 作用                                  |
@@ -30,7 +30,6 @@ pnpm add -D @skyroc/tailwind-plugin tailwindcss
 | `react-native`            | `>=0.81.0` | —                                     |
 | `uniwind`                 | `>=1.7.0`  | 把 `className` 编译成 RN 样式的运行时 |
 | `tailwindcss`             | `>=4`      | 构建期扫描与生成原子类                |
-| `@skyroc/tailwind-plugin` | workspace  | 注入设计令牌 CSS 变量                 |
 
 另外根布局用到的 `react-native-safe-area-context` 由 Expo 模板自带，如果你的项目没有，需要补装——不装则 `pt-safe` 一类工具类恒为 `0`，见 [快速开始](/docs/overview/getting-started)。
 

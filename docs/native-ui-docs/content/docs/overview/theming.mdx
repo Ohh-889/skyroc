@@ -3,11 +3,11 @@ title: 主题与样式
 description: 语义色令牌、主题切换，以及编写组件样式时的约定
 ---
 
-Native UI 的主题来自 `@skyroc/tailwind-plugin`——和 `@skyroc/web-ui` 是同一套令牌定义，只是输出形态按平台切换。组件只写语义色，明暗由宿主应用整体切换，**组件内部不写 `dark:` 分支**。
+Native UI 的主题来自 `@skyroc/native-ui/uniwind.css` 内部加载的 `@skyroc/tailwind-plugin`——和 `@skyroc/web-ui` 是同一套令牌定义，只是输出形态按平台切换。组件只写语义色，明暗由宿主应用整体切换，**组件内部不写 `dark:` 分支**。
 
 ## 语义色令牌
 
-`@plugin "@skyroc/tailwind-plugin"` 会注入下面这些 CSS 变量，对应的工具类是 `bg-*` / `text-*` / `border-*`：
+组件包的 Uniwind 入口会注入下面这些 CSS 变量，对应的工具类是 `bg-*` / `text-*` / `border-*`：
 
 | 令牌 | 语义 |
 | --- | --- |

@@ -14,13 +14,10 @@
 ```css
 @import 'tailwindcss';
 @import 'uniwind';
-
-@plugin "@skyroc/tailwind-plugin" {
-  platform: 'native';
-}
+@import '@skyroc/native-ui/uniwind.css';
 ```
 
-语义色与色阶由 `@skyroc/tailwind-plugin` 生成，**没有** `@skyroc/native-theme` 这个包。
+`@skyroc/native-ui/uniwind.css` 负责扫描组件库源码，并以 Native 模式加载 `@skyroc/tailwind-plugin`。语义色与色阶由该插件生成，**没有** `@skyroc/native-theme` 这个包。
 
 ## 强制使用 className
 

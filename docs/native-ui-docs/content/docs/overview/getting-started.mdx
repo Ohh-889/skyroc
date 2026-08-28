@@ -21,7 +21,7 @@ description: 安装依赖、配置 Metro 与 CSS 入口、在根布局初始化�
 
 ```bash
 pnpm add @skyroc/native-ui uniwind
-pnpm add -D @skyroc/tailwind-plugin tailwindcss
+pnpm add -D tailwindcss
 ```
 
 组件用到的原生能力以 `peerDependencies` 声明，**不随组件库自动安装**，需要按实际用到的组件用 `expo install` 逐个安装。最常用的几个：
@@ -48,26 +48,15 @@ module.exports = withUniwindConfig(config, {
 });
 ```
 
-## 2. 接入设计令牌并扫描组件源码
+## 2. 接入 Native UI 样式配置
 
 ```css title="global.css"
 @import 'tailwindcss';
 @import 'uniwind';
-
-@plugin "@skyroc/tailwind-plugin" {
-  platform: 'native';
-}
-
-@source "./node_modules/@skyroc/native-ui/dist";
+@import '@skyroc/native-ui/uniwind.css';
 ```
 
-`platform: 'native'` 会让令牌以 `var(--primary)` 而非 Web 端的 `hsl(var(--primary))` 形式输出。
-
-<Callout type="warn">
-  `@source` 的路径相对于 `global.css`，且必须指向**当前安装方式下真实存在的组件代码**——发布包扫描 `dist`，workspace
-  软链接开发时扫描 `src`。指错了 Tailwind 就发现不了组件库内部用的 className，组件会渲染成没有样式的裸元素。仓库内的
-  playground 用的是 `@source "./node_modules/@skyroc/native-ui/src"`。
-</Callout>
+该入口负责以 Native 模式加载设计令牌并扫描组件库代码。宿主应用无需区分 workspace 的 `src` 与发布包的 `dist`。
 
 ## 3. 在根布局初始化运行时能力
 
