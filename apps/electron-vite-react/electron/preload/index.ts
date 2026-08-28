@@ -4,7 +4,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args;
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args));
+    return ipcRenderer.on(channel, (event, ...listenerArgs) => listener(event, ...listenerArgs));
   },
   off(...args: Parameters<typeof ipcRenderer.off>) {
     const [channel, ...omit] = args;
@@ -131,8 +131,8 @@ function useLoading() {
 const { appendLoading, removeLoading } = useLoading();
 domReady().then(appendLoading);
 
-window.onmessage = ev => {
+window.addEventListener('message', ev => {
   ev.data.payload === 'removeLoading' && removeLoading();
-};
+});
 
 setTimeout(removeLoading, 4999);
