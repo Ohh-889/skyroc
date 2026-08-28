@@ -19,8 +19,8 @@ pnpm add electron-updater
   publish: {
     provider: 'generic',
     channel: 'latest',
-    url: 'https://foo.com/',
-  },
+    url: 'https://foo.com/'
+  }
 }
 ```
 

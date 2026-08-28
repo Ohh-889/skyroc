@@ -10,16 +10,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && electron-builder",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "preview": "vite preview",
     "pretest": "vite build --mode=test",
     "test": "vitest run",
     "test:e2e": "pnpm pretest && playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit --project tsconfig.json && tsc --noEmit --project tsconfig.main.json && tsc --noEmit --project tsconfig.preload.json"
   },
   "dependencies": {
     "electron-updater": "^6.8.3"
   },
   "devDependencies": {
+    "@skyroc/tsconfig": "workspace:*",
     "@playwright/test": "catalog:dev",
     "@tailwindcss/vite": "catalog:css",
     "@types/react": "catalog:dev",

@@ -922,6 +922,9 @@ importers:
       '@playwright/test':
         specifier: catalog:dev
         version: 1.59.1
+      '@skyroc/tsconfig':
+        specifier: workspace:*
+        version: link:../../internal/tsconfig
       '@tailwindcss/vite':
         specifier: catalog:css
         version: 4.3.3(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))

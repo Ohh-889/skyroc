@@ -33,6 +33,7 @@
   "sideEffects": false,
   "exports": {
     "./oxlint/base.json": "./oxlint/base.json",
+    "./oxlint/electron.json": "./oxlint/electron.json",
     "./oxlint/next.json": "./oxlint/next.json",
     "./oxlint/react.json": "./oxlint/react.json",
     "./package.json": "./package.json",

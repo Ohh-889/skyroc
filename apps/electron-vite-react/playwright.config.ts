@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test'
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './test/e2e',
@@ -6,6 +6,6 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   use: {
-    trace: 'on-first-retry',
-  },
-})
+    trace: 'on-first-retry'
+  }
+});

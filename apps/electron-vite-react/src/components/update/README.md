@@ -19,8 +19,8 @@ Add a `publish` field to `electron-builder.json` to define the update source and
   publish: {
     provider: 'generic',
     channel: 'latest',
-    url: 'https://foo.com/',
-  },
+    url: 'https://foo.com/'
+  }
 }
 ```
 

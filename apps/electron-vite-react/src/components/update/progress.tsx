@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 
 const Progress: React.FC<
   React.PropsWithChildren<{
-    percent?: number
+    percent?: number;
   }>
-> = (props) => {
-  const { percent = 0 } = props
-  const normalizedPercent = Math.min(Math.max(percent ?? 0, 0), 100)
+> = props => {
+  const { percent = 0 } = props;
+  const normalizedPercent = Math.min(Math.max(percent ?? 0, 0), 100);
 
   return (
     <div className="flex items-center gap-2">
@@ -20,7 +20,7 @@ const Progress: React.FC<
         {normalizedPercent.toFixed(1)}%
       </span>
     </div>
-  )
-}
+  );
+};
 
-export default Progress
+export default Progress;

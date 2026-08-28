@@ -1,0 +1,4 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../internal/config/oxlint/electron.json"]
+}

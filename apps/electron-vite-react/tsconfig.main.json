@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@skyroc/tsconfig/electron.json",
+  "include": ["electron/main", "vite.config.ts", "vitest.config.ts", "playwright.config.ts"]
+}

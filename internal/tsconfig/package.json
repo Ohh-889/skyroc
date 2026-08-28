@@ -5,6 +5,7 @@
   "description": "Shared TypeScript configuration for Skyroc Admin",
   "files": [
     "base.json",
+    "electron.json",
     "library.json",
     "node.json",
     "react-native-app.json",
@@ -15,6 +16,7 @@
   "type": "module",
   "exports": {
     "./base.json": "./base.json",
+    "./electron.json": "./electron.json",
     "./library.json": "./library.json",
     "./node.json": "./node.json",
     "./web.json": "./web.json",
