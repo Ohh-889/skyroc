@@ -1,6 +1,5 @@
 import { Button, ButtonIcon, Form, FormField, Input, Password, message } from '@skyroc/web-ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
 
 interface LoginFormValues {
   /** 用于登录与同步的邮箱。 */
@@ -8,8 +7,6 @@ interface LoginFormValues {
   /** 当前账号的登录密码。 */
   password: string;
 }
-
-interface LoginPageProps {}
 
 function handleMinimize() {
   window.desktopWindow?.minimize();
@@ -19,10 +16,16 @@ function handleClose() {
   window.desktopWindow?.close();
 }
 
-const LoginPage = (_props: LoginPageProps) => {
+const INIT_FORM_VALUES = {
+  email: '1509326266@qq.com',
+  password: '123456'
+};
+
+const LoginPage = () => {
   const navigate = useNavigate();
 
   const platform = window.desktopWindow?.platform;
+
   const isMac = platform === 'darwin';
 
   function enterWorkspace() {
@@ -44,10 +47,6 @@ const LoginPage = (_props: LoginPageProps) => {
   function handleMoreOptions() {
     message.info('更多选项将在设置中心提供');
   }
-
-  useEffect(() => {
-    window.desktopWindow?.setMode('auth');
-  }, []);
 
   return (
     <main className="auth-page flex h-screen  flex-col bg-background overflow-hidden">
@@ -88,7 +87,7 @@ const LoginPage = (_props: LoginPageProps) => {
 
         <Form<LoginFormValues>
           className="auth-enter-delay mt-9 space-y-4"
-          initialValues={{ email: '', password: '' }}
+          initialValues={INIT_FORM_VALUES}
           onFinish={handleSubmit}
           validateTrigger="onBlur"
         >
@@ -170,10 +169,6 @@ const LoginPage = (_props: LoginPageProps) => {
             在此设备继续
           </Button>
         </Form>
-
-        <p className="auth-enter-delay mt-auto text-center text-[11px] leading-5 text-muted-foreground">
-          当前为界面演示，不会提交真实凭证。
-        </p>
       </section>
     </main>
   );
