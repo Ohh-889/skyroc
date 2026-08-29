@@ -9,24 +9,23 @@ description: 安装依赖、启动 apps/admin、构建预览，并理解当前 M
 
 ## 环境要求
 
-| 工具      | 要求                | 来源                                         |
-| --------- | ------------------- | -------------------------------------------- |
-| Node.js   | 仓库根要求 `>=20`   | 根 `package.json`                            |
-| pnpm      | `10.4.1`            | 根 `package.json`、`apps/admin/package.json` |
-| workspace | 使用 pnpm workspace | `pnpm-workspace.yaml`                        |
+| 工具      | 要求                        | 来源                  |
+| --------- | --------------------------- | --------------------- |
+| Node.js   | `^22.11 \|\| ^24 \|\| >=26` | 根 `package.json`     |
+| pnpm      | `>=11`                      | 根 `package.json`     |
+| workspace | 使用 pnpm workspace         | `pnpm-workspace.yaml` |
 
-`apps/admin/package.json` 自身声明了 `node >=18.12.0`、`pnpm >=8.7.0`，但在当前 monorepo 中应按仓库根配置使用 Node 20+ 和 pnpm 10.4.1。
+仓库不锁定 pnpm 的具体版本，但要求使用 pnpm 11 或更高版本。
 
 ```bash
 node -v
 pnpm -v
 ```
 
-如果本机没有固定 pnpm 版本，可以通过 Corepack 启用：
+如果本机还没有 pnpm，可以安装最新版：
 
 ```bash
-corepack enable
-corepack prepare pnpm@10.4.1 --activate
+npm install --global pnpm@latest
 ```
 
 ## 获取代码

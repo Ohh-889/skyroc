@@ -16,7 +16,7 @@ Expo SDK 57 + React Native 0.86 + expo-router 的业务模板。
 
 ## 快速开始
 
-需要 Node >= 20、pnpm 10。在仓库根目录装依赖，不要在这个目录单独装：
+需要 Node 22.11+、pnpm 11+。在仓库根目录装依赖，不要在这个目录单独装：
 
 ```bash
 pnpm install

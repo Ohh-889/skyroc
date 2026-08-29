@@ -16,22 +16,22 @@ description: 仓库的开发约定、工具链、自动化脚本与 CI 全景
 
 ## 工具栈一览
 
-| 类别        | 工具                     | 版本   | 配置                        |
-| ----------- | ------------------------ | ------ | --------------------------- |
-| 包管理      | pnpm                     | 10.4.1 | `pnpm-workspace.yaml`       |
-| 任务编排    | Turborepo                | 2.x    | `turbo.json`                |
-| 编译        | TypeScript               | 6.x    | `internal/tsconfig`         |
-| Web 构建    | Vite                     | 8.x    | `apps/admin/vite.config.ts` |
-| Native 构建 | Expo                     | 57     | `apps/native-ui-playground` |
-| 库构建      | tsdown                   | 0.18   | 各包 `tsdown.config.ts`     |
-| Lint        | Oxlint                   | 1.60   | `.oxlintrc.json`            |
-| Format      | Oxfmt                    | 0.45   | `.oxfmtrc.json`             |
-| 单测        | Vitest                   | 4.x    | `@skyroc/config/vitest`     |
-| 组件 / 集成 | Testing Library          | 16.x   | `apps/admin`                |
-| Mock        | MSW                      | 2.x    | 已装未启                    |
-| Git 钩子    | simple-git-hooks         | 2.x    | 待启用                      |
-| 自动化      | `@skyroc/scripts` (`sa`) | 1.0    | `soybean.config.ts`         |
-| CI          | GitHub Actions           | —      | `.github/workflows`         |
+| 类别        | 工具                     | 版本 | 配置                        |
+| ----------- | ------------------------ | ---- | --------------------------- |
+| 包管理      | pnpm                     | 11+  | `pnpm-workspace.yaml`       |
+| 任务编排    | Turborepo                | 2.x  | `turbo.json`                |
+| 编译        | TypeScript               | 6.x  | `internal/tsconfig`         |
+| Web 构建    | Vite                     | 8.x  | `apps/admin/vite.config.ts` |
+| Native 构建 | Expo                     | 57   | `apps/native-ui-playground` |
+| 库构建      | tsdown                   | 0.18 | 各包 `tsdown.config.ts`     |
+| Lint        | Oxlint                   | 1.60 | `.oxlintrc.json`            |
+| Format      | Oxfmt                    | 0.45 | `.oxfmtrc.json`             |
+| 单测        | Vitest                   | 4.x  | `@skyroc/config/vitest`     |
+| 组件 / 集成 | Testing Library          | 16.x | `apps/admin`                |
+| Mock        | MSW                      | 2.x  | 已装未启                    |
+| Git 钩子    | simple-git-hooks         | 2.x  | 待启用                      |
+| 自动化      | `@skyroc/scripts` (`sa`) | 1.0  | `soybean.config.ts`         |
+| CI          | GitHub Actions           | —    | `.github/workflows`         |
 
 ## 工程化文档地图
 

@@ -33,7 +33,7 @@ description: 第一次接触本项目时的高频疑问解答
 
 ### Q：第一次 `pnpm install` 卡在 sharp / esbuild？
 
-> 仓库通过 `pnpm.onlyBuiltDependencies` 显式允许这些包执行构建脚本，卡住通常是网络问题。可以换镜像源：
+> 仓库通过 `pnpm-workspace.yaml` 的 `allowBuilds` 显式允许这些包执行构建脚本，卡住通常是网络问题。可以换镜像源：
 >
 > ```bash
 > pnpm config set registry https://registry.npmmirror.com

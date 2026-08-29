@@ -173,8 +173,8 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 
 ### 环境要求
 
-- Node.js 20 或更高版本
-- pnpm 10.4.1，建议通过 Corepack 使用仓库锁定版本
+- Node.js 22.11、24 或 26+
+- pnpm 11 或更高版本
 - Native 开发还需要 Expo、iOS 或 Android 本地环境
 
 ```bash

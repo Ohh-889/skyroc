@@ -7,10 +7,10 @@ description: 获取仓库、安装依赖，并启动 Admin、Web UI 或 Native U
 
 ## 环境要求
 
-| 工具    | 要求     | 说明                               |
-| ------- | -------- | ---------------------------------- |
-| Node.js | `>= 20`  | 以仓库根 `package.json` 为准       |
-| pnpm    | `10.4.1` | 仓库通过 `packageManager` 锁定版本 |
+| 工具    | 要求                        | 说明                         |
+| ------- | --------------------------- | ---------------------------- |
+| Node.js | `^22.11 \|\| ^24 \|\| >=26` | 以仓库根 `package.json` 为准 |
+| pnpm    | `>= 11`                     | 不锁定具体版本               |
 
 先确认本机版本：
 
@@ -19,11 +19,10 @@ node -v
 pnpm -v
 ```
 
-如果本机已提供 Corepack，但还没有启用仓库要求的 pnpm，可以执行：
+如果本机还没有 pnpm，可以按 pnpm 官方安装方式安装最新版：
 
 ```bash
-corepack enable
-corepack prepare pnpm@10.4.1 --activate
+npm install --global pnpm@latest
 ```
 
 ## 获取代码并安装依赖
@@ -94,9 +93,9 @@ pnpm --filter skyroc-admin build:test
 
 ## 常见问题
 
-### pnpm 版本不一致
+### pnpm 版本过低
 
-以根 `package.json` 的 `packageManager` 字段为准。切换版本后重新执行 `pnpm install`，不要混用 npm、Yarn 或不同 pnpm 版本生成依赖状态。
+仓库不锁定 pnpm 的具体版本，但要求 pnpm 11 或更高版本。升级后重新执行 `pnpm install`，不要混用 npm 或 Yarn 生成依赖状态。
 
 ### 9527 端口已被占用
 
@@ -108,7 +107,7 @@ pnpm --filter skyroc-admin build:test
 
 ### 安装卡在原生依赖
 
-仓库已经通过根 `package.json` 的 `pnpm.onlyBuiltDependencies` 声明允许执行安装脚本的依赖。先确认 pnpm 版本和当前网络环境，再查看 [常见问题](/docs/guide/getting-started/faq) 中的安装排查说明。
+仓库已经通过 `pnpm-workspace.yaml` 的 `allowBuilds` 声明允许执行安装脚本的依赖。先确认 pnpm 版本和当前网络环境，再查看 [常见问题](/docs/guide/getting-started/faq) 中的安装排查说明。
 
 ## 下一步
 

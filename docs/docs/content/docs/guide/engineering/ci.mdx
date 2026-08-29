@@ -23,13 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v6
         with:
-          version: 10.4.1
+          version: '>=11'
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22.14.0
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
@@ -198,6 +198,6 @@ pnpm build
 | 原因              | 排查                                           |
 | ----------------- | ---------------------------------------------- |
 | `lockfile` 不一致 | `pnpm install --frozen-lockfile` 是否报错      |
-| Node 版本         | 仓库要求 `>=20`，CI 必须显式 setup             |
+| Node 版本         | 仓库要求 22.11、24 或 26+，CI 必须显式 setup   |
 | Turbo 缓存影响    | 本地 `pnpm clean` 或 `turbo run build --force` |
 | 平台差异          | 大小写文件名、CRLF；macOS / Linux 不一致       |
