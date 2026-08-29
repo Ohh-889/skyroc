@@ -26,6 +26,7 @@ app-example
 # Electron Vite React
 /apps/electron-vite-react/dist-electron/
 /apps/electron-vite-react/release/
+!/apps/electron-vite-react/build
 
 # ---------- Caches ----------
 .cache
