@@ -1,9 +1,4 @@
-@import 'tailwindcss';
-@import '@skyroc/web-ui/tailwind.css';
-
-@plugin "@skyroc/tailwind-plugin" {
-  color: 'zinc';
-}
+@import '@skyroc/web-ui/style.css';
 
 @theme {
   --font-sans: 'Avenir Next', Avenir, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -31,6 +26,37 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+:root {
+  --accent: 78 35.7% 89%;
+  --accent-foreground: 93.6 21.7% 22.5%;
+  --background: 50 27.3% 95.7%;
+  --border: 66.7 11.7% 84.9%;
+  --card: 45 40% 98%;
+  --card-foreground: 97.5 10.5% 14.9%;
+  --foreground: 97.5 10.5% 14.9%;
+  --input: 66.7 11.7% 84.9%;
+  --muted: 68.6 16.3% 91.6%;
+  --muted-foreground: 100 4.5% 39%;
+  --popover: 45 40% 98%;
+  --popover-foreground: 97.5 10.5% 14.9%;
+  --primary: 87.7 28% 36.5%;
+  --primary-50: 82.5 33.3% 95.3%;
+  --primary-100: 82.1 35.8% 89.6%;
+  --primary-200: 78.6 54.7% 79.2%;
+  --primary-300: 80 42.9% 67.1%;
+  --primary-400: 83.5 30.8% 52.9%;
+  --primary-500: 86.1 28.4% 42.7%;
+  --primary-600: 89.3 28.3% 31.2%;
+  --primary-700: 90 27.7% 25.5%;
+  --primary-800: 90 26.4% 20.8%;
+  --primary-900: 90 24.4% 17.6%;
+  --primary-950: 92.3 27.7% 9.2%;
+  --primary-foreground: 70 30% 96.1%;
+  --ring: 87.7 28% 36.5%;
+  --secondary: 68.6 16.3% 91.6%;
+  --secondary-foreground: 97.5 10.5% 14.9%;
 }
 
 @layer utilities {
