@@ -33,6 +33,8 @@ jobs:
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v6
+        with:
+          version: '>=11'
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -50,20 +52,20 @@ jobs:
         id: changesets
         uses: changesets/action@v2
         with:
-          commit: 'chore(release): 更新包版本'
-          createGithubReleases: true
-          publish: pnpm release:publish
-          title: 'chore(release): 更新包版本'
-          version: pnpm release:version
+          commit-message: 'chore(release): 更新包版本'
+          create-github-releases: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-title: 'chore(release): 更新包版本'
+          publish-script: pnpm release:publish
+          version-script: pnpm release:version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
 
       - name: Rebase and merge release PR
-        if: steps.changesets.outputs.pullRequestNumber != ''
+        if: steps.changesets.outputs['pr-number'] != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+          RELEASE_PR_NUMBER: ${{ steps.changesets.outputs['pr-number'] }}
         run: |
           gh pr merge "$RELEASE_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --rebase
           gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref master
