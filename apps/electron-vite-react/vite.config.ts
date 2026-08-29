@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { electronSimple } from 'vite-plugin-electron/multi-env';
 import { notBundle } from 'vite-plugin-electron/plugin';
-import pkg from './package.json';
+import pkg from './package.json' with { type: 'json' };
 
 const external = Object.keys('dependencies' in pkg ? (pkg.dependencies as Record<string, string>) : {});
 
@@ -21,7 +21,7 @@ export default defineConfig(({ command }) => {
   return {
     resolve: {
       alias: {
-        '@': path.join(__dirname, 'src')
+        '@': path.join(import.meta.dirname, 'src')
       }
     },
     plugins: [
