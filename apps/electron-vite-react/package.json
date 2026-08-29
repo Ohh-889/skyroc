@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@playwright/test": "catalog:dev",
+    "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
     "@tailwindcss/vite": "catalog:css",
     "@tanstack/router-plugin": "catalog:web",

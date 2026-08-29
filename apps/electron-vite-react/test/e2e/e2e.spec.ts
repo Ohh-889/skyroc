@@ -87,7 +87,7 @@ test.describe('[electron-vite-react] e2e tests', () => {
   test('should load login page correctly', async () => {
     const h1 = await page.$('h1');
     const heading = await h1?.textContent();
-    expect(heading).toBe('欢迎回来');
+    expect(heading).toBe('回到桌面，接着做下去。');
     await page.screenshot({ path: 'test/screenshots/login.png' });
   });
 
