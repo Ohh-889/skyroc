@@ -3,11 +3,9 @@ import { Suspense, lazy } from 'react';
 import { router } from './features/router';
 import RouterProvider from './features/router/RouterProvider';
 
-interface AppProps {}
-
 const Devtools = lazy(() => import('./features/devtools').then(module => ({ default: module.Devtools })));
 
-const App = (_props: AppProps) => {
+const App = () => {
   return (
     <>
       <RouterProvider />
