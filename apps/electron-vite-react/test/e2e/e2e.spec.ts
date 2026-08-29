@@ -108,4 +108,16 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await page.getByRole('button', { name: '恢复示例数据' }).click();
     await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
   });
+
+  test('should navigate settings and switch responsibility sections', async () => {
+    await page.getByTestId('nav-settings').click();
+    await expect(page).toHaveURL(/#\/settings\/?$/);
+    await expect(page.getByRole('heading', { name: '设置中心' })).toBeVisible();
+
+    await page.getByTestId('settings-section-appearance').click();
+    await expect(page.getByRole('heading', { name: '主题外观' })).toBeVisible();
+
+    await page.getByTestId('settings-section-data').click();
+    await expect(page.getByText('删除本地数据')).toBeVisible();
+  });
 });
