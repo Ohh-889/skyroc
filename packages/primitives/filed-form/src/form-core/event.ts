@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/number-literal-case
 /* eslint-disable @typescript-eslint/prefer-literal-enum-member */
 /* eslint-disable no-bitwise */
 
