@@ -1,7 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BrowserWindow, Menu, app, dialog, ipcMain, shell } from 'electron';
+import { BrowserWindow, Menu, app, dialog, ipcMain, screen, shell } from 'electron';
 import type { OpenDialogOptions } from 'electron';
 import { update } from './update';
 
@@ -40,12 +40,38 @@ let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/index.mjs');
 const indexHtml = path.join(RENDERER_DIST, 'index.html');
 
+type DesktopWindowMode = 'auth' | 'workspace';
+
+function setDesktopWindowMode(window: BrowserWindow, mode: DesktopWindowMode) {
+  if (window.isMaximized()) window.unmaximize();
+
+  if (mode === 'auth') {
+    window.setResizable(true);
+    window.setMinimumSize(400, 520);
+    window.setSize(440, 620, true);
+    window.center();
+    window.setMaximizable(false);
+    window.setResizable(false);
+    return;
+  }
+
+  const { height: availableHeight, width: availableWidth } = screen.getDisplayMatching(window.getBounds()).workAreaSize;
+
+  window.setResizable(true);
+  window.setMaximizable(true);
+  window.setMinimumSize(760, 560);
+  window.setSize(Math.min(1240, availableWidth), Math.min(800, availableHeight), true);
+  window.center();
+}
+
 async function createWindow() {
   win = new BrowserWindow({
-    height: 800,
+    height: 620,
     icon: path.join(process.env.VITE_PUBLIC ?? '', 'favicon.ico'),
-    minHeight: 560,
-    minWidth: 760,
+    maximizable: false,
+    minHeight: 520,
+    minWidth: 400,
+    resizable: false,
     title: 'Main window',
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 18, y: 16 },
@@ -58,7 +84,7 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // contextIsolation: false,
     },
-    width: 1240
+    width: 440
   });
 
   if (VITE_DEV_SERVER_URL) {
@@ -117,6 +143,14 @@ ipcMain.on('desktop-window:toggle-maximize', event => {
 
 ipcMain.on('desktop-window:close', event => {
   BrowserWindow.fromWebContents(event.sender)?.close();
+});
+
+ipcMain.handle('desktop-window:set-mode', (event, mode: DesktopWindowMode) => {
+  if (mode !== 'auth' && mode !== 'workspace') return;
+
+  const window = BrowserWindow.fromWebContents(event.sender);
+
+  if (window) setDesktopWindowMode(window, mode);
 });
 
 ipcMain.handle('desktop-files:open-directory', async event => {

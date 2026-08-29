@@ -14,6 +14,7 @@ import type { BrowserWindow } from 'electron';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 let electronApp: ElectronApplication;
+let mainWin: JSHandle<BrowserWindow>;
 let page: Page;
 let testUserDataDir: string | undefined;
 let xvfbProcess: ChildProcess | undefined;
@@ -50,7 +51,7 @@ test.beforeAll(async () => {
   });
   page = await electronApp.firstWindow();
 
-  const mainWin: JSHandle<BrowserWindow> = await electronApp.browserWindow(page);
+  mainWin = await electronApp.browserWindow(page);
   await mainWin.evaluate(async win => {
     win.webContents.executeJavaScript('console.log("Execute JavaScript with e2e testing.")');
   });
@@ -82,13 +83,21 @@ test.describe('[electron-vite-react] e2e tests', () => {
     const title = await page.title();
     expect(title).toBe('Electron + Vite + React');
     await expect(page).toHaveURL(/#\/login$/);
+    await expect.poll(() => mainWin.evaluate(win => win.getSize())).toEqual([440, 620]);
   });
 
   test('should load login page correctly', async () => {
     const h1 = await page.$('h1');
     const heading = await h1?.textContent();
-    expect(heading).toBe('回到桌面，接着做下去。');
+    expect(heading).toBe('欢迎回来');
+    await page.waitForTimeout(500);
     await page.screenshot({ path: 'test/screenshots/login.png' });
+  });
+
+  test('should validate credentials with FormField', async () => {
+    await page.getByRole('button', { name: '登录', exact: true }).click();
+    await expect(page.getByText('请输入邮箱')).toBeVisible();
+    await expect(page.getByText('请输入密码')).toBeVisible();
   });
 
   test('should enter workspace and use the desktop shell', async () => {
@@ -96,6 +105,7 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await expect(page).toHaveURL(/#\/workspace$/);
     await expect(page.getByRole('heading', { name: '上午好，Shipeng' })).toBeVisible();
     await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
+    await expect.poll(async () => (await mainWin.evaluate(win => win.getSize()))[0]).toBeGreaterThanOrEqual(760);
 
     await page.getByTestId('sidebar-toggle').click();
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');

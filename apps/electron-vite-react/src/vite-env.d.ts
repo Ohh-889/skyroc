@@ -11,6 +11,7 @@ interface Window {
     close: () => void;
     minimize: () => void;
     platform: NodeJS.Platform;
+    setMode: (mode: 'auth' | 'workspace') => Promise<void>;
     toggleMaximize: () => void;
   };
   // expose in the `electron/preload/index.ts`

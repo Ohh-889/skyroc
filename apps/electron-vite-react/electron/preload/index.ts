@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld('desktopWindow', {
     ipcRenderer.send('desktop-window:minimize');
   },
   platform: process.platform,
+  setMode(mode: 'auth' | 'workspace') {
+    return ipcRenderer.invoke('desktop-window:set-mode', mode) as Promise<void>;
+  },
   toggleMaximize() {
     ipcRenderer.send('desktop-window:toggle-maximize');
   }

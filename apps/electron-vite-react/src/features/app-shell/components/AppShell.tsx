@@ -136,6 +136,7 @@ const AppShell = (props: AppShellProps) => {
   }
 
   useEffect(() => {
+    window.desktopWindow?.setMode('workspace');
     window.addEventListener('keydown', handleGlobalKeyDown);
 
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
