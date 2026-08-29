@@ -45,8 +45,15 @@ export interface MessageGlobalConfig {
   position?: ToastT['position'];
 }
 
-// Message style class - compact
-const messageClassName = '!py-2 !px-3 !min-h-0 !w-auto !max-w-md';
+// Message style class - compact and sized by content within the viewport.
+const messageClassName = '!py-2 !px-3 !min-h-0 !w-max !max-w-[min(28rem,calc(100vw-2rem))]';
+
+const centeredMessageClassName =
+  '!left-1/2 !right-auto [translate:-50%_0] max-[600px]:!left-[calc(50%_-_var(--mobile-offset-left))]';
+
+const leftMessageClassName = '!left-0 !right-auto';
+
+const rightMessageClassName = '!left-auto !right-0 max-[600px]:!right-[var(--mobile-offset-right)]';
 
 // Global config
 let globalConfig: MessageGlobalConfig = {
@@ -60,6 +67,19 @@ const activeMessages = new Set<string | number>();
 /** Check if value is MessageConfig object */
 function isMessageConfig(value: unknown): value is MessageConfig {
   return typeof value === 'object' && value !== null && 'content' in value;
+}
+
+/** Keep content-sized messages aligned within Sonner's fixed-position container. */
+function getMessagePositionClassName(position: ToastT['position']) {
+  if (position === 'top-center' || position === 'bottom-center') {
+    return centeredMessageClassName;
+  }
+
+  if (position === 'top-left' || position === 'bottom-left') {
+    return leftMessageClassName;
+  }
+
+  return rightMessageClassName;
 }
 
 /** Show message toast */
@@ -111,7 +131,7 @@ function showMessage(
     duration: msgDuration,
     icon,
     style,
-    className: `${messageClassName} ${className || ''}`.trim(),
+    className: `${messageClassName} ${getMessagePositionClassName(position)} ${className || ''}`.trim(),
     classNames: {
       title: '!font-normal'
     },
@@ -236,7 +256,7 @@ export const message = {
       id: key,
       icon,
       style,
-      className: `${messageClassName} ${className || ''}`.trim(),
+      className: `${messageClassName} ${getMessagePositionClassName(position)} ${className || ''}`.trim(),
       classNames: {
         title: '!font-normal'
       },

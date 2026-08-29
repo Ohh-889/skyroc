@@ -36,7 +36,7 @@ const sonnerMock = vi.hoisted(() => {
     error: createToastMethod('error-id'),
     info: createToastMethod('info-id'),
     loading: createToastMethod('loading-id'),
-    promise: vi.fn(() => 'promise-id'),
+    promise: vi.fn((_promise: unknown, _options?: ToastOptions) => 'promise-id'),
     success: createToastMethod('success-id'),
     warning: createToastMethod('warning-id')
   });
@@ -130,6 +130,8 @@ describe('Sonner', () => {
     expect(successOptions.duration).toBe(5000);
     expect(successOptions.position).toBe('bottom-center');
     expect(successOptions.className).toContain('!py-2');
+    expect(successOptions.className).toContain('!w-max');
+    expect(successOptions.className).toContain('[translate:-50%_0]');
     expect(successOptions.className).toContain('custom-message');
     expect(sonnerMock.toast.dismiss).toHaveBeenCalledWith('first-message');
     expect(sonnerMock.toast.error).toHaveBeenCalledWith('Failed', expect.objectContaining({ duration: 1000 }));
@@ -232,6 +234,11 @@ describe('Sonner', () => {
         success: 'Done'
       })
     );
+
+    const promiseOptions = sonnerMock.toast.promise.mock.calls[0]?.[1];
+
+    expect(promiseOptions?.className).toContain('!left-auto');
+    expect(promiseOptions?.className).not.toContain('[translate:-50%_0]');
   });
 
   it('routes notification calls through rich toast options, actions and max count handling', () => {
