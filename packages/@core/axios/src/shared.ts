@@ -23,7 +23,8 @@ export async function transformResponse(response: AxiosResponse) {
 
   if (!responseType || responseType === 'json') return;
 
-  const isJson = response.headers['content-type']?.includes('application/json');
+  const contentType = response.headers['content-type'];
+  const isJson = typeof contentType === 'string' && contentType.includes('application/json');
   if (!isJson) return;
 
   if (responseType === 'blob') {

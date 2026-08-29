@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { create } from 'axios';
 
 import { API_BASE_URL, API_TIMEOUT, SERVICE_CODES } from '../../config';
 
@@ -16,7 +16,7 @@ import { AUTH_URLS } from './urls';
  *
  * 代价是拆信封要自己来一遍，就是下面那三行。
  */
-const refreshClient = axios.create({
+const refreshClient = create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT
 });

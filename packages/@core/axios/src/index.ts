@@ -1,5 +1,5 @@
 import { nanoid } from '@skyroc/utils';
-import axios, { AxiosError, isAxiosError } from 'axios';
+import { AxiosError, create, isAxiosError } from 'axios';
 import type { AxiosResponse, CreateAxiosDefaults } from 'axios';
 import axiosRetry from 'axios-retry';
 import { BACKEND_ERROR_CODE, REQUEST_ID_KEY } from './constant';
@@ -43,7 +43,7 @@ function createCommonRequest<
   const opts = createDefaultOptions<ResponseData, ApiData, State>(options);
 
   const axiosConf = createAxiosConfig(axiosConfig);
-  const instance = axios.create(axiosConf);
+  const instance = create(axiosConf);
 
   /**
    * 托管请求共用一个 controller，cancelAllRequest 把它 abort 掉再换一个新的
