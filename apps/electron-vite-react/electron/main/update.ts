@@ -13,8 +13,6 @@ export function update(win: Electron.BrowserWindow) {
   autoUpdater.disableWebInstaller = false;
   autoUpdater.allowDowngrade = false;
 
-  // start check
-  autoUpdater.on('checking-for-update', function () {});
   // update available
   autoUpdater.on('update-available', (arg: UpdateInfo) => {
     win.webContents.send('update-can-available', { update: true, version: app.getVersion(), newVersion: arg?.version });
@@ -83,21 +81,25 @@ function startDownload(
   callback: (error: Error | null, info: ProgressInfo | null) => void,
   complete: (event: UpdateDownloadedEvent) => void
 ) {
-  const onDownloadProgress = (info: ProgressInfo) => callback(null, info);
-  const onError = (error: Error) => {
+  function onDownloadProgress(info: ProgressInfo) {
+    callback(null, info);
+  }
+
+  function onError(error: Error) {
     cleanup();
     callback(error, null);
-  };
-  const onDownloaded = (event: UpdateDownloadedEvent) => {
+  }
+
+  function onDownloaded(event: UpdateDownloadedEvent) {
     cleanup();
     complete(event);
-  };
+  }
 
-  const cleanup = () => {
+  function cleanup() {
     autoUpdater.off('download-progress', onDownloadProgress);
     autoUpdater.off('error', onError);
     autoUpdater.off('update-downloaded', onDownloaded);
-  };
+  }
 
   autoUpdater.on('download-progress', onDownloadProgress);
   autoUpdater.on('error', onError);

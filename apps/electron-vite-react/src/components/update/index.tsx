@@ -1,5 +1,5 @@
 import type { ProgressInfo } from 'electron-updater';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '@/components/update/modal';
 import Progress from '@/components/update/progress';
 
@@ -20,7 +20,7 @@ const Update = () => {
     onOk: () => window.ipcRenderer.invoke('start-download')
   });
 
-  const checkUpdate = async () => {
+  async function checkUpdate() {
     setChecking(true);
     /** @type {import('electron-updater').UpdateCheckResult | null | { message: string; error: Error }} */
     const result = await window.ipcRenderer.invoke('check-update');
@@ -31,45 +31,77 @@ const Update = () => {
       setUpdateAvailable(false);
       setUpdateError(result?.error);
     }
-  };
+  }
 
-  const onUpdateCanAvailable = useCallback((_event: Electron.IpcRendererEvent, arg1: VersionInfo) => {
-    setVersionInfo(arg1);
-    setUpdateError(undefined);
-    // Can be update
-    if (arg1.update) {
-      setModalBtn(state => ({
-        ...state,
-        cancelText: 'Cancel',
-        okText: 'Update',
-        onOk: () => window.ipcRenderer.invoke('start-download')
-      }));
-      setUpdateAvailable(true);
-    } else {
-      setUpdateAvailable(false);
-    }
-  }, []);
+  let updateContent = (
+    <pre className="overflow-auto text-left text-xs leading-6 text-slate-700">
+      {JSON.stringify(versionInfo ?? {}, null, 2)}
+    </pre>
+  );
 
-  const onUpdateError = useCallback((_event: Electron.IpcRendererEvent, arg1: ErrorType) => {
-    setUpdateAvailable(false);
-    setUpdateError(arg1);
-  }, []);
+  if (updateAvailable) {
+    updateContent = (
+      <div className="space-y-3 text-sm text-slate-700">
+        <div className="text-base font-semibold text-slate-900">The latest version is v{versionInfo?.newVersion}</div>
+        <div className="text-slate-600">
+          v{versionInfo?.version} -&gt; v{versionInfo?.newVersion}
+        </div>
+        <div className="flex items-center gap-3 pt-1">
+          <div className="shrink-0 font-medium text-slate-700">Update progress:</div>
+          <div className="min-w-0 flex-1">
+            <Progress percent={progressInfo?.percent} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const onDownloadProgress = useCallback((_event: Electron.IpcRendererEvent, arg1: ProgressInfo) => {
-    setProgressInfo(arg1);
-  }, []);
-
-  const onUpdateDownloaded = useCallback((_event: Electron.IpcRendererEvent) => {
-    setProgressInfo({ percent: 100 });
-    setModalBtn(state => ({
-      ...state,
-      cancelText: 'Later',
-      okText: 'Install now',
-      onOk: () => window.ipcRenderer.invoke('quit-and-install')
-    }));
-  }, []);
+  if (updateError) {
+    updateContent = (
+      <div className="text-sm leading-6 text-rose-700">
+        <p className="font-semibold text-rose-900">Error downloading the latest version.</p>
+        <p className="mt-1 max-h-40 overflow-auto">{updateError.message}</p>
+      </div>
+    );
+  }
 
   useEffect(() => {
+    function onUpdateCanAvailable(_event: Electron.IpcRendererEvent, arg1: VersionInfo) {
+      setVersionInfo(arg1);
+      setUpdateError(undefined);
+      // Can be update
+      if (arg1.update) {
+        setModalBtn(state => ({
+          ...state,
+          cancelText: 'Cancel',
+          okText: 'Update',
+          onOk: () => window.ipcRenderer.invoke('start-download')
+        }));
+        setUpdateAvailable(true);
+      } else {
+        setUpdateAvailable(false);
+      }
+    }
+
+    function onUpdateError(_event: Electron.IpcRendererEvent, arg1: ErrorType) {
+      setUpdateAvailable(false);
+      setUpdateError(arg1);
+    }
+
+    function onDownloadProgress(_event: Electron.IpcRendererEvent, arg1: ProgressInfo) {
+      setProgressInfo(arg1);
+    }
+
+    function onUpdateDownloaded(_event: Electron.IpcRendererEvent) {
+      setProgressInfo({ percent: 100 });
+      setModalBtn(state => ({
+        ...state,
+        cancelText: 'Later',
+        okText: 'Install now',
+        onOk: () => window.ipcRenderer.invoke('quit-and-install')
+      }));
+    }
+
     // Get version information and whether to update
     window.ipcRenderer.on('update-can-available', onUpdateCanAvailable);
     window.ipcRenderer.on('update-error', onUpdateError);
@@ -95,33 +127,7 @@ const Update = () => {
         title="Updater"
         footer={updateAvailable ? /* hide footer */ null : undefined}
       >
-        <div className="space-y-3">
-          {updateError ? (
-            <div className="text-sm leading-6 text-rose-700">
-              <p className="font-semibold text-rose-900">Error downloading the latest version.</p>
-              <p className="mt-1 max-h-40 overflow-auto">{updateError.message}</p>
-            </div>
-          ) : updateAvailable ? (
-            <div className="space-y-3 text-sm text-slate-700">
-              <div className="text-base font-semibold text-slate-900">
-                The latest version is v{versionInfo?.newVersion}
-              </div>
-              <div className="text-slate-600">
-                v{versionInfo?.version} -&gt; v{versionInfo?.newVersion}
-              </div>
-              <div className="flex items-center gap-3 pt-1">
-                <div className="shrink-0 font-medium text-slate-700">Update progress:</div>
-                <div className="min-w-0 flex-1">
-                  <Progress percent={progressInfo?.percent} />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <pre className="overflow-auto text-left text-xs leading-6 text-slate-700">
-              {JSON.stringify(versionInfo ?? {}, null, 2)}
-            </pre>
-          )}
-        </div>
+        <div className="space-y-3">{updateContent}</div>
       </Modal>
       <button
         disabled={checking}
