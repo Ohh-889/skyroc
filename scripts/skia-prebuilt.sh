@@ -7,8 +7,8 @@
 # 本脚本用 curl（原生走代理）、并行下载、并把 tar 包缓存到 ~/.cache/skia-prebuilt，
 # 之后无论重装多少次都是本地解压，秒完成。
 #
-# 前提：根 package.json 必须把 @shopify/react-native-skia 放进 pnpm.ignoredBuiltDependencies。
-# 留在 onlyBuiltDependencies 里等于放行官方 install-skia.mjs，700M 照样会被串行拉一遍。
+# 前提：pnpm-workspace.yaml 必须在 allowBuilds 中禁用 @shopify/react-native-skia。
+# 在 allowBuilds 里设为 true 等于放行官方 install-skia.mjs，700M 照样会被串行拉一遍。
 #
 # 用法:
 #   bash scripts/skia-prebuilt.sh                  # 装到 apps/* 用到的那几份

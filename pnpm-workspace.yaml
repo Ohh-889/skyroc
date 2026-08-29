@@ -13,6 +13,20 @@ packages:
 
 strictPeerDependencies: false
 ignoreWorkspaceRootCheck: true
+shamefullyHoist: true
+linkWorkspacePackages: true
+autoInstallPeers: true
+dedupePeerDependents: true
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@shopify/react-native-skia': false
+  electron-winstaller: true
+  esbuild: true
+  msw: true
+  sharp: true
+  simple-git-hooks: true
+  unrs-resolver: true
 
 overrides:
   # 确保类型一致性
@@ -20,6 +34,7 @@ overrides:
   '@types/react-dom': ^19.2.3
   antd: 6.5.3
   jotai-devtools: 0.14.0
+  lightningcss: 1.30.1
   typescript: 7.0.2
 
 catalogs:
@@ -207,7 +222,7 @@ catalogs:
 
     # 2D 图形引擎：Signature 的画布基于其封装。含原生模块，走 devDep + peerDep。
     # 它的预编译二进制（~700M）由 scripts/skia-prebuilt.sh 装，不走官方 postinstall——
-    # 因此根 package.json 把它列进了 pnpm.ignoredBuiltDependencies
+    # 因此在 allowBuilds 中显式禁用它的官方安装脚本
     '@shopify/react-native-skia': 2.4.18
 
   # ==================== 共享工具库 ====================
