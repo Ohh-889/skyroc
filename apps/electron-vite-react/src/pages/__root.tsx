@@ -6,7 +6,7 @@ import NotFoundPage from './not-found';
 
 const RootLayout = () => {
   return (
-    <div className="app-drag min-h-screen w-full  text-foreground">
+    <div className="min-h-screen w-full  text-foreground">
       <Sonner />
 
       <Outlet />

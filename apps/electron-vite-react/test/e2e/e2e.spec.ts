@@ -95,6 +95,10 @@ test.describe('[electron-vite-react] e2e tests', () => {
   });
 
   test('should validate credentials with FormField', async () => {
+    await page.getByLabel('邮箱').fill('');
+    await page.getByLabel('邮箱').blur();
+    await page.getByRole('textbox', { name: '密码', exact: true }).fill('');
+    await page.getByRole('textbox', { name: '密码', exact: true }).blur();
     await page.getByRole('button', { name: '登录', exact: true }).click();
     await expect(page.getByText('请输入邮箱')).toBeVisible();
     await expect(page.getByText('请输入密码')).toBeVisible();
@@ -106,6 +110,14 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await expect(page.getByRole('heading', { name: '上午好，Shipeng' })).toBeVisible();
     await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
     await expect.poll(async () => (await mainWin.evaluate(win => win.getSize()))[0]).toBeGreaterThanOrEqual(760);
+
+    await page.getByTestId('profile-dropdown-trigger').click();
+    await expect(page.getByText('应用设置', { exact: true })).toBeVisible();
+    await page.getByText('返回登录', { exact: true }).click();
+    await expect(page.getByRole('alertdialog')).toBeVisible();
+    await expect(page.getByText('确认返回登录页？')).toBeVisible();
+    await page.getByRole('button', { name: '取消' }).click();
+    await expect(page).toHaveURL(/#\/workspace$/);
 
     await page.getByTestId('sidebar-toggle').click();
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');

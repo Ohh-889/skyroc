@@ -2,6 +2,7 @@ import { Button, Command, CommandDialog, Icon, KeyboardKey } from '@skyroc/web-u
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import ProfileDropdown from './ProfileDropdown';
 
 interface AppShellProps {
   /** 当前路由渲染的业务页面。 */
@@ -297,15 +298,7 @@ const AppShell = (props: AppShellProps) => {
               />
               <span className={`truncate max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}>命令面板</span>
             </button>
-            <div className="flex items-center gap-3 rounded-xl border border-black/[0.07] bg-white/45 p-2.5">
-              <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#272b25] text-[11px] font-semibold text-[#e8f6d4]">
-                WS
-              </div>
-              <div className={`min-w-0 max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}>
-                <div className="truncate text-xs font-semibold text-[#343831]">本地模式</div>
-                <div className="mt-0.5 truncate text-[10px] text-[#8c9087]">设备数据已加密</div>
-              </div>
-            </div>
+            <ProfileDropdown isSidebarCollapsed={isSidebarCollapsed} />
           </div>
         </aside>
 
