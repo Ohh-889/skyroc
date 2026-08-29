@@ -90,6 +90,7 @@
   "dependencies": {
     "@skyroc/axios": "workspace:*",
     "@tanstack/react-query": "catalog:core",
+    "axios": "catalog:utils",
     "node-forge": "catalog:utils"
   },
   "devDependencies": {

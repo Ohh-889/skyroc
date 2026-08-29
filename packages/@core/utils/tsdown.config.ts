@@ -6,6 +6,9 @@ const dependencies = (pkg as { dependencies?: Record<string, string> }).dependen
 
 export default defineConfig({
   clean: true,
+  deps: {
+    neverBundle: Object.keys(dependencies)
+  },
   dts: true,
   entry: [
     'src/index.ts',
@@ -16,9 +19,9 @@ export default defineConfig({
     'src/type/index.ts',
     'src/web/index.ts'
   ],
-  external: Object.keys(dependencies),
   minify: false,
   platform: 'neutral',
   sourcemap: false,
+  tsconfig: 'tsconfig.web.json',
   unbundle: true
 });

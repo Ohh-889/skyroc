@@ -2360,6 +2360,9 @@ importers:
       '@tanstack/react-query':
         specifier: catalog:core
         version: 5.90.21(react@19.2.8)
+      axios:
+        specifier: catalog:utils
+        version: 1.20.0
       node-forge:
         specifier: catalog:utils
         version: 1.4.0
