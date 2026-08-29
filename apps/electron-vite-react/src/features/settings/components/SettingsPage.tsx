@@ -336,7 +336,9 @@ const SettingsPage = (_props: SettingsPageProps) => {
                 <button
                   aria-current={isActive ? 'page' : undefined}
                   className={`flex min-w-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${
-                    isActive ? 'bg-[#dfe9cf] text-[#344127]' : 'text-[#6f736a] hover:bg-black/[0.04] hover:text-[#343831]'
+                    isActive
+                      ? 'bg-[#dfe9cf] text-[#344127]'
+                      : 'text-[#6f736a] hover:bg-black/[0.04] hover:text-[#343831]'
                   }`}
                   data-testid={`settings-section-${section.id}`}
                   key={section.id}
@@ -502,8 +504,12 @@ const SettingsPage = (_props: SettingsPageProps) => {
                           onClick={() => updateSetting('themeMode', mode)}
                           type="button"
                         >
-                          <div className={`mb-5 h-18 rounded-xl border ${mode === 'dark' ? 'border-white/10 bg-[#282c26]' : 'border-black/[0.06] bg-white'}`}>
-                            <div className={`mx-2 mt-2 h-2 w-12 rounded-full ${mode === 'dark' ? 'bg-white/15' : 'bg-black/10'}`} />
+                          <div
+                            className={`mb-5 h-18 rounded-xl border ${mode === 'dark' ? 'border-white/10 bg-[#282c26]' : 'border-black/[0.06] bg-white'}`}
+                          >
+                            <div
+                              className={`mx-2 mt-2 h-2 w-12 rounded-full ${mode === 'dark' ? 'bg-white/15' : 'bg-black/10'}`}
+                            />
                             <div className="mx-2 mt-2 grid grid-cols-[18px_1fr] gap-2">
                               <span className={`h-8 rounded ${mode === 'dark' ? 'bg-white/10' : 'bg-[#e6eadf]'}`} />
                               <span className={`h-8 rounded ${mode === 'dark' ? 'bg-white/[0.06]' : 'bg-[#f1f0eb]'}`} />
@@ -513,7 +519,9 @@ const SettingsPage = (_props: SettingsPageProps) => {
                             <Icon icon={icons[mode]} />
                             {labels[mode]}
                           </div>
-                          {isActive ? <span className="absolute right-3 top-3 size-2 rounded-full bg-[#789654]" /> : null}
+                          {isActive ? (
+                            <span className="absolute right-3 top-3 size-2 rounded-full bg-[#789654]" />
+                          ) : null}
                         </button>
                       );
                     })}
@@ -561,7 +569,11 @@ const SettingsPage = (_props: SettingsPageProps) => {
                       <Slider
                         aria-label="界面缩放"
                         className="flex-1"
-                        classNames={{ range: 'bg-[#718b50]', thumb: 'border-[#718b50] bg-white', track: 'bg-[#e2e5dc]' }}
+                        classNames={{
+                          range: 'bg-[#718b50]',
+                          thumb: 'border-[#718b50] bg-white',
+                          track: 'bg-[#e2e5dc]'
+                        }}
                         max={125}
                         min={85}
                         onValueChange={value => updateSetting('zoom', value[0] ?? 100)}
@@ -627,7 +639,8 @@ const SettingsPage = (_props: SettingsPageProps) => {
               </div>
               <div className="rounded-[22px] border border-[#d7dccd] bg-[#eef2e8] p-5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-[#4d5c3e]">
-                  <Icon icon="lucide:calendar-clock" />格式预览
+                  <Icon icon="lucide:calendar-clock" />
+                  格式预览
                 </div>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-black/[0.06] bg-white/55 p-4">
@@ -741,7 +754,9 @@ const SettingsPage = (_props: SettingsPageProps) => {
                         { label: '每次询问', value: 'ask' },
                         { label: '停止任务并退出', value: 'stop' }
                       ]}
-                      onValueChange={value => updateSetting('backgroundPolicy', value as DesktopSettings['backgroundPolicy'])}
+                      onValueChange={value =>
+                        updateSetting('backgroundPolicy', value as DesktopSettings['backgroundPolicy'])
+                      }
                       triggerProps={{ placeholder: '选择后台策略' }}
                       value={settings.backgroundPolicy}
                     />
@@ -788,7 +803,8 @@ const SettingsPage = (_props: SettingsPageProps) => {
                       type="button"
                       variant="outline"
                     >
-                      <Icon icon="lucide:copy" />复制路径
+                      <Icon icon="lucide:copy" />
+                      复制路径
                     </Button>
                   </SettingRow>
                   <SettingRow
@@ -833,7 +849,8 @@ const SettingsPage = (_props: SettingsPageProps) => {
                       type="button"
                       variant="outline"
                     >
-                      <Icon icon="lucide:file-down" />导出 JSON
+                      <Icon icon="lucide:file-down" />
+                      导出 JSON
                     </Button>
                   </SettingRow>
                   <SettingRow
@@ -846,7 +863,8 @@ const SettingsPage = (_props: SettingsPageProps) => {
                       type="button"
                       variant="outline"
                     >
-                      <Icon icon="lucide:file-up" />选择文件
+                      <Icon icon="lucide:file-up" />
+                      选择文件
                     </Button>
                   </SettingRow>
                 </div>

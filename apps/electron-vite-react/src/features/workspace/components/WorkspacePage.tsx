@@ -528,7 +528,8 @@ const WorkspacePage = (_props: WorkspacePageProps) => {
                     />
                   </span>
                   <span className="flex items-center gap-1.5 text-[9px] font-semibold text-[#67804e]">
-                    <span className="size-1.5 rounded-full bg-[#78a04d]" />在线
+                    <span className="size-1.5 rounded-full bg-[#78a04d]" />
+                    在线
                   </span>
                 </div>
                 <h2 className="mt-5 text-xs font-semibold text-[#3a4035]">同步状态良好</h2>
@@ -550,7 +551,9 @@ const WorkspacePage = (_props: WorkspacePageProps) => {
                   </span>
                 </div>
                 <h2 className="mt-5 text-xs font-semibold text-[#523c27]">Skyroc 2.4.0</h2>
-                <p className="mt-1.5 text-[10px] leading-4 text-[#8a7055]">新版本已可用，包含任务恢复和索引性能改进。</p>
+                <p className="mt-1.5 text-[10px] leading-4 text-[#8a7055]">
+                  新版本已可用，包含任务恢复和索引性能改进。
+                </p>
                 <button
                   className="mt-3 text-[10px] font-semibold text-[#855828] underline decoration-[#b98a59]/45 underline-offset-4"
                   onClick={() => setActionMessage('更新详情已准备好，将在更新面板中打开')}

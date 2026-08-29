@@ -45,7 +45,23 @@
   }
 
   .app-no-drag,
-  .app-drag :where(a, button, input, textarea, select, option, label, summary, [role='button'], [role='dialog'], [role='menu'], [role='listbox'], [contenteditable='true'], [data-window-no-drag]) {
+  .app-drag
+    :where(
+      a,
+      button,
+      input,
+      textarea,
+      select,
+      option,
+      label,
+      summary,
+      [role='button'],
+      [role='dialog'],
+      [role='menu'],
+      [role='listbox'],
+      [contenteditable='true'],
+      [data-window-no-drag]
+    ) {
     -webkit-app-region: no-drag;
     app-region: no-drag;
   }
