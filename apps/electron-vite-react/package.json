@@ -20,11 +20,16 @@
   },
   "dependencies": {
     "@skyroc/web-ui": "workspace:*",
+    "@tanstack/react-devtools": "catalog:web",
     "@tanstack/react-router": "catalog:web",
-    "electron-updater": "^6.8.3"
+    "@tanstack/react-router-devtools": "catalog:web",
+    "electron-updater": "^6.8.3",
+    "jotai": "catalog:core",
+    "jotai-devtools": "catalog:web"
   },
   "devDependencies": {
     "@playwright/test": "catalog:dev",
+    "@rolldown/plugin-babel": "catalog:dev",
     "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
     "@tailwindcss/vite": "catalog:css",
@@ -32,15 +37,22 @@
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",
     "@vitejs/plugin-react": "catalog:web",
+    "babel-plugin-react-compiler": "catalog:dev",
+    "boxen": "catalog:dev",
     "electron": "catalog:electron",
     "electron-builder": "catalog:electron",
+    "gradient-string": "catalog:dev",
+    "jotai-babel": "catalog:dev",
     "react": "catalog:core",
     "react-dom": "catalog:core",
     "tailwindcss": "catalog:css",
     "typescript": "catalog:core",
+    "unplugin-auto-import": "catalog:dev",
+    "unplugin-icons": "catalog:dev",
     "vite": "catalog:core",
     "vite-plugin-electron": "catalog:electron",
     "vite-plugin-electron-renderer": "catalog:electron",
+    "vite-plugin-svg-icons": "catalog:dev",
     "vitest": "catalog:dev"
   }
 }
