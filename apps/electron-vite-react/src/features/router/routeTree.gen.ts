@@ -14,6 +14,7 @@ import { Route as appLayoutRouteImport } from './../../pages/(app)/layout'
 import { Route as IndexRouteImport } from './../../pages/index'
 import { Route as authLoginRouteImport } from './../../pages/(auth)/login'
 import { Route as appWorkspaceIndexRouteImport } from './../../pages/(app)/workspace/index'
+import { Route as appSettingsIndexRouteImport } from './../../pages/(app)/settings/index'
 
 const authLayoutRoute = authLayoutRouteImport.update({
   id: '/(auth)',
@@ -38,15 +39,22 @@ const appWorkspaceIndexRoute = appWorkspaceIndexRouteImport.update({
   path: '/workspace/',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
+  '/settings/': typeof appSettingsIndexRoute
   '/workspace/': typeof appWorkspaceIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
+  '/settings': typeof appSettingsIndexRoute
   '/workspace': typeof appWorkspaceIndexRoute
 }
 export interface FileRoutesById {
@@ -55,19 +63,21 @@ export interface FileRoutesById {
   '/(app)': typeof appLayoutRouteWithChildren
   '/(auth)': typeof authLayoutRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
+  '/(app)/settings/': typeof appSettingsIndexRoute
   '/(app)/workspace/': typeof appWorkspaceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/workspace/'
+  fullPaths: '/' | '/login' | '/settings/' | '/workspace/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/workspace'
+  to: '/' | '/login' | '/settings' | '/workspace'
   id:
     | '__root__'
     | '/'
     | '/(app)'
     | '/(auth)'
     | '/(auth)/login'
+    | '/(app)/settings/'
     | '/(app)/workspace/'
   fileRoutesById: FileRoutesById
 }
@@ -114,14 +124,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWorkspaceIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/settings/': {
+      id: '/(app)/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof appSettingsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
   }
 }
 
 interface appLayoutRouteChildren {
+  appSettingsIndexRoute: typeof appSettingsIndexRoute
   appWorkspaceIndexRoute: typeof appWorkspaceIndexRoute
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
+  appSettingsIndexRoute: appSettingsIndexRoute,
   appWorkspaceIndexRoute: appWorkspaceIndexRoute,
 }
 

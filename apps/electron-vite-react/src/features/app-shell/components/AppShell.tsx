@@ -1,4 +1,5 @@
 import { Button, Command, CommandDialog, Icon, KeyboardKey } from '@skyroc/web-ui';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
@@ -16,14 +17,16 @@ interface NavigationItem {
   label: string;
   /** 当前模板是否已经提供对应页面。 */
   ready: boolean;
+  /** 导航项对应的应用路由。 */
+  to?: '/settings' | '/workspace';
 }
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
-  { icon: 'lucide:layout-dashboard', id: 'workspace', label: '工作台', ready: true },
+  { icon: 'lucide:layout-dashboard', id: 'workspace', label: '工作台', ready: true, to: '/workspace' },
   { icon: 'lucide:folder-open', id: 'files', label: '文件', ready: false },
   { icon: 'lucide:list-checks', id: 'tasks', label: '任务', ready: false },
   { icon: 'lucide:bell', id: 'notifications', label: '通知', ready: false },
-  { icon: 'lucide:settings-2', id: 'settings', label: '设置', ready: false }
+  { icon: 'lucide:settings-2', id: 'settings', label: '设置', ready: true, to: '/settings' }
 ];
 
 function handleMinimize() {
@@ -41,6 +44,9 @@ function handleClose() {
 const AppShell = (props: AppShellProps) => {
   const { children } = props;
 
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: state => state.location.pathname });
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [activityMessage, setActivityMessage] = useState('所有本地更改均已保存');
@@ -53,8 +59,13 @@ const AppShell = (props: AppShellProps) => {
         {
           label: '前往工作台',
           leading: <Icon icon="lucide:layout-dashboard" />,
-          onSelect: () => runCommand('已在工作台'),
+          onSelect: () => runNavigationCommand('/workspace', '已打开工作台'),
           shortcut: ['command', '1']
+        },
+        {
+          label: '打开设置',
+          leading: <Icon icon="lucide:settings-2" />,
+          onSelect: () => runNavigationCommand('/settings', '已打开设置')
         },
         {
           label: '浏览最近文件',
@@ -98,6 +109,11 @@ const AppShell = (props: AppShellProps) => {
     setIsCommandOpen(false);
   }
 
+  async function runNavigationCommand(to: '/settings' | '/workspace', message: string) {
+    runCommand(message);
+    await navigate({ to });
+  }
+
   function handleGlobalKeyDown(event: KeyboardEvent) {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
@@ -105,9 +121,10 @@ const AppShell = (props: AppShellProps) => {
     }
   }
 
-  function handleNavigation(item: NavigationItem) {
-    if (item.ready) {
-      setActivityMessage('工作台已是当前页面');
+  async function handleNavigation(item: NavigationItem) {
+    if (item.ready && item.to) {
+      setActivityMessage(`${item.label}已打开`);
+      await navigate({ to: item.to });
       return;
     }
 
@@ -232,7 +249,7 @@ const AppShell = (props: AppShellProps) => {
             className="space-y-1"
           >
             {NAVIGATION_ITEMS.map(item => {
-              const isActive = item.id === 'workspace';
+              const isActive = item.to ? pathname.startsWith(item.to) : false;
 
               return (
                 <button
@@ -243,6 +260,7 @@ const AppShell = (props: AppShellProps) => {
                       : 'text-[#6f736a] hover:bg-black/[0.045] hover:text-[#292d27]'
                   }`}
                   key={item.id}
+                  data-testid={`nav-${item.id}`}
                   onClick={() => handleNavigation(item)}
                   title={isSidebarCollapsed ? item.label : undefined}
                   type="button"
