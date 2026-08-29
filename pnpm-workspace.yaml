@@ -21,12 +21,17 @@ dedupePeerDependents: true
 allowBuilds:
   '@parcel/watcher': true
   '@shopify/react-native-skia': false
+  '@swc/core': true
+  core-js: false
   electron-winstaller: true
+  es5-ext: false
   esbuild: true
   msw: true
   sharp: true
   simple-git-hooks: true
+  typeit: false
   unrs-resolver: true
+  workerd: true
 
 overrides:
   # 确保类型一致性
