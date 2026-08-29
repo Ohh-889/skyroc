@@ -1,17 +1,26 @@
 // oxlint-disable import/no-unassigned-import
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import RouterProvider from './features/router/RouterProvider';
 
 import './index.css';
 import './demos/ipc';
 // If you want use Node.js, the`nodeIntegration` needs to be enabled in the Main process.
 // import './demos/node'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <RouterProvider />
-  </React.StrictMode>
-);
+async function bootstrap() {
+  if (import.meta.env.DEV) {
+    await import('./features/devtools/jotai');
+  }
 
-postMessage({ payload: 'removeLoading' }, '*');
+  const { default: App } = await import('./App');
+
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+
+  postMessage({ payload: 'removeLoading' }, '*');
+}
+
+bootstrap();

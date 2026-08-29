@@ -1104,15 +1104,24 @@ importers:
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/shadcn-ui
+      '@tanstack/react-devtools':
+        specifier: catalog:web
+        version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
       '@tanstack/react-router':
         specifier: catalog:web
         version: 1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-router-devtools':
+        specifier: catalog:web
+        version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       electron-updater:
         specifier: ^6.8.3
         version: 6.8.9(supports-color@10.2.2)
       jotai:
         specifier: catalog:core
         version: 2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0)
+      jotai-devtools:
+        specifier: 0.14.0
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
     devDependencies:
       '@playwright/test':
         specifier: catalog:dev
