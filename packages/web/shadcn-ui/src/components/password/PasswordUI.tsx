@@ -44,12 +44,15 @@ const PasswordUI = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
         <>
           {trailing}
 
-          <span
+          <button
+            aria-label={visible ? '隐藏密码' : '显示密码'}
+            className="flex shrink-0 items-center justify-center border-0 bg-transparent p-0 text-inherit"
             data-slot="password-visible"
             onClick={toggleVisible}
+            type="button"
           >
             {VisibleIcon}
-          </span>
+          </button>
         </>
       }
     />

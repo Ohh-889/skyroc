@@ -25,7 +25,7 @@ describe('Password', () => {
 
     const input = screen.getByLabelText('Account password');
     const root = input.closest('[data-slot="input-root"]');
-    const visibleToggle = container.querySelector('[data-slot="password-visible"]');
+    const visibleToggle = screen.getByRole('button', { name: '显示密码' });
     const clearable = container.querySelector('[data-slot="input-clearable"]');
 
     expect(ref.current).toBe(input);
@@ -33,13 +33,15 @@ describe('Password', () => {
     expect(input).toHaveAttribute('type', 'password');
     expect(root).toHaveClass('custom-password-root');
     expect(screen.getByLabelText('password trailing')).toHaveTextContent('Required');
-    expect(visibleToggle?.querySelector('.lucide-eye-off')).toBeInTheDocument();
+    expect(visibleToggle).toHaveAttribute('type', 'button');
+    expect(visibleToggle.querySelector('.lucide-eye-off')).toBeInTheDocument();
 
     await user.click(visibleToggle!);
 
     expect(input).toHaveAttribute('type', 'text');
     expect(onVisibleChange).toHaveBeenLastCalledWith(true);
-    expect(visibleToggle?.querySelector('.lucide-eye')).toBeInTheDocument();
+    expect(visibleToggle).toHaveAccessibleName('隐藏密码');
+    expect(visibleToggle.querySelector('.lucide-eye')).toBeInTheDocument();
 
     await user.clear(input);
     await user.type(input, 'updated');
