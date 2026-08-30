@@ -1,5 +1,11 @@
 # create-skyroc
 
+## 2.0.4
+
+### Patch Changes
+
+- 4d42084: 修复 Admin 模板依赖与 pnpm 配置，补充 json5 依赖，并在生成项目中包含 pnpm-workspace.yaml 构建许可配置
+
 ## 2.0.3
 
 ### Patch Changes
