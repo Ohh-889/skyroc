@@ -1,5 +1,20 @@
 import { ACCENT_COLOR_VALUES } from '../../../../features/theme/theme';
+import type { ThemePreferences, TitlebarTheme, WindowMaterial } from '../../../../features/theme/theme';
 import type { DesktopSettings, SettingsSection, ShortcutId } from './types';
+
+type AppearanceSettings = ThemePreferences & {
+  /** 标题栏明暗策略。 */
+  titlebarTheme: TitlebarTheme;
+  /** 桌面窗口材质。 */
+  windowMaterial: WindowMaterial;
+  /** 界面整体缩放百分比。 */
+  zoom: number;
+};
+
+type LegacyDesktopSettings = Partial<DesktopSettings> & {
+  /** 旧版本的减少动画开关。 */
+  reduceMotion?: boolean;
+};
 
 interface ShortcutDefinition {
   /** 快捷键功能说明。 */
@@ -20,8 +35,33 @@ export const DEFAULT_SHORTCUTS: DesktopSettings['shortcuts'] = {
   openDirectory: '⌘ O'
 };
 
-export const DEFAULT_SETTINGS: DesktopSettings = {
+export const DEFAULT_APPEARANCE_SETTINGS: AppearanceSettings = {
   accentColor: 'moss',
+  accentSource: 'preset',
+  colorVisionMode: 'none',
+  contrastMode: 'standard',
+  customAccentColor: ACCENT_COLOR_VALUES.moss,
+  density: 'standard',
+  enhancedFocus: true,
+  fontFamily: 'system',
+  grayscale: false,
+  lineHeight: 'standard',
+  motionMode: 'system',
+  radius: 8,
+  reduceFlashing: false,
+  reduceTransparency: false,
+  scrollbarSize: 'auto',
+  surfacePreset: 'warm',
+  textScale: 100,
+  themeMode: 'system',
+  titlebarTheme: 'app',
+  underlineLinks: false,
+  windowMaterial: 'auto',
+  zoom: 100
+};
+
+export const DEFAULT_SETTINGS: DesktopSettings = {
+  ...DEFAULT_APPEARANCE_SETTINGS,
   backgroundPolicy: 'continue',
   closeBehavior: 'tray',
   defaultWorkspace: '~/Projects/desktop-kit',
@@ -29,14 +69,12 @@ export const DEFAULT_SETTINGS: DesktopSettings = {
   followLocale: true,
   language: 'zh-CN',
   launchAtLogin: false,
-  reduceMotion: false,
   restoreLastPage: true,
+  schemaVersion: 1,
   shortcuts: DEFAULT_SHORTCUTS,
   taskNotifications: true,
-  themeMode: 'system',
   trayBehavior: 'show',
-  updateNotifications: true,
-  zoom: 100
+  updateNotifications: true
 };
 
 export const SETTINGS_SECTIONS: SettingsSection[] = [
@@ -68,11 +106,14 @@ export function loadSettings(): DesktopSettings {
   if (!savedSettings) return DEFAULT_SETTINGS;
 
   try {
-    const parsedSettings = JSON.parse(savedSettings) as Partial<DesktopSettings>;
+    const parsedSettings = JSON.parse(savedSettings) as LegacyDesktopSettings;
+    const motionMode = parsedSettings.motionMode ?? (parsedSettings.reduceMotion ? 'reduced' : 'system');
 
     return {
       ...DEFAULT_SETTINGS,
       ...parsedSettings,
+      motionMode,
+      schemaVersion: 1,
       shortcuts: { ...DEFAULT_SHORTCUTS, ...parsedSettings.shortcuts }
     };
   } catch {

@@ -32,7 +32,7 @@ export const SettingRow = (props: SettingRowProps) => {
   const { children, description, destructive = false, title } = props;
 
   return (
-    <div className="flex min-h-19 items-center justify-between gap-8 px-5 py-4">
+    <div className="flex min-h-[var(--app-row-min-height)] items-center justify-between gap-8 px-5 py-[var(--app-row-padding-y)]">
       <div className="min-w-0">
         <h3 className={`text-[13px] font-semibold ${destructive ? 'text-destructive' : 'text-foreground'}`}>{title}</h3>
         <p className="mt-1 max-w-xl text-[11px] leading-5 text-muted-foreground">{description}</p>

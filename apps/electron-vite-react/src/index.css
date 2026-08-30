@@ -29,6 +29,16 @@
 }
 
 :root {
+  --app-card-padding: 1.25rem;
+  --app-color-filter: none;
+  --app-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --app-grayscale: 0;
+  --app-line-height: 1.5;
+  --app-radius: 0.5rem;
+  --app-row-min-height: 4.75rem;
+  --app-row-padding-y: 1rem;
+  --app-scrollbar-size: 10px;
+  --app-text-scale: 1;
   --accent: 78 35.7% 89%;
   --accent-foreground: 93.6 21.7% 22.5%;
   --background: 50 27.3% 95.7%;
@@ -64,6 +74,36 @@
   --theme-preview-toolbar: 97.5 10.5% 14.9%;
 }
 
+:root[data-surface='neutral'] {
+  --background: 0 0% 96%;
+  --border: 0 0% 85%;
+  --card: 0 0% 99%;
+  --input: 0 0% 85%;
+  --muted: 0 0% 92%;
+  --popover: 0 0% 99%;
+  --secondary: 0 0% 92%;
+}
+
+:root[data-surface='slate'] {
+  --background: 210 20% 96%;
+  --border: 214 15% 84%;
+  --card: 210 25% 99%;
+  --input: 214 15% 84%;
+  --muted: 210 18% 91%;
+  --popover: 210 25% 99%;
+  --secondary: 210 18% 91%;
+}
+
+:root[data-surface='pure'] {
+  --background: 0 0% 100%;
+  --border: 0 0% 88%;
+  --card: 0 0% 100%;
+  --input: 0 0% 88%;
+  --muted: 0 0% 95%;
+  --popover: 0 0% 100%;
+  --secondary: 0 0% 95%;
+}
+
 .dark {
   --accent: 86 16% 20%;
   --accent-foreground: 70 30% 92%;
@@ -93,6 +133,100 @@
   --ring: 80 42.9% 67.1%;
   --secondary: 85 7% 16%;
   --secondary-foreground: 60 20% 94%;
+}
+
+:root.dark[data-surface='neutral'] {
+  --background: 0 0% 7%;
+  --border: 0 0% 22%;
+  --card: 0 0% 10%;
+  --input: 0 0% 22%;
+  --muted: 0 0% 15%;
+  --popover: 0 0% 10%;
+  --secondary: 0 0% 15%;
+}
+
+:root.dark[data-surface='slate'] {
+  --background: 220 18% 8%;
+  --border: 217 13% 23%;
+  --card: 220 16% 11%;
+  --input: 217 13% 23%;
+  --muted: 218 15% 16%;
+  --popover: 220 16% 11%;
+  --secondary: 218 15% 16%;
+}
+
+:root.dark[data-surface='pure'] {
+  --background: 0 0% 0%;
+  --border: 0 0% 20%;
+  --card: 0 0% 5%;
+  --input: 0 0% 20%;
+  --muted: 0 0% 11%;
+  --popover: 0 0% 5%;
+  --secondary: 0 0% 11%;
+}
+
+:root[data-contrast='high'] {
+  --border: 0 0% 38%;
+  --input: 0 0% 38%;
+  --muted-foreground: 0 0% 25%;
+}
+
+:root.dark[data-contrast='high'] {
+  --border: 0 0% 68%;
+  --input: 0 0% 68%;
+  --muted-foreground: 0 0% 82%;
+}
+
+:root[data-font='modern'] {
+  --app-font-family: 'Avenir Next', Avenir, Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+:root[data-font='reading'] {
+  --app-font-family: 'Iowan Old Style', 'Palatino Linotype', 'Noto Serif SC', Georgia, serif;
+}
+
+:root[data-density='compact'] {
+  --app-card-padding: 0.875rem;
+  --app-row-min-height: 3.75rem;
+  --app-row-padding-y: 0.625rem;
+}
+
+:root[data-density='comfortable'] {
+  --app-card-padding: 1.5rem;
+  --app-row-min-height: 5.5rem;
+  --app-row-padding-y: 1.25rem;
+}
+
+:root[data-line-height='compact'] {
+  --app-line-height: 1.35;
+}
+
+:root[data-line-height='comfortable'] {
+  --app-line-height: 1.7;
+}
+
+:root[data-scrollbar='thin'] {
+  --app-scrollbar-size: 6px;
+}
+
+:root[data-scrollbar='wide'] {
+  --app-scrollbar-size: 16px;
+}
+
+:root[data-color-vision='protan'] {
+  --app-color-filter: url('#skyroc-color-protan');
+}
+
+:root[data-color-vision='deutan'] {
+  --app-color-filter: url('#skyroc-color-deutan');
+}
+
+:root[data-color-vision='tritan'] {
+  --app-color-filter: url('#skyroc-color-tritan');
+}
+
+:root[data-grayscale='true'] {
+  --app-grayscale: 1;
 }
 
 .theme-preview {
@@ -174,8 +308,9 @@
 @layer base {
   :root {
     color-scheme: light;
-    font-family: var(--font-sans);
-    line-height: 1.5;
+    font-family: var(--app-font-family);
+    font-size: calc(16px * var(--app-text-scale));
+    line-height: var(--app-line-height);
     font-weight: 400;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -203,11 +338,22 @@
   #root {
     min-height: 100vh;
     background: transparent;
+    filter: var(--app-color-filter) grayscale(var(--app-grayscale));
   }
 
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  :root[data-underline-links='true'] main a:not([role='button']) {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  :root[data-enhanced-focus='true'] :focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 3px;
   }
 
   button,
@@ -230,8 +376,8 @@
   }
 
   *::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: var(--app-scrollbar-size);
+    height: var(--app-scrollbar-size);
   }
 
   *::-webkit-scrollbar-track {
@@ -252,12 +398,66 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :root[data-motion='system'] *,
+  :root[data-motion='system'] *::before,
+  :root[data-motion='system'] *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 80ms !important;
+}
+
+:root[data-motion='none'] *,
+:root[data-motion='none'] *::before,
+:root[data-motion='none'] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+:root[data-reduce-flashing='true'] * {
+  animation-iteration-count: 1 !important;
+}
+
+:root[data-reduce-transparency='true']
+  :where([class*='backdrop-blur'], [class*='bg-card/'], [class*='bg-background/']) {
+  backdrop-filter: none !important;
+  background-color: hsl(var(--card)) !important;
+}
+
+:root:not([data-reduce-transparency='true']):is(
+    [data-window-material='auto'],
+    [data-window-material='vibrancy'],
+    [data-window-material='mica'],
+    [data-window-material='acrylic']
+  ),
+:root:not([data-reduce-transparency='true']):is(
+    [data-window-material='auto'],
+    [data-window-material='vibrancy'],
+    [data-window-material='mica'],
+    [data-window-material='acrylic']
+  )
+  body {
+  background: transparent;
+}
+
+:root:not([data-reduce-transparency='true']):is(
+    [data-window-material='auto'],
+    [data-window-material='vibrancy'],
+    [data-window-material='mica'],
+    [data-window-material='acrylic']
+  )
+  #root {
+  background: hsl(var(--background) / 88%);
 }

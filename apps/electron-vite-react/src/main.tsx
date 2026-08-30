@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import { initializeDesktopAppearance } from './features/theme/desktop-appearance';
 import { initializeTheme } from './features/theme/theme';
 import './index.css';
 import './demos/ipc';
@@ -11,12 +12,13 @@ import { loadSettings } from './pages/(app)/settings/modules/settings-config';
 
 async function bootstrap() {
   const settings = loadSettings();
-  const disposeTheme = initializeTheme({
-    accentColor: settings.accentColor,
-    themeMode: settings.themeMode
-  });
+  const disposeTheme = initializeTheme(settings);
+  const disposeDesktopAppearance = initializeDesktopAppearance(settings);
 
-  if (import.meta.hot) import.meta.hot.dispose(disposeTheme);
+  if (import.meta.hot) {
+    import.meta.hot.dispose(disposeTheme);
+    import.meta.hot.dispose(disposeDesktopAppearance);
+  }
 
   if (import.meta.env.DEV) {
     await import('./features/devtools/jotai');

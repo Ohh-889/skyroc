@@ -1,7 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BrowserWindow, Menu, app, dialog, ipcMain, screen, shell } from 'electron';
+import { BrowserWindow, Menu, app, dialog, ipcMain, nativeTheme, screen, shell, systemPreferences } from 'electron';
 import type { OpenDialogOptions } from 'electron';
 import { update } from './update';
 
@@ -41,6 +41,7 @@ const preload = path.join(__dirname, '../preload/index.mjs');
 const indexHtml = path.join(RENDERER_DIST, 'index.html');
 
 type DesktopWindowMode = 'auth' | 'workspace';
+type WindowMaterial = 'acrylic' | 'auto' | 'mica' | 'solid' | 'vibrancy';
 
 function setDesktopWindowMode(window: BrowserWindow, mode: DesktopWindowMode) {
   if (window.isMaximized()) window.unmaximize();
@@ -64,8 +65,41 @@ function setDesktopWindowMode(window: BrowserWindow, mode: DesktopWindowMode) {
   window.center();
 }
 
+function setWindowMaterial(window: BrowserWindow, material: WindowMaterial) {
+  if (process.platform === 'darwin') {
+    if (material === 'solid') {
+      window.setVibrancy(null);
+      return true;
+    }
+
+    if (material === 'auto' || material === 'vibrancy') {
+      window.setVibrancy('under-window');
+      return true;
+    }
+
+    return false;
+  }
+
+  if (process.platform === 'win32') {
+    if (material === 'solid') {
+      window.setBackgroundMaterial('none');
+      return true;
+    }
+
+    if (material === 'auto' || material === 'mica' || material === 'acrylic') {
+      window.setBackgroundMaterial(material === 'auto' ? 'auto' : material);
+      return true;
+    }
+
+    return false;
+  }
+
+  return material === 'auto' || material === 'solid';
+}
+
 async function createWindow() {
   win = new BrowserWindow({
+    backgroundColor: '#00000000',
     height: 620,
     icon: path.join(process.env.VITE_PUBLIC ?? '', 'favicon.ico'),
     maximizable: false,
@@ -153,6 +187,31 @@ ipcMain.handle('desktop-window:set-mode', (event, mode: DesktopWindowMode) => {
   if (window) setDesktopWindowMode(window, mode);
 });
 
+ipcMain.handle('desktop-appearance:get-native', () => {
+  const accentColor =
+    process.platform === 'darwin' || process.platform === 'win32' ? systemPreferences.getAccentColor() : null;
+
+  return { accentColor: accentColor || null };
+});
+
+ipcMain.handle('desktop-appearance:set-theme-source', (_event, themeSource: string) => {
+  if (themeSource === 'dark' || themeSource === 'light' || themeSource === 'system') {
+    nativeTheme.themeSource = themeSource;
+  }
+});
+
+ipcMain.handle('desktop-appearance:set-window-material', (event, material: WindowMaterial) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+
+  if (!window || !['acrylic', 'auto', 'mica', 'solid', 'vibrancy'].includes(material)) return false;
+  return setWindowMaterial(window, material);
+});
+
+ipcMain.handle('desktop-appearance:set-zoom-factor', (event, factor: number) => {
+  if (!Number.isFinite(factor) || factor < 0.85 || factor > 1.25) return;
+  event.sender.setZoomFactor(factor);
+});
+
 ipcMain.handle('desktop-files:open-directory', async event => {
   const window = BrowserWindow.fromWebContents(event.sender);
   const options: OpenDialogOptions = { properties: ['openDirectory', 'createDirectory'] };
@@ -169,7 +228,15 @@ ipcMain.handle('desktop-files:import-files', async event => {
   return result.canceled ? [] : result.filePaths;
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // systemPreferences.on('accent-color-changed', (_event, accentColor) => {
+  //   for (const window of BrowserWindow.getAllWindows()) {
+  //     window.webContents.send('desktop-appearance:accent-color-changed', accentColor);
+  //   }
+  // });
+
+  return createWindow();
+});
 
 app.on('window-all-closed', () => {
   win = null;

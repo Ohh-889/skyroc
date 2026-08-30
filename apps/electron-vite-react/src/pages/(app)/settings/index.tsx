@@ -2,7 +2,7 @@ import { Form, Input, useForm } from '@skyroc/web-ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { setAccentColor, setThemeMode, setThemePreferences } from '../../../features/theme/theme';
+import { applyDesktopAppearance } from '../../../features/theme/desktop-appearance';
 import AppearanceSettings from './modules/AppearanceSettings';
 import DataSettings from './modules/DataSettings';
 import GeneralSettings from './modules/GeneralSettings';
@@ -10,6 +10,7 @@ import LanguageSettings from './modules/LanguageSettings';
 import NotificationSettings from './modules/NotificationSettings';
 import {
   DATA_STORAGE_LOCATION,
+  DEFAULT_APPEARANCE_SETTINGS,
   DEFAULT_SETTINGS,
   DEFAULT_SHORTCUTS,
   SETTINGS_SECTIONS,
@@ -44,13 +45,21 @@ const SettingsPage = (_props: SettingsPageProps) => {
 
   const currentSection = SETTINGS_SECTIONS.find(section => section.id === activeSection) ?? SETTINGS_SECTIONS[0];
 
-  function handleSettingsChange(changedValues: Partial<DesktopSettings>, values: DesktopSettings) {
+  function handleSettingsChange(_changedValues: Partial<DesktopSettings>, values: DesktopSettings) {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(values));
 
-    if ('themeMode' in changedValues) setThemeMode(values.themeMode);
-    if ('accentColor' in changedValues) setAccentColor(values.accentColor);
+    applyDesktopAppearance(values);
 
     setStatusMessage('更改已保存到当前设备');
+  }
+
+  function handleAppearanceReset() {
+    const nextSettings = { ...form.getFieldsValue(), ...DEFAULT_APPEARANCE_SETTINGS };
+
+    form.setFieldsValue(DEFAULT_APPEARANCE_SETTINGS);
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
+    applyDesktopAppearance(nextSettings);
+    setStatusMessage('外观设置已恢复默认值');
   }
 
   async function chooseDirectory(key: 'defaultWorkspace' | 'downloadDirectory') {
@@ -118,6 +127,14 @@ const SettingsPage = (_props: SettingsPageProps) => {
         ...importedSettings,
         shortcuts: { ...currentSettings.shortcuts, ...importedSettings.shortcuts }
       });
+      const nextSettings = {
+        ...currentSettings,
+        ...importedSettings,
+        shortcuts: { ...currentSettings.shortcuts, ...importedSettings.shortcuts }
+      } as DesktopSettings;
+
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
+      applyDesktopAppearance(nextSettings);
       setStatusMessage(`已导入 ${file.name}`);
     } catch {
       setStatusMessage('配置导入失败：请选择有效的 JSON 文件');
@@ -147,7 +164,7 @@ const SettingsPage = (_props: SettingsPageProps) => {
   function handleDeleteLocalData() {
     localStorage.removeItem(SETTINGS_STORAGE_KEY);
     form.setFieldsValue(DEFAULT_SETTINGS);
-    setThemePreferences(DEFAULT_SETTINGS);
+    applyDesktopAppearance(DEFAULT_SETTINGS);
     setCacheSize('0 KB');
     setStatusMessage('本模板的本地设置数据已删除');
   }
@@ -215,7 +232,12 @@ const SettingsPage = (_props: SettingsPageProps) => {
                 onChooseDirectory={chooseDirectory}
               />
             ) : null}
-            {activeSection === 'appearance' ? <AppearanceSettings form={form} /> : null}
+            {activeSection === 'appearance' ? (
+              <AppearanceSettings
+                form={form}
+                onReset={handleAppearanceReset}
+              />
+            ) : null}
             {activeSection === 'language' ? <LanguageSettings form={form} /> : null}
             {activeSection === 'shortcuts' ? (
               <ShortcutSettings

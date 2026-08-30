@@ -1,4 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { IpcRendererEvent } from 'electron';
+
+const accentColorListeners = new Map<
+  (accentColor: string) => void,
+  (event: IpcRendererEvent, accentColor: string) => void
+>();
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -36,6 +42,34 @@ contextBridge.exposeInMainWorld('desktopWindow', {
   },
   toggleMaximize() {
     ipcRenderer.send('desktop-window:toggle-maximize');
+  }
+});
+
+contextBridge.exposeInMainWorld('desktopAppearance', {
+  getNativeAppearance() {
+    return ipcRenderer.invoke('desktop-appearance:get-native') as Promise<{ accentColor: string | null }>;
+  },
+  offAccentColorChanged(listener: (accentColor: string) => void) {
+    const wrappedListener = accentColorListeners.get(listener);
+
+    if (!wrappedListener) return;
+    ipcRenderer.removeListener('desktop-appearance:accent-color-changed', wrappedListener);
+    accentColorListeners.delete(listener);
+  },
+  onAccentColorChanged(listener: (accentColor: string) => void) {
+    const wrappedListener = (_event: IpcRendererEvent, accentColor: string) => listener(accentColor);
+
+    accentColorListeners.set(listener, wrappedListener);
+    ipcRenderer.on('desktop-appearance:accent-color-changed', wrappedListener);
+  },
+  setThemeSource(themeSource: 'dark' | 'light' | 'system') {
+    return ipcRenderer.invoke('desktop-appearance:set-theme-source', themeSource) as Promise<void>;
+  },
+  setWindowMaterial(material: 'acrylic' | 'auto' | 'mica' | 'solid' | 'vibrancy') {
+    return ipcRenderer.invoke('desktop-appearance:set-window-material', material) as Promise<boolean>;
+  },
+  setZoomFactor(factor: number) {
+    return ipcRenderer.invoke('desktop-appearance:set-zoom-factor', factor) as Promise<void>;
   }
 });
 
