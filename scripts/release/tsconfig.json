@@ -1,0 +1,10 @@
+{
+  "extends": "../../internal/tsconfig/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "lib": ["ESNext"],
+    "moduleResolution": "bundler",
+    "types": ["node"]
+  },
+  "include": ["./*.ts"]
+}
