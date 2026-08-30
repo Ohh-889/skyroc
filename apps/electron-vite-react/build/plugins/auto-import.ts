@@ -1,7 +1,7 @@
 import AutoImport from 'unplugin-auto-import/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 
-import { LOCAL_ICON_COLLECTION } from './icon-utils';
+import { LOCAL_ICON_COLLECTION } from './icon-utils.ts';
 
 const SOURCE_FILE_RE = /\.[tj]sx?(\?.*)?$/;
 

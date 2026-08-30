@@ -3,7 +3,7 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 import { electronSimple } from 'vite-plugin-electron/multi-env';
 import { notBundle } from 'vite-plugin-electron/plugin';
-import { setupRendererPlugins } from './build/plugins';
+import { setupRendererPlugins } from './build/plugins/index.ts';
 import pkg from './package.json' with { type: 'json' };
 
 const external = Object.keys('dependencies' in pkg ? (pkg.dependencies as Record<string, string>) : {});

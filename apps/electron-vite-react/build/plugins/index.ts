@@ -1,11 +1,11 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
-import { setupAutoImportPlugin } from './auto-import';
-import { setupBabelPlugin } from './babel';
-import { setupProjectInfoPlugin } from './info';
-import { setupRouterPlugin } from './router';
-import { setupUnpluginIconPlugins } from './unplugin-icon';
+import { setupAutoImportPlugin } from './auto-import.ts';
+import { setupBabelPlugin } from './babel.ts';
+import { setupProjectInfoPlugin } from './info.ts';
+import { setupRouterPlugin } from './router.ts';
+import { setupUnpluginIconPlugins } from './unplugin-icon.ts';
 
 export function setupRendererPlugins() {
   return [

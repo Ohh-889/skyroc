@@ -30,6 +30,7 @@
     ".agents",
     "pnpm-lock.yaml",
     "routeTree.gen.ts",
+    "auto-imports.d.ts",
     "uniwind-types.d.ts"
   ]
 }

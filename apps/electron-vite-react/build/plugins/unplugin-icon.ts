@@ -2,7 +2,7 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import Icons from 'unplugin-icons/vite';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 
-import { LOCAL_ICON_COLLECTION, LOCAL_ICON_PATH, LOCAL_ICON_PREFIX, transformLocalIcon } from './icon-utils';
+import { LOCAL_ICON_COLLECTION, LOCAL_ICON_PATH, LOCAL_ICON_PREFIX, transformLocalIcon } from './icon-utils.ts';
 
 export function setupUnpluginIconPlugins() {
   return [
