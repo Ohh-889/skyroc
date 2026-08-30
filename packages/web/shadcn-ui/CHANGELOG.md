@@ -1,5 +1,12 @@
 # @skyroc/web-ui
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [2146047]
+  - @skyroc/form@0.1.0
+
 ## 0.2.1
 
 ### Patch Changes

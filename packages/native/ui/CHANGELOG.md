@@ -1,5 +1,12 @@
 # @skyroc/native-ui
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [2146047]
+  - @skyroc/form@0.1.0
+
 ## 1.2.0
 
 ### Minor Changes
