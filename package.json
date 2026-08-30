@@ -1,6 +1,33 @@
 {
-  "name": "kitchen-sink",
+  "name": "skyroc",
   "private": true,
+  "description": "A cross-platform, layered and reusable frontend engineering platform for React, Vite and Expo",
+  "keywords": [
+    "admin-dashboard",
+    "design-system",
+    "expo",
+    "monorepo",
+    "react",
+    "react-native",
+    "skyroc",
+    "turborepo",
+    "typescript",
+    "vite"
+  ],
+  "homepage": "https://github.com/Ohh-889/skyroc",
+  "bugs": {
+    "url": "https://github.com/Ohh-889/skyroc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ohh",
+    "email": "1509326266@qq.com",
+    "url": "https://github.com/Ohh-889"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ohh-889/skyroc.git"
+  },
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
