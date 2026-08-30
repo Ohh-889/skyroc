@@ -135,6 +135,8 @@ export interface RadioCardGroupItem extends Omit<RadioProps, 'classNames' | 'col
 export interface RadioCardProps extends RadioGroupItemProps {
   /** Whether the radio is checked (controlled). */
   checked?: boolean;
+  /** Custom card content. When omitted, icon, label and description use the default layout. */
+  children?: ReactNode;
   /** Custom class names for different radio card UI slots. */
   classNames?: RadioClassNames;
   /** Description text displayed below the label. */
@@ -149,6 +151,14 @@ export interface RadioCardProps extends RadioGroupItemProps {
    * @default 'right'
    */
   radioPosition?: RadioPosition;
+}
+
+/** Selection state provided to a custom RadioCardGroup item renderer. */
+export interface RadioCardRenderState {
+  /** Whether the item is currently selected. */
+  checked: boolean;
+  /** Whether the item is disabled by itself or by the group. */
+  disabled: boolean;
 }
 
 /**
@@ -184,6 +194,8 @@ export interface RadioCardGroupProps extends Omit<StyledComponentProps<_RadioGro
    * @default 'right'
    */
   radioPosition?: RadioPosition;
+  /** Custom card-content renderer. Selection semantics and interaction remain managed by the group. */
+  renderItem?: (item: RadioCardGroupItem, state: RadioCardRenderState) => ReactNode;
   /** Component size variant. */
   size?: ThemeSize;
   /**

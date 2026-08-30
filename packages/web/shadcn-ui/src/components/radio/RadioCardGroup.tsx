@@ -18,6 +18,7 @@ const RadioCardGroup = (props: RadioCardGroupProps) => {
     onValueChange,
     orientation = 'horizontal',
     radioPosition = 'right',
+    renderItem,
     size,
     value,
     variant,
@@ -45,6 +46,7 @@ const RadioCardGroup = (props: RadioCardGroupProps) => {
       {items.map(item => {
         const isChecked = currentValue === item.value;
         const isDisabled = disabled || item.disabled;
+        const content = renderItem?.(item, { checked: isChecked, disabled: Boolean(isDisabled) });
 
         return (
           <RadioCard
@@ -57,7 +59,9 @@ const RadioCardGroup = (props: RadioCardGroupProps) => {
             size={size}
             variant={variant}
             {...item}
-          />
+          >
+            {content}
+          </RadioCard>
         );
       })}
     </Root>

@@ -2,7 +2,7 @@
 
 import { Item } from '@radix-ui/react-radio-group';
 import { Slot } from '@radix-ui/react-slot';
-import { cn } from '@skyroc/utils';
+import { cn, isNil } from '@skyroc/utils';
 import { forwardRef, useId } from 'react';
 import RadioLabel from '../label/LabelUI';
 import { radioVariants } from './radio-variants';
@@ -12,6 +12,7 @@ import type { RadioCardProps } from './types';
 const RadioCard = forwardRef<HTMLButtonElement, RadioCardProps>((props, ref) => {
   const {
     checked,
+    children,
     className,
     classNames,
     color,
@@ -66,7 +67,7 @@ const RadioCard = forwardRef<HTMLButtonElement, RadioCardProps>((props, ref) => 
     </Item>
   );
 
-  const contentElement = (
+  const defaultContentElement = (
     <div className={contentCls}>
       {icon ? <Slot className="shrink-0 text-lg">{icon}</Slot> : null}
 
@@ -77,6 +78,8 @@ const RadioCard = forwardRef<HTMLButtonElement, RadioCardProps>((props, ref) => 
       </div>
     </div>
   );
+
+  const contentElement = isNil(children) ? defaultContentElement : <div className={contentCls}>{children}</div>;
 
   return (
     <RadioLabel

@@ -239,4 +239,35 @@ describe('RadioCardGroup', () => {
     expect(basicCard).toHaveAttribute('data-state', 'unchecked');
     expect(teamCard).toHaveAttribute('data-state', 'checked');
   });
+
+  it('renders custom card content with current item state', async () => {
+    const user = setupUser();
+
+    render(
+      <RadioCardGroup
+        aria-label="Theme"
+        defaultValue="light"
+        items={[
+          { label: 'Light', value: 'light' },
+          { label: 'Dark', value: 'dark' },
+          { disabled: true, label: 'System', value: 'system' }
+        ]}
+        renderItem={(item, state) => (
+          <span>{`${item.label}: ${state.checked ? 'selected' : 'idle'}${state.disabled ? ', disabled' : ''}`}</span>
+        )}
+      />
+    );
+
+    const lightRadio = screen.getByRole('radio', { name: /Light: selected/ });
+    const darkRadio = screen.getByRole('radio', { name: /Dark: idle/ });
+    const systemRadio = screen.getByRole('radio', { name: /System: idle, disabled/ });
+
+    expect(lightRadio).toBeChecked();
+    expect(systemRadio).toBeDisabled();
+
+    await user.click(darkRadio);
+
+    expect(screen.getByRole('radio', { name: /Light: idle/ })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /Dark: selected/ })).toBeChecked();
+  });
 });
