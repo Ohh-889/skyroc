@@ -21,7 +21,6 @@ export const ROOT_TEMPLATE_ENTRIES = [
   '.oxfmtrc.json',
   '.vscode',
   'AGENTS.md',
-  'CLAUDE.md',
   'skills-lock.json'
 ] as const;
 
@@ -34,6 +33,7 @@ export const ROOT_SPECIAL_FILES = [
 
 /** Npm 包内不依赖符号链接语义，创建项目时按仓库约定重建。 */
 export const ROOT_TEMPLATE_SYMLINKS = [
+  { path: 'CLAUDE.md', target: 'AGENTS.md' },
   { path: '.claude/skills/migrate-oxfmt', target: '../../.agents/skills/migrate-oxfmt' },
   { path: '.claude/skills/migrate-oxlint', target: '../../.agents/skills/migrate-oxlint' }
 ] as const;

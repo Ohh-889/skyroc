@@ -111,6 +111,7 @@ describe('standalone 模式', () => {
     await Promise.all(
       (
         [
+          ['CLAUDE.md', 'AGENTS.md'],
           ['.claude/skills/migrate-oxfmt', '../../.agents/skills/migrate-oxfmt'],
           ['.claude/skills/migrate-oxlint', '../../.agents/skills/migrate-oxlint']
         ] as const
