@@ -1,5 +1,11 @@
 # @skyroc/web-ui
 
+## 0.2.1
+
+### Patch Changes
+
+- d5f4596: 支持自定义单选卡片内容
+
 ## 0.2.0
 
 ### Minor Changes
