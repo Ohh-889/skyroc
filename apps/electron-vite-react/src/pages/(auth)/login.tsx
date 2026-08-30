@@ -28,16 +28,16 @@ const LoginPage = () => {
 
   const isMac = platform === 'darwin';
 
-  function enterWorkspace() {
-    navigate({ to: '/workspace' });
+  function enterApp() {
+    navigate({ to: '/settings' });
   }
 
   function handleSubmit(_values: LoginFormValues) {
-    enterWorkspace();
+    enterApp();
   }
 
   function handleLocalMode() {
-    enterWorkspace();
+    enterApp();
   }
 
   function handleForgotPassword() {

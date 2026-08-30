@@ -19,20 +19,19 @@
     "typecheck": "tsc --noEmit --project tsconfig.json && tsc --noEmit --project tsconfig.main.json && tsc --noEmit --project tsconfig.preload.json"
   },
   "dependencies": {
-    "@skyroc/web-ui": "workspace:*",
-    "@tanstack/react-devtools": "catalog:web",
-    "@tanstack/react-router": "catalog:web",
-    "@tanstack/react-router-devtools": "catalog:web",
-    "electron-updater": "^6.8.3",
-    "jotai": "catalog:core",
-    "jotai-devtools": "catalog:web"
+    "electron-updater": "^6.8.3"
   },
   "devDependencies": {
     "@playwright/test": "catalog:dev",
     "@rolldown/plugin-babel": "catalog:dev",
+    "@skyroc/color": "workspace:*",
     "@skyroc/tailwind-plugin": "workspace:*",
     "@skyroc/tsconfig": "workspace:*",
+    "@skyroc/web-ui": "workspace:*",
     "@tailwindcss/vite": "catalog:css",
+    "@tanstack/react-devtools": "catalog:web",
+    "@tanstack/react-router": "catalog:web",
+    "@tanstack/react-router-devtools": "catalog:web",
     "@tanstack/router-plugin": "catalog:web",
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",
@@ -42,7 +41,9 @@
     "electron": "catalog:electron",
     "electron-builder": "catalog:electron",
     "gradient-string": "catalog:dev",
+    "jotai": "catalog:core",
     "jotai-babel": "catalog:dev",
+    "jotai-devtools": "catalog:web",
     "react": "catalog:core",
     "react-dom": "catalog:core",
     "tailwindcss": "catalog:css",

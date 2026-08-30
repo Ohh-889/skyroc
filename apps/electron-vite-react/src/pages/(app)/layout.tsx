@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 
-import AppShell from '@/features/app-shell/components/AppShell';
+import AppShell from '@/layouts/app-shell/components/AppShell';
 
 interface AppLayoutProps {}
 

@@ -1,4 +1,4 @@
-import type { ThemeMode } from '../../../../features/theme/theme';
+import type { AccentColor, ThemeMode } from '../../../../features/theme/theme';
 
 export type SettingsSectionId = 'appearance' | 'data' | 'general' | 'language' | 'notifications' | 'shortcuts';
 
@@ -17,7 +17,7 @@ export interface ShortcutMap {
 
 export interface DesktopSettings {
   /** 用户选择的界面强调色。 */
-  accentColor: 'amber' | 'blue' | 'moss' | 'rose';
+  accentColor: AccentColor;
   /** 主窗口关闭后的后台任务策略。 */
   backgroundPolicy: 'ask' | 'continue' | 'stop';
   /** 主窗口关闭后的处理方式。 */

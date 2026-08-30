@@ -104,11 +104,10 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await expect(page.getByText('请输入密码')).toBeVisible();
   });
 
-  test('should enter workspace and use the desktop shell', async () => {
+  test('should enter the desktop shell', async () => {
     await page.getByTestId('local-mode').click();
-    await expect(page).toHaveURL(/#\/workspace$/);
-    await expect(page.getByRole('heading', { name: '上午好，Shipeng' })).toBeVisible();
-    await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
+    await expect(page).toHaveURL(/#\/settings\/?$/);
+    await expect(page.getByRole('heading', { name: '设置中心' })).toBeVisible();
     await expect.poll(async () => (await mainWin.evaluate(win => win.getSize()))[0]).toBeGreaterThanOrEqual(760);
 
     await page.getByTestId('profile-dropdown-trigger').click();
@@ -117,18 +116,13 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await expect(page.getByRole('alertdialog')).toBeVisible();
     await expect(page.getByText('确认返回登录页？')).toBeVisible();
     await page.getByRole('button', { name: '取消' }).click();
-    await expect(page).toHaveURL(/#\/workspace$/);
+    await expect(page).toHaveURL(/#\/settings\/?$/);
 
     await page.getByTestId('sidebar-toggle').click();
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
     await expect(page.getByText('全局命令面板')).toBeAttached();
 
     await page.keyboard.press('Escape');
-    await page.getByTestId('demo-data-toggle').click();
-    await expect(page.getByTestId('workspace-empty')).toBeVisible();
-
-    await page.getByRole('button', { name: '恢复示例数据' }).click();
-    await expect(page.getByTestId('workspace-dashboard')).toBeVisible();
   });
 
   test('should navigate settings and switch responsibility sections', async () => {
@@ -167,6 +161,28 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await page.emulateMedia({ colorScheme: 'light' });
     await expect(page.locator('html')).not.toHaveClass(/dark/);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    const mossColors = await page.evaluate(() => {
+      const styles = getComputedStyle(document.documentElement);
+      return {
+        accent: styles.getPropertyValue('--accent').trim(),
+        primary: styles.getPropertyValue('--primary').trim()
+      };
+    });
+    await page.getByRole('radio', { name: '使用雾霭蓝' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-accent', 'blue');
+    await expect
+      .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('skyroc.desktop.settings') ?? '{}').accentColor))
+      .toBe('blue');
+    const blueColors = await page.evaluate(() => {
+      const styles = getComputedStyle(document.documentElement);
+      return {
+        accent: styles.getPropertyValue('--accent').trim(),
+        primary: styles.getPropertyValue('--primary').trim()
+      };
+    });
+    expect(blueColors.primary).not.toBe(mossColors.primary);
+    expect(blueColors.accent).not.toBe(mossColors.accent);
 
     await page.getByTestId('settings-section-general').click();
     await expect(launchAtLoginSwitch).toBeChecked();

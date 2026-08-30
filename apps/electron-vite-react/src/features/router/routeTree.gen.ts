@@ -13,7 +13,6 @@ import { Route as authLayoutRouteImport } from './../../pages/(auth)/layout'
 import { Route as appLayoutRouteImport } from './../../pages/(app)/layout'
 import { Route as IndexRouteImport } from './../../pages/index'
 import { Route as authLoginRouteImport } from './../../pages/(auth)/login'
-import { Route as appWorkspaceIndexRouteImport } from './../../pages/(app)/workspace/index'
 import { Route as appSettingsIndexRouteImport } from './../../pages/(app)/settings/index'
 
 const authLayoutRoute = authLayoutRouteImport.update({
@@ -34,11 +33,6 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => authLayoutRoute,
 } as any)
-const appWorkspaceIndexRoute = appWorkspaceIndexRouteImport.update({
-  id: '/workspace/',
-  path: '/workspace/',
-  getParentRoute: () => appLayoutRoute,
-} as any)
 const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -49,13 +43,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
   '/settings/': typeof appSettingsIndexRoute
-  '/workspace/': typeof appWorkspaceIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
   '/settings': typeof appSettingsIndexRoute
-  '/workspace': typeof appWorkspaceIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -64,13 +56,12 @@ export interface FileRoutesById {
   '/(auth)': typeof authLayoutRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
-  '/(app)/workspace/': typeof appWorkspaceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/settings/' | '/workspace/'
+  fullPaths: '/' | '/login' | '/settings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/settings' | '/workspace'
+  to: '/' | '/login' | '/settings'
   id:
     | '__root__'
     | '/'
@@ -78,7 +69,6 @@ export interface FileRouteTypes {
     | '/(auth)'
     | '/(auth)/login'
     | '/(app)/settings/'
-    | '/(app)/workspace/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,13 +107,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof authLayoutRoute
     }
-    '/(app)/workspace/': {
-      id: '/(app)/workspace/'
-      path: '/workspace'
-      fullPath: '/workspace/'
-      preLoaderRoute: typeof appWorkspaceIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
     '/(app)/settings/': {
       id: '/(app)/settings/'
       path: '/settings'
@@ -136,12 +119,10 @@ declare module '@tanstack/react-router' {
 
 interface appLayoutRouteChildren {
   appSettingsIndexRoute: typeof appSettingsIndexRoute
-  appWorkspaceIndexRoute: typeof appWorkspaceIndexRoute
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
   appSettingsIndexRoute: appSettingsIndexRoute,
-  appWorkspaceIndexRoute: appWorkspaceIndexRoute,
 }
 
 const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(

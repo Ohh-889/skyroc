@@ -10,7 +10,11 @@ import { loadSettings } from './pages/(app)/settings/modules/settings-config';
 // import './demos/node'
 
 async function bootstrap() {
-  const disposeTheme = initializeTheme(loadSettings().themeMode);
+  const settings = loadSettings();
+  const disposeTheme = initializeTheme({
+    accentColor: settings.accentColor,
+    themeMode: settings.themeMode
+  });
 
   if (import.meta.hot) import.meta.hot.dispose(disposeTheme);
 

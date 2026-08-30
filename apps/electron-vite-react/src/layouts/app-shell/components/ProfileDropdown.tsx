@@ -40,13 +40,6 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
     },
     { type: 'separator' as const },
     {
-      label: '工作台',
-      leading: <Icon icon="lucide:layout-dashboard" />,
-      onSelect: handleOpenWorkspace,
-      shortcut: '⌘1',
-      type: 'item' as const
-    },
-    {
       label: '应用设置',
       leading: <Icon icon="lucide:settings-2" />,
       onSelect: handleOpenSettings,
@@ -63,10 +56,6 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
       type: 'item' as const
     }
   ];
-
-  async function handleOpenWorkspace() {
-    await navigate({ to: '/workspace' });
-  }
 
   async function handleOpenSettings() {
     await navigate({ to: '/settings' });
@@ -100,7 +89,7 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
           aria-label="打开本地模式菜单"
           className={`flex items-center text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 ${
             isHeaderPlacement
-              ? 'gap-1 rounded-lg px-1 py-0.5 hover:bg-black/[0.045]'
+              ? 'gap-1 rounded-lg px-1 py-0.5 hover:bg-accent hover:text-accent-foreground'
               : `w-full rounded-xl border border-border bg-card/45 hover:border-primary/20 hover:bg-accent/50 ${isSidebarCollapsed ? 'justify-center p-1.5' : 'gap-3 p-2.5'}`
           }`}
           data-testid="profile-dropdown-trigger"

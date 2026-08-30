@@ -1101,9 +1101,31 @@ importers:
 
   apps/electron-vite-react:
     dependencies:
+      electron-updater:
+        specifier: ^6.8.3
+        version: 6.8.9(supports-color@10.2.2)
+    devDependencies:
+      '@playwright/test':
+        specifier: catalog:dev
+        version: 1.59.1
+      '@rolldown/plugin-babel':
+        specifier: catalog:dev
+        version: 0.2.3(@babel/core@8.0.1)(@babel/plugin-transform-runtime@7.29.0(@babel/core@8.0.1)(supports-color@10.2.2))(@babel/runtime@8.0.0)(rolldown@1.2.6)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))
+      '@skyroc/color':
+        specifier: workspace:*
+        version: link:../../packages/@core/color
+      '@skyroc/tailwind-plugin':
+        specifier: workspace:*
+        version: link:../../packages/@core/tailwind-plugin
+      '@skyroc/tsconfig':
+        specifier: workspace:*
+        version: link:../../internal/tsconfig
       '@skyroc/web-ui':
         specifier: workspace:*
         version: link:../../packages/web/shadcn-ui
+      '@tailwindcss/vite':
+        specifier: catalog:css
+        version: 4.3.3(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))
       '@tanstack/react-devtools':
         specifier: catalog:web
         version: 0.8.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(solid-js@1.9.11)
@@ -1113,31 +1135,6 @@ importers:
       '@tanstack/react-router-devtools':
         specifier: catalog:web
         version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/router-core@1.162.6)(csstype@3.2.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      electron-updater:
-        specifier: ^6.8.3
-        version: 6.8.9(supports-color@10.2.2)
-      jotai:
-        specifier: catalog:core
-        version: 2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0)
-      jotai-devtools:
-        specifier: 0.14.0
-        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
-    devDependencies:
-      '@playwright/test':
-        specifier: catalog:dev
-        version: 1.59.1
-      '@rolldown/plugin-babel':
-        specifier: catalog:dev
-        version: 0.2.3(@babel/core@8.0.1)(@babel/plugin-transform-runtime@7.29.0(@babel/core@8.0.1)(supports-color@10.2.2))(@babel/runtime@8.0.0)(rolldown@1.2.6)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))
-      '@skyroc/tailwind-plugin':
-        specifier: workspace:*
-        version: link:../../packages/@core/tailwind-plugin
-      '@skyroc/tsconfig':
-        specifier: workspace:*
-        version: link:../../internal/tsconfig
-      '@tailwindcss/vite':
-        specifier: catalog:css
-        version: 4.3.3(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))
       '@tanstack/router-plugin':
         specifier: catalog:web
         version: 1.162.8(@tanstack/react-router@1.162.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(supports-color@10.2.2)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.97.3)(terser@5.46.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(@swc/core@1.15.30)(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.30.1)(postcss@5.2.18)(uglify-js@3.19.3))
@@ -1165,9 +1162,15 @@ importers:
       gradient-string:
         specifier: catalog:dev
         version: 3.0.0
+      jotai:
+        specifier: catalog:core
+        version: 2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0)
       jotai-babel:
         specifier: catalog:dev
         version: 0.1.0(@babel/core@8.0.1)(@babel/template@8.0.0)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))
+      jotai-devtools:
+        specifier: 0.14.0
+        version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
       react:
         specifier: catalog:core
         version: 19.1.0

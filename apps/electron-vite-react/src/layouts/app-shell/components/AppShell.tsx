@@ -19,11 +19,10 @@ interface NavigationItem {
   /** 当前模板是否已经提供对应页面。 */
   ready: boolean;
   /** 导航项对应的应用路由。 */
-  to?: '/settings' | '/workspace';
+  to?: '/settings' ;
 }
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
-  { icon: 'lucide:layout-dashboard', id: 'workspace', label: '工作台', ready: true, to: '/workspace' },
   { icon: 'lucide:folder-open', id: 'files', label: '文件', ready: false },
   { icon: 'lucide:list-checks', id: 'tasks', label: '任务', ready: false },
   { icon: 'lucide:bell', id: 'notifications', label: '通知', ready: false },
@@ -57,12 +56,6 @@ const AppShell = (props: AppShellProps) => {
   const commandItems = [
     {
       children: [
-        {
-          label: '前往工作台',
-          leading: <Icon icon="lucide:layout-dashboard" />,
-          onSelect: () => runNavigationCommand('/workspace', '已打开工作台'),
-          shortcut: ['command', '1']
-        },
         {
           label: '打开设置',
           leading: <Icon icon="lucide:settings-2" />,
@@ -110,7 +103,7 @@ const AppShell = (props: AppShellProps) => {
     setIsCommandOpen(false);
   }
 
-  async function runNavigationCommand(to: '/settings' | '/workspace', message: string) {
+  async function runNavigationCommand(to: '/settings', message: string) {
     runCommand(message);
     await navigate({ to });
   }
@@ -144,14 +137,14 @@ const AppShell = (props: AppShellProps) => {
   }, []);
 
   return (
-    <div className="h-screen min-h-[560px] min-w-[760px] overflow-hidden bg-[#e9e8e2] text-[#20231e]">
+    <div className="h-screen min-h-[560px] min-w-[760px] overflow-hidden bg-background text-foreground">
       <header
-        className={`app-drag relative z-40 flex h-13 items-center border-b border-black/[0.08] bg-[#f5f3ec]/95 backdrop-blur-xl ${isMac ? 'pl-21 pr-2.5' : 'pl-3 pr-0'}`}
+        className={`app-drag relative z-40 flex h-13 items-center border-b border-border bg-card/95 backdrop-blur-xl ${isMac ? 'pl-21 pr-2.5' : 'pl-3 pr-0'}`}
       >
         <div className="app-no-drag flex min-w-0 items-center">
           <button
             aria-label={isSidebarCollapsed ? '展开侧边栏' : '收起侧边栏'}
-            className="grid size-8 place-items-center rounded-lg text-[#6a6d64] transition hover:bg-black/[0.055] hover:text-[#20231e]"
+            className="grid size-8 place-items-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
             data-testid="sidebar-toggle"
             onClick={handleSidebarToggle}
             type="button"
@@ -166,7 +159,7 @@ const AppShell = (props: AppShellProps) => {
 
         <button
           aria-label="搜索或输入命令"
-          className="app-no-drag absolute left-1/2 flex h-8 w-[min(348px,36vw)] -translate-x-1/2 items-center gap-2 rounded-lg border border-black/[0.08] bg-white/48 px-3 text-left text-xs text-[#858980] shadow-[0_1px_0_rgba(255,255,255,0.72)] transition hover:border-black/[0.14] hover:bg-white/72 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#728954]/25"
+          className="app-no-drag absolute left-1/2 flex h-8 w-[min(348px,36vw)] -translate-x-1/2 items-center gap-2 rounded-lg border border-border bg-background/60 px-3 text-left text-xs text-muted-foreground shadow-sm transition hover:border-primary/20 hover:bg-accent/60 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
           onClick={() => setIsCommandOpen(true)}
           type="button"
         >
@@ -177,7 +170,7 @@ const AppShell = (props: AppShellProps) => {
           />
           <span className="truncate">搜索或输入命令</span>
           <KeyboardKey
-            className="ml-auto border-black/10 bg-black/[0.035] text-[#73776e] shadow-none"
+            className="ml-auto border-border bg-muted text-muted-foreground shadow-none"
             size="xs"
             value={['command', 'K']}
           />
@@ -194,7 +187,7 @@ const AppShell = (props: AppShellProps) => {
           <div className="app-no-drag ml-2 flex h-full items-stretch">
             <button
               aria-label="最小化窗口"
-              className="grid w-11 place-items-center text-[#72766d] transition hover:bg-black/[0.06]"
+              className="grid w-11 place-items-center text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
               onClick={handleMinimize}
               type="button"
             >
@@ -206,7 +199,7 @@ const AppShell = (props: AppShellProps) => {
             </button>
             <button
               aria-label="最大化或恢复窗口"
-              className="grid w-11 place-items-center text-[#72766d] transition hover:bg-black/[0.06]"
+              className="grid w-11 place-items-center text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
               onClick={handleToggleMaximize}
               type="button"
             >
@@ -218,7 +211,7 @@ const AppShell = (props: AppShellProps) => {
             </button>
             <button
               aria-label="关闭窗口"
-              className="grid w-11 place-items-center text-[#72766d] transition hover:bg-[#d95044] hover:text-white"
+              className="grid w-11 place-items-center text-muted-foreground transition hover:bg-destructive hover:text-destructive-foreground"
               onClick={handleClose}
               type="button"
             >
@@ -234,7 +227,7 @@ const AppShell = (props: AppShellProps) => {
 
       <div className="grid h-[calc(100vh-3.25rem)] grid-cols-[auto_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_28px]">
         <aside
-          className={`row-span-1 flex flex-col border-r border-black/[0.08] bg-[#efeee8] px-2.5 py-3 transition-[width] duration-300 max-lg:w-[72px] ${isSidebarCollapsed ? 'w-[72px]' : 'w-[220px]'}`}
+          className={`row-span-1 flex flex-col border-r border-sidebar-border bg-sidebar-background px-2.5 py-3 text-sidebar-foreground transition-[width] duration-300 max-lg:w-[72px] ${isSidebarCollapsed ? 'w-[72px]' : 'w-[220px]'}`}
         >
           <nav
             aria-label="主导航"
@@ -248,8 +241,8 @@ const AppShell = (props: AppShellProps) => {
                   aria-current={isActive ? 'page' : undefined}
                   className={`group relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-[13px] font-medium transition ${
                     isActive
-                      ? 'bg-[#dce9c6] text-[#29311f] shadow-[inset_0_0_0_1px_rgba(83,108,48,0.08)]'
-                      : 'text-[#6f736a] hover:bg-black/[0.045] hover:text-[#292d27]'
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-inset ring-sidebar-ring/10'
+                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   }`}
                   key={item.id}
                   data-testid={`nav-${item.id}`}
@@ -258,7 +251,7 @@ const AppShell = (props: AppShellProps) => {
                   type="button"
                 >
                   <Icon
-                    className={isActive ? 'text-[#5f783f]' : 'text-[#858980]'}
+                    className={isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60'}
                     height="18"
                     icon={item.icon}
                     width="18"
@@ -266,7 +259,7 @@ const AppShell = (props: AppShellProps) => {
                   <span className={`truncate max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}>{item.label}</span>
                   {item.id === 'notifications' ? (
                     <span
-                      className={`ml-auto size-1.5 rounded-full bg-[#d97745] max-lg:absolute max-lg:right-2.5 max-lg:top-2.5 ${isSidebarCollapsed ? 'absolute right-2.5 top-2.5' : ''}`}
+                      className={`ml-auto size-1.5 rounded-full bg-warning max-lg:absolute max-lg:right-2.5 max-lg:top-2.5 ${isSidebarCollapsed ? 'absolute right-2.5 top-2.5' : ''}`}
                     />
                   ) : null}
                 </button>
@@ -276,7 +269,7 @@ const AppShell = (props: AppShellProps) => {
 
           <div className="mt-auto space-y-2">
             <button
-              className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-[13px] text-[#6f736a] transition hover:bg-black/[0.045] hover:text-[#292d27]"
+              className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-[13px] text-sidebar-foreground/70 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               onClick={() => setIsCommandOpen(true)}
               title="打开命令面板"
               type="button"
@@ -292,18 +285,18 @@ const AppShell = (props: AppShellProps) => {
         </aside>
 
         <ScrollArea
-          className="min-h-0 min-w-0 bg-[#f8f7f2]"
+          className="min-h-0 min-w-0 bg-background"
           size="sm"
         >
           <main>{children}</main>
         </ScrollArea>
 
-        <footer className="col-span-2 flex items-center border-t border-black/[0.08] bg-[#edebe5] px-3 text-[10px] text-[#74786f]">
+        <footer className="col-span-2 flex items-center border-t border-border bg-muted px-3 text-[10px] text-muted-foreground">
           <div className="flex items-center gap-1.5">
-            <span className="size-1.5 rounded-full bg-[#6c9a42] shadow-[0_0_0_3px_rgba(108,154,66,0.12)]" />
+            <span className="size-1.5 rounded-full bg-success ring-3 ring-success/10" />
             网络正常
           </div>
-          <span className="mx-2.5 h-3 w-px bg-black/10" />
+          <span className="mx-2.5 h-3 w-px bg-border" />
           <div className="flex items-center gap-1.5">
             <Icon
               height="12"
@@ -312,7 +305,7 @@ const AppShell = (props: AppShellProps) => {
             />
             已同步
           </div>
-          <span className="mx-2.5 h-3 w-px bg-black/10" />
+          <span className="mx-2.5 h-3 w-px bg-border" />
           <div
             aria-live="polite"
             className="min-w-0 truncate"
@@ -321,10 +314,10 @@ const AppShell = (props: AppShellProps) => {
           </div>
           <div className="ml-auto flex items-center gap-3 pl-4">
             <span className="flex items-center gap-1.5">
-              <span className="size-1.5 animate-pulse rounded-full bg-[#d68a45]" />1 个后台任务
+              <span className="size-1.5 animate-pulse rounded-full bg-warning" />1 个后台任务
             </span>
             <Button
-              className="h-5 rounded-md border-[#cfcfc7] bg-white/45 px-2 text-[10px] text-[#666a61] shadow-none hover:bg-white"
+              className="h-5 rounded-md border-border bg-background/60 px-2 text-[10px] text-muted-foreground shadow-none hover:bg-accent hover:text-accent-foreground"
               onClick={() => setActivityMessage('更新 2.4.0 已准备好下载')}
               size="xs"
               type="button"
@@ -337,12 +330,12 @@ const AppShell = (props: AppShellProps) => {
       </div>
 
       <CommandDialog
-        className="max-w-[640px] overflow-hidden rounded-2xl border-black/10 bg-[#f8f7f2] p-0 shadow-[0_30px_90px_rgba(28,31,26,0.28)]"
+        className="max-w-[640px] overflow-hidden rounded-2xl border-border bg-popover p-0 shadow-2xl"
         classNames={{
-          close: 'right-3 top-3 text-[#767a71]',
+          close: 'right-3 top-3 text-muted-foreground',
           description: 'sr-only',
           header: 'sr-only',
-          overlay: 'bg-[#1b1f19]/45 backdrop-blur-sm',
+          overlay: 'bg-foreground/45 backdrop-blur-sm',
           title: 'sr-only'
         }}
         description="搜索应用页面、最近文件和常用操作"
@@ -351,16 +344,16 @@ const AppShell = (props: AppShellProps) => {
         title="全局命令面板"
       >
         <Command
-          className="bg-transparent text-[#30342d]"
+          className="bg-transparent text-popover-foreground"
           classNames={{
-            empty: 'py-10 text-sm text-[#8a8e85]',
-            groupLabel: 'px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#969a91]',
-            input: 'h-12 text-sm placeholder:text-[#999d94]',
-            inputIcon: 'text-[#777b72]',
-            inputWrapper: 'border-black/[0.08] px-4 py-1',
-            item: 'mx-2 rounded-xl px-3 py-2.5 text-[13px] data-[selected=true]:bg-[#dfe9ce] data-[selected=true]:text-[#27321f]',
+            empty: 'py-10 text-sm text-muted-foreground',
+            groupLabel: 'px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground',
+            input: 'h-12 text-sm placeholder:text-muted-foreground',
+            inputIcon: 'text-muted-foreground',
+            inputWrapper: 'border-border px-4 py-1',
+            item: 'mx-2 rounded-xl px-3 py-2.5 text-[13px] data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground',
             list: 'max-h-[360px] py-2',
-            shortcut: 'text-[#989c93]'
+            shortcut: 'text-muted-foreground'
           }}
           empty="没有找到匹配的页面、文件或操作"
           inputProps={{ placeholder: '输入命令或搜索内容…' }}

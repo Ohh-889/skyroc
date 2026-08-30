@@ -1,3 +1,4 @@
+import { ACCENT_COLOR_VALUES } from '../../../../features/theme/theme';
 import type { DesktopSettings, SettingsSection, ShortcutId } from './types';
 
 interface ShortcutDefinition {
@@ -55,10 +56,10 @@ export const SHORTCUT_DEFINITIONS: ShortcutDefinition[] = [
 ];
 
 export const ACCENT_COLORS = [
-  { className: 'bg-primary', id: 'moss', label: '苔原绿' },
-  { className: 'bg-info', id: 'blue', label: '雾霭蓝' },
-  { className: 'bg-warning', id: 'amber', label: '暖琥珀' },
-  { className: 'bg-destructive', id: 'rose', label: '岩蔷薇' }
+  { color: ACCENT_COLOR_VALUES.moss, id: 'moss', label: '苔原绿' },
+  { color: ACCENT_COLOR_VALUES.blue, id: 'blue', label: '雾霭蓝' },
+  { color: ACCENT_COLOR_VALUES.amber, id: 'amber', label: '暖琥珀' },
+  { color: ACCENT_COLOR_VALUES.rose, id: 'rose', label: '岩蔷薇' }
 ] as const;
 
 export function loadSettings(): DesktopSettings {

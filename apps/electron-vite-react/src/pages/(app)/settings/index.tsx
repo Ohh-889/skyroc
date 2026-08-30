@@ -2,7 +2,7 @@ import { Form, Input, useForm } from '@skyroc/web-ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { setThemeMode } from '../../../features/theme/theme';
+import { setAccentColor, setThemeMode, setThemePreferences } from '../../../features/theme/theme';
 import AppearanceSettings from './modules/AppearanceSettings';
 import DataSettings from './modules/DataSettings';
 import GeneralSettings from './modules/GeneralSettings';
@@ -44,9 +44,12 @@ const SettingsPage = (_props: SettingsPageProps) => {
 
   const currentSection = SETTINGS_SECTIONS.find(section => section.id === activeSection) ?? SETTINGS_SECTIONS[0];
 
-  function handleSettingsChange(_changedValues: Partial<DesktopSettings>, values: DesktopSettings) {
+  function handleSettingsChange(changedValues: Partial<DesktopSettings>, values: DesktopSettings) {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(values));
-    setThemeMode(values.themeMode);
+
+    if ('themeMode' in changedValues) setThemeMode(values.themeMode);
+    if ('accentColor' in changedValues) setAccentColor(values.accentColor);
+
     setStatusMessage('更改已保存到当前设备');
   }
 
@@ -144,7 +147,7 @@ const SettingsPage = (_props: SettingsPageProps) => {
   function handleDeleteLocalData() {
     localStorage.removeItem(SETTINGS_STORAGE_KEY);
     form.setFieldsValue(DEFAULT_SETTINGS);
-    setThemeMode(DEFAULT_SETTINGS.themeMode);
+    setThemePreferences(DEFAULT_SETTINGS);
     setCacheSize('0 KB');
     setStatusMessage('本模板的本地设置数据已删除');
   }

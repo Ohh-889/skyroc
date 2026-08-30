@@ -17,7 +17,12 @@ const THEME_MODE_OPTIONS: RadioCardGroupProps['items'] = [
 
 const ACCENT_COLOR_OPTIONS: RadioCardGroupProps['items'] = ACCENT_COLORS.map(accent => ({
   'aria-label': `使用${accent.label}`,
-  icon: <span className={`size-3 rounded-full ${accent.className}`} />,
+  icon: (
+    <span
+      className="size-3 rounded-full"
+      style={{ backgroundColor: accent.color }}
+    />
+  ),
   label: accent.label,
   value: accent.id
 }));
