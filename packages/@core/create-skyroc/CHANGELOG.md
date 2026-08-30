@@ -1,5 +1,11 @@
 # create-skyroc
 
+## 2.0.1
+
+### Patch Changes
+
+- b5984f9: 添加了expo-template的复杂场景的列表解决方法示例
+
 ## 2.0.0
 
 ### Major Changes
