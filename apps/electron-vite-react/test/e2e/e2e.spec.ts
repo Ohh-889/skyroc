@@ -156,11 +156,10 @@ test.describe('[electron-vite-react] e2e tests', () => {
       .toBe('dark');
     await expect(page.locator('html')).toHaveClass(/dark/);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect
-      .poll(() =>
-        page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--background').trim())
-      )
-      .toBe('90 10% 8%');
+    const darkBackground = await page.evaluate(() => {
+      return getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+    });
+    expect(darkBackground).toBe('90 10% 8%');
 
     await page.getByRole('radio', { name: '跟随系统' }).click();
     await page.emulateMedia({ colorScheme: 'dark' });
