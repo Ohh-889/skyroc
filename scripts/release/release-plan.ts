@@ -53,16 +53,6 @@ export function formatReleaseCommitMessage(releases: PlannedRelease[]): string {
   return `chore(release): 发布 ${versions.join('、')}`;
 }
 
-export function mergeReleases(previousReleases: PlannedRelease[], currentReleases: PlannedRelease[]): PlannedRelease[] {
-  const releases = new Map<string, PlannedRelease>();
-
-  for (const release of [...previousReleases, ...currentReleases]) {
-    if (release.type !== 'none') releases.set(release.name, release);
-  }
-
-  return [...releases.values()].toSorted((left, right) => left.name.localeCompare(right.name));
-}
-
 export function resolveBuildTargets(releases: PlannedRelease[], workspacePackages: WorkspacePackage[]): string[] {
   const packagesByName = new Map(workspacePackages.map(pkg => [pkg.name, pkg]));
 
