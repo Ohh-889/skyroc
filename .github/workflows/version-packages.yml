@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - '.changeset/*.md'
-      - '.github/workflows/version-packages.yml'
   workflow_dispatch:
 
 concurrency:
@@ -44,28 +43,34 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Select release mode
+        id: release_mode
+        uses: changesets/action/select-mode@v2
+
       - name: Prepare release metadata
-        id: release-meta
+        if: steps.release_mode.outputs.mode == 'version'
+        id: release_meta
         run: pnpm exec tsx scripts/release/prepare-release-plan.ts --github-output
 
       - name: Create or update release PR
+        if: steps.release_mode.outputs.mode == 'version'
         id: changesets
         uses: changesets/action/version@v2
         with:
-          commit-message: ${{ steps.release-meta.outputs['commit-message'] }}
+          commit-message: ${{ steps.release_meta.outputs['commit-message'] }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-title: ${{ steps.release-meta.outputs['commit-message'] }}
+          pr-title: ${{ steps.release_meta.outputs['commit-message'] }}
           script: pnpm release:version
 
       - name: Rebase and merge release PR
-        if: steps.changesets.outputs['pr-number'] != ''
+        if: steps.release_mode.outputs.mode == 'version' && steps.changesets.outputs['pr-number'] != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_PR_NUMBER: ${{ steps.changesets.outputs['pr-number'] }}
         run: gh pr merge "$RELEASE_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --rebase
 
       - name: Dispatch publish workflow
-        if: steps.changesets.outputs['pr-number'] != ''
+        if: steps.release_mode.outputs.mode == 'version' && steps.changesets.outputs['pr-number'] != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref master
