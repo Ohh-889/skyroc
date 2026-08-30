@@ -1,27 +1,19 @@
-name: Release packages
+name: Publish packages
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - '.changeset/**'
-      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: publish-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
-  actions: write
   contents: write
   id-token: write
-  pull-requests: write
 
 jobs:
-  release:
-    name: Create release PR or publish packages
+  publish:
+    name: Publish packages to npm
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -48,24 +40,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create release PR or publish to npm
-        id: changesets
-        uses: changesets/action@v2
+      - name: Build and publish packages
+        uses: changesets/action/publish@v2
         with:
-          commit-message: 'chore(release): 更新包版本'
           create-github-releases: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-title: 'chore(release): 更新包版本'
-          publish-script: pnpm release:publish
-          version-script: pnpm release:version
+          script: pnpm release:publish
         env:
           NPM_CONFIG_PROVENANCE: 'true'
-
-      - name: Rebase and merge release PR
-        if: steps.changesets.outputs['pr-number'] != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_PR_NUMBER: ${{ steps.changesets.outputs['pr-number'] }}
-        run: |
-          gh pr merge "$RELEASE_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --rebase
-          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref master

@@ -43,6 +43,16 @@ export async function readReleasePlan(): Promise<ReleasePlan> {
   }
 }
 
+export function formatReleaseCommitMessage(releases: PlannedRelease[]): string {
+  const versions = releases
+    .filter(release => release.type !== 'none')
+    .map(release => `${release.name}@${release.newVersion}`);
+
+  if (versions.length === 0) return 'chore(release): 更新包版本';
+
+  return `chore(release): 发布 ${versions.join('、')}`;
+}
+
 export function mergeReleases(previousReleases: PlannedRelease[], currentReleases: PlannedRelease[]): PlannedRelease[] {
   const releases = new Map<string, PlannedRelease>();
 

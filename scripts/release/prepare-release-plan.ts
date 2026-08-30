@@ -1,11 +1,18 @@
 import { execFile as execFileCallback } from 'node:child_process';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { appendFile, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 
-import { mergeReleases, readJson, readReleasePlan, releasePlanPath, workspaceRoot } from './release-plan.ts';
+import {
+  formatReleaseCommitMessage,
+  mergeReleases,
+  readJson,
+  readReleasePlan,
+  releasePlanPath,
+  workspaceRoot
+} from './release-plan.ts';
 
 import type { PlannedRelease, ReleasePlan } from './release-plan.ts';
 
@@ -38,7 +45,7 @@ async function isPublished(release: PlannedRelease): Promise<boolean> {
   }
 }
 
-async function prepareReleasePlan(): Promise<void> {
+async function prepareReleasePlan(): Promise<ReleasePlan> {
   const statusDir = await mkdtemp(path.join(tmpdir(), 'skyroc-release-plan-'));
   const statusPath = path.join(statusDir, 'status.json');
 
@@ -61,12 +68,26 @@ async function prepareReleasePlan(): Promise<void> {
 
     await writeFile(releasePlanPath, `${JSON.stringify(plan, null, 2)}\n`);
     console.log(`Prepared release plan for ${plan.releases.length} package(s).`);
+
+    return plan;
   } finally {
     await rm(statusDir, { force: true, recursive: true });
   }
 }
 
-prepareReleasePlan().catch(error => {
+async function main(): Promise<void> {
+  const plan = await prepareReleasePlan();
+
+  if (process.argv.includes('--github-output')) {
+    const githubOutput = process.env.GITHUB_OUTPUT;
+
+    if (!githubOutput) throw new Error('GITHUB_OUTPUT is required when using --github-output');
+
+    await appendFile(githubOutput, `commit-message=${formatReleaseCommitMessage(plan.releases)}\n`);
+  }
+}
+
+main().catch(error => {
   console.error(error);
   process.exitCode = 1;
 });

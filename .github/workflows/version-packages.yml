@@ -1,0 +1,71 @@
+name: Version packages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.changeset/*.md'
+      - '.github/workflows/version-packages.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: version-packages-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  version:
+    name: Create and merge release PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: '>=11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.14.0
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare release metadata
+        id: release-meta
+        run: pnpm exec tsx scripts/release/prepare-release-plan.ts --github-output
+
+      - name: Create or update release PR
+        id: changesets
+        uses: changesets/action/version@v2
+        with:
+          commit-message: ${{ steps.release-meta.outputs['commit-message'] }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-title: ${{ steps.release-meta.outputs['commit-message'] }}
+          script: pnpm release:version
+
+      - name: Rebase and merge release PR
+        if: steps.changesets.outputs['pr-number'] != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_PR_NUMBER: ${{ steps.changesets.outputs['pr-number'] }}
+        run: gh pr merge "$RELEASE_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --rebase
+
+      - name: Dispatch publish workflow
+        if: steps.changesets.outputs['pr-number'] != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref master
