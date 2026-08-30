@@ -1,5 +1,11 @@
 # create-skyroc
 
+## 2.0.3
+
+### Patch Changes
+
+- 255d805: 升级admin-vite 依赖版本 解决vite升级以后 jotai-babel插件带来的bug
+
 ## 2.0.2
 
 ### Patch Changes

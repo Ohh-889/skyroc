@@ -3,44 +3,23 @@
     {
       "releases": [
         {
-          "name": "@skyroc/web-admin-vite",
+          "name": "create-skyroc",
           "type": "patch"
         }
       ],
-      "summary": "修复依赖升级之后Jotai Babel 预设并发加载而造成的报错",
-      "id": "polite-heads-add"
+      "summary": "升级admin-vite 依赖版本 解决vite升级以后 jotai-babel插件带来的bug",
+      "id": "nice-clowns-mate"
     }
   ],
   "releases": [
     {
-      "name": "@skyroc/web-admin-vite",
+      "name": "create-skyroc",
       "type": "patch",
-      "oldVersion": "0.1.1",
+      "oldVersion": "2.0.2",
       "changesets": [
-        "polite-heads-add"
+        "nice-clowns-mate"
       ],
-      "newVersion": "0.1.2"
-    },
-    {
-      "name": "skyroc-admin",
-      "type": "none",
-      "oldVersion": "3.0.0",
-      "changesets": [],
-      "newVersion": "3.0.0"
-    },
-    {
-      "name": "admin-example",
-      "type": "none",
-      "oldVersion": "3.0.0",
-      "changesets": [],
-      "newVersion": "3.0.0"
-    },
-    {
-      "name": "ruoyi-plus-fast",
-      "type": "none",
-      "oldVersion": "3.0.0",
-      "changesets": [],
-      "newVersion": "3.0.0"
+      "newVersion": "2.0.3"
     }
   ]
 }
