@@ -3,77 +3,23 @@
     {
       "releases": [
         {
-          "name": "@skyroc/form",
-          "type": "minor"
-        }
-      ],
-      "summary": "1. 更新依赖 2.ComputedField 组件值的更改使用useState 精准触发 不在依靠强制刷新组件变更值 使得子组件在使用react compiler的时候也能正常工作",
-      "id": "clean-cows-strive"
-    },
-    {
-      "releases": [
-        {
-          "name": "create-skyroc",
+          "name": "@skyroc/web-admin-vite",
           "type": "patch"
         }
       ],
-      "summary": "1.更新依赖 2. 修复依赖更新之后出现的一些报错",
-      "id": "sparkly-paths-dance"
+      "summary": "修复依赖升级之后Jotai Babel 预设并发加载而造成的报错",
+      "id": "polite-heads-add"
     }
   ],
   "releases": [
     {
-      "name": "@skyroc/form",
-      "type": "minor",
-      "oldVersion": "0.0.2",
+      "name": "@skyroc/web-admin-vite",
+      "type": "patch",
+      "oldVersion": "0.1.1",
       "changesets": [
-        "clean-cows-strive"
+        "polite-heads-add"
       ],
-      "newVersion": "0.1.0"
-    },
-    {
-      "name": "create-skyroc",
-      "type": "patch",
-      "oldVersion": "2.0.1",
-      "changesets": [
-        "sparkly-paths-dance"
-      ],
-      "newVersion": "2.0.2"
-    },
-    {
-      "name": "@skyroc/native-ui",
-      "type": "patch",
-      "oldVersion": "1.2.0",
-      "changesets": [],
-      "newVersion": "1.2.1"
-    },
-    {
-      "name": "@skyroc/web-ui",
-      "type": "patch",
-      "oldVersion": "0.2.1",
-      "changesets": [],
-      "newVersion": "0.2.2"
-    },
-    {
-      "name": "expo-templete",
-      "type": "none",
-      "oldVersion": "1.0.0",
-      "changesets": [],
-      "newVersion": "1.0.0"
-    },
-    {
-      "name": "native-ui-playground",
-      "type": "none",
-      "oldVersion": "1.0.0",
-      "changesets": [],
-      "newVersion": "1.0.0"
-    },
-    {
-      "name": "native-ui-docs",
-      "type": "none",
-      "oldVersion": "0.0.15",
-      "changesets": [],
-      "newVersion": "0.0.15"
+      "newVersion": "0.1.2"
     },
     {
       "name": "skyroc-admin",
@@ -90,46 +36,11 @@
       "newVersion": "3.0.0"
     },
     {
-      "name": "electron-vite-react",
-      "type": "none",
-      "oldVersion": "2.4.0",
-      "changesets": [],
-      "newVersion": "2.4.0"
-    },
-    {
       "name": "ruoyi-plus-fast",
       "type": "none",
       "oldVersion": "3.0.0",
       "changesets": [],
       "newVersion": "3.0.0"
-    },
-    {
-      "name": "skyroc-ui-playground",
-      "type": "none",
-      "oldVersion": "0.1.0",
-      "changesets": [],
-      "newVersion": "0.1.0"
-    },
-    {
-      "name": "docs",
-      "type": "none",
-      "oldVersion": "0.0.15",
-      "changesets": [],
-      "newVersion": "0.0.15"
-    },
-    {
-      "name": "web-ui-docs",
-      "type": "none",
-      "oldVersion": "0.0.0",
-      "changesets": [],
-      "newVersion": "0.0.0"
-    },
-    {
-      "name": "@skyroc/web-admin-shell",
-      "type": "none",
-      "oldVersion": "0.0.0",
-      "changesets": [],
-      "newVersion": "0.0.0"
     }
   ]
 }
