@@ -144,6 +144,12 @@ describe('standalone 模式', () => {
     expect(pkg.website).toBe('https://skyroc-admin.com/home/');
   });
 
+  it('包含 Admin 独立项目的 pnpm 构建许可', async () => {
+    const workspaceConfig = await readFile(path.join(standaloneDir, 'pnpm-workspace.yaml'), 'utf8');
+
+    expect(workspaceConfig).toBe(`allowBuilds:\n  '@parcel/watcher': true\n  esbuild: true\n  unrs-resolver: true\n`);
+  });
+
   it('shell 源码被完整复制进 src/framework', () => {
     for (const dir of SHELL_DIRS) {
       expect(existsSync(path.join(standaloneDir, 'src/framework', dir)), `src/framework/${dir}`).toBe(true);
@@ -243,6 +249,12 @@ describe('standalone 模式', () => {
 });
 
 describe('workspace 模式', () => {
+  it('包含 Admin 项目的 pnpm 构建许可', async () => {
+    const workspaceConfig = await readFile(path.join(workspaceDir, 'pnpm-workspace.yaml'), 'utf8');
+
+    expect(workspaceConfig).toBe(`allowBuilds:\n  '@parcel/watcher': true\n  esbuild: true\n  unrs-resolver: true\n`);
+  });
+
   it('不复制 shell，走 packages/web/admin 的共享副本', async () => {
     expect(existsSync(path.join(workspaceDir, 'src/framework'))).toBe(false);
 

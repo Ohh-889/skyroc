@@ -8,7 +8,7 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import * as prompts from '@clack/prompts';
 
-import { getTemplateAssetsDir, getWorkspaceRoot } from '../shared/paths';
+import { getPackageRoot, getTemplateAssetsDir, getWorkspaceRoot } from '../shared/paths';
 import {
   ADMIN_SHELL_DIRS,
   ROOT_SPECIAL_FILES,
@@ -138,8 +138,10 @@ async function copyExpoSource(sourceDir: string, targetDir: string) {
 
 async function copyAdminSource(sourceDir: string, targetDir: string) {
   const adminTargetDir = path.join(targetDir, 'admin');
+  const adminWorkspaceFile = path.join(getPackageRoot(), 'templates/admin/pnpm-workspace.yaml');
 
   assertSourceExists(sourceDir);
+  assertSourceExists(adminWorkspaceFile);
   await cp(sourceDir, adminTargetDir, {
     filter: source => {
       const relativePath = normalizeRelativePath(path.relative(sourceDir, source));
@@ -148,6 +150,7 @@ async function copyAdminSource(sourceDir: string, targetDir: string) {
     },
     recursive: true
   });
+  await cp(adminWorkspaceFile, path.join(adminTargetDir, 'pnpm-workspace.yaml'));
 }
 
 async function copyShellSource(workspaceRoot: string, targetDir: string) {
