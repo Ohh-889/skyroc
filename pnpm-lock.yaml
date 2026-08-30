@@ -533,6 +533,9 @@ catalogs:
     defu:
       specifier: ^6.1.7
       version: 6.1.7
+    json5:
+      specifier: ^2.2.3
+      version: 2.2.3
     klona:
       specifier: ^2.0.6
       version: 2.0.6
@@ -751,6 +754,9 @@ importers:
       jotai-devtools:
         specifier: 0.14.0
         version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
+      json5:
+        specifier: catalog:utils
+        version: 2.2.3
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -962,6 +968,9 @@ importers:
       jsbarcode:
         specifier: ^3.12.3
         version: 3.12.3
+      json5:
+        specifier: catalog:utils
+        version: 2.2.3
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -1557,6 +1566,9 @@ importers:
       jotai-devtools:
         specifier: 0.14.0
         version: 0.14.0(@types/react@19.2.18)(jotai@2.20.3(@babel/core@8.0.1)(@babel/template@8.0.0)(@types/react@19.2.18)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(redux@5.0.1)
+      json5:
+        specifier: catalog:utils
+        version: 2.2.3
       motion:
         specifier: catalog:ui-shared
         version: 12.34.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

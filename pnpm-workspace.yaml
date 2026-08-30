@@ -246,6 +246,7 @@ catalogs:
     'tailwind-merge': ^3.4.0
     'tailwind-variants': ^3.2.2
     defu: ^6.1.7
+    json5: ^2.2.3
     ahooks: ^3.9.6
     zod: ^4.1.13
 

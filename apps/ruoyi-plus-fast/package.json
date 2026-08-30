@@ -66,6 +66,7 @@
     "i18next": "catalog:i18n",
     "jotai": "catalog:core",
     "jotai-devtools": "catalog:web",
+    "json5": "catalog:utils",
     "motion": "catalog:ui-shared",
     "nprogress": "catalog:ui-shared",
     "react": "catalog:core",

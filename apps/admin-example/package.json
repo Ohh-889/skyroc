@@ -73,6 +73,7 @@
     "i18next": "catalog:i18n",
     "jotai": "catalog:core",
     "jotai-devtools": "catalog:web",
+    "json5": "catalog:utils",
     "jsbarcode": "^3.12.3",
     "leaflet": "^1.9.4",
     "motion": "catalog:ui-shared",
