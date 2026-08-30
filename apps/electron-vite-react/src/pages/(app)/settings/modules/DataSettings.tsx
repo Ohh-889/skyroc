@@ -1,7 +1,7 @@
 import { AlertDialog, Button, Icon } from '@skyroc/web-ui';
 import type { RefObject } from 'react';
-import { SettingRow, SettingsGroup } from './SettingsCard';
 import { DATA_STORAGE_LOCATION } from './settings-config';
+import { SettingRow, SettingsGroup } from './SettingsCard';
 
 interface DataSettingsProps {
   /** 当前缓存大小文案。 */

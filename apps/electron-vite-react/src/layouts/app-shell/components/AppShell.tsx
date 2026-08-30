@@ -19,7 +19,7 @@ interface NavigationItem {
   /** 当前模板是否已经提供对应页面。 */
   ready: boolean;
   /** 导航项对应的应用路由。 */
-  to?: '/settings' ;
+  to?: '/settings';
 }
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
