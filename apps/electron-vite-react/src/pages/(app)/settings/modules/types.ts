@@ -1,3 +1,5 @@
+import type { ThemeMode } from '../../../../features/theme/theme';
+
 export type SettingsSectionId = 'appearance' | 'data' | 'general' | 'language' | 'notifications' | 'shortcuts';
 
 export type ShortcutId = 'commandPalette' | 'globalSearch' | 'newWorkspace' | 'openDirectory';
@@ -39,7 +41,7 @@ export interface DesktopSettings {
   /** 后台任务完成时是否通知。 */
   taskNotifications: boolean;
   /** 应用界面的明暗模式。 */
-  themeMode: 'dark' | 'light' | 'system';
+  themeMode: ThemeMode;
   /** 单击托盘图标时执行的动作。 */
   trayBehavior: 'menu' | 'show';
   /** 发现应用更新时是否通知。 */

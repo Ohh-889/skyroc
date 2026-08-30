@@ -57,6 +57,71 @@
   --ring: 87.7 28% 36.5%;
   --secondary: 68.6 16.3% 91.6%;
   --secondary-foreground: 97.5 10.5% 14.9%;
+  --theme-preview-background: 50 27.3% 95.7%;
+  --theme-preview-border: 66.7 11.7% 84.9%;
+  --theme-preview-content: 68.6 16.3% 91.6%;
+  --theme-preview-sidebar: 87.7 28% 36.5%;
+  --theme-preview-toolbar: 97.5 10.5% 14.9%;
+}
+
+.dark {
+  --accent: 86 16% 20%;
+  --accent-foreground: 70 30% 92%;
+  --background: 90 10% 8%;
+  --border: 85 7% 21%;
+  --card: 90 9% 11%;
+  --card-foreground: 60 20% 94%;
+  --foreground: 60 20% 94%;
+  --input: 85 7% 21%;
+  --muted: 85 7% 16%;
+  --muted-foreground: 75 8% 66%;
+  --popover: 90 9% 11%;
+  --popover-foreground: 60 20% 94%;
+  --primary: 80 42.9% 67.1%;
+  --primary-50: 82.5 33.3% 95.3%;
+  --primary-100: 82.1 35.8% 89.6%;
+  --primary-200: 78.6 54.7% 79.2%;
+  --primary-300: 80 42.9% 67.1%;
+  --primary-400: 83.5 30.8% 52.9%;
+  --primary-500: 86.1 28.4% 42.7%;
+  --primary-600: 89.3 28.3% 31.2%;
+  --primary-700: 90 27.7% 25.5%;
+  --primary-800: 90 26.4% 20.8%;
+  --primary-900: 90 24.4% 17.6%;
+  --primary-950: 92.3 27.7% 9.2%;
+  --primary-foreground: 92.3 27.7% 9.2%;
+  --ring: 80 42.9% 67.1%;
+  --secondary: 85 7% 16%;
+  --secondary-foreground: 60 20% 94%;
+}
+
+.theme-preview {
+  border-color: hsl(var(--theme-preview-border));
+  background: hsl(var(--theme-preview-background));
+}
+
+.theme-preview-toolbar {
+  background: hsl(var(--theme-preview-toolbar) / 10%);
+}
+
+.theme-preview-sidebar {
+  background: hsl(var(--theme-preview-sidebar) / 12%);
+}
+
+.theme-preview-content {
+  background: hsl(var(--theme-preview-content));
+}
+
+.theme-preview[data-theme-preview='dark'] {
+  --theme-preview-background: 90 10% 8%;
+  --theme-preview-border: 85 7% 21%;
+  --theme-preview-content: 85 7% 16%;
+  --theme-preview-sidebar: 80 42.9% 67.1%;
+  --theme-preview-toolbar: 60 20% 94%;
+}
+
+.theme-preview[data-theme-preview='system'] {
+  background: linear-gradient(115deg, hsl(var(--theme-preview-background)) 0 48%, hsl(90 10% 8%) 48% 100%);
 }
 
 @layer utilities {
@@ -117,6 +182,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+  }
+
+  :root.dark {
+    color-scheme: dark;
   }
 
   html {

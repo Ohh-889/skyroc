@@ -148,11 +148,26 @@ test.describe('[electron-vite-react] e2e tests', () => {
 
     await page.getByTestId('settings-section-appearance').click();
     await expect(page.getByRole('heading', { name: '主题外观' })).toBeVisible();
-    await page.getByRole('button', { name: '深色' }).click();
-    await expect(page.getByRole('button', { name: '深色' })).toHaveAttribute('aria-pressed', 'true');
+    const darkThemeRadio = page.getByRole('radio', { name: '深色' });
+    await darkThemeRadio.click();
+    await expect(darkThemeRadio).toBeChecked();
     await expect
       .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('skyroc.desktop.settings') ?? '{}').themeMode))
       .toBe('dark');
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect
+      .poll(() =>
+        page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--background').trim())
+      )
+      .toBe('90 10% 8%');
+
+    await page.getByRole('radio', { name: '跟随系统' }).click();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(page.locator('html')).not.toHaveClass(/dark/);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
     await page.getByTestId('settings-section-general').click();
     await expect(launchAtLoginSwitch).toBeChecked();
