@@ -5,15 +5,18 @@ import { useState } from 'react';
 interface ProfileDropdownProps {
   /** 侧边栏是否处于仅显示图标的收起状态。 */
   isSidebarCollapsed: boolean;
+  /** 用户菜单显示在窗口头部还是侧边栏。 */
+  placement?: 'header' | 'sidebar';
 }
 
 const ProfileDropdown = (props: ProfileDropdownProps) => {
-  const { isSidebarCollapsed } = props;
+  const { isSidebarCollapsed, placement = 'sidebar' } = props;
 
   const navigate = useNavigate();
 
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
 
+  const isHeaderPlacement = placement === 'header';
   const menuItems = [
     {
       label: (
@@ -90,16 +93,18 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
           shortcut: 'text-[10px] text-muted-foreground'
         }}
         items={menuItems}
-        contentProps={{ align: 'end', side: 'right', sideOffset: 8 }}
+        contentProps={{ align: 'end', side: isHeaderPlacement ? 'bottom' : 'right', sideOffset: 8 }}
         modal={false}
       >
         <button
           aria-label="打开本地模式菜单"
-          className={`flex w-full items-center rounded-xl border border-border bg-card/45 text-left transition hover:border-primary/20 hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 ${
-            isSidebarCollapsed ? 'justify-center p-1.5' : 'gap-3 p-2.5'
+          className={`flex items-center text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 ${
+            isHeaderPlacement
+              ? 'gap-1 rounded-lg px-1 py-0.5 hover:bg-black/[0.045]'
+              : `w-full rounded-xl border border-border bg-card/45 hover:border-primary/20 hover:bg-accent/50 ${isSidebarCollapsed ? 'justify-center p-1.5' : 'gap-3 p-2.5'}`
           }`}
           data-testid="profile-dropdown-trigger"
-          title={isSidebarCollapsed ? '本地模式' : undefined}
+          title={isHeaderPlacement || isSidebarCollapsed ? '本地模式' : undefined}
           type="button"
         >
           <Avatar
@@ -111,15 +116,15 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
             fallback="WS"
             size="sm"
           />
-          <div className={`min-w-0 flex-1 max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}>
+          <div className={`min-w-0 flex-1 max-lg:hidden ${isHeaderPlacement || isSidebarCollapsed ? 'hidden' : ''}`}>
             <div className="truncate text-xs font-semibold text-foreground">本地模式</div>
             <div className="mt-0.5 truncate text-[10px] text-muted-foreground">设备数据已加密</div>
           </div>
           <Icon
-            className={`shrink-0 text-muted-foreground max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}
-            height="14"
-            icon="lucide:chevrons-up-down"
-            width="14"
+            className={`shrink-0 text-muted-foreground ${isHeaderPlacement ? '' : `max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}`}
+            height={isHeaderPlacement ? '12' : '14'}
+            icon={isHeaderPlacement ? 'lucide:chevron-down' : 'lucide:chevrons-up-down'}
+            width={isHeaderPlacement ? '12' : '14'}
           />
         </button>
       </DropdownMenu>

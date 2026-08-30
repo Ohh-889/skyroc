@@ -1,4 +1,4 @@
-import { Button, Command, CommandDialog, Icon, KeyboardKey } from '@skyroc/web-ui';
+import { Button, Command, CommandDialog, Icon, KeyboardKey, ScrollArea } from '@skyroc/web-ui';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -146,9 +146,9 @@ const AppShell = (props: AppShellProps) => {
   return (
     <div className="h-screen min-h-[560px] min-w-[760px] overflow-hidden bg-[#e9e8e2] text-[#20231e]">
       <header
-        className={`app-drag relative z-40 flex h-13 items-center border-b border-black/[0.08] bg-[#f5f3ec]/95 pr-0 backdrop-blur-xl ${isMac ? 'pl-21' : 'pl-3'}`}
+        className={`app-drag relative z-40 flex h-13 items-center border-b border-black/[0.08] bg-[#f5f3ec]/95 backdrop-blur-xl ${isMac ? 'pl-21 pr-2.5' : 'pl-3 pr-0'}`}
       >
-        <div className="app-no-drag flex min-w-0 items-center gap-2.5">
+        <div className="app-no-drag flex min-w-0 items-center">
           <button
             aria-label={isSidebarCollapsed ? '展开侧边栏' : '收起侧边栏'}
             className="grid size-8 place-items-center rounded-lg text-[#6a6d64] transition hover:bg-black/[0.055] hover:text-[#20231e]"
@@ -162,28 +162,11 @@ const AppShell = (props: AppShellProps) => {
               width="17"
             />
           </button>
-          <div className="grid size-7 place-items-center rounded-[9px] bg-[#242821] text-[10px] font-black text-[#d9f99d] shadow-[0_5px_14px_rgba(36,40,33,0.18)]">
-            S
-          </div>
-          <strong className="text-[12px] tracking-[0.15em] text-[#30342d]">SKYROC</strong>
-          <span className="mx-1 h-4 w-px bg-black/10" />
-          <button
-            className="flex min-w-0 items-center gap-2 rounded-md px-2 py-1 text-xs text-[#555a50] transition hover:bg-black/[0.045]"
-            onClick={() => setIsCommandOpen(true)}
-            type="button"
-          >
-            <span className="max-w-48 truncate">Desktop Kit</span>
-            <Icon
-              className="text-[#989b92]"
-              height="13"
-              icon="lucide:chevrons-up-down"
-              width="13"
-            />
-          </button>
         </div>
 
         <button
-          className="app-no-drag absolute left-1/2 flex h-8 w-[min(360px,34vw)] -translate-x-1/2 items-center gap-2 rounded-lg border border-black/[0.08] bg-white/55 px-3 text-left text-xs text-[#858980] shadow-[0_1px_0_rgba(255,255,255,0.75)] transition hover:border-black/[0.13] hover:bg-white/80"
+          aria-label="搜索或输入命令"
+          className="app-no-drag absolute left-1/2 flex h-8 w-[min(348px,36vw)] -translate-x-1/2 items-center gap-2 rounded-lg border border-black/[0.08] bg-white/48 px-3 text-left text-xs text-[#858980] shadow-[0_1px_0_rgba(255,255,255,0.72)] transition hover:border-black/[0.14] hover:bg-white/72 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#728954]/25"
           onClick={() => setIsCommandOpen(true)}
           type="button"
         >
@@ -192,7 +175,7 @@ const AppShell = (props: AppShellProps) => {
             icon="lucide:search"
             width="14"
           />
-          <span className="truncate">搜索页面、文件和操作</span>
+          <span className="truncate">搜索或输入命令</span>
           <KeyboardKey
             className="ml-auto border-black/10 bg-black/[0.035] text-[#73776e] shadow-none"
             size="xs"
@@ -200,8 +183,15 @@ const AppShell = (props: AppShellProps) => {
           />
         </button>
 
+        <div className="app-no-drag ml-auto flex items-center">
+          <ProfileDropdown
+            isSidebarCollapsed={false}
+            placement="header"
+          />
+        </div>
+
         {!isMac ? (
-          <div className="app-no-drag ml-auto flex h-full items-stretch">
+          <div className="app-no-drag ml-2 flex h-full items-stretch">
             <button
               aria-label="最小化窗口"
               className="grid w-11 place-items-center text-[#72766d] transition hover:bg-black/[0.06]"
@@ -298,11 +288,15 @@ const AppShell = (props: AppShellProps) => {
               />
               <span className={`truncate max-lg:hidden ${isSidebarCollapsed ? 'hidden' : ''}`}>命令面板</span>
             </button>
-            <ProfileDropdown isSidebarCollapsed={isSidebarCollapsed} />
           </div>
         </aside>
 
-        <main className="min-w-0 overflow-y-auto bg-[#f8f7f2]">{children}</main>
+        <ScrollArea
+          className="min-h-0 min-w-0 bg-[#f8f7f2]"
+          size="sm"
+        >
+          <main>{children}</main>
+        </ScrollArea>
 
         <footer className="col-span-2 flex items-center border-t border-black/[0.08] bg-[#edebe5] px-3 text-[10px] text-[#74786f]">
           <div className="flex items-center gap-1.5">
