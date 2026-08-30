@@ -1,6 +1,7 @@
 'use client';
 
 export {
+  Field as FormControl,
   Form,
   List as FormList,
   useArrayField,
