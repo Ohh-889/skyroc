@@ -141,7 +141,7 @@ test.describe('[electron-vite-react] e2e tests', () => {
       .toBe(true);
 
     await page.getByTestId('settings-section-appearance').click();
-    await expect(page.getByRole('heading', { name: '主题外观' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '主题与颜色' })).toBeVisible();
     const darkThemeRadio = page.getByRole('radio', { name: '深色' });
     await darkThemeRadio.click();
     await expect(darkThemeRadio).toBeChecked();
@@ -183,6 +183,22 @@ test.describe('[electron-vite-react] e2e tests', () => {
     });
     expect(blueColors.primary).not.toBe(mossColors.primary);
     expect(blueColors.accent).not.toBe(mossColors.accent);
+
+    await page.getByText('自定义', { exact: true }).click();
+    await page.getByLabel('自定义主题色').fill('#7c3aed');
+    await expect(page.locator('html')).toHaveAttribute('data-accent', 'custom');
+    await expect
+      .poll(() =>
+        page.evaluate(() => JSON.parse(localStorage.getItem('skyroc.desktop.settings') ?? '{}').customAccentColor)
+      )
+      .toBe('#7c3aed');
+
+    await page.getByText('高对比', { exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
+    const grayscaleSwitch = page.getByRole('switch', { name: '灰度模式' });
+    await grayscaleSwitch.click();
+    await expect(grayscaleSwitch).toBeChecked();
+    await expect(page.locator('html')).toHaveAttribute('data-grayscale', 'true');
 
     await page.getByTestId('settings-section-general').click();
     await expect(launchAtLoginSwitch).toBeChecked();
