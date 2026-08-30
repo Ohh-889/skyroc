@@ -136,8 +136,26 @@ test.describe('[electron-vite-react] e2e tests', () => {
     await expect(page).toHaveURL(/#\/settings\/?$/);
     await expect(page.getByRole('heading', { name: '设置中心' })).toBeVisible();
 
+    const launchAtLoginSwitch = page.getByRole('switch', { name: '开机启动' });
+    await expect(launchAtLoginSwitch).not.toBeChecked();
+    await launchAtLoginSwitch.click();
+    await expect(launchAtLoginSwitch).toBeChecked();
+    await expect
+      .poll(() =>
+        page.evaluate(() => JSON.parse(localStorage.getItem('skyroc.desktop.settings') ?? '{}').launchAtLogin)
+      )
+      .toBe(true);
+
     await page.getByTestId('settings-section-appearance').click();
     await expect(page.getByRole('heading', { name: '主题外观' })).toBeVisible();
+    await page.getByRole('button', { name: '深色' }).click();
+    await expect(page.getByRole('button', { name: '深色' })).toHaveAttribute('aria-pressed', 'true');
+    await expect
+      .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('skyroc.desktop.settings') ?? '{}').themeMode))
+      .toBe('dark');
+
+    await page.getByTestId('settings-section-general').click();
+    await expect(launchAtLoginSwitch).toBeChecked();
 
     await page.getByTestId('settings-section-data').click();
     await expect(page.getByText('删除本地数据')).toBeVisible();
