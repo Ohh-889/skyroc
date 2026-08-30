@@ -23,8 +23,8 @@
 - 🌐 **跨端复用** — 请求、状态、日志、调度、类型和工具收敛平台差异，可被 Web、React Native 与未来小程序复用。
 - 🎨 **双端设计系统** — `@skyroc/web-ui` 与 `@skyroc/native-ui` 共用设计令牌，各自保留符合平台习惯的实现。
 - 🔧 **统一工程化** — pnpm catalog 管理版本，Turborepo 编排任务，oxlint、oxfmt、Vitest 与 Playwright 统一质量流程。
-- 📦 **开箱即用** — `skyroc-admin` 提供干净骨架，`admin-example` 展示完整能力，`pnpm create:admin` 可以创建新应用。
-- 📱 **移动端模板** — `expo-templete` 是可直接 fork 的 Expo 业务模板，登录态、网络层、主题、国际化、深链与原生打包脚本都已就位。
+- 📦 **开箱即用** — `pnpm create skyroc` 可创建脱离 monorepo、独立安装运行的 Admin 或 Expo 项目。
+- 📱 **移动端模板** — `expo-templete` 提供完整的 Expo 业务模板，登录态、网络层、主题、国际化、深链与原生打包脚本都已就位。
 
 Web Admin、Web UI、React Native / Expo 组件库和 Expo 业务模板都已经落地；小程序目录仍作为后续扩展预留。
 
@@ -129,7 +129,7 @@ internal/* ── 为各 workspace 提供 TypeScript、测试、Lint 与 UnoCSS 
 | `@skyroc/logger` | 基于 LogLayer 的 Web、React Native、小程序日志与存储适配 |
 | `@skyroc/color` | 基于 colord / culori 的色彩工具与 OKLCH、Ant Design 调色板生成 |
 | `@skyroc/tailwind-plugin` | 设计令牌唯一来源，生成 Web / Native 的 Tailwind v4 主题变量与预设 |
-| `create-skyroc` | `packages/@core/create-skyroc` | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 项目 |
+| `create-skyroc` | `packages/@core/create-skyroc` | `pnpm create skyroc` 脚手架；构建时从源码准备模板资产，运行时生成独立 Admin 或 Expo 项目 |
 | `@skyroc/scripts` | 提交、清理、发布、依赖更新与 changelog 等通用工程 CLI |
 
 ### 🔗 共享能力与原语
@@ -196,15 +196,20 @@ pnpm --filter expo-templete start    # 之后改 JS 只要起 dev server
 
 模板的环境变量、打包脚本与目录约定见 [`apps/expo-templete/README.md`](./apps/expo-templete/README.md)。
 
-### 创建新的 Admin 应用
+### 创建独立的 Admin 或 Expo 项目
 
 ```bash
-# 在当前 monorepo 的 apps/ 下创建应用
-pnpm create:admin my-admin
+# 创建独立 Admin 项目（默认模板）
+pnpm create skyroc my-admin
 
-# 创建可以脱离 monorepo 独立安装的工程
-pnpm create skyroc my-admin --target /path/to/projects/my-admin
+# 创建独立 Expo 项目
+pnpm create skyroc my-app --template expo
+
+# 不传项目名时，交互选择 Admin / Expo 模板并输入项目名
+pnpm create skyroc
 ```
+
+生成结果不依赖当前 monorepo，可进入项目目录后独立安装依赖并运行。仓库内创建 workspace 应用仍可使用 `pnpm create:admin <name>` 或 `pnpm create:expo <name>`。
 
 更多参数见 [`create-skyroc` 文档](./packages/@core/create-skyroc/README.md)。
 
@@ -253,7 +258,9 @@ skyroc-admin/
 | `pnpm typecheck` / `pnpm lint`      | TypeScript 检查 / oxlint      |
 | `pnpm format` / `pnpm format:check` | oxfmt 格式化 / 仅检查         |
 | `pnpm test` / `pnpm test:e2e`       | Vitest / Playwright           |
-| `pnpm create:admin <name>`          | 从内置模板创建 Admin 应用     |
+| `pnpm create skyroc [name]`         | 创建独立 Admin / Expo 项目    |
+| `pnpm create:admin <name>`          | 在仓库内创建 Admin 应用       |
+| `pnpm create:expo <name>`           | 在仓库内创建 Expo 应用        |
 | `pnpm clean`                        | 清理 workspace 构建产物       |
 
 开发单个 workspace 时优先使用 `pnpm --filter <workspace-name> <command>`，减少无关任务和输出。
